@@ -96,19 +96,20 @@ PollsQuestion question = (PollsQuestion)request.getAttribute(WebKeys.POLLS_QUEST
 </c:choose>
 
 <%
+boolean hasConfigurationPermission = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION);
+
 boolean hasViewPermission = true;
 
 if (question != null) {
 	hasViewPermission = PollsQuestionPermission.contains(permissionChecker, question, ActionKeys.VIEW);
 }
 
+boolean showAddPollIcon = hasConfigurationPermission && PollsPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_QUESTION);
 boolean showEditPollIcon = (question != null) && PollsQuestionPermission.contains(permissionChecker, question, ActionKeys.UPDATE);
-boolean showSelectPollIcon = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION);
-boolean showAddPollIcon = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION) && PollsPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_QUESTION);
-boolean showIconsActions = themeDisplay.isSignedIn() && (showEditPollIcon || showSelectPollIcon || showAddPollIcon);
+boolean showIconsActions = themeDisplay.isSignedIn() && (hasConfigurationPermission || showEditPollIcon || showAddPollIcon);
 %>
 
-<c:if test="<%= showIconsActions && hasViewPermission %>">
+<c:if test="<%= hasViewPermission && showIconsActions %>">
 
 	<%
 	Group controlPanelGroup = GroupLocalServiceUtil.getGroup(themeDisplay.getCompanyId(), GroupConstants.CONTROL_PANEL);
@@ -143,7 +144,7 @@ boolean showIconsActions = themeDisplay.isSignedIn() && (showEditPollIcon || sho
 				/>
 			</c:if>
 
-			<c:if test="<%= showSelectPollIcon %>">
+			<c:if test="<%= hasConfigurationPermission %>">
 				<liferay-ui:icon
 					cssClass="portlet-configuration"
 					image="configuration"

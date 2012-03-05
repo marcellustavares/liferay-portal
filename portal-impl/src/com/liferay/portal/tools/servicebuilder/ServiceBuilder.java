@@ -160,21 +160,22 @@ public class ServiceBuilder {
 				"Please set these required arguments. Sample values are:\n" +
 				"\n" +
 				"\tservice.input.file=${service.file}\n" +
-				"\tservice.hbm.file=src/META-INF/portal-hbm.xml\n" +
-				"\tservice.orm.file=src/META-INF/portal-orm.xml\n" +
-				"\tservice.model.hints.file=src/META-INF/portal-model-hints.xml\n" +
-				"\tservice.spring.file=src/META-INF/portal-spring.xml\n" +
-				"\tservice.api.dir=${project.dir}/portal-service/src\n" +
-				"\tservice.impl.dir=src\n" +
-				"\tservice.json.file=${project.dir}/portal-web/docroot/html/js/liferay/service_unpacked.js\n" +
-				"\tservice.remoting.file=${project.dir}/portal-web/docroot/WEB-INF/remoting-servlet.xml\n" +
-				"\tservice.sql.dir=../sql\n" +
+				"\tservice.hbm.file=${basedir}/src/META-INF/portal-hbm.xml\n" +
+				"\tservice.orm.file=${basedir}/src/META-INF/portal-orm.xml\n" +
+				"\tservice.model.hints.file=${basedir}/src/META-INF/portal-model-hints.xml\n" +
+				"\tservice.spring.file=${basedir}/src/META-INF/portal-spring.xml\n" +
+				"\tservice.api.dir=${basedir}/../portal-service/src\n" +
+				"\tservice.impl.dir=${basedir}/src\n" +
+				"\tservice.json.file=${basedir}/../portal-web/docroot/html/js/liferay/service.js\n" +
+				"\tservice.remoting.file=${basedir}/../portal-web/docroot/WEB-INF/remoting-servlet.xml\n" +
+				"\tservice.sql.dir=${basedir}/../sql\n" +
 				"\tservice.sql.file=portal-tables.sql\n" +
 				"\tservice.sql.indexes.file=indexes.sql\n" +
 				"\tservice.sql.indexes.properties.file=indexes.properties\n" +
 				"\tservice.sql.sequences.file=sequences.sql\n" +
-				"\tservice.bean.locator.util.package=com.liferay.portal.kernel.bean\n" +
-				"\tservice.props.util.package=com.liferay.portal.util\n" +
+				"\tservice.bean.locator.util=com.liferay.portal.kernel.bean.PortalBeanLocatorUtil\n" +
+				"\tservice.props.util=com.liferay.portal.util.PropsUtil\n" +
+				"\tservice.test.dir=${basedir}/test/integration\n" +
 				"\n" +
 				"You can also customize the generated code by overriding the default templates with these optional system properties:\n" +
 				"\n" +
@@ -870,7 +871,7 @@ public class ServiceBuilder {
 		}
 		else {
 			String refPackage = name.substring(0, pos);
-			String refEntity = name.substring(pos + 1, name.length());
+			String refEntity = name.substring(pos + 1);
 
 			if (refPackage.equals(_packagePath)) {
 				pos = _ejbList.indexOf(new Entity(refEntity));
@@ -2633,7 +2634,7 @@ public class ServiceBuilder {
 
 				newContent =
 					content.substring(0, x) + "<beans>" + sb.toString() +
-						"</beans>" + content.substring(y, content.length());
+						"</beans>" + content.substring(y);
 			}
 		}
 
@@ -4240,7 +4241,7 @@ public class ServiceBuilder {
 			pos = fileName.indexOf(_apiDir + "/") + _apiDir.length();
 		}
 
-		String srcFile = fileName.substring(pos + 1, fileName.length());
+		String srcFile = fileName.substring(pos + 1);
 		String className = StringUtil.replace(
 			srcFile.substring(0, srcFile.length() - 5), "/", ".");
 

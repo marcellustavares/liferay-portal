@@ -333,8 +333,6 @@ public interface PropsKeys {
 
 	public static final String CLUSTER_EXECUTOR_DEBUG_ENABLED = "cluster.executor.debug.enabled";
 
-	public static final String CLUSTER_EXECUTOR_HEARTBEAT_INTERVAL = "cluster.executor.heartbeat.interval";
-
 	public static final String CLUSTER_LINK_AUTODETECT_ADDRESS = "cluster.link.autodetect.address";
 
 	public static final String CLUSTER_LINK_CHANNEL_PROPERTIES_CONTROL = "cluster.link.channel.properties.control";
@@ -420,8 +418,6 @@ public interface PropsKeys {
 	public static final String CUSTOM_SQL_FUNCTION_ISNULL = "custom.sql.function.isnull";
 
 	public static final String DATABASE_MYSQL_ENGINE = "database.mysql.engine";
-
-	public static final String DEFAULT_ADMIN_EMAIL_ADDRESS = "default.admin.email.address";
 
 	public static final String DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX = "default.admin.email.address.prefix";
 
@@ -810,6 +806,8 @@ public interface PropsKeys {
 	public static final String INDEX_ON_UPGRADE = "index.on.upgrade";
 
 	public static final String INDEX_READ_ONLY = "index.read.only";
+
+	public static final String INDEX_SEARCH_ENGINE_ID = "index.search.engine.id";
 
 	public static final String INDEX_SEARCH_HIGHLIGHT_ENABLED = "index.search.highlight.enabled";
 
@@ -1256,6 +1254,8 @@ public interface PropsKeys {
 	public static final String LUCENE_STORE_TYPE_FILE_FORCE_MMAP = "lucene.store.type.file.force.mmap";
 
 	public static final String MAIL_AUDIT_TRAIL = "mail.audit.trail";
+
+	public static final String MAIL_BATCH_SIZE = "mail.batch.size";
 
 	public static final String MAIL_HOOK_CYRUS_ADD_USER = "mail.hook.cyrus.add.user";
 
@@ -2120,6 +2120,8 @@ public interface PropsKeys {
 	public static final String WEB_SERVER_PROXY_LEGACY_MODE = "web.server.proxy.legacy.mode";
 
 	public static final String WEB_SERVER_SERVLET_DIRECTORY_INDEXING_ENABLED = "web.server.servlet.directory.indexing.enabled";
+
+	public static final String WEB_SERVER_SERVLET_VERSION_VERBOSITY = "web.server.servlet.version.verbosity";
 
 	public static final String WEBDAV_IGNORE = "webdav.ignore";
 

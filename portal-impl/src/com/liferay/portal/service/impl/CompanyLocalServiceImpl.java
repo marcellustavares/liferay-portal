@@ -51,12 +51,10 @@ import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.ContactConstants;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.VirtualHost;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.CompanyLocalServiceBaseImpl;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalInstances;
@@ -71,7 +69,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -382,75 +379,14 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		// Default admin
 
 		if (userPersistence.countByCompanyId(companyId) == 1) {
-			long creatorUserId = 0;
-			boolean autoPassword = false;
-			String password1 = PropsValues.DEFAULT_ADMIN_PASSWORD;
-			String password2 = password1;
-			boolean autoScreenName = false;
-			String screenName = PropsValues.DEFAULT_ADMIN_SCREEN_NAME;
+			String emailAddress =
+				PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
 
-			String emailAddress = null;
-
-			if (companyPersistence.countAll() == 1) {
-				emailAddress = PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS;
-			}
-
-			if (Validator.isNull(emailAddress)) {
-				emailAddress =
-					PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
-			}
-
-			long facebookId = 0;
-			String openId = StringPool.BLANK;
-			Locale locale = defaultUser.getLocale();
-			String firstName = PropsValues.DEFAULT_ADMIN_FIRST_NAME;
-			String middleName = PropsValues.DEFAULT_ADMIN_MIDDLE_NAME;
-			String lastName = PropsValues.DEFAULT_ADMIN_LAST_NAME;
-			int prefixId = 0;
-			int suffixId = 0;
-			boolean male = true;
-			int birthdayMonth = Calendar.JANUARY;
-			int birthdayDay = 1;
-			int birthdayYear = 1970;
-			String jobTitle = StringPool.BLANK;
-
-			Group guestGroup = groupLocalService.getGroup(
-				companyId, GroupConstants.GUEST);
-
-			long[] groupIds = new long[] {guestGroup.getGroupId()};
-
-			long[] organizationIds = null;
-
-			Role adminRole = roleLocalService.getRole(
-				companyId, RoleConstants.ADMINISTRATOR);
-
-			Role powerUserRole = roleLocalService.getRole(
-				companyId, RoleConstants.POWER_USER);
-
-			long[] roleIds = new long[] {
-				adminRole.getRoleId(), powerUserRole.getRoleId()
-			};
-
-			long[] userGroupIds = null;
-			boolean sendEmail = false;
-			ServiceContext serviceContext = new ServiceContext();
-
-			User defaultAdminUser = userLocalService.addUser(
-				creatorUserId, companyId, autoPassword, password1, password2,
-				autoScreenName, screenName, emailAddress, facebookId, openId,
-				locale, firstName, middleName, lastName, prefixId, suffixId,
-				male, birthdayMonth, birthdayDay, birthdayYear, jobTitle,
-				groupIds, organizationIds, roleIds, userGroupIds, sendEmail,
-				serviceContext);
-
-			userLocalService.updateEmailAddressVerified(
-				defaultAdminUser.getUserId(), true);
-
-			userLocalService.updateLastLogin(
-				defaultAdminUser.getUserId(), defaultAdminUser.getLoginIP());
-
-			userLocalService.updatePasswordReset(
-				defaultAdminUser.getUserId(), false);
+			userLocalService.addDefaultAdminUser(
+				companyId, PropsValues.DEFAULT_ADMIN_SCREEN_NAME, emailAddress,
+				defaultUser.getLocale(), PropsValues.DEFAULT_ADMIN_FIRST_NAME,
+				PropsValues.DEFAULT_ADMIN_MIDDLE_NAME,
+				PropsValues.DEFAULT_ADMIN_LAST_NAME);
 		}
 
 		// Portlets
@@ -786,19 +722,10 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		throws SystemException {
 
 		try {
+
+			// Search context
+
 			SearchContext searchContext = new SearchContext();
-
-			Facet assetEntriesFacet = new AssetEntriesFacet(searchContext);
-
-			assetEntriesFacet.setStatic(true);
-
-			searchContext.addFacet(assetEntriesFacet);
-
-			Facet scopeFacet = new ScopeFacet(searchContext);
-
-			scopeFacet.setStatic(true);
-
-			searchContext.addFacet(scopeFacet);
 
 			searchContext.setCompanyId(companyId);
 			searchContext.setEnd(end);
@@ -815,9 +742,25 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 				searchContext.setPortletIds(new String[] {portletId});
 			}
 
-			searchContext.setSearchEngineId(SearchEngineUtil.SYSTEM_ENGINE_ID);
 			searchContext.setStart(start);
 			searchContext.setUserId(userId);
+
+			// Always add facets as late as possible so that the search context
+			// fields can be considered by the facets
+
+			Facet assetEntriesFacet = new AssetEntriesFacet(searchContext);
+
+			assetEntriesFacet.setStatic(true);
+
+			searchContext.addFacet(assetEntriesFacet);
+
+			Facet scopeFacet = new ScopeFacet(searchContext);
+
+			scopeFacet.setStatic(true);
+
+			searchContext.addFacet(scopeFacet);
+
+			// Search
 
 			Indexer indexer = FacetedSearcher.getInstance();
 

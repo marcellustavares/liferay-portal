@@ -26,3 +26,11 @@ page import="com.liferay.portal.kernel.util.MethodParameter" %>
 <%@ page import="java.io.File" %>
 
 <%@ page import="java.lang.reflect.Method" %>
+
+<%
+String contextPath = request.getParameter("contextPath");
+
+if (contextPath == null) {
+	contextPath = ContextPathUtil.getContextPath(application);
+}
+%>

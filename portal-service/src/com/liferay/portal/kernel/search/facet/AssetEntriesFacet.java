@@ -69,6 +69,12 @@ public class AssetEntriesFacet extends MultiValueFacet {
 				continue;
 			}
 
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+				continue;
+			}
+
 			try {
 				BooleanQuery indexerBooleanQuery = indexer.getFacetQuery(
 					entryClassName, searchContext);
@@ -120,7 +126,7 @@ public class AssetEntriesFacet extends MultiValueFacet {
 		}
 
 		return BooleanClauseFactoryUtil.create(
-			facetQuery, BooleanClauseOccur.MUST.getName());
+			searchContext, facetQuery, BooleanClauseOccur.MUST.getName());
 	}
 
 	protected void initFacetClause() {

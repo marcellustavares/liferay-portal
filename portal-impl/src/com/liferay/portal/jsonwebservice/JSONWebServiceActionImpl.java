@@ -55,10 +55,10 @@ public class JSONWebServiceActionImpl implements JSONWebServiceAction {
 	}
 
 	public Object invoke() throws Exception {
-		JSONRPCRequest jsonRpcRequest =
+		JSONRPCRequest jsonRPCRequest =
 			_jsonWebServiceActionParameters.getJSONRPCRequest();
 
-		if (jsonRpcRequest == null) {
+		if (jsonRPCRequest == null) {
 			return _invokeActionMethod();
 		}
 
@@ -74,7 +74,7 @@ public class JSONWebServiceActionImpl implements JSONWebServiceAction {
 			_log.error(e, e);
 		}
 
-		return new JSONRPCResponse(jsonRpcRequest, result, exception);
+		return new JSONRPCResponse(jsonRPCRequest, result, exception);
 	}
 
 	private Object _createDefaultParameterValue(

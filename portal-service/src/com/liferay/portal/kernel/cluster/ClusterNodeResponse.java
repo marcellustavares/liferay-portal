@@ -99,7 +99,20 @@ public class ClusterNodeResponse implements Serializable {
 		sb.append("{clusterMessageType=");
 		sb.append(_clusterMessageType);
 
-		if (hasException()) {
+		boolean clusterMessageTypeNotifyOrUpdate = false;
+
+		if (_clusterMessageType.equals(ClusterMessageType.NOTIFY) ||
+			_clusterMessageType.equals(ClusterMessageType.UPDATE)) {
+
+			clusterMessageTypeNotifyOrUpdate = true;
+		}
+
+		if (clusterMessageTypeNotifyOrUpdate) {
+			sb.append(", clusterNode=");
+			sb.append(_clusterNode);
+		}
+
+		if (!clusterMessageTypeNotifyOrUpdate && hasException()) {
 			sb.append(", exception=");
 			sb.append(_exception);
 		}
@@ -107,7 +120,7 @@ public class ClusterNodeResponse implements Serializable {
 		sb.append(", multicast=");
 		sb.append(_multicast);
 
-		if (!hasException()) {
+		if (!clusterMessageTypeNotifyOrUpdate && !hasException()) {
 			sb.append(", result=");
 			sb.append(_result);
 		}

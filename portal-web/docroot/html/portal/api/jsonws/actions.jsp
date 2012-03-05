@@ -27,12 +27,6 @@ String signature = ParamUtil.getString(request, "signature");
 	<%
 	Map<String, Set> jsonWebServiceClasses = new LinkedHashMap<String, Set>();
 
-	String contextPath = request.getParameter("contextPath");
-
-	if (contextPath == null) {
-		contextPath = ContextPathUtil.getContextPath(application);
-	}
-
 	List<JSONWebServiceActionMapping> jsonWebServiceActionMappings = JSONWebServiceActionsManagerUtil.getJSONWebServiceActionMappings(contextPath);
 
 	for (JSONWebServiceActionMapping jsonWebServiceActionMapping : jsonWebServiceActionMappings) {

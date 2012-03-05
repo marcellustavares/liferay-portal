@@ -1047,7 +1047,16 @@ public class WebServerServlet extends HttpServlet {
 		freeMarkerContext.put("dateFormat", _dateFormat);
 		freeMarkerContext.put("entries", webServerEntries);
 		freeMarkerContext.put("path", HttpUtil.encodePath(path));
-		freeMarkerContext.put("serverInfo", ReleaseInfo.getServerInfo());
+
+		if (_WEB_SERVER_SERVLET_VERSION_VERBOSITY_DEFAULT) {
+		}
+		else if (_WEB_SERVER_SERVLET_VERSION_VERBOSITY_PARTIAL) {
+			freeMarkerContext.put("releaseInfo", ReleaseInfo.getName());
+		}
+		else {
+			freeMarkerContext.put("releaseInfo", ReleaseInfo.getReleaseInfo());
+		}
+
 		freeMarkerContext.put("validator", Validator_IW.getInstance());
 
 		String html = FreeMarkerUtil.process(_TEMPLATE_FTL, freeMarkerContext);
@@ -1210,6 +1219,14 @@ public class WebServerServlet extends HttpServlet {
 
 	private static final String _TEMPLATE_FTL =
 		"com/liferay/portal/webserver/dependencies/template.ftl";
+
+	private static final boolean _WEB_SERVER_SERVLET_VERSION_VERBOSITY_DEFAULT =
+		PropsValues.WEB_SERVER_SERVLET_VERSION_VERBOSITY.equalsIgnoreCase(
+			ReleaseInfo.getName());
+
+	private static final boolean _WEB_SERVER_SERVLET_VERSION_VERBOSITY_PARTIAL =
+		PropsValues.WEB_SERVER_SERVLET_VERSION_VERBOSITY.equalsIgnoreCase(
+			"partial");
 
 	private static Log _log = LogFactoryUtil.getLog(WebServerServlet.class);
 

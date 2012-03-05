@@ -396,7 +396,7 @@ public class SourceFormatter {
 	}
 
 	private static void _checkPersistenceTestSuite() throws IOException {
-		String basedir = "./portal-impl/test";
+		String basedir = "./portal-impl/test/integration";
 
 		if (!_fileUtil.exists(basedir)) {
 			return;

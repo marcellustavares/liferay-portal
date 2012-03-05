@@ -320,7 +320,7 @@ public class EditServerAction extends PortletAction {
 
 					try {
 						SearchEngineUtil.deletePortletDocuments(
-							companyId, portletId);
+							indexer.getSearchEngineId(), companyId, portletId);
 
 						indexer.reindex(
 							new String[] {String.valueOf(companyId)});
@@ -585,7 +585,7 @@ public class EditServerAction extends PortletAction {
 			String name = enu.nextElement();
 
 			if (name.startsWith("logLevel")) {
-				String loggerName = name.substring(8, name.length());
+				String loggerName = name.substring(8);
 
 				String priority = ParamUtil.getString(
 					actionRequest, name, Level.INFO.toString());

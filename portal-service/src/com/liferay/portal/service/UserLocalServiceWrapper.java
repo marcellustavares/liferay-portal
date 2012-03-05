@@ -248,6 +248,16 @@ public class UserLocalServiceWrapper implements UserLocalService,
 		_userLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
+	public com.liferay.portal.model.User addDefaultAdminUser(long companyId,
+		java.lang.String screenName, java.lang.String emailAddress,
+		java.util.Locale locale, java.lang.String firstName,
+		java.lang.String middleName, java.lang.String lastName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _userLocalService.addDefaultAdminUser(companyId, screenName,
+			emailAddress, locale, firstName, middleName, lastName);
+	}
+
 	/**
 	* Adds the user to the default groups, unless the user is already in these
 	* groups. The default groups can be specified in

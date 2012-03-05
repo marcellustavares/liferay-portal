@@ -131,6 +131,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -154,6 +155,76 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Zsigmond Rab
  */
 public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
+
+	public User addDefaultAdminUser(
+			long companyId, String screenName, String emailAddress,
+			Locale locale, String firstName, String middleName, String lastName)
+		throws PortalException, SystemException {
+
+		long creatorUserId = 0;
+		boolean autoPassword = false;
+		String password1 = PropsValues.DEFAULT_ADMIN_PASSWORD;
+		String password2 = password1;
+		boolean autoScreenName = false;
+
+		screenName = getScreenName(screenName);
+
+		for (int i = 1;; i++) {
+			User screenNameUser = userPersistence.fetchByC_SN(
+				companyId, screenName);
+
+			if (screenNameUser == null) {
+				break;
+			}
+
+			screenName = screenName + i;
+		}
+
+		long facebookId = 0;
+		String openId = StringPool.BLANK;
+		int prefixId = 0;
+		int suffixId = 0;
+		boolean male = true;
+		int birthdayMonth = Calendar.JANUARY;
+		int birthdayDay = 1;
+		int birthdayYear = 1970;
+		String jobTitle = StringPool.BLANK;
+
+		Group guestGroup = groupLocalService.getGroup(
+			companyId, GroupConstants.GUEST);
+
+		long[] groupIds = {guestGroup.getGroupId()};
+
+		long[] organizationIds = null;
+
+		Role adminRole = roleLocalService.getRole(
+			companyId, RoleConstants.ADMINISTRATOR);
+
+		Role powerUserRole = roleLocalService.getRole(
+			companyId, RoleConstants.POWER_USER);
+
+		long[] roleIds = {adminRole.getRoleId(), powerUserRole.getRoleId()};
+
+		long[] userGroupIds = null;
+		boolean sendEmail = false;
+		ServiceContext serviceContext = new ServiceContext();
+
+		User defaultAdminUser = addUser(
+			creatorUserId, companyId, autoPassword, password1, password2,
+			autoScreenName, screenName, emailAddress, facebookId, openId,
+			locale, firstName, middleName, lastName, prefixId, suffixId, male,
+			birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds,
+			organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+
+		updateEmailAddressVerified(defaultAdminUser.getUserId(), true);
+
+		updateLastLogin(
+			defaultAdminUser.getUserId(), defaultAdminUser.getLoginIP());
+
+		updatePasswordReset(defaultAdminUser.getUserId(), false);
+
+		return defaultAdminUser;
+	}
 
 	/**
 	 * Adds the user to the default groups, unless the user is already in these

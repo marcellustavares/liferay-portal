@@ -231,6 +231,13 @@ public interface UserLocalService extends PersistedModelLocalService {
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
+	public com.liferay.portal.model.User addDefaultAdminUser(long companyId,
+		java.lang.String screenName, java.lang.String emailAddress,
+		java.util.Locale locale, java.lang.String firstName,
+		java.lang.String middleName, java.lang.String lastName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
 	/**
 	* Adds the user to the default groups, unless the user is already in these
 	* groups. The default groups can be specified in

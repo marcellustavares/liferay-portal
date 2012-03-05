@@ -68,14 +68,15 @@ catch (NoSuchRecordSetException nsrse) {
 <%
 }
 
-boolean showAddListIcon = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION) && DDLPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_RECORD_SET);
+boolean hasConfigurationPermission = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION);
+
+boolean showAddListIcon = hasConfigurationPermission && DDLPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_RECORD_SET);
 boolean showAddTemplateIcon = (recordSet != null) && DDMPermission.contains(permissionChecker, scopeGroupId, ddmResource, ActionKeys.ADD_TEMPLATE);
 boolean showEditDetailTemplateIcon = (detailDDMTemplateId != 0) && DDMTemplatePermission.contains(permissionChecker, detailDDMTemplateId, ActionKeys.UPDATE);
 boolean showEditListTemplateIcon = (listDDMTemplateId != 0) && DDMTemplatePermission.contains(permissionChecker, listDDMTemplateId, ActionKeys.UPDATE);
-boolean showSelectListIcon = PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.CONFIGURATION);
 %>
 
-<c:if test="<%= themeDisplay.isSignedIn() && (showAddListIcon || showAddTemplateIcon || showEditDetailTemplateIcon || showEditListTemplateIcon || showSelectListIcon ) %>">
+<c:if test="<%= themeDisplay.isSignedIn() && (showAddListIcon || showAddTemplateIcon || showEditDetailTemplateIcon || showEditListTemplateIcon || hasConfigurationPermission ) %>">
 	<div class="lfr-meta-actions icons-container">
 		<div class="icon-actions">
 			<c:if test="<%= showAddTemplateIcon %>">
@@ -145,7 +146,7 @@ boolean showSelectListIcon = PortletPermissionUtil.contains(permissionChecker, l
 				/>
 			</c:if>
 
-			<c:if test="<%= showSelectListIcon %>">
+			<c:if test="<%= hasConfigurationPermission %>">
 				<liferay-ui:icon
 					cssClass="portlet-configuration"
 					image="configuration"

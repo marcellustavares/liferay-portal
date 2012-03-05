@@ -24,8 +24,11 @@ import com.liferay.portal.kernel.log.LogUtil;
 import com.liferay.portal.kernel.mail.Account;
 import com.liferay.portal.kernel.mail.MailMessage;
 import com.liferay.portal.kernel.mail.SMTPAccount;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
@@ -41,6 +44,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
@@ -113,7 +117,7 @@ public class MailEngine {
 			Message message = new MimeMessage(
 				session, new UnsyncByteArrayInputStream(bytes));
 
-			_send(session, message, null);
+			_send(session, message, null, _BATCH_SIZE);
 		}
 		catch (Exception e) {
 			throw new MailEngineException(e);
@@ -318,7 +322,10 @@ public class MailEngine {
 				message.setHeader("References", inReplyTo);
 			}
 
-			_send(session, message, bulkAddresses);
+			int batchSize = GetterUtil.getInteger(
+				PropsUtil.get(PropsKeys.MAIL_BATCH_SIZE), _BATCH_SIZE);
+
+			_send(session, message, bulkAddresses, batchSize);
 		}
 		catch (SendFailedException sfe) {
 			_log.error(sfe);
@@ -409,6 +416,31 @@ public class MailEngine {
 		}
 	}
 
+	private static Address[] _getBatchAddresses(
+		Address[] addresses, int index, int batchSize) {
+
+		if ((batchSize == _BATCH_SIZE) && (index == 0)) {
+			return addresses;
+		}
+		else if (batchSize == _BATCH_SIZE) {
+			return null;
+		}
+
+		int start = index * batchSize;
+
+		if (start > addresses.length) {
+			return null;
+		}
+
+		int end = ((index + 1) * batchSize);
+
+		if (end > addresses.length) {
+			end = addresses.length;
+		}
+
+		return ArrayUtil.subset(addresses, start, end);
+	}
+
 	private static Properties _getProperties(Account account) {
 		Properties properties = new Properties();
 
@@ -454,7 +486,8 @@ public class MailEngine {
 	}
 
 	private static void _send(
-		Session session, Message message, InternetAddress[] bulkAddresses) {
+		Session session, Message message, InternetAddress[] bulkAddresses,
+		int batchSize) {
 
 		try {
 			boolean smtpAuth = GetterUtil.getBoolean(
@@ -476,18 +509,45 @@ public class MailEngine {
 
 				transport.connect(smtpHost, smtpPort, user, password);
 
-				if ((bulkAddresses != null) && (bulkAddresses.length > 0)) {
-					transport.sendMessage(message, bulkAddresses);
+				Address[] addresses = null;
+
+				if (Validator.isNotNull(bulkAddresses)) {
+					addresses = bulkAddresses;
 				}
 				else {
-					transport.sendMessage(message, message.getAllRecipients());
+					addresses = message.getAllRecipients();
+				}
+
+				for (int i = 0;; i++) {
+					Address[] batchAddresses = _getBatchAddresses(
+						addresses, i, batchSize);
+
+					if ((batchAddresses == null) ||
+						(batchAddresses.length == 0)) {
+
+						break;
+					}
+
+					transport.sendMessage(message, batchAddresses);
 				}
 
 				transport.close();
 			}
 			else {
-				if ((bulkAddresses != null) && (bulkAddresses.length > 0)) {
-					Transport.send(message, bulkAddresses);
+				if (Validator.isNotNull(bulkAddresses)) {
+					int curBatch = 0;
+
+					Address[] portion = _getBatchAddresses(
+						bulkAddresses, curBatch, batchSize);
+
+					while (Validator.isNotNull(portion)) {
+						Transport.send(message, portion);
+
+						curBatch++;
+
+						portion = _getBatchAddresses(
+							bulkAddresses, curBatch, batchSize);
+					}
 				}
 				else {
 					Transport.send(message);
@@ -510,6 +570,8 @@ public class MailEngine {
 			}
 		}
 	}
+
+	private static final int _BATCH_SIZE = 0;
 
 	private static final String _MULTIPART_TYPE_ALTERNATIVE = "alternative";
 

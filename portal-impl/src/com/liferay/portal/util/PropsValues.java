@@ -270,8 +270,6 @@ public class PropsValues {
 
 	public static final boolean CLUSTER_EXECUTOR_DEBUG_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.CLUSTER_EXECUTOR_DEBUG_ENABLED));
 
-	public static final long CLUSTER_EXECUTOR_HEARTBEAT_INTERVAL = GetterUtil.getLong(PropsUtil.get(PropsKeys.CLUSTER_EXECUTOR_HEARTBEAT_INTERVAL));
-
 	public static final String CLUSTER_LINK_AUTODETECT_ADDRESS = PropsUtil.get(PropsKeys.CLUSTER_LINK_AUTODETECT_ADDRESS);
 
 	public static final String[] CLUSTER_LINK_CHANNEL_SYSTEM_PROPERTIES = PropsUtil.getArray(PropsKeys.CLUSTER_LINK_CHANNEL_SYSTEM_PROPERTIES);
@@ -343,8 +341,6 @@ public class PropsValues {
 	public static final String CUSTOM_SQL_FUNCTION_ISNULL = PropsUtil.get(PropsKeys.CUSTOM_SQL_FUNCTION_ISNULL);
 
 	public static final String DATABASE_MYSQL_ENGINE = PropsUtil.get(PropsKeys.DATABASE_MYSQL_ENGINE);
-
-	public static String DEFAULT_ADMIN_EMAIL_ADDRESS = PropsUtil.get(PropsKeys.DEFAULT_ADMIN_EMAIL_ADDRESS);
 
 	public static final String DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX = PropsUtil.get(PropsKeys.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX);
 
@@ -1543,6 +1539,8 @@ public class PropsValues {
 	public static final boolean WEB_SERVER_PROXY_LEGACY_MODE =  GetterUtil.getBoolean(PropsUtil.get(PropsKeys.WEB_SERVER_PROXY_LEGACY_MODE));
 
 	public static final boolean WEB_SERVER_SERVLET_DIRECTORY_INDEXING_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.WEB_SERVER_SERVLET_DIRECTORY_INDEXING_ENABLED));
+
+	public static final String WEB_SERVER_SERVLET_VERSION_VERBOSITY = GetterUtil.getString(PropsUtil.get(PropsKeys.WEB_SERVER_SERVLET_VERSION_VERBOSITY));
 
 	public static final String[] WEBDAV_IGNORE = PropsUtil.getArray(PropsKeys.WEBDAV_IGNORE);
 

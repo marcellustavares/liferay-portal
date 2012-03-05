@@ -15,10 +15,13 @@
 package com.liferay.portalweb.portal.util;
 
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
+
+import java.io.File;
 
 /**
  * @author Brian Wing Shun Chan
@@ -35,9 +38,19 @@ public class LiferayDefaultSelenium
 		String browserURL) {
 
 		super(serverHost, serverPort, browserStartCommand, browserURL);
+
+		File file = new File(StringPool.PERIOD);
+
+		String absolutePath = file.getAbsolutePath();
+
+		if (absolutePath.endsWith(StringPool.PERIOD)) {
+			absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+
+			_projectDir = absolutePath;
+		}
 	}
 
-	public void downloadFile(String value) {
+	public void downloadTempFile(String value) {
 		if (!_BROWSER_TYPE.equals("*chrome") &&
 			!_BROWSER_TYPE.equals("*firefox") &&
 			!_BROWSER_TYPE.equals("*iehta") &&
@@ -144,10 +157,15 @@ public class LiferayDefaultSelenium
 		_timeout = timeout;
 	}
 
-	public void uploadFile(String location, String value) {
-		String text = TestPropsValues.OUTPUT_DIR + value;
+	public void uploadCommonFile(String location, String value) {
+		super.type(
+			location,
+			_projectDir + "portal-web\\test\\com\\liferay\\portalweb\\" +
+				"dependencies\\" + value);
+	}
 
-		super.type(location, text);
+	public void uploadTempFile(String location, String value) {
+		super.type(location, TestPropsValues.OUTPUT_DIR + value);
 	}
 
 	@Override
@@ -171,7 +189,7 @@ public class LiferayDefaultSelenium
 				 className.startsWith("com.liferay.portalweb.properties")) &&
 				className.endsWith("Test")) {
 
-				String dirName = className.substring(22, className.length());
+				String dirName = className.substring(22);
 
 				dirName = StringUtil.replace(dirName, ".", "/") + "/";
 
@@ -195,6 +213,7 @@ public class LiferayDefaultSelenium
 	private static final String _SELENIUM_EXECUTABLE_DIR =
 		TestPropsValues.SELENIUM_EXECUTABLE_DIR;
 
+	private String _projectDir;
 	private String _timeout = "90000";
 
 }

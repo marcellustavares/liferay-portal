@@ -39,10 +39,10 @@ import jodd.util.KeyValue;
 public class JSONWebServiceActionParameters {
 
 	public void collectAll(
-		HttpServletRequest request, String pathParameters,
-		JSONRPCRequest jsonRpcRequest) {
+		HttpServletRequest request, String parameterPath,
+		JSONRPCRequest jsonRPCRequest, Map<String, Object> parameterMap) {
 
-		_jsonRpcRequest = jsonRpcRequest;
+		_jsonRPCRequest = jsonRPCRequest;
 
 		try {
 			_serviceContext = ServiceContextFactory.getInstance(request);
@@ -54,9 +54,10 @@ public class JSONWebServiceActionParameters {
 
 		_collectDefaultsFromRequestAttributes(request);
 
-		_collectFromPath(pathParameters);
+		_collectFromPath(parameterPath);
 		_collectFromRequestParameters(request);
-		_collectFromJSONRPCRequest(jsonRpcRequest);
+		_collectFromJSONRPCRequest(jsonRPCRequest);
+		_collectFromMap(parameterMap);
 	}
 
 	public List<KeyValue<String, Object>> getInnerParameters(String baseName) {
@@ -68,7 +69,7 @@ public class JSONWebServiceActionParameters {
 	}
 
 	public JSONRPCRequest getJSONRPCRequest() {
-		return _jsonRpcRequest;
+		return _jsonRPCRequest;
 	}
 
 	public Object getParameter(String name) {
@@ -115,15 +116,15 @@ public class JSONWebServiceActionParameters {
 		}
 	}
 
-	private void _collectFromJSONRPCRequest(JSONRPCRequest jsonRpcRequest) {
-		if (jsonRpcRequest == null) {
+	private void _collectFromJSONRPCRequest(JSONRPCRequest jsonRPCRequest) {
+		if (jsonRPCRequest == null) {
 			return;
 		}
 
-		Set<String> parameterNames = jsonRpcRequest.getParameterNames();
+		Set<String> parameterNames = jsonRPCRequest.getParameterNames();
 
 		for (String parameterName : parameterNames) {
-			String value = jsonRpcRequest.getParameter(parameterName);
+			String value = jsonRPCRequest.getParameter(parameterName);
 
 			parameterName = CamelCaseUtil.normalizeCamelCase(parameterName);
 
@@ -131,22 +132,36 @@ public class JSONWebServiceActionParameters {
 		}
 	}
 
-	private void _collectFromPath(String pathParameters) {
-		if (pathParameters == null) {
+	private void _collectFromMap(Map<String, Object> parameterMap) {
+		if (parameterMap == null) {
 			return;
 		}
 
-		if (pathParameters.startsWith(StringPool.SLASH)) {
-			pathParameters = pathParameters.substring(1);
+		for (Map.Entry<String, Object> entry : parameterMap.entrySet()) {
+			String parameterName = entry.getKey();
+
+			Object value = entry.getValue();
+
+			_parameters.put(parameterName, value);
+		}
+	}
+
+	private void _collectFromPath(String parameterPath) {
+		if (parameterPath == null) {
+			return;
 		}
 
-		String[] pathParametersParts = StringUtil.split(
-			pathParameters, CharPool.SLASH);
+		if (parameterPath.startsWith(StringPool.SLASH)) {
+			parameterPath = parameterPath.substring(1);
+		}
+
+		String[] parameterPathParts = StringUtil.split(
+			parameterPath, CharPool.SLASH);
 
 		int i = 0;
 
-		while (i < pathParametersParts.length) {
-			String name = pathParametersParts[i];
+		while (i < parameterPathParts.length) {
+			String name = parameterPathParts[i];
 
 			if (name.length() == 0) {
 				i++;
@@ -162,7 +177,7 @@ public class JSONWebServiceActionParameters {
 			else if (!name.startsWith(StringPool.PLUS)) {
 				i++;
 
-				value = pathParametersParts[i];
+				value = parameterPathParts[i];
 			}
 
 			name = CamelCaseUtil.toCamelCase(name);
@@ -183,18 +198,17 @@ public class JSONWebServiceActionParameters {
 		Enumeration<String> enu = request.getParameterNames();
 
 		while (enu.hasMoreElements()) {
-			String parameterName = enu.nextElement();
+			String name = enu.nextElement();
 
 			Object value = null;
 
 			if ((uploadServletRequest != null) &&
-				(uploadServletRequest.getFileName(parameterName) != null)) {
+				(uploadServletRequest.getFileName(name) != null)) {
 
-				value = uploadServletRequest.getFile(parameterName, true);
+				value = uploadServletRequest.getFile(name, true);
 			}
 			else {
-				String[] parameterValues = request.getParameterValues(
-					parameterName);
+				String[] parameterValues = request.getParameterValues(name);
 
 				if (parameterValues.length == 1) {
 					value = parameterValues[0];
@@ -204,9 +218,9 @@ public class JSONWebServiceActionParameters {
 				}
 			}
 
-			parameterName = CamelCaseUtil.normalizeCamelCase(parameterName);
+			name = CamelCaseUtil.normalizeCamelCase(name);
 
-			_parameters.put(parameterName, value);
+			_parameters.put(name, value);
 		}
 	}
 
@@ -338,7 +352,7 @@ public class JSONWebServiceActionParameters {
 	}
 
 	private Map<String, List<KeyValue<String, Object>>> _innerParameters;
-	private JSONRPCRequest _jsonRpcRequest;
+	private JSONRPCRequest _jsonRPCRequest;
 	private Map<String, Object> _parameters = new HashMap<String, Object>() {
 
 		@Override

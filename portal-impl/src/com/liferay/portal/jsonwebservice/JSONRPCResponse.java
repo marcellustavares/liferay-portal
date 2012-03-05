@@ -30,11 +30,11 @@ import java.util.Map;
 public class JSONRPCResponse implements JSONSerializable {
 
 	public JSONRPCResponse(
-		JSONRPCRequest jsonRpcRequest, Object result, Exception exception) {
+		JSONRPCRequest jsonRPCRequest, Object result, Exception exception) {
 
-		_id = jsonRpcRequest.getId();
+		_id = jsonRPCRequest.getId();
 
-		_jsonrpc = GetterUtil.getString(jsonRpcRequest.getJsonrpc());
+		_jsonrpc = GetterUtil.getString(jsonRPCRequest.getJsonrpc());
 
 		if (!_jsonrpc.equals("2.0")) {
 			_error = new Error(-32700, "Invalid JSON RPC version " + _jsonrpc);

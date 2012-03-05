@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.search;
 import com.liferay.portal.NoSuchCountryException;
 import com.liferay.portal.NoSuchModelException;
 import com.liferay.portal.NoSuchRegionException;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -86,7 +87,8 @@ public abstract class BaseIndexer implements Indexer {
 
 	public void delete(long companyId, String uid) throws SearchException {
 		try {
-			SearchEngineUtil.deleteDocument(companyId, uid);
+			SearchEngineUtil.deleteDocument(
+				getSearchEngineId(), companyId, uid);
 		}
 		catch (SearchException se) {
 			throw se;
@@ -201,7 +203,36 @@ public abstract class BaseIndexer implements Indexer {
 	}
 
 	public String getSearchEngineId() {
-		return SearchEngineUtil.SYSTEM_ENGINE_ID;
+		if (_searchEngineId != null) {
+			return _searchEngineId;
+		}
+
+		Class<?> clazz = getClass();
+
+		String searchEngineId = GetterUtil.getString(
+			PropsUtil.get(
+				PropsKeys.INDEX_SEARCH_ENGINE_ID, new Filter(clazz.getName())));
+
+		if (Validator.isNotNull(searchEngineId)) {
+			SearchEngine searchEngine = SearchEngineUtil.getSearchEngine(
+				searchEngineId);
+
+			if (searchEngine != null) {
+				_searchEngineId = searchEngineId;
+			}
+		}
+
+		if (_searchEngineId == null) {
+			_searchEngineId = SearchEngineUtil.getDefaultSearchEngineId();
+		}
+
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Search engine ID for " + clazz.getName() + " is " +
+					searchEngineId);
+		}
+
+		return _searchEngineId;
 	}
 
 	public String getSortField(String orderByCol) {
@@ -341,6 +372,8 @@ public abstract class BaseIndexer implements Indexer {
 
 	public Hits search(SearchContext searchContext) throws SearchException {
 		try {
+			searchContext.setSearchEngineId(getSearchEngineId());
+
 			BooleanQuery fullQuery = getFullQuery(searchContext);
 
 			fullQuery.setQueryConfig(searchContext.getQueryConfig());
@@ -801,7 +834,8 @@ public abstract class BaseIndexer implements Indexer {
 
 		document.addUID(getPortletId(), field1);
 
-		SearchEngineUtil.deleteDocument(companyId, document.get(Field.UID));
+		SearchEngineUtil.deleteDocument(
+			getSearchEngineId(), companyId, document.get(Field.UID));
 	}
 
 	protected void deleteDocument(long companyId, String field1, String field2)
@@ -811,7 +845,8 @@ public abstract class BaseIndexer implements Indexer {
 
 		document.addUID(getPortletId(), field1, field2);
 
-		SearchEngineUtil.deleteDocument(companyId, document.get(Field.UID));
+		SearchEngineUtil.deleteDocument(
+			getSearchEngineId(), companyId, document.get(Field.UID));
 	}
 
 	protected abstract void doDelete(Object obj) throws Exception;
@@ -1107,6 +1142,7 @@ public abstract class BaseIndexer implements Indexer {
 
 	private IndexerPostProcessor[] _indexerPostProcessors =
 		new IndexerPostProcessor[0];
+	private String _searchEngineId;
 	private boolean _stagingAware = true;
 
 }

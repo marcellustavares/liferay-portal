@@ -94,10 +94,10 @@ List<Group> mySites = user.getMySites(true, max);
 
 			boolean hasPowerUserRole = RoleLocalServiceUtil.hasUserRole(user.getUserId(), user.getCompanyId(), RoleConstants.POWER_USER, true);
 
-			Layout defaultLayout = null;
+			Layout defaultPublicLayout = null;
 
 			if (mySite.getDefaultPublicPlid() > 0) {
-				defaultLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPublicPlid());
+				defaultPublicLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPublicPlid());
 			}
 
 			if (mySite.getPublicLayoutsPageCount() == 0) {
@@ -112,14 +112,16 @@ List<Group> mySites = user.getMySites(true, max);
 					}
 				}
 			}
-			else if ((defaultLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultLayout, true, ActionKeys.VIEW)) {
+			else if ((defaultPublicLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultPublicLayout, true, ActionKeys.VIEW)) {
 				showPublicSite = false;
 			}
 
 			boolean showPrivateSite = true;
 
+			Layout defaultPrivateLayout = null;
+
 			if (mySite.getDefaultPrivatePlid() > 0) {
-				defaultLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPrivatePlid());
+				defaultPrivateLayout = LayoutLocalServiceUtil.getLayout(mySite.getDefaultPrivatePlid());
 			}
 
 			if (mySite.getPrivateLayoutsPageCount() == 0) {
@@ -134,7 +136,7 @@ List<Group> mySites = user.getMySites(true, max);
 					}
 				}
 			}
-			else if ((defaultLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultLayout, true, ActionKeys.VIEW)) {
+			else if ((defaultPrivateLayout != null ) && !LayoutPermissionUtil.contains(permissionChecker, defaultPrivateLayout, true, ActionKeys.VIEW)) {
 				showPrivateSite = false;
 			}
 		%>

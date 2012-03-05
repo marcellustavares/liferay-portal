@@ -37,6 +37,7 @@ import net.sf.ehcache.distribution.jgroups.JGroupEventMessage;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.jgroups.View;
 
 /**
  * <p>
@@ -84,7 +85,11 @@ public class JGroupsManager implements CacheManagerPeerProvider, CachePeer {
 	}
 
 	public List<Address> getBusMembership() {
-		return _jChannel.getView().getMembers();
+		BaseReceiver baseReceiver = (BaseReceiver)_jChannel.getReceiver();
+
+		View view = baseReceiver.getView();
+
+		return view.getMembers();
 	}
 
 	@SuppressWarnings("rawtypes")

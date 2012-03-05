@@ -70,6 +70,8 @@
 	<taskdef classpathref="lib.classpath" resource="com/orangevolt/tools/ant/taskdefs.properties" />
 	<taskdef classpathref="lib.classpath" resource="tasks.properties" />
 
+	<taskdef classname="com.tonicsystems.jarjar.JarJarTask" classpath="${project.dir}/lib/development/jarjar.jar" name="jarjar" />
+
 	<property name="doc.dir" value="${project.dir}/api" />
 
 	<propertycopy name="app.server.version" from="app.server.${app.server.type}.version" silent="true" />
@@ -93,11 +95,11 @@
 	</antelope:stringutil>
 
 	<condition property="file.suffix.bat" value=".bat" else=".sh">
-		<contains string="${os.name}" substring="Windows" casesensitive="false"/>
+		<contains string="${os.name}" substring="Windows" casesensitive="false" />
 	</condition>
 
 	<condition property="file.suffix.exe" value=".exe" else="">
-		<contains string="${os.name}" substring="Windows" casesensitive="false"/>
+		<contains string="${os.name}" substring="Windows" casesensitive="false" />
 	</condition>
 
 	<property name="definitions.dir" value="${project.dir}/definitions" />
@@ -298,24 +300,54 @@ Please set the environment variable ANT_OPTS to the recommended value of
 	</target>
 
 	<target name="compile-test">
-		<mkdir dir="test-classes" />
-		<mkdir dir="test-results" />
+		<antcall target="compile-test-functional" inheritall="false" />
+		<antcall target="compile-test-integration" inheritall="false" />
+		<antcall target="compile-test-unit" inheritall="false" />
+	</target>
 
-		<copy todir="test-classes">
-			<fileset dir="test" includes="**/*.properties,**/dependencies/**" />
-		</copy>
+	<target name="compile-test-cmd">
+		<if>
+			<available file="test/${test.type}" type="dir" />
+			<then>
+				<mkdir dir="test-classes/${test.type}" />
+				<mkdir dir="test-results/${test.type}" />
 
-		<javac
-			classpathref="project.classpath"
-			compiler="${javac.compiler}"
-			debug="${javac.debug}"
-			deprecation="${javac.deprecation}"
-			destdir="test-classes"
-			encoding="${javac.encoding}"
-			includeAntRuntime="false"
-			nowarn="${javac.nowarn}"
-			srcdir="test"
-		/>
+				<copy todir="test-classes/${test.type}">
+					<fileset dir="test" includes="*.properties" />
+					<fileset dir="test/${test.type}" includes="**/*.properties,**/dependencies/**" />
+				</copy>
+
+				<javac
+					classpathref="project.classpath"
+					compiler="${javac.compiler}"
+					debug="${javac.debug}"
+					deprecation="${javac.deprecation}"
+					destdir="test-classes/${test.type}"
+					encoding="${javac.encoding}"
+					includeAntRuntime="false"
+					nowarn="${javac.nowarn}"
+					srcdir="test/${test.type}"
+				/>
+			</then>
+		</if>
+	</target>
+
+	<target name="compile-test-functional">
+		<ant target="compile-test-cmd">
+			<property name="test.type" value="" />
+		</ant>
+	</target>
+
+	<target name="compile-test-integration">
+		<ant target="compile-test-cmd">
+			<property name="test.type" value="integration" />
+		</ant>
+	</target>
+
+	<target name="compile-test-unit">
+		<ant target="compile-test-cmd">
+			<property name="test.type" value="unit" />
+		</ant>
 	</target>
 
 	<target name="format-javadoc">
@@ -328,7 +360,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 			newenvironment="true"
 		>
 			<jvmarg value="-Xmx128m" />
-			<arg line="--limit ${limit} --init ${init}" />
+			<arg line="--limit ${limit} --init ${init} --update ${update}" />
 		</java>
 	</target>
 
@@ -394,6 +426,61 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		<setproxy proxyhost="${setproxy.proxy.host}" proxyport="${setproxy.proxy.port}" />
 	</target>
 
+	<target name="sonar">
+		<cobertura-merge datafile="${sonar.cobertura.reportPath}">
+			<fileset dir="${project.dir}">
+				<include name="**/cobertura.ser" />
+			</fileset>
+		</cobertura-merge>
+
+		<cobertura-report
+			datafile="${sonar.cobertura.reportPath}"
+			destdir="${sonar.cobertura.report.folder}"
+			format="${junit.cobertura.report.format}"
+		>
+			<fileset dir="${project.dir}/portal-impl/src">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${project.dir}/portal-service/src">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${project.dir}/util-java/src">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${project.dir}/util-taglib/src">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	
+		<copy todir="${sonar.surefire.reportsPath}" failonerror="false">
+			<fileset dir="${project.dir}/portal-impl/test-results">
+				<include name="**/*.xml" />
+			</fileset>
+			<fileset dir="${project.dir}/portal-service/test-results">
+				<include name="**/*.xml" />
+			</fileset>
+			<fileset dir="${project.dir}/util-java/test-results">
+				<include name="**/*.xml" />
+			</fileset>
+			<fileset dir="${project.dir}/util-taglib/test-results">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<taskdef resource="org/sonar/ant/antlib.xml" uri="antlib:org.sonar.ant">
+			<classpath path="lib/development/sonar-ant-task.jar" />
+		</taskdef>
+
+		<sonar:sonar
+			key="com.liferay:liferay-portal"
+			version="0.1-SNAPSHOT"
+			xmlns:sonar="antlib:org.sonar.ant"
+		/>
+
+		<delete dir="${sonar.cobertura.report.folder}" />
+		<delete dir="${sonar.surefire.reportsPath}" />
+	</target>
+
 	<target name="test">
 		<delete dir="test-classes" />
 		<delete dir="test-results" />
@@ -455,22 +542,90 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		<antcall target="report-test-coverage" />
 	</target>
 
-	<target name="test-class" depends="compile,instrument-test-coverage,compile-test" if="class">
-		<junit dir="${project.dir}" fork="on" forkmode="once" outputtoformatters="false" printsummary="on" showoutput="true">
-			<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/cobertura.ser" />
-			<jvmarg line="${junit.debug.jpda}" />
-			<jvmarg value="-Xmx1024m" />
-			<jvmarg value="-XX:MaxPermSize=256m" />
-			<jvmarg value="-Duser.timezone=GMT" />
-			<jvmarg value="-Dexternal-properties=${test.properties}" />
-			<classpath location="test-coverage" />
-			<classpath refid="test.classpath" />
-			<formatter type="brief" usefile="false" />
-			<formatter type="xml" />
-			<batchtest todir="test-results">
-				<fileset dir="test-classes" includes="**/${class}.class" />
-			</batchtest>
-		</junit>
+	<target name="test-class" depends="compile,instrument-test-coverage,compile-test">
+		<if>
+			<available file="test/integration" type="dir" />
+			<then>
+				<resourcecount property="test.integration.count">
+					<fileset dir="test-classes/integration" includes="**/${class}.class" />
+				</resourcecount>
+			</then>
+		</if>
+
+		<if>
+			<available file="test/unit" type="dir" />
+			<then>
+				<resourcecount property="test.unit.count">
+					<fileset dir="test-classes/unit" includes="**/${class}.class" />
+				</resourcecount>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${test.integration.count}" arg2="1" />
+			<then>
+				<var name="test.type" value="integration" />
+			</then>
+			<elseif>
+				<equals arg1="${test.unit.count}" arg2="1" />
+				<then>
+					<var name="test.type" value="unit" />
+				</then>
+			</elseif>
+			<else>
+				<var name="test.type" value="" />
+			</else>
+		</if>
+
+		<ant target="test-cmd">
+			<property name="test.type" value="${test.type}" />
+		</ant>
+
+		<antcall target="report-test-coverage" />
+	</target>
+
+	<target name="test-cmd">
+		<if>
+			<available file="test/${test.type}" type="dir" />
+			<then>
+				<junit dir="${project.dir}" fork="on" forkmode="perTest" haltonfailure="${junit.halt.on.failure}" outputtoformatters="false" printsummary="on" showoutput="true">
+					<sysproperty key="net.sourceforge.cobertura.datafile" file="test-coverage/cobertura.ser" />
+					<jvmarg line="${junit.debug.jpda}" />
+					<jvmarg value="-Xmx1024m" />
+					<jvmarg value="-XX:MaxPermSize=256m" />
+					<jvmarg value="-Duser.timezone=GMT" />
+					<jvmarg value="-Dexternal-properties=${test.properties}" />
+					<classpath location="test-coverage" />
+					<classpath refid="test.classpath" />
+					<formatter type="brief" usefile="false" />
+					<formatter type="xml" />
+					<batchtest todir="test-results/${test.type}">
+						<fileset dir="test-classes/${test.type}" includes="**/${class}.class">
+							<exclude name="**/ServiceHttpTestSuite.class" />
+							<exclude name="**/ServiceSoapTestSuite.class" />
+						</fileset>
+					</batchtest>
+				</junit>
+			</then>
+		</if>
+	</target>
+
+	<target name="test-integration" depends="compile,instrument-test-coverage,compile-test-integration">
+		<property name="class" value="*TestSuite" />
+
+		<ant target="test-cmd">
+			<property name="test.type" value="integration" />
+		</ant>
+
+		<antcall target="report-test-coverage" />
+	</target>
+
+	<target name="test-unit" depends="compile,instrument-test-coverage,compile-test-unit">
+		<property name="class" value="*Test" />
+
+		<ant target="test-cmd">
+			<property name="test.type" value="unit" />
+		</ant>
 
 		<antcall target="report-test-coverage" />
 	</target>

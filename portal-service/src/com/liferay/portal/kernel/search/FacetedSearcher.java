@@ -171,6 +171,12 @@ public class FacetedSearcher extends BaseIndexer {
 				continue;
 			}
 
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
+				continue;
+			}
+
 			if (Validator.isNotNull(keywords)) {
 				addSearchExpandoKeywords(
 					searchQuery, searchContext, keywords, entryClassName);
@@ -220,6 +226,12 @@ public class FacetedSearcher extends BaseIndexer {
 			Indexer indexer = IndexerRegistryUtil.getIndexer(entryClassName);
 
 			if (indexer == null) {
+				continue;
+			}
+
+			String searchEngineId = searchContext.getSearchEngineId();
+
+			if (!searchEngineId.equals(indexer.getSearchEngineId())) {
 				continue;
 			}
 
