@@ -221,7 +221,7 @@ public class CustomSQL {
 
 				int pos = i;
 
-				while ((i < keywords.length()) && !Character.isWhitespace(c)) {
+				while ((i + 1 < keywords.length()) && !Character.isWhitespace(c)) {
 					i++;
 
 					c = keywords.charAt(i);
