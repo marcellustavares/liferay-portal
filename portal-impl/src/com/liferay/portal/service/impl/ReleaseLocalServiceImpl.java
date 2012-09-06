@@ -79,81 +79,45 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 	}
 
 	public void createTablesAndPopulate() throws SystemException {
+		DB db = null;
+
 		try {
-			if (_log.isInfoEnabled()) {
-				_log.info("Create tables and populate with default data");
-			}
+			db = DBFactoryUtil.getDB();
 
-			DB db = DBFactoryUtil.getDB();
+			db.runSQL(
+				"update Release_ set testString = '" +
+					ReleaseConstants.TEST_STRING + "'");
 
-			db.runSQLTemplate("portal-tables.sql", false);
-			db.runSQLTemplate("portal-data-common.sql", false);
-			db.runSQLTemplate("portal-data-counter.sql", false);
-
-			if (!PropsValues.SCHEMA_RUN_MINIMAL && !ShardUtil.isEnabled()) {
-				db.runSQLTemplate("portal-data-sample.vm", false);
-			}
-
-			db.runSQLTemplate("portal-data-release.sql", false);
-			db.runSQLTemplate("indexes.sql", false);
-			db.runSQLTemplate("sequences.sql", false);
+			return;
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			try {
+				if (_log.isInfoEnabled()) {
+					_log.info("Create tables and populate with default data");
+				}
 
-			throw new SystemException(e);
+				db.runSQLTemplate("portal-tables.sql", false);
+				db.runSQLTemplate("portal-data-common.sql", false);
+				db.runSQLTemplate("portal-data-counter.sql", false);
+
+				if (!PropsValues.SCHEMA_RUN_MINIMAL && !ShardUtil.isEnabled()) {
+					db.runSQLTemplate("portal-data-sample.vm", false);
+				}
+
+				db.runSQLTemplate("portal-data-release.sql", false);
+				db.runSQLTemplate("indexes.sql", false);
+				db.runSQLTemplate("sequences.sql", false);
+			}
+			catch (Exception ex) {
+				_log.error(ex, ex);
+
+				throw new SystemException(ex);
+			}
 		}
 	}
 
 	public int getBuildNumberOrCreate()
 		throws PortalException, SystemException {
-
-		// Get release build number
-
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		try {
-			con = DataAccess.getConnection();
-
-			ps = con.prepareStatement(_GET_BUILD_NUMBER);
-
-			ps.setLong(1, ReleaseConstants.DEFAULT_ID);
-
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				int buildNumber = rs.getInt("buildNumber");
-
-				if (_log.isDebugEnabled()) {
-					_log.debug("Build number " + buildNumber);
-				}
-
-				DB db = DBFactoryUtil.getDB();
-
-				try {
-					db.runSQL("alter table Release_ add state_ INTEGER");
-				}
-				catch (Exception e) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(e.getMessage());
-					}
-				}
-
-				testSupportsStringCaseSensitiveQuery();
-
-				return buildNumber;
-			}
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(e.getMessage());
-			}
-		}
-		finally {
-			DataAccess.cleanUp(con, ps, rs);
-		}
 
 		// Create tables and populate with default data
 
@@ -164,11 +128,7 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 
 			testSupportsStringCaseSensitiveQuery();
 
-			Release release = getRelease(
-				ReleaseConstants.DEFAULT_SERVLET_CONTEXT_NAME,
-				ReleaseInfo.getParentBuildNumber());
-
-			return release.getBuildNumber();
+			return _getBuildNumber();
 		}
 		else {
 			throw new NoSuchReleaseException(
@@ -214,6 +174,58 @@ public class ReleaseLocalServiceImpl extends ReleaseLocalServiceBaseImpl {
 		releasePersistence.update(release, false);
 
 		return release;
+	}
+
+	protected int _getBuildNumber() throws PortalException, SystemException {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getConnection();
+
+			ps = con.prepareStatement(_GET_BUILD_NUMBER);
+
+			ps.setLong(1, ReleaseConstants.DEFAULT_ID);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				int buildNumber = rs.getInt("buildNumber");
+
+				if (_log.isDebugEnabled()) {
+					_log.debug("Build number " + buildNumber);
+				}
+
+				DB db = DBFactoryUtil.getDB();
+
+				try {
+					db.runSQL("alter table Release_ add state_ INTEGER");
+				}
+				catch (Exception e) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(e.getMessage());
+					}
+				}
+
+				return buildNumber;
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(e.getMessage());
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+
+		Release release = getRelease(
+			ReleaseConstants.DEFAULT_SERVLET_CONTEXT_NAME,
+			ReleaseInfo.getParentBuildNumber());
+
+		return release.getBuildNumber();
 	}
 
 	protected void testSupportsStringCaseSensitiveQuery()
