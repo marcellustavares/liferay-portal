@@ -79,7 +79,6 @@ JournalTemplate template = (JournalTemplate)row.getObject();
 
 		<liferay-ui:icon image="view_articles" message="view-web-content" url="<%= viewArticlesURL %>" />
 
-		<c:if test="<%= JournalStructurePermission.contains(permissionChecker, scopeGroupId, template.getStructureId(), ActionKeys.UPDATE) %>">
 			<portlet:renderURL var="editStructureURL">
 				<portlet:param name="struts_action" value="/journal/edit_structure" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -88,7 +87,7 @@ JournalTemplate template = (JournalTemplate)row.getObject();
 			</portlet:renderURL>
 
 			<liferay-ui:icon image="view_structures" message="edit-structure" url="<%= editStructureURL %>" />
-		</c:if>
+
 	</c:if>
 
 	<c:if test="<%= JournalTemplatePermission.contains(permissionChecker, template, ActionKeys.DELETE) %>">

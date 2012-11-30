@@ -1,3 +1,7 @@
+<%@ page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %>
+
+<%@ page
+	import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil" %>
 <%--
 /**
  * Copyright (c) 2000-2012 Liferay, Inc. All rights reserved.
@@ -174,10 +178,10 @@ else {
 				</c:if>
 
 				<%
-				List<JournalStructure> structures = JournalStructureLocalServiceUtil.getStructures(scopeGroupId);
+				List<DDMStructure> ddmStructures = DDMStructureLocalServiceUtil.getStructures(scopeGroupId, PortalUtil.getClassNameId(JournalArticle.class));
 				%>
 
-				<c:if test="<%= !structures.isEmpty() %>">
+				<c:if test="<%= !ddmStructures.isEmpty() %>">
 					<liferay-portlet:renderURL varImpl="viewBasicJournalStructureArticlesURL">
 						<portlet:param name="struts_action" value="/journal/view" />
 						<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
@@ -205,13 +209,13 @@ else {
 				</c:if>
 
 				<%
-				for (JournalStructure structure : structures) {
+				for (DDMStructure ddmStructure : ddmStructures) {
 				%>
 
 					<liferay-portlet:renderURL varImpl="viewJournalStructureArticlesURL">
 						<portlet:param name="struts_action" value="/journal/view" />
 						<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
-						<portlet:param name="structureId" value="<%= structure.getStructureId() %>" />
+						<portlet:param name="structureId" value="<%= ddmStructure.getStructureKey() %>" />
 						<portlet:param name="entryStart" value="0" />
 						<portlet:param name="entryEnd" value="<%= String.valueOf(entryEnd - entryStart) %>" />
 						<portlet:param name="folderStart" value="0" />
@@ -221,15 +225,15 @@ else {
 					<%
 					dataView = new HashMap<String, Object>();
 
-					dataView.put("structure-id", structure.getStructureId());
+					dataView.put("structure-id", ddmStructure.getStructureKey());
 					%>
 
 					<liferay-ui:app-view-navigation-entry
 						cssClassName="folder structure"
 						dataView="<%= dataView %>"
-						entryTitle="<%= HtmlUtil.escape(structure.getName(locale)) %>"
+						entryTitle="<%= HtmlUtil.escape(ddmStructure.getName(locale)) %>"
 						iconImage="copy"
-						selected="<%= structureId.equals(structure.getStructureId()) %>"
+						selected="<%= structureId.equals(ddmStructure.getStructureKey()) %>"
 						viewURL="<%= viewJournalStructureArticlesURL.toString() %>"
 					/>
 

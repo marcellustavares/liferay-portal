@@ -1,3 +1,7 @@
+<%@ page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %>
+
+<%@ page
+	import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil" %>
 <%--
 /**
  * Copyright (c) 2000-2012 Liferay, Inc. All rights reserved.
@@ -36,10 +40,10 @@ long structureGroupId = 0;
 String structureName = StringPool.BLANK;
 
 if (Validator.isNotNull(structureId)) {
-	JournalStructure structure = null;
+	DDMStructure structure = null;
 
 	try {
-		structure = JournalStructureLocalServiceUtil.getStructure(groupId, structureId, true);
+		structure = DDMStructureLocalServiceUtil.getStructure(Long.valueOf(structureId));
 	}
 	catch (NoSuchStructureException nsse) {
 	}
@@ -71,6 +75,8 @@ boolean cacheable = BeanParamUtil.getBoolean(template, request, "cacheable");
 if (template == null) {
 	cacheable = true;
 }
+
+long classNameId = PortalUtil.getClassNameId(DDMStructure.class);
 %>
 
 <aui:form method="post" name="fm2">
@@ -170,25 +176,22 @@ if (template == null) {
 
 			<c:choose>
 				<c:when test="<%= (template == null) || (Validator.isNotNull(structureId)) %>">
-					<portlet:renderURL var="editStructureURL">
+					<portlet:renderURL var="structureURL">
 						<portlet:param name="struts_action" value="/journal/edit_structure" />
 						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="groupId" value="<%= String.valueOf(structureGroupId) %>" />
-						<portlet:param name="structureId" value="<%= structureId %>" />
+						<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 					</portlet:renderURL>
 
-					<aui:a href="<%= editStructureURL %>" id="structureName" label="<%= HtmlUtil.escape(structureName) %>" />
+					<aui:a href="<%= structureURL %>" id="structureName" label="<%= HtmlUtil.escape(structureName) %>" />
 				</c:when>
 				<c:otherwise>
 					<aui:a href="" id="structureName" />
 				</c:otherwise>
 			</c:choose>
 
-			<c:if test="<%= (template == null) || (Validator.isNull(template.getStructureId())) %>">
-				<aui:button onClick='<%= renderResponse.getNamespace() + "openStructureSelector();" %>' value="select" />
+			<aui:button onClick='<%= renderResponse.getNamespace() + "openStructureSelector();" %>' value="select" />
 
-				<aui:button disabled="<%= Validator.isNull(structureId) %>" name="removeStructureButton" onClick='<%= renderResponse.getNamespace() + "removeStructure();" %>' value="remove" />
-			</c:if>
+			<aui:button name="removeStructureButton" onClick='<%= renderResponse.getNamespace() + "removeStructure();" %>' value="remove" />
 		</aui:field-wrapper>
 
 		<aui:select label="language-type" name="langType">
@@ -268,14 +271,21 @@ if (template == null) {
 	}
 
 	function <portlet:namespace />openStructureSelector() {
-		Liferay.Util.openWindow(
+		Liferay.Util.openDDMPortlet(
 			{
+				ddmResource: '<%= ddmResource %>',
+				ddmResourceActionId: '<%= ActionKeys.ADD_TEMPLATE %>',
 				dialog: {
-					width: 680
+					width: 820
 				},
-				id: '<portlet:namespace />structureSelector',
-				title: '<%= UnicodeLanguageUtil.get(pageContext, "structure") %>',
-				uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/journal/select_structure" /><portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" /></portlet:renderURL>'
+				saveCallback: '<%= renderResponse.getNamespace() + "selectStructure" %>',
+				showGlobalScope: true,
+				showManageTemplates: false,
+				storageType: '<%= PropsValues.DYNAMIC_DATA_LISTS_STORAGE_TYPE %>',
+				structureName: 'data-definition',
+				structureType: 'com.liferay.portlet.journal.model.JournalArticle',
+				struts_action: '/dynamic_data_mapping/select_structure',
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 			}
 		);
 	}
@@ -306,7 +316,7 @@ if (template == null) {
 		submitForm(document.<portlet:namespace />fm1);
 	}
 
-	function <portlet:namespace />selectStructure(structureId, structureName, dialog) {
+	function <portlet:namespace />oldSelectStructure(structureId, structureName, dialog) {
 		document.<portlet:namespace />fm1.<portlet:namespace />structureId.value = structureId;
 
 		var nameEl = document.getElementById("<portlet:namespace />structureName");
@@ -320,6 +330,25 @@ if (template == null) {
 			dialog.close();
 		}
 	}
+
+	Liferay.provide(
+		window,
+		'<portlet:namespace />selectStructure',
+		function(ddmStructureId, ddmStructureName, dialog) {
+			document.<portlet:namespace />fm1.<portlet:namespace />structureId.value = ddmStructureId;
+
+			var nameEl = document.getElementById("<portlet:namespace />structureName");
+
+			nameEl.href = "<portlet:renderURL><portlet:param name="struts_action" value="/dynamic_data_mapping/edit_structure" /><portlet:param name="redirect" value="<%= currentURL %>" /><portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" /><portlet:param name="classNameId" value="<%= String.valueOf(classNameId) %>" /></portlet:renderURL>&<portlet:namespace />classPK=" + ddmStructureId;
+			nameEl.innerHTML = ddmStructureName + "&nbsp;";
+
+			document.getElementById("<portlet:namespace />removeStructureButton").disabled = false;
+
+			if (dialog) {
+				dialog.close();
+			}
+		}
+	);
 
 	Liferay.Util.disableToggleBoxes('<portlet:namespace />autoTemplateIdCheckbox','<portlet:namespace />newTemplateId', true);
 
