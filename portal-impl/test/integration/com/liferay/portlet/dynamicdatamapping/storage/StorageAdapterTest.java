@@ -16,6 +16,8 @@ package com.liferay.portlet.dynamicdatamapping.storage;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.test.EnvironmentExecutionTestListener;
 import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
@@ -26,6 +28,13 @@ import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.service.BaseDDMServiceTestCase;
+
+import java.io.Serializable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,6 +62,89 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_expandoStorageAdapater = new ExpandoStorageAdapter();
 		_xmlStorageAdapater = new XMLStorageAdapter();
+
+		_enLocale = LocaleUtil.fromLanguageId("en_US");
+		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
+	}
+
+	@Test
+	public void testCreateLocalizedField() throws Exception {
+		String xsd = readText("text-repeatable-structure.xsd");
+
+		DDMStructure structure = addStructure(
+			_classNameId, null, "Test Structure", xsd,
+			StorageType.XML.getValue(), DDMStructureConstants.TYPE_DEFAULT);
+
+		Fields fields = new Fields();
+
+		Map<Locale, List<Serializable>> dataMap =
+			new HashMap<Locale, List<Serializable>>();
+
+		List<Serializable> enValues = ListUtil.fromArray(
+			new Serializable[] {"one", "two", "three"});
+		List<Serializable> ptValues = ListUtil.fromArray(
+			new Serializable[] {"um", "dois", "tres"});
+
+		dataMap.put(_enLocale, enValues);
+		dataMap.put(_ptLocale, ptValues);
+
+		Field field1 = new Field(
+			structure.getStructureId(), "name_1", dataMap, _enLocale);
+
+		fields.put(field1);
+
+		Field field2 = new Field();
+
+		field2.setDefaultLocale(_ptLocale);
+		field2.setDDMStructureId(structure.getStructureId());
+		field2.setName("name_2");
+
+		field2.addValue(_enLocale, "Joe");
+		field2.addValue(_ptLocale, "Joao");
+
+		fields.put(field2);
+
+		// XML
+
+		long classPK = create(
+			_xmlStorageAdapater, structure.getStructureId(), fields);
+
+		Fields actualFields = _xmlStorageAdapater.getFields(classPK);
+
+		Field actualField1 = actualFields.get("name_1");
+
+		Assert.assertEquals(_enLocale, actualField1.getDefaultLocale());
+
+		Assert.assertEquals(enValues, actualField1.getValues(_enLocale));
+		Assert.assertEquals(ptValues, actualField1.getValues(_ptLocale));
+
+		Field actualField2 = actualFields.get("name_2");
+
+		Assert.assertEquals(_ptLocale, actualField2.getDefaultLocale());
+
+		Assert.assertEquals("Joe", actualField2.getValue(_enLocale, 0));
+		Assert.assertEquals("Joao", actualField2.getValue(_ptLocale, 0));
+
+		// Expando
+
+		classPK = create(
+			_expandoStorageAdapater, structure.getStructureId(), fields);
+
+		actualFields = _expandoStorageAdapater.getFields(classPK);
+
+		actualField1 = actualFields.get("name_1");
+
+		Assert.assertEquals(_enLocale, actualField1.getDefaultLocale());
+
+		Assert.assertEquals(enValues, actualField1.getValues(_enLocale));
+		Assert.assertEquals(ptValues, actualField1.getValues(_ptLocale));
+
+		actualField2 = actualFields.get("name_2");
+
+		Assert.assertEquals(_ptLocale, actualField2.getDefaultLocale());
+
+		Assert.assertEquals("Joe", actualField2.getValue(_enLocale, 0));
+		Assert.assertEquals("Joao", actualField2.getValue(_ptLocale, 0));
 	}
 
 	@Test
@@ -65,8 +157,9 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		Fields fields = new Fields();
 
-		Field field = new Field(
-			structure.getStructureId(), "name", new String[] {"1", "2"});
+		Serializable values = new String[] {"1", "2"};
+
+		Field field = new Field(structure.getStructureId(), "name_1", values);
 
 		fields.put(field);
 
@@ -77,7 +170,12 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		Fields actualFields = _xmlStorageAdapater.getFields(classPK);
 
-		Assert.assertEquals(fields, actualFields);
+		Field actualField = actualFields.get("name_1");
+
+		Locale defaultLocale = LocaleUtil.getDefault();
+
+		Assert.assertEquals("1", actualField.getValue(defaultLocale, 0));
+		Assert.assertEquals("2", actualField.getValue(defaultLocale, 1));
 
 		// Expando
 
@@ -86,7 +184,10 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		actualFields = _expandoStorageAdapater.getFields(classPK);
 
-		Assert.assertEquals(fields, actualFields);
+		actualField = actualFields.get("name_1");
+
+		Assert.assertEquals("1", actualField.getValue(defaultLocale, 0));
+		Assert.assertEquals("2", actualField.getValue(defaultLocale, 1));
 	}
 
 	protected long create(
@@ -99,7 +200,9 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 	}
 
 	private long _classNameId;
+	private Locale _enLocale;
 	private StorageAdapter _expandoStorageAdapater;
+	private Locale _ptLocale;
 	private StorageAdapter _xmlStorageAdapater;
 
 }

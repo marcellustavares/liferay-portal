@@ -269,6 +269,18 @@ public class MapUtil {
 		return sb.toString();
 	}
 
+	public static <K, V1, V2> void transformValues(
+		Map<K, V1> source, Map<K, V2> target, Transformer<V2> transformer) {
+
+		if ((source == null) || (target == null) || (transformer == null)) {
+			return;
+		}
+
+		for (Map.Entry<K, V1> entry : source.entrySet()) {
+			target.put(entry.getKey(), transformer.transform(entry.getValue()));
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(MapUtil.class);
 
 }
