@@ -55,6 +55,7 @@ import java.io.Serializable;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -143,6 +144,41 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			userId, groupId, recordSetId, displayIndex, fields, serviceContext);
 	}
 
+	public DDLRecord addRecordLocale(
+			long recordId, ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		DDLRecord record = ddlRecordPersistence.findByPrimaryKey(recordId);
+
+		DDLRecordSet recordSet = record.getRecordSet();
+
+		DDMStructure ddmStructure = recordSet.getDDMStructure();
+
+		Fields fields = DDMUtil.getFields(
+			ddmStructure.getStructureId(), serviceContext);
+
+		Fields existingFields = StorageEngineUtil.getFields(
+			record.getDDMStorageId());
+
+		Iterator<Field> iterator = fields.iterator();
+
+		while (iterator.hasNext()) {
+			Field field = iterator.next();
+
+			Field existingField = existingFields.get(field.getName());
+
+			for (Locale curFieldLocale : field.getAvailableLocales()) {
+				existingField.setValues(
+					curFieldLocale, field.getValues(curFieldLocale));
+			}
+		}
+
+		return updateRecord(
+			serviceContext.getUserId(), recordId, false,
+			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, existingFields, false,
+			serviceContext);
+	}
+
 	public void deleteRecord(DDLRecord record)
 		throws PortalException, SystemException {
 
@@ -197,6 +233,30 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		DDLRecord record = ddlRecordPersistence.findByPrimaryKey(recordId);
 
 		deleteRecord(record);
+	}
+
+	public DDLRecord deleteRecordLocale(
+			long recordId, Locale locale, ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		DDLRecord record = ddlRecordPersistence.findByPrimaryKey(recordId);
+
+		Fields fields = StorageEngineUtil.getFields(record.getDDMStorageId());
+
+		Iterator<Field> iterator = fields.iterator();
+
+		while (iterator.hasNext()) {
+			Field field = iterator.next();
+
+			Map<Locale, List<Serializable>> valuesMap = field.getValuesMap();
+
+			valuesMap.remove(locale);
+		}
+
+		return updateRecord(
+			serviceContext.getUserId(), recordId, false,
+			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields, false,
+			serviceContext);
 	}
 
 	public void deleteRecords(long recordSetId)

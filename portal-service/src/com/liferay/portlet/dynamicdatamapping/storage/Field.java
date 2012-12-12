@@ -155,7 +155,7 @@ public class Field implements Serializable {
 	}
 
 	public Serializable getValue(Locale locale) {
-		List<Serializable> values = _valuesMap.get(locale);
+		List<Serializable> values = _getValues(locale);
 
 		if (values.isEmpty()) {
 			return null;
@@ -184,13 +184,13 @@ public class Field implements Serializable {
 	}
 
 	public Serializable getValue(Locale locale, int index) {
-		List<Serializable> values = _valuesMap.get(locale);
+		List<Serializable> values = _getValues(locale);
 
 		return values.get(index);
 	}
 
 	public List<Serializable> getValues(Locale locale) {
-		return _valuesMap.get(locale);
+		return _getValues(locale);
 	}
 
 	public Map<Locale, List<Serializable>> getValuesMap() {
@@ -256,6 +256,16 @@ public class Field implements Serializable {
 		}
 
 		return FieldRendererFactory.getFieldRenderer(dataType);
+	}
+
+	private List<Serializable> _getValues(Locale locale) {
+		Set<Locale> availableLocales = getAvailableLocales();
+
+		if (!availableLocales.contains(locale)) {
+			locale = getDefaultLocale();
+		}
+
+		return _valuesMap.get(locale);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(Field.class);
