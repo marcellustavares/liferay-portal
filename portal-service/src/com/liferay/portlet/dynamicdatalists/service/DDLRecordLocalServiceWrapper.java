@@ -283,6 +283,13 @@ public class DDLRecordLocalServiceWrapper implements DDLRecordLocalService,
 			displayIndex, fieldsMap, serviceContext);
 	}
 
+	public com.liferay.portlet.dynamicdatalists.model.DDLRecord addRecordLocale(
+		long recordId, com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddlRecordLocalService.addRecordLocale(recordId, serviceContext);
+	}
+
 	public void deleteRecord(
 		com.liferay.portlet.dynamicdatalists.model.DDLRecord record)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -294,6 +301,15 @@ public class DDLRecordLocalServiceWrapper implements DDLRecordLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		_ddlRecordLocalService.deleteRecord(recordId);
+	}
+
+	public com.liferay.portlet.dynamicdatalists.model.DDLRecord deleteRecordLocale(
+		long recordId, java.util.Locale locale,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddlRecordLocalService.deleteRecordLocale(recordId, locale,
+			serviceContext);
 	}
 
 	public void deleteRecords(long recordSetId)
