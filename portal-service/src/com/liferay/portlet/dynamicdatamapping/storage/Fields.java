@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage;
 
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -23,8 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +57,32 @@ public class Fields implements Serializable {
 
 	public Field get(String name) {
 		return _fieldsMap.get(name);
+	}
+
+	public Set<Locale> getAvailableLocales() {
+		Set<Locale> availableLocales = new HashSet<Locale>();
+		Iterator<Field> iterator = iterator();
+
+		while (iterator.hasNext()) {
+			Field field = iterator.next();
+
+			for (Locale availableLocale : field.getAvailableLocales()) {
+				availableLocales.add(availableLocale);
+			}
+		}
+
+		return availableLocales;
+	}
+
+	public Locale getDefaultLocale() {
+		Locale defaultLocale = LocaleUtil.getDefault();
+		Iterator<Field> iterator = iterator();
+
+		if (iterator.hasNext()) {
+			defaultLocale = iterator().next().getDefaultLocale();
+		}
+
+		return defaultLocale;
 	}
 
 	public Set<String> getNames() {

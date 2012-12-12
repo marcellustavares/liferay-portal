@@ -30,6 +30,7 @@ import com.liferay.portlet.documentlibrary.FileSizeException;
 import com.liferay.portlet.dynamicdatalists.NoSuchRecordException;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordLocalServiceUtil;
+import com.liferay.portlet.dynamicdatalists.service.DDLRecordServiceUtil;
 import com.liferay.portlet.dynamicdatalists.util.DDLUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
 
@@ -66,6 +67,9 @@ public class EditRecordAction extends PortletAction {
 			}
 			else if (cmd.equals(Constants.REVERT)) {
 				revertRecordVersion(actionRequest);
+			}
+			else if (cmd.equals(Constants.TRANSLATE)) {
+				translateRecord(actionRequest);
 			}
 
 			if (Validator.isNotNull(cmd)) {
@@ -139,6 +143,17 @@ public class EditRecordAction extends PortletAction {
 
 		DDLRecordLocalServiceUtil.revertRecordVersion(
 			themeDisplay.getUserId(), recordId, version, serviceContext);
+	}
+
+	protected DDLRecord translateRecord(ActionRequest actionRequest)
+			throws Exception {
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			DDLRecord.class.getName(), actionRequest);
+
+		long recordId = ParamUtil.getLong(serviceContext, "recordId");
+
+		return DDLRecordServiceUtil.addRecordLocale(recordId, serviceContext);
 	}
 
 	protected DDLRecord updateRecord(ActionRequest actionRequest)

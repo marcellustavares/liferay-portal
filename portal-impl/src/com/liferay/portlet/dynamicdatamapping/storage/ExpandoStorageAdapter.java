@@ -20,10 +20,12 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Transformer;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
@@ -53,6 +55,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.expression.EvaluationException;
@@ -242,7 +245,13 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 				continue;
 			}
 
-			int type = _getExpandoColumnType(ddmStructureId, name);
+			int type = ExpandoColumnConstants.STRING_LOCALIZED;
+
+			Field field = fields.get(name);
+
+			if (field.isRepeatable()) {
+				type = ExpandoColumnConstants.STRING_ARRAY_LOCALIZED;
+			}
 
 			ExpandoColumnLocalServiceUtil.addColumn(
 				expandoTable.getTableId(), name, type);
@@ -307,15 +316,31 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 					ExpandoColumn column = expandoValue.getColumn();
 
 					String fieldName = column.getName();
-					Serializable fieldValue = expandoValue.getSerializable();
 
 					if (ddmStructure.hasField(fieldName) &&
 						((fieldNames == null) ||
 						 ((fieldNames != null) &&
 						  fieldNames.contains(fieldName)))) {
 
-						Field field = new Field(
-							ddmStructureId, fieldName, fieldValue);
+						Field field = new Field();
+
+						field.setDefaultLocale(expandoValue.getDefaultLocale());
+						field.setDDMStructureId(ddmStructureId);
+						field.setName(fieldName);
+
+						Map<Locale, List<Serializable>> valuesMap =
+							new HashMap<Locale, List<Serializable>>();
+
+						String type = ddmStructure.getFieldType(fieldName);
+
+						Transformer<List<Serializable>> transformer =
+							_getTransformer(type);
+
+						MapUtil.transformValues(
+							(Map<Locale, ?>)expandoValue.getSerializable(),
+							valuesMap, transformer);
+
+						field.setValuesMap(valuesMap);
 
 						fields.put(field);
 					}
@@ -330,94 +355,6 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		}
 
 		return fieldsList;
-	}
-
-	private int _getExpandoColumnType(long ddmStructureId, String name)
-		throws PortalException, SystemException {
-
-		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
-			ddmStructureId);
-
-		String fieldDataType = ddmStructure.getFieldDataType(name);
-
-		boolean repeatable = ddmStructure.isFieldRepeatable(name);
-
-		if (fieldDataType.equals(FieldConstants.BOOLEAN)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.BOOLEAN_ARRAY;
-			}
-
-			return ExpandoColumnConstants.BOOLEAN;
-		}
-		else if (fieldDataType.equals(FieldConstants.DATE)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.DATE_ARRAY;
-			}
-
-			return ExpandoColumnConstants.DATE;
-		}
-		else if (fieldDataType.equals(FieldConstants.DOCUMENT_LIBRARY)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.STRING_ARRAY;
-			}
-
-			return ExpandoColumnConstants.STRING;
-		}
-		else if (fieldDataType.equals(FieldConstants.DOUBLE)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.DOUBLE_ARRAY;
-			}
-
-			return ExpandoColumnConstants.DOUBLE;
-		}
-		else if (fieldDataType.equals(FieldConstants.FILE_UPLOAD)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.STRING_ARRAY;
-			}
-
-			return ExpandoColumnConstants.STRING;
-		}
-		else if (fieldDataType.equals(FieldConstants.FLOAT)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.FLOAT_ARRAY;
-			}
-
-			return ExpandoColumnConstants.FLOAT;
-		}
-		else if (fieldDataType.equals(FieldConstants.INTEGER)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.INTEGER_ARRAY;
-			}
-
-			return ExpandoColumnConstants.INTEGER;
-		}
-		else if (fieldDataType.equals(FieldConstants.LONG)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.LONG_ARRAY;
-			}
-
-			return ExpandoColumnConstants.LONG;
-		}
-		else if (fieldDataType.equals(FieldConstants.NUMBER)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.NUMBER_ARRAY;
-			}
-
-			return ExpandoColumnConstants.NUMBER;
-		}
-		else if (fieldDataType.equals(FieldConstants.SHORT)) {
-			if (repeatable) {
-				return ExpandoColumnConstants.SHORT_ARRAY;
-			}
-
-			return ExpandoColumnConstants.SHORT;
-		}
-		else if (repeatable) {
-			return ExpandoColumnConstants.STRING_ARRAY;
-		}
-		else {
-			return ExpandoColumnConstants.STRING;
-		}
 	}
 
 	private long[] _getExpandoRowIds(long ddmStructureId)
@@ -458,6 +395,19 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		_checkExpandoColumns(ddmStructureId, expandoTable, fields);
 
 		return expandoTable;
+	}
+
+	private Transformer<List<Serializable>> _getTransformer(String type) {
+		Transformer<List<Serializable>> transformer = _transformersMap.get(
+			type);
+
+		if (transformer == null) {
+			transformer = new FieldValuesTransformer(type);
+
+			_transformersMap.put(type, transformer);
+		}
+
+		return transformer;
 	}
 
 	private Expression _parseExpression(Condition condition) {
@@ -545,14 +495,39 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		while (itr.hasNext()) {
 			Field field = itr.next();
 
+			Map dataMap = null;
+
+			if (field.isRepeatable()) {
+				dataMap = new HashMap<Locale, String[]>();
+
+				for (Locale locale : field.getAvailableLocales()) {
+					String[] values = ArrayUtil.toStringArray(
+						(Object[])field.getValue(locale));
+
+					dataMap.put(locale, values);
+				}
+			}
+			else {
+				dataMap = new HashMap<Locale, String>();
+
+				for (Locale locale : field.getAvailableLocales()) {
+					String value = String.valueOf(field.getValue(locale));
+
+					dataMap.put(locale, value);
+				}
+			}
+
 			ExpandoValueLocalServiceUtil.addValue(
 				expandoTable.getCompanyId(),
 				ExpandoStorageAdapter.class.getName(), expandoTable.getName(),
-				field.getName(), classPK, field.getValue());
+				field.getName(), classPK, dataMap, field.getDefaultLocale());
 		}
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(
 		ExpandoStorageAdapter.class);
+
+	private Map<String, Transformer<List<Serializable>>> _transformersMap =
+		new HashMap<String, Transformer<List<Serializable>>>();
 
 }

@@ -51,6 +51,10 @@ public interface ExpandoValue extends ExpandoValueModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
+	public java.util.Locale getDefaultLocale()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
 	public double getDouble()
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
@@ -198,7 +202,8 @@ public interface ExpandoValue extends ExpandoValueModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
-	public void setString(java.lang.String data, java.util.Locale locale)
+	public void setString(java.lang.String data, java.util.Locale locale,
+		java.util.Locale defaultLocale)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
@@ -206,17 +211,20 @@ public interface ExpandoValue extends ExpandoValueModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
-	public void setStringArray(java.lang.String[] data, java.util.Locale locale)
+	public void setStringArray(java.lang.String[] data,
+		java.util.Locale locale, java.util.Locale defaultLocale)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public void setStringArrayMap(
-		java.util.Map<java.util.Locale, java.lang.String[]> dataMap)
+		java.util.Map<java.util.Locale, java.lang.String[]> dataMap,
+		java.util.Locale defaultLocale)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public void setStringMap(
-		java.util.Map<java.util.Locale, java.lang.String> dataMap)
+		java.util.Map<java.util.Locale, java.lang.String> dataMap,
+		java.util.Locale defaultLocale)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 }

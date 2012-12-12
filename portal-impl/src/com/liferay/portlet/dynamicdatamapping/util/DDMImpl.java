@@ -22,14 +22,17 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.DuplicateDirectoryException;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
@@ -60,6 +63,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,6 +101,17 @@ public class DDMImpl implements DDM {
 			ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
+		String defaultLanguageId = GetterUtil.getString(
+			serviceContext.getAttribute("defaultLanguageId"));
+
+		String languageId = GetterUtil.getString(
+			serviceContext.getAttribute("languageId"),
+			serviceContext.getLanguageId());
+
+		Locale defaultLocale = LocaleUtil.fromLanguageId(defaultLanguageId);
+
+		Locale locale = LocaleUtil.fromLanguageId(languageId);
+
 		DDMStructure ddmStructure = getDDMStructure(
 			ddmStructureId, ddmTemplateId);
 
@@ -116,7 +131,10 @@ public class DDMImpl implements DDM {
 				continue;
 			}
 
-			Field field = new Field(ddmStructureId, fieldName, fieldValues);
+			Field field = new Field(
+				ddmStructureId, fieldName, fieldValues, locale);
+
+			field.setDefaultLocale(defaultLocale);
 
 			fields.put(field);
 		}
@@ -232,9 +250,13 @@ public class DDMImpl implements DDM {
 			return;
 		}
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		DDMStructure structure = field.getDDMStructure();
 
-		Serializable fieldValue = field.getValue(valueIndex);
+		Serializable fieldValue = field.getValue(
+			themeDisplay.getLocale(), valueIndex);
 
 		JSONObject fileJSONObject = JSONFactoryUtil.createJSONObject(
 			String.valueOf(fieldValue));
@@ -320,7 +342,8 @@ public class DDMImpl implements DDM {
 			}
 		}
 
-		Field field = new Field(structureId, fieldName, fieldValues);
+		Field field = new Field(
+			structureId, fieldName, fieldValues, serviceContext.getLocale());
 
 		fields.put(field);
 
