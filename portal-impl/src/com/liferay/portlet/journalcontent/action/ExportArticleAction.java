@@ -35,6 +35,7 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.DocumentConversionUtil;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
 import com.liferay.portlet.journalcontent.util.JournalContentUtil;
+import com.liferay.util.portlet.PortletRequestUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,9 +85,11 @@ public class ExportArticleAction extends PortletAction {
 			HttpServletResponse response = PortalUtil.getHttpServletResponse(
 				actionResponse);
 
+			String xmlRequest = PortletRequestUtil.toXML(actionRequest, actionResponse);
+			
 			getFile(
 				groupId, articleId, targetExtension, allowedExtensions,
-				languageId, themeDisplay, request, response);
+				languageId, themeDisplay, xmlRequest, request, response);
 
 			setForward(actionRequest, ActionConstants.COMMON_NULL);
 		}
@@ -98,14 +101,14 @@ public class ExportArticleAction extends PortletAction {
 	protected void getFile(
 			long groupId, String articleId, String targetExtension,
 			String[] allowedExtensions, String languageId,
-			ThemeDisplay themeDisplay, HttpServletRequest request,
+			ThemeDisplay themeDisplay, String xmlRequest, HttpServletRequest request,
 			HttpServletResponse response)
 		throws Exception {
 
 		try {
 			JournalArticleDisplay articleDisplay =
 				JournalContentUtil.getDisplay(
-					groupId, articleId, null, languageId, themeDisplay);
+					groupId, articleId, null, "export", languageId, themeDisplay, 1, xmlRequest);
 
 			int pages = articleDisplay.getNumberOfPages();
 
