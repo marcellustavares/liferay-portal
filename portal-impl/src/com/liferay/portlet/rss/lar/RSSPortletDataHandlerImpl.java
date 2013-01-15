@@ -273,14 +273,14 @@ public class RSSPortletDataHandlerImpl extends JournalPortletDataHandlerImpl {
 		List<Element> structureElements = rootElement.elements("structure");
 
 		for (Element structureElement : structureElements) {
-			JournalPortletDataHandlerImpl.importStructure(
+			JournalPortletDataHandlerImpl.importDDMStructure(
 				portletDataContext, structureElement);
 		}
 
 		List<Element> templateElements = rootElement.elements("template");
 
 		for (Element templateElement : templateElements) {
-			JournalPortletDataHandlerImpl.importTemplate(
+			JournalPortletDataHandlerImpl.importDDMTemplate(
 				portletDataContext, templateElement);
 		}
 

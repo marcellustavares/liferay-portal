@@ -922,14 +922,14 @@ public class LayoutImporter {
 		Element structureElement = layoutElement.element("structure");
 
 		if (structureElement != null) {
-			JournalPortletDataHandlerImpl.importStructure(
+			JournalPortletDataHandlerImpl.importDDMStructure(
 				portletDataContext, structureElement);
 		}
 
 		Element templateElement = layoutElement.element("template");
 
 		if (templateElement != null) {
-			JournalPortletDataHandlerImpl.importTemplate(
+			JournalPortletDataHandlerImpl.importDDMTemplate(
 				portletDataContext, templateElement);
 		}
 

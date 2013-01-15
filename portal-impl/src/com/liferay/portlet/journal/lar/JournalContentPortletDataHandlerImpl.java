@@ -31,12 +31,12 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.lar.DLPortletDataHandlerImpl;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.journal.NoSuchArticleException;
 import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.journal.model.JournalTemplate;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalContentSearchLocalServiceUtil;
-import com.liferay.portlet.journal.service.JournalTemplateLocalServiceUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -253,11 +253,11 @@ public class JournalContentPortletDataHandlerImpl
 			Validator.isNotNull(preferenceTemplateId) &&
 			!defaultTemplateId.equals(preferenceTemplateId)) {
 
-			JournalTemplate template =
-				JournalTemplateLocalServiceUtil.getTemplate(
+			DDMTemplate template =
+				DDMTemplateLocalServiceUtil.getTemplate(
 					article.getGroupId(), preferenceTemplateId, true);
 
-			JournalPortletDataHandlerImpl.exportTemplate(
+			JournalPortletDataHandlerImpl.exportDDMTemplate(
 				portletDataContext, rootElement, dlFileEntryTypesElement,
 				dlFoldersElement, dlFilesElement, dlFileRanksElement,
 				dlRepositoriesElement, dlRepositoryEntriesElement, template);
@@ -302,7 +302,7 @@ public class JournalContentPortletDataHandlerImpl
 		Element structureElement = rootElement.element("structure");
 
 		if (structureElement != null) {
-			JournalPortletDataHandlerImpl.importStructure(
+			JournalPortletDataHandlerImpl.importDDMStructure(
 				portletDataContext, structureElement);
 		}
 
@@ -310,7 +310,7 @@ public class JournalContentPortletDataHandlerImpl
 
 		if (templateElements != null) {
 			for (Element templateElement : templateElements) {
-				JournalPortletDataHandlerImpl.importTemplate(
+				JournalPortletDataHandlerImpl.importDDMTemplate(
 					portletDataContext, templateElement);
 			}
 		}
@@ -355,7 +355,7 @@ public class JournalContentPortletDataHandlerImpl
 		if (Validator.isNotNull(templateId)) {
 			Map<String, String> templateIds =
 				(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
-					JournalTemplate.class + ".templateId");
+					DDMTemplate.class + ".templateId");
 
 			templateId = MapUtil.getString(templateIds, templateId, templateId);
 
