@@ -95,14 +95,14 @@ import com.liferay.portlet.asset.service.persistence.AssetCategoryUtil;
 import com.liferay.portlet.asset.service.persistence.AssetTagUtil;
 import com.liferay.portlet.asset.service.persistence.AssetVocabularyUtil;
 import com.liferay.portlet.assetpublisher.util.AssetPublisherUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureUtil;
 import com.liferay.portlet.expando.NoSuchTableException;
 import com.liferay.portlet.expando.model.ExpandoColumn;
 import com.liferay.portlet.expando.model.ExpandoTable;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.portlet.expando.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portlet.expando.util.ExpandoConverterUtil;
-import com.liferay.portlet.journal.model.JournalStructure;
-import com.liferay.portlet.journal.service.persistence.JournalStructureUtil;
 import com.liferay.portlet.journalcontent.util.JournalContentUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.ratings.model.RatingsEntry;
@@ -204,7 +204,7 @@ public class PortletImporter {
 				_log.debug(
 					"Do not delete portlet data for " + portletId +
 						" because the portlet does not have a " +
-							"PortletDataHandler");
+						"PortletDataHandler");
 			}
 
 			return null;
@@ -221,7 +221,7 @@ public class PortletImporter {
 
 		try {
 			portletPreferencesImpl =
-				(PortletPreferencesImpl)portletDataHandler.deleteData(
+				(PortletPreferencesImpl) portletDataHandler.deleteData(
 					portletDataContext, portletId, portletPreferencesImpl);
 		}
 		finally {
@@ -486,9 +486,9 @@ public class PortletImporter {
 
 	/**
 	 * @see com.liferay.portlet.documentlibrary.lar.DLPortletDataHandlerImpl#getFileEntryTypeName(
-	 *      String, long, String, int)
+	 *String, long, String, int)
 	 * @see com.liferay.portlet.documentlibrary.lar.DLPortletDataHandlerImpl#getFolderName(
-	 *      String, long, long, String, int)
+	 *String, long, long, String, int)
 	 */
 	protected String getAssetCategoryName(
 			String uuid, long groupId, long parentCategoryId, String name,
@@ -546,9 +546,9 @@ public class PortletImporter {
 
 	/**
 	 * @see com.liferay.portlet.documentlibrary.lar.DLPortletDataHandlerImpl#getFileEntryTypeName(
-	 *      String, long, String, int)
+	 *String, long, String, int)
 	 * @see com.liferay.portlet.documentlibrary.lar.DLPortletDataHandlerImpl#getFolderName(
-	 *      String, long, long, String, int)
+	 *String, long, long, String, int)
 	 */
 	protected String getAssetVocabularyName(
 			String uuid, long groupId, String name, int count)
@@ -616,14 +616,14 @@ public class PortletImporter {
 			assetCategory.getParentCategoryId());
 
 		if ((parentAssetCategoryId !=
-				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) &&
+			AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) &&
 			(parentAssetCategoryId == assetCategory.getParentCategoryId())) {
 
 			String path = getAssetCategoryPath(
 				portletDataContext, parentAssetCategoryId);
 
 			AssetCategory parentAssetCategory =
-				(AssetCategory)portletDataContext.getZipEntryAsObject(path);
+				(AssetCategory) portletDataContext.getZipEntryAsObject(path);
 
 			Node parentCategoryNode =
 				assetCategoryElement.getParent().selectSingleNode(
@@ -632,7 +632,7 @@ public class PortletImporter {
 			if (parentCategoryNode != null) {
 				importAssetCategory(
 					portletDataContext, assetVocabularyPKs, assetCategoryPKs,
-					assetCategoryUuids, (Element)parentCategoryNode,
+					assetCategoryUuids, (Element) parentCategoryNode,
 					parentAssetCategory);
 
 				parentAssetCategoryId = MapUtil.getLong(
@@ -663,7 +663,7 @@ public class PortletImporter {
 
 		try {
 			if (parentAssetCategoryId !=
-					AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
 
 				AssetCategoryUtil.findByPrimaryKey(parentAssetCategoryId);
 			}
@@ -1036,7 +1036,7 @@ public class PortletImporter {
 				_log.debug(
 					"Do not import portlet data for " + portletId +
 						" because the portlet does not have a " +
-							"PortletDataHandler");
+						"PortletDataHandler");
 			}
 
 			return null;
@@ -1059,7 +1059,7 @@ public class PortletImporter {
 			portletDataElement.attributeValue("path"));
 
 		portletPreferencesImpl =
-			(PortletPreferencesImpl)portletDataHandler.importData(
+			(PortletPreferencesImpl) portletDataHandler.importData(
 				portletDataContext, portletId, portletPreferencesImpl,
 				portletData);
 
@@ -1133,7 +1133,7 @@ public class PortletImporter {
 				}
 
 				if (((ownerType == PortletKeys.PREFS_OWNER_TYPE_GROUP) ||
-					 (ownerType == PortletKeys.PREFS_OWNER_TYPE_LAYOUT)) &&
+					(ownerType == PortletKeys.PREFS_OWNER_TYPE_LAYOUT)) &&
 					!importPortletSetup) {
 
 					continue;
@@ -1200,7 +1200,7 @@ public class PortletImporter {
 						portletId, xml, layout);
 				}
 				else if (rootPotletId.equals(
-							PortletKeys.TAGS_CATEGORIES_NAVIGATION)) {
+					PortletKeys.TAGS_CATEGORIES_NAVIGATION)) {
 
 					xml = updateAssetCategoriesNavigationPortletPreferences(
 						portletDataContext, companyId, ownerId, ownerType, plid,
@@ -1252,7 +1252,7 @@ public class PortletImporter {
 			assetVocabulariesElement.elements("vocabulary");
 
 		Map<Long, Long> assetVocabularyPKs =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+			(Map<Long, Long>) portletDataContext.getNewPrimaryKeysMap(
 				AssetVocabulary.class);
 
 		for (Element assetVocabularyElement : assetVocabularyElements) {
@@ -1263,7 +1263,7 @@ public class PortletImporter {
 			}
 
 			AssetVocabulary assetVocabulary =
-				(AssetVocabulary)portletDataContext.getZipEntryAsObject(path);
+				(AssetVocabulary) portletDataContext.getZipEntryAsObject(path);
 
 			importAssetVocabulary(
 				portletDataContext, assetVocabularyPKs, assetVocabularyElement,
@@ -1276,11 +1276,11 @@ public class PortletImporter {
 			"category");
 
 		Map<Long, Long> assetCategoryPKs =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+			(Map<Long, Long>) portletDataContext.getNewPrimaryKeysMap(
 				AssetCategory.class);
 
 		Map<String, String> assetCategoryUuids =
-			(Map<String, String>)portletDataContext.getNewPrimaryKeysMap(
+			(Map<String, String>) portletDataContext.getNewPrimaryKeysMap(
 				AssetCategory.class.getName() + "uuid");
 
 		for (Element assetCategoryElement : assetCategoryElements) {
@@ -1291,7 +1291,7 @@ public class PortletImporter {
 			}
 
 			AssetCategory assetCategory =
-				(AssetCategory)portletDataContext.getZipEntryAsObject(path);
+				(AssetCategory) portletDataContext.getZipEntryAsObject(path);
 
 			importAssetCategory(
 				portletDataContext, assetVocabularyPKs, assetCategoryPKs,
@@ -1421,10 +1421,10 @@ public class PortletImporter {
 			}
 
 			AssetTag assetTag =
-				(AssetTag)portletDataContext.getZipEntryAsObject(path);
+				(AssetTag) portletDataContext.getZipEntryAsObject(path);
 
 			Map<Long, Long> assetTagPKs =
-				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				(Map<Long, Long>) portletDataContext.getNewPrimaryKeysMap(
 					AssetTag.class);
 
 			importAssetTag(
@@ -1475,7 +1475,7 @@ public class PortletImporter {
 
 			for (String zipFolderEntry : zipFolderEntries) {
 				MBMessage mbMessage =
-					(MBMessage)portletDataContext.getZipEntryAsObject(
+					(MBMessage) portletDataContext.getZipEntryAsObject(
 						zipFolderEntry);
 
 				if (mbMessage != null) {
@@ -1581,7 +1581,7 @@ public class PortletImporter {
 			String className = assetElement.attributeValue("class-name");
 			String key = assetElement.attributeValue("key");
 
-			Lock lock = (Lock)portletDataContext.getZipEntryAsObject(path);
+			Lock lock = (Lock) portletDataContext.getZipEntryAsObject(path);
 
 			if (lock != null) {
 				portletDataContext.addLocks(className, key, lock);
@@ -1618,7 +1618,7 @@ public class PortletImporter {
 
 			for (String zipFolderEntry : zipFolderEntries) {
 				RatingsEntry ratingsEntry =
-					(RatingsEntry)portletDataContext.getZipEntryAsObject(
+					(RatingsEntry) portletDataContext.getZipEntryAsObject(
 						zipFolderEntry);
 
 				if (ratingsEntry != null) {
@@ -1816,11 +1816,11 @@ public class PortletImporter {
 				name.equals("classTypeIds")) {
 
 				updatePreferencesClassPKs(
-					portletDataContext, jxPreferences, name,
-					JournalStructure.class, companyGroup.getGroupId());
+					portletDataContext, jxPreferences, name, DDMStructure.class,
+					companyGroup.getGroupId());
 			}
 			else if (name.equals("anyAssetType") ||
-					 name.equals("classNameIds")) {
+				name.equals("classNameIds")) {
 
 				updateAssetPublisherClassNameIds(jxPreferences, name);
 			}
@@ -1830,7 +1830,7 @@ public class PortletImporter {
 					layout.getPlid());
 			}
 			else if (name.startsWith("queryName") &&
-					 value.equalsIgnoreCase("assetCategories")) {
+				value.equalsIgnoreCase("assetCategories")) {
 
 				String index = name.substring(9, name.length());
 
@@ -1869,8 +1869,8 @@ public class PortletImporter {
 
 			newValues[i] = StringUtil.replace(
 				oldValue,
-				new String[] {"[$GROUP_SCOPE_ID$]", "[$LAYOUT_SCOPE_ID$]"},
-				new String[] {groupScopeId, layoutScopeId});
+				new String[]{"[$GROUP_SCOPE_ID$]", "[$LAYOUT_SCOPE_ID$]"},
+				new String[]{groupScopeId, layoutScopeId});
 		}
 
 		jxPreferences.setValues(key, newValues);
@@ -1939,7 +1939,7 @@ public class PortletImporter {
 
 				if (!ArrayUtil.contains(dataPortletPreferences, name) ||
 					(Validator.isNull(scopeLayoutUuid) &&
-					 scopeType.equals("company"))) {
+						scopeType.equals("company"))) {
 
 					String[] values = jxPreferences.getValues(name, null);
 
@@ -1965,7 +1965,7 @@ public class PortletImporter {
 		}
 
 		Map<Long, Long> primaryKeysMap =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(clazz);
+			(Map<Long, Long>) portletDataContext.getNewPrimaryKeysMap(clazz);
 
 		String[] newValues = new String[oldValues.length];
 
@@ -2003,7 +2003,7 @@ public class PortletImporter {
 						}
 					}
 					else if (className.equals(
-							AssetVocabulary.class.getName())) {
+						AssetVocabulary.class.getName())) {
 
 						AssetVocabulary assetVocabulary =
 							AssetVocabularyUtil.fetchByUUID_G(
@@ -2018,21 +2018,19 @@ public class PortletImporter {
 							newPrimaryKey = assetVocabulary.getVocabularyId();
 						}
 					}
-					else if (className.equals(
-							JournalStructure.class.getName())) {
-
-						JournalStructure journalStructure =
-							JournalStructureUtil.fetchByUUID_G(
+					else if (className.equals(DDMStructure.class.getName())) {
+						DDMStructure ddmStructure =
+							DDMStructureUtil.fetchByUUID_G(
 								uuid, portletDataContext.getScopeGroupId());
 
-						if (journalStructure == null) {
-							journalStructure =
-								JournalStructureUtil.fetchByUUID_G(
+						if (ddmStructure == null) {
+							ddmStructure =
+								DDMStructureUtil.fetchByUUID_G(
 									uuid, companyGroupId);
 						}
 
-						if (journalStructure != null) {
-							newPrimaryKey = journalStructure.getId();
+						if (ddmStructure != null) {
+							newPrimaryKey = ddmStructure.getStructureId();
 						}
 					}
 				}

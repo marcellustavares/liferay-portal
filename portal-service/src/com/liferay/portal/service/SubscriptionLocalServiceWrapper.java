@@ -295,8 +295,7 @@ public class SubscriptionLocalServiceWrapper implements SubscriptionLocalService
 
 	public java.util.List<com.liferay.portal.model.Subscription> getSubscriptions(
 		long companyId, long userId, java.lang.String className, long[] classPKs)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _subscriptionLocalService.getSubscriptions(companyId, userId,
 			className, classPKs);
 	}

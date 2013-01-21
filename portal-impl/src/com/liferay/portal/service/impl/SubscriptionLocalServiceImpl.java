@@ -208,7 +208,7 @@ public class SubscriptionLocalServiceImpl
 
 	public List<Subscription> getSubscriptions(
 			long companyId, long userId, String className, long[] classPKs)
-		throws PortalException, SystemException {
+		throws SystemException {
 
 		long classNameId = PortalUtil.getClassNameId(className);
 

@@ -301,8 +301,7 @@ public class SubscriptionLocalServiceUtil {
 
 	public static java.util.List<com.liferay.portal.model.Subscription> getSubscriptions(
 		long companyId, long userId, java.lang.String className, long[] classPKs)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getSubscriptions(companyId, userId, className, classPKs);
 	}
