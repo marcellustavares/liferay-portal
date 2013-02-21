@@ -165,7 +165,7 @@ public class Field implements Serializable {
 	public Serializable getValue(Locale locale) {
 		List<Serializable> values = _getValues(locale);
 
-		if (values.isEmpty()) {
+		if ((values == null) || values.isEmpty()) {
 			return null;
 		}
 
