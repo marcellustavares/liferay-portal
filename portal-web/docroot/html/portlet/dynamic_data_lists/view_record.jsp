@@ -81,6 +81,18 @@ if (editable) {
 	%>
 
 	<aui:button-row>
+		<c:if test="<%= DDLRecordSetPermission.contains(permissionChecker, record.getRecordSet(), ActionKeys.UPDATE) %>">
+			<portlet:renderURL var="editRecordURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
+				<portlet:param name="struts_action" value="/dynamic_data_lists/edit_record" />
+				<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UPDATE %>" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
+				<portlet:param name="recordId" value="<%= String.valueOf(record.getRecordId()) %>" />
+				<portlet:param name="formDDMTemplateId" value="<%= String.valueOf(formDDMTemplateId) %>" />
+			</portlet:renderURL>
+
+			<aui:button href="<%= editRecordURL %>" name="edit" value="edit" />
+		</c:if>
+
 		<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
 	</aui:button-row>
 </aui:fieldset>
