@@ -223,14 +223,14 @@ insert into LayoutSet (layoutSetId, companyId, groupId, privateLayout, logo, the
 ##
 
 insert into User_ (uuid_, userId, companyId, createDate, modifiedDate, defaultUser, contactId, password_, passwordEncrypted, passwordReset, screenName, emailAddress, greeting, firstName, middleName, lastName, loginDate, failedLoginAttempts, agreedToTermsOfUse, status) values ('$portalUUIDUtil.generate()', $defaultUserId, $companyId, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, TRUE, $defaultContactId, 'password', FALSE, FALSE, '$defaultUserId', 'default@liferay.com', 'Welcome!', '', '', '', CURRENT_TIMESTAMP, 0, TRUE, 0);
-insert into Contact_ (contactId, companyId, userId, userName, createDate, modifiedDate, classNameId, classPK, accountId, parentContactId, emailAddress, firstName, middleName, lastName, male, birthday) values ($defaultContactId, $companyId, $defaultUserId, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $userClassNameId, $defaultUserId, $accountId, 0, 'default@liferay.com', '', '', '', TRUE, '01/01/1970');
+insert into Contact_ (contactId, companyId, userId, userName, createDate, modifiedDate, classNameId, classPK, accountId, parentContactId, emailAddress, firstName, middleName, lastName, prefixId, male, birthday) values ($defaultContactId, $companyId, $defaultUserId, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $userClassNameId, $defaultUserId, $accountId, 0, 'default@liferay.com', '', '', '', 11018, TRUE, '01/01/1970');
 
 ##
 ## User (test@liferay.com)
 ##
 
 insert into User_ (uuid_, userId, companyId, createDate, modifiedDate, defaultUser, contactId, password_, passwordEncrypted, passwordReset, screenName, emailAddress, greeting, firstName, middleName, lastName, loginDate, lastLoginDate, failedLoginAttempts, agreedToTermsOfUse, emailAddressVerified, status) values ('$portalUUIDUtil.generate()', $testUserId, $companyId, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, $testContactId, 'test', FALSE, FALSE, 'joebloggs', 'test@liferay.com', 'Welcome Joe Bloggs!', 'Joe', '', 'Bloggs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, FALSE, TRUE, 0);
-insert into Contact_ (contactId, companyId, userId, userName, createDate, modifiedDate, classNameId, classPK, accountId, parentContactId, emailAddress, firstName, middleName, lastName, male, birthday) values ($testContactId, $companyId, $testUserId, 'Joe Bloggs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $userClassNameId, $testUserId, $accountId, 0, 'test@liferay.com', 'Joe', '', 'Bloggs', TRUE, '01/01/1970');
+insert into Contact_ (contactId, companyId, userId, userName, createDate, modifiedDate, classNameId, classPK, accountId, parentContactId, emailAddress, firstName, middleName, lastName, prefixId, male, birthday) values ($testContactId, $companyId, $testUserId, 'Joe Bloggs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $userClassNameId, $testUserId, $accountId, 0, 'test@liferay.com', 'Joe', '', 'Bloggs', 11018, TRUE, '01/01/1970');
 
 #set ($testGroupId = $counter.get())
 

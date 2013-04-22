@@ -662,6 +662,7 @@ insert into ListType (listTypeId, name, type_) values (11014, 'dr', 'com.liferay
 insert into ListType (listTypeId, name, type_) values (11015, 'mr', 'com.liferay.portal.model.Contact.prefix');
 insert into ListType (listTypeId, name, type_) values (11016, 'mrs', 'com.liferay.portal.model.Contact.prefix');
 insert into ListType (listTypeId, name, type_) values (11017, 'ms', 'com.liferay.portal.model.Contact.prefix');
+insert into ListType (listTypeId, name, type_) values (11018, '', 'com.liferay.portal.model.Contact.prefix');
 
 insert into ListType (listTypeId, name, type_) values (11020, 'ii', 'com.liferay.portal.model.Contact.suffix');
 insert into ListType (listTypeId, name, type_) values (11021, 'iii', 'com.liferay.portal.model.Contact.suffix');
