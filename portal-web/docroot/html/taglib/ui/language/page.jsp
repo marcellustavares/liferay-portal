@@ -129,13 +129,15 @@ for (int i = 0; i < locales.length; i++) {
 			if (displayStyle == LanguageTag.LIST_SHORT_TEXT) {
 				localeDisplayName = LocaleUtil.getShortDisplayName(locales[i], duplicateLanguages);
 			}
-			else {
+			else if (displayStyle == LanguageTag.LIST_LONG_TEXT){
+				localeDisplayName = LocaleUtil.getDisplayLanguage(locales[i]);
+			} else {
 				localeDisplayName = LocaleUtil.getLongDisplayName(locales[i]);
 			}
 		%>
 
 			<c:choose>
-				<c:when test="<%= (displayStyle == LanguageTag.LIST_LONG_TEXT) || (displayStyle == LanguageTag.LIST_SHORT_TEXT) %>">
+				<c:when test="<%= (displayStyle == LanguageTag.LIST_LONG_TEXT) || (displayStyle == LanguageTag.LIST_SHORT_TEXT) || (displayStyle == LanguageTag.LIST_LONG_TEXT_WITH_COUNTRY) %>">
 					<c:choose>
 						<c:when test="<%= currentLanguageId.equals(languageId) %>">
 							<span class="<%= cssClassName %>" lang="<%= LocaleUtil.toW3cLanguageId(locales[i]) %>"><%= localeDisplayName %></span>

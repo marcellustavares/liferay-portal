@@ -56,6 +56,10 @@ public class LocaleUtil {
 		return getInstance()._getDefault();
 	}
 
+	public static String getDisplayLanguage(Locale locale) {
+		return getInstance()._getDisplayLanguage(locale);
+	}
+
 	public static LocaleUtil getInstance() {
 		PortalRuntimePermission.checkGetBeanProperty(LocaleUtil.class);
 
@@ -208,6 +212,16 @@ public class LocaleUtil {
 		}
 
 		return _locale;
+	}
+
+	private String _getDisplayLanguage(Locale locale) {
+		String displayLanguage = locale.getDisplayLanguage(locale);
+
+		if (LanguageUtil.isBetaLocale(locale)) {
+			return displayLanguage.concat(_BETA_SUFFIX);
+		}
+
+		return displayLanguage;
 	}
 
 	private Map<String, String> _getISOLanguages(Locale locale) {

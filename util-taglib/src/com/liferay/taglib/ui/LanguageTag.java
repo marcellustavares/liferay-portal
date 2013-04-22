@@ -31,6 +31,8 @@ public class LanguageTag extends IncludeTag {
 
 	public static final int LIST_LONG_TEXT = 1;
 
+	public static final int LIST_LONG_TEXT_WITH_COUNTRY = 4;
+
 	public static final int LIST_SHORT_TEXT = 2;
 
 	public static final int SELECT_BOX = 3;
