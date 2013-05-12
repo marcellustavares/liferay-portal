@@ -111,6 +111,10 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return PortletKeys.DYNAMIC_DATA_MAPPING;
 	}
 
+	public long[] getTemplateClassNameIds(long classNameId) {
+		return new long[] {classNameId};
+	}
+
 	public String getTemplateDDMResource(
 		HttpServletRequest request, DDMTemplate template) {
 

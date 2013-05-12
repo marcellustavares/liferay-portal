@@ -44,6 +44,8 @@ public interface DDMDisplay {
 
 	public String getPortletId();
 
+	public long[] getTemplateClassNameIds(long classNameId);
+
 	public String getTemplateDDMResource(
 		HttpServletRequest request, DDMTemplate template);
 

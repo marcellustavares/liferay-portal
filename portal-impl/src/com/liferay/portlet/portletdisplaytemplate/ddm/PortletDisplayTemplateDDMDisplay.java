@@ -63,6 +63,15 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 	}
 
 	@Override
+	public long[] getTemplateClassNameIds(long classNameId) {
+		if (classNameId == 0) {
+			return TemplateHandlerRegistryUtil.getClassNameIds();
+		}
+
+		return super.getTemplateClassNameIds(classNameId);
+	}
+
+	@Override
 	public String getTemplateDDMResource(
 		HttpServletRequest request, DDMTemplate template) {
 
