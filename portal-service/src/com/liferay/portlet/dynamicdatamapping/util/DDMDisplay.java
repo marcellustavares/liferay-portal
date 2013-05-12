@@ -51,6 +51,8 @@ public interface DDMDisplay {
 
 	public String getPortletId();
 
+	public String getStorageType();
+
 	public long[] getTemplateClassNameIds(long classNameId);
 
 	public String getTemplateDDMResource(

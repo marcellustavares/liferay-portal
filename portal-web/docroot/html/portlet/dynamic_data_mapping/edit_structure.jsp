@@ -223,7 +223,6 @@ if (Validator.isNotNull(script)) {
 				eventName: '<portlet:namespace />selectParentStructure',
 				showGlobalScope: true,
 				showManageTemplates: false,
-				storageType: '<%= HtmlUtil.escapeJS(scopeStorageType) %>',
 				structureName: '<%= HtmlUtil.escapeJS(scopeStructureName) %>',
 				structureType: '<%= HtmlUtil.escapeJS(scopeStructureType) %>',
 				struts_action: '/dynamic_data_mapping/select_structure',

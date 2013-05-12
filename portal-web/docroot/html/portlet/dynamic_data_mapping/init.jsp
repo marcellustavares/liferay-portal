@@ -66,9 +66,11 @@ page import="com.liferay.portlet.journal.model.JournalArticle" %>
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
 String refererPortletName = ParamUtil.getString(request, "refererPortletName", portletName);
+
+DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
+
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
 String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
-String scopeStorageType = ParamUtil.getString(request, "scopeStorageType");
 String scopeStructureName = ParamUtil.getString(request, "scopeStructureName");
 String scopeStructureType = ParamUtil.getString(request, "scopeStructureType");
 String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
@@ -79,6 +81,8 @@ boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates
 boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 
 long scopeClassNameId = PortalUtil.getClassNameId(scopeStructureType);
+
+String scopeStorageType = ddmDisplay.getStorageType();
 
 String storageTypeValue = StringPool.BLANK;
 
@@ -99,8 +103,6 @@ else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 }
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
-
-DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
 
 String ddmResource = ddmDisplay.getDDMResource();
 %>

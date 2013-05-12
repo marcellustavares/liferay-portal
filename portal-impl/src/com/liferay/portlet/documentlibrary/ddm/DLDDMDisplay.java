@@ -34,6 +34,11 @@ public class DLDDMDisplay extends BaseDDMDisplay {
 	}
 
 	@Override
+	public String getStorageType() {
+		return "xml";
+	}
+
+	@Override
 	public String getTemplateDDMResourceActionId() {
 		return ActionKeys.ADD_TEMPLATE;
 	}
