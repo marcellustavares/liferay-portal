@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -173,6 +174,19 @@ public class BaseDDMDisplay implements DDMDisplay {
 
 	public String getViewTemplatesTitle(DDMStructure structure, Locale locale) {
 		return getViewTemplatesTitle(structure, false, locale);
+	}
+
+	public boolean isShowAddStructureButton(
+		PermissionChecker permissionChecker, long groupId) {
+
+		boolean showAddStructureButton = false;
+
+		if (!getPortletId().equals(PortletKeys.DYNAMIC_DATA_MAPPING)) {
+			showAddStructureButton = permissionChecker.hasPermission(
+				groupId, getDDMResource(), groupId, ActionKeys.ADD_STRUCTURE);
+		}
+
+		return showAddStructureButton;
 	}
 
 	public boolean isShowStructureSelector() {
