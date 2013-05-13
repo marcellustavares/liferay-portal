@@ -70,7 +70,6 @@ String refererPortletName = ParamUtil.getString(request, "refererPortletName", p
 DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
 
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
-String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
 boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
 boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
@@ -107,6 +106,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 String ddmResource = ddmDisplay.getDDMResource();
 String scopeAvailableFields = ddmDisplay.getAvailableFields();
 String scopeStructureName = ddmDisplay.getStructureName(locale);
+String scopeTemplateMode = ddmDisplay.getTemplateMode();
 %>
 
 <%@ include file="/html/portlet/dynamic_data_mapping/init-ext.jsp" %>

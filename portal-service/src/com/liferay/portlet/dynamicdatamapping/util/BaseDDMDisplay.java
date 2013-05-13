@@ -164,6 +164,10 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return _templateLanguageTypes;
 	}
 
+	public String getTemplateMode() {
+		return StringPool.BLANK;
+	}
+
 	public String getTemplateType() {
 		return DDMTemplateConstants.TEMPLATE_TYPE_FORM;
 	}
