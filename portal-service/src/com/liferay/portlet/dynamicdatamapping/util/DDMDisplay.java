@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface DDMDisplay {
 
+	public String getAvailableFields();
+
 	public String getDDMResource();
 
 	public String getEditStructureDefaultValuesURL(

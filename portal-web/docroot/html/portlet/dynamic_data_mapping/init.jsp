@@ -70,7 +70,6 @@ String refererPortletName = ParamUtil.getString(request, "refererPortletName", p
 DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
 
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
-String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
 String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
 boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
@@ -106,6 +105,7 @@ else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 
 String ddmResource = ddmDisplay.getDDMResource();
+String scopeAvailableFields = ddmDisplay.getAvailableFields();
 String scopeStructureName = ddmDisplay.getStructureName(locale);
 %>
 

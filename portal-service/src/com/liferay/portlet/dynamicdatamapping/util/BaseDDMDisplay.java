@@ -48,6 +48,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BaseDDMDisplay implements DDMDisplay {
 
+	public String getAvailableFields() {
+		return "Liferay.FormBuilder.AVAILABLE_FIELDS.DDM_STRUCTURE";
+	}
+
 	public String getDDMResource() {
 		return StringPool.BLANK;
 	}
