@@ -72,7 +72,6 @@ DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName)
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
 String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
 String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
-String scopeTemplateType = ParamUtil.getString(request, "scopeTemplateType");
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
 boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
 boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
@@ -92,6 +91,8 @@ if (scopeStorageType.equals("expando")) {
 else if (scopeStorageType.equals("xml")) {
 	storageTypeValue = StorageType.XML.getValue();
 }
+
+String scopeTemplateType = ddmDisplay.getTemplateType();
 
 String templateTypeValue = StringPool.BLANK;
 

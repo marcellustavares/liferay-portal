@@ -28,6 +28,7 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.util.BaseDDMDisplay;
 import com.liferay.portlet.journal.model.JournalArticle;
 
@@ -119,6 +120,11 @@ public class JournalDDMDisplay extends BaseDDMDisplay {
 	@Override
 	public Set<String> getTemplateLanguageTypes() {
 		return _templateLanguageTypes;
+	}
+
+	@Override
+	public String getTemplateType() {
+		return DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY;
 	}
 
 	@Override

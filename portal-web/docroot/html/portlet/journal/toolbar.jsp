@@ -125,7 +125,6 @@
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
 				showGlobalScope: 'false',
 				showManageTemplates: 'true',
-				templateType: '<%= DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY %>',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 			}
 		);
@@ -144,7 +143,6 @@
 				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
 				struts_action: '/dynamic_data_mapping/view_template',
-				templateType: '<%= DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY %>',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "templates") %>'
 			}
 		);

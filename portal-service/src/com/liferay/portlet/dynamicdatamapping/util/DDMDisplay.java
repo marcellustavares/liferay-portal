@@ -68,6 +68,8 @@ public interface DDMDisplay {
 
 	public Set<String> getTemplateLanguageTypes();
 
+	public String getTemplateType();
+
 	public String getTemplateType(DDMTemplate template, Locale locale);
 
 	public String getViewTemplatesBackURL(
