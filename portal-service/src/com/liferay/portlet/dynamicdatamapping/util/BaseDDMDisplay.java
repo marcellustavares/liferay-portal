@@ -125,6 +125,10 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return StringPool.BLANK;
 	}
 
+	public String getStructureType() {
+		return StringPool.BLANK;
+	}
+
 	public long[] getTemplateClassNameIds(long classNameId) {
 		return new long[] {classNameId};
 	}

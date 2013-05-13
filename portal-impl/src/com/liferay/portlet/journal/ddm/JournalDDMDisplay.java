@@ -102,6 +102,11 @@ public class JournalDDMDisplay extends BaseDDMDisplay {
 	}
 
 	@Override
+	public String getStructureType() {
+		return JournalArticle.class.getName();
+	}
+
+	@Override
 	public String getTemplateDDMResourceActionId() {
 		return ActionKeys.ADD_TEMPLATE;
 	}

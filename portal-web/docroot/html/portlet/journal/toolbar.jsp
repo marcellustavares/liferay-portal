@@ -126,7 +126,6 @@
 				showGlobalScope: 'false',
 				showManageTemplates: 'true',
 				structureName: 'structure',
-				structureType: 'com.liferay.portlet.journal.model.JournalArticle',
 				templateType: '<%= DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY %>',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 			}
@@ -146,7 +145,6 @@
 				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
 				structureName: 'structure',
-				structureType: 'com.liferay.portlet.journal.model.JournalArticle',
 				struts_action: '/dynamic_data_mapping/view_template',
 				templateType: '<%= DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY %>',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "templates") %>'
