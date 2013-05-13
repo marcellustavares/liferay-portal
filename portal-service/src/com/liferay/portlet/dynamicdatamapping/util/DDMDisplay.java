@@ -53,6 +53,8 @@ public interface DDMDisplay {
 
 	public String getStorageType();
 
+	public String getStructureName(Locale locale);
+
 	public String getStructureType();
 
 	public long[] getTemplateClassNameIds(long classNameId);

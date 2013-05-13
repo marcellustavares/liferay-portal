@@ -395,7 +395,6 @@ String ddmResourceActionId = ddmDisplay.getTemplateDDMResourceActionId();
 					eventName: '<portlet:namespace />selectStructure',
 					groupId: <%= groupId %>,
 					refererPortletName: '<%= PortletKeys.JOURNAL %>',
-					structureName: 'structure',
 					struts_action: '/dynamic_data_mapping/select_structure',
 					title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 				},

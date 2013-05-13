@@ -125,6 +125,10 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return StringPool.BLANK;
 	}
 
+	public String getStructureName(Locale locale) {
+		return LanguageUtil.get(locale, "structure");
+	}
+
 	public String getStructureType() {
 		return StringPool.BLANK;
 	}
