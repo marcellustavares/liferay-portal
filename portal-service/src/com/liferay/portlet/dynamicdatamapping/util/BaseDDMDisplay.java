@@ -125,6 +125,14 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return ActionKeys.ADD_TEMPLATE;
 	}
 
+	public long getTemplateHandlerClassNameId(DDMTemplate template) {
+		if (template != null) {
+			return template.getClassNameId();
+		}
+
+		return 0;
+	}
+
 	public Set<String> getTemplateLanguageTypes() {
 		return _templateLanguageTypes;
 	}
