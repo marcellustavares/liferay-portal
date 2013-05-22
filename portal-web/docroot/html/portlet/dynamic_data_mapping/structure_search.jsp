@@ -66,11 +66,7 @@ StructureDisplayTerms displayTerms = new StructureDisplayTerms(renderRequest);
 </liferay-ui:search-toggle>
 
 <%
-boolean showAddStructureButton = false;
-
-if (!refererPortletName.equals(PortletKeys.DYNAMIC_DATA_MAPPING)) {
-	showAddStructureButton = DDMPermission.contains(permissionChecker, scopeGroupId, ddmResource, ActionKeys.ADD_STRUCTURE);
-}
+boolean showAddStructureButton = ddmDisplay.isShowAddStructureButton(permissionChecker, scopeGroupId);
 
 String buttonLabel = "add-structure";
 

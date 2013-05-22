@@ -144,17 +144,14 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 		Liferay.Util.openDDMPortlet(
 			{
 				classPK: '<%= ddmStructureId %>',
-				ddmResource: '<%= ddmResource %>',
 				dialog: {
 					destroyOnHide: true
 				},
 				eventName: '<portlet:namespace />selectDDMStructure',
+				refererPortletName: '<%= PortletKeys.DOCUMENT_LIBRARY %>',
 				showGlobalScope: true,
 				showManageTemplates: false,
 				showToolbar: true,
-				storageType: 'xml',
-				structureName: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>',
-				structureType: 'com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata',
 				struts_action: '/dynamic_data_mapping/select_structure',
 				title: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>'
 			},

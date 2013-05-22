@@ -27,10 +27,13 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 
 import java.util.Locale;
 import java.util.Set;
@@ -38,10 +41,29 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Eduardo Garcia
  */
 public class BaseDDMDisplay implements DDMDisplay {
+
+	public String getAvailableFields() {
+		return "Liferay.FormBuilder.AVAILABLE_FIELDS.DDM_STRUCTURE";
+	}
+
+	public String getDDMResource() {
+		return StringPool.BLANK;
+	}
+
+	public String getEditStructureDefaultValuesURL(
+			LiferayPortletRequest liferayPortletRequest,
+			LiferayPortletResponse liferayPortletResponse,
+			DDMStructure structure, String redirectURL, String backURL)
+		throws Exception {
+
+		return null;
+	}
 
 	public String getEditTemplateBackURL(
 			LiferayPortletRequest liferayPortletRequest,
@@ -104,8 +126,50 @@ public class BaseDDMDisplay implements DDMDisplay {
 		return PortletKeys.DYNAMIC_DATA_MAPPING;
 	}
 
+	public String getStorageType() {
+		return StringPool.BLANK;
+	}
+
+	public String getStructureName(Locale locale) {
+		return LanguageUtil.get(locale, "structure");
+	}
+
+	public String getStructureType() {
+		return StringPool.BLANK;
+	}
+
+	public long[] getTemplateClassNameIds(long classNameId) {
+		return new long[] {classNameId};
+	}
+
+	public String getTemplateDDMResource(
+		HttpServletRequest request, DDMTemplate template) {
+
+		return getDDMResource();
+	}
+
+	public String getTemplateDDMResourceActionId() {
+		return ActionKeys.ADD_TEMPLATE;
+	}
+
+	public long getTemplateHandlerClassNameId(DDMTemplate template) {
+		if (template != null) {
+			return template.getClassNameId();
+		}
+
+		return 0;
+	}
+
 	public Set<String> getTemplateLanguageTypes() {
 		return _templateLanguageTypes;
+	}
+
+	public String getTemplateMode() {
+		return StringPool.BLANK;
+	}
+
+	public String getTemplateType() {
+		return DDMTemplateConstants.TEMPLATE_TYPE_FORM;
 	}
 
 	public String getTemplateType(DDMTemplate template, Locale locale) {
@@ -144,6 +208,19 @@ public class BaseDDMDisplay implements DDMDisplay {
 
 	public String getViewTemplatesTitle(DDMStructure structure, Locale locale) {
 		return getViewTemplatesTitle(structure, false, locale);
+	}
+
+	public boolean isShowAddStructureButton(
+		PermissionChecker permissionChecker, long groupId) {
+
+		boolean showAddStructureButton = false;
+
+		if (!getPortletId().equals(PortletKeys.DYNAMIC_DATA_MAPPING)) {
+			showAddStructureButton = permissionChecker.hasPermission(
+				groupId, getDDMResource(), groupId, ActionKeys.ADD_STRUCTURE);
+		}
+
+		return showAddStructureButton;
 	}
 
 	public boolean isShowStructureSelector() {

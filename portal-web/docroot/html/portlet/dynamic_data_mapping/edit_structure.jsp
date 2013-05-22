@@ -71,6 +71,7 @@ if (Validator.isNotNull(script)) {
 	<aui:input name="classPK" type="hidden" value="<%= String.valueOf(classPK) %>" />
 	<aui:input name="xsd" type="hidden" />
 	<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
+	<aui:input name="ddmResource" type="hidden" value="<%= ddmResource %>" />
 
 	<liferay-ui:error exception="<%= LocaleException.class %>">
 
@@ -213,9 +214,7 @@ if (Validator.isNotNull(script)) {
 	function <portlet:namespace />openParentStructureSelector() {
 		Liferay.Util.openDDMPortlet(
 			{
-				availableFields: 'Liferay.FormBuilder.AVAILABLE_FIELDS.WCM_STRUCTURE',
 				classPK: <%= (structure != null) ? structure.getPrimaryKey() : 0 %>,
-				ddmResource: '<%= HtmlUtil.escapeJS(ddmResource) %>',
 				dialog: {
 					destroyOnHide: true,
 					zIndex: Liferay.zIndex.WINDOW + 2
@@ -223,9 +222,6 @@ if (Validator.isNotNull(script)) {
 				eventName: '<portlet:namespace />selectParentStructure',
 				showGlobalScope: true,
 				showManageTemplates: false,
-				storageType: '<%= HtmlUtil.escapeJS(scopeStorageType) %>',
-				structureName: '<%= HtmlUtil.escapeJS(scopeStructureName) %>',
-				structureType: '<%= HtmlUtil.escapeJS(scopeStructureType) %>',
 				struts_action: '/dynamic_data_mapping/select_structure',
 				title: '<%= HtmlUtil.escapeJS(scopeTitle) %>'
 			},

@@ -65,22 +65,21 @@ page import="com.liferay.portlet.journal.model.JournalArticle" %>
 <%
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
-String ddmResource = ParamUtil.getString(request, "ddmResource");
-String ddmResourceActionId = ParamUtil.getString(request, "ddmResourceActionId");
 String refererPortletName = ParamUtil.getString(request, "refererPortletName", portletName);
+
+DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
+
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
-String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields");
-String scopeStorageType = ParamUtil.getString(request, "scopeStorageType");
-String scopeStructureName = ParamUtil.getString(request, "scopeStructureName");
-String scopeStructureType = ParamUtil.getString(request, "scopeStructureType");
-String scopeTemplateMode = ParamUtil.getString(request, "scopeTemplateMode");
-String scopeTemplateType = ParamUtil.getString(request, "scopeTemplateType");
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
 boolean showGlobalScope = ParamUtil.getBoolean(request, "showGlobalScope");
 boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);
 boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 
+String scopeStructureType = ddmDisplay.getStructureType();
+
 long scopeClassNameId = PortalUtil.getClassNameId(scopeStructureType);
+
+String scopeStorageType = ddmDisplay.getStorageType();
 
 String storageTypeValue = StringPool.BLANK;
 
@@ -90,6 +89,8 @@ if (scopeStorageType.equals("expando")) {
 else if (scopeStorageType.equals("xml")) {
 	storageTypeValue = StorageType.XML.getValue();
 }
+
+String scopeTemplateType = ddmDisplay.getTemplateType();
 
 String templateTypeValue = StringPool.BLANK;
 
@@ -101,6 +102,11 @@ else if (scopeTemplateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 }
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
+
+String ddmResource = ddmDisplay.getDDMResource();
+String scopeAvailableFields = ddmDisplay.getAvailableFields();
+String scopeStructureName = ddmDisplay.getStructureName(locale);
+String scopeTemplateMode = ddmDisplay.getTemplateMode();
 %>
 
 <%@ include file="/html/portlet/dynamic_data_mapping/init-ext.jsp" %>
