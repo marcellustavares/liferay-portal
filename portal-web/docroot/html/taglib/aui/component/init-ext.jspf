@@ -37,6 +37,6 @@ public String _serialize(Object value, String javaScriptAttributes) {
 
 	JSONTransformer jsonTransformer = JSONFactoryUtil.createJavaScriptNormalizerJSONTransformer(javaScriptAttributesList);
 
-	return JSONFactoryUtil.looseSerialize(value, jsonTransformer, String.class);
+	return JSONFactoryUtil.looseSerializeDeep(value, jsonTransformer, String.class);
 }
 %>
