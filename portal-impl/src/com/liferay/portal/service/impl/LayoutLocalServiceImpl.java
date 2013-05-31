@@ -21,25 +21,14 @@ import com.liferay.portal.SitemapChangeFrequencyException;
 import com.liferay.portal.SitemapIncludeException;
 import com.liferay.portal.SitemapPagePriorityException;
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.dao.orm.Criterion;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Junction;
-import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lar.PortletDataException;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -63,24 +52,18 @@ import com.liferay.portal.model.LayoutReference;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletPreferences;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
-import com.liferay.portal.model.impl.LayoutImpl;
-import com.liferay.portal.model.impl.PortletPreferencesImpl;
 import com.liferay.portal.model.impl.VirtualLayout;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
-import com.liferay.portal.util.ClassLoaderUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.comparator.LayoutComparator;
 import com.liferay.portal.util.comparator.LayoutPriorityComparator;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.backgroundtask.model.BTEntry;
 import com.liferay.portlet.dynamicdatalists.RecordSetDuplicateRecordSetKeyException;
 import com.liferay.portlet.dynamicdatamapping.StructureDuplicateStructureKeyException;
@@ -102,8 +85,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import javax.portlet.PortletException;
 
 /**
  * Provides the local service for accessing, adding, deleting, exporting,
@@ -2121,9 +2102,6 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		Layout layout = layoutPersistence.findByG_P_L(
 			groupId, privateLayout, layoutId);
 
-		List<Locale> modifiedLocales = LocalizationUtil.getModifiedLocales(
-			layout.getNameMap(), nameMap);
-
 		if (parentLayoutId != layout.getParentLayoutId()) {
 			int priority = layoutLocalServiceHelper.getNextPriority(
 				groupId, privateLayout, parentLayoutId,
@@ -2192,13 +2170,6 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 				imageLocalService.updateImage(
 					layout.getIconImageId(), iconBytes);
 			}
-		}
-
-		// Portlet preferences
-
-		if (!modifiedLocales.isEmpty()) {
-			updateScopedPortletNames(
-				groupId, privateLayout, layoutId, nameMap, modifiedLocales);
 		}
 
 		// Layout friendly URLs
@@ -2683,153 +2654,36 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		return updatePriority(layout, priority);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0, with no direct replacement
+	 */
 	@Override
+	@SuppressWarnings("unused")
 	public void updateScopedPortletNames(
 			long groupId, boolean privateLayout, long layoutId,
 			Map<Locale, String> nameMap, List<Locale> nameMapModifiedLocales)
 		throws PortalException, SystemException {
-
-		Layout layout = layoutPersistence.findByG_P_L(
-			groupId, privateLayout, layoutId);
-
-		DynamicQuery portletPreferencesDynamicQuery =
-			DynamicQueryFactoryUtil.forClass(
-				PortletPreferences.class, PortletPreferencesImpl.TABLE_NAME,
-				ClassLoaderUtil.getPortalClassLoader());
-
-		Property plidProperty = PropertyFactoryUtil.forName("plid");
-
-		DynamicQuery layoutDynamicQuery = DynamicQueryFactoryUtil.forClass(
-			Layout.class, LayoutImpl.TABLE_NAME,
-			ClassLoaderUtil.getPortalClassLoader());
-
-		Projection plidProjection = ProjectionFactoryUtil.property("plid");
-
-		layoutDynamicQuery.setProjection(plidProjection, false);
-
-		Property groupIdProperty = PropertyFactoryUtil.forName("groupId");
-
-		layoutDynamicQuery.add(groupIdProperty.eq(groupId));
-
-		Property privateLayoutProperty = PropertyFactoryUtil.forName(
-			"privateLayout");
-
-		layoutDynamicQuery.add(privateLayoutProperty.eq(privateLayout));
-
-		portletPreferencesDynamicQuery.add(plidProperty.in(layoutDynamicQuery));
-
-		Junction junction = RestrictionsFactoryUtil.disjunction();
-
-		List<Portlet> scopablePortlets =
-			portletLocalService.getScopablePortlets();
-
-		for (Portlet scopablePortlet :scopablePortlets) {
-			if (scopablePortlet.isInstanceable()) {
-				Criterion criterion = RestrictionsFactoryUtil.like(
-					"portletId",
-					scopablePortlet.getPortletId() +
-						PortletConstants.INSTANCE_SEPARATOR +
-							StringPool.PERCENT);
-
-				junction.add(criterion);
-			}
-			else {
-				Criterion criterion = RestrictionsFactoryUtil.eq(
-					"portletId", scopablePortlet.getPortletId());
-
-				junction.add(criterion);
-			}
-		}
-
-		portletPreferencesDynamicQuery.add(junction);
-
-		List<PortletPreferences> portletPreferencesList =
-			portletPreferencesLocalService.dynamicQuery(
-				portletPreferencesDynamicQuery);
-
-		for (PortletPreferences portletPreferences : portletPreferencesList) {
-			if (portletPreferences.getPortletId() == null) {
-				continue;
-			}
-
-			Layout curLayout = layoutPersistence.findByPrimaryKey(
-				portletPreferences.getPlid());
-
-			javax.portlet.PortletPreferences jxPreferences =
-				PortletPreferencesFactoryUtil.getLayoutPortletSetup(
-					curLayout, portletPreferences.getPortletId());
-
-			String scopeLayoutUuid = GetterUtil.getString(
-				jxPreferences.getValue("lfrScopeLayoutUuid", null));
-
-			if (!scopeLayoutUuid.equals(layout.getUuid())) {
-				continue;
-			}
-
-			for (Locale locale : nameMapModifiedLocales) {
-				String languageId = LanguageUtil.getLanguageId(locale);
-
-				String portletTitle = PortalUtil.getPortletTitle(
-					PortletConstants.getRootPortletId(
-						portletPreferences.getPortletId()), languageId);
-
-				String newPortletTitle = PortalUtil.getNewPortletTitle(
-					portletTitle, curLayout.getName(languageId),
-					nameMap.get(locale));
-
-				if (newPortletTitle.equals(portletTitle)) {
-					continue;
-				}
-
-				try {
-					jxPreferences.setValue(
-						"portletSetupTitle_" + languageId, newPortletTitle);
-					jxPreferences.setValue(
-						"portletSetupUseCustomTitle", Boolean.TRUE.toString());
-
-					jxPreferences.store();
-				}
-				catch (IOException ioe) {
-					throw new SystemException(ioe);
-				}
-				catch (PortletException pe) {
-					throw new SystemException(pe);
-				}
-			}
-		}
 	}
 
 	/**
 	 * Updates the names of the portlets within scope of the group, the scope of
 	 * the layout's UUID, and the privacy.
 	 *
-	 * @param  groupId the primary key of the group
-	 * @param  privateLayout whether the layout is private to the group
-	 * @param  layoutId the primary key of the layout whose UUID to match
-	 * @param  name the new name for the portlets
-	 * @param  languageId the primary key of the language
-	 * @throws PortalException if a matching layout could not be found
-	 * @throws SystemException if a system exception occurred
-	 * @see    com.liferay.portlet.portletconfiguration.action.EditScopeAction
+	 * @param      groupId the primary key of the group
+	 * @param      privateLayout whether the layout is private to the group
+	 * @param      layoutId the primary key of the layout whose UUID to match
+	 * @param      name the new name for the portlets
+	 * @param      languageId the primary key of the language
+	 * @throws     PortalException if a matching layout could not be found
+	 * @throws     SystemException if a system exception occurred
+	 * @see        com.liferay.portlet.portletconfiguration.action.EditScopeAction
+	 * @deprecated As of 6.2.0, with no direct replacement
 	 */
 	@Override
 	public void updateScopedPortletNames(
 			long groupId, boolean privateLayout, long layoutId, String name,
 			String languageId)
 		throws PortalException, SystemException {
-
-		Map<Locale, String> map = new HashMap<Locale, String>();
-
-		Locale locale = LocaleUtil.fromLanguageId(languageId);
-
-		map.put(locale, name);
-
-		List<Locale> locales = new ArrayList<Locale>();
-
-		locales.add(locale);
-
-		updateScopedPortletNames(
-			groupId, privateLayout, layoutId, map, locales);
 	}
 
 	@Override

@@ -399,6 +399,9 @@ public class LayoutStagedModelDataHandler
 			importedLayout = existingLayout;
 		}
 
+		portletDataContext.setPlid(importedLayout.getPlid());
+		portletDataContext.setOldPlid(layout.getPlid());
+
 		newLayoutsMap.put(oldLayoutId, importedLayout);
 
 		long parentLayoutId = layout.getParentLayoutId();
@@ -477,9 +480,6 @@ public class LayoutStagedModelDataHandler
 
 		importedLayout.setHidden(layout.isHidden());
 		importedLayout.setFriendlyURL(friendlyURL);
-
-		portletDataContext.setPlid(importedLayout.getPlid());
-		portletDataContext.setOldPlid(layout.getPlid());
 
 		importLayoutFriendlyURLs(portletDataContext, layout);
 
