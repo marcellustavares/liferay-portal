@@ -383,6 +383,22 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 		}
 	}
 
+	@Override
+	public CalEvent deleteCalEvent(CalEvent calEvent)
+			throws SystemException {
+		try {
+			return deleteEvent(calEvent);
+		} catch (PortalException e) {
+			throw new SystemException(e);
+		}
+	};
+
+	@Override
+	public CalEvent deleteCalEvent(long eventId)
+			throws PortalException, SystemException {
+		return deleteEvent(eventId);
+	};
+
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public CalEvent deleteEvent(CalEvent event)
