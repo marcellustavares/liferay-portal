@@ -1366,6 +1366,10 @@
 				ddmURL.setParameter('showManageTemplates', config.showManageTemplates);
 			}
 
+			if ('showHeader' in config) {
+				ddmURL.setParameter('showHeader', false);
+			}
+
 			if ('showToolbar' in config) {
 				ddmURL.setParameter('showToolbar', config.showToolbar);
 			}
