@@ -115,6 +115,20 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 	);
 
 	Liferay.component('<%= namespace + name %>TimePicker');
+
+	A.one('#<%= namespace + name %>').on(
+		'blur',
+		function (event) {
+			var timePicker = Liferay.component('<%= namespace + name %>TimePicker');
+
+			timePicker.fire(
+				'selectionChange',
+				{
+					newSelection: timePicker.getParsedDatesFromInputValue()
+				}
+			);
+		}
+	);
 </aui:script>
 
 <%!
