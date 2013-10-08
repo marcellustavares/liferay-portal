@@ -189,6 +189,8 @@ public interface PropsKeys {
 
 	public static final String AUTH_TOKEN_IGNORE_ACTIONS = "auth.token.ignore.actions";
 
+	public static final String AUTH_TOKEN_IGNORE_ORIGINS = "auth.token.ignore.origins";
+
 	public static final String AUTH_TOKEN_IGNORE_PORTLETS = "auth.token.ignore.portlets";
 
 	public static final String AUTH_TOKEN_IMPL = "auth.token.impl";
@@ -430,6 +432,8 @@ public interface PropsKeys {
 	public static final String CLUSTER_LINK_ENABLED = "cluster.link.enabled";
 
 	public static final String CLUSTER_LINK_NODE_BOOTUP_RESPONSE_TIMEOUT = "cluster.link.node.bootup.response.timeout";
+
+	public static final String CLUSTERABLE_ADVICE_CALL_MASTER_TIMEOUT = "clusterable.advice.call.master.timeout";
 
 	public static final String COMBO_ALLOWED_FILE_EXTENSIONS = "combo.allowed.file.extensions";
 

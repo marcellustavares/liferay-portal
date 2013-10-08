@@ -17,10 +17,10 @@ package com.liferay.portal.util;
 import com.liferay.portal.NoSuchImageException;
 import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.NoSuchUserException;
-import com.liferay.portal.cluster.ClusterInvokeThreadLocal;
 import com.liferay.portal.dao.orm.common.SQLTransformer;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
+import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
@@ -5105,56 +5105,52 @@ public class PortalImpl implements Portal {
 	public UploadServletRequest getUploadServletRequest(
 		HttpServletRequest request) {
 
-		HttpServletRequestWrapper requestWrapper = null;
+		List<PersistentHttpServletRequestWrapper>
+			persistentHttpServletRequestWrappers =
+				new ArrayList<PersistentHttpServletRequestWrapper>();
 
-		if (request instanceof HttpServletRequestWrapper) {
-			requestWrapper = (HttpServletRequestWrapper)request;
+		HttpServletRequest currentRequest = request;
+
+		while (currentRequest instanceof HttpServletRequestWrapper) {
+			if (currentRequest instanceof UploadServletRequest) {
+				return (UploadServletRequest)currentRequest;
+			}
+
+			if (currentRequest instanceof
+					PersistentHttpServletRequestWrapper) {
+
+				PersistentHttpServletRequestWrapper
+					persistentHttpServletRequestWrapper =
+						(PersistentHttpServletRequestWrapper)currentRequest;
+
+				persistentHttpServletRequestWrappers.add(
+					persistentHttpServletRequestWrapper.clone());
+			}
+
+			HttpServletRequestWrapper httpServletRequestWrapper =
+				(HttpServletRequestWrapper)currentRequest;
+
+			currentRequest =
+				(HttpServletRequest)httpServletRequestWrapper.getRequest();
 		}
 
-		UploadServletRequest uploadServletRequest = null;
-
-		while (uploadServletRequest == null) {
-
-			// Find the underlying UploadServletRequest wrapper. For example,
-			// WebSphere wraps all requests with ProtectedServletRequest.
-
-			if (requestWrapper instanceof UploadServletRequest) {
-				uploadServletRequest = (UploadServletRequest)requestWrapper;
-			}
-			else {
-				HttpServletRequest parentRequest =
-					(HttpServletRequest)requestWrapper.getRequest();
-
-				if (!(parentRequest instanceof HttpServletRequestWrapper)) {
-
-					// This block should never be reached unless this method is
-					// called from a hot deployable portlet. See LayoutAction.
-
-					if (ServerDetector.isWebLogic()) {
-						if (requestWrapper instanceof
-								NonSerializableObjectRequestWrapper) {
-
-							parentRequest = requestWrapper;
-						}
-						else {
-							parentRequest =
-								new NonSerializableObjectRequestWrapper(
-									parentRequest);
-						}
-					}
-
-					uploadServletRequest = new UploadServletRequestImpl(
-						parentRequest);
-
-					break;
-				}
-				else {
-					requestWrapper = (HttpServletRequestWrapper)parentRequest;
-				}
-			}
+		if (ServerDetector.isWebLogic()) {
+			currentRequest = new NonSerializableObjectRequestWrapper(
+				currentRequest);
 		}
 
-		return uploadServletRequest;
+		for (int i = persistentHttpServletRequestWrappers.size() - 1; i >= 0;
+				i--) {
+
+			HttpServletRequestWrapper httpServletRequestWrapper =
+				persistentHttpServletRequestWrappers.get(i);
+
+			httpServletRequestWrapper.setRequest(currentRequest);
+
+			currentRequest = httpServletRequestWrapper;
+		}
+
+		return new UploadServletRequestImpl(currentRequest);
 	}
 
 	@Override
@@ -7030,7 +7026,7 @@ public class PortalImpl implements Portal {
 			LayoutTypePortlet layoutTypePortlet =
 				(LayoutTypePortlet)layout.getLayoutType();
 
-			if (layoutTypePortlet.hasPortletId(portletId)) {
+			if (layoutTypePortlet.hasPortletId(portletId, true)) {
 				if (getScopeGroupId(layout, portletId) == scopeGroupId) {
 					plid = layout.getPlid();
 
@@ -7084,6 +7080,28 @@ public class PortalImpl implements Portal {
 		}
 
 		return locale;
+	}
+
+	protected String getCanonicalDomain(
+		boolean canonicalURL, String virtualHostname, String portalDomain) {
+
+		if (!canonicalURL || Validator.isBlank(portalDomain)) {
+			return virtualHostname;
+		}
+
+		int pos = portalDomain.indexOf(CharPool.COLON);
+
+		if (pos != -1) {
+			portalDomain = portalDomain.substring(0, pos);
+		}
+
+		if (!StringUtil.equalsIgnoreCase(portalDomain, _LOCALHOST) &&
+			StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST)) {
+
+			virtualHostname = portalDomain;
+		}
+
+		return virtualHostname;
 	}
 
 	protected Map<String, List<Portlet>> getCategoriesMap(
@@ -7258,16 +7276,18 @@ public class PortalImpl implements Portal {
 				}
 			}
 
+			String portalDomain = HttpUtil.getDomain(portalURL);
+
 			if (Validator.isNotNull(virtualHostname) &&
 				(canonicalURL ||
 				 !StringUtil.equalsIgnoreCase(virtualHostname, _LOCALHOST))) {
 
+				virtualHostname = getCanonicalDomain(
+					canonicalURL, virtualHostname, portalDomain);
+
 				virtualHostname = getPortalURL(
 					virtualHostname, themeDisplay.getServerPort(),
 					themeDisplay.isSecure());
-
-				String portalDomain = HttpUtil.getDomain(
-					themeDisplay.getPortalURL());
 
 				if (canonicalURL || virtualHostname.contains(portalDomain)) {
 					String path = StringPool.BLANK;
@@ -7315,6 +7335,9 @@ public class PortalImpl implements Portal {
 					if (canonicalURL ||
 						!StringUtil.equalsIgnoreCase(
 							virtualHostname, _LOCALHOST)) {
+
+						virtualHostname = getCanonicalDomain(
+							canonicalURL, virtualHostname, portalDomain);
 
 						portalURL = getPortalURL(
 							virtualHostname, themeDisplay.getServerPort(),

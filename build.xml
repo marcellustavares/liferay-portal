@@ -60,6 +60,13 @@
 		</if>
 
 		<if>
+			<equals arg1="${app.server.type}" arg2="resin" />
+			<then>
+				<ant dir="support-resin" target="clean" inheritAll="false" />
+			</then>
+		</if>
+
+		<if>
 			<equals arg1="${app.server.type}" arg2="tomcat" />
 			<then>
 				<delete failonerror="false">
@@ -70,6 +77,13 @@
 				</delete>
 
 				<ant dir="support-tomcat" target="clean" inheritAll="false" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${app.server.type}" arg2="websphere" />
+			<then>
+				<ant dir="support-websphere" target="clean" inheritAll="false" />
 			</then>
 		</if>
 
@@ -383,6 +397,8 @@ ${app.server.tomcat.dir}, then run "ant -buildfile build-dist.xml unzip-tomcat".
 		<if>
 			<equals arg1="${app.server.type}" arg2="resin" />
 			<then>
+				<ant dir="support-resin" target="deploy" inheritAll="false" />
+
 				<copy todir="${app.server.lib.global.dir}">
 					<fileset
 						dir="lib/development"
@@ -482,6 +498,8 @@ ${app.server.tomcat.dir}, then run "ant -buildfile build-dist.xml unzip-tomcat".
 		<if>
 			<equals arg1="${app.server.type}" arg2="websphere" />
 			<then>
+				<ant dir="support-websphere" target="deploy" inheritAll="false" />
+
 				<exec dir="${app.server.websphere.bin.dir}" executable="/bin/sh" os="${os.unix}">
 					<arg line="startServer.sh server1" />
 				</exec>
@@ -781,8 +799,6 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 		<var name="git.plugins.dir" unset="true" />
 
 		<echo file="git-commit-plugins">${git.commit.plugins.rev.parse}</echo>
-
-		<var name="git.commit.plugins.rev.parse" unset="true" />
 	</target>
 
 	<target name="record-git-commit-portal">
@@ -790,17 +806,7 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 			<arg line="rev-parse HEAD" />
 		</exec>
 
-		<if>
-			<isset property="env.JENKINS_HOME" />
-			<then>
-				<echo file="${env.JENKINS_HOME}/userContent/git-commit-portal">${git.commit.portal.rev.parse}</echo>
-			</then>
-			<else>
-				<echo file="git-commit-portal">${git.commit.portal.rev.parse}</echo>
-			</else>
-		</if>
-
-		<var name="git.commit.portal.rev.parse" unset="true" />
+		<echo file="git-commit-portal">${git.commit.portal.rev.parse}</echo>
 	</target>
 
 	<target name="record-svn-revision">
@@ -922,6 +928,10 @@ Plugins: ${lp.plugins.dir}</echo>
 
 	<target name="test-integration">
 		<ant antfile="build-test.xml" target="test-integration" inheritAll="false" />
+	</target>
+
+	<target name="test-package">
+		<ant antfile="build-test.xml" target="test-package" inheritAll="false" />
 	</target>
 
 	<target name="test-unit">

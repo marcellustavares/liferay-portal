@@ -455,12 +455,14 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 				dynamicQuery.add(
 					classNameIdProperty.eq(stagedModelType.getClassNameId()));
 
-				Property referrerClassNameIdProperty =
-					PropertyFactoryUtil.forName("referrerClassNameId");
+				if (stagedModelType.getReferrerClassNameId() >= 0) {
+					Property referrerClassNameIdProperty =
+						PropertyFactoryUtil.forName("referrerClassNameId");
 
-				dynamicQuery.add(
-					referrerClassNameIdProperty.eq(
-						stagedModelType.getReferrerClassNameId()));
+					dynamicQuery.add(
+						referrerClassNameIdProperty.eq(
+							stagedModelType.getReferrerClassNameId()));
+				}
 
 				Property typeProperty = PropertyFactoryUtil.forName("type");
 
@@ -1660,10 +1662,7 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 			StringBundler urlSB)
 		throws PortalException, SystemException {
 
-		Group group = GroupLocalServiceUtil.getGroup(
-			portletDataContext.getScopeGroupId());
-
-		if (!HttpUtil.hasProtocol(url) || !group.isStagingGroup()) {
+		if (!HttpUtil.hasProtocol(url)) {
 			return url;
 		}
 
@@ -1674,6 +1673,9 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 		if (portalPort == -1) {
 			return url;
 		}
+
+		Group group = GroupLocalServiceUtil.getGroup(
+			portletDataContext.getScopeGroupId());
 
 		LayoutSet publicLayoutSet = group.getPublicLayoutSet();
 

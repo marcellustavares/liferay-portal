@@ -78,7 +78,7 @@
 		</if>
 
 		<if>
-			<condition action="Home#isElementPresent" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
+			<isset var="portletName" />
 			<then>
 				<execute action="Home#click" locator1="//ul[@class='category-portlets']/li[contains(.,'${portletName}')]/a" />
 			</then>
@@ -175,6 +175,18 @@
 				<equals arg1="${pageType}" arg2="Child" />
 				<then>
 					<var name="pageTypeURL" value="/child-sitename" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${pageType}" arg2="Child1" />
+				<then>
+					<var name="pageTypeURL" value="/child-site1name" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${pageType}" arg2="Child Child" />
+				<then>
+					<var name="pageTypeURL" value="/child-childsite1name" />
 				</then>
 			</elseif>
 			<else>

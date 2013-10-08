@@ -170,6 +170,8 @@ public class PropsValues {
 
 	public static String[] AUTH_TOKEN_IGNORE_ACTIONS = PropsUtil.getArray(PropsKeys.AUTH_TOKEN_IGNORE_ACTIONS);
 
+	public static String[] AUTH_TOKEN_IGNORE_ORIGINS = PropsUtil.getArray(PropsKeys.AUTH_TOKEN_IGNORE_ORIGINS);
+
 	public static String[] AUTH_TOKEN_IGNORE_PORTLETS = PropsUtil.getArray(PropsKeys.AUTH_TOKEN_IGNORE_PORTLETS);
 
 	public static final String AUTH_TOKEN_IMPL = PropsUtil.get(PropsKeys.AUTH_TOKEN_IMPL);
@@ -373,6 +375,8 @@ public class PropsValues {
 	public static final boolean CLUSTER_LINK_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.CLUSTER_LINK_ENABLED));
 
 	public static final long CLUSTER_LINK_NODE_BOOTUP_RESPONSE_TIMEOUT = GetterUtil.getLong(PropsUtil.get(PropsKeys.CLUSTER_LINK_NODE_BOOTUP_RESPONSE_TIMEOUT));
+
+	public static final long CLUSTERABLE_ADVICE_CALL_MASTER_TIMEOUT = GetterUtil.getLong(PropsUtil.get(PropsKeys.CLUSTERABLE_ADVICE_CALL_MASTER_TIMEOUT));
 
 	public static final String[] COMBO_ALLOWED_FILE_EXTENSIONS = PropsUtil.getArray(PropsKeys.COMBO_ALLOWED_FILE_EXTENSIONS);
 

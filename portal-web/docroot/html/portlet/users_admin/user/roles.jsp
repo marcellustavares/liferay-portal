@@ -84,9 +84,10 @@ userGroupRoles.addAll(siteRoles);
 <c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 	<liferay-ui:icon
 		cssClass="modify-link"
+		iconClass="icon-search"
 		id="selectRegularRoleLink"
-		image="add"
 		label="<%= true %>"
+		linkCssClass="btn"
 		message="select"
 		method="get"
 		url="javascript:;"
@@ -115,8 +116,6 @@ userGroupRoles.addAll(siteRoles);
 		);
 	</aui:script>
 </c:if>
-
-<br /><br />
 
 <h3><liferay-ui:message key="inherited-roles" /></h3>
 
@@ -167,8 +166,6 @@ userGroupRoles.addAll(siteRoles);
 
 	<liferay-ui:search-iterator paginate="<%= false %>" />
 </liferay-ui:search-container>
-
-<br /><br />
 
 <h3><liferay-ui:message key="organization-roles" /></h3>
 
@@ -253,9 +250,10 @@ userGroupRoles.addAll(siteRoles);
 <c:if test="<%= !organizations.isEmpty() && !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 	<liferay-ui:icon
 		cssClass="modify-link"
+		iconClass="icon-search"
 		id="selectOrganizationRoleLink"
-		image="add"
 		label="<%= true %>"
+		linkCssClass="btn"
 		message="select"
 		method="get"
 		url="javascript:;"
@@ -282,8 +280,6 @@ userGroupRoles.addAll(siteRoles);
 		);
 	</aui:script>
 </c:if>
-
-<br /><br />
 
 <h3><liferay-ui:message key="site-roles" /></h3>
 
@@ -347,9 +343,10 @@ userGroupRoles.addAll(siteRoles);
 		<c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
 			<liferay-ui:icon
 				cssClass="modify-link"
+				iconClass="icon-search"
 				id="selectSiteRoleLink"
-				image="add"
 				label="<%= true %>"
+				linkCssClass="btn"
 				message="select"
 				method="get"
 				url="javascript:;"
@@ -406,8 +403,8 @@ userGroupRoles.addAll(siteRoles);
 	function <portlet:namespace />deleteGroupRole(roleId, groupId) {
 		for (var i = 0; i < <portlet:namespace />groupRolesRoleIds.length; i++) {
 			if ((<portlet:namespace />groupRolesRoleIds[i] == roleId) && (<portlet:namespace />groupRolesGroupIds[i] == groupId)) {
-				 <portlet:namespace />groupRolesGroupIds.splice(i, 1);
-				 <portlet:namespace />groupRolesRoleIds.splice(i, 1);
+				<portlet:namespace />groupRolesGroupIds.splice(i, 1);
+				<portlet:namespace />groupRolesRoleIds.splice(i, 1);
 
 				break;
 			}
