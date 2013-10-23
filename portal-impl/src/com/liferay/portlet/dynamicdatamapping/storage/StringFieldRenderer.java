@@ -42,6 +42,10 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 
 		List<String> values = new ArrayList<String>();
 
+		if (field.isPrivate()) {
+			return StringPool.BLANK;
+		}
+
 		for (Serializable value : field.getValues(locale)) {
 			String valueString = String.valueOf(value);
 
@@ -49,8 +53,8 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 				continue;
 			}
 
-			if (fieldType.equals(DDMImpl.TYPE_RADIO) ||
-				fieldType.equals(DDMImpl.TYPE_SELECT)) {
+			if (DDMImpl.TYPE_RADIO.equals(fieldType) ||
+				DDMImpl.TYPE_SELECT.equals(fieldType)) {
 
 				valueString = handleJSON(field, valueString, locale);
 			}
@@ -67,14 +71,14 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 
 		Serializable value = field.getValue(locale, valueIndex);
 
-		if (Validator.isNull(value)) {
+		if (Validator.isNull(value) || field.isPrivate()) {
 			return StringPool.BLANK;
 		}
 
 		String fieldType = getFieldType(field);
 
-		if (fieldType.equals(DDMImpl.TYPE_RADIO) ||
-			fieldType.equals(DDMImpl.TYPE_SELECT)) {
+		if (DDMImpl.TYPE_RADIO.equals(fieldType) ||
+			DDMImpl.TYPE_SELECT.equals(fieldType)) {
 
 			return handleJSON(field, String.valueOf(value), locale);
 		}
