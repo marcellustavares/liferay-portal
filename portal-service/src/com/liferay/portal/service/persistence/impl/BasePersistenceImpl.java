@@ -87,8 +87,13 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 	public long countWithDynamicQuery(DynamicQuery dynamicQuery)
 		throws SystemException {
 
-		return countWithDynamicQuery(
-			dynamicQuery, ProjectionFactoryUtil.rowCount());
+		List<Long> results = findWithDynamicQuery(dynamicQuery);
+
+		if (results.isEmpty()) {
+			return 0;
+		}
+
+		return results.get(0);
 	}
 
 	@Override
@@ -102,14 +107,7 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 
 		dynamicQuery.setProjection(projection);
 
-		List<Long> results = findWithDynamicQuery(dynamicQuery);
-
-		if (results.isEmpty()) {
-			return 0;
-		}
-		else {
-			return (results.get(0)).longValue();
-		}
+		return countWithDynamicQuery(dynamicQuery);
 	}
 
 	@Override
