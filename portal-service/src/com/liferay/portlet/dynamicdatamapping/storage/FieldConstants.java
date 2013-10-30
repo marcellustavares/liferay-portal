@@ -132,6 +132,9 @@ public class FieldConstants {
 			return GetterUtil.getLong(value);
 		}
 		else if (type.equals(NUMBER)) {
+			value = value.replaceAll("[,\\.](?=\\d*[,\\.])","").
+				replaceAll(",", ".");
+
 			return GetterUtil.getNumber(value);
 		}
 		else if (type.equals(SHORT)) {
