@@ -13,10 +13,17 @@ AUI.add(
 			return defaultAcceptFiles(val, node, ruleValue);
 		};
 
+		var number = function(val, node, ruleValue) {
+            var regex = A.DOM._getRegExp('^[+\\-]?(\\d+)(\\.\\d+)?([eE][+-]?\\d+)?$', 'i');
+
+            return regex && regex.test(val);
+		};
+
 		A.mix(
 			DEFAULTS_FORM_VALIDATOR.RULES,
 			{
-				acceptFiles: acceptFiles
+				acceptFiles: acceptFiles,
+				number: number
 			},
 			true
 		);
