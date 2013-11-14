@@ -105,6 +105,8 @@
 
 	<!-- Generic search engine -->
 
+	<bean id="com.liferay.portal.kernel.search.NoOpIndexSearcherWriter" class="com.liferay.portal.kernel.search.NoOpIndexSearcherWriter">
+	</bean>
 	<bean id="com.liferay.portal.search.generic.GenericSearchEngineImpl" class="com.liferay.portal.kernel.search.BaseSearchEngine">
 		<property name="booleanClauseFactory" >
 			<bean class="com.liferay.portal.search.generic.BooleanClauseFactoryImpl" />
@@ -112,6 +114,8 @@
 		<property name="booleanQueryFactory" >
 			<bean class="com.liferay.portal.search.generic.BooleanQueryFactoryImpl" />
 		</property>
+		<property name="indexSearcher" ref="com.liferay.portal.kernel.search.NoOpIndexSearcherWriter" />
+		<property name="indexWriter" ref="com.liferay.portal.kernel.search.NoOpIndexSearcherWriter" />
 		<property name="luceneBased" value="false" />
 		<property name="termQueryFactory">
 			<bean class="com.liferay.portal.search.generic.TermQueryFactoryImpl" />
