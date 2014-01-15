@@ -28,6 +28,20 @@ public enum ComparisonOperator {
 		return _value;
 	}
 
+	public boolean in(ComparisonOperator... comparisonOperators) {
+
+		boolean result = false;
+
+		for (ComparisonOperator comparisonOperator : comparisonOperators) {
+			if (this == comparisonOperator) {
+				result = true;
+				break;
+			}
+		}
+
+		return result;
+	}
+
 	@Override
 	public String toString() {
 		return _value;

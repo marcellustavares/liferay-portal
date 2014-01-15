@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
@@ -72,6 +71,32 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @author Marcellus Tavares
  */
 public class ExpandoStorageAdapter extends BaseStorageAdapter {
+
+	protected void buildInNotInQuery(
+		FieldCondition fieldCondition, StringBundler sb, boolean inOperator) {
+
+		String logicalString = " and ";
+
+		if (inOperator) {
+			logicalString = " or ";
+		}
+
+		List<Object> inArguments = (List<Object>)fieldCondition.getValue();
+
+		String value = (String)inArguments.get(0);
+
+		sb.append(" and (");
+		_buildMatchesExpression(value, sb);
+
+		if (inArguments.size() > 1) {
+			for (int i = 1; i < inArguments.size(); i++) {
+				sb.append(logicalString);
+				_buildMatchesExpression((String)inArguments.get(i), sb);
+			}
+		}
+
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+	}
 
 	@Override
 	protected long doCreate(
@@ -161,7 +186,7 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		Expression expression = null;
 
 		if (condition != null) {
-			expression = _parseExpression(condition);
+			expression = _parseExpression(ddmStructureId, condition);
 		}
 
 		int count = 0;
@@ -217,14 +242,24 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 			standardEvaluationContext.setBeanResolver(
 				new ExpandoValueBeanResolver(expandoValues));
 
-			return expression.getValue(
-				standardEvaluationContext, Boolean.class);
+			Boolean valueOf = expression.getValue(standardEvaluationContext,
+				Boolean.class);
+
+			return valueOf;
 		}
 		catch (EvaluationException ee) {
 			_log.error("Unable to evaluate expression", ee);
 		}
 
 		return false;
+	}
+
+	private void _buildMatchesExpression(String fieldValue,
+		StringBundler sb) {
+
+		sb.append(".data matches '(.*)(<Data language-id=\"\\w+\">(\\w+,?)*");
+		sb.append(fieldValue);
+		sb.append("(,?\\w+)*</Data>)(.*)'");
 	}
 
 	private void _checkExpandoColumns(ExpandoTable expandoTable, Fields fields)
@@ -290,7 +325,7 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		Expression expression = null;
 
 		if (condition != null) {
-			expression = _parseExpression(condition);
+			expression = _parseExpression(ddmStructureId, condition);
 		}
 
 		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
@@ -423,8 +458,8 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		return valuesMap;
 	}
 
-	private Expression _parseExpression(Condition condition) {
-		String expression = _toExpression(condition);
+	private Expression _parseExpression(long ddmStructureId, Condition condition) throws Exception {
+		String expression = _toExpression(ddmStructureId, condition);
 
 		try {
 			ExpressionParser expressionParser = new SpelExpressionParser();
@@ -438,21 +473,22 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		return null;
 	}
 
-	private String _toExpression(Condition condition) {
+	private String _toExpression(long ddmStructureId, Condition condition) throws Exception {
 		if (condition.isJunction()) {
 			Junction junction = (Junction)condition;
 
 			return StringPool.OPEN_PARENTHESIS.concat(
-				_toExpression(junction)).concat(StringPool.CLOSE_PARENTHESIS);
+				_toExpression(ddmStructureId, junction)).concat(StringPool.CLOSE_PARENTHESIS);
 		}
 		else {
 			FieldCondition fieldCondition = (FieldCondition)condition;
 
-			return _toExpression(fieldCondition);
+			return _toExpression(ddmStructureId, fieldCondition);
 		}
 	}
 
-	private String _toExpression(FieldCondition fieldCondition) {
+	private String _toExpression(long ddmStructureId,
+		FieldCondition fieldCondition) throws Exception {
 		StringBundler sb = new StringBundler(5);
 
 		sb.append("(@");
@@ -461,23 +497,52 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		ComparisonOperator comparisonOperator =
 			fieldCondition.getComparisonOperator();
 
-		if (comparisonOperator.equals(ComparisonOperator.LIKE)) {
-			sb.append(".data matches ");
-		}
-		else {
-			sb.append(".data == ");
+		DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
+			ddmStructureId);
+
+		String fieldDataType = structure.getFieldDataType(
+			fieldCondition.getName());
+
+		switch (comparisonOperator) {
+			case EQUALS:
+
+				if (FieldConstants.STRING.equals(fieldDataType)) {
+					_buildMatchesExpression(fieldCondition.getValue().toString(),
+						sb);
+				}
+				else {
+					sb.append(".data == ");
+				}
+
+				break;
+			case LIKE:
+				_buildMatchesExpression((String)fieldCondition.getValue(), sb);
+				break;
+			case NOT_IN:
+				buildInNotInQuery(fieldCondition, sb, false);
+				break;
+			case IN:
+				buildInNotInQuery(fieldCondition, sb, true);
+				break;
+			default:
+				//<?xml version='1.0' encoding='UTF-8'?><root available-locales="en_US" default-locale="en_US"><Data language-id="en_US">5</Data></root>
+
+				sb.append(".data ");
+				sb.append(comparisonOperator.getValue());
+				sb.append(" ");
+				sb.append(fieldCondition.getValue());
+				break;
 		}
 
-		String value = StringUtil.quote(
-			String.valueOf(fieldCondition.getValue()));
-
-		sb.append(value);
 		sb.append(StringPool.CLOSE_PARENTHESIS);
+
+		System.out.println(sb);
 
 		return sb.toString();
 	}
 
-	private String _toExpression(Junction junction) {
+	private String _toExpression(long ddmStructureId, Junction junction)
+		throws Exception {
 		StringBundler sb = new StringBundler();
 
 		LogicalOperator logicalOperator = junction.getLogicalOperator();
@@ -487,7 +552,7 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		while (itr.hasNext()) {
 			Condition condition = itr.next();
 
-			sb.append(_toExpression(condition));
+			sb.append(_toExpression(ddmStructureId, condition));
 
 			if (itr.hasNext()) {
 				sb.append(StringPool.SPACE);
