@@ -53,6 +53,42 @@ import java.util.Map;
  */
 public class XMLStorageAdapter extends BaseStorageAdapter {
 
+	protected void buildInNotInQuery(
+		FieldCondition fieldCondition, StringBundler sb, boolean inOperator) {
+
+		String logicalString = " and ";
+		String comparisonString = " != ";
+
+		if (inOperator) {
+			logicalString = " or ";
+			comparisonString = " = ";
+		}
+
+		List<Object> inArguments = (List<Object>)fieldCondition.getValue();
+
+		String value = HtmlUtil.escapeXPathAttribute(
+			String.valueOf(inArguments.get(0)));
+
+		sb.append(" and (");
+		sb.append(" dynamic-content ");
+		sb.append(comparisonString);
+		sb.append(value);
+
+		if (inArguments.size() > 1) {
+			for (int i = 1; i < inArguments.size(); i++) {
+				value = HtmlUtil.escapeXPathAttribute(
+					String.valueOf(inArguments.get(i)));
+
+				sb.append(logicalString);
+				sb.append(" dynamic-content ");
+				sb.append(comparisonString);
+				sb.append(value);
+			}
+		}
+
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+	}
+
 	@Override
 	protected long doCreate(
 			long companyId, long ddmStructureId, Fields fields,
@@ -301,24 +337,30 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 		ComparisonOperator comparisonOperator =
 			fieldCondition.getComparisonOperator();
 
-		if (comparisonOperator.equals(ComparisonOperator.LIKE)) {
-			sb.append(" and matches(dynamic-content, ");
-		}
-		else {
-			sb.append(" and dynamic-content= ");
-		}
-
 		String value = HtmlUtil.escapeXPathAttribute(
 			String.valueOf(fieldCondition.getValue()));
 
-		sb.append(value);
-
-		if (comparisonOperator.equals(ComparisonOperator.LIKE)) {
-			sb.append(StringPool.CLOSE_PARENTHESIS);
+		switch (comparisonOperator) {
+			case LIKE:
+				sb.append(" and matches(dynamic-content, ");
+				sb.append(value);
+				sb.append(StringPool.CLOSE_PARENTHESIS);
+				break;
+			case NOT_IN:
+				buildInNotInQuery(fieldCondition, sb, false);
+				break;
+			case IN:
+				buildInNotInQuery(fieldCondition, sb, true);
+				break;
+			default:
+				sb.append("and dynamic-content ");
+				sb.append(comparisonOperator.getValue());
+				sb.append(" ");
+				sb.append(value);
+				break;
 		}
 
 		sb.append(StringPool.CLOSE_PARENTHESIS);
-
 		return sb.toString();
 	}
 
