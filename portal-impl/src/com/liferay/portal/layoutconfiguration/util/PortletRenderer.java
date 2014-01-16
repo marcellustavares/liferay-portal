@@ -67,7 +67,7 @@ public class PortletRenderer {
 		throws PortletContainerException {
 
 		request = PortletContainerUtil.setupOptionalRenderParameters(
-			request, null, _columnId, _columnPos, _columnCount);
+			request, null, null, _columnId, _columnPos, _columnCount);
 
 		return _render(request, response);
 	}
@@ -77,7 +77,7 @@ public class PortletRenderer {
 		throws PortletContainerException {
 
 		request = PortletContainerUtil.setupOptionalRenderParameters(
-			request, _RENDER_PATH, null, null, null);
+			request, _RENDER_PATH, null, null, null, null);
 
 		_restrictPortletServletRequest = (RestrictPortletServletRequest)request;
 
@@ -92,7 +92,7 @@ public class PortletRenderer {
 			WebKeys.PARALLEL_RENDERING_TIMEOUT_ERROR, Boolean.TRUE);
 
 		request = PortletContainerUtil.setupOptionalRenderParameters(
-			request, null, null, null, null);
+			request, null, null, null, null, null);
 
 		_restrictPortletServletRequest = (RestrictPortletServletRequest)request;
 
@@ -167,7 +167,7 @@ public class PortletRenderer {
 
 			HttpServletRequest request =
 				PortletContainerUtil.setupOptionalRenderParameters(
-					_request, null, _columnId, _columnPos, _columnCount);
+					_request, null, null, _columnId, _columnPos, _columnCount);
 
 			_restrictPortletServletRequest =
 				(RestrictPortletServletRequest)request;
