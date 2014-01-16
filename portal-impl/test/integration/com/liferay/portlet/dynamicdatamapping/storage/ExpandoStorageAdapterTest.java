@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 
@@ -111,6 +112,13 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 		Assert.fail("Not yet implemented !");
 	}
 
+	public static void main(String[] args) {
+
+		String teste = "<?xml version='1.0' encoding='UTF-8'?><root available-locales=\"en_US\" default-locale=\"en_US\"><Data language-id=\"en_US\">a</Data></root>";
+
+		System.out.println(teste.replaceAll("", ""));
+	}
+
 	@Override
 	public void testConditionGreaterThan() throws Exception {
 		ConditionData conditionData = ConditionData
@@ -191,12 +199,9 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema(
 					"ddm-structure-number-field.xsd").withStructureName(
 					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(5, 6)
-				.withExpectedResults(
-					Arrays
-						.asList(7, 8, 9, 10), 0).withExpectedResults(
-					Arrays
-						.asList(1, 2, 3, 4, 5, 6), 1);
+					_expandoStorageAdapater).usingSampleValues(5)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 0)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1);
 
 		testCondition(conditionData);
 	}
@@ -223,7 +228,19 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionInWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.IN, "number")
+				.withStructureSchema(
+					"ddm-structure-number-field.xsd").withStructureName(
+					"Number Field Structure").usingStorageAdapter(
+					_expandoStorageAdapater).usingSampleValues(5, 6)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 0)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1)
+				.withExpectedResults(Arrays.asList(4, 6), 1)
+				.withExpectedResults(Arrays.asList(4, 5), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
@@ -329,12 +346,13 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 		ConditionData conditionData =
 			ConditionData
 				.newConditionData(
-					ComparisonOperator.NOT_EQUALS, "text").withStructureSchema(
-					"ddm-structure-text-field.xsd").withStructureName(
-					"Text Field Structure")
-				.usingStorageAdapter(_expandoStorageAdapater).usingSampleValues(
-					"5").withExpectedResults("5", 0)
-				.withExpectedResults("6", 1);
+					ComparisonOperator.NOT_EQUALS, "text")
+					.withStructureSchema("ddm-structure-text-field.xsd")
+					.withStructureName("Text Field Structure")
+					.usingStorageAdapter(_expandoStorageAdapater)
+					.usingSampleValues("a")
+					.withExpectedResults("a", 0)
+					.withExpectedResults("b", 1);
 
 		testCondition(conditionData);
 	}
@@ -346,7 +364,19 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionNotEqualsWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(
+					ComparisonOperator.NOT_EQUALS, "text")
+					.withStructureSchema("ddm-structure-text-field.xsd")
+					.withStructureName("Text Field Structure")
+					.usingStorageAdapter(_expandoStorageAdapater)
+					.usingSampleValues("a","b")
+					.withExpectedResults("a", 0)
+					.withExpectedResults("b", 0)
+					.withExpectedResults("c", 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
@@ -354,15 +384,12 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 		ConditionData conditionData =
 			ConditionData
 				.newConditionData(ComparisonOperator.NOT_IN, "number")
-				.withStructureSchema(
-					"ddm-structure-number-field.xsd").withStructureName(
-					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(6)
-
-				// .withExpectedResults(Arrays.asList(7,8,9,10), 1)
-
-				.withExpectedResults(Arrays
-					.asList(6), 0);
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_expandoStorageAdapater)
+				.usingSampleValues(5)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 0);
 
 		testCondition(conditionData);
 	}
@@ -374,17 +401,28 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionNotInWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.NOT_IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_expandoStorageAdapater)
+				.usingSampleValues(5,6)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 0)
+				.withExpectedResults(Arrays.asList(4, 6), 1)
+				.withExpectedResults(Arrays.asList(4, 5), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testDateField() throws Exception {
 		String xsd = readText("ddm-structure-date-field.xsd");
 
-		DDMStructure structure =
-			addStructure(
-				_classNameId, null, "Date Field Structure", xsd, StorageType.EXPANDO
-					.getValue(), DDMStructureConstants.TYPE_DEFAULT);
+		DDMStructure structure = addStructure(_classNameId, null,
+			"Date Field Structure", xsd, StorageType.EXPANDO.getValue(),
+				DDMStructureConstants.TYPE_DEFAULT);
 
 		Fields fields = new Fields();
 
