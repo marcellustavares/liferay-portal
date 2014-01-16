@@ -396,6 +396,11 @@ public class JournalConverterImpl implements JournalConverter {
 			Locale locale = LocaleUtil.fromLanguageId(
 				dynamicContentElement.attributeValue("language-id"));
 
+			Map<String, String> attributes = getFieldAttributes(
+				dynamicContentElement);
+
+			ddmField.addAttributes(locale, attributes);
+
 			Serializable serializable = getFieldValue(
 				dataType, type, dynamicContentElement);
 
@@ -403,6 +408,21 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 
 		return ddmField;
+	}
+
+	protected Map<String, String> getFieldAttributes(
+			Element dynamicContentElement)
+		throws Exception {
+
+		List<Attribute> attributes = dynamicContentElement.attributes();
+
+		Map<String, String> fieldAttributes = new HashMap<String, String>();
+
+		for (Attribute attribute : attributes) {
+			fieldAttributes.put(attribute.getName(), attribute.getValue());
+		}
+
+		return fieldAttributes;
 	}
 
 	protected Serializable getFieldValue(
@@ -521,6 +541,13 @@ public class JournalConverterImpl implements JournalConverter {
 
 			dynamicContentElement.addAttribute(
 				"language-id", LocaleUtil.toLanguageId(locale));
+
+			for (Map.Entry<String, String> entry :
+					ddmField.getAttributes(locale).entrySet()) {
+
+				dynamicContentElement.addAttribute(
+					entry.getKey(), entry.getValue());
+			}
 
 			int count = ddmFieldsCounter.get(fieldName);
 
