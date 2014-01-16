@@ -36,13 +36,13 @@ import com.liferay.portlet.dynamicdatamapping.storage.query.Condition;
 import com.liferay.portlet.dynamicdatamapping.storage.query.FieldCondition;
 
 import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,18 +63,22 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionEquals() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionEqualsWithLocale() throws Exception;
 
 	@Test
 	public abstract void testConditionEqualsWithRepeatable() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionExcludes() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionExcludesWithLocale() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionExcludesWithRepeatable() throws Exception;
 
@@ -84,6 +88,7 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionGreaterThanOrEqualTo() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionGreaterThanOrEqualToWithLocale()
 		throws Exception;
@@ -92,6 +97,7 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	public abstract void testConditionGreaterThanOrEqualToWithRepeatable()
 		throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionGreaterThanWithLocale() throws Exception;
 
@@ -102,27 +108,34 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionIn() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionIncludes() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionIncludesWithLocale() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionIncludesWithRepeatable() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionInWithLocale() throws Exception;
 
 	@Test
 	public abstract void testConditionInWithRepeatable() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionJoin() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionJoinWithLocale() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionJoinWithRepeatable() throws Exception;
 
@@ -132,6 +145,7 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionLessThanOrEqualTo() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionLessThanOrEqualToWithLocale()
 		throws Exception;
@@ -140,6 +154,7 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	public abstract void testConditionLessThanOrEqualToWithRepeatable()
 		throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionLessThanWithLocale() throws Exception;
 
@@ -149,9 +164,11 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionLike() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionLikeWithLocale() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionLikeWithRepeatable() throws Exception;
 
@@ -168,6 +185,7 @@ public abstract class BaseStorageAdapterTest extends BaseDDMServiceTestCase {
 	@Test
 	public abstract void testConditionNotIn() throws Exception;
 
+	@Ignore("Not ready to run")
 	@Test
 	public abstract void testConditionNotInWithLocale() throws Exception;
 

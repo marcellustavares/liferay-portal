@@ -48,7 +48,6 @@ import com.liferay.portlet.expando.service.ExpandoTableLocalServiceUtil;
 import com.liferay.portlet.expando.service.ExpandoValueLocalServiceUtil;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +56,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
@@ -83,19 +84,18 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 
 		List<Object> inArguments = (List<Object>)fieldCondition.getValue();
 
-		String value = (String)inArguments.get(0);
-
-		sb.append(" and (");
-		_buildMatchesExpression(value, sb);
+		String value = inArguments.get(0).toString();
+		_buildMatchesExpression(fieldCondition.getName(), value, sb, inOperator);
 
 		if (inArguments.size() > 1) {
+
 			for (int i = 1; i < inArguments.size(); i++) {
 				sb.append(logicalString);
-				_buildMatchesExpression((String)inArguments.get(i), sb);
+				_buildMatchesExpression(fieldCondition.getName(),
+					inArguments.get(i).toString(), sb, inOperator);
 			}
 		}
 
-		sb.append(StringPool.CLOSE_PARENTHESIS);
 	}
 
 	@Override
@@ -254,12 +254,26 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		return false;
 	}
 
-	private void _buildMatchesExpression(String fieldValue,
-		StringBundler sb) {
+	private void _buildMatchesExpression(String fieldName,
+		String fieldValue, StringBundler sb, boolean matches) {
 
+		if(!matches) {
+			sb.append(StringPool.OPEN_PARENTHESIS);
+		}
+
+		sb.append("@");
+		sb.append(fieldName);
 		sb.append(".data matches '(.*)(<Data language-id=\"\\w+\">(\\w+,?)*");
 		sb.append(fieldValue);
 		sb.append("(,?\\w+)*</Data>)(.*)'");
+
+		if(!matches) {
+			sb.append(StringPool.CLOSE_PARENTHESIS);
+			sb.append(ComparisonOperator.NOT_EQUALS.getValue());
+			sb.append(true);
+
+		}
+
 	}
 
 	private void _checkExpandoColumns(ExpandoTable expandoTable, Fields fields)
@@ -491,8 +505,7 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		FieldCondition fieldCondition) throws Exception {
 		StringBundler sb = new StringBundler(5);
 
-		sb.append("(@");
-		sb.append(fieldCondition.getName());
+		sb.append("(");
 
 		ComparisonOperator comparisonOperator =
 			fieldCondition.getComparisonOperator();
@@ -507,16 +520,27 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 			case EQUALS:
 
 				if (FieldConstants.STRING.equals(fieldDataType)) {
-					_buildMatchesExpression(fieldCondition.getValue().toString(),
-						sb);
+					_buildMatchesExpression(fieldCondition.getName(),
+						fieldCondition.getValue().toString(), sb, true);
 				}
 				else {
 					sb.append(".data == ");
 				}
 
 				break;
+			case NOT_EQUALS:
+
+				if (FieldConstants.STRING.equals(fieldDataType)) {
+					_buildMatchesExpression(fieldCondition.getName(),
+						fieldCondition.getValue().toString(), sb, false);
+				}
+				else {
+					sb.append(".data != ");
+				}
+
+				break;
 			case LIKE:
-				_buildMatchesExpression((String)fieldCondition.getValue(), sb);
+				_buildMatchesExpression(fieldCondition.getName(), (String)fieldCondition.getValue(), sb, true);
 				break;
 			case NOT_IN:
 				buildInNotInQuery(fieldCondition, sb, false);
@@ -525,9 +549,13 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 				buildInNotInQuery(fieldCondition, sb, true);
 				break;
 			default:
-				//<?xml version='1.0' encoding='UTF-8'?><root available-locales="en_US" default-locale="en_US"><Data language-id="en_US">5</Data></root>
+				//<?xml version='1.0' encoding='UTF-8'?>
+				//<root available-locales="en_US" default-locale="en_US">
+				//<Data language-id="en_US">5</Data></root>
 
-				sb.append(".data ");
+				sb.append("@");
+				sb.append(fieldCondition.getName());
+				sb.append(".data");
 				sb.append(comparisonOperator.getValue());
 				sb.append(" ");
 				sb.append(fieldCondition.getValue());
