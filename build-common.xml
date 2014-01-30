@@ -523,6 +523,102 @@ Please set the environment variable ANT_OPTS to the recommended value of
 		</sequential>
 	</macrodef>
 
+	<macrodef name="check-fix-pack-requirements">
+		<attribute default="${app.server.dir}/patching-tool/patches" name="fix.pack.dir" />
+		<attribute name="fix.pack.file.name" />
+
+		<sequential>
+			<propertyregex
+				input="@{fix.pack.file.name}"
+				property="fix.pack.build.version"
+				regexp=".+(\d{4})\.zip"
+				replace="\1"
+			/>
+
+			<propertyregex
+				input="@{fix.pack.file.name}"
+				property="fix.pack.portal.version"
+				regexp=".+(\d)(\d)(\d\d)\.zip"
+				replace="\1.\2.\3"
+			/>
+
+			<property
+				name="fix.pack.temp.dir"
+				value="@{fix.pack.dir}/temp"
+			/>
+
+			<mkdir dir="${fix.pack.temp.dir}" />
+
+			<unzip
+				dest="${fix.pack.temp.dir}"
+				src="@{fix.pack.dir}/@{fix.pack.file.name}"
+			/>
+
+			<xmlproperty file="${fix.pack.temp.dir}/fixpack_documentation.xml" />
+
+			<delete dir="${fix.pack.temp.dir}" />
+
+			<antelope:stringutil property="fix.pack.requirements" string="${patch.requirements}">
+				<antelope:replace regex="!" replacement="" />
+				<antelope:replace regex="&gt;=" replacement="-" />
+			</antelope:stringutil>
+
+			<var name="patch.requirements" unset="true" />
+
+			<if>
+				<not>
+					<equals arg1="${fix.pack.requirements}" arg2="" />
+				</not>
+				<then>
+					<for list="${fix.pack.requirements}" param="fix.pack.requirement">
+						<sequential>
+							<propertyregex
+								input="@{fix.pack.requirement}"
+								property="fix.pack.requirement.type"
+								override="true"
+								regexp="-\d+"
+								replace=""
+							/>
+
+							<if>
+								<equals arg1="${fix.pack.requirement.type}" arg2="hotfix" />
+								<then>
+									<var
+										name="fix.pack.requirement.file.name"
+										value="liferay-@{fix.pack.requirement}-${fix.pack.build.version}.zip"
+									/>
+								</then>
+								<else>
+									<var
+										name="fix.pack.requirement.file.name"
+										value="liferay-fix-pack-@{fix.pack.requirement}-${fix.pack.build.version}.zip"
+									/>
+								</else>
+							</if>
+
+							<if>
+								<not>
+									<available file="@{fix.pack.dir}/${fix.pack.requirement.file.name}" />
+								</not>
+								<then>
+									<get
+										dest="@{fix.pack.dir}"
+										src="http://mirrors/files.liferay.com/private/ee/fix-packs/${fix.pack.portal.version}/${fix.pack.requirement.type}/${fix.pack.requirement.file.name}"
+									/>
+
+									<check-fix-pack-requirements
+										fix.pack.dir="@{fix.pack.dir}"
+										fix.pack.file.name="${fix.pack.requirement.file.name}"
+									/>
+								</then>
+							</if>
+						</sequential>
+					</for>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="execute">
 		<attribute default="." name="dir" />
 
