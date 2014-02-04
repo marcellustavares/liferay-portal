@@ -105,8 +105,8 @@ public class BaseJournalServiceTestCase {
 		return companyGroup.getGroupId();
 	}
 
-	protected String getDefultXsd() throws Exception {
-		String xsd = readText("test-journal-structure-all-fields.xml");
+	protected String getDefaultXsd() throws Exception {
+		String xsd = readText("test-journal-structure-text.xml");
 
 		return DDMXMLUtil.formatXML(xsd);
 	}

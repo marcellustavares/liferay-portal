@@ -61,7 +61,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 		String structureId = generateId();
 
 		JournalStructure structure = addStructure(
-			groupId, structureId, getDefultXsd());
+			groupId, structureId, getDefaultXsd());
 
 		Assert.assertEquals(structureId, structure.getStructureId());
 	}
@@ -70,7 +70,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 	public void testCheckNewLine() throws Exception {
 		String structureId = generateId();
 
-		String xsd = getDefultXsd();
+		String xsd = getDefaultXsd();
 
 		xsd.concat("\\n\\n");
 
@@ -88,7 +88,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 	public void testCopyStructure() throws Exception {
 		String oldStructureId = generateId();
 
-		String xsd = getDefultXsd();
+		String xsd = getDefaultXsd();
 
 		addStructure(groupId, oldStructureId, xsd);
 
@@ -110,7 +110,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 		String structureId = generateId();
 
 		JournalStructure structure = addStructure(
-			groupId, structureId, getDefultXsd());
+			groupId, structureId, getDefaultXsd());
 
 		JournalStructureLocalServiceUtil.deleteStructure(structure);
 
@@ -121,8 +121,8 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 
 	@Test
 	public void testDeleteStructures() throws Exception {
-		addStructure(groupId, generateId(), getDefultXsd());
-		addStructure(groupId, generateId(), getDefultXsd());
+		addStructure(groupId, generateId(), getDefaultXsd());
+		addStructure(groupId, generateId(), getDefaultXsd());
 
 		int structuresCount =
 			JournalStructureLocalServiceUtil.getStructuresCount(groupId);
@@ -141,7 +141,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 	public void testGetStructure() throws Exception {
 		String structureId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		boolean hasStructure = hasStructure(structureId, false);
 
@@ -152,7 +152,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 	public void testGetStructureGlobalIncluded() throws Exception {
 		String structureId = generateId();
 
-		addStructure(getCompanyGroupId(), structureId, getDefultXsd());
+		addStructure(getCompanyGroupId(), structureId, getDefaultXsd());
 
 		boolean hasStructure = hasStructure(structureId, true);
 
@@ -161,8 +161,8 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 
 	@Test
 	public void testGetStructures() throws Exception {
-		addStructure(groupId, generateId(), getDefultXsd());
-		addStructure(groupId, generateId(), getDefultXsd());
+		addStructure(groupId, generateId(), getDefaultXsd());
+		addStructure(groupId, generateId(), getDefaultXsd());
 
 		List<JournalStructure> structures =
 			JournalStructureLocalServiceUtil.getStructures(groupId);
@@ -172,10 +172,10 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 
 	@Test
 	public void testSearchByKeywords() throws Exception {
-		addStructure(groupId, generateId(), "First Structure", getDefultXsd());
+		addStructure(groupId, generateId(), "First Structure", getDefaultXsd());
 		addStructure(
 			getCompanyGroupId(), generateId(), "Second Structure",
-			getDefultXsd());
+			getDefaultXsd());
 
 		long[] groupIds = new long[] {getCompanyGroupId(), groupId};
 
@@ -189,10 +189,10 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 
 	@Test
 	public void testSearchCountByKeywords() throws Exception {
-		addStructure(groupId, generateId(), "First Structure", getDefultXsd());
+		addStructure(groupId, generateId(), "First Structure", getDefaultXsd());
 		addStructure(
 			getCompanyGroupId(), generateId(), "Second Structure",
-			getDefultXsd());
+			getDefaultXsd());
 
 		long[] groupIds = new long[] {groupId};
 
@@ -207,7 +207,7 @@ public class JournalStructureServiceTest extends BaseJournalServiceTestCase {
 	public void testUpdateTemplate() throws Exception {
 		String structureId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 

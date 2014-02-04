@@ -137,7 +137,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 	public void testGetStructureTemplates() throws Exception {
 		String structureId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		addTemplate(groupId, generateId(), structureId, "Template Content");
 
@@ -152,7 +152,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 	public void testGetStructureTemplatesCount() throws Exception {
 		String structureId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		addTemplate(groupId, generateId(), structureId, "Template Content 1");
 		addTemplate(groupId, generateId(), structureId, "Template Content 2");
@@ -168,7 +168,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 	public void testGetStructureTemplatesGlobalIncluded() throws Exception {
 		String structureId = generateId();
 
-		addStructure(getCompanyGroupId(), structureId, getDefultXsd());
+		addStructure(getCompanyGroupId(), structureId, getDefaultXsd());
 
 		addTemplate(groupId, generateId(), structureId, "Template Content 1");
 		addTemplate(
@@ -188,7 +188,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 
 		String structureId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		addTemplate(groupId, templateId, structureId, "Template Content");
 
@@ -201,7 +201,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 	public void testSearchByKeywords() throws Exception {
 		String structureId = generateId();
 
-		addStructure(getCompanyGroupId(), structureId, getDefultXsd());
+		addStructure(getCompanyGroupId(), structureId, getDefaultXsd());
 
 		addTemplate(
 			groupId, generateId(), structureId, "First Template",
@@ -225,7 +225,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 	public void testSearchCountByKeywords() throws Exception {
 		String structureId = generateId();
 
-		addStructure(getCompanyGroupId(), structureId, getDefultXsd());
+		addStructure(getCompanyGroupId(), structureId, getDefaultXsd());
 
 		addTemplate(
 			groupId, generateId(), structureId, "First Template",
@@ -250,7 +250,7 @@ public class JournalTemplateServiceTest extends BaseJournalServiceTestCase {
 
 		String templateId = generateId();
 
-		addStructure(groupId, structureId, getDefultXsd());
+		addStructure(groupId, structureId, getDefaultXsd());
 
 		addTemplate(groupId, templateId, structureId, "Template Content");
 
