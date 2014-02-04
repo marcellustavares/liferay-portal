@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+	<dynamic-element dataType="string" indexType="text" name="text" repeatable="true" required="true" showLabel="true" type="text" width="25">
+		<meta-data locale="en_US">
+			<entry name="label"><![CDATA[Text Field]]></entry>
+			<entry name="predefinedValue"><![CDATA[test]]></entry>
+			<entry name="tip"><![CDATA[These are some instructions.]]></entry>
+		</meta-data>
+	</dynamic-element>
+</root>

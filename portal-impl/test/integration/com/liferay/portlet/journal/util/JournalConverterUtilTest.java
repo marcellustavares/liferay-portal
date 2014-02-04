@@ -300,24 +300,69 @@ public class JournalConverterUtilTest extends BaseDDMServiceTestCase {
 	}
 
 	@Test
-	public void testGetDDMXSD() throws Exception {
-		DDMStructure expectedDDMStructure = new DDMStructureImpl();
+	public void testGetDDMXSDBooleanField() throws Exception {
+		testGetDDMXSD("test-journal-structure-boolean-field.xml",
+			"test-ddm-structure-boolean-field.xml");
+	}
 
-		expectedDDMStructure.setXsd(
-			readText("test-ddm-structure-all-fields.xml"));
+	@Test
+	public void testGetDDMXSDContact() throws Exception {
+		testGetDDMXSD("test-journal-structure-contact.xml",
+			"test-ddm-structure-contact.xml");
+	}
 
-		String actualXSD = JournalConverterUtil.getDDMXSD(
-			readText("test-journal-structure-all-fields.xml"));
+	@Test
+	public void testGetDDMXSDDocumentLibrary() throws Exception {
+		testGetDDMXSD("test-journal-structure-document-library.xml",
+			"test-ddm-structure-document-library.xml");
+	}
 
-		validateDDMXSD(actualXSD);
+	@Test
+	public void testGetDDMXSDHtml() throws Exception {
+		testGetDDMXSD("test-journal-structure-html.xml",
+			"test-ddm-structure-html.xml");
+	}
 
-		DDMStructure actualDDMStructure = new DDMStructureImpl();
+	@Test
+	public void testGetDDMXSDImage() throws Exception {
+		testGetDDMXSD("test-journal-structure-image.xml",
+			"test-ddm-structure-image.xml");
+	}
 
-		actualDDMStructure.setXsd(actualXSD);
+	@Test
+	public void testGetDDMXSDLinkToLayout() throws Exception {
+		testGetDDMXSD("test-journal-structure-link-to-layout.xml",
+			"test-ddm-structure-link-to-page.xml");
+	}
 
-		Assert.assertEquals(
-			expectedDDMStructure.getFieldsMap(),
-			actualDDMStructure.getFieldsMap());
+	@Test
+	public void testGetDDMXSDList() throws Exception {
+		testGetDDMXSD("test-journal-structure-list.xml",
+			"test-ddm-structure-list.xml");
+	}
+
+	@Test
+	public void testGetDDMXSDMultiList() throws Exception {
+		testGetDDMXSD("test-journal-structure-multi-list.xml",
+			"test-ddm-structure-multi-list.xml");
+	}
+
+	@Test
+	public void testGetDDMXSDSelectionBreak() throws Exception {
+		testGetDDMXSD("test-journal-structure-selection-break.xml",
+			"test-ddm-structure-separator.xml");
+	}
+
+	@Test
+	public void testGetDDMXSDText() throws Exception {
+		testGetDDMXSD("test-journal-structure-text.xml",
+			"test-ddm-structure-text.xml");
+	}
+
+	@Test
+	public void testGetDDMXSDTextBox() throws Exception {
+		testGetDDMXSD("test-journal-structure-text-box.xml",
+			"test-ddm-structure-text-box.xml");
 	}
 
 	@Test
@@ -782,6 +827,26 @@ public class JournalConverterUtilTest extends BaseDDMServiceTestCase {
 			"com/liferay/portlet/journal/dependencies/" + fileName);
 
 		return StringUtil.read(inputStream);
+	}
+
+	protected void testGetDDMXSD(String sourceXML, String expectedXML) throws Exception {
+		String actualXSD = JournalConverterUtil.getDDMXSD(
+			readText(sourceXML));
+
+		validateDDMXSD(actualXSD);
+
+		DDMStructure expectedDDMStructure = new DDMStructureImpl();
+
+		expectedDDMStructure.setXsd(
+			readText(expectedXML));
+
+		DDMStructure actualDDMStructure = new DDMStructureImpl();
+
+		actualDDMStructure.setXsd(actualXSD);
+
+		Assert.assertEquals(
+			expectedDDMStructure.getFieldsMap(),
+			actualDDMStructure.getFieldsMap());
 	}
 
 	protected void udpateFieldsMap(
