@@ -837,6 +837,12 @@ AUI.add(
 					iconClass: 'icon-picture',
 					label: Liferay.Language.get('image'),
 					type: 'wcm-image'
+				},
+				{
+					hiddenAttributes: MAP_HIDDEN_FIELD_ATTRS.DEFAULT,
+					iconClass: 'icon-fb-separator',
+					label: Liferay.Language.get('separator'),
+					type: 'ddm-separator'
 				}
 			]
 		};

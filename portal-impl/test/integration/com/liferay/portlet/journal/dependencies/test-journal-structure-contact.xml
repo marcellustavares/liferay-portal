@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<dynamic-element name="contact" type="text" index-type="text" repeatable="true">
+		<dynamic-element name="phone" type="text" index-type="text" repeatable="true">
+			<dynamic-element name="ext" type="text" index-type="text" repeatable="false">
+				<meta-data>
+					<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+					<entry name="instructions"><![CDATA[]]></entry>
+					<entry name="label"><![CDATA[Ext]]></entry>
+					<entry name="predefinedValue"><![CDATA[]]></entry>
+					<entry name="required"><![CDATA[false]]></entry>
+				</meta-data>
+			</dynamic-element>
+			<meta-data>
+				<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+				<entry name="instructions"><![CDATA[]]></entry>
+				<entry name="label"><![CDATA[Phone]]></entry>
+				<entry name="predefinedValue"><![CDATA[]]></entry>
+				<entry name="required"><![CDATA[false]]></entry>
+			</meta-data>
+		</dynamic-element>
+		<meta-data>
+			<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+			<entry name="instructions"><![CDATA[]]></entry>
+			<entry name="label"><![CDATA[Contact]]></entry>
+			<entry name="predefinedValue"><![CDATA[]]></entry>
+			<entry name="required"><![CDATA[false]]></entry>
+		</meta-data>
+	</dynamic-element>
+</root>

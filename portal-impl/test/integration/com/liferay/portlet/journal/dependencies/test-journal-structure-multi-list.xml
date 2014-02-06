@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+	<dynamic-element name="multi-list" type="multi-list" index-type="" repeatable="false">
+		<dynamic-element name="Item 01" type="value" repeatable="false" />
+		<dynamic-element name="Item 02" type="value" repeatable="false" />
+		<meta-data>
+			<entry name="displayAsTooltip"><![CDATA[true]]></entry>
+			<entry name="instructions"><![CDATA[]]></entry>
+			<entry name="label"><![CDATA[Multi Select Field]]></entry>
+			<entry name="predefinedValue"><![CDATA[]]></entry>
+			<entry name="required"><![CDATA[false]]></entry>
+		</meta-data>
+	</dynamic-element>
+</root>
