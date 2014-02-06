@@ -80,7 +80,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		List<String> fieldNames = new ArrayList<String>();
 
-		Map<String, Map<String, String>> fieldsMap = getFieldsMap();
+		Map<String, Map<String, String>> fieldsMap = getFieldsMap(true);
 
 		for (Map<String, String> field : fieldsMap.values()) {
 			String parentNameKey = _getPrivateAttributeKey("parentName");
@@ -285,8 +285,9 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		Map<String, Map<String, Map<String, String>>> localizedFieldsMap =
 			getLocalizedFieldsMap();
 
-		Map<String, Map<String, String>> fieldsMap = localizedFieldsMap.get(
-			locale);
+		Map<String, Map<String, String>> fieldsMap =
+			new LinkedHashMap<String, Map<String, String>>(
+				localizedFieldsMap.get(locale));
 
 		if (includeTransientFields) {
 			Map<String, Map<String, Map<String, String>>>
