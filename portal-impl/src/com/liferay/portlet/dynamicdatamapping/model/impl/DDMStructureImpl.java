@@ -191,7 +191,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			throw new StructureFieldException();
 		}
 
-		Map<String, Map<String, String>> fieldsMap = getFieldsMap(locale);
+		Map<String, Map<String, String>> fieldsMap = getFieldsMap(locale, true);
 
 		Map<String, String> field = fieldsMap.get(fieldName);
 
@@ -261,7 +261,23 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	}
 
 	@Override
+	public Map<String, Map<String, String>> getFieldsMap(
+			boolean includeTransientFields)
+		throws PortalException, SystemException {
+
+		return getFieldsMap(getDefaultLanguageId(), includeTransientFields);
+	}
+
+	@Override
 	public Map<String, Map<String, String>> getFieldsMap(String locale)
+		throws PortalException, SystemException {
+
+		return getFieldsMap(locale, false);
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getFieldsMap(
+			String locale, boolean includeTransientFields)
 		throws PortalException, SystemException {
 
 		_indexFieldsMap(locale);
@@ -271,6 +287,16 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		Map<String, Map<String, String>> fieldsMap = localizedFieldsMap.get(
 			locale);
+
+		if (includeTransientFields) {
+			Map<String, Map<String, Map<String, String>>>
+				localizedTransientFieldsMap = getLocalizedTransientFieldsMap();
+
+			Map<String, Map<String, String>> transientFieldsMap =
+				localizedTransientFieldsMap.get(locale);
+
+			fieldsMap.putAll(transientFieldsMap);
+		}
 
 		return fieldsMap;
 	}
@@ -329,7 +355,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		List<String> fieldNames = new ArrayList<String>();
 
-		Map<String, Map<String, String>> fieldsMap = getFieldsMap();
+		Map<String, Map<String, String>> fieldsMap = getFieldsMap(true);
 
 		for (Map.Entry<String, Map<String, String>> entry :
 				fieldsMap.entrySet()) {
@@ -414,7 +440,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public boolean hasField(String fieldName)
 		throws PortalException, SystemException {
 
-		Map<String, Map<String, String>> fieldsMap = getFieldsMap();
+		Map<String, Map<String, String>> fieldsMap = getFieldsMap(true);
 
 		boolean hasField = fieldsMap.containsKey(fieldName);
 
@@ -441,6 +467,19 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		throws PortalException, SystemException {
 
 		return GetterUtil.getBoolean(getFieldProperty(fieldName, "repeatable"));
+	}
+
+	public boolean isFieldTransient(String fieldName)
+		throws PortalException, SystemException {
+
+		if (!hasField(fieldName)) {
+			throw new StructureFieldException();
+		}
+
+		Map<String, Map<String, String>> transientFieldsMap =
+			getTransientFieldsMap(getDefaultLanguageId());
+
+		return transientFieldsMap.containsKey(fieldName);
 	}
 
 	@Override
