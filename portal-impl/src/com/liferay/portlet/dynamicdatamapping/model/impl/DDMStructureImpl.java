@@ -469,6 +469,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		return GetterUtil.getBoolean(getFieldProperty(fieldName, "repeatable"));
 	}
 
+	@Override
 	public boolean isFieldTransient(String fieldName)
 		throws PortalException, SystemException {
 
