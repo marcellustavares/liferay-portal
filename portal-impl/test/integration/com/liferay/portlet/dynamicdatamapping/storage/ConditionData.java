@@ -1,12 +1,16 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage;
 
-import com.liferay.portlet.dynamicdatamapping.storage.query.ComparisonOperator;
-
 import java.io.Serializable;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.liferay.portlet.dynamicdatamapping.storage.query.ComparisonOperator;
 public class ConditionData {
 
 	public static ConditionData newConditionData(
@@ -31,7 +35,7 @@ public class ConditionData {
 		return _fieldName;
 	}
 
-	public Serializable[] getSampleValues() {
+	public Map<Locale,List<Serializable>> getSampleValues() {
 
 		return _sampleValues;
 	}
@@ -51,9 +55,9 @@ public class ConditionData {
 		return _structureSchema;
 	}
 
-	public ConditionData usingSampleValues(Serializable... sampleValues) {
+	public ConditionData usingSampleValues(Locale locale, Serializable... sampleValues) {
 
-		this._sampleValues = sampleValues;
+		this._sampleValues.put(locale,Arrays.asList(sampleValues));
 
 		return this;
 	}
@@ -97,12 +101,13 @@ public class ConditionData {
 		this._fieldName = fieldName;
 		this._comparisonOperator = comparisonOperator;
 		this._expectedResults = new ArrayList<ExpectedResult>();
+		this._sampleValues = new HashMap<Locale, List<Serializable>>();
 	}
 
 	private ComparisonOperator _comparisonOperator;
 	private List<ExpectedResult> _expectedResults;
 	private String _fieldName;
-	private Serializable[] _sampleValues;
+	private Map<Locale,List<Serializable>> _sampleValues;
 	private StorageAdapter _storageAdapter;
 	private String _structureName;
 	private String _structureSchema;

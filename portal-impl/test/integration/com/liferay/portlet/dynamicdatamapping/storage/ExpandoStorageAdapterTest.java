@@ -69,7 +69,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-text-field.xsd")
 				.withStructureName("Text Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues("a")
+				.usingSampleValues(_enLocale, "a")
 				.withExpectedResults("a", 1)
 				.withExpectedResults("c", 0);
 
@@ -89,7 +89,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 			.withStructureSchema("ddm-structure-text-field.xsd")
 			.withStructureName("Text Field Structure")
 			.usingStorageAdapter(_expandoStorageAdapater)
-			.usingSampleValues("a", "b")
+			.usingSampleValues(_enLocale, "a", "b")
 			.withExpectedResults("a", 1)
 			.withExpectedResults("b", 1)
 			.withExpectedResults("c", 0);
@@ -126,7 +126,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues(5)
+				.usingSampleValues(_enLocale, 5)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(7, 0);
 
@@ -140,7 +140,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues(5)
+				.usingSampleValues(_enLocale, 5)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(5, 1)
 				.withExpectedResults(6, 0)
@@ -163,7 +163,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues(5,6)
+				.usingSampleValues(_enLocale,5, 6)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(5, 1)
 				.withExpectedResults(6, 1)
@@ -184,7 +184,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 			.withStructureSchema("ddm-structure-number-field.xsd")
 			.withStructureName("Number Field Structure")
 			.usingStorageAdapter(_expandoStorageAdapater)
-			.usingSampleValues(5, 6)
+			.usingSampleValues(_enLocale, 5, 6)
 			.withExpectedResults(4, 1)
 			.withExpectedResults(7, 0);
 
@@ -199,7 +199,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema(
 					"ddm-structure-number-field.xsd").withStructureName(
 					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(5)
+					_expandoStorageAdapater).usingSampleValues(_enLocale, 5)
 				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 0)
 				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1);
 
@@ -234,7 +234,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema(
 					"ddm-structure-number-field.xsd").withStructureName(
 					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(5, 6)
+					_expandoStorageAdapater).usingSampleValues(_enLocale, 5, 6)
 				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 0)
 				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1)
 				.withExpectedResults(Arrays.asList(4, 6), 1)
@@ -267,7 +267,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema(
 					"ddm-structure-number-field.xsd").withStructureName(
 					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(5, 6)
+					_expandoStorageAdapater).usingSampleValues(_enLocale, 5, 6)
 				.withExpectedResults(
 					7, 1).withExpectedResults(6, 1).withExpectedResults(5, 0)
 				.withExpectedResults(4, 0);
@@ -284,7 +284,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema(
 					"ddm-structure-number-field.xsd").withStructureName(
 					"Number Field Structure").usingStorageAdapter(
-					_expandoStorageAdapater).usingSampleValues(5, 6)
+					_expandoStorageAdapater).usingSampleValues(_enLocale, 5, 6)
 				.withExpectedResults(
 					7, 1).withExpectedResults(6, 1).withExpectedResults(5, 1)
 				.withExpectedResults(4, 0);
@@ -323,7 +323,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 					"ddm-structure-text-field.xsd").withStructureName(
 					"Text Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater).usingSampleValues(
-					"unitedstates").withExpectedResults("az", 0)
+					_enLocale, "unitedstates").withExpectedResults("az", 0)
 				.withExpectedResults(
 					"ted", 1).withExpectedResults("tate", 1)
 				.withExpectedResults("xyz", 0);
@@ -350,7 +350,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 					.withStructureSchema("ddm-structure-text-field.xsd")
 					.withStructureName("Text Field Structure")
 					.usingStorageAdapter(_expandoStorageAdapater)
-					.usingSampleValues("a")
+					.usingSampleValues(_enLocale, "a")
 					.withExpectedResults("a", 0)
 					.withExpectedResults("b", 1);
 
@@ -371,7 +371,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 					.withStructureSchema("ddm-structure-text-field.xsd")
 					.withStructureName("Text Field Structure")
 					.usingStorageAdapter(_expandoStorageAdapater)
-					.usingSampleValues("a","b")
+					.usingSampleValues(_enLocale,"a", "b")
 					.withExpectedResults("a", 0)
 					.withExpectedResults("b", 0)
 					.withExpectedResults("c", 1);
@@ -387,7 +387,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues(5)
+				.usingSampleValues(_enLocale, 5)
 				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
 				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 0);
 
@@ -407,7 +407,7 @@ public class ExpandoStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_expandoStorageAdapater)
-				.usingSampleValues(5,6)
+				.usingSampleValues(_enLocale,5, 6)
 				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
 				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 0)
 				.withExpectedResults(Arrays.asList(4, 6), 1)

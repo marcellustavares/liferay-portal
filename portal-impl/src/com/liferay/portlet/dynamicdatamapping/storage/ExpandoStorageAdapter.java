@@ -516,6 +516,11 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 		String fieldDataType = structure.getFieldDataType(
 			fieldCondition.getName());
 
+
+
+
+
+
 		switch (comparisonOperator) {
 			case EQUALS:
 
@@ -540,7 +545,8 @@ public class ExpandoStorageAdapter extends BaseStorageAdapter {
 
 				break;
 			case LIKE:
-				_buildMatchesExpression(fieldCondition.getName(), (String)fieldCondition.getValue(), sb, true);
+				_buildMatchesExpression(fieldCondition.getName(),
+					(String)fieldCondition.getValue(), sb, true);
 				break;
 			case NOT_IN:
 				buildInNotInQuery(fieldCondition, sb, false);

@@ -89,6 +89,20 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 		sb.append(StringPool.CLOSE_PARENTHESIS);
 	}
 
+	protected void buildLikeQuery(FieldCondition fieldCondition,
+		StringBundler sb) {
+
+		String likeArgument = (String)fieldCondition.getValue();
+
+		String value = HtmlUtil.escapeXPathAttribute(
+			String.valueOf(likeArgument));
+
+		sb.append(" and ");
+		sb.append(" dynamic-content[contains(text(),");
+		sb.append(value);
+		sb.append(")]");
+	}
+
 	@Override
 	protected long doCreate(
 			long companyId, long ddmStructureId, Fields fields,
@@ -342,9 +356,7 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 
 		switch (comparisonOperator) {
 			case LIKE:
-				sb.append(" and matches(dynamic-content, ");
-				sb.append(value);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
+				buildLikeQuery(fieldCondition, sb);
 				break;
 			case NOT_IN:
 				buildInNotInQuery(fieldCondition, sb, false);
@@ -361,6 +373,9 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 		}
 
 		sb.append(StringPool.CLOSE_PARENTHESIS);
+
+		System.out.println(sb);
+
 		return sb.toString();
 	}
 

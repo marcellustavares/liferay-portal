@@ -68,7 +68,7 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-text-field.xsd")
 				.withStructureName("Text Field Structure")
 				.usingStorageAdapter(_xmlStorageAdapater)
-				.usingSampleValues("a")
+				.usingSampleValues(_enLocale, "a")
 				.withExpectedResults("a", 1)
 				.withExpectedResults("c", 0);
 
@@ -77,7 +77,19 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionEqualsWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+
+		ConditionData conditionData = ConditionData
+			.newConditionData(ComparisonOperator.EQUALS, "text")
+			.withStructureSchema("ddm-structure-text-field.xsd")
+			.withStructureName("Text Field Structure")
+			.usingStorageAdapter(_xmlStorageAdapater)
+			.usingSampleValues(_enLocale, "a")
+			.usingSampleValues(_ptLocale, "c")
+			.withExpectedResults("a", 1)
+			.withExpectedResults("b", 0)
+			.withExpectedResults("c", 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
@@ -88,7 +100,7 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 			.withStructureSchema("ddm-structure-text-field.xsd")
 			.withStructureName("Text Field Structure")
 			.usingStorageAdapter(_xmlStorageAdapater)
-			.usingSampleValues("a", "b")
+			.usingSampleValues(_enLocale, "a", "b")
 			.withExpectedResults("a", 1)
 			.withExpectedResults("b", 1)
 			.withExpectedResults("c", 0);
@@ -118,7 +130,7 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_xmlStorageAdapater)
-				.usingSampleValues(5)
+				.usingSampleValues(_enLocale, 5)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(7, 0);
 
@@ -132,7 +144,7 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_xmlStorageAdapater)
-				.usingSampleValues(5)
+				.usingSampleValues(_enLocale, 5)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(5, 1)
 				.withExpectedResults(6, 0)
@@ -143,7 +155,21 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionGreaterThanOrEqualToWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+
+		ConditionData conditionData = ConditionData .newConditionData(
+			ComparisonOperator.GREATER_THAN_OR_EQUAL_TO, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 5)
+				.usingSampleValues(_ptLocale, 6)
+				.withExpectedResults(4, 1)
+				.withExpectedResults(5, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(7, 0);
+
+		testCondition(conditionData);
+
 	}
 
 	@Override
@@ -155,7 +181,7 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 				.withStructureSchema("ddm-structure-number-field.xsd")
 				.withStructureName("Number Field Structure")
 				.usingStorageAdapter(_xmlStorageAdapater)
-				.usingSampleValues(5, 6)
+				.usingSampleValues(_enLocale, 5, 6)
 				.withExpectedResults(4, 1)
 				.withExpectedResults(5, 1)
 				.withExpectedResults(6, 1)
@@ -166,7 +192,18 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionGreaterThanWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData = ConditionData
+			.newConditionData(ComparisonOperator.GREATER_THAN, "number")
+			.withStructureSchema("ddm-structure-number-field.xsd")
+			.withStructureName("Number Field Structure")
+			.usingStorageAdapter(_xmlStorageAdapater)
+			.usingSampleValues(_enLocale, 5)
+			.usingSampleValues(_ptLocale, 6)
+			.withExpectedResults(4, 1)
+			.withExpectedResults(6, 0)
+			.withExpectedResults(7, 0);
+
+	testCondition(conditionData);
 	}
 
 	@Override
@@ -176,27 +213,23 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 			.withStructureSchema("ddm-structure-number-field.xsd")
 			.withStructureName("Number Field Structure")
 			.usingStorageAdapter(_xmlStorageAdapater)
-			.usingSampleValues(5, 6)
+			.usingSampleValues(_enLocale, 5, 6)
 			.withExpectedResults(4, 1)
 			.withExpectedResults(7, 0);
 
-	testCondition(conditionData);
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionIn() throws Exception {
 		ConditionData conditionData =
-			ConditionData
-				.newConditionData(ComparisonOperator.IN, "number")
-				.withStructureSchema(
-					"ddm-structure-number-field.xsd").withStructureName(
-					"Number Field Structure").usingStorageAdapter(
-					_xmlStorageAdapater).usingSampleValues(5, 6)
-				.withExpectedResults(
-					Arrays
-						.asList(7, 8, 9, 10), 0).withExpectedResults(
-					Arrays
-						.asList(1, 2, 3, 4, 5, 6), 1);
+			ConditionData.newConditionData(ComparisonOperator.IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 0)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1);
 
 		testCondition(conditionData);
 	}
@@ -218,12 +251,31 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionInWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData.newConditionData(ComparisonOperator.IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.usingSampleValues(_ptLocale, 8)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionInWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData.newConditionData(ComparisonOperator.IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6,7)
+				.withExpectedResults(Arrays.asList(7, 8, 9, 10), 1)
+				.withExpectedResults(Arrays.asList(1, 2, 3, 4, 5, 6), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
@@ -245,14 +297,14 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 	public void testConditionLessThan() throws Exception {
 		ConditionData conditionData =
 			ConditionData
-				.newConditionData(
-					ComparisonOperator.LESS_THAN, "number")
-				.withStructureSchema(
-					"ddm-structure-number-field.xsd").withStructureName(
-					"Number Field Structure").usingStorageAdapter(
-					_xmlStorageAdapater).usingSampleValues(5, 6)
-				.withExpectedResults(
-					7, 1).withExpectedResults(6, 1).withExpectedResults(5, 0)
+				.newConditionData(ComparisonOperator.LESS_THAN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 5)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 0)
 				.withExpectedResults(4, 0);
 
 		testCondition(conditionData);
@@ -262,14 +314,14 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 	public void testConditionLessThanOrEqualTo() throws Exception {
 		ConditionData conditionData =
 			ConditionData
-				.newConditionData(
-					ComparisonOperator.LESS_THAN_OR_EQUAL_TO, "number")
-				.withStructureSchema(
-					"ddm-structure-number-field.xsd").withStructureName(
-					"Number Field Structure").usingStorageAdapter(
-					_xmlStorageAdapater).usingSampleValues(5, 6)
-				.withExpectedResults(
-					7, 1).withExpectedResults(6, 1).withExpectedResults(5, 1)
+				.newConditionData(ComparisonOperator.LESS_THAN_OR_EQUAL_TO, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 0)
 				.withExpectedResults(4, 0);
 
 		testCondition(conditionData);
@@ -277,38 +329,86 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionLessThanOrEqualToWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.LESS_THAN_OR_EQUAL_TO, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.usingSampleValues(_ptLocale, 5)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 1)
+				.withExpectedResults(4, 0);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionLessThanOrEqualToWithRepeatable()
 		throws Exception {
 
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.LESS_THAN_OR_EQUAL_TO, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 5, 6)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 1)
+				.withExpectedResults(4, 0);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionLessThanWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.LESS_THAN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 5, 6)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 0)
+				.withExpectedResults(4, 0);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionLessThanWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.LESS_THAN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 5, 6)
+				.withExpectedResults(7, 1)
+				.withExpectedResults(6, 1)
+				.withExpectedResults(5, 0)
+				.withExpectedResults(4, 0);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionLike() throws Exception {
 		ConditionData conditionData =
-			ConditionData
-				.newConditionData(ComparisonOperator.LIKE, "text")
-				.withStructureSchema(
-					"ddm-structure-text-field.xsd").withStructureName(
-					"Text Field Structure")
-				.usingStorageAdapter(_xmlStorageAdapater).usingSampleValues(
-					"unitedstates").withExpectedResults("az", 0)
-				.withExpectedResults(
-					"ted", 1).withExpectedResults("tate", 1)
+			ConditionData.newConditionData(ComparisonOperator.LIKE, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "unitedstates")
+				.withExpectedResults("az", 0)
+				.withExpectedResults("ted", 1)
+				.withExpectedResults("tate", 1)
 				.withExpectedResults("xyz", 0);
 
 		testCondition(conditionData);
@@ -316,24 +416,48 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionLikeWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData.newConditionData(ComparisonOperator.LIKE, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "unitedstates")
+				.usingSampleValues(_ptLocale, "aazbb")
+				.withExpectedResults("az", 1)
+				.withExpectedResults("ted", 1)
+				.withExpectedResults("tate", 1)
+				.withExpectedResults("xyz", 0);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionLikeWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.LIKE, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "united", "states", "az", "xyz")
+				.withExpectedResults("az", 1)
+				.withExpectedResults("ted", 1)
+				.withExpectedResults("tate", 1)
+				.withExpectedResults("xyz", 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionNotEquals() throws Exception {
 		ConditionData conditionData =
 			ConditionData
-				.newConditionData(
-					ComparisonOperator.NOT_EQUALS, "text").withStructureSchema(
-					"ddm-structure-text-field.xsd").withStructureName(
-					"Text Field Structure")
-				.usingStorageAdapter(_xmlStorageAdapater).usingSampleValues(
-					"5").withExpectedResults("5", 0)
+				.newConditionData(ComparisonOperator.NOT_EQUALS, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "5")
+				.withExpectedResults("5", 0)
 				.withExpectedResults("6", 1);
 
 		testCondition(conditionData);
@@ -341,12 +465,34 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 
 	@Override
 	public void testConditionNotEqualsWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.NOT_EQUALS, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "5")
+				.usingSampleValues(_ptLocale, "6")
+				.withExpectedResults("5", 1)
+				.withExpectedResults("6", 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionNotEqualsWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.NOT_EQUALS, "text")
+				.withStructureSchema("ddm-structure-text-field.xsd")
+				.withStructureName("Text Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, "5","7","9")
+				.usingSampleValues(_ptLocale, "6","8")
+				.withExpectedResults("5", 1)
+				.withExpectedResults("6", 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
@@ -354,27 +500,42 @@ public class XmlStorageAdapterTest extends BaseStorageAdapterTest {
 		ConditionData conditionData =
 			ConditionData
 				.newConditionData(ComparisonOperator.NOT_IN, "number")
-				.withStructureSchema(
-					"ddm-structure-number-field.xsd").withStructureName(
-					"Number Field Structure").usingStorageAdapter(
-					_xmlStorageAdapater).usingSampleValues(6)
-
-				// .withExpectedResults(Arrays.asList(7,8,9,10), 1)
-
-				.withExpectedResults(Arrays
-					.asList(6), 0);
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.withExpectedResults(Arrays.asList(6), 0);
 
 		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionNotInWithLocale() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.NOT_IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6)
+				.usingSampleValues(_ptLocale, 7)
+				.withExpectedResults(Arrays.asList(6), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
 	public void testConditionNotInWithRepeatable() throws Exception {
-		Assert.fail("Not yet implemented !");
+		ConditionData conditionData =
+			ConditionData
+				.newConditionData(ComparisonOperator.NOT_IN, "number")
+				.withStructureSchema("ddm-structure-number-field.xsd")
+				.withStructureName("Number Field Structure")
+				.usingStorageAdapter(_xmlStorageAdapater)
+				.usingSampleValues(_enLocale, 6, 7, 8)
+				.withExpectedResults(Arrays.asList(6), 1);
+
+		testCondition(conditionData);
 	}
 
 	@Override
