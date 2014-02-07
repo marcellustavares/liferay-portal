@@ -816,13 +816,16 @@ public class JournalConverterImpl implements JournalConverter {
 
 		element.remove(element.attribute("type"));
 
-		String dataType = _ddmDataTypes.get(type);
+		if (!type.equals("selection_break")) {
+			String dataType = _ddmDataTypes.get(type);
 
-		if (dataType == null) {
-			dataType = "string";
+			if (dataType == null) {
+				dataType = "string";
+			}
+
+			element.addAttribute("dataType", dataType);
 		}
 
-		element.addAttribute("dataType", dataType);
 		element.addAttribute("indexType", indexType);
 
 		String required = "false";
