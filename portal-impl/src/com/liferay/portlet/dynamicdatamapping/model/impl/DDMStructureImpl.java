@@ -49,6 +49,7 @@ import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUti
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -282,24 +283,16 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		_indexFieldsMap(locale);
 
-		Map<String, Map<String, Map<String, String>>> localizedFieldsMap =
-			getLocalizedFieldsMap();
-
-		Map<String, Map<String, String>> fieldsMap =
-			new LinkedHashMap<String, Map<String, String>>(
-				localizedFieldsMap.get(locale));
+		Map<String, Map<String, Map<String, String>>> fieldsMap = null;
 
 		if (includeTransientFields) {
-			Map<String, Map<String, Map<String, String>>>
-				localizedTransientFieldsMap = getLocalizedTransientFieldsMap();
-
-			Map<String, Map<String, String>> transientFieldsMap =
-				localizedTransientFieldsMap.get(locale);
-
-			fieldsMap.putAll(transientFieldsMap);
+			fieldsMap = getLocalizedFieldsMap();
+		}
+		else {
+			fieldsMap = getLocalizedPersistentFieldsMap();
 		}
 
-		return fieldsMap;
+		return Collections.unmodifiableMap(fieldsMap.get(locale));
 	}
 
 	@Override
@@ -339,6 +332,19 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public Map<String, Map<String, Map<String, String>>>
+		getLocalizedPersistentFieldsMap() {
+
+		if (_localizedPersistentFieldsMap == null) {
+			_localizedPersistentFieldsMap =
+				new ConcurrentHashMap
+					<String, Map<String, Map<String, String>>>();
+		}
+
+		return _localizedPersistentFieldsMap;
+	}
+
+	@Override
+	public Map<String, Map<String, Map<String, String>>>
 		getLocalizedTransientFieldsMap() {
 
 		if (_localizedTransientFieldsMap == null) {
@@ -348,6 +354,22 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 
 		return _localizedTransientFieldsMap;
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getPersistentFieldsMap(
+			String locale)
+		throws PortalException, SystemException {
+
+		_indexFieldsMap(locale);
+
+		Map<String, Map<String, Map<String, String>>>
+			localizedPersistentFieldsMap = getLocalizedPersistentFieldsMap();
+
+		Map<String, Map<String, String>> fieldsMap =
+			localizedPersistentFieldsMap.get(locale);
+
+		return fieldsMap;
 	}
 
 	@Override
@@ -516,6 +538,14 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	}
 
 	@Override
+	public void setLocalizedPersistentFieldsMap(
+		Map<String, Map<String, Map<String, String>>>
+			localizedPersistentFieldsMap) {
+
+		_localizedPersistentFieldsMap = localizedPersistentFieldsMap;
+	}
+
+	@Override
 	public void setLocalizedTransientFieldsMap(
 		Map<String, Map<String, Map<String, String>>>
 			localizedTransientFieldsMap) {
@@ -529,6 +559,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		_document = null;
 		_localizedFieldsMap = null;
+		_localizedPersistentFieldsMap = null;
 		_localizedTransientFieldsMap = null;
 	}
 
@@ -618,6 +649,12 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			locale);
 
 		Map<String, Map<String, Map<String, String>>>
+			localizedPersistentFieldsMap = getLocalizedPersistentFieldsMap();
+
+		Map<String, Map<String, String>> persistentFieldsMap =
+			localizedPersistentFieldsMap.get(locale);
+
+		Map<String, Map<String, Map<String, String>>>
 			localizedTransientFieldsMap = getLocalizedTransientFieldsMap();
 
 		Map<String, Map<String, String>> transientFieldsMap =
@@ -632,11 +669,15 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 				DDMStructureLocalServiceUtil.getStructure(
 					getParentStructureId());
 
-			fieldsMap = parentStructure.getFieldsMap(locale);
+			fieldsMap = parentStructure.getFieldsMap(locale, true);
+			persistentFieldsMap = parentStructure.getPersistentFieldsMap(
+				locale);
 			transientFieldsMap = parentStructure.getTransientFieldsMap(locale);
 		}
 		else {
 			fieldsMap = new LinkedHashMap<String, Map<String, String>>();
+			persistentFieldsMap =
+				new LinkedHashMap<String, Map<String, String>>();
 			transientFieldsMap =
 				new LinkedHashMap<String, Map<String, String>>();
 		}
@@ -650,8 +691,10 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 			String name = element.attributeValue("name");
 
+			fieldsMap.put(name, _getField(element, locale));
+
 			if (Validator.isNotNull(element.attributeValue("dataType"))) {
-				fieldsMap.put(name, _getField(element, locale));
+				persistentFieldsMap.put(name, _getField(element, locale));
 			}
 			else {
 				transientFieldsMap.put(name, _getField(element, locale));
@@ -666,9 +709,11 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 				privateFieldName);
 
 			fieldsMap.put(privateFieldName, privateField);
+			persistentFieldsMap.put(privateFieldName, privateField);
 		}
 
 		localizedFieldsMap.put(locale, fieldsMap);
+		localizedPersistentFieldsMap.put(locale, persistentFieldsMap);
 		localizedTransientFieldsMap.put(locale, transientFieldsMap);
 	}
 
@@ -700,6 +745,10 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@CacheField
 	private Map<String, Map<String, Map<String, String>>> _localizedFieldsMap;
+
+	@CacheField
+	private Map<String, Map<String, Map<String, String>>>
+		_localizedPersistentFieldsMap;
 
 	@CacheField
 	private Map<String, Map<String, Map<String, String>>>

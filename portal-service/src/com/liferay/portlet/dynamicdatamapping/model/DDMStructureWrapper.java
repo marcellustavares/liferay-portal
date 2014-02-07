@@ -1075,8 +1075,21 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedPersistentFieldsMap() {
+		return _ddmStructure.getLocalizedPersistentFieldsMap();
+	}
+
+	@Override
 	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedTransientFieldsMap() {
 		return _ddmStructure.getLocalizedTransientFieldsMap();
+	}
+
+	@Override
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>> getPersistentFieldsMap(
+		java.lang.String locale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddmStructure.getPersistentFieldsMap(locale);
 	}
 
 	@Override
@@ -1131,17 +1144,17 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
-	public boolean isFieldTransient(java.lang.String fieldName)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return _ddmStructure.isFieldTransient(fieldName);
-	}
-
-	@Override
 	public boolean isFieldRepeatable(java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _ddmStructure.isFieldRepeatable(fieldName);
+	}
+
+	@Override
+	public boolean isFieldTransient(java.lang.String fieldName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddmStructure.isFieldTransient(fieldName);
 	}
 
 	@Override
@@ -1153,6 +1166,12 @@ public class DDMStructureWrapper implements DDMStructure,
 	public void setLocalizedFieldsMap(
 		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> localizedFieldsMap) {
 		_ddmStructure.setLocalizedFieldsMap(localizedFieldsMap);
+	}
+
+	@Override
+	public void setLocalizedPersistentFieldsMap(
+		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> localizedPersistentFieldsMap) {
+		_ddmStructure.setLocalizedPersistentFieldsMap(localizedPersistentFieldsMap);
 	}
 
 	@Override
