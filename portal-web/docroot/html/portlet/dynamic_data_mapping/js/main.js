@@ -41,6 +41,7 @@ AUI.add(
 			dataType: 1,
 			indexType: 1,
 			multiple: 1,
+			localizable: 1,
 			name: 1,
 			options: 1,
 			readOnly: 1,
@@ -133,6 +134,7 @@ AUI.add(
 							editMessage: Liferay.Language.get('edit'),
 							label: Liferay.Language.get('field-label'),
 							large: Liferay.Language.get('large'),
+							localizable: Liferay.Language.get('localizable'),
 							medium: Liferay.Language.get('medium'),
 							multiple: Liferay.Language.get('multiple'),
 							name: Liferay.Language.get('name'),
@@ -364,6 +366,7 @@ AUI.add(
 								dataType: field.get('dataType'),
 								fieldNamespace: field.get('fieldNamespace'),
 								indexType: field.get('indexType'),
+								localizable: field.get('localizable'),
 								multiple: field.get('multiple'),
 								name: field.get('name'),
 								readOnly: field.get('readOnly'),
@@ -476,9 +479,13 @@ AUI.add(
 
 						if (editingLocale === translationManager.get('defaultLocale')) {
 							AArray.removeItem(readOnlyAttributes, 'name');
+							// TODO(pablo.carvalho): change this to remove all the attributes
+							// that are not in LOCALIZABLE_FIELD_ATTRS
 						}
 						else if (AArray.indexOf(readOnlyAttributes, 'name') === -1) {
 							readOnlyAttributes.push('name');
+							// TODO(pablo.carvalho): change this to push all the attributes
+							// that are not in LOCALIZABLE_FIELD_ATTRS
 						}
 
 						return readOnlyAttributes;
