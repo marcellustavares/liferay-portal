@@ -75,6 +75,13 @@ public class DDLRecordServiceWrapper implements DDLRecordService,
 	}
 
 	@Override
+	public void deleteRecord(long recordId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_ddlRecordService.deleteRecord(recordId);
+	}
+
+	@Override
 	public com.liferay.portlet.dynamicdatalists.model.DDLRecord deleteRecordLocale(
 		long recordId, java.util.Locale locale,
 		com.liferay.portal.service.ServiceContext serviceContext)

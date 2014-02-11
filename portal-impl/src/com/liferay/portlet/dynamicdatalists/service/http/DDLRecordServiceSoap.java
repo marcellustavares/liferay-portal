@@ -66,6 +66,17 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class DDLRecordServiceSoap {
+	public static void deleteRecord(long recordId) throws RemoteException {
+		try {
+			DDLRecordServiceUtil.deleteRecord(recordId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordSoap deleteRecordLocale(
 		long recordId, String locale,
 		com.liferay.portal.service.ServiceContext serviceContext)
