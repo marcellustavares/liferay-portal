@@ -108,5 +108,35 @@ public class DDLRecordServiceSoap {
 		}
 	}
 
+	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordVersionSoap getRecordVersion(
+		long recordId, java.lang.String version) throws RemoteException {
+		try {
+			com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion returnValue =
+				DDLRecordServiceUtil.getRecordVersion(recordId, version);
+
+			return com.liferay.portlet.dynamicdatalists.model.DDLRecordVersionSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void revertRecordVersion(long userId, long recordId,
+		java.lang.String version,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			DDLRecordServiceUtil.revertRecordVersion(userId, recordId, version,
+				serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(DDLRecordServiceSoap.class);
 }

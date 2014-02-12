@@ -237,6 +237,77 @@ public class DDLRecordServiceHttp {
 		}
 	}
 
+	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion getRecordVersion(
+		HttpPrincipal httpPrincipal, long recordId, java.lang.String version)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		try {
+			MethodKey methodKey = new MethodKey(DDLRecordServiceUtil.class,
+					"getRecordVersion", _getRecordVersionParameterTypes5);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					recordId, version);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static void revertRecordVersion(HttpPrincipal httpPrincipal,
+		long userId, long recordId, java.lang.String version,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		try {
+			MethodKey methodKey = new MethodKey(DDLRecordServiceUtil.class,
+					"revertRecordVersion", _revertRecordVersionParameterTypes6);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					recordId, version, serviceContext);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
 		HttpPrincipal httpPrincipal, long recordId, boolean majorVersion,
 		int displayIndex,
@@ -247,7 +318,7 @@ public class DDLRecordServiceHttp {
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordServiceUtil.class,
-					"updateRecord", _updateRecordParameterTypes5);
+					"updateRecord", _updateRecordParameterTypes7);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					recordId, majorVersion, displayIndex, fields, mergeFields,
@@ -288,11 +359,51 @@ public class DDLRecordServiceHttp {
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordServiceUtil.class,
-					"updateRecord", _updateRecordParameterTypes6);
+					"updateRecord", _updateRecordParameterTypes8);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					recordId, displayIndex, fieldsMap, mergeFields,
 					serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.liferay.portlet.dynamicdatalists.model.DDLRecord)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
+		HttpPrincipal httpPrincipal, long userId, long recordId,
+		int displayIndex,
+		com.liferay.portlet.dynamicdatamapping.storage.Fields fields,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		try {
+			MethodKey methodKey = new MethodKey(DDLRecordServiceUtil.class,
+					"updateRecord", _updateRecordParameterTypes9);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					recordId, displayIndex, fields, serviceContext);
 
 			Object returnObj = null;
 
@@ -340,13 +451,25 @@ public class DDLRecordServiceHttp {
 	private static final Class<?>[] _getRecordParameterTypes4 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _updateRecordParameterTypes5 = new Class[] {
+	private static final Class<?>[] _getRecordVersionParameterTypes5 = new Class[] {
+			long.class, java.lang.String.class
+		};
+	private static final Class<?>[] _revertRecordVersionParameterTypes6 = new Class[] {
+			long.class, long.class, java.lang.String.class,
+			com.liferay.portal.service.ServiceContext.class
+		};
+	private static final Class<?>[] _updateRecordParameterTypes7 = new Class[] {
 			long.class, boolean.class, int.class,
 			com.liferay.portlet.dynamicdatamapping.storage.Fields.class,
 			boolean.class, com.liferay.portal.service.ServiceContext.class
 		};
-	private static final Class<?>[] _updateRecordParameterTypes6 = new Class[] {
+	private static final Class<?>[] _updateRecordParameterTypes8 = new Class[] {
 			long.class, int.class, java.util.Map.class, boolean.class,
+			com.liferay.portal.service.ServiceContext.class
+		};
+	private static final Class<?>[] _updateRecordParameterTypes9 = new Class[] {
+			long.class, long.class, int.class,
+			com.liferay.portlet.dynamicdatamapping.storage.Fields.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 }

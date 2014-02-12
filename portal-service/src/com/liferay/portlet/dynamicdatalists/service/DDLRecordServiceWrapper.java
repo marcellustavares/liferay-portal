@@ -100,6 +100,24 @@ public class DDLRecordServiceWrapper implements DDLRecordService,
 	}
 
 	@Override
+	public com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion getRecordVersion(
+		long recordId, java.lang.String version)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddlRecordService.getRecordVersion(recordId, version);
+	}
+
+	@Override
+	public void revertRecordVersion(long userId, long recordId,
+		java.lang.String version,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_ddlRecordService.revertRecordVersion(userId, recordId, version,
+			serviceContext);
+	}
+
+	@Override
 	public com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
 		long recordId, boolean majorVersion, int displayIndex,
 		com.liferay.portlet.dynamicdatamapping.storage.Fields fields,
@@ -121,6 +139,17 @@ public class DDLRecordServiceWrapper implements DDLRecordService,
 			com.liferay.portal.kernel.exception.SystemException {
 		return _ddlRecordService.updateRecord(recordId, displayIndex,
 			fieldsMap, mergeFields, serviceContext);
+	}
+
+	@Override
+	public com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
+		long userId, long recordId, int displayIndex,
+		com.liferay.portlet.dynamicdatamapping.storage.Fields fields,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _ddlRecordService.updateRecord(userId, recordId, displayIndex,
+			fields, serviceContext);
 	}
 
 	/**

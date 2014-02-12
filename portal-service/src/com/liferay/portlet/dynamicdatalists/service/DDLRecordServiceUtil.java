@@ -102,6 +102,22 @@ public class DDLRecordServiceUtil {
 		return getService().getRecord(recordId);
 	}
 
+	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion getRecordVersion(
+		long recordId, java.lang.String version)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRecordVersion(recordId, version);
+	}
+
+	public static void revertRecordVersion(long userId, long recordId,
+		java.lang.String version,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.revertRecordVersion(userId, recordId, version, serviceContext);
+	}
+
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
 		long recordId, boolean majorVersion, int displayIndex,
 		com.liferay.portlet.dynamicdatamapping.storage.Fields fields,
@@ -124,6 +140,17 @@ public class DDLRecordServiceUtil {
 		return getService()
 				   .updateRecord(recordId, displayIndex, fieldsMap,
 			mergeFields, serviceContext);
+	}
+
+	public static com.liferay.portlet.dynamicdatalists.model.DDLRecord updateRecord(
+		long userId, long recordId, int displayIndex,
+		com.liferay.portlet.dynamicdatamapping.storage.Fields fields,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateRecord(userId, recordId, displayIndex, fields,
+			serviceContext);
 	}
 
 	public static DDLRecordService getService() {
