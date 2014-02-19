@@ -125,7 +125,7 @@ public class JournalConverterImpl implements JournalConverter {
 
 		DDMFieldsCounter ddmFieldsCounter = new DDMFieldsCounter();
 
-		for (String fieldName : ddmStructure.getRootFieldNames()) {
+		for (String fieldName : ddmFields.getNames()) {
 			int repetitions = countFieldRepetition(
 				ddmFields, fieldName, null, -1);
 
