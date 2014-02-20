@@ -47,6 +47,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.storage.Attributes;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
@@ -62,6 +63,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -216,8 +218,12 @@ public class DDMImpl implements DDM {
 				continue;
 			}
 
+			List<Serializable> fieldAttributes = getFieldAttributes(
+				ddmStructure, fieldName, fieldNamespace, serviceContext);
+
 			Field field = createField(
-				ddmStructure, fieldName, fieldValues, serviceContext);
+				ddmStructure, fieldName, fieldValues, fieldAttributes,
+				serviceContext);
 
 			fields.put(field);
 		}
@@ -351,6 +357,8 @@ public class DDMImpl implements DDM {
 			}
 			else {
 				for (Locale locale : newField.getAvailableLocales()) {
+					existingField.setAttributes(
+						locale, newField.getAttributes(locale));
 					existingField.setValues(locale, newField.getValues(locale));
 				}
 
@@ -363,7 +371,8 @@ public class DDMImpl implements DDM {
 
 	protected Field createField(
 			DDMStructure ddmStructure, String fieldName,
-			List<Serializable> fieldValues, ServiceContext serviceContext)
+			List<Serializable> fieldValues, List<Serializable> fieldAttributes,
+			ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		Field field = new Field();
@@ -389,6 +398,7 @@ public class DDMImpl implements DDM {
 
 		field.setDefaultLocale(defaultLocale);
 
+		field.addAttributes(locale, fieldAttributes);
 		field.setName(fieldName);
 		field.setValues(locale, fieldValues);
 
@@ -416,6 +426,36 @@ public class DDMImpl implements DDM {
 		}
 
 		return ddmStructure;
+	}
+
+	protected List<Serializable> getFieldAttributes(
+			DDMStructure ddmStructure, String fieldName, String fieldNamespace,
+			ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		String fieldDataType = ddmStructure.getFieldDataType(fieldName);
+
+		if (!fieldDataType.equals(FieldConstants.IMAGE)) {
+			return Collections.EMPTY_LIST;
+		}
+
+		List<String> fieldNames = getFieldNames(
+			fieldNamespace, fieldName, serviceContext);
+
+		List<Serializable> attributeValues = new ArrayList<Serializable>();
+
+		for (String fieldNameValue : fieldNames) {
+			String attributeValue = GetterUtil.getString(
+				serviceContext.getAttribute(fieldNameValue + "Alt"));
+
+			Attributes attributes = new Attributes();
+
+			attributes.addAttribute("alt", attributeValue);
+
+			attributeValues.add(attributes);
+		}
+
+		return attributeValues;
 	}
 
 	protected List<String> getFieldNames(

@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
@@ -52,6 +53,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.xsl.XSLTemplateResource;
 import com.liferay.portal.xsl.XSLURIResolver;
+import com.liferay.portlet.dynamicdatamapping.storage.Attributes;
 import com.liferay.portlet.journal.util.JournalXSLURIResolver;
 import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplateConstants;
 import com.liferay.taglib.util.VelocityTaglib;
@@ -524,8 +526,16 @@ public class Transformer {
 			String type = dynamicElementElement.attributeValue(
 				"type", StringPool.BLANK);
 
+			Attributes attributes = new Attributes();
+
+			for (Attribute attribute : dynamicContentElement.attributes()) {
+				attributes.addAttribute(
+					attribute.getName(), attribute.getValue());
+			}
+
 			TemplateNode templateNode = new TemplateNode(
-				themeDisplay, name, StringUtil.stripCDATA(data), type);
+				themeDisplay, name, StringUtil.stripCDATA(data), type,
+				attributes);
 
 			if (dynamicElementElement.element("dynamic-element") != null) {
 				templateNode.appendChildren(

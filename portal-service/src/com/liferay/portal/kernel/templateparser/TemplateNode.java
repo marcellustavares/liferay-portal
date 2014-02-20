@@ -24,6 +24,7 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.storage.Attributes;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,10 +38,12 @@ import java.util.Map;
 public class TemplateNode extends LinkedHashMap<String, Object> {
 
 	public TemplateNode(
-		ThemeDisplay themeDisplay, String name, String data, String type) {
+		ThemeDisplay themeDisplay, String name, String data, String type,
+		Attributes attributes) {
 
 		_themeDisplay = themeDisplay;
 
+		put("attributes", attributes);
 		put("name", name);
 		put("data", data);
 		put("type", type);
@@ -73,6 +76,20 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 	public void appendSibling(TemplateNode templateNode) {
 		_siblingTemplateNodes.add(templateNode);
+	}
+
+	public String getAttribute(String name) {
+		Attributes attributes = getAttributes();
+
+		if (attributes == null) {
+			return StringPool.BLANK;
+		}
+
+		return String.valueOf(attributes.getAttribute(name));
+	}
+
+	public Attributes getAttributes() {
+		return (Attributes)get("attributes");
 	}
 
 	public TemplateNode getChild(String name) {

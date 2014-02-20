@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.storage.Attributes;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
@@ -237,6 +238,9 @@ public class JournalConverterImpl implements JournalConverter {
 
 			if (existingDDMField != null) {
 				for (Locale locale : ddmField.getAvailableLocales()) {
+					existingDDMField.addAttributes(
+						locale, ddmField.getAttributes(locale));
+
 					existingDDMField.addValues(
 						locale, ddmField.getValues(locale));
 				}
@@ -397,6 +401,10 @@ public class JournalConverterImpl implements JournalConverter {
 			Locale locale = LocaleUtil.fromLanguageId(
 				dynamicContentElement.attributeValue("language-id"));
 
+			Serializable attributes = getFieldAttributes(dynamicContentElement);
+
+			ddmField.addAttributes(locale, attributes);
+
 			Serializable serializable = getFieldValue(
 				dataType, type, dynamicContentElement);
 
@@ -404,6 +412,19 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 
 		return ddmField;
+	}
+
+	protected Serializable getFieldAttributes(Element dynamicContentElement)
+		throws Exception {
+
+		Attributes fieldAttributes = new Attributes();
+
+		for (Attribute attribute : dynamicContentElement.attributes()) {
+			fieldAttributes.addAttribute(
+				attribute.getName(), attribute.getValue());
+		}
+
+		return fieldAttributes;
 	}
 
 	protected Serializable getFieldValue(
@@ -560,6 +581,20 @@ public class JournalConverterImpl implements JournalConverter {
 					"language-id", LocaleUtil.toLanguageId(locale));
 
 				int count = ddmFieldsCounter.get(fieldName);
+
+				Serializable fieldAttributes = ddmField.getAttributes(
+					locale, count);
+
+				Attributes attributes = (Attributes)fieldAttributes;
+
+				Map<String, String> attributesMap = attributes.getAttributes();
+
+				for (Map.Entry<String, String> entry :
+						attributesMap.entrySet()) {
+
+					dynamicContentElement.addAttribute(
+						entry.getKey(), entry.getValue());
+				}
 
 				Serializable fieldValue = ddmField.getValue(locale, count);
 

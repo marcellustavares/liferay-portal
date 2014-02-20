@@ -73,6 +73,26 @@ public class Field implements Serializable {
 		this(0, name, value);
 	}
 
+	public void addAttributes(
+		Locale locale, List<Serializable> attributesList) {
+
+		for (Serializable attributes : attributesList) {
+			addAttributes(locale, attributes);
+		}
+	}
+
+	public void addAttributes(Locale locale, Serializable attributes) {
+		List<Serializable> attributesList = _attributesMap.get(locale);
+
+		if (attributesList == null) {
+			attributesList = new ArrayList<Serializable>();
+
+			_attributesMap.put(locale, attributesList);
+		}
+
+		attributesList.add(attributes);
+	}
+
 	public void addValue(Locale locale, Serializable value) {
 		List<Serializable> values = _valuesMap.get(locale);
 
@@ -111,6 +131,66 @@ public class Field implements Serializable {
 		}
 
 		return false;
+	}
+
+	public Serializable getAttribute(Locale locale, String name) {
+		List<Serializable> attributesList = _getAttributes(locale);
+
+		if (attributesList.isEmpty()) {
+			return null;
+		}
+
+		try {
+			DDMStructure ddmStructure = getDDMStructure();
+
+			if (ddmStructure == null) {
+				return _getAttribute(attributesList.get(0), name);
+			}
+
+			boolean repeatable = isRepeatable();
+
+			if (repeatable) {
+				List<Serializable> attributes = new ArrayList<Serializable>();
+
+				for (Serializable attribute : attributesList) {
+					attributes.add(_getAttribute(attribute, name));
+				}
+
+				return FieldConstants.getSerializable(
+					getDataType(), attributes);
+			}
+
+			return _getAttribute(attributesList.get(0), name);
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return null;
+	}
+
+	public Serializable getAttribute(Locale locale, String name, int index) {
+		List<Serializable> attributeList = _getAttributes(locale);
+
+		if (index >= attributeList.size()) {
+			return null;
+		}
+
+		return _getAttribute(attributeList.get(index), name);
+	}
+
+	public List<Serializable> getAttributes(Locale locale) {
+		return _getAttributes(locale);
+	}
+
+	public Serializable getAttributes(Locale locale, int index) {
+		List<Serializable> attributeList = _getAttributes(locale);
+
+		if (index >= attributeList.size()) {
+			return null;
+		}
+
+		return attributeList.get(index);
 	}
 
 	public Set<Locale> getAvailableLocales() {
@@ -231,6 +311,12 @@ public class Field implements Serializable {
 		return ddmStructure.isFieldRepeatable(_name);
 	}
 
+	public void setAttributes(
+		Locale locale, List<Serializable> attributesList) {
+
+		_attributesMap.put(locale, attributesList);
+	}
+
 	public void setDDMStructureId(long ddmStructureId) {
 		_ddmStructureId = ddmStructureId;
 	}
@@ -289,6 +375,34 @@ public class Field implements Serializable {
 		return FieldRendererFactory.getFieldRenderer(dataType);
 	}
 
+	private Serializable _getAttribute(
+		Serializable attributesValue, String name) {
+
+		Attributes attributes = (Attributes)attributesValue;
+
+		return attributes.getAttribute(name);
+	}
+
+	private List<Serializable> _getAttributes(Locale locale) {
+		Set<Locale> availableLocales = getAvailableLocales();
+
+		if (!availableLocales.contains(locale)) {
+			locale = getDefaultLocale();
+		}
+
+		if (locale == null) {
+			locale = LocaleUtil.getSiteDefault();
+		}
+
+		List<Serializable> values = _attributesMap.get(locale);
+
+		if (values == null) {
+			return Collections.emptyList();
+		}
+
+		return values;
+	}
+
 	private List<Serializable> _getValues(Locale locale) {
 		Set<Locale> availableLocales = getAvailableLocales();
 
@@ -311,6 +425,8 @@ public class Field implements Serializable {
 
 	private static Log _log = LogFactoryUtil.getLog(Field.class);
 
+	private Map<Locale, List<Serializable>> _attributesMap =
+		new HashMap<Locale, List<Serializable>>();
 	private long _ddmStructureId;
 	private Locale _defaultLocale;
 	private String _name;
