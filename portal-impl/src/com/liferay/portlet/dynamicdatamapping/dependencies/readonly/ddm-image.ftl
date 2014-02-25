@@ -1,11 +1,22 @@
 <#include "../init.ftl">
 
+<#if fieldRawValue?has_content>
+	<#assign fileJSONObject = getFileJSONObject(fieldRawValue)>
+
+	<#assign alt = fileJSONObject.getString("alt")>
+	<#assign src = fileJSONObject.getString("data")>
+</#if>
+
 <@aui["field-wrapper"] data=data>
+	<label>
+		<@liferay_ui.message key=escape(label) />
+	</label>
+
 	<#if (fields??) && (fieldValue != "")>
     [ <a href="javascript:;" id="${portletNamespace}${namespacedFieldName}ToggleImage" onClick="${portletNamespace}${namespacedFieldName}ToggleImage();">${languageUtil.get(locale, "show")}</a> ]
 
     <div class="hide wcm-image-preview" id="${portletNamespace}${namespacedFieldName}Container">
-        <img id="${portletNamespace}${namespacedFieldName}Image" src="${fieldValue}" class="img-polaroid"/>
+        <img alt="${alt}" id="${portletNamespace}${namespacedFieldName}Image" src="${src}" class="img-polaroid"/>
     </div>
 	</#if>
 
