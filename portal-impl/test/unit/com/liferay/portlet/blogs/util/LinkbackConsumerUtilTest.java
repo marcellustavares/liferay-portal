@@ -41,9 +41,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Java 7: this test requires -XX:-UseSplitVerifier
- *
- * https://groups.google.com/d/msg/powermock/vngllLwhv70/UluqE0wTO-IJ
+ * Note for Eclipse users:
+ * -XX:-UseSplitVerifier is needed to run this test under Java 7.
+ * (https://groups.google.com/d/msg/powermock/vngllLwhv70/UluqE0wTO-IJ)
  *
  * @author André de Oliveira
  */
@@ -55,7 +55,7 @@ public class LinkbackConsumerUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_prepareMocks();
+		doSetup();
 	}
 
 	@Test
@@ -64,50 +64,66 @@ public class LinkbackConsumerUtilTest {
 		long messageId = 42;
 		String url = "__url__";
 
-		doReturn("__URLtoString__").when(_mockHttp).URLtoString(url);
+		doReturn(
+			"__URLtoString__"
+		).when(
+			_http
+		).URLtoString(
+			url
+		);
 
 		LinkbackConsumerUtil.addNewTrackback(messageId, url, "__entryUrl__");
 		LinkbackConsumerUtil.verifyNewTrackbacks();
 
-		// verify that expected API was indeed called
-
-		verify(_mockMBMessageLocalService).deleteDiscussionMessage(messageId);
+		verify(
+			_mbMessageLocalService
+		).deleteDiscussionMessage(
+			messageId
+		);
 	}
 
 	@Test
 	public void testTrackbackToItself() throws Exception {
 
-		long messageId = 42;
 		String url = "__url__";
 
-		doReturn("__URLtoString_contains_entryUrl__").when(
-			_mockHttp).URLtoString(url);
+		doReturn(
+			"__URLtoString_contains_entryUrl__"
+		).when(
+			_http
+		).URLtoString(
+			url
+		);
 
-		LinkbackConsumerUtil.addNewTrackback(messageId, url, "entryUrl");
+		LinkbackConsumerUtil.addNewTrackback(0L, url, "entryUrl");
 		LinkbackConsumerUtil.verifyNewTrackbacks();
 
-		// verify that unwanted API was not called spuriously
-
-		verifyZeroInteractions(_mockMBMessageLocalService);
+		verifyZeroInteractions(
+			_mbMessageLocalService
+		);
 	}
 
-	private void _prepareMocks() throws Exception {
+	void doSetup() throws Exception {
 
 		MockitoAnnotations.initMocks(this);
 
 		mockStatic(MBMessageLocalServiceUtil.class, new CallsRealMethods());
-		stub(method(MBMessageLocalServiceUtil.class, "getService")).toReturn(
-			_mockMBMessageLocalService);
+
+		stub(
+			method(MBMessageLocalServiceUtil.class, "getService")
+		).toReturn(
+			_mbMessageLocalService
+		);
 
 		mockStatic(PortalSocketPermission.class, new DoesNothing());
 
-		new HttpUtil().setHttp(_mockHttp);
+		new HttpUtil().setHttp(_http);
 	}
 
 	@Mock
-	private Http _mockHttp;
+	private Http _http;
 
 	@Mock
-	private MBMessageLocalService _mockMBMessageLocalService;
+	private MBMessageLocalService _mbMessageLocalService;
 
 }
