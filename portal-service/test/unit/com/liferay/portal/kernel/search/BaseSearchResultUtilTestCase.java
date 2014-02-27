@@ -18,6 +18,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 import static org.junit.Assert.assertThat;
 
+import static org.mockito.Mockito.doReturn;
+
 import com.liferay.portal.kernel.util.FastDateFormatFactory;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.Props;
@@ -45,12 +47,12 @@ public abstract class BaseSearchResultUtilTestCase {
 
 	@Before
 	public void setUp() {
-		_prepareMocks();
+		doSetup();
 	}
 
 	List<SearchResult> getSearchResults(Hits hits) {
 
-		return SearchResultUtil.getSearchResults(hits, null, mockPortletURL);
+		return SearchResultUtil.getSearchResults(hits, null, portletURL);
 	}
 
 	DocumentImpl newDocument(String entryClassName) {
@@ -87,6 +89,30 @@ public abstract class BaseSearchResultUtilTestCase {
 				Field.CLASS_NAME_ID, String.valueOf(alternateClassNameId)));
 	}
 
+	protected void doSetup() {
+		MockitoAnnotations.initMocks(this);
+
+		PropsUtil.setProps(props);
+
+		new FastDateFormatFactoryUtil().setFastDateFormatFactory(
+			fastDateFormatFactory);
+
+		new PortalUtil().setPortal(portal);
+
+		new AssetRendererFactoryRegistryUtil().setAssetRendererFactoryRegistry(
+			assetRendererFactoryRegistry);
+
+		new IndexerRegistryUtil().setIndexerRegistry(indexerRegistry);
+
+		doReturn(
+			ALTERNATE_CLASS_NAME
+		).when(
+			portal
+		).getClassName(
+			ALTERNATE_CLASS_NAME_ID
+		);
+	}
+
 	static final String ALTERNATE_CLASS_NAME = "com.liferay.Foo";
 	static final long ALTERNATE_CLASS_NAME_ID = 42;
 	static final long ALTERNATE_CLASS_PK = 142857;
@@ -97,48 +123,32 @@ public abstract class BaseSearchResultUtilTestCase {
 		"A long time ago, in a galaxy far, far away...";
 
 	@Mock
-	AssetRendererFactoryRegistry mockAssetRendererFactoryRegistry;
+	AssetRendererFactoryRegistry assetRendererFactoryRegistry;
 
 	@Mock
-	AssetRendererFactory mockAssetRendererFactory;
+	AssetRendererFactory assetRendererFactory;
 
 	@Mock
-	AssetRenderer mockAssetRenderer;
+	AssetRenderer assetRenderer;
 
 	@Mock
-	FastDateFormatFactory mockFastDateFormatFactory;
+	FastDateFormatFactory fastDateFormatFactory;
 
 	@Mock
-	IndexerRegistry mockIndexerRegistry;
+	IndexerRegistry indexerRegistry;
 
 	@Mock
-	Indexer mockIndexer;
+	Indexer indexer;
 
 	@Mock
-	Portal mockPortal;
+	Portal portal;
 
 	@Mock
-	PortletURL mockPortletURL;
+	PortletURL portletURL;
 
 	@Mock
-	Props mockProps;
+	Props props;
 
 	SearchResult result;
-
-	private void _prepareMocks() {
-		MockitoAnnotations.initMocks(this);
-
-		PropsUtil.setProps(mockProps);
-
-		new FastDateFormatFactoryUtil().setFastDateFormatFactory(
-			mockFastDateFormatFactory);
-
-		new PortalUtil().setPortal(mockPortal);
-
-		new AssetRendererFactoryRegistryUtil().setAssetRendererFactoryRegistry(
-			mockAssetRendererFactoryRegistry);
-
-		new IndexerRegistryUtil().setIndexerRegistry(mockIndexerRegistry);
-	}
 
 }

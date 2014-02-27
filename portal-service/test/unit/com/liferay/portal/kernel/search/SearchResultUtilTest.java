@@ -47,7 +47,8 @@ public class SearchResultUtilTest extends BaseSearchResultUtilTestCase {
 		assertThat(
 			"should return a null summary," +
 			" as no Indexer or AssetRenderer were defined", result.getSummary(),
-			nullValue());
+			nullValue()
+		);
 
 		assertAllUnrelatedDetailsAreEmpty();
 	}
@@ -65,14 +66,37 @@ public class SearchResultUtilTest extends BaseSearchResultUtilTestCase {
 	@Test
 	public void testSummaryFromAssetRenderer() throws Exception {
 
-		doReturn(mockAssetRendererFactory).when(
-			mockAssetRendererFactoryRegistry).
-				getAssetRendererFactoryByClassName(anyString());
-		doReturn(mockAssetRenderer).when(mockAssetRendererFactory).
-			getAssetRenderer(anyLong());
-		doReturn(SUMMARY_TITLE).when(mockAssetRenderer).getTitle((Locale)any());
-		doReturn(SUMMARY_CONTENT).when(mockAssetRenderer).getSearchSummary(
-			(Locale)any());
+		doReturn(
+			assetRendererFactory
+		).when(
+			assetRendererFactoryRegistry
+		).getAssetRendererFactoryByClassName(
+			anyString()
+		);
+
+		doReturn(
+			assetRenderer
+		).when(
+			assetRendererFactory
+		).getAssetRenderer(
+			anyLong()
+		);
+
+		doReturn(
+			SUMMARY_TITLE
+		).when(
+			assetRenderer
+		).getTitle(
+			(Locale)any()
+		);
+
+		doReturn(
+			SUMMARY_CONTENT
+		).when(
+			assetRenderer
+		).getSearchSummary(
+			(Locale)any()
+		);
 
 		searchBlankDocument();
 
@@ -80,7 +104,7 @@ public class SearchResultUtilTest extends BaseSearchResultUtilTestCase {
 		assertThat(summary.getTitle(), is(SUMMARY_TITLE));
 		assertThat(summary.getContent(), is(SUMMARY_CONTENT));
 		assertThat(summary.getMaxContentLength(), is(200));
-		assertThat(summary.getPortletURL(), theInstance(mockPortletURL));
+		assertThat(summary.getPortletURL(), theInstance(portletURL));
 
 		assertAllUnrelatedDetailsAreEmpty();
 	}
@@ -91,9 +115,21 @@ public class SearchResultUtilTest extends BaseSearchResultUtilTestCase {
 		Summary summary = new Summary(
 			null, SUMMARY_TITLE, SUMMARY_CONTENT, null);
 
-		doReturn(mockIndexer).when(mockIndexerRegistry).getIndexer(anyString());
-		doReturn(summary).when(mockIndexer).getSummary(
-			(Document)any(), (Locale)any(), anyString(), (PortletURL)any());
+		doReturn(
+			indexer
+		).when(
+			indexerRegistry
+		).getIndexer(
+			anyString()
+		);
+
+		doReturn(
+			summary
+		).when(
+			indexer
+		).getSummary(
+			(Document)any(), (Locale)any(), anyString(), (PortletURL)any()
+		);
 
 		searchBlankDocument();
 

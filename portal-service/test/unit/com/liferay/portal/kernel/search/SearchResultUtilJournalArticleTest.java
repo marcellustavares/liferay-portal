@@ -56,9 +56,21 @@ public class SearchResultUtilJournalArticleTest
 	@Test
 	public void testJournalArticleWithDefectiveIndexer() throws Exception {
 
-		doReturn(mockIndexer).when(mockIndexerRegistry).getIndexer(anyString());
-		doThrow(IllegalArgumentException.class).when(mockIndexer).getSummary(
-			(Document)any(), (Locale)any(), anyString(), (PortletURL)any());
+		doReturn(
+			indexer
+		).when(
+			indexerRegistry
+		).getIndexer(
+			anyString()
+		);
+
+		doThrow(
+			IllegalArgumentException.class
+		).when(
+			indexer
+		).getSummary(
+			(Document)any(), (Locale)any(), anyString(), (PortletURL)any()
+		);
 
 		DocumentImpl doc = newDocumentJournalArticleWithVersion();
 
@@ -74,10 +86,17 @@ public class SearchResultUtilJournalArticleTest
 			"and versions will be set, but the summary will be missing.",
 			result.getSummary(), nullValue());
 
-		// verify APIs were indeed called
+		verify(
+			indexerRegistry
+		).getIndexer(
+			JOURNALARTICLE_CLASS_NAME
+		);
 
-		verify(mockIndexerRegistry).getIndexer(JOURNALARTICLE_CLASS_NAME);
-		verify(mockIndexer).getSummary(doc, null, "", mockPortletURL);
+		verify(
+			indexer
+		).getSummary(
+			doc, null, "", portletURL
+		);
 	}
 
 	void assertSearchResultWithVersion() {

@@ -26,8 +26,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.support.membermodification.MemberMatcher.method;
+import static org.powermock.api.support.membermodification.MemberModifier.stub;
+
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.service.MBMessageLocalService;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
@@ -40,14 +42,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.stubbing.answers.CallsRealMethods;
 
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * Java 7: this test requires -XX:-UseSplitVerifier
- *
- * https://groups.google.com/d/msg/powermock/vngllLwhv70/UluqE0wTO-IJ
+ * Note for Eclipse users:
+ * -XX:-UseSplitVerifier is needed to run this test under Java 7.
+ * (https://groups.google.com/d/msg/powermock/vngllLwhv70/UluqE0wTO-IJ)
  *
  * @author André de Oliveira
  */
@@ -60,16 +61,19 @@ public class SearchResultUtilMBMessageTest
 	public void setUp() {
 		super.setUp();
 
-		_prepareMBMessageMocks();
+		doSetupMBMessage();
 	}
 
 	@Test
-	public void testMBMessage() throws PortalException, SystemException {
+	public void testMBMessage() throws Exception {
 
-		doReturn(ALTERNATE_CLASS_NAME).when(mockPortal).getClassName(
-			ALTERNATE_CLASS_NAME_ID);
-		doReturn(mockMBMessage).when(mockMBMessageLocalService).getMessage(
-			ENTRY_CLASS_PK);
+		doReturn(
+			mockMBMessage
+		).when(
+			mockMBMessageLocalService
+		).getMessage(
+			ENTRY_CLASS_PK
+		);
 
 		searchSingleDocument(newDocumentMBMessageWithAlternates());
 
@@ -86,9 +90,9 @@ public class SearchResultUtilMBMessageTest
 			"must be the prepared MBMessage", mbMessages.get(0),
 			theInstance(mockMBMessage));
 
-		// verify API was not called spuriously
-
-		verifyZeroInteractions(mockIndexerRegistry);
+		verifyZeroInteractions(
+			indexerRegistry
+		);
 
 		assertThat(result.getSummary(), nullValue());
 
@@ -96,8 +100,7 @@ public class SearchResultUtilMBMessageTest
 	}
 
 	@Test
-	public void testMBMessageMissingAlternateClassPKAndName()
-		throws PortalException, SystemException {
+	public void testMBMessageMissingAlternateClassPKAndName() throws Exception {
 
 		searchSingleDocument(newDocumentMBMessage());
 
@@ -114,9 +117,9 @@ public class SearchResultUtilMBMessageTest
 			"when there isn't an alternate Class Name or PK.",
 			result.getMBMessages(), empty());
 
-		// verify API was not called spuriously
-
-		verifyZeroInteractions(mockMBMessageLocalService);
+		verifyZeroInteractions(
+			mockMBMessageLocalService
+		);
 
 		assertThat(result.getSummary(), nullValue());
 
@@ -124,13 +127,15 @@ public class SearchResultUtilMBMessageTest
 	}
 
 	@Test
-	public void testMBMessageMissingFromService()
-		throws PortalException, SystemException {
+	public void testMBMessageMissingFromService() throws Exception {
 
-		doReturn(ALTERNATE_CLASS_NAME).when(mockPortal).getClassName(
-			ALTERNATE_CLASS_NAME_ID);
-		doReturn(null).when(mockMBMessageLocalService).getMessage(
-			ENTRY_CLASS_PK);
+		doReturn(
+			null
+		).when(
+			mockMBMessageLocalService
+		).getMessage(
+			ENTRY_CLASS_PK
+		);
 
 		searchSingleDocument(newDocumentMBMessageWithAlternates());
 
@@ -157,12 +162,23 @@ public class SearchResultUtilMBMessageTest
 			"but ultimately the summary ends empty.", result.getSummary(),
 			nullValue());
 
-		// verify APIs were indeed called
+		verify(
+			mockMBMessageLocalService
+		).getMessage(
+			ENTRY_CLASS_PK
+		);
 
-		verify(mockMBMessageLocalService).getMessage(ENTRY_CLASS_PK);
-		verify(mockIndexerRegistry).getIndexer(ALTERNATE_CLASS_NAME);
-		verify(mockAssetRendererFactoryRegistry).
-			getAssetRendererFactoryByClassName(ALTERNATE_CLASS_NAME);
+		verify(
+			indexerRegistry
+		).getIndexer(
+			ALTERNATE_CLASS_NAME
+		);
+
+		verify(
+			assetRendererFactoryRegistry
+		).getAssetRendererFactoryByClassName(
+			ALTERNATE_CLASS_NAME
+		);
 
 		assertAllUnrelatedDetailsAreEmpty();
 	}
@@ -185,6 +201,16 @@ public class SearchResultUtilMBMessageTest
 		return doc;
 	}
 
+	protected void doSetupMBMessage() {
+		mockStatic(MBMessageLocalServiceUtil.class, new CallsRealMethods());
+
+		stub(
+			method(MBMessageLocalServiceUtil.class, "getService")
+		).toReturn(
+			mockMBMessageLocalService
+		);
+	}
+
 	static final String MBMESSAGE_CLASS_NAME = MBMessage.class.getName();
 
 	@Mock
@@ -192,13 +218,5 @@ public class SearchResultUtilMBMessageTest
 
 	@Mock
 	MBMessageLocalService mockMBMessageLocalService;
-
-	private void _prepareMBMessageMocks() {
-		PowerMockito.mockStatic(
-			MBMessageLocalServiceUtil.class, new CallsRealMethods());
-		PowerMockito.stub(
-			PowerMockito.method(MBMessageLocalServiceUtil.class, "getService")
-						).toReturn(mockMBMessageLocalService);
-	}
 
 }
