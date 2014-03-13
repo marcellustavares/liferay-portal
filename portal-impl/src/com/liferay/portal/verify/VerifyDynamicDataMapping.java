@@ -164,6 +164,10 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 			DDMStructureLocalServiceUtil.getStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
+			if (ddmStructure.isSystemStructure()) {
+				continue;
+			}
+
 			verifyDDMStructure(ddmStructure);
 			verifyDDMTemplates(ddmStructure);
 
