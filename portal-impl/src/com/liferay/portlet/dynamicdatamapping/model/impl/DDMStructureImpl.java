@@ -124,7 +124,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public Document getDocument() {
-		if (_document == null) {
+		if (!isSystemStructure() && (_document == null)) {
 			try {
 				_document = SAXReaderUtil.read(getXsd());
 			}
@@ -503,6 +503,15 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			getTransientFieldsMap(getDefaultLanguageId());
 
 		return transientFieldsMap.containsKey(fieldName);
+	}
+
+	@Override
+	public boolean isSystemStructure() {
+		if ((getCompanyId() == 0) && (getGroupId() == 0)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override

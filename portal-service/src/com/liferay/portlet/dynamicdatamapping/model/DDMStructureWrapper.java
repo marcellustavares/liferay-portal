@@ -1158,6 +1158,11 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
+	public boolean isSystemStructure() {
+		return _ddmStructure.isSystemStructure();
+	}
+
+	@Override
 	public void setDocument(com.liferay.portal.kernel.xml.Document document) {
 		_ddmStructure.setDocument(document);
 	}

@@ -174,6 +174,8 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
+	public boolean isSystemStructure();
+
 	public void setDocument(com.liferay.portal.kernel.xml.Document document);
 
 	public void setLocalizedFieldsMap(

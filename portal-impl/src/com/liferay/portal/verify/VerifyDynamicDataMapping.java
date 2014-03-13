@@ -164,6 +164,10 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 			DDMStructureLocalServiceUtil.getStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
+			if (ddmStructure.isSystemStructure()) {
+				continue;
+			}
+
 			verifyDDMStructure(ddmStructure);
 			verifyDDMTemplates(ddmStructure);
 
@@ -487,7 +491,9 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 	}
 
 	protected void verifyDDMTemplate(DDMTemplate ddmTemplate) throws Exception {
-		if (ddmTemplate.getType() != DDMTemplateConstants.TEMPLATE_TYPE_FORM) {
+		String type = ddmTemplate.getType();
+
+		if (type.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
 			return;
 		}
 
