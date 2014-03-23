@@ -17,6 +17,7 @@ package com.liferay.portlet.dynamicdatamapping.storage;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.StorageException;
@@ -27,6 +28,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.query.Condition;
+import com.liferay.portlet.dynamicdatamapping.storage.query.FieldCondition;
 
 import java.util.List;
 import java.util.Map;
@@ -248,6 +250,9 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 
 		update(classPK, fields, false, serviceContext);
 	}
+
+	protected abstract void buildInNotInQuery(
+		FieldCondition fieldCondition, StringBundler sb, boolean inOperator);
 
 	protected abstract long doCreate(
 			long companyId, long ddmStructureId, Fields fields,

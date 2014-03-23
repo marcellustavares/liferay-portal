@@ -14,6 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage.query;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Marcellus Tavares
  */
@@ -40,6 +43,16 @@ public class FieldConditionImpl implements FieldCondition {
 	@Override
 	public Object getValue() {
 		return _value;
+	}
+
+	@Override
+	public List<Object> getValueAsList() {
+
+		if(_value instanceof List) {
+			return (List<Object>)_value;
+		}
+
+		return Arrays.asList(_value);
 	}
 
 	@Override

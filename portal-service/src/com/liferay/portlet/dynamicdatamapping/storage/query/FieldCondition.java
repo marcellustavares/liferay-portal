@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage.query;
 
+import java.util.List;
+
 /**
  * @author Marcellus Tavares
  */
@@ -24,5 +26,7 @@ public interface FieldCondition extends Condition {
 	public String getName();
 
 	public Object getValue();
+
+	public List<Object> getValueAsList();
 
 }
