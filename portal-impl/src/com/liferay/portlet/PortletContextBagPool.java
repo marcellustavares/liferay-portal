@@ -26,6 +26,10 @@ public class PortletContextBagPool {
 		_instance._portletContextBagPool.clear();
 	}
 
+	public static boolean containsAll(String... servletContextNames) {
+		return _instance._containsAll(servletContextNames);
+	}
+
 	public static PortletContextBag get(String servletContextName) {
 		return _instance._get(servletContextName);
 	}
@@ -43,6 +47,22 @@ public class PortletContextBagPool {
 	private PortletContextBagPool() {
 		_portletContextBagPool =
 			new ConcurrentHashMap<String, PortletContextBag>();
+	}
+
+	private boolean _containsAll(String... servletContextNames) {
+
+		if(servletContextNames == null || servletContextNames.length == 0) {
+			return false;
+		}
+
+		for(String servletContextName: servletContextNames) {
+
+			if(!_portletContextBagPool.containsKey(servletContextName)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private PortletContextBag _get(String servletContextName) {

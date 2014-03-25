@@ -235,6 +235,12 @@ public class SchedulerEngineHelperUtil {
 
 	public static void initialize() throws SchedulerException {
 		getSchedulerEngineHelper().initialize();
+		initialized = true;
+
+	}
+
+	public static boolean isInitialized() throws SchedulerException {
+		return initialized;
 	}
 
 	public static String namespaceGroupName(
@@ -367,5 +373,6 @@ public class SchedulerEngineHelperUtil {
 	}
 
 	private static SchedulerEngineHelper _schedulerEngineHelper;
+	private static boolean initialized;
 
 }

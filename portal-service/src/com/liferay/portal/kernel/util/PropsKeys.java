@@ -2179,11 +2179,15 @@ public interface PropsKeys {
 
 	public static final String SC_PRODUCT_COMMENTS_ENABLED = "sc.product.comments.enabled";
 
+	public static final String SCHEDULER_DEPENDENT_APPS = "scheduler.dependent.apps";
+
 	public static final String SCHEDULER_DESCRIPTION_MAX_LENGTH = "scheduler.description.max.length";
 
 	public static final String SCHEDULER_ENABLED = "scheduler.enabled";
 
 	public static final String SCHEDULER_GROUP_NAME_MAX_LENGTH = "scheduler.group.name.max.length";
+
+	public static final String SCHEDULER_INIT_DELAY_IN_MINUTES = "scheduler.init.delay.in.minutes";
 
 	public static final String SCHEDULER_JOB_NAME_MAX_LENGTH = "scheduler.job.name.max.length";
 

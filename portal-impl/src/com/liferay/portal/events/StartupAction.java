@@ -14,6 +14,9 @@
 
 package com.liferay.portal.events;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.liferay.portal.cache.ehcache.EhcacheStreamBootstrapCacheLoader;
 import com.liferay.portal.jericho.CachedLoggerProvider;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
@@ -39,6 +42,7 @@ import com.liferay.portal.kernel.resiliency.spi.agent.annotation.Direction;
 import com.liferay.portal.kernel.resiliency.spi.agent.annotation.DistributedRegistry;
 import com.liferay.portal.kernel.resiliency.spi.agent.annotation.MatchType;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.servlet.JspFactorySwapper;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
@@ -48,7 +52,9 @@ import com.liferay.portal.security.lang.DoPrivilegedUtil;
 import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.PortletContextBagPool;
 import com.liferay.portlet.messageboards.util.MBMessageIndexer;
 
 import javax.portlet.MimeResponse;
@@ -192,11 +198,8 @@ public class StartupAction extends SimpleAction {
 
 		// Scheduler
 
-		if (_log.isDebugEnabled()) {
-			_log.debug("Initialize scheduler engine lifecycle");
-		}
+		_initializeSchedulerEngine();
 
-		SchedulerEngineHelperUtil.initialize();
 
 		// Verify
 
@@ -219,6 +222,32 @@ public class StartupAction extends SimpleAction {
 		// Jericho
 
 		CachedLoggerProvider.install();
+	}
+
+	private void _initializeSchedulerEngine() {
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Initialize scheduler engine lifecycle");
+		}
+
+
+		final Timer timerInitializationDelay = new Timer();
+		timerInitializationDelay.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+
+				try {
+					if(!SchedulerEngineHelperUtil.isInitialized()) {
+						SchedulerEngineHelperUtil.initialize();
+					}
+				}
+				catch (SchedulerException e) {
+					_log.error(e.getMessage(),e);
+				}
+			}
+		},PropsValues.SCHEDULER_INIT_DELAY_IN_MINUTES * 60 * 1000);
+
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(StartupAction.class);

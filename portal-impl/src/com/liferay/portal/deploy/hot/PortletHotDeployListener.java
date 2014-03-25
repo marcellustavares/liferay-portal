@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.PortletApp;
@@ -52,6 +53,7 @@ import com.liferay.portal.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.settings.SettingsFactoryUtil;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebAppPool;
 import com.liferay.portal.util.WebKeys;
@@ -79,11 +81,8 @@ import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import javax.portlet.PortletURLGenerationListener;
-
 import javax.servlet.ServletContext;
-
 import javax.sql.DataSource;
 
 import org.apache.portals.bridges.struts.StrutsPortlet;
@@ -539,6 +538,13 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 
 			PortletURLListenerFactory.create(portletURLListener);
 		}
+
+
+		if(PortletContextBagPool.containsAll(
+			PropsValues.SCHEDULER_DEPENDENT_APPS)) {
+			SchedulerEngineHelperUtil.initialize();
+		}
+
 	}
 
 	protected void processPortletProperties(
