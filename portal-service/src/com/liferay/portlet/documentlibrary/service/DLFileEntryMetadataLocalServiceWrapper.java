@@ -356,6 +356,11 @@ public class DLFileEntryMetadataLocalServiceWrapper
 		return _dlFileEntryMetadataLocalService.getFileVersionFileEntryMetadatasCount(fileVersionId);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, java.util.List, long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
 	@Deprecated
 	@Override
 	public void updateFileEntryMetadata(long companyId,
@@ -375,14 +380,20 @@ public class DLFileEntryMetadataLocalServiceWrapper
 		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures,
 		long fileEntryTypeId, long fileEntryId, long fileVersionId,
 		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
-		com.liferay.portal.service.ServiceContext serviceContext, boolean isCopy)
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		_dlFileEntryMetadataLocalService.updateFileEntryMetadata(companyId,
 			ddmStructures, fileEntryTypeId, fileEntryId, fileVersionId,
-			fieldsMap, serviceContext, isCopy);
+			fieldsMap, serviceContext, validateDDMStructureFields);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
 	@Deprecated
 	@Override
 	public void updateFileEntryMetadata(long fileEntryTypeId, long fileEntryId,
@@ -399,11 +410,13 @@ public class DLFileEntryMetadataLocalServiceWrapper
 	public void updateFileEntryMetadata(long fileEntryTypeId, long fileEntryId,
 		long fileVersionId,
 		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
-		com.liferay.portal.service.ServiceContext serviceContext, boolean isCopy)
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		_dlFileEntryMetadataLocalService.updateFileEntryMetadata(fileEntryTypeId,
-			fileEntryId, fileVersionId, fieldsMap, serviceContext, isCopy);
+			fileEntryId, fileVersionId, fieldsMap, serviceContext,
+			validateDDMStructureFields);
 	}
 
 	/**

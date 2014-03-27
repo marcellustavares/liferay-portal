@@ -294,6 +294,11 @@ public interface DLFileEntryMetadataLocalService extends BaseLocalService,
 	public long getFileVersionFileEntryMetadatasCount(long fileVersionId)
 		throws com.liferay.portal.kernel.exception.SystemException;
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, java.util.List, long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
 	@Deprecated
 	public void updateFileEntryMetadata(long companyId,
 		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures,
@@ -307,10 +312,16 @@ public interface DLFileEntryMetadataLocalService extends BaseLocalService,
 		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures,
 		long fileEntryTypeId, long fileEntryId, long fileVersionId,
 		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
-		com.liferay.portal.service.ServiceContext serviceContext, boolean isCopy)
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
 	@Deprecated
 	public void updateFileEntryMetadata(long fileEntryTypeId, long fileEntryId,
 		long fileVersionId,
@@ -322,7 +333,8 @@ public interface DLFileEntryMetadataLocalService extends BaseLocalService,
 	public void updateFileEntryMetadata(long fileEntryTypeId, long fileEntryId,
 		long fileVersionId,
 		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
-		com.liferay.portal.service.ServiceContext serviceContext, boolean isCopy)
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 }
