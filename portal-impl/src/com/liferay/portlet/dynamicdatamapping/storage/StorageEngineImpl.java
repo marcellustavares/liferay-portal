@@ -48,14 +48,15 @@ public class StorageEngineImpl implements StorageEngine {
 	@Override
 	public long create(
 			long companyId, long ddmStructureId, Fields fields,
-			ServiceContext serviceContext, boolean isCopy)
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
 		throws StorageException {
 
 		StorageAdapter storageAdapter = getStructureStorageAdapter(
 			ddmStructureId);
 
 		return storageAdapter.create(
-			companyId, ddmStructureId, fields, serviceContext, isCopy);
+			companyId, ddmStructureId, fields, serviceContext,
+			validateDDMStructureFields);
 	}
 
 	@Override

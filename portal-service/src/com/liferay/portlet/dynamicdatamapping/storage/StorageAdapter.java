@@ -36,7 +36,7 @@ public interface StorageAdapter {
 
 	public long create(
 			long companyId, long ddmStructureId, Fields fields,
-			ServiceContext serviceContext, boolean isCopy)
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
 		throws StorageException;
 
 	public void deleteByClass(long classPK) throws StorageException;

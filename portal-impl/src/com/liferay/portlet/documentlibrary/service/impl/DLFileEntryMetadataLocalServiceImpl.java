@@ -144,7 +144,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 			long companyId, List<DDMStructure> ddmStructures,
 			long fileEntryTypeId, long fileEntryId, long fileVersionId,
 			Map<String, Fields> fieldsMap, ServiceContext serviceContext,
-			boolean isCopy)
+			boolean validateDDMStructureFields)
 		throws PortalException, SystemException {
 
 		for (DDMStructure ddmStructure : ddmStructures) {
@@ -153,7 +153,8 @@ public class DLFileEntryMetadataLocalServiceImpl
 			if (fields != null) {
 				updateFileEntryMetadata(
 					companyId, ddmStructure, fileEntryTypeId, fileEntryId,
-					fileVersionId, fields, serviceContext, isCopy);
+					fileVersionId, fields, serviceContext,
+					validateDDMStructureFields);
 			}
 		}
 	}
@@ -172,14 +173,14 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 		updateFileEntryMetadata(
 			fileEntryTypeId, fileEntryId, fileVersionId, fieldsMap,
-			serviceContext, false);
+			serviceContext, true);
 	}
 
 	@Override
 	public void updateFileEntryMetadata(
 			long fileEntryTypeId, long fileEntryId, long fileVersionId,
 			Map<String, Fields> fieldsMap, ServiceContext serviceContext,
-			boolean isCopy)
+			boolean validateDDMStructureFields)
 		throws PortalException, SystemException {
 
 		DLFileEntryType fileEntryType =
@@ -189,7 +190,8 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 		updateFileEntryMetadata(
 			fileEntryType.getCompanyId(), ddmStructures, fileEntryTypeId,
-			fileEntryId, fileVersionId, fieldsMap, serviceContext, isCopy);
+			fileEntryId, fileVersionId, fieldsMap, serviceContext,
+			validateDDMStructureFields);
 	}
 
 	protected void deleteFileEntryMetadata(
@@ -213,7 +215,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 	protected void updateFileEntryMetadata(
 			long companyId, DDMStructure ddmStructure, long fileEntryTypeId,
 			long fileEntryId, long fileVersionId, Fields fields,
-			ServiceContext serviceContext, boolean isCopy)
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
 		throws StorageException, SystemException {
 
 		DLFileEntryMetadata fileEntryMetadata =
@@ -236,7 +238,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 			long ddmStorageId = StorageEngineUtil.create(
 				companyId, ddmStructure.getStructureId(), fields,
-				serviceContext, isCopy);
+				serviceContext, validateDDMStructureFields);
 
 			fileEntryMetadata.setDDMStorageId(ddmStorageId);
 

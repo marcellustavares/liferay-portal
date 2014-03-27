@@ -39,11 +39,12 @@ public class StorageEngineUtil {
 
 	public static long create(
 			long companyId, long ddmStructureId, Fields fields,
-			ServiceContext serviceContext, boolean isCopy)
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
 		throws StorageException {
 
 		return getStorageEngine().create(
-			companyId, ddmStructureId, fields, serviceContext, isCopy);
+			companyId, ddmStructureId, fields, serviceContext,
+			validateDDMStructureFields);
 	}
 
 	public static void deleteByClass(long classPK) throws StorageException {
