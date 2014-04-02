@@ -1590,11 +1590,11 @@ public class PropsValues {
 
 	public static final boolean SC_PRODUCT_COMMENTS_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.SC_PRODUCT_COMMENTS_ENABLED));
 
-	public static String[] SCHEDULER_DEPENDENT_APPS = PropsUtil.getArray(PropsKeys.SCHEDULER_DEPENDENT_APPS);
+	public static String[] SCHEDULER_INITIALIZATION_REQUIRED_DEPLOYMENT_CONTEXTS = PropsUtil.getArray(PropsKeys.SCHEDULER_INITIALIZATION_REQUIRED_DEPLOYMENT_CONTEXTS);
 
 	public static final boolean SCHEDULER_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.SCHEDULER_ENABLED));
 
-	public static final int SCHEDULER_INIT_DELAY_IN_MINUTES = GetterUtil.getInteger(PropsUtil.get(PropsKeys.SCHEDULER_INIT_DELAY_IN_MINUTES));
+	public static final int SCHEDULER_INITIALIZATION_DELAY = GetterUtil.getInteger(PropsUtil.get(PropsKeys.SCHEDULER_INITIALIZATION_DELAY));
 
 	public static final String[] SCRIPTING_FORBIDDEN_CLASSES = PropsUtil.getArray(PropsKeys.SCRIPTING_FORBIDDEN_CLASSES);
 

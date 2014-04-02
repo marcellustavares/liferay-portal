@@ -14,9 +14,6 @@
 
 package com.liferay.portal.events;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.liferay.portal.cache.ehcache.EhcacheStreamBootstrapCacheLoader;
 import com.liferay.portal.jericho.CachedLoggerProvider;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
@@ -54,8 +51,10 @@ import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portal.tools.DBUpgrader;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
-import com.liferay.portlet.PortletContextBagPool;
 import com.liferay.portlet.messageboards.util.MBMessageIndexer;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletRequest;
@@ -200,7 +199,6 @@ public class StartupAction extends SimpleAction {
 
 		_initializeSchedulerEngine();
 
-
 		// Verify
 
 		if (_log.isDebugEnabled()) {
@@ -225,29 +223,28 @@ public class StartupAction extends SimpleAction {
 	}
 
 	private void _initializeSchedulerEngine() {
-
 		if (_log.isDebugEnabled()) {
 			_log.debug("Initialize scheduler engine lifecycle");
 		}
 
-
-		final Timer timerInitializationDelay = new Timer();
-		timerInitializationDelay.schedule(new TimerTask() {
+		TimerTask timerTask = new TimerTask() {
 
 			@Override
 			public void run() {
-
 				try {
-					if(!SchedulerEngineHelperUtil.isInitialized()) {
+					if (!SchedulerEngineHelperUtil.isInitialized()) {
 						SchedulerEngineHelperUtil.initialize();
 					}
 				}
 				catch (SchedulerException e) {
-					_log.error(e.getMessage(),e);
+					_log.error(e.getMessage(), e);
 				}
 			}
-		},PropsValues.SCHEDULER_INIT_DELAY_IN_MINUTES * 60 * 1000);
+		};
 
+		Timer timer = new Timer();
+
+		timer.schedule(timerTask, PropsValues.SCHEDULER_INITIALIZATION_DELAY);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(StartupAction.class);
