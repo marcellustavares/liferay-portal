@@ -46,6 +46,20 @@ public class StorageEngineImpl implements StorageEngine {
 	}
 
 	@Override
+	public long create(
+			long companyId, long ddmStructureId, Fields fields,
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.create(
+			companyId, ddmStructureId, fields, serviceContext,
+			validateDDMStructureFields);
+	}
+
+	@Override
 	public void deleteByClass(long classPK) throws StorageException {
 		StorageAdapter storageAdapter = getClassStorageAdapter(classPK);
 

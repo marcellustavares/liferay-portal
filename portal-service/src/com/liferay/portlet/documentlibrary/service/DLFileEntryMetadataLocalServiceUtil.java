@@ -331,6 +331,12 @@ public class DLFileEntryMetadataLocalServiceUtil {
 		return getService().getFileVersionFileEntryMetadatasCount(fileVersionId);
 	}
 
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, java.util.List, long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
+	@Deprecated
 	public static void updateFileEntryMetadata(long companyId,
 		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures,
 		long fileEntryTypeId, long fileEntryId, long fileVersionId,
@@ -343,6 +349,26 @@ public class DLFileEntryMetadataLocalServiceUtil {
 			fileEntryId, fileVersionId, fieldsMap, serviceContext);
 	}
 
+	public static void updateFileEntryMetadata(long companyId,
+		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures,
+		long fileEntryTypeId, long fileEntryId, long fileVersionId,
+		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.updateFileEntryMetadata(companyId, ddmStructures, fileEntryTypeId,
+			fileEntryId, fileVersionId, fieldsMap, serviceContext,
+			validateDDMStructureFields);
+	}
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #updateFileEntryMetadata(
+	long, long, long, java.util.Map,
+	com.liferay.portal.service.ServiceContext, boolean)}
+	*/
+	@Deprecated
 	public static void updateFileEntryMetadata(long fileEntryTypeId,
 		long fileEntryId, long fileVersionId,
 		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
@@ -352,6 +378,18 @@ public class DLFileEntryMetadataLocalServiceUtil {
 		getService()
 			.updateFileEntryMetadata(fileEntryTypeId, fileEntryId,
 			fileVersionId, fieldsMap, serviceContext);
+	}
+
+	public static void updateFileEntryMetadata(long fileEntryTypeId,
+		long fileEntryId, long fileVersionId,
+		java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> fieldsMap,
+		com.liferay.portal.service.ServiceContext serviceContext,
+		boolean validateDDMStructureFields)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.updateFileEntryMetadata(fileEntryTypeId, fileEntryId,
+			fileVersionId, fieldsMap, serviceContext, validateDDMStructureFields);
 	}
 
 	public static DLFileEntryMetadataLocalService getService() {

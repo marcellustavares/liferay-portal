@@ -37,6 +37,16 @@ public class StorageEngineUtil {
 			companyId, ddmStructureId, fields, serviceContext);
 	}
 
+	public static long create(
+			long companyId, long ddmStructureId, Fields fields,
+			ServiceContext serviceContext, boolean validateDDMStructureFields)
+		throws StorageException {
+
+		return getStorageEngine().create(
+			companyId, ddmStructureId, fields, serviceContext,
+			validateDDMStructureFields);
+	}
+
 	public static void deleteByClass(long classPK) throws StorageException {
 		getStorageEngine().deleteByClass(classPK);
 	}
