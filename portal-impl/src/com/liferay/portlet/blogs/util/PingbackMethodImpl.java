@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.blogs.util;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -25,30 +23,26 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.kernel.xmlrpc.Response;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
+import com.liferay.portlet.blogs.pingback.PingbackComments;
+import com.liferay.portlet.blogs.pingback.PingbackCommentsImpl;
 import com.liferay.portlet.blogs.pingback.PingbackException;
+import com.liferay.portlet.blogs.pingback.PingbackServiceContextFunction;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 
 import java.io.IOException;
 
@@ -83,6 +77,10 @@ public class PingbackMethodImpl implements Method {
 	public static final int TARGET_URI_DOES_NOT_EXIST = 32;
 
 	public static final int TARGET_URI_INVALID = 33;
+
+	public PingbackMethodImpl() {
+		_pingbackComments = new PingbackCommentsImpl();
+	}
 
 	@Override
 	public Response execute(long companyId) {
@@ -126,8 +124,10 @@ public class PingbackMethodImpl implements Method {
 					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
 						"[/url]";
 
-			addLinkbackComment(
-				userId, groupId, className, classPK, body, companyId, urlTitle);
+			_pingbackComments.addComment(
+				userId, groupId, className, classPK, body,
+				new PingbackServiceContextFunction(
+					companyId, groupId, urlTitle));
 		}
 		catch (PingbackException pe) {
 			throw pe;
@@ -169,73 +169,8 @@ public class PingbackMethodImpl implements Method {
 		}
 	}
 
-	protected static void addLinkbackComment(
-		long userId, long groupId, String className, long classPK, String body,
-		long companyId, String urlTitle)
-	throws PortalException, SystemException {
-
-		MBMessageDisplay messageDisplay =
-			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
-				userId, groupId, className, classPK,
-				WorkflowConstants.STATUS_APPROVED);
-
-		MBThread thread = messageDisplay.getThread();
-
-		long threadId = thread.getThreadId();
-		long parentMessageId = thread.getRootMessageId();
-
-		List<MBMessage> messages =
-			MBMessageLocalServiceUtil.getThreadMessages(
-				threadId, WorkflowConstants.STATUS_APPROVED);
-
-		for (MBMessage message : messages) {
-			if (message.getBody().equals(body)) {
-				throw new PingbackException(
-					PINGBACK_ALREADY_REGISTERED,
-					"Pingback previously registered");
-			}
-		}
-
-		ServiceContext serviceContext = buildServiceContext(
-			companyId, groupId, urlTitle);
-
-		MBMessageLocalServiceUtil.addDiscussionMessage(
-			userId, StringPool.BLANK, groupId, className, classPK, threadId,
-			parentMessageId, StringPool.BLANK, body, serviceContext);
-	}
-
-	protected static ServiceContext buildServiceContext(
-		long companyId, long groupId, String urlTitle)
-	throws PortalException, SystemException {
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		String pingbackUserName = LanguageUtil.get(
-			LocaleUtil.getSiteDefault(), "pingback");
-
-		serviceContext.setAttribute("pingbackUserName", pingbackUserName);
-
-		StringBundler sb = new StringBundler(5);
-
-		String layoutFullURL = PortalUtil.getLayoutFullURL(
-			groupId, PortletKeys.BLOGS);
-
-		sb.append(layoutFullURL);
-
-		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
-
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(
-			companyId, PortletKeys.BLOGS);
-
-		sb.append(portlet.getFriendlyURLMapping());
-		sb.append(StringPool.SLASH);
-		sb.append(urlTitle);
-
-		serviceContext.setAttribute("redirect", sb.toString());
-
-		serviceContext.setLayoutFullURL(layoutFullURL);
-
-		return serviceContext;
+	protected PingbackMethodImpl(PingbackComments pingbackComments) {
+		_pingbackComments = pingbackComments;
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
@@ -384,6 +319,7 @@ public class PingbackMethodImpl implements Method {
 
 	private static Log _log = LogFactoryUtil.getLog(PingbackMethodImpl.class);
 
+	private PingbackComments _pingbackComments;
 	private String _sourceUri;
 	private String _targetUri;
 
