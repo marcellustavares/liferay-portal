@@ -14,11 +14,7 @@
 
 package com.liferay.portlet;
 
-import com.liferay.portal.kernel.util.ArrayUtil;
-
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,10 +24,6 @@ public class PortletContextBagPool {
 
 	public static void clear() {
 		_instance._portletContextBagPool.clear();
-	}
-
-	public static boolean containsAll(String[] servletContextNames) {
-		return _instance._containsAll(servletContextNames);
 	}
 
 	public static PortletContextBag get(String servletContextName) {
@@ -51,16 +43,6 @@ public class PortletContextBagPool {
 	private PortletContextBagPool() {
 		_portletContextBagPool =
 			new ConcurrentHashMap<String, PortletContextBag>();
-	}
-
-	private boolean _containsAll(String[] servletContextNames) {
-		if (ArrayUtil.isEmpty(servletContextNames)) {
-			return false;
-		}
-
-		Set<String> keySet = _portletContextBagPool.keySet();
-
-		return keySet.containsAll(Arrays.asList(servletContextNames));
 	}
 
 	private PortletContextBag _get(String servletContextName) {

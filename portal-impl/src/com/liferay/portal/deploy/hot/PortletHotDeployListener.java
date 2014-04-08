@@ -539,13 +539,6 @@ public class PortletHotDeployListener extends BaseHotDeployListener {
 
 			PortletURLListenerFactory.create(portletURLListener);
 		}
-
-		String[] requiredDeploymentContexts =
-			PropsValues.SCHEDULER_INITIALIZATION_REQUIRED_DEPLOYMENT_CONTEXTS;
-
-		if (PortletContextBagPool.containsAll(requiredDeploymentContexts)) {
-			SchedulerEngineHelperUtil.initialize();
-		}
 	}
 
 	protected void processPortletProperties(
