@@ -119,40 +119,15 @@ public class PingbackMethodImpl implements Method {
 			String className = BlogsEntry.class.getName();
 			long classPK = entry.getEntryId();
 
-			MBMessageDisplay messageDisplay =
-				MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
-					userId, groupId, className, classPK,
-					WorkflowConstants.STATUS_APPROVED);
+			String urlTitle = entry.getUrlTitle();
 
-			MBThread thread = messageDisplay.getThread();
-
-			long threadId = thread.getThreadId();
-			long parentMessageId = thread.getRootMessageId();
 			String body =
 				"[...] " + getExcerpt() + " [...] [url=" + _sourceUri + "]" +
 					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
 						"[/url]";
 
-			List<MBMessage> messages =
-				MBMessageLocalServiceUtil.getThreadMessages(
-					threadId, WorkflowConstants.STATUS_APPROVED);
-
-			for (MBMessage message : messages) {
-				if (message.getBody().equals(body)) {
-					throw new PingbackException(
-						PINGBACK_ALREADY_REGISTERED,
-						"Pingback previously registered");
-				}
-			}
-
-			String urlTitle = entry.getUrlTitle();
-
-			ServiceContext serviceContext = buildServiceContext(
-				companyId, groupId, urlTitle);
-
-			MBMessageLocalServiceUtil.addDiscussionMessage(
-				userId, StringPool.BLANK, groupId, className, classPK, threadId,
-				parentMessageId, StringPool.BLANK, body, serviceContext);
+			addLinkbackComment(
+				userId, groupId, className, classPK, body, companyId, urlTitle);
 		}
 		catch (PingbackException pe) {
 			throw pe;
@@ -192,6 +167,41 @@ public class PingbackMethodImpl implements Method {
 
 			return false;
 		}
+	}
+
+	protected static void addLinkbackComment(
+		long userId, long groupId, String className, long classPK, String body,
+		long companyId, String urlTitle)
+	throws PortalException, SystemException {
+
+		MBMessageDisplay messageDisplay =
+			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
+				userId, groupId, className, classPK,
+				WorkflowConstants.STATUS_APPROVED);
+
+		MBThread thread = messageDisplay.getThread();
+
+		long threadId = thread.getThreadId();
+		long parentMessageId = thread.getRootMessageId();
+
+		List<MBMessage> messages =
+			MBMessageLocalServiceUtil.getThreadMessages(
+				threadId, WorkflowConstants.STATUS_APPROVED);
+
+		for (MBMessage message : messages) {
+			if (message.getBody().equals(body)) {
+				throw new PingbackException(
+					PINGBACK_ALREADY_REGISTERED,
+					"Pingback previously registered");
+			}
+		}
+
+		ServiceContext serviceContext = buildServiceContext(
+			companyId, groupId, urlTitle);
+
+		MBMessageLocalServiceUtil.addDiscussionMessage(
+			userId, StringPool.BLANK, groupId, className, classPK, threadId,
+			parentMessageId, StringPool.BLANK, body, serviceContext);
 	}
 
 	protected static ServiceContext buildServiceContext(
