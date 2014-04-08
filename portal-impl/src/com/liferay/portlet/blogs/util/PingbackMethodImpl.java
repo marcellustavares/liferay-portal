@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.blogs.util;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -143,32 +145,10 @@ public class PingbackMethodImpl implements Method {
 				}
 			}
 
-			ServiceContext serviceContext = new ServiceContext();
+			String urlTitle = entry.getUrlTitle();
 
-			String pingbackUserName = LanguageUtil.get(
-				LocaleUtil.getSiteDefault(), "pingback");
-
-			serviceContext.setAttribute("pingbackUserName", pingbackUserName);
-
-			StringBundler sb = new StringBundler(5);
-
-			String layoutFullURL = PortalUtil.getLayoutFullURL(
-				groupId, PortletKeys.BLOGS);
-
-			sb.append(layoutFullURL);
-
-			sb.append(Portal.FRIENDLY_URL_SEPARATOR);
-
-			Portlet portlet = PortletLocalServiceUtil.getPortletById(
-				companyId, PortletKeys.BLOGS);
-
-			sb.append(portlet.getFriendlyURLMapping());
-			sb.append(StringPool.SLASH);
-			sb.append(entry.getUrlTitle());
-
-			serviceContext.setAttribute("redirect", sb.toString());
-
-			serviceContext.setLayoutFullURL(layoutFullURL);
+			ServiceContext serviceContext = buildServiceContext(
+				companyId, groupId, urlTitle);
 
 			MBMessageLocalServiceUtil.addDiscussionMessage(
 				userId, StringPool.BLANK, groupId, className, classPK, threadId,
@@ -212,6 +192,40 @@ public class PingbackMethodImpl implements Method {
 
 			return false;
 		}
+	}
+
+	protected static ServiceContext buildServiceContext(
+		long companyId, long groupId, String urlTitle)
+	throws PortalException, SystemException {
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		String pingbackUserName = LanguageUtil.get(
+			LocaleUtil.getSiteDefault(), "pingback");
+
+		serviceContext.setAttribute("pingbackUserName", pingbackUserName);
+
+		StringBundler sb = new StringBundler(5);
+
+		String layoutFullURL = PortalUtil.getLayoutFullURL(
+			groupId, PortletKeys.BLOGS);
+
+		sb.append(layoutFullURL);
+
+		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
+
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			companyId, PortletKeys.BLOGS);
+
+		sb.append(portlet.getFriendlyURLMapping());
+		sb.append(StringPool.SLASH);
+		sb.append(urlTitle);
+
+		serviceContext.setAttribute("redirect", sb.toString());
+
+		serviceContext.setLayoutFullURL(layoutFullURL);
+
+		return serviceContext;
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
