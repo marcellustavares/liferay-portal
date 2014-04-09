@@ -111,21 +111,6 @@ public class WorkflowHandlerRegistryUtil {
 			return;
 		}
 
-		WorkflowInstanceLink workflowInstanceLink =
-			WorkflowInstanceLinkLocalServiceUtil.fetchWorkflowInstanceLink(
-				companyId, groupId, className, classPK);
-
-		if (workflowInstanceLink != null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Workflow already started for class " + className +
-						" with primary key " + classPK + " in group " +
-							groupId);
-			}
-
-			return;
-		}
-
 		WorkflowDefinitionLink workflowDefinitionLink = null;
 
 		if (WorkflowThreadLocal.isEnabled() &&
