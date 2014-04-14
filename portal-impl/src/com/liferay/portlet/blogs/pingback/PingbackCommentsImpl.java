@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.blogs.util.PingbackMethodImpl;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageDisplay;
 import com.liferay.portlet.messageboards.model.MBThread;
@@ -39,7 +38,7 @@ public class PingbackCommentsImpl implements PingbackComments {
 			long userId, long groupId, String className, long classPK,
 			String body,
 			Function<String, ServiceContext> serviceContextFunction)
-		throws PortalException, SystemException {
+		throws DuplicateCommentException, PortalException, SystemException {
 
 		MBMessageDisplay messageDisplay =
 			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
@@ -57,9 +56,7 @@ public class PingbackCommentsImpl implements PingbackComments {
 
 		for (MBMessage message : messages) {
 			if (message.getBody().equals(body)) {
-				throw new PingbackException(
-					PingbackMethodImpl.PINGBACK_ALREADY_REGISTERED,
-					"Pingback previously registered");
+				throw new DuplicateCommentException();
 			}
 		}
 

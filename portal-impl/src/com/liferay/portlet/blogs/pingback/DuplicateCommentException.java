@@ -14,19 +14,9 @@
 
 package com.liferay.portlet.blogs.pingback;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.util.Function;
-import com.liferay.portal.service.ServiceContext;
-
 /**
  * @author André de Oliveira
  */
-public interface PingbackComments {
-
-	public abstract void addComment(
-		long userId, long groupId, String className, long classPK, String body,
-		Function<String, ServiceContext> serviceContextFunction)
-	throws DuplicateCommentException, PortalException, SystemException;
+public class DuplicateCommentException extends RuntimeException {
 
 }

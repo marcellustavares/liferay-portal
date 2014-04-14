@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.blogs.util;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -38,6 +40,7 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
+import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.PingbackComments;
 import com.liferay.portlet.blogs.pingback.PingbackCommentsImpl;
 import com.liferay.portlet.blogs.pingback.PingbackException;
@@ -117,17 +120,15 @@ public class PingbackMethodImpl implements Method {
 			String className = BlogsEntry.class.getName();
 			long classPK = entry.getEntryId();
 
-			String urlTitle = entry.getUrlTitle();
-
 			String body =
 				"[...] " + getExcerpt() + " [...] [url=" + _sourceUri + "]" +
 					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
 						"[/url]";
 
-			_pingbackComments.addComment(
-				userId, groupId, className, classPK, body,
-				new PingbackServiceContextFunction(
-					companyId, groupId, urlTitle));
+			String urlTitle = entry.getUrlTitle();
+
+			addComment(
+				userId, groupId, className, classPK, body, companyId, urlTitle);
 		}
 		catch (PingbackException pe) {
 			throw pe;
@@ -171,6 +172,24 @@ public class PingbackMethodImpl implements Method {
 
 	protected PingbackMethodImpl(PingbackComments pingbackComments) {
 		_pingbackComments = pingbackComments;
+	}
+
+	protected void addComment(
+		long userId, long groupId, String className, long classPK, String body,
+		long companyId, String urlTitle)
+	throws PortalException, SystemException {
+
+		try {
+			_pingbackComments.addComment(
+				userId, groupId, className, classPK, body,
+				new PingbackServiceContextFunction(
+					companyId, groupId, urlTitle));
+		}
+		catch (DuplicateCommentException dce) {
+			throw new PingbackException(
+				PingbackMethodImpl.PINGBACK_ALREADY_REGISTERED,
+				"Pingback previously registered");
+		}
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
