@@ -20,10 +20,9 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.security.pacl.permission.PortalSocketPermission;
+import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xmlrpc.Fault;
 import com.liferay.portal.kernel.xmlrpc.XmlRpc;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
@@ -39,18 +38,13 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
+import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
+import com.liferay.portlet.blogs.pingback.PingbackComments;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBMessageLocalService;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 
 import java.io.IOException;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -78,7 +72,7 @@ import org.powermock.reflect.Whitebox;
 @PrepareForTest( {
 	PropsValues.class, PortalSocketPermission.class,
 	PortletLocalServiceUtil.class, BlogsEntryLocalServiceUtil.class,
-	UserLocalServiceUtil.class, MBMessageLocalServiceUtil.class
+	UserLocalServiceUtil.class
 })
 @RunWith(PowerMockRunner.class)
 public class PingbackMethodImplTest extends PowerMockito {
@@ -90,7 +84,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		setUpBlogsEntry();
 		setUpHttp();
 		setUpLanguage();
-		setUpMessageBoards();
 		setUpPortal();
 		setUpPortlet();
 		setUpUser();
@@ -289,22 +282,14 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testPingbackAlreadyRegistered() throws Exception {
-		MBMessage message = Mockito.mock(MBMessage.class);
-
-		when(
-			message.getBody()
-		).thenReturn(
-			"[...] Liferay [...] [url=__sourceUri__]__read_more__[/url]"
-		);
-
-		List<MBMessage> messages = Collections.singletonList(message);
-
-		when(
-			_mbMessageLocalService.getThreadMessages(
-				THREAD_ID, WorkflowConstants.STATUS_APPROVED)
-		).thenReturn(
-			messages
-		);
+		Mockito.doThrow(
+			DuplicateCommentException.class
+		).when(
+			_pingbackComments
+		).addComment(
+			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
+			Matchers.anyLong(), Matchers.anyString(),
+			(Function<String, ServiceContext>)Matchers.any());
 
 		execute();
 
@@ -321,29 +306,13 @@ public class PingbackMethodImplTest extends PowerMockito {
 		verifySuccess();
 
 		Mockito.verify(
-			_mbMessageLocalService
-		).getDiscussionMessageDisplay(
-			USER_ID, GROUP_ID, BlogsEntry.class.getName(), ENTRY_ID,
-			WorkflowConstants.STATUS_APPROVED
-		);
-
-		Mockito.verify(
-			_mbMessageLocalService
-		).getThreadMessages(
-			THREAD_ID, WorkflowConstants.STATUS_APPROVED
-		);
-
-		Mockito.verify(
-			_mbMessageLocalService
-		).addDiscussionMessage(
-			Matchers.eq(USER_ID), Matchers.eq(StringPool.BLANK),
-			Matchers.eq(GROUP_ID), Matchers.eq(BlogsEntry.class.getName()),
-			Matchers.eq(ENTRY_ID), Matchers.eq(THREAD_ID),
-			Matchers.eq(PARENT_MESSAGE_ID), Matchers.eq(StringPool.BLANK),
+			_pingbackComments
+		).addComment(
+			Matchers.eq(USER_ID), Matchers.eq(GROUP_ID),
+			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
 				"[...] Liferay [...] [url=__sourceUri__]__read_more__[/url]"),
-			(ServiceContext)Matchers.any()
-		);
+			(Function<String, ServiceContext>)Matchers.any());
 	}
 
 	protected void doTestEntryIdParam(String namespace) throws Exception {
@@ -376,7 +345,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void execute(String targetURI) {
-		PingbackMethodImpl method = new PingbackMethodImpl();
+		PingbackMethodImpl method = new PingbackMethodImpl(_pingbackComments);
 
 		method.setArguments(new Object[]{"__sourceUri__", targetURI});
 
@@ -446,44 +415,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		languageUtil.setLanguage(_language);
 	}
 
-	protected void setUpMessageBoards() throws Exception {
-
-		when(
-			_mbMessageDisplay.getThread()
-		).thenReturn(
-			_mbThread
-		);
-
-		when(
-			_mbMessageLocalService.getDiscussionMessageDisplay(
-				Matchers.anyLong(), Matchers.anyLong(),
-				Matchers.eq(BlogsEntry.class.getName()), Matchers.anyLong(),
-				Matchers.eq(WorkflowConstants.STATUS_APPROVED))
-		).thenReturn(
-			_mbMessageDisplay
-		);
-
-		when(
-			_mbThread.getRootMessageId()
-		).thenReturn(
-			PARENT_MESSAGE_ID
-		);
-
-		when(
-			_mbThread.getThreadId()
-		).thenReturn(
-			THREAD_ID
-		);
-
-		mockStatic(MBMessageLocalServiceUtil.class, new CallsRealMethods());
-
-		stub(
-			method(MBMessageLocalServiceUtil.class, "getService")
-		).toReturn(
-			_mbMessageLocalService
-		);
-	}
-
 	protected void setUpPortal() throws PortalException, SystemException {
 
 		when(
@@ -514,24 +445,11 @@ public class PingbackMethodImplTest extends PowerMockito {
 			_friendlyURLMapper
 		);
 
-		when(
-			portlet.getFriendlyURLMapping()
-		).thenReturn(
-			"__FriendlyURLMapping__"
-		);
-
 		PortletLocalService portletLocalService = Mockito.mock(
 			PortletLocalService.class);
 
 		when(
 			portletLocalService.getPortletById(PortletKeys.BLOGS)
-		).thenReturn(
-			portlet
-		);
-
-		when(
-			portletLocalService.getPortletById(
-				Matchers.anyLong(), Matchers.eq(PortletKeys.BLOGS))
 		).thenReturn(
 			portlet
 		);
@@ -585,15 +503,14 @@ public class PingbackMethodImplTest extends PowerMockito {
 		verifySuccess();
 
 		Mockito.verify(
-			_mbMessageLocalService
-		).addDiscussionMessage(
-			Matchers.anyLong(), Matchers.anyString(), Matchers.anyLong(),
-			Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong(),
-			Matchers.anyLong(), Matchers.anyString(),
+			_pingbackComments
+		).addComment(
+			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
+			Matchers.anyLong(),
 			Matchers.eq(
 				"[...] " + excerpt +
 					" [...] [url=__sourceUri__]__read_more__[/url]"),
-			(ServiceContext)Matchers.any()
+			(Function<String, ServiceContext>)Matchers.any()
 		);
 	}
 
@@ -664,10 +581,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	private static final long GROUP_ID = 33L;
 
-	private static final long PARENT_MESSAGE_ID = 1337L;
-
-	private static final long THREAD_ID = 7676L;
-
 	private static final long USER_ID = 142857L;
 
 	@Mock
@@ -686,13 +599,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 	private Language _language;
 
 	@Mock
-	private MBMessageDisplay _mbMessageDisplay;
-
-	@Mock
-	private MBMessageLocalService _mbMessageLocalService;
-
-	@Mock
-	private MBThread _mbThread;
+	private PingbackComments _pingbackComments;
 
 	@Mock
 	private Portal _portal;
