@@ -54,13 +54,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -345,21 +342,8 @@ public class PingbackMethodImplTest extends PowerMockito {
 			Matchers.eq(PARENT_MESSAGE_ID), Matchers.eq(StringPool.BLANK),
 			Matchers.eq(
 				"[...] Liferay [...] [url=__sourceUri__]__read_more__[/url]"),
-			_serviceContextCaptor.capture()
+			(ServiceContext)Matchers.any()
 		);
-
-		ServiceContext serviceContext = _serviceContextCaptor.getValue();
-
-		Assert.assertEquals(
-			"__pingbackUserName__",
-			serviceContext.getAttribute("pingbackUserName"));
-
-		Assert.assertEquals(
-			"__LayoutFullURL__/-/__FriendlyURLMapping__/__UrlTitle__",
-			serviceContext.getAttribute("redirect"));
-
-		Assert.assertEquals(
-			"__LayoutFullURL__", serviceContext.getLayoutFullURL());
 	}
 
 	protected void doTestEntryIdParam(String namespace) throws Exception {
@@ -455,7 +439,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	protected void setUpLanguage() {
 
-		whenLanguageGetThenReturn("pingback", "__pingbackUserName__");
 		whenLanguageGetThenReturn("read-more", "__read_more__");
 
 		LanguageUtil languageUtil = new LanguageUtil();
@@ -502,13 +485,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void setUpPortal() throws PortalException, SystemException {
-
-		when(
-			_portal.getLayoutFullURL(
-				Matchers.anyLong(), Matchers.eq(PortletKeys.BLOGS))
-		).thenReturn(
-			"__LayoutFullURL__"
-		);
 
 		when(
 			_portal.getPlidFromFriendlyURL(
@@ -720,9 +696,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Mock
 	private Portal _portal;
-
-	@Captor
-	private ArgumentCaptor<ServiceContext> _serviceContextCaptor;
 
 	@Mock
 	private XmlRpc _xmlRpc;
