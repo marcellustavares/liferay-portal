@@ -347,7 +347,9 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	protected void execute(String targetURI) {
 		PingbackMethodImpl method = new PingbackMethodImpl(
-			_pingbackComments, new PingbackExcerptExtractorImpl());
+			_pingbackComments,
+			new PingbackExcerptExtractorImpl(
+				PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH));
 
 		method.setArguments(new Object[]{"__sourceUri__", targetURI});
 

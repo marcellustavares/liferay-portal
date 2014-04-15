@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.blogs.util.PingbackMethodImpl;
 
 import java.io.IOException;
 
@@ -37,6 +35,10 @@ import net.htmlparser.jericho.TextExtractor;
  * @author André de Oliveira
  */
 public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
+
+	public PingbackExcerptExtractorImpl(int length) {
+		_length = length;
+	}
 
 	@Override
 	public String getExcerpt() throws IOException {
@@ -59,7 +61,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 
 				String body = textExtractor.toString();
 
-				if (body.length() < PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH) {
+				if (body.length() < _length) {
 					element = element.getParentElement();
 
 					if (element != null) {
@@ -69,8 +71,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 					}
 				}
 
-				return StringUtil.shorten(
-					body, PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH);
+				return StringUtil.shorten(body, _length);
 			}
 		}
 
@@ -90,8 +91,10 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 	}
 
 	@Override
-	public void validateSource() throws PingbackException {
-		Source source = null;
+	public void validateSource()
+		throws InvalidSourceURIException, UnavailableSourceURIException {
+
+		Source source;
 
 		try {
 			String html = HttpUtil.URLtoString(_sourceUri);
@@ -103,9 +106,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 				_log.debug(e, e);
 			}
 
-			throw new PingbackException(
-				PingbackMethodImpl.SOURCE_URI_DOES_NOT_EXIST,
-				"Error accessing source URI");
+			throw new UnavailableSourceURIException();
 		}
 
 		List<StartTag> startTags = source.getAllStartTags("a");
@@ -119,14 +120,13 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 			}
 		}
 
-		throw new PingbackException(
-			PingbackMethodImpl.SOURCE_URI_INVALID,
-			"Could not find target URI in source");
+		throw new InvalidSourceURIException();
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(
 		PingbackExcerptExtractorImpl.class);
 
+	private int _length;
 	private String _sourceUri;
 	private String _targetUri;
 
