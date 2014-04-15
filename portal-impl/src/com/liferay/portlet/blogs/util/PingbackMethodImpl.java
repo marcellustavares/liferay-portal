@@ -23,10 +23,7 @@ import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapperThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.kernel.xmlrpc.Response;
@@ -44,21 +41,15 @@ import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.PingbackComments;
 import com.liferay.portlet.blogs.pingback.PingbackCommentsImpl;
 import com.liferay.portlet.blogs.pingback.PingbackException;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractorImpl;
 import com.liferay.portlet.blogs.pingback.PingbackServiceContextFunction;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-
-import java.io.IOException;
 
 import java.net.URL;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTag;
-import net.htmlparser.jericho.TextExtractor;
 
 /**
  * @author Alexander Chow
@@ -83,6 +74,7 @@ public class PingbackMethodImpl implements Method {
 
 	public PingbackMethodImpl() {
 		_pingbackComments = new PingbackCommentsImpl();
+		_excerptExtractor = new PingbackExcerptExtractorImpl();
 	}
 
 	@Override
@@ -104,7 +96,7 @@ public class PingbackMethodImpl implements Method {
 				"Pingbacks are disabled");
 		}
 
-		validateSource();
+		_excerptExtractor.validateSource();
 
 		try {
 			BlogsEntry entry = getBlogsEntry(companyId);
@@ -121,9 +113,10 @@ public class PingbackMethodImpl implements Method {
 			long classPK = entry.getEntryId();
 
 			String body =
-				"[...] " + getExcerpt() + " [...] [url=" + _sourceUri + "]" +
+				"[...] " + _excerptExtractor.getExcerpt() +
+					" [...] [url=" + _sourceUri + "]" +
 					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
-						"[/url]";
+					"[/url]";
 
 			String urlTitle = entry.getUrlTitle();
 
@@ -159,6 +152,9 @@ public class PingbackMethodImpl implements Method {
 			_sourceUri = (String)arguments[0];
 			_targetUri = (String)arguments[1];
 
+			_excerptExtractor.setSourceUri(_sourceUri);
+			_excerptExtractor.setTargetUri(_targetUri);
+
 			return true;
 		}
 		catch (Exception e) {
@@ -170,8 +166,13 @@ public class PingbackMethodImpl implements Method {
 		}
 	}
 
-	protected PingbackMethodImpl(PingbackComments pingbackComments) {
+	protected PingbackMethodImpl(
+			PingbackComments pingbackComments,
+			PingbackExcerptExtractor excerptExtractor
+		) {
+
 		_pingbackComments = pingbackComments;
+		_excerptExtractor = excerptExtractor;
 	}
 
 	protected void addComment(
@@ -248,44 +249,6 @@ public class PingbackMethodImpl implements Method {
 		return entry;
 	}
 
-	protected String getExcerpt() throws IOException {
-		String html = HttpUtil.URLtoString(_sourceUri);
-
-		Source source = new Source(html);
-
-		source.fullSequentialParse();
-
-		List<Element> elements = source.getAllElements("a");
-
-		for (Element element : elements) {
-			String href = GetterUtil.getString(
-				element.getAttributeValue("href"));
-
-			if (href.equals(_targetUri)) {
-				element = element.getParentElement();
-
-				TextExtractor textExtractor = new TextExtractor(element);
-
-				String body = textExtractor.toString();
-
-				if (body.length() < PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH) {
-					element = element.getParentElement();
-
-					if (element != null) {
-						textExtractor = new TextExtractor(element);
-
-						body = textExtractor.toString();
-					}
-				}
-
-				return StringUtil.shorten(
-					body, PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH);
-			}
-		}
-
-		return StringPool.BLANK;
-	}
-
 	protected String getParam(Map<String, String[]> params, String name) {
 		String[] paramArray = params.get(name);
 
@@ -304,40 +267,9 @@ public class PingbackMethodImpl implements Method {
 		}
 	}
 
-	protected void validateSource() throws PingbackException {
-		Source source = null;
-
-		try {
-			String html = HttpUtil.URLtoString(_sourceUri);
-
-			source = new Source(html);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-
-			throw new PingbackException(
-				SOURCE_URI_DOES_NOT_EXIST, "Error accessing source URI");
-		}
-
-		List<StartTag> startTags = source.getAllStartTags("a");
-
-		for (StartTag startTag : startTags) {
-			String href = GetterUtil.getString(
-				startTag.getAttributeValue("href"));
-
-			if (href.equals(_targetUri)) {
-				return;
-			}
-		}
-
-		throw new PingbackException(
-			SOURCE_URI_INVALID, "Could not find target URI in source");
-	}
-
 	private static Log _log = LogFactoryUtil.getLog(PingbackMethodImpl.class);
 
+	private PingbackExcerptExtractor _excerptExtractor;
 	private PingbackComments _pingbackComments;
 	private String _sourceUri;
 	private String _targetUri;
