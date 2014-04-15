@@ -145,7 +145,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 	public void testErrorAccessingSource() throws Exception {
 
 		Mockito.doThrow(
-			new UnavailableSourceURIException()
+			new UnavailableSourceURIException(new NullPointerException())
 		).when(
 			_excerptExtractor
 		).validateSource();
@@ -278,7 +278,8 @@ public class PingbackMethodImplTest extends PowerMockito {
 			Matchers.eq(USER_ID), Matchers.eq(GROUP_ID),
 			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
-				"[...] __excerpt__ [...] [url=__sourceUri__]__read_more__[/url]"),
+				"[...] __excerpt__ [...]" +
+				" [url=__sourceUri__]__read_more__[/url]"),
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 
@@ -520,6 +521,9 @@ public class PingbackMethodImplTest extends PowerMockito {
 	private BlogsEntryLocalService _blogsEntryLocalService;
 
 	@Mock
+	private PingbackExcerptExtractor _excerptExtractor;
+
+	@Mock
 	private FriendlyURLMapper _friendlyURLMapper;
 
 	@Mock
@@ -527,9 +531,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Mock
 	private PingbackComments _pingbackComments;
-
-	@Mock
-	private PingbackExcerptExtractor _excerptExtractor;
 
 	@Mock
 	private Portal _portal;
