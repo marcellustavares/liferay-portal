@@ -41,6 +41,7 @@ import com.liferay.portlet.blogs.pingback.PingbackComments;
 import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor;
 import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
+import com.liferay.portlet.blogs.pingback.PingbackImpl;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 
@@ -244,7 +245,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 	@Test
 	public void testSetArguments() throws Exception {
 		PingbackMethodImpl method = new PingbackMethodImpl(
-			_pingbackComments, _excerptExtractor);
+			new PingbackImpl(_pingbackComments, _excerptExtractor));
 
 		method.setArguments(new Object[]{"__sourceUri__", "__targetUri__"});
 
@@ -314,7 +315,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	protected void execute(String targetURI) {
 		PingbackMethodImpl method = new PingbackMethodImpl(
-			_pingbackComments, _excerptExtractor);
+			new PingbackImpl(_pingbackComments, _excerptExtractor));
 
 		method.setArguments(new Object[]{"__sourceUri__", targetURI});
 
