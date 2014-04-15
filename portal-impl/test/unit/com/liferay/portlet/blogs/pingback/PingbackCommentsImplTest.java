@@ -110,8 +110,7 @@ public class PingbackCommentsImplTest extends PowerMockito {
 		Assert.fail();
 	}
 
-	protected void addComment()
-		throws PortalException, SystemException {
+	protected void addComment() throws PortalException, SystemException {
 
 		_pingbackComments.addComment(
 			USER_ID, GROUP_ID, BlogsEntry.class.getName(), ENTRY_ID, "__body__",
