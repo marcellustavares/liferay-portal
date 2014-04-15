@@ -17,15 +17,12 @@ package com.liferay.portlet.blogs.pingback;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapperThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
@@ -35,7 +32,6 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.blogs.util.PingbackMethodImpl;
 
 import java.net.URL;
 
@@ -63,52 +59,34 @@ public class PingbackImpl implements Pingback {
 	}
 
 	@Override
-	public void addPingback(long companyId) throws PingbackException {
+	public void addPingback(long companyId) throws Exception {
 		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
-			throw new PingbackException(
-				XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-				"Pingbacks are disabled");
+			throw new DisabledPingbacksException();
 		}
 
 		_excerptExtractor.validateSource();
 
-		try {
-			BlogsEntry entry = getBlogsEntry(companyId);
+		BlogsEntry entry = getBlogsEntry(companyId);
 
-			if (!entry.isAllowPingbacks()) {
-				throw new PingbackException(
-					XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-					"Pingbacks are disabled");
-			}
-
-			long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
-			long groupId = entry.getGroupId();
-			String className = BlogsEntry.class.getName();
-			long classPK = entry.getEntryId();
-
-			String body =
-				"[...] " + _excerptExtractor.getExcerpt() +
-					" [...] [url=" + _sourceUri + "]" +
-					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
-					"[/url]";
-
-			String urlTitle = entry.getUrlTitle();
-
-			addComment(
-				userId, groupId, className, classPK, body, companyId, urlTitle);
+		if (!entry.isAllowPingbacks()) {
+			throw new DisabledPingbacksException();
 		}
-		catch (PingbackException pe) {
-			throw pe;
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
 
-			throw new PingbackException(
-				PingbackMethodImpl.TARGET_URI_INVALID,
-				"Error parsing target URI");
-		}
+		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
+		long groupId = entry.getGroupId();
+		String className = BlogsEntry.class.getName();
+		long classPK = entry.getEntryId();
+
+		String body =
+			"[...] " + _excerptExtractor.getExcerpt() +
+				" [...] [url=" + _sourceUri + "]" +
+				LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
+				"[/url]";
+
+		String urlTitle = entry.getUrlTitle();
+
+		addComment(
+			userId, groupId, className, classPK, body, companyId, urlTitle);
 	}
 
 	@Override
@@ -123,22 +101,22 @@ public class PingbackImpl implements Pingback {
 		_excerptExtractor.setTargetUri(targetUri);
 	}
 
+	public static class DisabledPingbacksException extends RuntimeException {
+
+		public DisabledPingbacksException() {
+			super("Pingbacks are disabled");
+		}
+
+	}
+
 	protected void addComment(
 		long userId, long groupId, String className, long classPK, String body,
 		long companyId, String urlTitle)
-	throws PortalException, SystemException {
+	throws DuplicateCommentException, PortalException, SystemException {
 
-		try {
-			_pingbackComments.addComment(
-				userId, groupId, className, classPK, body,
-				new PingbackServiceContextFunction(
-					companyId, groupId, urlTitle));
-		}
-		catch (DuplicateCommentException dce) {
-			throw new PingbackException(
-				PingbackMethodImpl.PINGBACK_ALREADY_REGISTERED,
-				"Pingback previously registered");
-		}
+		_pingbackComments.addComment(
+			userId, groupId, className, classPK, body,
+			new PingbackServiceContextFunction(companyId, groupId, urlTitle));
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
@@ -214,8 +192,6 @@ public class PingbackImpl implements Pingback {
 			return null;
 		}
 	}
-
-	private static Log _log = LogFactoryUtil.getLog(PingbackImpl.class);
 
 	private PingbackExcerptExtractor _excerptExtractor;
 	private PingbackComments _pingbackComments;
