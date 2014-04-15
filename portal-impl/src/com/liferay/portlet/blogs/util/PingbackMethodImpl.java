@@ -18,12 +18,14 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.kernel.xmlrpc.Response;
+import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
+import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.Pingback;
-import com.liferay.portlet.blogs.pingback.PingbackException;
 import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
 import com.liferay.portlet.blogs.pingback.PingbackImpl;
+import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
 
 /**
  * @author Alexander Chow
@@ -57,14 +59,26 @@ public class PingbackMethodImpl implements Method {
 
 			return XmlRpcUtil.createSuccess("Pingback accepted");
 		}
+		catch (DisabledPingbacksException dpe) {
+			return createFault(XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, dpe);
+		}
+		catch (DuplicateCommentException dce) {
+			return XmlRpcUtil.createFault(
+				PINGBACK_ALREADY_REGISTERED, "Pingback previously registered");
+		}
 		catch (InvalidSourceURIException isue) {
 			return createFault(SOURCE_URI_INVALID, isue);
 		}
 		catch (UnavailableSourceURIException usue) {
 			return createFault(SOURCE_URI_DOES_NOT_EXIST, usue);
 		}
-		catch (PingbackException pe) {
-			return createFault(pe.getCode(), pe);
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+
+			return XmlRpcUtil.createFault(
+				TARGET_URI_INVALID, "Error parsing target URI");
 		}
 	}
 
