@@ -27,6 +27,21 @@ public interface PingbackExcerptExtractor {
 
 	public abstract void setTargetUri(String targetUri);
 
-	public abstract void validateSource() throws PingbackException;
+	public abstract void validateSource()
+		throws InvalidSourceURIException, UnavailableSourceURIException;
+
+	public static class InvalidSourceURIException extends RuntimeException {
+
+		public InvalidSourceURIException() {
+			super("Could not find target URI in source");
+		}
+	}
+
+	public static class UnavailableSourceURIException extends RuntimeException {
+
+		public UnavailableSourceURIException() {
+			super("Error accessing source URI");
+		}
+	}
 
 }
