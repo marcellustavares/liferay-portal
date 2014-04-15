@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.security.pacl.permission.PortalSocketPermission;
 import com.liferay.portal.kernel.util.Function;
-import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.xmlrpc.Fault;
 import com.liferay.portal.kernel.xmlrpc.XmlRpc;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
@@ -40,11 +38,11 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.PingbackComments;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractorImpl;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-
-import java.io.IOException;
 
 import java.util.Locale;
 import java.util.Map;
@@ -58,7 +56,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.stubbing.answers.CallsRealMethods;
-import org.mockito.internal.stubbing.answers.DoesNothing;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -83,7 +80,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		MockitoAnnotations.initMocks(this);
 
 		setUpBlogsEntry();
-		setUpHttp();
 		setUpLanguage();
 		setUpPortal();
 		setUpPortlet();
@@ -149,75 +145,16 @@ public class PingbackMethodImplTest extends PowerMockito {
 	public void testErrorAccessingSource() throws Exception {
 
 		Mockito.doThrow(
-			IOException.class
+			new UnavailableSourceURIException()
 		).when(
-			_http
-		).URLtoString(
-			"__sourceUri__"
-		);
+			_excerptExtractor
+		).validateSource();
 
 		execute();
 
 		verifyFault(
 			PingbackMethodImpl.SOURCE_URI_DOES_NOT_EXIST,
 			"Error accessing source URI");
-	}
-
-	@Test
-	public void testExcerptShorten() throws Exception {
-		int previous = PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH;
-
-		Whitebox.setInternalState(
-			PropsValues.class, "BLOGS_LINKBACK_EXCERPT_LENGTH", 4);
-
-		try {
-			whenURLToStringSourceURIThenReturn(
-				"<body><a href='http://liferay.com'>12345</a></body>");
-
-			execute();
-
-			verifyExcerpt("1...");
-		}
-		finally {
-			Whitebox.setInternalState(
-				PropsValues.class, "BLOGS_LINKBACK_EXCERPT_LENGTH", previous);
-		}
-	}
-
-	@Test
-	public void testExcerptWithParent() throws Exception {
-		whenURLToStringSourceURIThenReturn(
-			"<body><p>" +
-			"Visit <a href='http://liferay.com'>Liferay</a> to learn more" +
-			"</p></body>");
-
-		execute();
-
-		verifyExcerpt("Visit Liferay to learn more");
-	}
-
-	@Test
-	public void testExcerptWithTwoParents() throws Exception {
-		int previous = PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH;
-
-		Whitebox.setInternalState(
-			PropsValues.class, "BLOGS_LINKBACK_EXCERPT_LENGTH",
-			"Liferay".length() + 11);
-
-		try {
-			whenURLToStringSourceURIThenReturn(
-				"<body>_____<p>12345<span>67890" +
-				"<a href='http://liferay.com'>Liferay</a>" +
-				"12345</span>67890</p>_____</body>");
-
-			execute();
-
-			verifyExcerpt("1234567890Lifer...");
-		}
-		finally {
-			Whitebox.setInternalState(
-				PropsValues.class, "BLOGS_LINKBACK_EXCERPT_LENGTH", previous);
-		}
 	}
 
 	@Test
@@ -244,9 +181,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		String friendlyURL =
 			"http://liferay.com/__blogs__/-/__remainder-of-the-friendly-url__";
 
-		whenURLToStringSourceURIThenReturn(
-			"<body><a href='" + friendlyURL + "'>Liferay</a></body>");
-
 		execute(friendlyURL);
 
 		verifySuccess();
@@ -259,11 +193,15 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testMalformedTarget() throws Exception {
+	public void testMalfunctionAtExcerptExtraction() throws Exception {
 
-		whenURLToStringSourceURIThenReturn("<a href='MALFORMED' />");
+		Mockito.doThrow(
+			new NullPointerException()
+		).when(
+			_excerptExtractor
+		).getExcerpt();
 
-		execute("MALFORMED");
+		execute();
 
 		verifyFault(
 			PingbackMethodImpl.TARGET_URI_INVALID, "Error parsing target URI");
@@ -272,7 +210,11 @@ public class PingbackMethodImplTest extends PowerMockito {
 	@Test
 	public void testMissingTarget() throws Exception {
 
-		whenURLToStringSourceURIThenReturn("");
+		Mockito.doThrow(
+			new InvalidSourceURIException()
+		).when(
+			_excerptExtractor
+		).validateSource();
 
 		execute();
 
@@ -300,7 +242,31 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
+	public void testSetArguments() throws Exception {
+		PingbackMethodImpl method = new PingbackMethodImpl(
+			_pingbackComments, _excerptExtractor);
+
+		method.setArguments(new Object[]{"__sourceUri__", "__targetUri__"});
+
+		Mockito.verify(
+			_excerptExtractor
+		).setSourceUri(
+			"__sourceUri__"
+		);
+		Mockito.verify(
+			_excerptExtractor
+		).setTargetUri(
+			"__targetUri__"
+		);
+	}
+
+	@Test
 	public void testSuccess() throws Exception {
+		Mockito.when(
+			_excerptExtractor.getExcerpt()
+		).thenReturn(
+			"__excerpt__"
+		);
 
 		execute();
 
@@ -312,7 +278,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 			Matchers.eq(USER_ID), Matchers.eq(GROUP_ID),
 			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
-				"[...] Liferay [...] [url=__sourceUri__]__read_more__[/url]"),
+				"[...] __excerpt__ [...] [url=__sourceUri__]__read_more__[/url]"),
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 
@@ -347,9 +313,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	protected void execute(String targetURI) {
 		PingbackMethodImpl method = new PingbackMethodImpl(
-			_pingbackComments,
-			new PingbackExcerptExtractorImpl(
-				PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH));
+			_pingbackComments, _excerptExtractor);
 
 		method.setArguments(new Object[]{"__sourceUri__", targetURI});
 
@@ -396,18 +360,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		).toReturn(
 			_blogsEntryLocalService
 		);
-	}
-
-	protected void setUpHttp() throws Exception {
-
-		whenURLToStringSourceURIThenReturn(
-			"<body><a href='http://liferay.com'>Liferay</a></body>");
-
-		mockStatic(PortalSocketPermission.class, new DoesNothing());
-
-		HttpUtil httpUtil = new HttpUtil();
-
-		httpUtil.setHttp(_http);
 	}
 
 	protected void setUpLanguage() {
@@ -502,22 +454,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		xmlRpcUtil.setXmlRpc(_xmlRpc);
 	}
 
-	protected void verifyExcerpt(String excerpt) throws Exception {
-
-		verifySuccess();
-
-		Mockito.verify(
-			_pingbackComments
-		).addComment(
-			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
-			Matchers.anyLong(),
-			Matchers.eq(
-				"[...] " + excerpt +
-					" [...] [url=__sourceUri__]__read_more__[/url]"),
-			(Function<String, ServiceContext>)Matchers.any()
-		);
-	}
-
 	protected void verifyFault(int code, String description) {
 
 		Mockito.verify(
@@ -569,16 +505,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		);
 	}
 
-	protected void whenURLToStringSourceURIThenReturn(String toBeReturned)
-		throws Exception {
-
-		when(
-			_http.URLtoString("__sourceUri__")
-		).thenReturn(
-			toBeReturned
-		);
-	}
-
 	private static final long COMPANY_ID = 1L;
 
 	private static final long ENTRY_ID = 99999L;
@@ -597,13 +523,13 @@ public class PingbackMethodImplTest extends PowerMockito {
 	private FriendlyURLMapper _friendlyURLMapper;
 
 	@Mock
-	private Http _http;
-
-	@Mock
 	private Language _language;
 
 	@Mock
 	private PingbackComments _pingbackComments;
+
+	@Mock
+	private PingbackExcerptExtractor _excerptExtractor;
 
 	@Mock
 	private Portal _portal;
