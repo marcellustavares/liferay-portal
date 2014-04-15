@@ -14,14 +14,12 @@
 
 package com.liferay.portlet.blogs.pingback;
 
-import java.io.IOException;
-
 /**
  * @author André de Oliveira
  */
 public interface PingbackExcerptExtractor {
 
-	public abstract String getExcerpt() throws IOException;
+	public abstract String getExcerpt() throws UnavailableSourceURIException;
 
 	public abstract void setSourceUri(String sourceUri);
 
@@ -39,8 +37,8 @@ public interface PingbackExcerptExtractor {
 
 	public static class UnavailableSourceURIException extends RuntimeException {
 
-		public UnavailableSourceURIException() {
-			super("Error accessing source URI");
+		public UnavailableSourceURIException(Throwable cause) {
+			super("Error accessing source URI", cause);
 		}
 	}
 

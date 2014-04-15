@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import java.io.IOException;
-
 import java.util.List;
 
 import net.htmlparser.jericho.Element;
@@ -41,10 +39,8 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 	}
 
 	@Override
-	public String getExcerpt() throws IOException {
-		String html = HttpUtil.URLtoString(_sourceUri);
-
-		Source source = new Source(html);
+	public String getExcerpt() throws UnavailableSourceURIException {
+		Source source = getSource();
 
 		source.fullSequentialParse();
 
@@ -94,20 +90,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 	public void validateSource()
 		throws InvalidSourceURIException, UnavailableSourceURIException {
 
-		Source source;
-
-		try {
-			String html = HttpUtil.URLtoString(_sourceUri);
-
-			source = new Source(html);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-
-			throw new UnavailableSourceURIException();
-		}
+		Source source = getSource();
 
 		List<StartTag> startTags = source.getAllStartTags("a");
 
@@ -121,6 +104,21 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 		}
 
 		throw new InvalidSourceURIException();
+	}
+
+	protected Source getSource() throws UnavailableSourceURIException {
+		try {
+			String html = HttpUtil.URLtoString(_sourceUri);
+
+			return new Source(html);
+		}
+		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+
+			throw new UnavailableSourceURIException(e);
+		}
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(
