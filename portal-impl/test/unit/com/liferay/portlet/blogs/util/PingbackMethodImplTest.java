@@ -40,6 +40,7 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.PingbackComments;
+import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractorImpl;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 
@@ -345,7 +346,8 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void execute(String targetURI) {
-		PingbackMethodImpl method = new PingbackMethodImpl(_pingbackComments);
+		PingbackMethodImpl method = new PingbackMethodImpl(
+			_pingbackComments, new PingbackExcerptExtractorImpl());
 
 		method.setArguments(new Object[]{"__sourceUri__", targetURI});
 
