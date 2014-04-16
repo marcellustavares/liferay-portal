@@ -50,14 +50,6 @@ public class PingbackImpl implements Pingback {
 		_pingbackComments = new PingbackCommentsImpl();
 	}
 
-	public PingbackImpl(
-		PingbackComments pingbackComments,
-		PingbackExcerptExtractor excerptExtractor
-	) {
-		_pingbackComments = pingbackComments;
-		_excerptExtractor = excerptExtractor;
-	}
-
 	@Override
 	public void addPingback(long companyId) throws Exception {
 		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
@@ -107,6 +99,14 @@ public class PingbackImpl implements Pingback {
 			super("Pingbacks are disabled");
 		}
 
+	}
+
+	protected PingbackImpl(
+		PingbackComments pingbackComments,
+		PingbackExcerptExtractor excerptExtractor
+	) {
+		_pingbackComments = pingbackComments;
+		_excerptExtractor = excerptExtractor;
 	}
 
 	protected void addComment(
