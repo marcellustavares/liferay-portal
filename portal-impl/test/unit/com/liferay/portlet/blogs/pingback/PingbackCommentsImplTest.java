@@ -111,14 +111,12 @@ public class PingbackCommentsImplTest extends PowerMockito {
 	}
 
 	protected void addComment() throws PortalException, SystemException {
-
 		_pingbackComments.addComment(
 			USER_ID, GROUP_ID, BlogsEntry.class.getName(), ENTRY_ID, "__body__",
 			_serviceContextFunction);
 	}
 
 	protected void setUpMessageBoards() throws Exception {
-
 		when(
 			_mbMessageDisplay.getThread()
 		).thenReturn(

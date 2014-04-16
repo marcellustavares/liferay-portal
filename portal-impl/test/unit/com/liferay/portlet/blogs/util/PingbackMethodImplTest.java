@@ -41,7 +41,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Before
 	public void setUp() throws Exception {
-
 		MockitoAnnotations.initMocks(this);
 
 		setUpXmlRpc();
@@ -49,7 +48,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testDisabledPingbacks() throws Exception {
-
 		whenAddPingbackThrow(new DisabledPingbacksException());
 
 		execute();
@@ -61,7 +59,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testPingbackAlreadyRegistered() throws Exception {
-
 		whenAddPingbackThrow(new DuplicateCommentException());
 
 		execute();
@@ -73,26 +70,24 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testSetArguments() throws Exception {
-
 		PingbackMethodImpl method = new PingbackMethodImpl(_pingback);
 
-		method.setArguments(new Object[]{"__sourceUri__", "__targetUri__"});
+		method.setArguments(new Object[]{"__sourceURI__", "__targetURI__"});
 
 		Mockito.verify(
 			_pingback
-		).setSourceUri(
-			"__sourceUri__"
+		).setSourceURI(
+			"__sourceURI__"
 		);
 		Mockito.verify(
 			_pingback
-		).setTargetUri(
-			"__targetUri__"
+		).setTargetURI(
+			"__targetURI__"
 		);
 	}
 
 	@Test
 	public void testSourceURIDoesNotExist() throws Exception {
-
 		whenAddPingbackThrow(
 			new UnavailableSourceURIException(new NullPointerException()));
 
@@ -105,7 +100,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testSourceURIInvalid() throws Exception {
-
 		whenAddPingbackThrow(new InvalidSourceURIException());
 
 		execute();
@@ -117,7 +111,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testSuccess() throws Exception {
-
 		execute();
 
 		Mockito.verify(
@@ -129,7 +122,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testUnforeseenMalfunction() throws Exception {
-
 		whenAddPingbackThrow(new NullPointerException());
 
 		execute();
@@ -139,14 +131,12 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void execute() throws Exception {
-
 		PingbackMethodImpl pingbackMethod = new PingbackMethodImpl(_pingback);
 
 		pingbackMethod.execute(42);
 	}
 
 	protected void setUpXmlRpc() {
-
 		Fault fault = Mockito.mock(Fault.class);
 
 		when(
@@ -161,7 +151,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void verifyFault(int code, String description) {
-
 		Mockito.verify(
 			_xmlRpc
 		).createFault(
@@ -170,7 +159,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	protected void whenAddPingbackThrow(Throwable toBeThrown) throws Exception {
-
 		Mockito.doThrow(
 			toBeThrown
 		).when(

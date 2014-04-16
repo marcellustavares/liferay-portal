@@ -95,13 +95,12 @@ public class PingbackImplTest extends PowerMockito {
 			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
 				"[...] __excerpt__ [...]" +
-				" [url=__sourceUri__]__read_more__[/url]"),
+				" [url=__sourceURI__]__read_more__[/url]"),
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 
 	@Test(expected = DisabledPingbacksException.class)
 	public void testDisabledPingbacksAtEntry() throws Exception {
-
 		when(
 			_blogsEntry.isAllowPingbacks()
 		).thenReturn(
@@ -194,7 +193,6 @@ public class PingbackImplTest extends PowerMockito {
 
 	@Test(expected = InvalidSourceURIException.class)
 	public void testInvalidSourceURI() throws Exception {
-
 		Mockito.doThrow(
 			new InvalidSourceURIException()
 		).when(
@@ -206,7 +204,6 @@ public class PingbackImplTest extends PowerMockito {
 
 	@Test(expected = NullPointerException.class)
 	public void testMalfunctionAtExcerptExtraction() throws Exception {
-
 		Mockito.doThrow(
 			new NullPointerException()
 		).when(
@@ -221,24 +218,23 @@ public class PingbackImplTest extends PowerMockito {
 		PingbackImpl pingback = new PingbackImpl(
 			_pingbackComments, _excerptExtractor);
 
-		pingback.setSourceUri("__sourceUri__");
-		pingback.setTargetUri("__targetUri__");
+		pingback.setSourceURI("__sourceURI__");
+		pingback.setTargetURI("__targetURI__");
 
 		Mockito.verify(
 			_excerptExtractor
-		).setSourceUri(
-			"__sourceUri__"
+		).setSourceURI(
+			"__sourceURI__"
 		);
 		Mockito.verify(
 			_excerptExtractor
-		).setTargetUri(
-			"__targetUri__"
+		).setTargetURI(
+			"__targetURI__"
 		);
 	}
 
 	@Test(expected = UnavailableSourceURIException.class)
 	public void testUnavailableSourceURI() throws Exception {
-
 		Mockito.doThrow(
 			new UnavailableSourceURIException(new NullPointerException())
 		).when(
@@ -249,7 +245,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void doTestEntryIdParam(String namespace) throws Exception {
-
 		when(
 			_blogsEntryLocalService.getEntry(Matchers.anyLong())
 		).thenReturn(
@@ -279,14 +274,13 @@ public class PingbackImplTest extends PowerMockito {
 		PingbackImpl pingback = new PingbackImpl(
 			_pingbackComments, _excerptExtractor);
 
-		pingback.setSourceUri("__sourceUri__");
-		pingback.setTargetUri(targetURI);
+		pingback.setSourceURI("__sourceURI__");
+		pingback.setTargetURI(targetURI);
 
 		pingback.addPingback(COMPANY_ID);
 	}
 
 	protected void setUpBlogsEntry() throws Exception {
-
 		when(
 			_blogsEntry.getEntryId()
 		).thenReturn(
@@ -328,7 +322,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void setUpLanguage() {
-
 		whenLanguageGetThenReturn("read-more", "__read_more__");
 
 		LanguageUtil languageUtil = new LanguageUtil();
@@ -337,7 +330,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void setUpPortal() throws PortalException, SystemException {
-
 		when(
 			_portal.getPlidFromFriendlyURL(
 				Matchers.eq(COMPANY_ID), Matchers.anyString())
@@ -357,7 +349,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void setUpPortlet() throws SystemException {
-
 		Portlet portlet = Mockito.mock(Portlet.class);
 
 		when(
@@ -385,7 +376,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void setUpUser() throws PortalException, SystemException {
-
 		UserLocalService userLocalService = Mockito.mock(
 			UserLocalService.class);
 
@@ -429,7 +419,6 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	protected void whenLanguageGetThenReturn(String key, String toBeReturned) {
-
 		when(
 			_language.get((Locale)Matchers.any(), Matchers.eq(key))
 		).thenReturn(

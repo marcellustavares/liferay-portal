@@ -50,7 +50,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 			String href = GetterUtil.getString(
 				element.getAttributeValue("href"));
 
-			if (href.equals(_targetUri)) {
+			if (href.equals(_targetURI)) {
 				element = element.getParentElement();
 
 				TextExtractor textExtractor = new TextExtractor(element);
@@ -75,15 +75,15 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 	}
 
 	@Override
-	public void setSourceUri(String sourceUri) {
+	public void setSourceURI(String sourceURI) {
 
-		_sourceUri = sourceUri;
+		_sourceURI = sourceURI;
 	}
 
 	@Override
-	public void setTargetUri(String targetUri) {
+	public void setTargetURI(String targetURI) {
 
-		_targetUri = targetUri;
+		_targetURI = targetURI;
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 			String href = GetterUtil.getString(
 				startTag.getAttributeValue("href"));
 
-			if (href.equals(_targetUri)) {
+			if (href.equals(_targetURI)) {
 				return;
 			}
 		}
@@ -108,7 +108,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 
 	protected Source getSource() throws UnavailableSourceURIException {
 		try {
-			String html = HttpUtil.URLtoString(_sourceUri);
+			String html = HttpUtil.URLtoString(_sourceURI);
 
 			return new Source(html);
 		}
@@ -125,7 +125,7 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 		PingbackExcerptExtractorImpl.class);
 
 	private int _length;
-	private String _sourceUri;
-	private String _targetUri;
+	private String _sourceURI;
+	private String _targetURI;
 
 }

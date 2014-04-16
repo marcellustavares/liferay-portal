@@ -24,9 +24,10 @@ import com.liferay.portal.service.ServiceContext;
  */
 public interface PingbackComments {
 
-	public abstract void addComment(
-		long userId, long groupId, String className, long classPK, String body,
-		Function<String, ServiceContext> serviceContextFunction)
-	throws DuplicateCommentException, PortalException, SystemException;
+	public void addComment(
+			long userId, long groupId, String className, long classPK,
+			String body,
+			Function<String, ServiceContext> serviceContextFunction)
+		throws DuplicateCommentException, PortalException, SystemException;
 
 }
