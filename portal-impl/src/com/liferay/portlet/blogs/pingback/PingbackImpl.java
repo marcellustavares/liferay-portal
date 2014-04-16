@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.portlet.FriendlyURLMapperThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalServiceUtil;
@@ -68,13 +69,7 @@ public class PingbackImpl implements Pingback {
 		long groupId = entry.getGroupId();
 		String className = BlogsEntry.class.getName();
 		long classPK = entry.getEntryId();
-
-		String body =
-			"[...] " + _excerptExtractor.getExcerpt() +
-				" [...] [url=" + _sourceUri + "]" +
-				LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
-				"[/url]";
-
+		String body = buildBody();
 		String urlTitle = entry.getUrlTitle();
 
 		addComment(
@@ -117,6 +112,20 @@ public class PingbackImpl implements Pingback {
 		_pingbackComments.addComment(
 			userId, groupId, className, classPK, body,
 			new PingbackServiceContextFunction(companyId, groupId, urlTitle));
+	}
+
+	protected String buildBody() {
+		StringBundler sb = new StringBundler(7);
+
+		sb.append("[...] ");
+		sb.append(_excerptExtractor.getExcerpt());
+		sb.append(" [...] [url=");
+		sb.append(_sourceUri);
+		sb.append("]");
+		sb.append(LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"));
+		sb.append("[/url]");
+
+		return sb.toString();
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
