@@ -55,6 +55,23 @@ public class PingbackServiceContextFunction
 		}
 	}
 
+	protected String buildRedirect(String layoutFullURL)
+		throws SystemException {
+
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			_companyId, PortletKeys.BLOGS);
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(layoutFullURL);
+		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
+		sb.append(portlet.getFriendlyURLMapping());
+		sb.append(StringPool.SLASH);
+		sb.append(_urlTitle);
+
+		return sb.toString();
+	}
+
 	protected ServiceContext buildServiceContext()
 		throws PortalException, SystemException {
 
@@ -65,23 +82,11 @@ public class PingbackServiceContextFunction
 
 		serviceContext.setAttribute("pingbackUserName", pingbackUserName);
 
-		StringBundler sb = new StringBundler(5);
-
 		String layoutFullURL = PortalUtil.getLayoutFullURL(
 			_groupId, PortletKeys.BLOGS);
 
-		sb.append(layoutFullURL);
-
-		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
-
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(
-			_companyId, PortletKeys.BLOGS);
-
-		sb.append(portlet.getFriendlyURLMapping());
-		sb.append(StringPool.SLASH);
-		sb.append(_urlTitle);
-
-		serviceContext.setAttribute("redirect", sb.toString());
+		String redirect = buildRedirect(layoutFullURL);
+		serviceContext.setAttribute("redirect", redirect);
 
 		serviceContext.setLayoutFullURL(layoutFullURL);
 
