@@ -52,13 +52,12 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 	@Test(expected = UnavailableSourceURIException.class)
 	public void testErrorAccessingSource() throws Exception {
-
 		Mockito.doThrow(
 			IOException.class
 		).when(
 			_http
 		).URLtoString(
-			"__sourceUri__"
+			"__sourceURI__"
 		);
 
 		execute();
@@ -69,7 +68,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 		_excerptExtractor = new PingbackExcerptExtractorImpl(4);
 
 		whenURLToStringSourceURIThenReturn(
-			"<body><a href='__targetUri__'>12345</a></body>");
+			"<body><a href='__targetURI__'>12345</a></body>");
 
 		execute();
 
@@ -80,7 +79,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	public void testExcerptWithParent() throws Exception {
 		whenURLToStringSourceURIThenReturn(
 			"<body><p>" +
-			"Visit <a href='__targetUri__'>Liferay</a> to learn more" +
+			"Visit <a href='__targetURI__'>Liferay</a> to learn more" +
 			"</p></body>");
 
 		execute();
@@ -95,7 +94,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 		whenURLToStringSourceURIThenReturn(
 			"<body>_____<p>12345<span>67890" +
-			"<a href='__targetUri__'>Liferay</a>" +
+			"<a href='__targetURI__'>Liferay</a>" +
 			"12345</span>67890</p>_____</body>");
 
 		execute();
@@ -105,7 +104,6 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 	@Test(expected = NullPointerException.class)
 	public void testMalformedTarget() throws Exception {
-
 		whenURLToStringSourceURIThenReturn("<a href='MALFORMED' />");
 
 		execute("MALFORMED");
@@ -113,19 +111,18 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 	@Test(expected = InvalidSourceURIException.class)
 	public void testMissingTarget() throws Exception {
-
 		whenURLToStringSourceURIThenReturn("");
 
 		execute();
 	}
 
 	protected void execute() throws Exception {
-		execute("__targetUri__");
+		execute("__targetURI__");
 	}
 
 	protected void execute(String targetURI) throws Exception {
-		_excerptExtractor.setSourceUri("__sourceUri__");
-		_excerptExtractor.setTargetUri(targetURI);
+		_excerptExtractor.setSourceURI("__sourceURI__");
+		_excerptExtractor.setTargetURI(targetURI);
 		_excerptExtractor.validateSource();
 		_excerpt = _excerptExtractor.getExcerpt();
 	}
@@ -146,7 +143,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 		throws Exception {
 
 		when(
-			_http.URLtoString("__sourceUri__")
+			_http.URLtoString("__sourceURI__")
 		).thenReturn(
 			toBeReturned
 		);

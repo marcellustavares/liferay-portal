@@ -19,13 +19,13 @@ package com.liferay.portlet.blogs.pingback;
  */
 public interface PingbackExcerptExtractor {
 
-	public abstract String getExcerpt() throws UnavailableSourceURIException;
+	public String getExcerpt() throws UnavailableSourceURIException;
 
-	public abstract void setSourceUri(String sourceUri);
+	public void setSourceURI(String sourceURI);
 
-	public abstract void setTargetUri(String targetUri);
+	public void setTargetURI(String targetURI);
 
-	public abstract void validateSource()
+	public void validateSource()
 		throws InvalidSourceURIException, UnavailableSourceURIException;
 
 	public static class InvalidSourceURIException extends RuntimeException {

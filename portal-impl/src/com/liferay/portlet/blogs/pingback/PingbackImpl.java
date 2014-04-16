@@ -77,15 +77,15 @@ public class PingbackImpl implements Pingback {
 	}
 
 	@Override
-	public void setSourceUri(String sourceUri) {
-		_sourceUri = sourceUri;
-		_excerptExtractor.setSourceUri(sourceUri);
+	public void setSourceURI(String sourceURI) {
+		_sourceURI = sourceURI;
+		_excerptExtractor.setSourceURI(sourceURI);
 	}
 
 	@Override
-	public void setTargetUri(String targetUri) {
-		_targetUri = targetUri;
-		_excerptExtractor.setTargetUri(targetUri);
+	public void setTargetURI(String targetURI) {
+		_targetURI = targetURI;
+		_excerptExtractor.setTargetURI(targetURI);
 	}
 
 	public static class DisabledPingbacksException extends RuntimeException {
@@ -105,9 +105,9 @@ public class PingbackImpl implements Pingback {
 	}
 
 	protected void addComment(
-		long userId, long groupId, String className, long classPK, String body,
-		long companyId, String urlTitle)
-	throws DuplicateCommentException, PortalException, SystemException {
+			long userId, long groupId, String className, long classPK,
+			String body, long companyId, String urlTitle)
+		throws DuplicateCommentException, PortalException, SystemException {
 
 		_pingbackComments.addComment(
 			userId, groupId, className, classPK, body,
@@ -120,7 +120,7 @@ public class PingbackImpl implements Pingback {
 		sb.append("[...] ");
 		sb.append(_excerptExtractor.getExcerpt());
 		sb.append(" [...] [url=");
-		sb.append(_sourceUri);
+		sb.append(_sourceURI);
 		sb.append("]");
 		sb.append(LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"));
 		sb.append("[/url]");
@@ -129,9 +129,7 @@ public class PingbackImpl implements Pingback {
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
-		BlogsEntry entry = null;
-
-		URL url = new URL(_targetUri);
+		URL url = new URL(_targetURI);
 
 		String friendlyURL = url.getPath();
 
@@ -170,6 +168,8 @@ public class PingbackImpl implements Pingback {
 
 		String param = getParam(params, "entryId");
 
+		BlogsEntry entry;
+
 		if (Validator.isNotNull(param)) {
 			long entryId = GetterUtil.getLong(param);
 
@@ -204,7 +204,7 @@ public class PingbackImpl implements Pingback {
 
 	private PingbackExcerptExtractor _excerptExtractor;
 	private PingbackComments _pingbackComments;
-	private String _sourceUri;
-	private String _targetUri;
+	private String _sourceURI;
+	private String _targetURI;
 
 }
