@@ -95,8 +95,8 @@ public class PingbackMethodImpl implements Method {
 	@Override
 	public boolean setArguments(Object[] arguments) {
 		try {
-			_pingback.setSourceUri((String)arguments[0]);
-			_pingback.setTargetUri((String)arguments[1]);
+			_pingback.setSourceURI((String)arguments[0]);
+			_pingback.setTargetURI((String)arguments[1]);
 
 			return true;
 		}

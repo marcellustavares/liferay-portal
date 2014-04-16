@@ -85,7 +85,6 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 	}
 
 	protected void setUpLanguage() {
-
 		whenLanguageGetThenReturn("pingback", "__pingbackUserName__");
 
 		LanguageUtil languageUtil = new LanguageUtil();
@@ -94,7 +93,6 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 	}
 
 	protected void setUpPortal() throws PortalException, SystemException {
-
 		Portal portal = Mockito.mock(Portal.class);
 
 		when(
@@ -110,7 +108,6 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 	}
 
 	protected void setUpPortlet() throws SystemException {
-
 		Portlet portlet = Mockito.mock(Portlet.class);
 
 		when(
@@ -139,7 +136,6 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 	}
 
 	protected void whenLanguageGetThenReturn(String key, String toBeReturned) {
-
 		when(
 			_language.get((Locale)Matchers.any(), Matchers.eq(key))
 		).thenReturn(
