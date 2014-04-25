@@ -15,23 +15,23 @@
 package com.liferay.portlet.blogs.pingback;
 
 /**
- * @author André de Oliveira
+ * @author Marcellus Tavares
  */
-public class DuplicateCommentException extends RuntimeException {
+public class InvalidSourceURIException extends RuntimeException {
 
-	public DuplicateCommentException() {
+	public InvalidSourceURIException() {
 		super();
 	}
 
-	public DuplicateCommentException(String msg) {
+	public InvalidSourceURIException(String msg) {
 		super(msg);
 	}
 
-	public DuplicateCommentException(String msg, Throwable cause) {
+	public InvalidSourceURIException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public DuplicateCommentException(Throwable cause) {
+	public InvalidSourceURIException(Throwable cause) {
 		super(cause);
 	}
 
