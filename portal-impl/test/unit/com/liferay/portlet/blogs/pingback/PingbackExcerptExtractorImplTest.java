@@ -17,8 +17,6 @@ package com.liferay.portlet.blogs.pingback;
 import com.liferay.portal.kernel.security.pacl.permission.PortalSocketPermission;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
 
 import java.io.IOException;
 

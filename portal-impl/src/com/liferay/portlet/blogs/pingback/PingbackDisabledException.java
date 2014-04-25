@@ -15,23 +15,23 @@
 package com.liferay.portlet.blogs.pingback;
 
 /**
- * @author André de Oliveira
+ * @author Marcellus Tavares
  */
-public class DuplicateCommentException extends RuntimeException {
+public class PingbackDisabledException extends RuntimeException {
 
-	public DuplicateCommentException() {
+	public PingbackDisabledException() {
 		super();
 	}
 
-	public DuplicateCommentException(String msg) {
+	public PingbackDisabledException(String msg) {
 		super(msg);
 	}
 
-	public DuplicateCommentException(String msg, Throwable cause) {
+	public PingbackDisabledException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public DuplicateCommentException(Throwable cause) {
+	public PingbackDisabledException(Throwable cause) {
 		super(cause);
 	}
 

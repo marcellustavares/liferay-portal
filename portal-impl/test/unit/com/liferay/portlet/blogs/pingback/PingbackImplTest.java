@@ -31,9 +31,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 
@@ -99,7 +96,7 @@ public class PingbackImplTest extends PowerMockito {
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 
-	@Test(expected = DisabledPingbacksException.class)
+	@Test(expected = PingbackDisabledException.class)
 	public void testDisabledPingbacksAtEntry() throws Exception {
 		when(
 			_blogsEntry.isAllowPingbacks()
@@ -110,7 +107,7 @@ public class PingbackImplTest extends PowerMockito {
 		execute();
 	}
 
-	@Test(expected = DisabledPingbacksException.class)
+	@Test(expected = PingbackDisabledException.class)
 	public void testDisabledPingbacksAtProps() throws Exception {
 		boolean previous = PropsValues.BLOGS_PINGBACK_ENABLED;
 

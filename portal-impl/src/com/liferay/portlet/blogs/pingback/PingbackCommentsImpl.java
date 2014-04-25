@@ -38,7 +38,7 @@ public class PingbackCommentsImpl implements PingbackComments {
 			long userId, long groupId, String className, long classPK,
 			String body,
 			Function<String, ServiceContext> serviceContextFunction)
-		throws DuplicateCommentException, PortalException, SystemException {
+		throws PortalException, SystemException {
 
 		MBMessageDisplay messageDisplay =
 			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(

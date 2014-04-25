@@ -103,7 +103,8 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 			}
 		}
 
-		throw new InvalidSourceURIException();
+		throw new InvalidSourceURIException(
+			"Could not find target URI in source");
 	}
 
 	protected Source getSource() throws UnavailableSourceURIException {
@@ -117,7 +118,8 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 				_log.debug(e, e);
 			}
 
-			throw new UnavailableSourceURIException(e);
+			throw new UnavailableSourceURIException(
+				"Error accessing source URI", e);
 		}
 	}
 

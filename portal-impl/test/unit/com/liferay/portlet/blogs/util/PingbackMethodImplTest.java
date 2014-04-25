@@ -19,10 +19,10 @@ import com.liferay.portal.kernel.xmlrpc.XmlRpc;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
+import com.liferay.portlet.blogs.pingback.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.Pingback;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
+import com.liferay.portlet.blogs.pingback.PingbackDisabledException;
+import com.liferay.portlet.blogs.pingback.UnavailableSourceURIException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 
 	@Test
 	public void testDisabledPingbacks() throws Exception {
-		whenAddPingbackThrow(new DisabledPingbacksException());
+		whenAddPingbackThrow(new PingbackDisabledException());
 
 		execute();
 

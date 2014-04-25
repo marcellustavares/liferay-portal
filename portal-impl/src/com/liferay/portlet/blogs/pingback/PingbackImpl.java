@@ -54,7 +54,7 @@ public class PingbackImpl implements Pingback {
 	@Override
 	public void addPingback(long companyId) throws Exception {
 		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
-			throw new DisabledPingbacksException();
+			throw new PingbackDisabledException("Pingbacks are disabled");
 		}
 
 		_excerptExtractor.validateSource();
@@ -62,7 +62,7 @@ public class PingbackImpl implements Pingback {
 		BlogsEntry entry = getBlogsEntry(companyId);
 
 		if (!entry.isAllowPingbacks()) {
-			throw new DisabledPingbacksException();
+			throw new PingbackDisabledException("Pingbacks are disabled");
 		}
 
 		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
@@ -88,14 +88,6 @@ public class PingbackImpl implements Pingback {
 		_excerptExtractor.setTargetURI(targetURI);
 	}
 
-	public static class DisabledPingbacksException extends RuntimeException {
-
-		public DisabledPingbacksException() {
-			super("Pingbacks are disabled");
-		}
-
-	}
-
 	protected PingbackImpl(
 		PingbackComments pingbackComments,
 		PingbackExcerptExtractor excerptExtractor
@@ -107,7 +99,7 @@ public class PingbackImpl implements Pingback {
 	protected void addComment(
 			long userId, long groupId, String className, long classPK,
 			String body, long companyId, String urlTitle)
-		throws DuplicateCommentException, PortalException, SystemException {
+		throws PortalException, SystemException {
 
 		_pingbackComments.addComment(
 			userId, groupId, className, classPK, body,
