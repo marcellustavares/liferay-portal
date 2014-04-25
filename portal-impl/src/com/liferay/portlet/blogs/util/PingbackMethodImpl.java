@@ -21,11 +21,11 @@ import com.liferay.portal.kernel.xmlrpc.Response;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
+import com.liferay.portlet.blogs.pingback.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.Pingback;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
+import com.liferay.portlet.blogs.pingback.PingbackDisabledException;
 import com.liferay.portlet.blogs.pingback.PingbackImpl;
-import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
+import com.liferay.portlet.blogs.pingback.UnavailableSourceURIException;
 
 /**
  * @author Alexander Chow
@@ -59,8 +59,8 @@ public class PingbackMethodImpl implements Method {
 
 			return XmlRpcUtil.createSuccess("Pingback accepted");
 		}
-		catch (DisabledPingbacksException dpe) {
-			return createFault(XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, dpe);
+		catch (PingbackDisabledException pde) {
+			return createFault(XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, pde);
 		}
 		catch (DuplicateCommentException dce) {
 			return XmlRpcUtil.createFault(

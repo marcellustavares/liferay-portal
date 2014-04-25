@@ -37,9 +37,10 @@ public class PingbackServiceContextFunction
 
 	public PingbackServiceContextFunction(
 		long companyId, long groupId, String urlTitle) {
-			_companyId = companyId;
-			_groupId = groupId;
-			_urlTitle = urlTitle;
+
+		_companyId = companyId;
+		_groupId = groupId;
+		_urlTitle = urlTitle;
 	}
 
 	@Override
@@ -55,23 +56,6 @@ public class PingbackServiceContextFunction
 		}
 	}
 
-	protected String buildRedirect(String layoutFullURL)
-		throws SystemException {
-
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(
-			_companyId, PortletKeys.BLOGS);
-
-		StringBundler sb = new StringBundler(5);
-
-		sb.append(layoutFullURL);
-		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
-		sb.append(portlet.getFriendlyURLMapping());
-		sb.append(StringPool.SLASH);
-		sb.append(_urlTitle);
-
-		return sb.toString();
-	}
-
 	protected ServiceContext buildServiceContext()
 		throws PortalException, SystemException {
 
@@ -85,12 +69,28 @@ public class PingbackServiceContextFunction
 		String layoutFullURL = PortalUtil.getLayoutFullURL(
 			_groupId, PortletKeys.BLOGS);
 
-		String redirect = buildRedirect(layoutFullURL);
+		String redirect = getRedirect(layoutFullURL);
+
 		serviceContext.setAttribute("redirect", redirect);
 
 		serviceContext.setLayoutFullURL(layoutFullURL);
 
 		return serviceContext;
+	}
+
+	protected String getRedirect(String layoutFullURL) throws SystemException {
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			_companyId, PortletKeys.BLOGS);
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(layoutFullURL);
+		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
+		sb.append(portlet.getFriendlyURLMapping());
+		sb.append(StringPool.SLASH);
+		sb.append(_urlTitle);
+
+		return sb.toString();
 	}
 
 	private long _companyId;

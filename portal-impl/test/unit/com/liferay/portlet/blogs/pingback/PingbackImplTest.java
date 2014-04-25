@@ -19,7 +19,9 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
+import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.PortletLocalServiceUtil;
@@ -31,9 +33,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 
@@ -78,6 +77,20 @@ public class PingbackImplTest extends PowerMockito {
 		setUpUser();
 	}
 
+	@Test(expected = DuplicateCommentException.class)
+	public void testAddDuplicatePingback() throws Exception {
+		Mockito.doThrow(
+			DuplicateCommentException.class
+		).when(
+			_pingbackComments
+		).addComment(
+			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
+			Matchers.anyLong(), Matchers.anyString(),
+			(Function<String, ServiceContext>)Matchers.any());
+
+		execute();
+	}
+
 	@Test
 	public void testAddPingback() throws Exception {
 		Mockito.when(
@@ -95,12 +108,14 @@ public class PingbackImplTest extends PowerMockito {
 			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
 				"[...] __excerpt__ [...]" +
-				" [url=__sourceURI__]__read_more__[/url]"),
+					" [url=__sourceURI__]__read_more__[/url]"),
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 
-	@Test(expected = DisabledPingbacksException.class)
-	public void testDisabledPingbacksAtEntry() throws Exception {
+	@Test(expected = PingbackDisabledException.class)
+	public void testAddPingbackWhenBlogEntryDisablesPingbacks()
+		throws Exception {
+
 		when(
 			_blogsEntry.isAllowPingbacks()
 		).thenReturn(
@@ -110,8 +125,10 @@ public class PingbackImplTest extends PowerMockito {
 		execute();
 	}
 
-	@Test(expected = DisabledPingbacksException.class)
-	public void testDisabledPingbacksAtProps() throws Exception {
+	@Test(expected = PingbackDisabledException.class)
+	public void testAddPingbackWhenPortalPropertyDisablesPingbacks()
+		throws Exception {
+
 		boolean previous = PropsValues.BLOGS_PINGBACK_ENABLED;
 
 		Whitebox.setInternalState(
@@ -126,16 +143,35 @@ public class PingbackImplTest extends PowerMockito {
 		}
 	}
 
-	@Test(expected = DuplicateCommentException.class)
-	public void testDuplicateComment() throws Exception {
+	@Test(expected = InvalidSourceURIException.class)
+	public void testAddPingbackWithInvalidSourceURI() throws Exception {
 		Mockito.doThrow(
-			DuplicateCommentException.class
+			new InvalidSourceURIException()
 		).when(
-			_pingbackComments
-		).addComment(
-			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
-			Matchers.anyLong(), Matchers.anyString(),
-			(Function<String, ServiceContext>)Matchers.any());
+			_excerptExtractor
+		).validateSource();
+
+		execute();
+	}
+
+	@Test(expected = UnavailableSourceURIException.class)
+	public void testAddPingbackWithUnavailableSourceURI() throws Exception {
+		Mockito.doThrow(
+			new UnavailableSourceURIException(new NullPointerException())
+		).when(
+			_excerptExtractor
+		).validateSource();
+
+		execute();
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testAddPingbackWithUnexpectedException() throws Exception {
+		Mockito.doThrow(
+			new NullPointerException()
+		).when(
+			_excerptExtractor
+		).getExcerpt();
 
 		execute();
 	}
@@ -160,7 +196,7 @@ public class PingbackImplTest extends PowerMockito {
 
 	@Test
 	public void testFriendlyURL() throws Exception {
-		long plid = 84L;
+		long plid = RandomUtil.randomLong();
 
 		when(
 			_portal.getPlidFromFriendlyURL(COMPANY_ID, "/__blogs__")
@@ -168,7 +204,7 @@ public class PingbackImplTest extends PowerMockito {
 			plid
 		);
 
-		long groupId = 8844L;
+		long groupId = RandomUtil.randomLong();
 
 		when(
 			_portal.getScopeGroupId(plid)
@@ -191,28 +227,6 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
-	@Test(expected = InvalidSourceURIException.class)
-	public void testInvalidSourceURI() throws Exception {
-		Mockito.doThrow(
-			new InvalidSourceURIException()
-		).when(
-			_excerptExtractor
-		).validateSource();
-
-		execute();
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testMalfunctionAtExcerptExtraction() throws Exception {
-		Mockito.doThrow(
-			new NullPointerException()
-		).when(
-			_excerptExtractor
-		).getExcerpt();
-
-		execute();
-	}
-
 	@Test
 	public void testSetSourceAndTargetURIs() throws Exception {
 		PingbackImpl pingback = new PingbackImpl(
@@ -233,17 +247,6 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
-	@Test(expected = UnavailableSourceURIException.class)
-	public void testUnavailableSourceURI() throws Exception {
-		Mockito.doThrow(
-			new UnavailableSourceURIException(new NullPointerException())
-		).when(
-			_excerptExtractor
-		).validateSource();
-
-		execute();
-	}
-
 	protected void doTestEntryIdParam(String namespace) throws Exception {
 		when(
 			_blogsEntryLocalService.getEntry(Matchers.anyLong())
@@ -251,11 +254,14 @@ public class PingbackImplTest extends PowerMockito {
 			_blogsEntry
 		);
 
-		String name = (namespace == null ? "" : namespace) + "entryId";
-		long entryId = 12345;
+		if (namespace == null) {
+			namespace = StringPool.BLANK;
+		}
+
+		long entryId = RandomUtil.randomLong();
 
 		whenFriendlyURLMapperPopulateParamsPut(
-			"", name, String.valueOf(entryId));
+			StringPool.BLANK, namespace + "entryId", String.valueOf(entryId));
 
 		execute();
 
@@ -334,13 +340,13 @@ public class PingbackImplTest extends PowerMockito {
 			_portal.getPlidFromFriendlyURL(
 				Matchers.eq(COMPANY_ID), Matchers.anyString())
 		).thenReturn(
-			42L
+			RandomUtil.randomLong()
 		);
 
 		when(
 			_portal.getScopeGroupId(Matchers.anyLong())
 		).thenReturn(
-			42L
+			RandomUtil.randomLong()
 		);
 
 		PortalUtil portalUtil = new PortalUtil();
@@ -426,13 +432,13 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
-	private static final long COMPANY_ID = 1L;
+	private static final long COMPANY_ID = RandomUtil.randomLong();
 
-	private static final long ENTRY_ID = 99999L;
+	private static final long ENTRY_ID = RandomUtil.randomLong();
 
-	private static final long GROUP_ID = 33L;
+	private static final long GROUP_ID = RandomUtil.randomLong();
 
-	private static final long USER_ID = 142857L;
+	private static final long USER_ID = RandomUtil.randomLong();
 
 	@Mock
 	private BlogsEntry _blogsEntry;

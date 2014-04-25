@@ -17,8 +17,6 @@ package com.liferay.portlet.blogs.pingback;
 import com.liferay.portal.kernel.security.pacl.permission.PortalSocketPermission;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
 
 import java.io.IOException;
 
@@ -39,7 +37,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { PortalSocketPermission.class })
+@PrepareForTest({PortalSocketPermission.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
@@ -64,8 +62,8 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testExcerptShorten() throws Exception {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(4);
+	public void testGetExcerpt() throws Exception {
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(4);
 
 		whenURLToStringSourceURIThenReturn(
 			"<body><a href='__targetURI__'>12345</a></body>");
@@ -76,7 +74,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testExcerptWithParent() throws Exception {
+	public void testGetExcerptWhenAnchorHasParent() throws Exception {
 		whenURLToStringSourceURIThenReturn(
 			"<body><p>" +
 			"Visit <a href='__targetURI__'>Liferay</a> to learn more" +
@@ -88,9 +86,8 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testExcerptWithTwoParents() throws Exception {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(
-			"Liferay".length() + 11);
+	public void testGetExcerptWhenAnchorHasTwoParents() throws Exception {
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(18);
 
 		whenURLToStringSourceURIThenReturn(
 			"<body>_____<p>12345<span>67890" +
@@ -103,14 +100,14 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testMalformedTarget() throws Exception {
+	public void testGetExcerptWhenAnchorIsMalformed() throws Exception {
 		whenURLToStringSourceURIThenReturn("<a href='MALFORMED' />");
 
 		execute("MALFORMED");
 	}
 
 	@Test(expected = InvalidSourceURIException.class)
-	public void testMissingTarget() throws Exception {
+	public void testGetExcerptWhenAnchorIsMissing() throws Exception {
 		whenURLToStringSourceURIThenReturn("");
 
 		execute();
@@ -121,10 +118,11 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	protected void execute(String targetURI) throws Exception {
-		_excerptExtractor.setSourceURI("__sourceURI__");
-		_excerptExtractor.setTargetURI(targetURI);
-		_excerptExtractor.validateSource();
-		_excerpt = _excerptExtractor.getExcerpt();
+		_pingbackExcerptExtractor.setSourceURI("__sourceURI__");
+		_pingbackExcerptExtractor.setTargetURI(targetURI);
+		_pingbackExcerptExtractor.validateSource();
+
+		_excerpt = _pingbackExcerptExtractor.getExcerpt();
 	}
 
 	protected void setUpHttp() throws Exception {
@@ -150,10 +148,11 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	private String _excerpt;
-	private PingbackExcerptExtractor _excerptExtractor =
-		new PingbackExcerptExtractorImpl(200);
 
 	@Mock
 	private Http _http;
+
+	private PingbackExcerptExtractor _pingbackExcerptExtractor =
+		new PingbackExcerptExtractorImpl(200);
 
 }

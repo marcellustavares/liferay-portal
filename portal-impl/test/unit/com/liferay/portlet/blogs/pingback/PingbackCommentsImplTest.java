@@ -16,6 +16,7 @@ package com.liferay.portlet.blogs.pingback;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -48,7 +49,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { MBMessageLocalServiceUtil.class })
+@PrepareForTest({MBMessageLocalServiceUtil.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackCommentsImplTest extends PowerMockito {
 
@@ -87,7 +88,7 @@ public class PingbackCommentsImplTest extends PowerMockito {
 	}
 
 	@Test(expected = DuplicateCommentException.class)
-	public void testDuplicateComment() throws Exception {
+	public void testAddDuplicateComment() throws Exception {
 		MBMessage message = Mockito.mock(MBMessage.class);
 
 		when(
@@ -161,15 +162,15 @@ public class PingbackCommentsImplTest extends PowerMockito {
 		);
 	}
 
-	private static final long ENTRY_ID = 142857;
+	private static final long ENTRY_ID = RandomUtil.randomLong();
 
-	private static final long GROUP_ID = 16;
+	private static final long GROUP_ID = RandomUtil.randomLong();
 
-	private static final long PARENT_MESSAGE_ID = 1337L;
+	private static final long PARENT_MESSAGE_ID = RandomUtil.randomLong();
 
-	private static final long THREAD_ID = 7676L;
+	private static final long THREAD_ID = RandomUtil.randomLong();
 
-	private static final long USER_ID = 42;
+	private static final long USER_ID = RandomUtil.randomLong();
 
 	@Mock
 	private MBMessageDisplay _mbMessageDisplay;

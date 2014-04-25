@@ -46,30 +46,31 @@ import java.util.Map;
 public class PingbackImpl implements Pingback {
 
 	public PingbackImpl() {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(
 			PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH);
+
 		_pingbackComments = new PingbackCommentsImpl();
 	}
 
 	@Override
 	public void addPingback(long companyId) throws Exception {
 		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
-			throw new DisabledPingbacksException();
+			throw new PingbackDisabledException();
 		}
 
-		_excerptExtractor.validateSource();
+		_pingbackExcerptExtractor.validateSource();
 
 		BlogsEntry entry = getBlogsEntry(companyId);
 
 		if (!entry.isAllowPingbacks()) {
-			throw new DisabledPingbacksException();
+			throw new PingbackDisabledException();
 		}
 
 		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
 		long groupId = entry.getGroupId();
 		String className = BlogsEntry.class.getName();
 		long classPK = entry.getEntryId();
-		String body = buildBody();
+		String body = getBody();
 		String urlTitle = entry.getUrlTitle();
 
 		addComment(
@@ -79,53 +80,31 @@ public class PingbackImpl implements Pingback {
 	@Override
 	public void setSourceURI(String sourceURI) {
 		_sourceURI = sourceURI;
-		_excerptExtractor.setSourceURI(sourceURI);
+		_pingbackExcerptExtractor.setSourceURI(sourceURI);
 	}
 
 	@Override
 	public void setTargetURI(String targetURI) {
 		_targetURI = targetURI;
-		_excerptExtractor.setTargetURI(targetURI);
-	}
-
-	public static class DisabledPingbacksException extends RuntimeException {
-
-		public DisabledPingbacksException() {
-			super("Pingbacks are disabled");
-		}
-
+		_pingbackExcerptExtractor.setTargetURI(targetURI);
 	}
 
 	protected PingbackImpl(
 		PingbackComments pingbackComments,
-		PingbackExcerptExtractor excerptExtractor
-	) {
+		PingbackExcerptExtractor excerptExtractor) {
+
 		_pingbackComments = pingbackComments;
-		_excerptExtractor = excerptExtractor;
+		_pingbackExcerptExtractor = excerptExtractor;
 	}
 
 	protected void addComment(
 			long userId, long groupId, String className, long classPK,
 			String body, long companyId, String urlTitle)
-		throws DuplicateCommentException, PortalException, SystemException {
+		throws PortalException, SystemException {
 
 		_pingbackComments.addComment(
 			userId, groupId, className, classPK, body,
 			new PingbackServiceContextFunction(companyId, groupId, urlTitle));
-	}
-
-	protected String buildBody() {
-		StringBundler sb = new StringBundler(7);
-
-		sb.append("[...] ");
-		sb.append(_excerptExtractor.getExcerpt());
-		sb.append(" [...] [url=");
-		sb.append(_sourceURI);
-		sb.append("]");
-		sb.append(LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"));
-		sb.append("[/url]");
-
-		return sb.toString();
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
@@ -184,6 +163,20 @@ public class PingbackImpl implements Pingback {
 		return entry;
 	}
 
+	protected String getBody() {
+		StringBundler sb = new StringBundler(7);
+
+		sb.append("[...] ");
+		sb.append(_pingbackExcerptExtractor.getExcerpt());
+		sb.append(" [...] [url=");
+		sb.append(_sourceURI);
+		sb.append("]");
+		sb.append(LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"));
+		sb.append("[/url]");
+
+		return sb.toString();
+	}
+
 	protected String getParam(Map<String, String[]> params, String name) {
 		String[] paramArray = params.get(name);
 
@@ -202,8 +195,8 @@ public class PingbackImpl implements Pingback {
 		}
 	}
 
-	private PingbackExcerptExtractor _excerptExtractor;
 	private PingbackComments _pingbackComments;
+	private PingbackExcerptExtractor _pingbackExcerptExtractor;
 	private String _sourceURI;
 	private String _targetURI;
 

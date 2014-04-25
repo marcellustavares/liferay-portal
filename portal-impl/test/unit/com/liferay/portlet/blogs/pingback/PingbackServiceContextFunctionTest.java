@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.PortletLocalServiceUtil;
@@ -47,7 +48,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { PortletLocalServiceUtil.class })
+@PrepareForTest({PortletLocalServiceUtil.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackServiceContextFunctionTest extends PowerMockito {
 
@@ -62,8 +63,9 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 
 	@Test
 	public void testBuildServiceContext() {
-		long companyId = 1L;
-		long groupId = 33L;
+		long companyId = RandomUtil.randomLong();
+
+		long groupId = RandomUtil.randomLong();
 
 		PingbackServiceContextFunction function =
 			new PingbackServiceContextFunction(

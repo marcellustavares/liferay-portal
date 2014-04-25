@@ -14,15 +14,16 @@
 
 package com.liferay.portlet.blogs.util;
 
+import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.xmlrpc.Fault;
 import com.liferay.portal.kernel.xmlrpc.XmlRpc;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
+import com.liferay.portlet.blogs.pingback.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.Pingback;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.InvalidSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackExcerptExtractor.UnavailableSourceURIException;
-import com.liferay.portlet.blogs.pingback.PingbackImpl.DisabledPingbacksException;
+import com.liferay.portlet.blogs.pingback.PingbackDisabledException;
+import com.liferay.portlet.blogs.pingback.UnavailableSourceURIException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,18 +48,9 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testDisabledPingbacks() throws Exception {
-		whenAddPingbackThrow(new DisabledPingbacksException());
+	public void testConvertDuplicateCommentExceptionToXmlRpcFault()
+		throws Exception {
 
-		execute();
-
-		verifyFault(
-			XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-			"Pingbacks are disabled");
-	}
-
-	@Test
-	public void testPingbackAlreadyRegistered() throws Exception {
 		whenAddPingbackThrow(new DuplicateCommentException());
 
 		execute();
@@ -69,25 +61,47 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testSetArguments() throws Exception {
-		PingbackMethodImpl method = new PingbackMethodImpl(_pingback);
+	public void testConvertInvalidSourceURIExceptionToXmlRpcFault()
+		throws Exception {
 
-		method.setArguments(new Object[]{"__sourceURI__", "__targetURI__"});
+		whenAddPingbackThrow(new InvalidSourceURIException());
 
-		Mockito.verify(
-			_pingback
-		).setSourceURI(
-			"__sourceURI__"
-		);
-		Mockito.verify(
-			_pingback
-		).setTargetURI(
-			"__targetURI__"
-		);
+		execute();
+
+		verifyFault(
+			PingbackMethodImpl.SOURCE_URI_INVALID,
+			"Could not find target URI in source");
 	}
 
 	@Test
-	public void testSourceURIDoesNotExist() throws Exception {
+	public void testConvertNullPointerExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(new NullPointerException());
+
+		execute();
+
+		verifyFault(
+			PingbackMethodImpl.TARGET_URI_INVALID, "Error parsing target URI");
+	}
+
+	@Test
+	public void testConvertPingbackDisabledExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(new PingbackDisabledException());
+
+		execute();
+
+		verifyFault(
+			XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
+			"Pingbacks are disabled");
+	}
+
+	@Test
+	public void testConvertUnavailableSourceURIExceptionToXmlRpcFault()
+		throws Exception {
+
 		whenAddPingbackThrow(
 			new UnavailableSourceURIException(new NullPointerException()));
 
@@ -99,14 +113,22 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testSourceURIInvalid() throws Exception {
-		whenAddPingbackThrow(new InvalidSourceURIException());
+	public void testSetArguments() throws Exception {
+		PingbackMethodImpl method = new PingbackMethodImpl(_pingback);
 
-		execute();
+		method.setArguments(new Object[] {"__sourceURI__", "__targetURI__"});
 
-		verifyFault(
-			PingbackMethodImpl.SOURCE_URI_INVALID,
-			"Could not find target URI in source");
+		Mockito.verify(
+			_pingback
+		).setSourceURI(
+			"__sourceURI__"
+		);
+
+		Mockito.verify(
+			_pingback
+		).setTargetURI(
+			"__targetURI__"
+		);
 	}
 
 	@Test
@@ -120,20 +142,10 @@ public class PingbackMethodImplTest extends PowerMockito {
 		);
 	}
 
-	@Test
-	public void testUnforeseenMalfunction() throws Exception {
-		whenAddPingbackThrow(new NullPointerException());
-
-		execute();
-
-		verifyFault(
-			PingbackMethodImpl.TARGET_URI_INVALID, "Error parsing target URI");
-	}
-
 	protected void execute() throws Exception {
 		PingbackMethodImpl pingbackMethod = new PingbackMethodImpl(_pingback);
 
-		pingbackMethod.execute(42);
+		pingbackMethod.execute(RandomUtil.randomLong());
 	}
 
 	protected void setUpXmlRpc() {
