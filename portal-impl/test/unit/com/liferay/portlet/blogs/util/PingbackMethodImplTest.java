@@ -63,7 +63,9 @@ public class PingbackMethodImplTest extends PowerMockito {
 	public void testConvertInvalidSourceURIExceptionToXmlRpcFault()
 		throws Exception {
 
-		whenAddPingbackThrow(new InvalidSourceURIException());
+		whenAddPingbackThrow(
+			new InvalidSourceURIException(
+				"Could not find target URI in source"));
 
 		execute();
 
@@ -88,7 +90,8 @@ public class PingbackMethodImplTest extends PowerMockito {
 	public void testConvertPingbackDisabledExceptionToXmlRpcFault()
 		throws Exception {
 
-		whenAddPingbackThrow(new PingbackDisabledException());
+		whenAddPingbackThrow(
+			new PingbackDisabledException("Pingbacks are disabled"));
 
 		execute();
 
@@ -102,7 +105,8 @@ public class PingbackMethodImplTest extends PowerMockito {
 		throws Exception {
 
 		whenAddPingbackThrow(
-			new UnavailableSourceURIException(new NullPointerException()));
+			new UnavailableSourceURIException(
+				"Error accessing source URI", new NullPointerException()));
 
 		execute();
 
