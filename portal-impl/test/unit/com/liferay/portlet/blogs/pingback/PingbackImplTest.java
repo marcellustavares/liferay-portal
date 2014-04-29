@@ -75,6 +75,20 @@ public class PingbackImplTest extends PowerMockito {
 		setUpUser();
 	}
 
+	@Test(expected = DuplicateCommentException.class)
+	public void testAddDuplicatePingback() throws Exception {
+		Mockito.doThrow(
+			DuplicateCommentException.class
+		).when(
+			_pingbackComments
+		).addComment(
+			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
+			Matchers.anyLong(), Matchers.anyString(),
+			(Function<String, ServiceContext>)Matchers.any());
+
+		execute();
+	}
+
 	@Test
 	public void testAddPingback() throws Exception {
 		Mockito.when(
@@ -97,7 +111,9 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	@Test(expected = PingbackDisabledException.class)
-	public void testDisabledPingbacksAtEntry() throws Exception {
+	public void testAddPingbackWhenBlogEntryDisablesPingbacks()
+		throws Exception {
+
 		when(
 			_blogsEntry.isAllowPingbacks()
 		).thenReturn(
@@ -108,7 +124,9 @@ public class PingbackImplTest extends PowerMockito {
 	}
 
 	@Test(expected = PingbackDisabledException.class)
-	public void testDisabledPingbacksAtProps() throws Exception {
+	public void testAddPingbackWhenPortalPropertyDisablesPingbacks()
+		throws Exception {
+
 		boolean previous = PropsValues.BLOGS_PINGBACK_ENABLED;
 
 		Whitebox.setInternalState(
@@ -123,40 +141,8 @@ public class PingbackImplTest extends PowerMockito {
 		}
 	}
 
-	@Test(expected = DuplicateCommentException.class)
-	public void testDuplicateComment() throws Exception {
-		Mockito.doThrow(
-			DuplicateCommentException.class
-		).when(
-			_pingbackComments
-		).addComment(
-			Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
-			Matchers.anyLong(), Matchers.anyString(),
-			(Function<String, ServiceContext>)Matchers.any());
-
-		execute();
-	}
-
 	@Test
-	public void testEntryIdParam() throws Exception {
-		doTestEntryIdParam(null);
-	}
-
-	@Test
-	public void testEntryIdParamWithNamespace() throws Exception {
-		String namespace = "__namespace__.";
-
-		when(
-			_portal.getPortletNamespace(PortletKeys.BLOGS)
-		).thenReturn(
-			namespace
-		);
-
-		doTestEntryIdParam(namespace);
-	}
-
-	@Test
-	public void testFriendlyURL() throws Exception {
+	public void testAddPingbackWithFriendlyURL() throws Exception {
 		long plid = 84L;
 
 		when(
@@ -188,8 +174,30 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
+	@Test
+	public void testAddPingbackWithFriendlyURLParameterEntryId()
+		throws Exception {
+
+		doTestAddPingbackWithFriendlyURLParameterEntryId(null);
+	}
+
+	@Test
+	public void testAddPingbackWithFriendlyURLParameterEntryIdInNamespace()
+		throws Exception {
+
+		String namespace = "__namespace__.";
+
+		when(
+			_portal.getPortletNamespace(PortletKeys.BLOGS)
+		).thenReturn(
+			namespace
+		);
+
+		doTestAddPingbackWithFriendlyURLParameterEntryId(namespace);
+	}
+
 	@Test(expected = InvalidSourceURIException.class)
-	public void testInvalidSourceURI() throws Exception {
+	public void testAddPingbackWithInvalidSourceURI() throws Exception {
 		Mockito.doThrow(
 			new InvalidSourceURIException()
 		).when(
@@ -199,8 +207,19 @@ public class PingbackImplTest extends PowerMockito {
 		execute();
 	}
 
+	@Test(expected = UnavailableSourceURIException.class)
+	public void testAddPingbackWithUnavailableSourceURI() throws Exception {
+		Mockito.doThrow(
+			new UnavailableSourceURIException(new NullPointerException())
+		).when(
+			_excerptExtractor
+		).validateSource();
+
+		execute();
+	}
+
 	@Test(expected = NullPointerException.class)
-	public void testMalfunctionAtExcerptExtraction() throws Exception {
+	public void testAddPingbackWithUnexpectedException() throws Exception {
 		Mockito.doThrow(
 			new NullPointerException()
 		).when(
@@ -230,18 +249,10 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
-	@Test(expected = UnavailableSourceURIException.class)
-	public void testUnavailableSourceURI() throws Exception {
-		Mockito.doThrow(
-			new UnavailableSourceURIException(new NullPointerException())
-		).when(
-			_excerptExtractor
-		).validateSource();
+	protected void doTestAddPingbackWithFriendlyURLParameterEntryId(
+		String namespace)
+	throws Exception {
 
-		execute();
-	}
-
-	protected void doTestEntryIdParam(String namespace) throws Exception {
 		when(
 			_blogsEntryLocalService.getEntry(Matchers.anyLong())
 		).thenReturn(

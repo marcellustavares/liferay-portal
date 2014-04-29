@@ -87,7 +87,7 @@ public class PingbackCommentsImplTest extends PowerMockito {
 	}
 
 	@Test(expected = DuplicateCommentException.class)
-	public void testDuplicateComment() throws Exception {
+	public void testAddDuplicateComment() throws Exception {
 		MBMessage message = Mockito.mock(MBMessage.class);
 
 		when(

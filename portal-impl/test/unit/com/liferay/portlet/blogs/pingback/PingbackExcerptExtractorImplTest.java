@@ -48,21 +48,8 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 		setUpHttp();
 	}
 
-	@Test(expected = UnavailableSourceURIException.class)
-	public void testErrorAccessingSource() throws Exception {
-		Mockito.doThrow(
-			IOException.class
-		).when(
-			_http
-		).URLtoString(
-			"__sourceURI__"
-		);
-
-		execute();
-	}
-
 	@Test
-	public void testExcerptShorten() throws Exception {
+	public void testGetExcerpt() throws Exception {
 		_excerptExtractor = new PingbackExcerptExtractorImpl(4);
 
 		whenURLToStringSourceURIThenReturn(
@@ -74,7 +61,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testExcerptWithParent() throws Exception {
+	public void testGetExcerptWhenAnchorHasParent() throws Exception {
 		whenURLToStringSourceURIThenReturn(
 			"<body><p>" +
 			"Visit <a href='__targetURI__'>Liferay</a> to learn more" +
@@ -86,7 +73,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testExcerptWithTwoParents() throws Exception {
+	public void testGetExcerptWhenAnchorHasTwoParents() throws Exception {
 		_excerptExtractor = new PingbackExcerptExtractorImpl(
 			"Liferay".length() + 11);
 
@@ -101,15 +88,28 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testMalformedTarget() throws Exception {
+	public void testGetExcerptWhenAnchorIsMalformed() throws Exception {
 		whenURLToStringSourceURIThenReturn("<a href='MALFORMED' />");
 
 		execute("MALFORMED");
 	}
 
 	@Test(expected = InvalidSourceURIException.class)
-	public void testMissingTarget() throws Exception {
+	public void testGetExcerptWhenAnchorIsMissing() throws Exception {
 		whenURLToStringSourceURIThenReturn("");
+
+		execute();
+	}
+
+	@Test(expected = UnavailableSourceURIException.class)
+	public void testGetExcerptWhenReferrerIsUnavailable() throws Exception {
+		Mockito.doThrow(
+			IOException.class
+		).when(
+			_http
+		).URLtoString(
+			"__sourceURI__"
+		);
 
 		execute();
 	}

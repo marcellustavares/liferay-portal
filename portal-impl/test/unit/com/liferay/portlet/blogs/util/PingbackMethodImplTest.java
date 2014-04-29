@@ -47,18 +47,9 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testDisabledPingbacks() throws Exception {
-		whenAddPingbackThrow(new PingbackDisabledException());
+	public void testConvertDuplicateCommentExceptionToXmlRpcFault()
+		throws Exception {
 
-		execute();
-
-		verifyFault(
-			XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-			"Pingbacks are disabled");
-	}
-
-	@Test
-	public void testPingbackAlreadyRegistered() throws Exception {
 		whenAddPingbackThrow(new DuplicateCommentException());
 
 		execute();
@@ -69,7 +60,70 @@ public class PingbackMethodImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testSetArguments() throws Exception {
+	public void testConvertInvalidSourceURIExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(new InvalidSourceURIException());
+
+		execute();
+
+		verifyFault(
+			PingbackMethodImpl.SOURCE_URI_INVALID,
+			"Could not find target URI in source");
+	}
+
+	@Test
+	public void testConvertNullPointerExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(new NullPointerException());
+
+		execute();
+
+		verifyFault(
+			PingbackMethodImpl.TARGET_URI_INVALID, "Error parsing target URI");
+	}
+
+	@Test
+	public void testConvertPingbackDisabledExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(new PingbackDisabledException());
+
+		execute();
+
+		verifyFault(
+			XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
+			"Pingbacks are disabled");
+	}
+
+	@Test
+	public void testConvertUnavailableSourceURIExceptionToXmlRpcFault()
+		throws Exception {
+
+		whenAddPingbackThrow(
+			new UnavailableSourceURIException(new NullPointerException()));
+
+		execute();
+
+		verifyFault(
+			PingbackMethodImpl.SOURCE_URI_DOES_NOT_EXIST,
+			"Error accessing source URI");
+	}
+
+	@Test
+	public void testExecuteWithSuccess() throws Exception {
+		execute();
+
+		Mockito.verify(
+			_xmlRpc
+		).createSuccess(
+			"Pingback accepted"
+		);
+	}
+
+	@Test
+	public void testSetArgumentsConvertsArrayToSetters() throws Exception {
 		PingbackMethodImpl method = new PingbackMethodImpl(_pingback);
 
 		method.setArguments(new Object[]{"__sourceURI__", "__targetURI__"});
@@ -84,50 +138,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		).setTargetURI(
 			"__targetURI__"
 		);
-	}
-
-	@Test
-	public void testSourceURIDoesNotExist() throws Exception {
-		whenAddPingbackThrow(
-			new UnavailableSourceURIException(new NullPointerException()));
-
-		execute();
-
-		verifyFault(
-			PingbackMethodImpl.SOURCE_URI_DOES_NOT_EXIST,
-			"Error accessing source URI");
-	}
-
-	@Test
-	public void testSourceURIInvalid() throws Exception {
-		whenAddPingbackThrow(new InvalidSourceURIException());
-
-		execute();
-
-		verifyFault(
-			PingbackMethodImpl.SOURCE_URI_INVALID,
-			"Could not find target URI in source");
-	}
-
-	@Test
-	public void testSuccess() throws Exception {
-		execute();
-
-		Mockito.verify(
-			_xmlRpc
-		).createSuccess(
-			"Pingback accepted"
-		);
-	}
-
-	@Test
-	public void testUnforeseenMalfunction() throws Exception {
-		whenAddPingbackThrow(new NullPointerException());
-
-		execute();
-
-		verifyFault(
-			PingbackMethodImpl.TARGET_URI_INVALID, "Error parsing target URI");
 	}
 
 	protected void execute() throws Exception {
