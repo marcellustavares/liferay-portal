@@ -50,7 +50,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 	@Test
 	public void testGetExcerpt() throws Exception {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(4);
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(4);
 
 		whenURLToStringSourceURIThenReturn(
 			"<body><a href='__targetURI__'>12345</a></body>");
@@ -74,8 +74,7 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
 	@Test
 	public void testGetExcerptWhenAnchorHasTwoParents() throws Exception {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(
-			"Liferay".length() + 11);
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(18);
 
 		whenURLToStringSourceURIThenReturn(
 			"<body>_____<p>12345<span>67890" +
@@ -119,10 +118,11 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	protected void execute(String targetURI) throws Exception {
-		_excerptExtractor.setSourceURI("__sourceURI__");
-		_excerptExtractor.setTargetURI(targetURI);
-		_excerptExtractor.validateSource();
-		_excerpt = _excerptExtractor.getExcerpt();
+		_pingbackExcerptExtractor.setSourceURI("__sourceURI__");
+		_pingbackExcerptExtractor.setTargetURI(targetURI);
+		_pingbackExcerptExtractor.validateSource();
+
+		_excerpt = _pingbackExcerptExtractor.getExcerpt();
 	}
 
 	protected void setUpHttp() throws Exception {
@@ -148,10 +148,11 @@ public class PingbackExcerptExtractorImplTest extends PowerMockito {
 	}
 
 	private String _excerpt;
-	private PingbackExcerptExtractor _excerptExtractor =
-		new PingbackExcerptExtractorImpl(200);
 
 	@Mock
 	private Http _http;
+
+	private PingbackExcerptExtractor _pingbackExcerptExtractor =
+		new PingbackExcerptExtractorImpl(200);
 
 }

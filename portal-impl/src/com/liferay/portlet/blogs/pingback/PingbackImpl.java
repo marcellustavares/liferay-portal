@@ -46,7 +46,7 @@ import java.util.Map;
 public class PingbackImpl implements Pingback {
 
 	public PingbackImpl() {
-		_excerptExtractor = new PingbackExcerptExtractorImpl(
+		_pingbackExcerptExtractor = new PingbackExcerptExtractorImpl(
 			PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH);
 
 		_pingbackComments = new PingbackCommentsImpl();
@@ -58,7 +58,7 @@ public class PingbackImpl implements Pingback {
 			throw new PingbackDisabledException("Pingbacks are disabled");
 		}
 
-		_excerptExtractor.validateSource();
+		_pingbackExcerptExtractor.validateSource();
 
 		BlogsEntry entry = getBlogsEntry(companyId);
 
@@ -80,21 +80,21 @@ public class PingbackImpl implements Pingback {
 	@Override
 	public void setSourceURI(String sourceURI) {
 		_sourceURI = sourceURI;
-		_excerptExtractor.setSourceURI(sourceURI);
+		_pingbackExcerptExtractor.setSourceURI(sourceURI);
 	}
 
 	@Override
 	public void setTargetURI(String targetURI) {
 		_targetURI = targetURI;
-		_excerptExtractor.setTargetURI(targetURI);
+		_pingbackExcerptExtractor.setTargetURI(targetURI);
 	}
 
 	protected PingbackImpl(
 		PingbackComments pingbackComments,
-		PingbackExcerptExtractor excerptExtractor) {
+		PingbackExcerptExtractor pingbackExcerptExtractor) {
 
 		_pingbackComments = pingbackComments;
-		_excerptExtractor = excerptExtractor;
+		_pingbackExcerptExtractor = pingbackExcerptExtractor;
 	}
 
 	protected void addComment(
@@ -111,7 +111,7 @@ public class PingbackImpl implements Pingback {
 		StringBundler sb = new StringBundler(7);
 
 		sb.append("[...] ");
-		sb.append(_excerptExtractor.getExcerpt());
+		sb.append(_pingbackExcerptExtractor.getExcerpt());
 		sb.append(" [...] [url=");
 		sb.append(_sourceURI);
 		sb.append("]");
@@ -195,8 +195,8 @@ public class PingbackImpl implements Pingback {
 		}
 	}
 
-	private PingbackExcerptExtractor _excerptExtractor;
 	private PingbackComments _pingbackComments;
+	private PingbackExcerptExtractor _pingbackExcerptExtractor;
 	private String _sourceURI;
 	private String _targetURI;
 
