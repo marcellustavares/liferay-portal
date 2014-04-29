@@ -14,21 +14,13 @@
 
 package com.liferay.portal.kernel.search;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
-import com.liferay.portlet.asset.model.AssetRenderer;
-import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +57,7 @@ public class SearchResultUtil {
 				String className = entryClassName;
 				long classPK = entryClassPK;
 
-				FileEntry fileEntry = null;
-				MBMessage mbMessage = null;
+				final SearchResultContributor contributor;
 
 				if (entryClassName.equals(DLFileEntry.class.getName()) ||
 					entryClassName.equals(MBMessage.class.getName())) {
@@ -81,20 +72,30 @@ public class SearchResultUtil {
 						if (entryClassName.equals(
 								DLFileEntry.class.getName())) {
 
-							fileEntry = DLAppLocalServiceUtil.getFileEntry(
-								entryClassPK);
+							contributor =
+								SearchResultDLFileEntryContributor.newInstance(
+									entryClassPK, locale, portletURL,
+									portletRequest, portletResponse);
 						}
 						else if (entryClassName.equals(
 									MBMessage.class.getName())) {
 
-							mbMessage = MBMessageLocalServiceUtil.getMessage(
-								entryClassPK);
+							contributor =
+								SearchResultMBMessageContributor.newInstance(
+									entryClassPK);
+						}
+						else {
+							contributor = null;
 						}
 					}
 					else {
 						className = entryClassName;
 						classPK = entryClassPK;
+						contributor = null;
 					}
+				}
+				else {
+					contributor = null;
 				}
 
 				SearchResult searchResult = new SearchResult(
@@ -109,17 +110,8 @@ public class SearchResultUtil {
 					searchResult = searchResults.get(index);
 				}
 
-				if (fileEntry != null) {
-					Summary summary = getSummary(
-						document, DLFileEntry.class.getName(),
-						fileEntry.getFileEntryId(), locale, portletURL,
-						portletRequest, portletResponse);
-
-					searchResult.addFileEntry(fileEntry, summary);
-				}
-
-				if (mbMessage != null) {
-					searchResult.addMBMessage(mbMessage);
+				if (contributor != null) {
+					contributor.contributeTo(searchResult, document);
 				}
 
 				if (entryClassName.equals(JournalArticle.class.getName())) {
@@ -128,8 +120,8 @@ public class SearchResultUtil {
 					searchResult.addVersion(version);
 				}
 
-				if ((mbMessage == null) && (fileEntry == null)) {
-					Summary summary = getSummary(
+				if (contributor == null) {
+					Summary summary = SearchResultSummaryFactory.getSummary(
 						document, className, classPK, locale, portletURL,
 						portletRequest, portletResponse);
 
@@ -137,7 +129,7 @@ public class SearchResultUtil {
 				}
 				else {
 					if (searchResult.getSummary() == null) {
-						Summary summary = getSummary(
+						Summary summary = SearchResultSummaryFactory.getSummary(
 							className, classPK, locale, portletURL);
 
 						searchResult.setSummary(summary);
@@ -154,54 +146,6 @@ public class SearchResultUtil {
 		}
 
 		return searchResults;
-	}
-
-	protected static Summary getSummary(
-			Document document, String className, long classPK, Locale locale,
-			PortletURL portletURL, PortletRequest portletRequest,
-			PortletResponse portletResponse)
-		throws PortalException, SystemException {
-
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
-
-		if (indexer != null) {
-			String snippet = document.get(Field.SNIPPET);
-
-			return indexer.getSummary(
-				document, snippet, portletURL, portletRequest, portletResponse);
-		}
-
-		return getSummary(className, classPK, locale, portletURL);
-	}
-
-	protected static Summary getSummary(
-			String className, long classPK, Locale locale,
-			PortletURL portletURL)
-		throws PortalException, SystemException {
-
-		AssetRendererFactory assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				className);
-
-		if (assetRendererFactory == null) {
-			return null;
-		}
-
-		AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(
-			classPK);
-
-		if (assetRenderer == null) {
-			return null;
-		}
-
-		Summary summary = new Summary(
-			assetRenderer.getTitle(locale),
-			assetRenderer.getSearchSummary(locale), portletURL);
-
-		summary.setMaxContentLength(200);
-		summary.setPortletURL(portletURL);
-
-		return summary;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(SearchResultUtil.class);
