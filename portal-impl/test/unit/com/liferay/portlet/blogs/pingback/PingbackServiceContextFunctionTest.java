@@ -47,7 +47,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { PortletLocalServiceUtil.class })
+@PrepareForTest({PortletLocalServiceUtil.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackServiceContextFunctionTest extends PowerMockito {
 
@@ -63,6 +63,7 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 	@Test
 	public void testBuildServiceContext() {
 		long companyId = 1L;
+
 		long groupId = 33L;
 
 		PingbackServiceContextFunction function =

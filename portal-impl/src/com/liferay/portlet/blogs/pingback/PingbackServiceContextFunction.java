@@ -37,9 +37,10 @@ public class PingbackServiceContextFunction
 
 	public PingbackServiceContextFunction(
 		long companyId, long groupId, String urlTitle) {
-			_companyId = companyId;
-			_groupId = groupId;
-			_urlTitle = urlTitle;
+
+		_companyId = companyId;
+		_groupId = groupId;
+		_urlTitle = urlTitle;
 	}
 
 	@Override

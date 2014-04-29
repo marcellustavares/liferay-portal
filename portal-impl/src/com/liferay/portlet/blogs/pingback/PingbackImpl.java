@@ -48,6 +48,7 @@ public class PingbackImpl implements Pingback {
 	public PingbackImpl() {
 		_excerptExtractor = new PingbackExcerptExtractorImpl(
 			PropsValues.BLOGS_LINKBACK_EXCERPT_LENGTH);
+
 		_pingbackComments = new PingbackCommentsImpl();
 	}
 
@@ -90,8 +91,8 @@ public class PingbackImpl implements Pingback {
 
 	protected PingbackImpl(
 		PingbackComments pingbackComments,
-		PingbackExcerptExtractor excerptExtractor
-	) {
+		PingbackExcerptExtractor excerptExtractor) {
+
 		_pingbackComments = pingbackComments;
 		_excerptExtractor = excerptExtractor;
 	}

@@ -58,8 +58,8 @@ import org.powermock.reflect.Whitebox;
  * @author André de Oliveira
  */
 @PrepareForTest( {
-	PropsValues.class, PortletLocalServiceUtil.class,
-	BlogsEntryLocalServiceUtil.class, UserLocalServiceUtil.class
+	BlogsEntryLocalServiceUtil.class, PortletLocalServiceUtil.class,
+	PropsValues.class, UserLocalServiceUtil.class
 })
 @RunWith(PowerMockRunner.class)
 public class PingbackImplTest extends PowerMockito {
@@ -106,7 +106,7 @@ public class PingbackImplTest extends PowerMockito {
 			Matchers.eq(BlogsEntry.class.getName()), Matchers.eq(ENTRY_ID),
 			Matchers.eq(
 				"[...] __excerpt__ [...]" +
-				" [url=__sourceURI__]__read_more__[/url]"),
+					" [url=__sourceURI__]__read_more__[/url]"),
 			(Function<String, ServiceContext>)Matchers.any());
 	}
 

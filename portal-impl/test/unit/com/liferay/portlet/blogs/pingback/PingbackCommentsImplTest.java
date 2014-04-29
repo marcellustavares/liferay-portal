@@ -48,7 +48,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { MBMessageLocalServiceUtil.class })
+@PrepareForTest({MBMessageLocalServiceUtil.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackCommentsImplTest extends PowerMockito {
 

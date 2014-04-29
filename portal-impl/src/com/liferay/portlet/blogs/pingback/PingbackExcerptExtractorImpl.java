@@ -76,13 +76,11 @@ public class PingbackExcerptExtractorImpl implements PingbackExcerptExtractor {
 
 	@Override
 	public void setSourceURI(String sourceURI) {
-
 		_sourceURI = sourceURI;
 	}
 
 	@Override
 	public void setTargetURI(String targetURI) {
-
 		_targetURI = targetURI;
 	}
 

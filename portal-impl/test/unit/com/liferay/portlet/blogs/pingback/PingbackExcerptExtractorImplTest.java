@@ -37,7 +37,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author André de Oliveira
  */
-@PrepareForTest( { PortalSocketPermission.class })
+@PrepareForTest({PortalSocketPermission.class})
 @RunWith(PowerMockRunner.class)
 public class PingbackExcerptExtractorImplTest extends PowerMockito {
 
