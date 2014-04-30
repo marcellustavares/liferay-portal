@@ -22,6 +22,7 @@ import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
@@ -62,9 +63,9 @@ public class PingbackServiceContextFunctionTest extends PowerMockito {
 
 	@Test
 	public void testBuildServiceContext() {
-		long companyId = 1L;
+		long companyId = ServiceTestUtil.randomLong();
 
-		long groupId = 33L;
+		long groupId = ServiceTestUtil.randomLong();
 
 		PingbackServiceContextFunction function =
 			new PingbackServiceContextFunction(

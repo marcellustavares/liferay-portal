@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageDisplay;
@@ -161,15 +162,15 @@ public class PingbackCommentsImplTest extends PowerMockito {
 		);
 	}
 
-	private static final long ENTRY_ID = 142857;
+	private static final long ENTRY_ID = ServiceTestUtil.randomLong();
 
-	private static final long GROUP_ID = 16;
+	private static final long GROUP_ID = ServiceTestUtil.randomLong();
 
-	private static final long PARENT_MESSAGE_ID = 1337L;
+	private static final long PARENT_MESSAGE_ID = ServiceTestUtil.randomLong();
 
-	private static final long THREAD_ID = 7676L;
+	private static final long THREAD_ID = ServiceTestUtil.randomLong();
 
-	private static final long USER_ID = 42;
+	private static final long USER_ID = ServiceTestUtil.randomLong();
 
 	@Mock
 	private MBMessageDisplay _mbMessageDisplay;

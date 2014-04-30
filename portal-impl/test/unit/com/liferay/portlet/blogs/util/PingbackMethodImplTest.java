@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.xmlrpc.Fault;
 import com.liferay.portal.kernel.xmlrpc.XmlRpc;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcUtil;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portlet.blogs.pingback.DuplicateCommentException;
 import com.liferay.portlet.blogs.pingback.InvalidSourceURIException;
 import com.liferay.portlet.blogs.pingback.Pingback;
@@ -147,7 +148,7 @@ public class PingbackMethodImplTest extends PowerMockito {
 	protected void execute() throws Exception {
 		PingbackMethodImpl pingbackMethod = new PingbackMethodImpl(_pingback);
 
-		pingbackMethod.execute(42);
+		pingbackMethod.execute(ServiceTestUtil.randomLong());
 	}
 
 	protected void setUpXmlRpc() {

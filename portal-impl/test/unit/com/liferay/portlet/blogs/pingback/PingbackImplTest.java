@@ -24,6 +24,7 @@ import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalService;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.Portal;
@@ -143,7 +144,7 @@ public class PingbackImplTest extends PowerMockito {
 
 	@Test
 	public void testAddPingbackWithFriendlyURL() throws Exception {
-		long plid = 84L;
+		long plid = ServiceTestUtil.randomLong();
 
 		when(
 			_portal.getPlidFromFriendlyURL(COMPANY_ID, "/__blogs__")
@@ -151,7 +152,7 @@ public class PingbackImplTest extends PowerMockito {
 			plid
 		);
 
-		long groupId = 8844L;
+		long groupId = ServiceTestUtil.randomLong();
 
 		when(
 			_portal.getScopeGroupId(plid)
@@ -259,8 +260,16 @@ public class PingbackImplTest extends PowerMockito {
 			_blogsEntry
 		);
 
-		String name = (namespace == null ? "" : namespace) + "entryId";
-		long entryId = 12345;
+		String name;
+
+		if (namespace == null) {
+			name = "entryId";
+		}
+		else {
+			name = namespace + "entryId";
+		}
+
+		long entryId = ServiceTestUtil.randomLong();
 
 		whenFriendlyURLMapperPopulateParamsPut(
 			"", name, String.valueOf(entryId));
@@ -342,13 +351,13 @@ public class PingbackImplTest extends PowerMockito {
 			_portal.getPlidFromFriendlyURL(
 				Matchers.eq(COMPANY_ID), Matchers.anyString())
 		).thenReturn(
-			42L
+			ServiceTestUtil.randomLong()
 		);
 
 		when(
 			_portal.getScopeGroupId(Matchers.anyLong())
 		).thenReturn(
-			42L
+			ServiceTestUtil.randomLong()
 		);
 
 		PortalUtil portalUtil = new PortalUtil();
@@ -434,13 +443,13 @@ public class PingbackImplTest extends PowerMockito {
 		);
 	}
 
-	private static final long COMPANY_ID = 1L;
+	private static final long COMPANY_ID = ServiceTestUtil.randomLong();
 
-	private static final long ENTRY_ID = 99999L;
+	private static final long ENTRY_ID = ServiceTestUtil.randomLong();
 
-	private static final long GROUP_ID = 33L;
+	private static final long GROUP_ID = ServiceTestUtil.randomLong();
 
-	private static final long USER_ID = 142857L;
+	private static final long USER_ID = ServiceTestUtil.randomLong();
 
 	@Mock
 	private BlogsEntry _blogsEntry;
