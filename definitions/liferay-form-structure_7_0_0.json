@@ -1,0 +1,39 @@
+{
+	"type": "object",
+	"patternProperties": {
+		"^[a-zA-Z0-9_.]+$": { "$ref": "#/definitions/fieldStructure" }
+	},
+	"additionalProperties": false,
+
+	"definitions": {
+		"fieldStructure": {
+			"type": "object",
+			"properties": {
+				"calculatedValueExpression": { 
+					"$ref": "#/definitions/localizedString" 
+				},
+				"dataType": { "$ref": "fieldDataTypes" },
+				"indexType": { "enum": [ "text", "keyword", "" ] },
+				"multiple": { "type": "boolean" },
+				"nestedFields": { 
+					"type": "array",
+					"items": { "type": "string" }
+				},
+				"repeatable": { "type": "boolean" },
+				"validation": { "type": "string" }
+			},
+			"additionalProperties": false
+		},
+		"localizedString": {
+			"type": "object",
+			"patternProperties": {
+				"^[a-z]{2}(_[a-zA-Z]+)*$": { "type": "string" }
+			},
+			"additionalProperties": false
+		},
+		"fieldDataTypes": {
+			"type": "string",
+			"pattern": "([a-zA-Z0-9]|-|_)+"
+		}
+	}
+}

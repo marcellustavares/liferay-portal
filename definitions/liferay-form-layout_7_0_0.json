@@ -1,0 +1,127 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"pages": { "$ref": "#/definitions/pages" },
+		"fieldsLayout": { "$ref": "#/definitions/fieldsLayout" }
+	},
+	"required": [ "pages" ],
+	"additionalProperties": false,
+ 
+	"definitions": {
+		"pages": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/page" }
+		},
+		"page": {
+			"type": "object",
+			"properties": {
+				"sections": { "$ref": "#/definitions/sections" }
+			},
+			"required": [ "sections" ],
+			"additionalProperties": false
+		},
+		"sections": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/section" }
+		},
+		"section": {
+			"type": "object",
+			"properties": {
+				"fields": { "$ref": "#/definitions/fields" },
+				"layout": { "$ref": "#/definitions/layouts/genericLayout" }
+			},
+			"required": [ "fields" ],
+			"additionalProperties": false
+		},
+		"fields": {
+			"type": "array",
+			"items": { "type": "string" }
+		},
+		"layouts": {
+			"genericLayout": {
+				"allOf": [
+					{
+						"type": "object",
+						"properties": { 
+							"layoutType": { "type": "string" }
+						},
+						"required": [ "layoutType" ]
+					},
+					{
+						"anyOf":[
+							{ "$ref": "#/definitions/layouts/gridLayout" },
+							{ "$ref": "#/definitions/layouts/flowLayout" }
+						]
+					}
+				]
+			},
+			"gridLayout": {
+				"type": "object",
+				"properties": {
+					"layoutType": { "enum": [ "gridLayout" ] },
+					"cols": {
+						"type": "array",
+						"items": { "type": "integer" }
+					}
+				},
+				"required": [ "cols" ],
+				"additionalProperties": false
+			},
+			"flowLayout": {
+				"type": "object",
+				"properties": {
+					"layoutType": { "enum": [ "flowLayout" ] },
+					"float": { "enum": [ "left", "right", "none" ] }
+				},
+				"required": [ "float" ],
+				"additionalProperties": false
+			}
+		},
+		"fieldsLayout": {
+			"type": "object",
+			"patternProperties": {
+				"^[a-zA-Z0-9_.]+$": { "$ref": "#/definitions/fieldLayout" }
+			},
+			"additionalProperties": false
+		},
+		"fieldLayout": {
+			"type": "object",
+			"properties": {
+				"label": { "$ref": "#/definitions/localizedString" },
+				"predefinedValue": { "$ref": "#/definitions/localizedString" },
+				"style": { "$ref": "#/definitions/localizedString" },
+				"tip": { "$ref": "#/definitions/localizedString" },
+				"type": { "$ref": "#/definitions/fieldTypes" },
+				"visibility": { "type": "string" }
+			},
+			"required": [ "type" ],
+			"additionalProperties": false
+		},
+		"localizedString": {
+			"type": "object",
+			"patternProperties": {
+				"^[a-z]{2}(_[a-zA-Z]+)*$": { "type": "string" }
+			},
+			"additionalProperties": false
+		},
+		"fieldTypes": {
+			"enum": [
+				"boolean",
+				"date",
+				"document-library",
+				"double",
+				"float",
+				"geolocation",
+				"html",
+				"image",
+				"integer",
+				"link-to-page",
+				"long",
+				"number",
+				"short",
+				"string"
+			]
+		}
+	}
+}
