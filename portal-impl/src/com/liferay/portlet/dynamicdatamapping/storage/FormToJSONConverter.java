@@ -1,5 +1,8 @@
 package com.liferay.portlet.dynamicdatamapping.storage;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.forms.FormField;
 import com.liferay.portlet.dynamicdatamapping.forms.FormPage;
@@ -9,56 +12,48 @@ import com.liferay.portlet.dynamicdatamapping.forms.SectionLayout;
 import java.util.List;
 public class FormToJSONConverter {
 	public String convert(Form layout) {
-		_stringBuilder = new StringBuilder();
-
-		_stringBuilder.append("{\"pages\":");
-		convert(layout.getPages());
-		_stringBuilder.append('}');
-
-		return _stringBuilder.toString();
+		JSONObject root = JSONFactoryUtil.createJSONObject();
+		root.put("pages", convert(layout.getPages()));
+		return root.toString();
 	}
 
-	protected void convert(FormField field) {
+	protected JSONObject convert(FormField field) {
 		_stringBuilder.append("{}");
+		JSONObject fieldJSON = JSONFactoryUtil.createJSONObject();
+		return fieldJSON;
 	}
 
-	protected void convert(FormPage page) {
-		_stringBuilder.append("{\"sections\":");
-		convert(page.getSections());
-		_stringBuilder.append('}');
+	protected JSONObject convert(FormPage page) {
+		JSONObject pageJSON = JSONFactoryUtil.createJSONObject();
+		pageJSON.put("sections", convert(page.getSections()));
+		return pageJSON;
 	}
 
-	protected void convert(FormSection section) {
-		_stringBuilder.append("{\"layout\":");
-		convert(section.getLayout());
-		_stringBuilder.append(",\"fields\":");
-		convert(section.getFields());
-		_stringBuilder.append('}');
+	protected JSONObject convert(FormSection section) {
+		JSONObject sectionJSON = JSONFactoryUtil.createJSONObject();
+		sectionJSON.put("layout", convert(section.getLayout()));
+		sectionJSON.put("fields", convert(section.getFields()));
+		return sectionJSON;
 	}
 
-	protected <T> void convert(List<T> list) {
-		_stringBuilder.append('[');
-		boolean firstItem = true;
+	protected <T> JSONArray convert(List<T> list) {
+		JSONArray array = JSONFactoryUtil.createJSONArray();
 
 		for (T item : list) {
-			if (!firstItem) {
-				_stringBuilder.append(',');
-			}
-
-			convert(item);
-			firstItem = false;
+			array.put(convert(item));
 		}
 
-		_stringBuilder.append(']');
+		return array;
 	}
 
-	protected void convert(Object obj) {
+	protected JSONObject convert(Object obj) {
 		throw new IllegalArgumentException(
 			"Unrecognized type: " + obj.getClass().getName());
 	}
 
-	protected void convert(SectionLayout sectionLayout) {
-		_stringBuilder.append("{}");
+	protected JSONObject convert(SectionLayout sectionLayout) {
+		JSONObject layoutJSON = JSONFactoryUtil.createJSONObject();
+		return layoutJSON;
 	}
 
 	private StringBuilder _stringBuilder;
