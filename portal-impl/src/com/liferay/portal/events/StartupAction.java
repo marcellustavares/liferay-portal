@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.resiliency.spi.agent.annotation.Direction;
 import com.liferay.portal.kernel.resiliency.spi.agent.annotation.DistributedRegistry;
 import com.liferay.portal.kernel.resiliency.spi.agent.annotation.MatchType;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
-import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.servlet.JspFactorySwapper;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
@@ -49,12 +48,8 @@ import com.liferay.portal.security.lang.DoPrivilegedUtil;
 import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portal.tools.DBUpgrader;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.messageboards.util.MBMessageIndexer;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletRequest;
@@ -197,7 +192,8 @@ public class StartupAction extends SimpleAction {
 
 		// Scheduler
 
-		_initializeSchedulerEngine();
+		_log.debug("Initialize scheduler engine lifecycle");
+		SchedulerEngineHelperUtil.initialize();
 
 		// Verify
 
@@ -220,31 +216,6 @@ public class StartupAction extends SimpleAction {
 		// Jericho
 
 		CachedLoggerProvider.install();
-	}
-
-	private void _initializeSchedulerEngine() {
-		if (_log.isDebugEnabled()) {
-			_log.debug("Initialize scheduler engine lifecycle");
-		}
-
-		TimerTask timerTask = new TimerTask() {
-
-			@Override
-			public void run() {
-				try {
-					if (!SchedulerEngineHelperUtil.isInitialized()) {
-						SchedulerEngineHelperUtil.initialize();
-					}
-				}
-				catch (SchedulerException e) {
-					_log.error(e.getMessage(), e);
-				}
-			}
-		};
-
-		Timer timer = new Timer();
-
-		timer.schedule(timerTask, PropsValues.SCHEDULER_INITIALIZATION_DELAY);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(StartupAction.class);

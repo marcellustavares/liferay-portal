@@ -18,9 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
-import com.liferay.portal.kernel.servlet.ServletContextPool;
-import com.liferay.portal.util.PropsValues;
 
 /**
  * @author Brian Wing Shun Chan
@@ -33,26 +30,13 @@ public class HotDeployMessageListener extends BaseMessageListener {
 		String command = message.getString("command");
 		String servletContextName = message.getString("servletContextName");
 
-		if (command.equals("deploy")) {
-			if (_log.isDebugEnabled()) {
+		if (_log.isDebugEnabled()) {
+			if (command.equals("deploy")) {
 				_log.debug(servletContextName + " was deployed");
 			}
-
-			initializeSchedulerEngine();
-		}
-		else if (command.equals("undeploy")) {
-			if (_log.isDebugEnabled()) {
+			else if (command.equals("undeploy")) {
 				_log.debug(servletContextName + " was undeployed");
 			}
-		}
-	}
-
-	protected void initializeSchedulerEngine() throws Exception {
-		if (ServletContextPool.containsAll(
-				PropsValues.
-					SCHEDULER_INITIALIZATION_REQUIRED_DEPLOYMENT_CONTEXTS)) {
-
-			SchedulerEngineHelperUtil.initialize();
 		}
 	}
 
