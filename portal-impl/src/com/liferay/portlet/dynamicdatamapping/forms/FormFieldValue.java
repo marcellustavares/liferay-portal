@@ -20,26 +20,42 @@ package com.liferay.portlet.dynamicdatamapping.forms;
 public class FormFieldValue {
 
 	public LocalizedValue getCalculatedValue() {
+
 		return _calculatedValue;
 	}
 
+	public Class<?> getDataType() {
+
+		return _dataType;
+	}
+
 	public String getFieldName() {
+
 		return _fieldName;
 	}
 
 	public FlatFieldRepresentation getNestedFieldsValues() {
+
 		return _nestedFieldsValues;
 	}
 
 	public LocalizedValue getValueExpression() {
+
 		return _valueExpression;
 	}
 
 	public void setCalculatedValue(LocalizedValue calculatedValue) {
+
 		_calculatedValue = calculatedValue;
 	}
 
+	public void setDataType(Class<?> _dataType) {
+
+		this._dataType = _dataType;
+	}
+
 	public void setFieldName(String fieldName) {
+
 		_fieldName = fieldName;
 	}
 
@@ -50,10 +66,12 @@ public class FormFieldValue {
 	}
 
 	public void setValueExpression(LocalizedValue valueExpression) {
+
 		_valueExpression = valueExpression;
 	}
 
 	private LocalizedValue _calculatedValue;
+	private Class<?> _dataType;
 	private String _fieldName;
 	private FlatFieldRepresentation _nestedFieldsValues;
 	private LocalizedValue _valueExpression;
