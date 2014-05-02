@@ -18,6 +18,7 @@ package com.liferay.portlet.dynamicdatamapping.storage;
  * @author Pablo Carvalho
  */
 public class FormMetadataJSON {
+
 	public FormMetadataJSON(String layoutJSON, String structureJSON) {
 		_layoutJSON = layoutJSON;
 		_structureJSON = structureJSON;
@@ -41,4 +42,5 @@ public class FormMetadataJSON {
 
 	private String _layoutJSON;
 	private String _structureJSON;
+
 }

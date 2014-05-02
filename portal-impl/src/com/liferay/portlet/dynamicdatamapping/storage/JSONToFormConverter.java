@@ -34,10 +34,9 @@ import java.util.List;
 public class JSONToFormConverter {
 
 	public JSONToFormConverter(String layoutJSON, String structureJSON)
-		throws JSONException  {
+		throws JSONException {
 
 		_layoutRoot = JSONFactoryUtil.createJSONObject(layoutJSON);
-
 		_fieldsLayoutRoot = _layoutRoot.getJSONObject("fieldsLayout");
 
 		_structureRoot = JSONFactoryUtil.createJSONObject(structureJSON);
@@ -53,56 +52,6 @@ public class JSONToFormConverter {
 		return form;
 	}
 
-	protected List<FormPage> getPages(JSONArray pagesArray) {
-		List<FormPage> pages = new ArrayList<FormPage>();
-
-		for (int i = 0; i < pagesArray.length(); ++i) {
-			pages.add(getPage(pagesArray.getJSONObject(i)));
-		}
-
-		return pages;
-	}
-
-	protected FormPage getPage(JSONObject pageNode) {
-		FormPage page = new FormPage();
-
-		JSONArray sectionsArray = pageNode.getJSONArray("sections");
-
-		page.setSections(getSections(sectionsArray));
-
-		return page;
-	}
-
-	protected List<FormSection> getSections(JSONArray sectionsArray) {
-		List<FormSection> sections = new ArrayList<FormSection>();
-
-		for (int i = 0; i < sectionsArray.length(); ++i) {
-			sections.add(getSection(sectionsArray.getJSONObject(i)));
-		}
-
-		return sections;
-	}
-
-	protected FormSection getSection(JSONObject sectionNode) {
-		FormSection section = new FormSection();
-
-		JSONArray fieldsArray = sectionNode.getJSONArray("fields");
-
-		section.setFields(getFields(fieldsArray));
-
-		return section;
-	}
-
-	protected List<FormField> getFields(JSONArray fieldsArray) {
-		List<FormField> fields = new ArrayList<FormField>();
-
-		for (int i = 0; i < fieldsArray.length(); ++i) {
-			fields.add(getField(fieldsArray.getString(i)));
-		}
-
-		return fields;
-	}
-
 	protected FormField getField(String fieldName) {
 		FormField formField = new FormField();
 
@@ -115,8 +64,7 @@ public class JSONToFormConverter {
 			getLocalizedString(fieldLayout.getJSONObject("predefinedValue")));
 		formField.setStyle(
 			getLocalizedString(fieldLayout.getJSONObject("style")));
-		formField.setTip(
-			getLocalizedString(fieldLayout.getJSONObject("tip")));
+		formField.setTip(getLocalizedString(fieldLayout.getJSONObject("tip")));
 		formField.setType(fieldLayout.getString("type"));
 		formField.setVisibilityExpression(fieldLayout.getString("visibility"));
 
@@ -134,21 +82,69 @@ public class JSONToFormConverter {
 		return formField;
 	}
 
-	protected LocalizedValue getLocalizedString (JSONObject localizedNode) {
+	protected List<FormField> getFields(JSONArray fieldsArray) {
+		List<FormField> fields = new ArrayList<FormField>();
+
+		for (int i = 0; i < fieldsArray.length(); ++i) {
+			fields.add(getField(fieldsArray.getString(i)));
+		}
+
+		return fields;
+	}
+
+	protected LocalizedValue getLocalizedString(JSONObject localizedNode) {
 		LocalizedValue value = new LocalizedValue();
-
 		Iterator<String> keys = localizedNode.keys();
-
 		while (keys.hasNext()) {
 			String language = keys.next();
-
 			value.addValue(language, localizedNode.getString(language));
 		}
 
 		return value;
 	}
 
-	private JSONObject _layoutRoot;
+	protected FormPage getPage(JSONObject pageNode) {
+		FormPage page = new FormPage();
+
+		JSONArray sectionsArray = pageNode.getJSONArray("sections");
+
+		page.setSections(getSections(sectionsArray));
+
+		return page;
+	}
+
+	protected List<FormPage> getPages(JSONArray pagesArray) {
+		List<FormPage> pages = new ArrayList<FormPage>();
+
+		for (int i = 0; i < pagesArray.length(); ++i) {
+			pages.add(getPage(pagesArray.getJSONObject(i)));
+		}
+
+		return pages;
+	}
+
+	protected FormSection getSection(JSONObject sectionNode) {
+		FormSection section = new FormSection();
+
+		JSONArray fieldsArray = sectionNode.getJSONArray("fields");
+
+		section.setFields(getFields(fieldsArray));
+
+		return section;
+	}
+
+	protected List<FormSection> getSections(JSONArray sectionsArray) {
+		List<FormSection> sections = new ArrayList<FormSection>();
+
+		for (int i = 0; i < sectionsArray.length(); ++i) {
+			sections.add(getSection(sectionsArray.getJSONObject(i)));
+		}
+
+		return sections;
+	}
+
 	private JSONObject _fieldsLayoutRoot;
+	private JSONObject _layoutRoot;
 	private JSONObject _structureRoot;
+
 }

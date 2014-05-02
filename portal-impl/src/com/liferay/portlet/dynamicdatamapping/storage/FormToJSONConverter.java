@@ -31,6 +31,7 @@ import java.util.Locale;
  * @author Pablo Carvalho
  */
 public class FormToJSONConverter {
+
 	public FormMetadataJSON convert(Form layout) {
 		JSONObject formLayout = JSONFactoryUtil.createJSONObject();
 
@@ -40,7 +41,7 @@ public class FormToJSONConverter {
 		formLayout.put("pages", convertFormPages(layout.getPages()));
 		formLayout.put("fieldsLayout", _flatFieldsLayout);
 
-		FormMetadataJSON metadataJSON =	new FormMetadataJSON(
+		FormMetadataJSON metadataJSON = new FormMetadataJSON(
 			formLayout.toString(), _flatFieldsStructure.toString());
 
 		return metadataJSON;
@@ -143,4 +144,5 @@ public class FormToJSONConverter {
 
 	private JSONObject _flatFieldsLayout;
 	private JSONObject _flatFieldsStructure;
+
 }
