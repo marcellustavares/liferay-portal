@@ -33,7 +33,7 @@ public class FormField {
 		return _indexType;
 	}
 
-	public String getLabel() {
+	public LocalizedValue getLabel() {
 		return _label;
 	}
 
@@ -91,7 +91,7 @@ public class FormField {
 		_indexType = indexType;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(LocalizedValue label) {
 		_label = label;
 	}
 
@@ -138,7 +138,7 @@ public class FormField {
 	private LocalizedValue _calculatedValueExpression;
 	private String _dataType;
 	private String _indexType;
-	private String _label;
+	private LocalizedValue _label;
 	private boolean _multiple;
 	private String _name;
 	private List<FormField> _nestedFields;
