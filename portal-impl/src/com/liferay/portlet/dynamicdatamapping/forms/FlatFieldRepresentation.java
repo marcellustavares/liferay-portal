@@ -38,7 +38,7 @@ public class FlatFieldRepresentation {
 		currentValues.add(fieldValue);
 	}
 
-	public void addFieldValue(Iterable<FormFieldValue> fieldValues) {
+	public void addFieldValues(Iterable<FormFieldValue> fieldValues) {
 		for (FormFieldValue fieldValue : fieldValues) {
 			addFieldValue(fieldValue);
 		}
@@ -48,7 +48,7 @@ public class FlatFieldRepresentation {
 		return _fields.keySet();
 	}
 
-	public List<FormFieldValue> getFieldValue(String fieldName) {
+	public List<FormFieldValue> getFieldValues(String fieldName) {
 		return _fields.get(fieldName);
 	}
 
