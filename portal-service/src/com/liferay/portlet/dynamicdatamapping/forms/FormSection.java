@@ -14,7 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.forms;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pablo Carvalho
@@ -23,6 +25,20 @@ public class FormSection {
 
 	public List<FormField> getFields() {
 		return _fields;
+	}
+
+	public Map<String, FormField> getFieldsMap(boolean includeNestedFields) {
+		Map<String, FormField> fieldsMap = new HashMap<String, FormField>();
+
+		for (FormField field : _fields) {
+			fieldsMap.put(field.getName(), field);
+
+			if (includeNestedFields) {
+				fieldsMap.putAll(field.getNestedFieldsMap());
+			}
+		}
+
+		return fieldsMap;
 	}
 
 	public SectionLayout getLayout() {
