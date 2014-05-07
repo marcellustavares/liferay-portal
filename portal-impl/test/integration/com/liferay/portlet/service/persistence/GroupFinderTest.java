@@ -231,7 +231,9 @@ public class GroupFinderTest {
 
 	protected List<Group> findByLayouts(long parentGroupId) throws Exception {
 		return GroupFinderUtil.findByLayouts(
-			TestPropsValues.getCompanyId(), parentGroupId, true, -1, -1);
+			TestPropsValues.getCompanyId(), parentGroupId, true,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new GroupNameComparator(true));
 	}
 
 	private static ResourceAction _arbitraryResourceAction;

@@ -130,7 +130,7 @@ public class JSONWebServiceActionImpl implements JSONWebServiceAction {
 						try {
 							targetType = classLoader.loadClass(className);
 						}
-						catch (ClassNotFoundException e) {
+						catch (ClassNotFoundException cnfe) {
 						}
 					}
 

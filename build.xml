@@ -84,27 +84,44 @@
 				/>
 			</unzip>
 
-			<if>
-				<available file="app.server.${user.name}.properties" />
-				<then>
-					<copy
-						file="app.server.${user.name}.properties"
-						overwrite="true"
-						tofile="${project.dir}/tools/sdk/build.${user.name}.properties"
+			<propertyselector
+				casesensitive="false"
+				delimiter="," match="app\.(.+)\.dir"
+				property="app.server.dir.property.list"
+				select="\1"
+			/>
+
+			<sortlist
+				delimiter=","
+				override="true"
+				property="app.server.dir.property.list"
+				value="${app.server.dir.property.list}"
+			/>
+
+			<for list="${app.server.dir.property.list}" param="app.server.dir.property">
+				<sequential>
+					<propertycopy
+						from="app.@{app.server.dir.property}.dir"
+						name="temp.app.server.dir"
 					/>
-				</then>
-				<else>
-					<echo file="${project.dir}/tools/sdk/build.${user.name}.properties">
-						app.server.parent.dir=${app.server.parent.dir}
-						app.server.type=${app.server.type}
+
+					<echo
+						append="true"
+						file="${project.dir}/tools/sdk/build.${user.name}.properties"
+					>
+						app.@{app.server.dir.property}.dir=${temp.app.server.dir}
 					</echo>
-				</else>
-			</if>
+
+					<var name="temp.app.server.dir" unset="true" />
+				</sequential>
+			</for>
 
 			<echo
 				append="true"
 				file="${project.dir}/tools/sdk/build.${user.name}.properties"
 			>
+				app.server.type=${app.server.type}
+				auto.deploy.dir=${liferay.home}/osgi/apps
 				clean.delete.ivy.md5=true
 				clean.delete.lib=true
 				liferay.home=${liferay.home}
@@ -986,6 +1003,10 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 
 	<target name="setup-jrebel">
 		<setup-jrebel />
+	</target>
+
+	<target name="setup-sdk">
+		<setup-sdk />
 	</target>
 
 	<target name="sort-xml-attributes">

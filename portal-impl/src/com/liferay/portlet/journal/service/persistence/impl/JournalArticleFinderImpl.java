@@ -1101,7 +1101,7 @@ public class JournalArticleFinderImpl
 			sql = replaceStatusJoin(sql, queryDefinition);
 
 			sql = CustomSQLUtil.replaceOrderBy(
-				sql, queryDefinition.getOrderByComparator());
+				sql, queryDefinition.getOrderByComparator("JournalArticle"));
 
 			if (inlineSQLHelper) {
 				sql = InlineSQLHelperUtil.replacePermissionCheck(
@@ -1157,7 +1157,7 @@ public class JournalArticleFinderImpl
 			sql = replaceStatusJoin(sql, queryDefinition);
 
 			sql = CustomSQLUtil.replaceOrderBy(
-				sql, queryDefinition.getOrderByComparator());
+				sql, queryDefinition.getOrderByComparator("JournalArticle"));
 
 			if (groupId <= 0) {
 				sql = StringUtil.replace(
@@ -1224,7 +1224,7 @@ public class JournalArticleFinderImpl
 			sql = replaceStatusJoin(sql, queryDefinition);
 
 			sql = CustomSQLUtil.replaceOrderBy(
-				sql, queryDefinition.getOrderByComparator());
+				sql, queryDefinition.getOrderByComparator("JournalArticle"));
 
 			if (folderIds.isEmpty()) {
 				sql = StringUtil.replace(

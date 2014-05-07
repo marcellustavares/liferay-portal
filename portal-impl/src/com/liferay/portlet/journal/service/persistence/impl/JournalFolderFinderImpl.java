@@ -207,7 +207,7 @@ public class JournalFolderFinderImpl extends BasePersistenceImpl<JournalFolder>
 			String sql = updateSQL(sb.toString(), folderId);
 
 			sql = CustomSQLUtil.replaceOrderBy(
-				sql, queryDefinition.getOrderByComparator());
+				sql, queryDefinition.getOrderByComparator("JournalArticle"));
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
