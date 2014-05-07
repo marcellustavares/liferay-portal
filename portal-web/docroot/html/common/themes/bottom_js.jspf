@@ -184,3 +184,42 @@ if (layout != null) {
 		);
 	</c:if>
 </aui:script>
+
+<c:if test="<%= PropsValues.JAVASCRIPT_SINGLE_PAGE_APPLICATION_ENABLED %>">
+	<aui:script use="liferay-surface-app">
+		if (Liferay.Surface) {
+
+			<%
+			List<Portlet> portletsList = PortletLocalServiceUtil.getPortlets(themeDisplay.getCompanyId());
+
+			for (Portlet portlet : portletsList) {
+				if (portlet.isActive() && portlet.isReady() && !portlet.isUndeployedPortlet() && !portlet.isSinglePageApplication()) {
+			%>
+
+				Liferay.Surface.blacklist['<%= portlet.getPortletId() %>'] = true;
+
+			<%
+				}
+			}
+			%>
+
+		}
+	</aui:script>
+
+	<div id="bottomJs">
+		<div id="bottomJs-default">
+			<script>
+
+				<%
+				String currentURL = PortalUtil.getCurrentURL(request);
+				%>
+
+				Liferay.currentURL = '<%= HtmlUtil.escapeJS(currentURL) %>';
+				Liferay.currentURLEncoded = '<%= HttpUtil.encodeURL(currentURL) %>';
+
+			</script>
+		</div>
+	</div>
+
+	<div class="lfr-surface-loading-bar"></div>
+</c:if>
