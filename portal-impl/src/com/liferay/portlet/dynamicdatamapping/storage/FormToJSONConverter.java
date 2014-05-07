@@ -17,6 +17,7 @@ package com.liferay.portlet.dynamicdatamapping.storage;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.forms.FormField;
 import com.liferay.portlet.dynamicdatamapping.forms.FormPage;
@@ -38,6 +39,10 @@ public class FormToJSONConverter {
 		_flatFieldsLayout = JSONFactoryUtil.createJSONObject();
 		_flatFieldsStructure = JSONFactoryUtil.createJSONObject();
 
+		JSONArray availableLanguages = convertAvailableLocales(
+				layout.getAvailableLocales());
+
+		formLayout.put("availableLanguages", availableLanguages);
 		formLayout.put("pages", convertFormPages(layout.getPages()));
 		formLayout.put("fieldsLayout", _flatFieldsLayout);
 
@@ -45,6 +50,16 @@ public class FormToJSONConverter {
 			formLayout.toString(), _flatFieldsStructure.toString());
 
 		return metadataJSON;
+	}
+
+	protected JSONArray convertAvailableLocales(List<Locale> availableLocales) {
+		JSONArray availableLanguages = JSONFactoryUtil.createJSONArray();
+
+		for (Locale locale : availableLocales) {
+			availableLanguages.put(LocaleUtil.toLanguageId(locale));
+		}
+
+		return availableLanguages;
 	}
 
 	protected void addFieldToFlatFieldsLayout(FormField field) {

@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.forms.FormField;
 import com.liferay.portlet.dynamicdatamapping.forms.FormPage;
@@ -27,6 +28,7 @@ import com.liferay.portlet.dynamicdatamapping.forms.LocalizedValue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Pablo Carvalho
@@ -45,11 +47,32 @@ public class JSONToFormConverter {
 	public Form convert() {
 		Form form = new Form();
 
+		JSONArray languageArray = _layoutRoot.getJSONArray(
+			"availableLanguages");
+
+		form.setAvailableLocales(getAvailableLanguages(languageArray));
+
+		String defaultLanguageId = _layoutRoot.getString("defaultLanguage");
+
+		form.setDefaultLocale(LocaleUtil.fromLanguageId(defaultLanguageId));
+
 		JSONArray pagesArray = _layoutRoot.getJSONArray("pages");
 
 		form.setPages(getPages(pagesArray));
 
 		return form;
+	}
+
+	protected List<Locale> getAvailableLanguages(JSONArray languageArray) {
+		List<Locale> languages = new ArrayList<Locale>();
+
+		for (int i = 0; i < languageArray.length(); ++i) {
+			String languageId = languageArray.getString(i);
+
+			languages.add(LocaleUtil.fromLanguageId(languageId));
+		}
+
+		return languages;
 	}
 
 	protected FormField getField(String fieldName) {

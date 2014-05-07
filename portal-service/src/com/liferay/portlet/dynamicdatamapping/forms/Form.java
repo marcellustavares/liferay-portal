@@ -17,6 +17,7 @@ package com.liferay.portlet.dynamicdatamapping.forms;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -24,8 +25,20 @@ import java.util.Map;
  */
 public class Form {
 
+	public void addAvailableLocale(Locale locale) {
+		_availableLocales.add(locale);
+	}
+
 	public void addPage(FormPage page) {
 		_pages.add(page);
+	}
+
+	public List<Locale> getAvailableLocales() {
+		return _availableLocales;
+	}
+
+	public Locale getDefaultLocale() {
+		return _defaultLocale;
 	}
 
 	public Map<String, FormField> getFieldsMap(boolean includeNestedFields) {
@@ -42,10 +55,20 @@ public class Form {
 		return _pages;
 	}
 
+	public void setAvailableLocales(List<Locale> availableLocales) {
+		_availableLocales = availableLocales;
+	}
+
+	public void setDefaultLocale(Locale defaultLocale) {
+		_defaultLocale = defaultLocale;
+	}
+
 	public void setPages(List<FormPage> pages) {
 		_pages = pages;
 	}
 
+	private List<Locale> _availableLocales;
+	private Locale _defaultLocale;
 	private List<FormPage> _pages = new LinkedList<FormPage>();
 
 }

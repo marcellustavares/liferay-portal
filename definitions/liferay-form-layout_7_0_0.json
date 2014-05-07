@@ -2,6 +2,8 @@
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
 	"properties": {
+		"availableLanguages": { "$ref": "#/definitions/languageArray" },
+		"defaultLanguage": { "$ref": "#/definitions/languageId" },
 		"pages": { "$ref": "#/definitions/pages" },
 		"fieldsLayout": { "$ref": "#/definitions/fieldsLayout" }
 	},
@@ -9,6 +11,14 @@
 	"additionalProperties": false,
  
 	"definitions": {
+		"languageArray": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/languageId" }
+		},
+		"languageId": {
+			"type": "string",
+			"pattern": "^[a-z]{2}(_[a-zA-Z]+)*$"
+		},
 		"pages": {
 			"type": "array",
 			"items": { "$ref": "#/definitions/page" }
