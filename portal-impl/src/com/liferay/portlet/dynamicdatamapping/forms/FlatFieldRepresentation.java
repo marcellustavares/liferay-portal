@@ -25,16 +25,13 @@ import java.util.Set;
  */
 public class FlatFieldRepresentation {
 
-	public FlatFieldRepresentation() {
-		_fields = new HashMap<String, List<FormFieldValue> >();
-	}
-
 	public void addFieldValue(FormFieldValue fieldValue) {
 		List<FormFieldValue> currentValues = _fields.get(
 			fieldValue.getFieldName());
 
 		if (currentValues == null) {
 			currentValues = new ArrayList<FormFieldValue>();
+
 			_fields.put(fieldValue.getFieldName(), currentValues);
 		}
 
@@ -55,6 +52,7 @@ public class FlatFieldRepresentation {
 		return _fields.get(fieldName);
 	}
 
-	private Map<String, List<FormFieldValue> > _fields;
+	private Map<String, List<FormFieldValue>> _fields =
+		new HashMap<String, List<FormFieldValue>>();
 
 }

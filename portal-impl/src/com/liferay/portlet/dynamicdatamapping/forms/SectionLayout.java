@@ -18,5 +18,4 @@ package com.liferay.portlet.dynamicdatamapping.forms;
  * @author Pablo Carvalho
  */
 public class SectionLayout {
-
 }

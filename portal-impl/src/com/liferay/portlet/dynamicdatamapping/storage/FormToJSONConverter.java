@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.liferay.portlet.dynamicdatamapping.storage;
 
 import com.liferay.portal.kernel.json.JSONArray;
@@ -10,51 +24,61 @@ import com.liferay.portlet.dynamicdatamapping.forms.FormSection;
 import com.liferay.portlet.dynamicdatamapping.forms.SectionLayout;
 
 import java.util.List;
+
+/**
+ * @author Pablo Carvalho
+ */
 public class FormToJSONConverter {
 	public String convert(Form layout) {
-		JSONObject root = JSONFactoryUtil.createJSONObject();
-		root.put("pages", convert(layout.getPages()));
-		return root.toString();
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("pages", convert(layout.getPages()));
+
+		return jsonObject.toString();
 	}
 
 	protected JSONObject convert(FormField field) {
-		_stringBuilder.append("{}");
 		JSONObject fieldJSON = JSONFactoryUtil.createJSONObject();
+
 		return fieldJSON;
 	}
 
 	protected JSONObject convert(FormPage page) {
-		JSONObject pageJSON = JSONFactoryUtil.createJSONObject();
-		pageJSON.put("sections", convert(page.getSections()));
-		return pageJSON;
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("sections", convert(page.getSections()));
+
+		return jsonObject;
 	}
 
 	protected JSONObject convert(FormSection section) {
-		JSONObject sectionJSON = JSONFactoryUtil.createJSONObject();
-		sectionJSON.put("layout", convert(section.getLayout()));
-		sectionJSON.put("fields", convert(section.getFields()));
-		return sectionJSON;
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("layout", convert(section.getLayout()));
+		jsonObject.put("fields", convert(section.getFields()));
+
+		return jsonObject;
 	}
 
 	protected <T> JSONArray convert(List<T> list) {
-		JSONArray array = JSONFactoryUtil.createJSONArray();
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		for (T item : list) {
-			array.put(convert(item));
+			jsonArray.put(convert(item));
 		}
 
-		return array;
+		return jsonArray;
 	}
 
-	protected JSONObject convert(Object obj) {
+	protected JSONObject convert(Object object) {
 		throw new IllegalArgumentException(
-			"Unrecognized type: " + obj.getClass().getName());
+			"Unrecognized type: " + object.getClass().getName());
 	}
 
 	protected JSONObject convert(SectionLayout sectionLayout) {
-		JSONObject layoutJSON = JSONFactoryUtil.createJSONObject();
-		return layoutJSON;
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		return jsonObject;
 	}
 
-	private StringBuilder _stringBuilder;
 }
