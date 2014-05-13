@@ -16,26 +16,21 @@ package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portlet.messageboards.model.MBMessage;
+
+import java.util.Locale;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 
 /**
- * @author Eudaldo Alonso
  * @author André de Oliveira
  */
-public class SearchResultMBMessageContributor
-	implements SearchResultContributor {
+public interface SearchResultContributorFactory {
 
-	@Override
-	public void contributeTo(SearchResult searchResult, Document document)
-		throws PortalException, SystemException {
-
-		searchResult.addMBMessage(_mbMessage);
-	}
-
-	protected SearchResultMBMessageContributor(MBMessage mbMessage) {
-		_mbMessage = mbMessage;
-	}
-
-	private MBMessage _mbMessage;
+	public SearchResultContributor getInstance(
+			long entryClassPK, Locale locale, PortletURL portletURL,
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws PortalException, SystemException;
 
 }

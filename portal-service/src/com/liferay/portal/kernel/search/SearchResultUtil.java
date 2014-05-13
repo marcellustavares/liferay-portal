@@ -45,6 +45,9 @@ public class SearchResultUtil {
 		Hits hits, Locale locale, PortletURL portletURL,
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
+		SearchResultContributorRegistry contributorRegistry =
+			new SearchResultContributorRegistryImpl();
+
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
 		for (Document document : hits.getDocs()) {
@@ -69,24 +72,9 @@ public class SearchResultUtil {
 					if ((classPK > 0) && (classNameId > 0)) {
 						className = PortalUtil.getClassName(classNameId);
 
-						if (entryClassName.equals(
-								DLFileEntry.class.getName())) {
-
-							contributor =
-								SearchResultDLFileEntryContributor.newInstance(
-									entryClassPK, locale, portletURL,
-									portletRequest, portletResponse);
-						}
-						else if (entryClassName.equals(
-									MBMessage.class.getName())) {
-
-							contributor =
-								SearchResultMBMessageContributor.newInstance(
-									entryClassPK);
-						}
-						else {
-							contributor = null;
-						}
+						contributor = contributorRegistry.getInstance(
+							entryClassName, entryClassPK, locale, portletURL,
+							portletRequest, portletResponse);
 					}
 					else {
 						className = entryClassName;
