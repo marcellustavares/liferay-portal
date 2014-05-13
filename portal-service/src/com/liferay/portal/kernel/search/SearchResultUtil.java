@@ -51,27 +51,28 @@ public class SearchResultUtil {
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
 		for (Document document : hits.getDocs()) {
-			String entryClassName = GetterUtil.getString(
+			final String entryClassName = GetterUtil.getString(
 				document.get(Field.ENTRY_CLASS_NAME));
-			long entryClassPK = GetterUtil.getLong(
+			final long entryClassPK = GetterUtil.getLong(
 				document.get(Field.ENTRY_CLASS_PK));
 
 			try {
-				String className = entryClassName;
-				long classPK = entryClassPK;
-
+				final String className;
+				final long classPK;
 				final SearchResultContributor contributor;
 
 				if (entryClassName.equals(DLFileEntry.class.getName()) ||
 					entryClassName.equals(MBMessage.class.getName())) {
 
-					classPK = GetterUtil.getLong(document.get(Field.CLASS_PK));
-					long classNameId = GetterUtil.getLong(
+					final long overrideClassPK = GetterUtil.getLong(
+						document.get(Field.CLASS_PK));
+					final long overrideClassNameId = GetterUtil.getLong(
 						document.get(Field.CLASS_NAME_ID));
 
-					if ((classPK > 0) && (classNameId > 0)) {
-						className = PortalUtil.getClassName(classNameId);
-
+					if ((overrideClassPK > 0) && (overrideClassNameId > 0)) {
+						className = PortalUtil.getClassName(
+							overrideClassNameId);
+						classPK = overrideClassPK;
 						contributor = contributorRegistry.getInstance(
 							entryClassName, entryClassPK, locale, portletURL,
 							portletRequest, portletResponse);
@@ -83,6 +84,8 @@ public class SearchResultUtil {
 					}
 				}
 				else {
+					className = entryClassName;
+					classPK = entryClassPK;
 					contributor = null;
 				}
 
