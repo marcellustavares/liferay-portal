@@ -12,32 +12,35 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.forms;
-
-import java.util.List;
+package com.liferay.portlet.dynamicdatamapping.storage;
 
 /**
  * @author Pablo Carvalho
  */
-public class FormSection {
+public class FormMetadataJSON {
 
-	public List<FormField> getFields() {
-		return _fields;
+	public FormMetadataJSON(String layoutJSON, String structureJSON) {
+		_layoutJSON = layoutJSON;
+		_structureJSON = structureJSON;
 	}
 
-	public SectionLayout getLayout() {
-		return _layout;
+	public String getLayoutJSON() {
+		return _layoutJSON;
 	}
 
-	public void setFields(List<FormField> fields) {
-		_fields = fields;
+	public String getStructureJSON() {
+		return _structureJSON;
 	}
 
-	public void setLayout(SectionLayout layout) {
-		_layout = layout;
+	public void setLayoutJSON(String layoutJSON) {
+		_layoutJSON = layoutJSON;
 	}
 
-	private List<FormField> _fields;
-	private SectionLayout _layout;
+	public void setStructureJSON(String structureJSON) {
+		_structureJSON = structureJSON;
+	}
+
+	private String _layoutJSON;
+	private String _structureJSON;
 
 }

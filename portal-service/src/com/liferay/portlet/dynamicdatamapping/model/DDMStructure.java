@@ -55,7 +55,7 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.lang.String locale)
+		java.lang.String languageId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 

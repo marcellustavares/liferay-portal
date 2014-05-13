@@ -1,0 +1,45 @@
+{
+	"type": "object",
+	"patternProperties": {
+		"^[a-zA-Z0-9_.]+$": { "$ref": "#/definitions/fieldData" }
+	},
+	"additionalProperties": false,
+
+	"definitions": {
+		"fieldData": {
+			"type": "object",
+			"properties": {
+				"value": { "$ref": "#/definitions/localizedValue" }
+			},
+			"additionalProperties": false
+		},
+		"localizedValue": {
+			"type": "object",
+			"patternProperties": {
+				"^[a-z]{2}(_[a-zA-Z]+)*$": { "$ref": "#/definitions/value" }
+			},
+			"additionalProperties": false
+		},
+		"value": {
+			"anyOf": [
+				{ "type": "string" },
+				{ "$ref": "#/definitions/repeatedValue" }
+			]
+		},
+		"repeatedValue": {
+			"type": "array", 
+			"items": { 
+				"type": "object",
+				"properties": {
+					"value": { "type": "string" },
+					"parentNode": { "$ref": "#/definitions/fieldIdentifier" }
+				},
+				"additionalProperties": false
+			}
+		},
+		"fieldIdentifier": {
+			"type": "string",
+			"pattern": "^[a-zA-Z0-9_.]+$"
+		}
+	}
+}

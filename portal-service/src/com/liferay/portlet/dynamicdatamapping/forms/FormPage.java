@@ -14,12 +14,24 @@
 
 package com.liferay.portlet.dynamicdatamapping.forms;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pablo Carvalho
  */
 public class FormPage {
+
+	public Map<String, FormField> getFieldsMap(boolean includeNestedFields) {
+		Map<String, FormField> fieldsMap = new HashMap<String, FormField>();
+
+		for (FormSection section : _sections) {
+			fieldsMap.putAll(section.getFieldsMap(includeNestedFields));
+		}
+
+		return fieldsMap;
+	}
 
 	public List<FormSection> getSections() {
 		return _sections;

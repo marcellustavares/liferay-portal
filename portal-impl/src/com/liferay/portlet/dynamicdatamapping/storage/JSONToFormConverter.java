@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.forms.FormField;
 import com.liferay.portlet.dynamicdatamapping.forms.FormPage;
@@ -27,17 +28,17 @@ import com.liferay.portlet.dynamicdatamapping.forms.LocalizedValue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Pablo Carvalho
  */
 public class JSONToFormConverter {
-	
+
 	public JSONToFormConverter(String layoutJSON, String structureJSON)
-		throws JSONException  {
-		
+		throws JSONException {
+
 		_layoutRoot = JSONFactoryUtil.createJSONObject(layoutJSON);
-		
 		_fieldsLayoutRoot = _layoutRoot.getJSONObject("fieldsLayout");
 
 		_structureRoot = JSONFactoryUtil.createJSONObject(structureJSON);
@@ -45,82 +46,53 @@ public class JSONToFormConverter {
 
 	public Form convert() {
 		Form form = new Form();
-		
+
+		JSONArray languageArray = _layoutRoot.getJSONArray(
+			"availableLanguages");
+
+		form.setAvailableLocales(getAvailableLanguages(languageArray));
+
+		String defaultLanguageId = _layoutRoot.getString("defaultLanguage");
+
+		form.setDefaultLocale(LocaleUtil.fromLanguageId(defaultLanguageId));
+
 		JSONArray pagesArray = _layoutRoot.getJSONArray("pages");
-		
+
 		form.setPages(getPages(pagesArray));
-		
+
 		return form;
 	}
 
-	protected List<FormPage> getPages(JSONArray pagesArray) {
-		List<FormPage> pages = new ArrayList<FormPage>();
-		
-		for (int i = 0; i < pagesArray.length(); ++i) {
-			pages.add(getPage(pagesArray.getJSONObject(i)));
+	protected List<Locale> getAvailableLanguages(JSONArray languageArray) {
+		List<Locale> languages = new ArrayList<Locale>();
+
+		for (int i = 0; i < languageArray.length(); ++i) {
+			String languageId = languageArray.getString(i);
+
+			languages.add(LocaleUtil.fromLanguageId(languageId));
 		}
-		
-		return pages;
-	}
 
-	protected FormPage getPage(JSONObject pageNode) {
-		FormPage page = new FormPage();
-		
-		JSONArray sectionsArray = pageNode.getJSONArray("sections");
-		
-		page.setSections(getSections(sectionsArray));
-		
-		return page;
-	}
-
-	protected List<FormSection> getSections(JSONArray sectionsArray) {
-		List<FormSection> sections = new ArrayList<FormSection>();
-	
-		for (int i = 0; i < sectionsArray.length(); ++i) {
-			sections.add(getSection(sectionsArray.getJSONObject(i)));
-		}
-		
-		return sections;
-	}
-
-	protected FormSection getSection(JSONObject sectionNode) {
-		FormSection section = new FormSection();
-		
-		JSONArray fieldsArray = sectionNode.getJSONArray("fields");
-		
-		section.setFields(getFields(fieldsArray));
-		
-		return section;
-	}
-
-	protected List<FormField> getFields(JSONArray fieldsArray) {
-		List<FormField> fields = new ArrayList<FormField>();
-		
-		for (int i = 0; i < fieldsArray.length(); ++i) {
-			fields.add(getField(fieldsArray.getString(i)));
-		}
-		
-		return fields;
+		return languages;
 	}
 
 	protected FormField getField(String fieldName) {
 		FormField formField = new FormField();
 
 		JSONObject fieldLayout = _fieldsLayoutRoot.getJSONObject(fieldName);
-		
-		formField.setLabel(fieldLayout.getString("label"));
+
+		formField.setLabel(
+			getLocalizedString(fieldLayout.getJSONObject("label")));
 		formField.setName(fieldName);
 		formField.setPredefinedValue(
 			getLocalizedString(fieldLayout.getJSONObject("predefinedValue")));
 		formField.setStyle(
 			getLocalizedString(fieldLayout.getJSONObject("style")));
-		formField.setTip(
-			getLocalizedString(fieldLayout.getJSONObject("tip")));
+		formField.setTip(getLocalizedString(fieldLayout.getJSONObject("tip")));
 		formField.setType(fieldLayout.getString("type"));
 		formField.setVisibilityExpression(fieldLayout.getString("visibility"));
 
 		JSONObject fieldStructure = _structureRoot.getJSONObject(fieldName);
-		
+
 		formField.setDataType(fieldStructure.getString("dataType"));
 		formField.setIndexType(fieldStructure.getString("indexType"));
 		formField.setMultiple(fieldStructure.getBoolean("multiple"));
@@ -133,21 +105,69 @@ public class JSONToFormConverter {
 		return formField;
 	}
 
-	protected LocalizedValue getLocalizedString (JSONObject localizedNode) {
+	protected List<FormField> getFields(JSONArray fieldsArray) {
+		List<FormField> fields = new ArrayList<FormField>();
+
+		for (int i = 0; i < fieldsArray.length(); ++i) {
+			fields.add(getField(fieldsArray.getString(i)));
+		}
+
+		return fields;
+	}
+
+	protected LocalizedValue getLocalizedString(JSONObject localizedNode) {
 		LocalizedValue value = new LocalizedValue();
-		
 		Iterator<String> keys = localizedNode.keys();
-		
 		while (keys.hasNext()) {
 			String language = keys.next();
-		
 			value.addValue(language, localizedNode.getString(language));
 		}
-		
+
 		return value;
 	}
 
-	private JSONObject _layoutRoot;
+	protected FormPage getPage(JSONObject pageNode) {
+		FormPage page = new FormPage();
+
+		JSONArray sectionsArray = pageNode.getJSONArray("sections");
+
+		page.setSections(getSections(sectionsArray));
+
+		return page;
+	}
+
+	protected List<FormPage> getPages(JSONArray pagesArray) {
+		List<FormPage> pages = new ArrayList<FormPage>();
+
+		for (int i = 0; i < pagesArray.length(); ++i) {
+			pages.add(getPage(pagesArray.getJSONObject(i)));
+		}
+
+		return pages;
+	}
+
+	protected FormSection getSection(JSONObject sectionNode) {
+		FormSection section = new FormSection();
+
+		JSONArray fieldsArray = sectionNode.getJSONArray("fields");
+
+		section.setFields(getFields(fieldsArray));
+
+		return section;
+	}
+
+	protected List<FormSection> getSections(JSONArray sectionsArray) {
+		List<FormSection> sections = new ArrayList<FormSection>();
+
+		for (int i = 0; i < sectionsArray.length(); ++i) {
+			sections.add(getSection(sectionsArray.getJSONObject(i)));
+		}
+
+		return sections;
+	}
+
 	private JSONObject _fieldsLayoutRoot;
+	private JSONObject _layoutRoot;
 	private JSONObject _structureRoot;
+
 }

@@ -14,7 +14,10 @@
 
 package com.liferay.portlet.dynamicdatamapping.forms;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Pablo Carvalho
@@ -33,8 +36,24 @@ public class FormField {
 		return _indexType;
 	}
 
-	public String getLabel() {
+	public LocalizedValue getLabel() {
 		return _label;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, the correct getter should be called instead.
+	 */
+	public String getProperty(String propertyName, Locale locale) {
+		Map<String, String> properties = new HashMap<String, String>();
+
+		properties.put("dataType", getDataType());
+		properties.put("label", getLabel().getValue(locale));
+		properties.put("repeatable", String.valueOf(isRepeatable()));
+		//properties.put("required", )
+		properties.put("tip", getTip().getValue(locale));
+		properties.put("type", getType());
+
+		return properties.get(propertyName);
 	}
 
 	public String getName() {
@@ -91,7 +110,7 @@ public class FormField {
 		_indexType = indexType;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(LocalizedValue label) {
 		_label = label;
 	}
 
@@ -105,6 +124,17 @@ public class FormField {
 
 	public void setNestedFields(List<FormField> nestedFields) {
 		_nestedFields = nestedFields;
+	}
+
+	public Map<String, FormField> getNestedFieldsMap() {
+		Map<String, FormField> fieldsMap = new HashMap<String, FormField>();
+
+		for (FormField nestedField : _nestedFields) {
+			fieldsMap.put(nestedField.getName(), nestedField);
+			fieldsMap.putAll(nestedField.getNestedFieldsMap());
+		}
+
+		return fieldsMap;
 	}
 
 	public void setPredefinedValue(LocalizedValue predefinedValue) {
@@ -138,7 +168,7 @@ public class FormField {
 	private LocalizedValue _calculatedValueExpression;
 	private String _dataType;
 	private String _indexType;
-	private String _label;
+	private LocalizedValue _label;
 	private boolean _multiple;
 	private String _name;
 	private List<FormField> _nestedFields;

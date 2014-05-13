@@ -17,68 +17,147 @@ package com.liferay.portlet.dynamicdatamapping.storage;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.forms.FormField;
 import com.liferay.portlet.dynamicdatamapping.forms.FormPage;
 import com.liferay.portlet.dynamicdatamapping.forms.FormSection;
+import com.liferay.portlet.dynamicdatamapping.forms.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.forms.SectionLayout;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Pablo Carvalho
  */
 public class FormToJSONConverter {
-	public String convert(Form layout) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		jsonObject.put("pages", convert(layout.getPages()));
+	public FormMetadataJSON convert(Form layout) {
+		JSONObject formLayout = JSONFactoryUtil.createJSONObject();
 
-		return jsonObject.toString();
+		_flatFieldsLayout = JSONFactoryUtil.createJSONObject();
+		_flatFieldsStructure = JSONFactoryUtil.createJSONObject();
+
+		JSONArray availableLanguages = convertAvailableLocales(
+				layout.getAvailableLocales());
+
+		formLayout.put("availableLanguages", availableLanguages);
+		formLayout.put("pages", convertFormPages(layout.getPages()));
+		formLayout.put("fieldsLayout", _flatFieldsLayout);
+
+		FormMetadataJSON metadataJSON = new FormMetadataJSON(
+			formLayout.toString(), _flatFieldsStructure.toString());
+
+		return metadataJSON;
 	}
 
-	protected JSONObject convert(FormField field) {
-		JSONObject fieldJSON = JSONFactoryUtil.createJSONObject();
+	protected JSONArray convertAvailableLocales(List<Locale> availableLocales) {
+		JSONArray availableLanguages = JSONFactoryUtil.createJSONArray();
 
-		return fieldJSON;
-	}
-
-	protected JSONObject convert(FormPage page) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-		jsonObject.put("sections", convert(page.getSections()));
-
-		return jsonObject;
-	}
-
-	protected JSONObject convert(FormSection section) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-		jsonObject.put("layout", convert(section.getLayout()));
-		jsonObject.put("fields", convert(section.getFields()));
-
-		return jsonObject;
-	}
-
-	protected <T> JSONArray convert(List<T> list) {
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		for (T item : list) {
-			jsonArray.put(convert(item));
+		for (Locale locale : availableLocales) {
+			availableLanguages.put(LocaleUtil.toLanguageId(locale));
 		}
 
-		return jsonArray;
+		return availableLanguages;
 	}
 
-	protected JSONObject convert(Object object) {
-		throw new IllegalArgumentException(
-			"Unrecognized type: " + object.getClass().getName());
+	protected void addFieldToFlatFieldsLayout(FormField field) {
+		JSONObject fieldJSON = JSONFactoryUtil.createJSONObject();
+
+		fieldJSON.put("label", convertLocalizedValue(field.getLabel()));
+		fieldJSON.put(
+			"predefinedValue",
+			convertLocalizedValue(field.getPredefinedValue()));
+		fieldJSON.put("style", convertLocalizedValue(field.getStyle()));
+		fieldJSON.put("type", field.getType());
+		fieldJSON.put("visibility", field.getVisibilityExpression());
+
+		_flatFieldsLayout.put(field.getName(), fieldJSON);
 	}
 
-	protected JSONObject convert(SectionLayout sectionLayout) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+	protected void addFieldToFlatFieldsStructure(FormField field) {
+		JSONObject fieldJSON = JSONFactoryUtil.createJSONObject();
 
-		return jsonObject;
+		fieldJSON.put(
+			"calculatedValueExpression",
+			convertLocalizedValue(field.getCalculatedValueExpression()));
+		fieldJSON.put("dataType", field.getDataType());
+		fieldJSON.put("indexType", field.getIndexType());
+		fieldJSON.put("multiple", field.isMultiple());
+		fieldJSON.put(
+			"nestedFields", convertFormFields(field.getNestedFields()));
+		fieldJSON.put("repeatable", field.isRepeatable());
+		fieldJSON.put("validation", field.getValidationExpression());
+
+		_flatFieldsStructure.put(field.getName(), fieldJSON);
 	}
+
+	protected void addFieldToFlatRepresentations(FormField field) {
+		addFieldToFlatFieldsLayout(field);
+		addFieldToFlatFieldsStructure(field);
+	}
+
+	protected JSONArray convertFormFields(List<FormField> list) {
+		JSONArray array = JSONFactoryUtil.createJSONArray();
+
+		for (FormField item : list) {
+			array.put(item.getName());
+			addFieldToFlatRepresentations(item);
+		}
+
+		return array;
+	}
+
+	protected JSONObject convertFormPage(FormPage page) {
+		JSONObject pageJSON = JSONFactoryUtil.createJSONObject();
+		pageJSON.put("sections", convertFormSections(page.getSections()));
+		return pageJSON;
+	}
+
+	protected JSONArray convertFormPages(List<FormPage> list) {
+		JSONArray array = JSONFactoryUtil.createJSONArray();
+
+		for (FormPage item : list) {
+			array.put(convertFormPage(item));
+		}
+
+		return array;
+	}
+
+	protected JSONObject convertFormSection(FormSection section) {
+		JSONObject sectionJSON = JSONFactoryUtil.createJSONObject();
+		sectionJSON.put("layout", convertSectionLayout(section.getLayout()));
+		sectionJSON.put("fields", convertFormFields(section.getFields()));
+		return sectionJSON;
+	}
+
+	protected JSONArray convertFormSections(List<FormSection> list) {
+		JSONArray array = JSONFactoryUtil.createJSONArray();
+
+		for (FormSection item : list) {
+			array.put(convertFormSection(item));
+		}
+
+		return array;
+	}
+
+	protected JSONObject convertLocalizedValue(LocalizedValue value) {
+		JSONObject valueJSON = JSONFactoryUtil.createJSONObject();
+
+		for (Locale locale : value.getAvailableLocales()) {
+			valueJSON.put(locale.getLanguage(), value.getValue(locale));
+		}
+
+		return valueJSON;
+	}
+
+	protected JSONObject convertSectionLayout(SectionLayout sectionLayout) {
+		JSONObject layoutJSON = JSONFactoryUtil.createJSONObject();
+		return layoutJSON;
+	}
+
+	private JSONObject _flatFieldsLayout;
+	private JSONObject _flatFieldsStructure;
 
 }

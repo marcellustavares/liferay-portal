@@ -957,10 +957,10 @@ public class DDMStructureWrapper implements DDMStructure,
 
 	@Override
 	public java.lang.String getFieldLabel(java.lang.String fieldName,
-		java.lang.String locale)
+		java.lang.String languageId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		return _ddmStructure.getFieldLabel(fieldName, locale);
+		return _ddmStructure.getFieldLabel(fieldName, languageId);
 	}
 
 	@Override

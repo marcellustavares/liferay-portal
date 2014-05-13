@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Pablo Carvalho
@@ -43,6 +44,10 @@ public class LocalizedValue {
 
 	public void addValue(String languageId, String value) {
 		addValue(LocaleUtil.fromLanguageId(languageId), value);
+	}
+
+	public Set<Locale> getAvailableLocales() {
+		return _values.keySet();
 	}
 
 	public String getValue(Locale locale) {
