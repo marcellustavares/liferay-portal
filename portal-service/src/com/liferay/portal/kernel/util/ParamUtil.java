@@ -18,15 +18,14 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.Serializable;
-
 import java.text.DateFormat;
-
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.portlet.PortletRequest;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -379,6 +378,85 @@ public class ParamUtil {
 
 		return GetterUtil.getDateValues(
 			serviceContext.getAttribute(param), dateFormat, defaultValue);
+	}
+
+	public static Date getDate(
+		HttpServletRequest request, String paramPrefix, TimeZone timeZone,
+		Date defaultValue) {
+
+		int year = getInteger(request, paramPrefix + "Year");
+		int month  = getInteger(request, paramPrefix + "Month");
+		int day = getInteger(request, paramPrefix + "Day");
+		int hour = getInteger(request, paramPrefix + "Hour");
+		int minute = getInteger(request, paramPrefix + "Minute");
+
+		if (year + month + day + hour + minute == 0) {
+			return defaultValue;
+		}
+
+		Calendar calendar = CalendarFactoryUtil.getCalendar(
+			year, month, day, hour, minute, 0, 0, timeZone);
+
+		return calendar.getTime();
+	}
+
+	public static Date getDate(
+		HttpServletRequest request, String paramPrefix, Date defaultValue) {
+
+		return getDate(
+			request, paramPrefix, TimeZoneUtil.getDefault(), defaultValue);
+	}
+
+	public static Date getDate(
+		HttpServletRequest request, String paramPrefix, TimeZone timeZone) {
+
+		return getDate(request, paramPrefix, timeZone, DateUtil.newDate());
+	}
+
+	public static Date getDate(HttpServletRequest request, String paramPrefix) {
+		return getDate(request, paramPrefix, TimeZoneUtil.getDefault());
+	}
+
+	public static Date getDate(
+		PortletRequest portletRequest, String paramPrefix, TimeZone timeZone,
+		Date defaultValue) {
+
+		int year = getInteger(portletRequest, paramPrefix + "Year");
+		int month  = getInteger(portletRequest, paramPrefix + "Month");
+		int day = getInteger(portletRequest, paramPrefix + "Day");
+		int hour = getInteger(portletRequest, paramPrefix + "Hour");
+		int minute = getInteger(portletRequest, paramPrefix + "Minute");
+
+		if (year + month + day + hour + minute == 0) {
+			return defaultValue;
+		}
+
+		Calendar calendar = CalendarFactoryUtil.getCalendar(
+			year, month, day, hour, minute, 0, 0, timeZone);
+
+		return calendar.getTime();
+	}
+
+	public static Date getDate(
+		PortletRequest portletRequest, String paramPrefix, Date defaultValue) {
+
+		return getDate(
+			portletRequest, paramPrefix, TimeZoneUtil.getDefault(),
+			defaultValue);
+	}
+
+	public static Date getDate(
+		PortletRequest portletRequest, String paramPrefix,
+		TimeZone timeZone) {
+
+		return getDate(
+			portletRequest, paramPrefix, timeZone, DateUtil.newDate());
+	}
+
+	public static Date getDate(
+		PortletRequest portletRequest, String paramPrefix) {
+
+		return getDate(portletRequest, paramPrefix, TimeZoneUtil.getDefault());
 	}
 
 	public static double getDouble(HttpServletRequest request, String param) {
