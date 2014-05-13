@@ -16,26 +16,36 @@ package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portlet.messageboards.model.MBMessage;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
+
+import java.util.Locale;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 
 /**
  * @author Eudaldo Alonso
  * @author André de Oliveira
  */
-public class SearchResultMBMessageContributor
-	implements SearchResultContributor {
+public class SearchResultDLFileEntryContributorFactory
+	implements SearchResultContributorFactory {
 
 	@Override
-	public void contributeTo(SearchResult searchResult, Document document)
+	public SearchResultContributor getInstance(
+			long entryClassPK, Locale locale, PortletURL portletURL,
+			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws PortalException, SystemException {
 
-		searchResult.addMBMessage(_mbMessage);
-	}
+		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(entryClassPK);
 
-	protected SearchResultMBMessageContributor(MBMessage mbMessage) {
-		_mbMessage = mbMessage;
-	}
+		if (fileEntry == null) {
+			return null;
+		}
 
-	private MBMessage _mbMessage;
+		return new SearchResultDLFileEntryContributor(
+			fileEntry, locale, portletURL, portletRequest, portletResponse);
+	}
 
 }

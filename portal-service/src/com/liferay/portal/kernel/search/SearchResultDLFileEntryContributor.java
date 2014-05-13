@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 import java.util.Locale;
 
@@ -33,21 +32,6 @@ import javax.portlet.PortletURL;
 public class SearchResultDLFileEntryContributor
 	implements SearchResultContributor {
 
-	public static SearchResultContributor newInstance(
-		long entryClassPK, Locale locale, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse)
-	throws PortalException, SystemException {
-
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(entryClassPK);
-
-		if (fileEntry == null) {
-			return null;
-		}
-
-		return new SearchResultDLFileEntryContributor(
-			fileEntry, locale, portletURL, portletRequest, portletResponse);
-	}
-
 	@Override
 	public void contributeTo(SearchResult searchResult, Document document)
 		throws PortalException, SystemException {
@@ -59,7 +43,7 @@ public class SearchResultDLFileEntryContributor
 		searchResult.addFileEntry(_fileEntry, summary);
 	}
 
-	private SearchResultDLFileEntryContributor(
+	protected SearchResultDLFileEntryContributor(
 		FileEntry fileEntry, Locale locale, PortletURL portletURL,
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
