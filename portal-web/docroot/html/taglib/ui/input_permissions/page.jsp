@@ -71,6 +71,8 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 		List guestDefaultActions = (List)request.getAttribute("liferay-ui:input-permissions:guestDefaultActions");
 		List guestUnsupportedActions = (List)request.getAttribute("liferay-ui:input-permissions:guestUnsupportedActions");
 
+		boolean hasViewRole = supportedActions.contains(ActionKeys.VIEW);
+
 		boolean submitted = (request.getParameter(groupPermissionsName) != null);
 
 		boolean inputPermissionsShowOptions = ParamUtil.getBoolean(request, "inputPermissionsShowOptions");
@@ -80,54 +82,56 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 
 		<input id="<%= uniqueNamespace %>inputPermissionsShowOptions" name="<%= namespace %>inputPermissionsShowOptions" type="hidden" value="<%= inputPermissionsShowOptions %>" />
 
-		<p>
-			<label class="inline-label" for="<%= namespace %>inputPermissionsViewRole">
-				<liferay-ui:message key="viewable-by" />
-			</label>
-
-			<select id="<%= uniqueNamespace %>inputPermissionsViewRole" name="<%= namespace %>inputPermissionsViewRole" onChange="<%= uniqueNamespace + "updatePermissionsView();" %>">
-
-				<%
-				String guestRoleLabel = LanguageUtil.format(pageContext, "x-role", guestRole.getTitle(themeDisplay.getLocale()), false);
-
-				if (PropsValues.PERMISSIONS_CHECK_GUEST_ENABLED) {
-					guestRoleLabel = LanguageUtil.get(pageContext, "anyone") + StringPool.SPACE + StringPool.OPEN_PARENTHESIS + guestRoleLabel + StringPool.CLOSE_PARENTHESIS;
-				}
-				%>
-
-				<option <%= (inputPermissionsViewRole.equals(RoleConstants.GUEST)) ? "selected=\"selected\"" : "" %> value="<%= RoleConstants.GUEST %>"><%= guestRoleLabel %></option>
-
-				<c:if test="<%= hasViewDefaultGroupRolePermission %>">
-					<option <%= (inputPermissionsViewRole.equals(defaultGroupRole.getName())) ? "selected=\"selected\"" : "" %> value="<%= defaultGroupRole.getName() %>">
-						<c:choose>
-							<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.ORGANIZATION_USER) %>">
-								<liferay-ui:message key="organization-members" />
-							</c:when>
-							<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.POWER_USER) %>">
-								<liferay-ui:message key="power-users" />
-							</c:when>
-							<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.SITE_MEMBER) %>">
-								<liferay-ui:message key="site-members" />
-							</c:when>
-							<c:otherwise>
-								<liferay-ui:message key="user" />
-							</c:otherwise>
-						</c:choose>
-					</option>
-				</c:if>
-
-				<option <%= (inputPermissionsViewRole.equals(RoleConstants.OWNER)) ? "selected=\"selected\"" : "" %> value="<%= RoleConstants.OWNER %>"><liferay-ui:message key="owner" /></option>
-			</select>
-
-			<span <%= inputPermissionsShowOptions ? "class=\"hide\"" : "" %> id="<%= uniqueNamespace %>inputPermissionsShowOptionsLink">
-				<a href="javascript:<%= uniqueNamespace %>inputPermissionsShowOptions();" style="margin-left: 10px;"><liferay-ui:message key="more-options" /> &raquo;</a> <liferay-ui:icon-help message="input-permissions-more-options-help" />
-			</span>
-
-			<a <%= inputPermissionsShowOptions ? "" : "class=\"hide\"" %> href="javascript:<%= uniqueNamespace %>inputPermissionsHideOptions();" id="<%= uniqueNamespace %>inputPermissionsHideOptionsLink" style="margin-left: 10px;">&laquo; <liferay-ui:message key="hide-options" /></a>
-		</p>
+		<c:if test="<%= hasViewRole %>">
+			<p>
+				<label class="inline-label" for="<%= namespace %>inputPermissionsViewRole">
+					<liferay-ui:message key="viewable-by" />
+				</label>
+	
+				<select id="<%= uniqueNamespace %>inputPermissionsViewRole" name="<%= namespace %>inputPermissionsViewRole" onChange="<%= uniqueNamespace + "updatePermissionsView();" %>">
+	
+					<%
+					String guestRoleLabel = LanguageUtil.format(pageContext, "x-role", guestRole.getTitle(themeDisplay.getLocale()), false);
+	
+					if (PropsValues.PERMISSIONS_CHECK_GUEST_ENABLED) {
+						guestRoleLabel = LanguageUtil.get(pageContext, "anyone") + StringPool.SPACE + StringPool.OPEN_PARENTHESIS + guestRoleLabel + StringPool.CLOSE_PARENTHESIS;
+					}
+					%>
+	
+					<option <%= (inputPermissionsViewRole.equals(RoleConstants.GUEST)) ? "selected=\"selected\"" : "" %> value="<%= RoleConstants.GUEST %>"><%= guestRoleLabel %></option>
+	
+					<c:if test="<%= hasViewDefaultGroupRolePermission %>">
+						<option <%= (inputPermissionsViewRole.equals(defaultGroupRole.getName())) ? "selected=\"selected\"" : "" %> value="<%= defaultGroupRole.getName() %>">
+							<c:choose>
+								<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.ORGANIZATION_USER) %>">
+									<liferay-ui:message key="organization-members" />
+								</c:when>
+								<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.POWER_USER) %>">
+									<liferay-ui:message key="power-users" />
+								</c:when>
+								<c:when test="<%= defaultGroupRole.getName().equals(RoleConstants.SITE_MEMBER) %>">
+									<liferay-ui:message key="site-members" />
+								</c:when>
+								<c:otherwise>
+									<liferay-ui:message key="user" />
+								</c:otherwise>
+							</c:choose>
+						</option>
+					</c:if>
+	
+					<option <%= (inputPermissionsViewRole.equals(RoleConstants.OWNER)) ? "selected=\"selected\"" : "" %> value="<%= RoleConstants.OWNER %>"><liferay-ui:message key="owner" /></option>
+				</select>
+	
+				<span <%= inputPermissionsShowOptions ? "class=\"hide\"" : "" %> id="<%= uniqueNamespace %>inputPermissionsShowOptionsLink">
+					<a href="javascript:<%= uniqueNamespace %>inputPermissionsShowOptions();" style="margin-left: 10px;"><liferay-ui:message key="more-options" /> &raquo;</a> <liferay-ui:icon-help message="input-permissions-more-options-help" />
+				</span>
+	
+				<a <%= inputPermissionsShowOptions ? "" : "class=\"hide\"" %> href="javascript:<%= uniqueNamespace %>inputPermissionsHideOptions();" id="<%= uniqueNamespace %>inputPermissionsHideOptionsLink" style="margin-left: 10px;">&laquo; <liferay-ui:message key="hide-options" /></a>
+			</p>
+		</c:if>
 
 		<div class="permissions-table-container">
-			<table class="lfr-table responsive-table-horizontal <%= inputPermissionsShowOptions ? "" : "hide" %>" id="<%= uniqueNamespace %>inputPermissionsTable">
+			<table class="lfr-table responsive-table-horizontal <%= (inputPermissionsShowOptions || !hasViewRole) ? "" : "hide" %>" id="<%= uniqueNamespace %>inputPermissionsTable">
 			<thead>
 				<tr>
 					<th>
