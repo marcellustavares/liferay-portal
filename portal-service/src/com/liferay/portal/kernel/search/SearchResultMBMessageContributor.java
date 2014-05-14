@@ -32,6 +32,11 @@ public class SearchResultMBMessageContributor
 		searchResult.addMBMessage(_mbMessage);
 	}
 
+	@Override
+	public boolean prefersSummaryOfDocument() {
+		return false;
+	}
+
 	protected SearchResultMBMessageContributor(MBMessage mbMessage) {
 		_mbMessage = mbMessage;
 	}

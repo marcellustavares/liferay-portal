@@ -14,18 +14,12 @@
 
 package com.liferay.portal.kernel.search;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.messageboards.model.MBMessage;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 
 /**
  * @author André de Oliveira
@@ -39,29 +33,20 @@ public class SearchResultContributorRegistryImpl
 			new SearchResultDLFileEntryContributorFactory());
 
 		register(
+			JournalArticle.class.getName(),
+			new SearchResultJournalArticleContributorFactory());
+
+		register(
 			MBMessage.class.getName(),
 			new SearchResultMBMessageContributorFactory());
 	}
 
 	@Override
-	public SearchResultContributor getInstance(
-			String entryClassName, long entryClassPK, Locale locale,
-			PortletURL portletURL, PortletRequest portletRequest,
-			PortletResponse portletResponse)
-		throws PortalException, SystemException {
-
-		SearchResultContributorFactory factory = _registeredFactories.get(
-			entryClassName);
-
-		if (factory == null) {
-			return null;
-		}
-
-		return factory.getInstance(
-			entryClassPK, locale, portletURL, portletRequest, portletResponse);
+	public SearchResultContributorFactory getFactory(String entryClassName) {
+		return _registeredFactories.get(entryClassName);
 	}
 
-	protected void register(
+	public void register(
 		String className, SearchResultContributorFactory factory) {
 
 		_registeredFactories.put(className, factory);

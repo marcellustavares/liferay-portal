@@ -48,4 +48,9 @@ public class SearchResultDLFileEntryContributorFactory
 			fileEntry, locale, portletURL, portletRequest, portletResponse);
 	}
 
+	@Override
+	public boolean requiresKeyInDocument() {
+		return true;
+	}
+
 }

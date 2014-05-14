@@ -18,9 +18,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.messageboards.model.MBMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,33 +57,54 @@ public class SearchResultUtil {
 				document.get(Field.ENTRY_CLASS_PK));
 
 			try {
-				final SearchResultKey key;
+				final SearchResultKey keyOverride;
 				final SearchResultContributor contributor;
 
-				if (entryClassName.equals(DLFileEntry.class.getName()) ||
-					entryClassName.equals(MBMessage.class.getName())) {
+				SearchResultContributorFactory factory =
+					contributorRegistry.getFactory(entryClassName);
 
-					final long overrideClassPK = GetterUtil.getLong(
-						document.get(Field.CLASS_PK));
-					final long overrideClassNameId = GetterUtil.getLong(
-						document.get(Field.CLASS_NAME_ID));
+				if (factory != null) {
+					final boolean useContributor;
 
-					if ((overrideClassPK > 0) && (overrideClassNameId > 0)) {
-						key = new SearchResultKey(
-							PortalUtil.getClassName(overrideClassNameId),
-							overrideClassPK);
-						contributor = contributorRegistry.getInstance(
-							entryClassName, entryClassPK, locale, portletURL,
-							portletRequest, portletResponse);
+					if (factory.requiresKeyInDocument()) {
+						SearchResultKey keyInDocument = getSearchResultKey(
+							document);
+
+						if (keyInDocument != null) {
+							keyOverride = keyInDocument;
+							useContributor = true;
+						}
+						else {
+							keyOverride = null;
+							useContributor = false;
+						}
 					}
 					else {
-						key = new SearchResultKey(entryClassName, entryClassPK);
+						keyOverride = null;
+						useContributor = true;
+					}
+
+					if (useContributor) {
+						contributor = factory.getInstance(
+							entryClassPK, locale, portletURL, portletRequest,
+							portletResponse);
+					}
+					else {
 						contributor = null;
 					}
 				}
 				else {
-					key = new SearchResultKey(entryClassName, entryClassPK);
+					keyOverride = null;
 					contributor = null;
+				}
+
+				final SearchResultKey key;
+
+				if (keyOverride != null) {
+					key = keyOverride;
+				}
+				else {
+					key = new SearchResultKey(entryClassName, entryClassPK);
 				}
 
 				SearchResult searchResult = searchResults.get(key);
@@ -100,13 +118,9 @@ public class SearchResultUtil {
 					contributor.contributeTo(searchResult, document);
 				}
 
-				if (entryClassName.equals(JournalArticle.class.getName())) {
-					String version = document.get(Field.VERSION);
+				if ((contributor == null) ||
+					contributor.prefersSummaryOfDocument()) {
 
-					searchResult.addVersion(version);
-				}
-
-				if (contributor == null) {
 					Summary summary = SearchResultSummaryFactory.getSummary(
 						document, searchResult.getClassName(),
 						searchResult.getClassPK(), locale, portletURL,
@@ -134,6 +148,19 @@ public class SearchResultUtil {
 		}
 
 		return new ArrayList<SearchResult>(searchResults.values());
+	}
+
+	protected static SearchResultKey getSearchResultKey(Document document) {
+		long classPK = GetterUtil.getLong(document.get(Field.CLASS_PK));
+		long classNameId = GetterUtil.getLong(
+			document.get(Field.CLASS_NAME_ID));
+
+		if ((classPK > 0) && (classNameId > 0)) {
+			return new SearchResultKey(
+				PortalUtil.getClassName(classNameId), classPK);
+		}
+
+		return null;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(SearchResultUtil.class);

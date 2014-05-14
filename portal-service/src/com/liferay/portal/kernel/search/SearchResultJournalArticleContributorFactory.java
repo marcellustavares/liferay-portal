@@ -17,14 +17,30 @@ package com.liferay.portal.kernel.search;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
+import java.util.Locale;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
+
 /**
  * @author André de Oliveira
  */
-public interface SearchResultContributor {
+public class SearchResultJournalArticleContributorFactory
+	implements SearchResultContributorFactory {
 
-	public void contributeTo(SearchResult searchResult, Document document)
-		throws PortalException, SystemException;
+	@Override
+	public SearchResultContributor getInstance(
+			long entryClassPK, Locale locale, PortletURL portletURL,
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws PortalException, SystemException {
 
-	public boolean prefersSummaryOfDocument();
+		return new SearchResultJournalArticleContributor();
+	}
+
+	@Override
+	public boolean requiresKeyInDocument() {
+		return false;
+	}
 
 }
