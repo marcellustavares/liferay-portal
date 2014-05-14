@@ -23,8 +23,10 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.messageboards.model.MBMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -48,7 +50,8 @@ public class SearchResultUtil {
 		SearchResultContributorRegistry contributorRegistry =
 			new SearchResultContributorRegistryImpl();
 
-		List<SearchResult> searchResults = new ArrayList<SearchResult>();
+		Map<SearchResultKey, SearchResult> searchResults =
+			new HashMap<SearchResultKey, SearchResult>();
 
 		for (Document document : hits.getDocs()) {
 			final String entryClassName = GetterUtil.getString(
@@ -57,8 +60,7 @@ public class SearchResultUtil {
 				document.get(Field.ENTRY_CLASS_PK));
 
 			try {
-				final String className;
-				final long classPK;
+				final SearchResultKey key;
 				final SearchResultContributor contributor;
 
 				if (entryClassName.equals(DLFileEntry.class.getName()) ||
@@ -70,35 +72,28 @@ public class SearchResultUtil {
 						document.get(Field.CLASS_NAME_ID));
 
 					if ((overrideClassPK > 0) && (overrideClassNameId > 0)) {
-						className = PortalUtil.getClassName(
-							overrideClassNameId);
-						classPK = overrideClassPK;
+						key = new SearchResultKey(
+							PortalUtil.getClassName(overrideClassNameId),
+							overrideClassPK);
 						contributor = contributorRegistry.getInstance(
 							entryClassName, entryClassPK, locale, portletURL,
 							portletRequest, portletResponse);
 					}
 					else {
-						className = entryClassName;
-						classPK = entryClassPK;
+						key = new SearchResultKey(entryClassName, entryClassPK);
 						contributor = null;
 					}
 				}
 				else {
-					className = entryClassName;
-					classPK = entryClassPK;
+					key = new SearchResultKey(entryClassName, entryClassPK);
 					contributor = null;
 				}
 
-				SearchResult searchResult = new SearchResult(
-					className, classPK);
+				SearchResult searchResult = searchResults.get(key);
 
-				int index = searchResults.indexOf(searchResult);
-
-				if (index < 0) {
-					searchResults.add(searchResult);
-				}
-				else {
-					searchResult = searchResults.get(index);
+				if (searchResult == null) {
+					searchResult = new SearchResult(key);
+					searchResults.put(key, searchResult);
 				}
 
 				if (contributor != null) {
@@ -113,7 +108,8 @@ public class SearchResultUtil {
 
 				if (contributor == null) {
 					Summary summary = SearchResultSummaryFactory.getSummary(
-						document, className, classPK, locale, portletURL,
+						document, searchResult.getClassName(),
+						searchResult.getClassPK(), locale, portletURL,
 						portletRequest, portletResponse);
 
 					searchResult.setSummary(summary);
@@ -121,7 +117,8 @@ public class SearchResultUtil {
 				else {
 					if (searchResult.getSummary() == null) {
 						Summary summary = SearchResultSummaryFactory.getSummary(
-							className, classPK, locale, portletURL);
+							searchResult.getClassName(),
+							searchResult.getClassPK(), locale, portletURL);
 
 						searchResult.setSummary(summary);
 					}
@@ -136,7 +133,7 @@ public class SearchResultUtil {
 			}
 		}
 
-		return searchResults;
+		return new ArrayList<SearchResult>(searchResults.values());
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(SearchResultUtil.class);
