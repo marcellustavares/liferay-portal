@@ -48,4 +48,9 @@ public class SearchResultMBMessageContributorFactory
 		return new SearchResultMBMessageContributor(mbMessage);
 	}
 
+	@Override
+	public boolean requiresKeyInDocument() {
+		return true;
+	}
+
 }

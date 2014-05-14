@@ -14,24 +14,11 @@
 
 package com.liferay.portal.kernel.search;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-
-import java.util.Locale;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
-
 /**
  * @author André de Oliveira
  */
 public interface SearchResultContributorRegistry {
 
-	public SearchResultContributor getInstance(
-		String entryClassName, long entryClassPK, Locale locale,
-		PortletURL portletURL, PortletRequest portletRequest,
-		PortletResponse portletResponse)
-	throws PortalException, SystemException;
+	public SearchResultContributorFactory getFactory(String entryClassName);
 
 }

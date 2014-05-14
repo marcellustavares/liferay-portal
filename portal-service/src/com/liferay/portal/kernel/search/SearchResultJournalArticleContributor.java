@@ -18,13 +18,24 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
 /**
+ * @author Eudaldo Alonso
  * @author André de Oliveira
  */
-public interface SearchResultContributor {
+public class SearchResultJournalArticleContributor
+	implements SearchResultContributor {
 
+	@Override
 	public void contributeTo(SearchResult searchResult, Document document)
-		throws PortalException, SystemException;
+		throws PortalException, SystemException {
 
-	public boolean prefersSummaryOfDocument();
+		String version = document.get(Field.VERSION);
+
+		searchResult.addVersion(version);
+	}
+
+	@Override
+	public boolean prefersSummaryOfDocument() {
+		return true;
+	}
 
 }

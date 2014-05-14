@@ -33,4 +33,6 @@ public interface SearchResultContributorFactory {
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws PortalException, SystemException;
 
+	public boolean requiresKeyInDocument();
+
 }
