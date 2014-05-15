@@ -51,37 +51,31 @@ public class SearchResultUtil {
 			new HashMap<SearchResultKey, SearchResult>();
 
 		for (Document document : hits.getDocs()) {
-			final String entryClassName = GetterUtil.getString(
+			String entryClassName = GetterUtil.getString(
 				document.get(Field.ENTRY_CLASS_NAME));
-			final long entryClassPK = GetterUtil.getLong(
+			long entryClassPK = GetterUtil.getLong(
 				document.get(Field.ENTRY_CLASS_PK));
 
 			try {
-				final SearchResultKey keyOverride;
-				final SearchResultContributor contributor;
+				SearchResultKey key = null;
+				SearchResultContributor contributor = null;
 
 				SearchResultContributorFactory factory =
 					contributorRegistry.getFactory(entryClassName);
 
 				if (factory != null) {
-					final boolean useContributor;
+					boolean useContributor = true;
 
 					if (factory.requiresKeyInDocument()) {
 						SearchResultKey keyInDocument = getSearchResultKey(
 							document);
 
-						if (keyInDocument != null) {
-							keyOverride = keyInDocument;
-							useContributor = true;
-						}
-						else {
-							keyOverride = null;
+						if (keyInDocument == null) {
 							useContributor = false;
 						}
-					}
-					else {
-						keyOverride = null;
-						useContributor = true;
+						else {
+							key = keyInDocument;
+						}
 					}
 
 					if (useContributor) {
@@ -89,21 +83,9 @@ public class SearchResultUtil {
 							entryClassPK, locale, portletURL, portletRequest,
 							portletResponse);
 					}
-					else {
-						contributor = null;
-					}
-				}
-				else {
-					keyOverride = null;
-					contributor = null;
 				}
 
-				final SearchResultKey key;
-
-				if (keyOverride != null) {
-					key = keyOverride;
-				}
-				else {
+				if (key == null) {
 					key = new SearchResultKey(entryClassName, entryClassPK);
 				}
 
