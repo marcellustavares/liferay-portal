@@ -42,6 +42,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.dynamicdatamapping.StructureFieldException;
+import com.liferay.portlet.dynamicdatamapping.forms.Form;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
@@ -64,14 +65,16 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public String[] getAvailableLanguageIds() {
-		Document document = getDocument();
+		List<Locale> availableLocales = _form.getAvailableLocales();
 
-		Element rootElement = document.getRootElement();
+		String[] availableLanguageIds = new String[availableLocales.size()];
 
-		String availableLocales = rootElement.attributeValue(
-			"available-locales");
+		int i = 0;
+		for (Locale locale : availableLocales) {
+			availableLanguageIds[i++] = LocaleUtil.toLanguageId(locale);
+		}
 
-		return StringUtil.split(availableLocales);
+		return availableLanguageIds;
 	}
 
 	@Override
@@ -109,17 +112,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public String getDefaultLanguageId() {
-		Document document = getDocument();
-
-		if (document == null) {
-			Locale locale = LocaleUtil.getSiteDefault();
-
-			return locale.toString();
-		}
-
-		Element rootElement = document.getRootElement();
-
-		return rootElement.attributeValue("default-locale");
+		return LocaleUtil.toLanguageId(_form.getDefaultLocale());
 	}
 
 	@Override
@@ -161,11 +154,11 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	}
 
 	@Override
-	public String getFieldLabel(String fieldName, String locale)
+	public String getFieldLabel(String fieldName, String languageId)
 		throws PortalException, SystemException {
 
 		return GetterUtil.getString(
-			getFieldProperty(fieldName, "label", locale), fieldName);
+			getFieldProperty(fieldName, "label", languageId), fieldName);
 	}
 
 	@Override
@@ -731,6 +724,8 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@CacheField
 	private Document _document;
+
+	private Form _form;
 
 	@CacheField
 	private Map<String, Map<String, Map<String, String>>> _localizedFieldsMap;
