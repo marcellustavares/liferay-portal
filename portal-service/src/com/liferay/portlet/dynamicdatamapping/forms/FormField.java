@@ -40,6 +40,29 @@ public class FormField {
 		return _label;
 	}
 
+	public String getName() {
+		return _name;
+	}
+
+	public List<FormField> getNestedFields() {
+		return _nestedFields;
+	}
+
+	public Map<String, FormField> getNestedFieldsMap() {
+		Map<String, FormField> fieldsMap = new HashMap<String, FormField>();
+
+		for (FormField nestedField : _nestedFields) {
+			fieldsMap.put(nestedField.getName(), nestedField);
+			fieldsMap.putAll(nestedField.getNestedFieldsMap());
+		}
+
+		return fieldsMap;
+	}
+
+	public LocalizedValue getPredefinedValue() {
+		return _predefinedValue;
+	}
+
 	/**
 	 * @deprecated As of 7.0.0, the correct getter should be called instead.
 	 */
@@ -54,18 +77,6 @@ public class FormField {
 		properties.put("type", getType());
 
 		return properties.get(propertyName);
-	}
-
-	public String getName() {
-		return _name;
-	}
-
-	public List<FormField> getNestedFields() {
-		return _nestedFields;
-	}
-
-	public LocalizedValue getPredefinedValue() {
-		return _predefinedValue;
 	}
 
 	public LocalizedValue getStyle() {
@@ -124,17 +135,6 @@ public class FormField {
 
 	public void setNestedFields(List<FormField> nestedFields) {
 		_nestedFields = nestedFields;
-	}
-
-	public Map<String, FormField> getNestedFieldsMap() {
-		Map<String, FormField> fieldsMap = new HashMap<String, FormField>();
-
-		for (FormField nestedField : _nestedFields) {
-			fieldsMap.put(nestedField.getName(), nestedField);
-			fieldsMap.putAll(nestedField.getNestedFieldsMap());
-		}
-
-		return fieldsMap;
 	}
 
 	public void setPredefinedValue(LocalizedValue predefinedValue) {

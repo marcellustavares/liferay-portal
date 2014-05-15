@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
@@ -70,6 +69,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		String[] availableLanguageIds = new String[availableLocales.size()];
 
 		int i = 0;
+
 		for (Locale locale : availableLocales) {
 			availableLanguageIds[i++] = LocaleUtil.toLanguageId(locale);
 		}

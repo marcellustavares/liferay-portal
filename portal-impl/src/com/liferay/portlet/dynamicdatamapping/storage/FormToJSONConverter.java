@@ -40,7 +40,7 @@ public class FormToJSONConverter {
 		_flatFieldsStructure = JSONFactoryUtil.createJSONObject();
 
 		JSONArray availableLanguages = convertAvailableLocales(
-				layout.getAvailableLocales());
+			layout.getAvailableLocales());
 
 		formLayout.put("availableLanguages", availableLanguages);
 		formLayout.put("pages", convertFormPages(layout.getPages()));
@@ -50,16 +50,6 @@ public class FormToJSONConverter {
 			formLayout.toString(), _flatFieldsStructure.toString());
 
 		return metadataJSON;
-	}
-
-	protected JSONArray convertAvailableLocales(List<Locale> availableLocales) {
-		JSONArray availableLanguages = JSONFactoryUtil.createJSONArray();
-
-		for (Locale locale : availableLocales) {
-			availableLanguages.put(LocaleUtil.toLanguageId(locale));
-		}
-
-		return availableLanguages;
 	}
 
 	protected void addFieldToFlatFieldsLayout(FormField field) {
@@ -96,6 +86,16 @@ public class FormToJSONConverter {
 	protected void addFieldToFlatRepresentations(FormField field) {
 		addFieldToFlatFieldsLayout(field);
 		addFieldToFlatFieldsStructure(field);
+	}
+
+	protected JSONArray convertAvailableLocales(List<Locale> availableLocales) {
+		JSONArray availableLanguages = JSONFactoryUtil.createJSONArray();
+
+		for (Locale locale : availableLocales) {
+			availableLanguages.put(LocaleUtil.toLanguageId(locale));
+		}
+
+		return availableLanguages;
 	}
 
 	protected JSONArray convertFormFields(List<FormField> list) {
