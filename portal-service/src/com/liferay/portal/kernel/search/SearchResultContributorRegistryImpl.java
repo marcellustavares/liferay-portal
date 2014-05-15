@@ -14,10 +14,6 @@
 
 package com.liferay.portal.kernel.search;
 
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.messageboards.model.MBMessage;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,17 +24,6 @@ public class SearchResultContributorRegistryImpl
 	implements SearchResultContributorRegistry {
 
 	public SearchResultContributorRegistryImpl() {
-		register(
-			DLFileEntry.class.getName(),
-			new SearchResultDLFileEntryContributorFactory());
-
-		register(
-			JournalArticle.class.getName(),
-			new SearchResultJournalArticleContributorFactory());
-
-		register(
-			MBMessage.class.getName(),
-			new SearchResultMBMessageContributorFactory());
 	}
 
 	@Override
@@ -46,6 +31,7 @@ public class SearchResultContributorRegistryImpl
 		return _registeredFactories.get(entryClassName);
 	}
 
+	@Override
 	public void register(
 		String className, SearchResultContributorFactory factory) {
 

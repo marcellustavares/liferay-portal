@@ -21,4 +21,7 @@ public interface SearchResultContributorRegistry {
 
 	public SearchResultContributorFactory getFactory(String entryClassName);
 
+	public void register(
+		String className, SearchResultContributorFactory factory);
+
 }
