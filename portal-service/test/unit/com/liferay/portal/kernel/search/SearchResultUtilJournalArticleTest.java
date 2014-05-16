@@ -73,9 +73,9 @@ public class SearchResultUtilJournalArticleTest
 			indexer
 		);
 
-		Document doc = newDocumentJournalArticleWithVersion();
+		Document document = newDocumentJournalArticleWithVersion();
 
-		searchSingleDocument(doc);
+		searchSingleDocument(document);
 
 		assertThatSearchResultHasVersion();
 
@@ -84,12 +84,13 @@ public class SearchResultUtilJournalArticleTest
 			result.getSummary());
 
 		verifyStatic();
+
 		IndexerRegistryUtil.getIndexer(JOURNALARTICLE_CLASS_NAME);
 
 		Mockito.verify(
 			indexer
 		).getSummary(
-			doc, StringPool.BLANK, portletURL, null, null
+			document, StringPool.BLANK, portletURL, null, null
 		);
 	}
 
@@ -108,11 +109,11 @@ public class SearchResultUtilJournalArticleTest
 	}
 
 	protected Document newDocumentJournalArticleWithVersion() {
-		Document doc = newDocument(JOURNALARTICLE_CLASS_NAME);
+		Document document = newDocument(JOURNALARTICLE_CLASS_NAME);
 
-		doc.add(new Field(Field.VERSION, DOCUMENT_VERSION));
+		document.add(new Field(Field.VERSION, DOCUMENT_VERSION));
 
-		return doc;
+		return document;
 	}
 
 	protected static final String DOCUMENT_VERSION = String.valueOf(

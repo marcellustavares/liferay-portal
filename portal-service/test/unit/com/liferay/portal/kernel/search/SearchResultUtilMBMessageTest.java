@@ -74,9 +74,11 @@ public class SearchResultUtilMBMessageTest
 			result.getSummary());
 
 		verifyStatic();
+
 		IndexerRegistryUtil.getIndexer(DOCUMENT_CLASS_NAME);
 
 		verifyStatic();
+
 		AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
 			DOCUMENT_CLASS_NAME);
 
@@ -112,9 +114,11 @@ public class SearchResultUtilMBMessageTest
 		Assert.assertSame(mockMBMessage, mbMessages.get(0));
 
 		verifyStatic(Mockito.never());
+
 		IndexerRegistryUtil.getIndexer(Matchers.anyString());
 
 		verifyStatic(Mockito.never());
+
 		IndexerRegistryUtil.getIndexer((Class<?>)Matchers.any());
 
 		Assert.assertNull(result.getSummary());
@@ -144,11 +148,12 @@ public class SearchResultUtilMBMessageTest
 	public void testTwoDocumentsWithSameAlternateKey() {
 		long baseEntryPK = ENTRY_CLASS_PK;
 
-		Document docA = newDocumentMBMessageWithAlternateKey(baseEntryPK);
-		Document docB = newDocumentMBMessageWithAlternateKey(baseEntryPK + 1);
+		Document documentA = newDocumentMBMessageWithAlternateKey(baseEntryPK);
+		Document documentB = newDocumentMBMessageWithAlternateKey(
+			baseEntryPK + 1);
 
 		List<SearchResult> searchResults = getSearchResults(
-			newHits(docA, docB));
+			newHits(documentA, documentB));
 
 		Assert.assertEquals("two hits, one result", 1, searchResults.size());
 
@@ -173,11 +178,11 @@ public class SearchResultUtilMBMessageTest
 	}
 
 	protected Document newDocumentMBMessageWithAlternateKey(long entryClassPK) {
-		Document doc = newDocument(MBMESSAGE_CLASS_NAME, entryClassPK);
+		Document document = newDocument(MBMESSAGE_CLASS_NAME, entryClassPK);
 
-		setKeyInDocument(doc);
+		setKeyInDocument(document);
 
-		return doc;
+		return document;
 	}
 
 	protected void setUpMBMessage() {

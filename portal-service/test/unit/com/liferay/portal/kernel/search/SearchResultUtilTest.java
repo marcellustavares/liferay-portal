@@ -135,11 +135,11 @@ public class SearchResultUtilTest extends BaseSearchResultUtilTestCase {
 	public void testTwoDocumentsWithSameEntryKey() {
 		String className = "__className__";
 
-		Document docA = newDocument(className);
-		Document docB = newDocument(className);
+		Document documentA = newDocument(className);
+		Document documentB = newDocument(className);
 
 		List<SearchResult> searchResults = getSearchResults(
-			newHits(docA, docB));
+			newHits(documentA, documentB));
 
 		Assert.assertEquals("two hits, one result", 1, searchResults.size());
 

@@ -53,12 +53,12 @@ public abstract class BaseSearchResultUtilTestCase extends PowerMockito {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		setUpPortal();
-
-		setUpRegistryBeforeOtherRegistries();
-
 		setUpAssetRendererFactoryRegistry();
+		setUpFastDateFormatFactory();
 		setUpIndexerRegistry();
+		setUpPortal();
+		setUpProps();
+		setUpRegistryBeforeOtherRegistries();
 	}
 
 	protected List<SearchResult> getSearchResults(Hits hits) {
@@ -70,20 +70,21 @@ public abstract class BaseSearchResultUtilTestCase extends PowerMockito {
 	}
 
 	protected Document newDocument(String entryClassName, long entryClassPk) {
-		Document doc = new DocumentImpl();
+		Document document = new DocumentImpl();
 
-		doc.add(new Field(Field.ENTRY_CLASS_PK, String.valueOf(entryClassPk)));
-		doc.add(new Field(Field.ENTRY_CLASS_NAME, entryClassName));
+		document.add(
+			new Field(Field.ENTRY_CLASS_PK, String.valueOf(entryClassPk)));
+		document.add(new Field(Field.ENTRY_CLASS_NAME, entryClassName));
 
-		return doc;
+		return document;
 	}
 
 	protected Document newDocumentWithAlternateKey(String entryClassName) {
-		Document doc = newDocument(entryClassName);
+		Document document = newDocument(entryClassName);
 
-		setKeyInDocument(doc);
+		setKeyInDocument(document);
 
-		return doc;
+		return document;
 	}
 
 	protected Hits newHits(Document... docs) {
@@ -94,19 +95,22 @@ public abstract class BaseSearchResultUtilTestCase extends PowerMockito {
 		return hits;
 	}
 
-	protected void searchSingleDocument(Document doc) {
-		List<SearchResult> searchResults = getSearchResults(newHits(doc));
+	protected void searchSingleDocument(Document document) {
+		Hits hits = newHits(document);
+
+		List<SearchResult> searchResults = getSearchResults(hits);
 
 		Assert.assertEquals("one hit, one result", 1, searchResults.size());
 
 		result = searchResults.get(0);
 	}
 
-	protected void setKeyInDocument(Document doc) {
-		doc.add(new Field(Field.CLASS_PK, String.valueOf(DOCUMENT_CLASS_PK)));
-		doc.add(
+	protected void setKeyInDocument(Document document) {
+		document.add(
 			new Field(
 				Field.CLASS_NAME_ID, String.valueOf(DOCUMENT_CLASS_NAME_ID)));
+		document.add(
+			new Field(Field.CLASS_PK, String.valueOf(DOCUMENT_CLASS_PK)));
 	}
 
 	protected void setUpAssetRendererFactoryRegistry() {
@@ -114,19 +118,19 @@ public abstract class BaseSearchResultUtilTestCase extends PowerMockito {
 			AssetRendererFactoryRegistryUtil.class, new CallsRealMethods());
 	}
 
-	protected void setUpIndexerRegistry() {
-		mockStatic(IndexerRegistryUtil.class, new CallsRealMethods());
-	}
-
-	protected void setUpPortal() {
-		PropsUtil.setProps(props);
-
+	protected void setUpFastDateFormatFactory() {
 		FastDateFormatFactoryUtil fastDateFormatFactoryUtil =
 			new FastDateFormatFactoryUtil();
 
 		fastDateFormatFactoryUtil.setFastDateFormatFactory(
 			mock(FastDateFormatFactory.class));
+	}
 
+	protected void setUpIndexerRegistry() {
+		mockStatic(IndexerRegistryUtil.class, new CallsRealMethods());
+	}
+
+	protected void setUpPortal() {
 		PortalUtil portalUtil = new PortalUtil();
 
 		portalUtil.setPortal(portal);
@@ -136,6 +140,10 @@ public abstract class BaseSearchResultUtilTestCase extends PowerMockito {
 		).thenReturn(
 			DOCUMENT_CLASS_NAME
 		);
+	}
+
+	protected void setUpProps() {
+		PropsUtil.setProps(props);
 	}
 
 	protected void setUpRegistryBeforeOtherRegistries() {

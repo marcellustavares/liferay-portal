@@ -87,9 +87,11 @@ public class SearchResultUtilDLFileEntryTest
 			result.getSummary());
 
 		verifyStatic();
+
 		IndexerRegistryUtil.getIndexer(DOCUMENT_CLASS_NAME);
 
 		verifyStatic();
+
 		AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
 			DOCUMENT_CLASS_NAME);
 
@@ -123,11 +125,11 @@ public class SearchResultUtilDLFileEntryTest
 			fileEntry
 		);
 
-		Document doc = newDocumentDLFileEntryWithAlternateKey();
+		Document document = newDocumentDLFileEntryWithAlternateKey();
 
-		doc.add(new Field(Field.SNIPPET, "__snippet__"));
+		document.add(new Field(Field.SNIPPET, "__snippet__"));
 
-		searchSingleDocument(doc);
+		searchSingleDocument(document);
 
 		Assert.assertEquals(DOCUMENT_CLASS_NAME, result.getClassName());
 		Assert.assertEquals(DOCUMENT_CLASS_PK, result.getClassPK());
@@ -140,6 +142,7 @@ public class SearchResultUtilDLFileEntryTest
 			result.getSummary());
 
 		verifyStatic();
+
 		IndexerRegistryUtil.getIndexer(DLFILEENTRY_CLASS_NAME);
 
 		Assert.assertThat(
@@ -155,7 +158,7 @@ public class SearchResultUtilDLFileEntryTest
 		Mockito.verify(
 			indexer
 		).getSummary(
-			doc, "__snippet__", portletURL, null, null
+			document, "__snippet__", portletURL, null, null
 		);
 	}
 
@@ -193,7 +196,7 @@ public class SearchResultUtilDLFileEntryTest
 			new IndexerRegistryGetIndexer()
 		);
 
-		Summary summaryFromIndexer = new Summary(
+		Summary summary = new Summary(
 			null, "FileEntry Title", "FileEntry Content", null);
 
 		when(
@@ -202,7 +205,7 @@ public class SearchResultUtilDLFileEntryTest
 				(PortletURL)Matchers.any(), (PortletRequest)Matchers.isNull(),
 				(PortletResponse)Matchers.isNull())
 		).thenReturn(
-			summaryFromIndexer
+			summary
 		);
 
 		class AssetRendererFactoryRegistryGetAssetRendererFactoryByClassName
@@ -263,7 +266,7 @@ public class SearchResultUtilDLFileEntryTest
 
 		Summary summaryFromResult = result.getSummary();
 
-		Assert.assertNotSame(summaryFromIndexer, summaryFromResult);
+		Assert.assertNotSame(summary, summaryFromResult);
 
 		Assert.assertEquals(SUMMARY_TITLE, summaryFromResult.getTitle());
 		Assert.assertEquals(SUMMARY_CONTENT, summaryFromResult.getContent());
@@ -273,11 +276,13 @@ public class SearchResultUtilDLFileEntryTest
 		Assert.assertEquals(1, tuples.size());
 
 		Tuple tuple = tuples.get(0);
+
 		FileEntry fileEntryFromTuple = (FileEntry)tuple.getObject(0);
+
 		Summary summaryFromTuple = (Summary)tuple.getObject(1);
 
 		Assert.assertSame(fileEntry, fileEntryFromTuple);
-		Assert.assertSame(summaryFromIndexer, summaryFromTuple);
+		Assert.assertSame(summary, summaryFromTuple);
 
 		Assert.assertEquals("FileEntry Title", summaryFromTuple.getTitle());
 		Assert.assertEquals("FileEntry Content", summaryFromTuple.getContent());
