@@ -14,7 +14,9 @@
 
 package com.liferay.portal.kernel.search;
 
-import java.util.List;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
@@ -22,29 +24,15 @@ import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 /**
- * @author Eudaldo Alonso
+ * @author André de Oliveira
  */
-public class SearchResultUtil {
+public interface SearchResultContributorFactory {
 
-	public static List<SearchResult> getSearchResults(
-		Hits hits, Locale locale, PortletURL portletURL) {
+	public SearchResultContributor getInstance(
+			long entryClassPK, Locale locale, PortletURL portletURL,
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws PortalException, SystemException;
 
-		return getSearchResults(hits, locale, portletURL, null, null);
-	}
-
-	public static List<SearchResult> getSearchResults(
-		Hits hits, Locale locale, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		SearchResultContributorRegistry contributorRegistry =
-			SearchResultContributorRegistryUtil.getRegistry();
-
-		SearchDocumentsToResultsTranslator translator =
-			new SearchDocumentsToResultsTranslator(
-				locale, portletURL, portletRequest, portletResponse,
-				contributorRegistry);
-
-		return translator.translate(hits.getDocs());
-	}
+	public boolean requiresKeyInDocument();
 
 }
