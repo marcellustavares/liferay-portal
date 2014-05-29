@@ -493,7 +493,7 @@ public class JournalArticleServiceTest {
 			@Override
 			public void checkStructure(
 					JournalArticle article, DDMStructure structure)
-				throws DocumentException, PortalException {
+				throws PortalException {
 
 				super.checkStructure(article, structure);
 			}
