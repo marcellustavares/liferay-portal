@@ -849,6 +849,16 @@ public class JournalConverterImpl implements JournalConverter {
 			metadataElement = element.addElement("meta-data");
 		}
 
+		String indexType = StringPool.BLANK;
+
+		Attribute indexTypeAttribute = element.attribute("index-type");
+
+		if (indexTypeAttribute != null) {
+			indexType = indexTypeAttribute.getValue();
+
+			element.remove(indexTypeAttribute);
+		}
+
 		if (type.equals("multi-list")) {
 			element.addAttribute("multiple", "true");
 		}
@@ -863,22 +873,13 @@ public class JournalConverterImpl implements JournalConverter {
 				addMetadataEntry(
 					metadataElement, "label", HttpUtil.decodeURL(name));
 
+				element.addAttribute("indexType", indexType);
 				element.addAttribute("name", "option" + StringUtil.randomId());
 				element.addAttribute("type", "option");
 				element.addAttribute("value", HttpUtil.decodeURL(type));
 
 				return;
 			}
-		}
-
-		String indexType = StringPool.BLANK;
-
-		Attribute indexTypeAttribute = element.attribute("index-type");
-
-		if (indexTypeAttribute != null) {
-			indexType = indexTypeAttribute.getValue();
-
-			element.remove(indexTypeAttribute);
 		}
 
 		element.remove(element.attribute("type"));
