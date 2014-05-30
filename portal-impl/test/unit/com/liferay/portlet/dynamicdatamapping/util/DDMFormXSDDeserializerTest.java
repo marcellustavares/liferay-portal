@@ -46,15 +46,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author Pablo Carvalho
  */
 @PrepareForTest( {
-	DDMFormXSDSerializerUtil.class, HtmlUtil.class, LocaleUtil.class,
+	DDMFormXSDDeserializerUtil.class, HtmlUtil.class, LocaleUtil.class,
 	SAXReaderUtil.class
 })
 @RunWith(PowerMockRunner.class)
-public class DDMFormXSDSerializerTest extends PowerMockito {
+public class DDMFormXSDDeserializerTest extends PowerMockito {
 
 	@Before
 	public void setUp() throws Exception {
-		setUpDDMFormXSDSerializer();
+		setUpDDMFormXSDDeserializer();
 		setUpHtml();
 		setUpLocale();
 		setUpSAXReader();
@@ -64,7 +64,7 @@ public class DDMFormXSDSerializerTest extends PowerMockito {
 	public void testAllFieldsTypesDeserialization() throws Exception {
 		String xml = readXML("dynamic-data-mapping-all-fields-structure.xml");
 
-		DDMForm ddmForm = DDMFormXSDSerializerUtil.deserialize(xml);
+		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(xml);
 
 		testAvailableLocales(ddmForm);
 		testDefaultLocale(ddmForm);
@@ -90,13 +90,13 @@ public class DDMFormXSDSerializerTest extends PowerMockito {
 		return StringUtil.read(inputStream);
 	}
 
-	protected void setUpDDMFormXSDSerializer() {
-		spy(DDMFormXSDSerializerUtil.class);
+	protected void setUpDDMFormXSDDeserializer() {
+		spy(DDMFormXSDDeserializerUtil.class);
 
 		when(
-			DDMFormXSDSerializerUtil.getDDMFormXSDSerializer()
+			DDMFormXSDDeserializerUtil.getDDMFormXSDDeserializer()
 		).thenReturn(
-			_ddmFormXSDSerializer
+			_ddmFormXSDDeserializer
 		);
 	}
 
@@ -245,7 +245,7 @@ public class DDMFormXSDSerializerTest extends PowerMockito {
 			"opcao 1", value1Labels.getValue(LocaleUtil.BRAZIL));
 	}
 
-	private DDMFormXSDSerializer _ddmFormXSDSerializer =
-		new DDMFormXSDSerializerImpl();
+	private DDMFormXSDDeserializer _ddmFormXSDDeserializer =
+		new DDMFormXSDDeserializerImpl();
 
 }
