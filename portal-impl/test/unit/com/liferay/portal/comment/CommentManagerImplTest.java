@@ -14,7 +14,6 @@
 
 package com.liferay.portal.comment;
 
-import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
@@ -54,6 +53,8 @@ public class CommentManagerImplTest extends PowerMockito {
 
 		setUpMessageBoards();
 		setUpServiceContext();
+
+		_commentManager.setMBMessageLocalService(_mbMessageLocalService);
 	}
 
 	@Test
@@ -112,6 +113,22 @@ public class CommentManagerImplTest extends PowerMockito {
 	}
 
 	@Test
+	public void testAddInitialDiscussion() throws Exception {
+		long userId = RandomTestUtil.randomLong();
+		long groupId = RandomTestUtil.randomLong();
+		long classPK = RandomTestUtil.randomLong();
+
+		_commentManager.addInitialDiscussion(
+			userId, groupId, "__ClassName__", classPK, "__UserName__");
+
+		Mockito.verify(
+			_mbMessageLocalService
+		).addDiscussionMessage(
+			userId, "__UserName__", groupId, "__ClassName__", classPK,
+			WorkflowConstants.ACTION_PUBLISH);
+	}
+
+	@Test
 	public void testDeleteComment() throws Exception {
 		long mbMessageId = RandomTestUtil.randomLong();
 
@@ -121,6 +138,19 @@ public class CommentManagerImplTest extends PowerMockito {
 			_mbMessageLocalService
 		).deleteDiscussionMessage(
 			mbMessageId
+		);
+	}
+
+	@Test
+	public void testDeleteDiscussion() throws Exception {
+		long classPK = RandomTestUtil.randomLong();
+
+		_commentManager.deleteDiscussion("__ClassName__", classPK);
+
+		Mockito.verify(
+			_mbMessageLocalService
+		).deleteDiscussionMessages(
+			"__ClassName__", classPK
 		);
 	}
 
@@ -169,7 +199,7 @@ public class CommentManagerImplTest extends PowerMockito {
 		);
 	}
 
-	private CommentManager _commentManager = new CommentManagerImpl();
+	private CommentManagerImpl _commentManager = new CommentManagerImpl();
 
 	@Mock
 	private MBMessage _mbMessage;
