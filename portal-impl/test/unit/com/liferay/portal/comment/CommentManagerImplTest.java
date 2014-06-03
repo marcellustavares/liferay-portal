@@ -57,7 +57,7 @@ public class CommentManagerImplTest extends PowerMockito {
 	}
 
 	@Test
-	public void testAddComment() throws Exception {
+	public void testAddCommentWithUsernameAndSubject() throws Exception {
 		long mbMessageId = RandomTestUtil.randomLong();
 
 		when(
