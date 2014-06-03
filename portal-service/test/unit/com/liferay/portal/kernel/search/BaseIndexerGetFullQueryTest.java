@@ -66,7 +66,7 @@ public class BaseIndexerGetFullQueryTest extends PowerMockito {
 		setUpRegistries();
 		setUpSearchEngine();
 
-		_baseIndexer = new BaseIndexerToTestGetFullQuery();
+		_baseIndexer = new BaseIndexerTest();
 	}
 
 	@Test
@@ -170,13 +170,19 @@ public class BaseIndexerGetFullQueryTest extends PowerMockito {
 	protected void setUpJSONFactory() {
 		JSONFactory jsonFactory = mock(JSONFactory.class);
 
-		when(jsonFactory.createJSONObject()).thenReturn(mock(JSONObject.class));
+		when(
+			jsonFactory.createJSONObject()
+		).thenReturn(
+			mock(JSONObject.class)
+		);
 
 		new JSONFactoryUtil().setJSONFactory(jsonFactory);
 	}
 
 	protected void setUpProps() {
-		PropsUtil.setProps(Mockito.mock(Props.class));
+		Props props = mock(Props.class);
+
+		PropsUtil.setProps(props);
 	}
 
 	protected void setUpRegistries() throws Exception {
@@ -238,7 +244,7 @@ public class BaseIndexerGetFullQueryTest extends PowerMockito {
 	private BaseIndexer _baseIndexer;
 	private SearchContext _searchContext = new SearchContext();
 
-	private class BaseIndexerToTestGetFullQuery extends BaseIndexer {
+	private class BaseIndexerTest extends BaseIndexer {
 
 		@Override
 		public String[] getClassNames() {
