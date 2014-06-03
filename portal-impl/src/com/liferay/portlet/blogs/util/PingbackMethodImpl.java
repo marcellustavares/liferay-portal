@@ -321,6 +321,10 @@ public class PingbackMethodImpl implements Method {
 		}
 	}
 
+	protected void setCommentManager(CommentManager commentManager) {
+		_commentManager = commentManager;
+	}
+
 	protected void validateSource()
 		throws InvalidSourceURIException, UnavailableSourceURIException {
 

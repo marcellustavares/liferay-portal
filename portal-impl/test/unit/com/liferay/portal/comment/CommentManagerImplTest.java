@@ -15,16 +15,20 @@
 package com.liferay.portal.comment;
 
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageDisplay;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.service.MBMessageLocalService;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +39,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.stubbing.answers.CallsRealMethods;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -57,6 +60,27 @@ public class CommentManagerImplTest extends PowerMockito {
 	}
 
 	@Test
+	public void testAddComment() throws Exception {
+		_commentManager.addComment(
+			_USER_ID, _GROUP_ID, "__className__", _ENTRY_ID, "__body__",
+			_serviceContext);
+
+		Mockito.verify(
+			_mbMessageLocalService
+		).addDiscussionMessage(
+			_USER_ID, StringPool.BLANK, _GROUP_ID, "__className__", _ENTRY_ID,
+			_THREAD_ID, _PARENT_MESSAGE_ID, StringPool.BLANK, "__body__",
+			_serviceContext
+		);
+
+		Mockito.verify(
+			_mbMessageLocalService
+		).getThreadMessages(
+			_THREAD_ID, WorkflowConstants.STATUS_APPROVED
+		);
+	}
+
+	@Test
 	public void testAddCommentWithUsernameAndSubject() throws Exception {
 		long mbMessageId = RandomTestUtil.randomLong();
 
@@ -66,49 +90,43 @@ public class CommentManagerImplTest extends PowerMockito {
 			mbMessageId
 		);
 
-		long parentMessageId = RandomTestUtil.randomLong();
-
-		when(
-			_mbThread.getRootMessageId()
-		).thenReturn(
-			parentMessageId
-		);
-
-		long threadId = RandomTestUtil.randomLong();
-
-		when(
-			_mbThread.getThreadId()
-		).thenReturn(
-			threadId
-		);
-
-		long userId = RandomTestUtil.randomLong();
-		long groupId = RandomTestUtil.randomLong();
-		String className = BlogsEntry.class.getName();
-		long classPK = RandomTestUtil.randomLong();
-
 		Assert.assertEquals(
 			mbMessageId,
 			_commentManager.addComment(
-				userId, groupId, className, classPK, "__blogName__",
-				"__title__", "__body__", _serviceContextFunction));
-
-		Mockito.verify(
-			_mbMessageLocalService
-		).getDiscussionMessageDisplay(
-			userId, groupId, className, classPK,
-			WorkflowConstants.STATUS_APPROVED
-		);
+				_USER_ID, _GROUP_ID, "__className__", _ENTRY_ID, "__userName__",
+				"__subject__", "__body__", _serviceContextFunction));
 
 		Mockito.verify(
 			_mbMessageLocalService
 		).addDiscussionMessage(
-			Matchers.eq(userId), Matchers.eq("__blogName__"),
-			Matchers.eq(groupId), Matchers.eq(className), Matchers.eq(classPK),
-			Matchers.eq(threadId), Matchers.eq(parentMessageId),
-			Matchers.eq("__title__"), Matchers.eq("__body__"),
-			Matchers.same(_serviceContext)
+			_USER_ID, "__userName__", _GROUP_ID, "__className__", _ENTRY_ID,
+			_THREAD_ID, _PARENT_MESSAGE_ID, "__subject__", "__body__",
+			_serviceContext
 		);
+	}
+
+	@Test(expected = DuplicateCommentException.class)
+	public void testAddDuplicateComment() throws Exception {
+		when(
+			_mbMessage.getBody()
+		).thenReturn(
+			"__body__"
+		);
+
+		List<MBMessage> messages = Collections.singletonList(_mbMessage);
+
+		when(
+			_mbMessageLocalService.getThreadMessages(
+				_THREAD_ID, WorkflowConstants.STATUS_APPROVED)
+		).thenReturn(
+			messages
+		);
+
+		_commentManager.addComment(
+			_USER_ID, _GROUP_ID, "__className__", _ENTRY_ID, "__body__",
+			_serviceContext);
+
+		Assert.fail();
 	}
 
 	@Test
@@ -144,20 +162,30 @@ public class CommentManagerImplTest extends PowerMockito {
 
 		when(
 			_mbMessageLocalService.getDiscussionMessageDisplay(
-				Matchers.anyLong(), Matchers.anyLong(),
-				Matchers.eq(BlogsEntry.class.getName()), Matchers.anyLong(),
-				Matchers.eq(WorkflowConstants.STATUS_APPROVED)
-			)
+				_USER_ID, _GROUP_ID, "__className__", _ENTRY_ID,
+				WorkflowConstants.STATUS_APPROVED)
 		).thenReturn(
 			_mbMessageDisplay
 		);
 
-		mockStatic(MBMessageLocalServiceUtil.class, new CallsRealMethods());
+		mockStatic(MBMessageLocalServiceUtil.class, Mockito.CALLS_REAL_METHODS);
 
 		stub(
 			method(MBMessageLocalServiceUtil.class, "getService")
 		).toReturn(
 			_mbMessageLocalService
+		);
+
+		when(
+			_mbThread.getRootMessageId()
+		).thenReturn(
+			_PARENT_MESSAGE_ID
+		);
+
+		when(
+			_mbThread.getThreadId()
+		).thenReturn(
+			_THREAD_ID
 		);
 	}
 
@@ -168,6 +196,16 @@ public class CommentManagerImplTest extends PowerMockito {
 			_serviceContext
 		);
 	}
+
+	private static final long _ENTRY_ID = RandomTestUtil.randomLong();
+
+	private static final long _GROUP_ID = RandomTestUtil.randomLong();
+
+	private static final long _PARENT_MESSAGE_ID = RandomTestUtil.randomLong();
+
+	private static final long _THREAD_ID = RandomTestUtil.randomLong();
+
+	private static final long _USER_ID = RandomTestUtil.randomLong();
 
 	private CommentManager _commentManager = new CommentManagerImpl();
 
