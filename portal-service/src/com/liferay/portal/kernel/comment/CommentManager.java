@@ -33,4 +33,7 @@ public interface CommentManager {
 	public void deleteComment(long commentId)
 		throws PortalException, SystemException;
 
+	public int getCommentsCount(String className, long classPK)
+		throws SystemException;
+
 }

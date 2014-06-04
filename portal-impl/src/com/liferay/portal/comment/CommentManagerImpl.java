@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageDisplay;
 import com.liferay.portlet.messageboards.model.MBThread;
@@ -61,6 +62,16 @@ public class CommentManagerImpl implements CommentManager {
 		throws PortalException, SystemException {
 
 		MBMessageLocalServiceUtil.deleteDiscussionMessage(commentId);
+	}
+
+	@Override
+	public int getCommentsCount(String className, long classPK)
+		throws SystemException {
+
+		long classNameId = PortalUtil.getClassNameId(className);
+
+		return MBMessageLocalServiceUtil.getDiscussionMessagesCount(
+			classNameId, classPK, WorkflowConstants.STATUS_APPROVED);
 	}
 
 }
