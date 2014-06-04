@@ -200,6 +200,8 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 			serviceContext.getAssetTagNames(),
 			serviceContext.getAssetLinkEntryIds());
 
+		// Comment
+
 		addInitialDiscussion(entry, userId, groupId);
 
 		// Workflow
@@ -346,6 +348,8 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		// Expando
 
 		expandoRowLocalService.deleteRows(entry.getEntryId());
+
+		// Comments
 
 		deleteDiscussion(entry);
 
