@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.util.Portal;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.test.RandomTestUtil;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -53,6 +55,7 @@ public class CommentManagerImplTest extends PowerMockito {
 		MockitoAnnotations.initMocks(this);
 
 		setUpMessageBoards();
+		setUpPortal();
 		setUpServiceContext();
 	}
 
@@ -124,6 +127,30 @@ public class CommentManagerImplTest extends PowerMockito {
 		);
 	}
 
+	@Test
+	public void testGetCommentsCount() throws Exception {
+		long classPK = RandomTestUtil.randomLong();
+		long classNameId = RandomTestUtil.randomLong();
+		int expectedCommentsCount = RandomTestUtil.randomInt();
+
+		Mockito.when(
+			_mbMessageLocalService.getDiscussionMessagesCount(
+				classNameId, classPK, WorkflowConstants.STATUS_APPROVED)
+		).thenReturn(
+			expectedCommentsCount
+		);
+
+		Mockito.when(
+			_portal.getClassNameId("__className__")
+		).thenReturn(
+			classNameId
+		);
+
+		Assert.assertEquals(
+			expectedCommentsCount,
+			_commentManager.getCommentsCount("__className__", classPK));
+	}
+
 	protected void setUpMessageBoards() throws Exception {
 		when(
 			_mbMessageDisplay.getThread()
@@ -161,6 +188,12 @@ public class CommentManagerImplTest extends PowerMockito {
 		);
 	}
 
+	protected void setUpPortal() {
+		PortalUtil portalUtil = new PortalUtil();
+
+		portalUtil.setPortal(_portal);
+	}
+
 	protected void setUpServiceContext() {
 		when(
 			_serviceContextFunction.apply(MBMessage.class.getName())
@@ -182,6 +215,9 @@ public class CommentManagerImplTest extends PowerMockito {
 
 	@Mock
 	private MBThread _mbThread;
+
+	@Mock
+	private Portal _portal;
 
 	private ServiceContext _serviceContext = new ServiceContext();
 
