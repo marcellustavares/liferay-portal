@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.blogs.util;
 
+import com.liferay.portal.comment.CommentManagerImpl;
+import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.dao.search.SearchContainerResults;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -51,6 +53,15 @@ public class BlogsUtil {
 	public static final String DISPLAY_STYLE_FULL_CONTENT = "full-content";
 
 	public static final String DISPLAY_STYLE_TITLE = "title";
+
+	public static int getCommentsCount(BlogsEntry entry)
+		throws SystemException {
+
+		CommentManager commentManager = new CommentManagerImpl();
+
+		return commentManager.getCommentsCount(
+			BlogsEntry.class.getName(), entry.getEntryId());
+	}
 
 	public static Map<String, String> getEmailDefinitionTerms(
 		PortletRequest portletRequest, String emailFromAddress,
