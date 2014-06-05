@@ -55,7 +55,7 @@ public class CommentManagerImplTest extends PowerMockito {
 		MockitoAnnotations.initMocks(this);
 
 		setUpMessageBoards();
-		setUpPortal();
+		setUpPortalUtil();
 		setUpServiceContext();
 	}
 
@@ -188,7 +188,7 @@ public class CommentManagerImplTest extends PowerMockito {
 		);
 	}
 
-	protected void setUpPortal() {
+	protected void setUpPortalUtil() {
 		PortalUtil portalUtil = new PortalUtil();
 
 		portalUtil.setPortal(_portal);
