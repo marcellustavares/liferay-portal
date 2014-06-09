@@ -15,27 +15,26 @@
 package com.liferay.portal.kernel.comment;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.util.Function;
-import com.liferay.portal.service.ServiceContext;
 
 /**
  * @author André de Oliveira
  */
-public interface CommentManager {
+public class DuplicateCommentException extends PortalException {
 
-	public void addComment(
-			long userId, long groupId, String className, long classPK,
-			String body, ServiceContext serviceContext)
-		throws PortalException, SystemException;
+	public DuplicateCommentException() {
+		super();
+	}
 
-	public long addComment(
-			long userId, long groupId, String className, long classPK,
-			String userName, String subject, String body,
-			Function<String, ServiceContext> serviceContextFunction)
-		throws PortalException, SystemException;
+	public DuplicateCommentException(String msg) {
+		super(msg);
+	}
 
-	public void deleteComment(long commentId)
-		throws PortalException, SystemException;
+	public DuplicateCommentException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public DuplicateCommentException(Throwable cause) {
+		super(cause);
+	}
 
 }

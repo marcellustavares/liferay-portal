@@ -15,9 +15,11 @@
 package com.liferay.portal.comment;
 
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -25,11 +27,44 @@ import com.liferay.portlet.messageboards.model.MBMessageDisplay;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 
+import java.util.List;
+
 /**
  * @author André de Oliveira
  * @author Alexander Chow
  */
 public class CommentManagerImpl implements CommentManager {
+
+	@Override
+	public void addComment(
+			long userId, long groupId, String className, long classPK,
+			String body, ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		MBMessageDisplay messageDisplay =
+			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
+				userId, groupId, className, classPK,
+				WorkflowConstants.STATUS_APPROVED);
+
+		MBThread thread = messageDisplay.getThread();
+
+		long threadId = thread.getThreadId();
+		long parentMessageId = thread.getRootMessageId();
+
+		List<MBMessage> messages =
+			MBMessageLocalServiceUtil.getThreadMessages(
+				threadId, WorkflowConstants.STATUS_APPROVED);
+
+		for (MBMessage message : messages) {
+			if (message.getBody().equals(body)) {
+				throw new DuplicateCommentException();
+			}
+		}
+
+		MBMessageLocalServiceUtil.addDiscussionMessage(
+			userId, StringPool.BLANK, groupId, className, classPK, threadId,
+			parentMessageId, StringPool.BLANK, body, serviceContext);
+	}
 
 	@Override
 	public long addComment(
