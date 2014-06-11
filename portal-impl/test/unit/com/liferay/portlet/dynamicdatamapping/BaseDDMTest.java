@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -32,6 +33,10 @@ import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateImpl;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormXSDDeserializerImpl;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormXSDDeserializerUtil;
+
+import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +59,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @PrepareForTest(
 	{
-		DDMStructureLocalServiceUtil.class, DDMTemplateLocalServiceUtil.class,
-		HtmlUtil.class, LocaleUtil.class, LocalizationUtil.class,
-		PropsUtil.class, SAXReaderUtil.class
+		DDMFormXSDDeserializerUtil.class, DDMStructureLocalServiceUtil.class,
+		DDMTemplateLocalServiceUtil.class, HtmlUtil.class, LocaleUtil.class,
+		LocalizationUtil.class, PropsUtil.class, SAXReaderUtil.class
 	})
 @RunWith(PowerMockRunner.class)
 public class BaseDDMTest extends PowerMockito {
@@ -65,6 +70,7 @@ public class BaseDDMTest extends PowerMockito {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
+		setUpDDMFormXSDDeserializerUtil();
 		setUpDDMStructureLocalServiceUtil();
 		setUpDDMTemplateLocalServiceUtil();
 		setUpHtmlUtil();
@@ -128,16 +134,23 @@ public class BaseDDMTest extends PowerMockito {
 		return document;
 	}
 
-	protected DDMStructure createStructure(String name, Document document) {
-		DDMStructure structure = new DDMStructureImpl();
+	protected DDMStructure createStructure(String name, Document document)
+		throws SystemException {
 
-		structure.setStructureId(RandomTestUtil.randomLong());
-		structure.setName(name);
-		structure.setDocument(document);
+		try {
+			DDMStructure structure = new DDMStructureImpl();
 
-		_structures.put(structure.getStructureId(), structure);
+			structure.setStructureId(RandomTestUtil.randomLong());
+			structure.setName(name);
+			structure.setXsd(document.formattedString());
 
-		return structure;
+			_structures.put(structure.getStructureId(), structure);
+
+			return structure;
+		}
+		catch (IOException ioe) {
+			throw new SystemException(ioe);
+		}
 	}
 
 	protected DDMStructure createStructure(String name, String... fieldNames) {
@@ -176,6 +189,14 @@ public class BaseDDMTest extends PowerMockito {
 		catch (Exception e) {
 			return null;
 		}
+	}
+
+	protected void setUpDDMFormXSDDeserializerUtil() {
+		spy(DDMFormXSDDeserializerUtil.class);
+
+		when(
+			DDMFormXSDDeserializerUtil.getDDMFormXSDDeserializer()
+		).thenReturn(new DDMFormXSDDeserializerImpl());
 	}
 
 	protected void setUpDDMStructureLocalServiceUtil() {
