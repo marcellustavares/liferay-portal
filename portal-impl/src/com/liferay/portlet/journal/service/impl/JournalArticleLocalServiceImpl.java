@@ -5921,18 +5921,21 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected Map<String, String> createFieldsValuesMap(String content)
-		throws SystemException {
+		throws PortalException {
 
 		try {
 			Map<String, String> fieldsValuesMap = new HashMap<String, String>();
 
+			XPath xPathSelector = SAXReaderUtil.createXPath(
+				"//dynamic-element");
+
 			Document document = SAXReaderUtil.read(content);
 
-			Element rootElement = document.getRootElement();
+			List<Node> nodes = xPathSelector.selectNodes(document);
 
-			List<Element> elements = rootElement.elements();
+			for (Node node : nodes) {
+				Element element = (Element)node;
 
-			for (Element element : elements) {
 				String fieldName = element.attributeValue(
 					"name", StringPool.BLANK);
 
@@ -5949,7 +5952,7 @@ public class JournalArticleLocalServiceImpl
 			return fieldsValuesMap;
 		}
 		catch (DocumentException de) {
-			throw new SystemException(de);
+			throw new PortalException(de);
 		}
 	}
 
