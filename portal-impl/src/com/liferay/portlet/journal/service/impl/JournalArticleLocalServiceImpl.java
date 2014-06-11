@@ -103,7 +103,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
@@ -5920,6 +5920,39 @@ public class JournalArticleLocalServiceImpl
 		newArticle.setContent(contentDocument.formattedString());
 	}
 
+	protected Map<String, String> createFieldsValuesMap(String content)
+		throws SystemException {
+
+		try {
+			Map<String, String> fieldsValuesMap = new HashMap<String, String>();
+
+			Document document = SAXReaderUtil.read(content);
+
+			Element rootElement = document.getRootElement();
+
+			List<Element> elements = rootElement.elements();
+
+			for (Element element : elements) {
+				String fieldName = element.attributeValue(
+					"name", StringPool.BLANK);
+
+				List<Element> dynamicContentElements = element.elements(
+					"dynamic-content");
+
+				for (Element dynamicContentElement : dynamicContentElements) {
+					String value = dynamicContentElement.getText();
+
+					fieldsValuesMap.put(fieldName, value);
+				}
+			}
+
+			return fieldsValuesMap;
+		}
+		catch (DocumentException de) {
+			throw new SystemException(de);
+		}
+	}
+
 	protected void format(
 			User user, long groupId, String articleId, double version,
 			boolean incrementVersion, Element root, Map<String, byte[]> images)
@@ -6671,36 +6704,43 @@ public class JournalArticleLocalServiceImpl
 			serviceContext, workflowContext);
 	}
 
+	protected void updateDDMFormFieldPredefinedValue(
+		DDMFormField ddmFormField, String ddmFormFieldValue) {
+
+		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
+
+		for (Locale locale : predefinedValue.getAvailableLocales()) {
+			predefinedValue.addValue(locale, ddmFormFieldValue);
+		}
+	}
+
 	protected void updateDDMStructurePredefinedValues(
 			long ddmStructureId, String content, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
-		try {
-			Document document = SAXReaderUtil.read(content);
+		Map<String, String> fieldsValuesMap = createFieldsValuesMap(content);
 
-			Element rootElement = document.getRootElement();
+		DDMStructure ddmStructure = ddmStructureLocalService.fetchDDMStructure(
+			ddmStructureId);
 
-			List<Element> elements = rootElement.elements();
+		DDMForm ddmForm = ddmStructure.getDDMForm();
 
-			for (Element element : elements) {
-				String fieldName = element.attributeValue(
-					"name", StringPool.BLANK);
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
 
-				List<Element> dynamicContentElements = element.elements(
-					"dynamic-content");
+		for (Map.Entry<String, String> fieldValue :
+				fieldsValuesMap.entrySet()) {
 
-				for (Element dynamicContentElement : dynamicContentElements) {
-					String value = dynamicContentElement.getText();
+			String ddmFormFieldName = fieldValue.getKey();
+			String ddmFormFieldValue = fieldValue.getValue();
 
-					ddmStructureLocalService.updateXSDFieldMetadata(
-						ddmStructureId, fieldName,
-						FieldConstants.PREDEFINED_VALUE, value, serviceContext);
-				}
-			}
+			updateDDMFormFieldPredefinedValue(
+				ddmFormFieldsMap.get(ddmFormFieldName), ddmFormFieldValue);
 		}
-		catch (DocumentException de) {
-			throw new SystemException(de);
-		}
+
+		ddmStructure.updateDDMForm(ddmForm);
+
+		ddmStructureLocalService.updateDDMStructure(ddmStructure);
 	}
 
 	protected void updatePreviousApprovedArticle(JournalArticle article)
