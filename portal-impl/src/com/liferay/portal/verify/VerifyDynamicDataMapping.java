@@ -402,7 +402,7 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 			updateFileUploadReferences(ddmStructureLink);
 		}
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
+		DDMForm ddmForm = ddmStructure.getDdmForm();
 
 		updateFileUploadReferences(ddmForm);
 
@@ -519,7 +519,7 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 	protected void verifyDDMStructure(DDMStructure ddmStructure)
 		throws Exception {
 
-		DDMForm ddmForm = verifyDDMForm(ddmStructure.getDDMForm());
+		DDMForm ddmForm = verifyDDMForm(ddmStructure.getDdmForm());
 
 		updateDDMStructure(ddmStructure, ddmForm);
 	}

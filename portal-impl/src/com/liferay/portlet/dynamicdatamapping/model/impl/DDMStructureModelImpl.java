@@ -861,6 +861,14 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		_type = type;
 	}
 
+	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDdmForm() {
+		return null;
+	}
+
+	public void setDdmForm(
+		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm) {
+	}
+
 	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedFieldsMap() {
 		return null;
 	}
@@ -1106,6 +1114,8 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 
 		ddmStructureModelImpl._originalDescription = ddmStructureModelImpl._description;
 
+		setDdmForm(null);
+
 		setLocalizedFieldsMap(null);
 
 		setLocalizedPersistentFieldsMap(null);
@@ -1206,6 +1216,8 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		}
 
 		ddmStructureCacheModel.type = getType();
+
+		ddmStructureCacheModel._ddmForm = getDdmForm();
 
 		ddmStructureCacheModel._localizedFieldsMap = getLocalizedFieldsMap();
 

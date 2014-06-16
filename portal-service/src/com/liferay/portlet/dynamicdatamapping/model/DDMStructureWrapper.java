@@ -925,9 +925,8 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDDMForm()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmStructure.getDDMForm();
+	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDdmForm() {
+		return _ddmStructure.getDdmForm();
 	}
 
 	@Override
@@ -1137,6 +1136,12 @@ public class DDMStructureWrapper implements DDMStructure,
 	public boolean isFieldTransient(java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmStructure.isFieldTransient(fieldName);
+	}
+
+	@Override
+	public void setDdmForm(
+		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm) {
+		_ddmStructure.setDdmForm(ddmForm);
 	}
 
 	@Override

@@ -350,7 +350,7 @@ public class JournalFeedLocalServiceImpl
 					classNameLocalService.getClassNameId(JournalArticle.class),
 					structureId);
 
-			DDMForm ddmForm = ddmStructure.getDDMForm();
+			DDMForm ddmForm = ddmStructure.getDdmForm();
 
 			Map<String, DDMFormField> ddmFormFieldsMap =
 				ddmForm.getDDMFormFieldsMap(true);

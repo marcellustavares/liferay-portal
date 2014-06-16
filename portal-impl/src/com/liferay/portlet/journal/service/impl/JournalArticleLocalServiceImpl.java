@@ -5509,7 +5509,7 @@ public class JournalArticleLocalServiceImpl
 			JournalArticle article, DDMStructure ddmStructure)
 		throws PortalException {
 
-		checkStructure(article.getDocument(), ddmStructure.getDDMForm());
+		checkStructure(article.getDocument(), ddmStructure.getDdmForm());
 	}
 
 	protected void checkStructureField(
@@ -6595,13 +6595,12 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void updateDDMStructurePredefinedValues(
-			long ddmStructureId, String content, ServiceContext serviceContext)
-		throws PortalException {
+		long ddmStructureId, String content, ServiceContext serviceContext) {
 
 		DDMStructure ddmStructure = ddmStructureLocalService.fetchDDMStructure(
 			ddmStructureId);
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
+		DDMForm ddmForm = ddmStructure.getDdmForm();
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			ddmForm.getDDMFormFieldsMap(true);
