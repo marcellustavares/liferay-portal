@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
 import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.JavaConstants;
@@ -167,6 +168,29 @@ public class IconTag extends IncludeTag {
 		_useDialog = false;
 	}
 
+	protected Map<String, Object> getData() {
+		Map<String, Object> data = null;
+
+		if (_data != null) {
+			data = new HashMap<String, Object>(_data);
+		}
+		else {
+			data = new HashMap<String, Object>(1);
+		}
+
+		if (_useDialog && Validator.isNull(data.get("title"))) {
+			String message = getProcessedMessage();
+
+			if (_localizeMessage) {
+				message = LanguageUtil.get(pageContext, message);
+			}
+
+			data.put("title", HtmlUtil.stripHtml(message));
+		}
+
+		return data;
+	}
+
 	protected String getDetails() {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -183,65 +207,93 @@ public class IconTag extends IncludeTag {
 			StringBundler sb = new StringBundler(6);
 
 			sb.append(" alt=\"");
-			sb.append(LanguageUtil.get(pageContext, _message));
+			sb.append(LanguageUtil.get(pageContext, getProcessedMessage()));
 			sb.append("\"");
 
 			if (_toolTip) {
 				sb.append(" onmouseover=\"Liferay.Portal.ToolTip.show(this, '");
-				sb.append(UnicodeLanguageUtil.get(pageContext, _message));
+				sb.append(
+					UnicodeLanguageUtil.get(
+						pageContext, getProcessedMessage()));
 				sb.append("')\"");
 			}
 			else {
 				sb.append(" title=\"");
-				sb.append(LanguageUtil.get(pageContext, _message));
+				sb.append(LanguageUtil.get(pageContext, getProcessedMessage()));
 				sb.append("\"");
 			}
 
 			details = sb.toString();
 		}
 
-		boolean auiImage = false;
+		if (Validator.isNull(_src) || !themeDisplay.isThemeImagesFastLoad() ||
+			isAUIImage()) {
 
-		if ((_image != null) && _image.startsWith(_AUI_PATH)) {
-			auiImage = true;
+			return details;
 		}
 
-		if (Validator.isNotNull(_src) && themeDisplay.isThemeImagesFastLoad() &&
-			!auiImage) {
+		SpriteImage spriteImage = null;
+		String spriteFileName = null;
+		String spriteFileURL = null;
 
-			SpriteImage spriteImage = null;
-			String spriteFileName = null;
-			String spriteFileURL = null;
+		String imageFileName = StringUtil.replace(_src, "common/../", "");
 
-			String imageFileName = StringUtil.replace(_src, "common/../", "");
+		if (imageFileName.contains(Http.PROTOCOL_DELIMITER)) {
+			String portalURL = PortalUtil.getPortalURL(request);
 
-			if (imageFileName.contains(Http.PROTOCOL_DELIMITER)) {
-				String portalURL = PortalUtil.getPortalURL(request);
+			if (imageFileName.startsWith(portalURL)) {
+				imageFileName = imageFileName.substring(portalURL.length());
+			}
+			else {
+				URL imageURL = null;
 
-				if (imageFileName.startsWith(portalURL)) {
-					imageFileName = imageFileName.substring(portalURL.length());
+				try {
+					imageURL = new URL(imageFileName);
+
+					imageFileName = imageURL.getPath();
 				}
-				else {
-					URL imageURL = null;
-
-					try {
-						imageURL = new URL(imageFileName);
-
-						imageFileName = imageURL.getPath();
-					}
-					catch (MalformedURLException e) {
-					}
+				catch (MalformedURLException e) {
 				}
 			}
+		}
 
-			Theme theme = themeDisplay.getTheme();
+		Theme theme = themeDisplay.getTheme();
 
-			String contextPath = theme.getContextPath();
+		String contextPath = theme.getContextPath();
 
-			String imagesPath = contextPath.concat(theme.getImagesPath());
+		String imagesPath = contextPath.concat(theme.getImagesPath());
 
-			if (imageFileName.startsWith(imagesPath)) {
-				spriteImage = theme.getSpriteImage(imageFileName);
+		if (imageFileName.startsWith(imagesPath)) {
+			spriteImage = theme.getSpriteImage(imageFileName);
+
+			if (spriteImage != null) {
+				spriteFileName = spriteImage.getSpriteFileName();
+
+				if (BrowserSnifferUtil.isIe(request) &&
+					(BrowserSnifferUtil.getMajorVersion(request) < 7)) {
+
+					spriteFileName = StringUtil.replace(
+						spriteFileName, ".png", ".gif");
+				}
+
+				String cdnBaseURL = themeDisplay.getCDNBaseURL();
+
+				spriteFileURL = cdnBaseURL.concat(spriteFileName);
+			}
+		}
+
+		if (spriteImage == null) {
+			Portlet portlet = (Portlet)request.getAttribute(
+				"liferay-portlet:icon_portlet:portlet");
+
+			if (portlet == null) {
+				portlet = (Portlet)request.getAttribute(WebKeys.RENDER_PORTLET);
+			}
+
+			if (portlet != null) {
+				PortletApp portletApp = portlet.getPortletApp();
+
+				spriteImage = portletApp.getSpriteImage(imageFileName);
 
 				if (spriteImage != null) {
 					spriteFileName = spriteImage.getSpriteFileName();
@@ -258,61 +310,67 @@ public class IconTag extends IncludeTag {
 					spriteFileURL = cdnBaseURL.concat(spriteFileName);
 				}
 			}
+		}
 
-			if (spriteImage == null) {
-				Portlet portlet = (Portlet)request.getAttribute(
-					"liferay-portlet:icon_portlet:portlet");
+		if (spriteImage != null) {
+			String themeImagesPath = themeDisplay.getPathThemeImages();
 
-				if (portlet == null) {
-					portlet = (Portlet)request.getAttribute(
-						WebKeys.RENDER_PORTLET);
-				}
+			_src = themeImagesPath.concat("/spacer.png");
 
-				if (portlet != null) {
-					PortletApp portletApp = portlet.getPortletApp();
+			StringBundler sb = new StringBundler(10);
 
-					spriteImage = portletApp.getSpriteImage(imageFileName);
+			sb.append(details);
+			sb.append(" style=\"background-image: url('");
+			sb.append(spriteFileURL);
+			sb.append("'); background-position: 50% -");
+			sb.append(spriteImage.getOffset());
+			sb.append("px; background-repeat: no-repeat; height: ");
+			sb.append(spriteImage.getHeight());
+			sb.append("px; width: ");
+			sb.append(spriteImage.getWidth());
+			sb.append("px;\"");
 
-					if (spriteImage != null) {
-						spriteFileName = spriteImage.getSpriteFileName();
-
-						if (BrowserSnifferUtil.isIe(request) &&
-							(BrowserSnifferUtil.getMajorVersion(request) < 7)) {
-
-							spriteFileName = StringUtil.replace(
-								spriteFileName, ".png", ".gif");
-						}
-
-						String cdnBaseURL = themeDisplay.getCDNBaseURL();
-
-						spriteFileURL = cdnBaseURL.concat(spriteFileName);
-					}
-				}
-			}
-
-			if (spriteImage != null) {
-				String themeImagesPath = themeDisplay.getPathThemeImages();
-
-				_src = themeImagesPath.concat("/spacer.png");
-
-				StringBundler sb = new StringBundler(10);
-
-				sb.append(details);
-				sb.append(" style=\"background-image: url('");
-				sb.append(spriteFileURL);
-				sb.append("'); background-position: 50% -");
-				sb.append(spriteImage.getOffset());
-				sb.append("px; background-repeat: no-repeat; height: ");
-				sb.append(spriteImage.getHeight());
-				sb.append("px; width: ");
-				sb.append(spriteImage.getWidth());
-				sb.append("px;\"");
-
-				details = sb.toString();
-			}
+			details = sb.toString();
 		}
 
 		return details;
+	}
+
+	protected String getId() {
+		if (Validator.isNotNull(_id)) {
+			return _id;
+		}
+
+		String id = (String)request.getAttribute("liferay-ui:icon-menu:id");
+
+		String message = _message;
+
+		if (Validator.isNull(message)) {
+			message = _image;
+		}
+
+		if (Validator.isNotNull(id) && Validator.isNotNull(message)) {
+			id = id.concat(StringPool.UNDERLINE).concat(
+				FriendlyURLNormalizerUtil.normalize(message));
+
+			PortletResponse portletResponse =
+				(PortletResponse)request.getAttribute(
+					JavaConstants.JAVAX_PORTLET_RESPONSE);
+
+			String namespace = StringPool.BLANK;
+
+			if (portletResponse != null) {
+				namespace = portletResponse.getNamespace();
+			}
+
+			id = PortalUtil.getUniqueElementId(
+				getOriginalServletRequest(), namespace, id);
+		}
+		else {
+			id = PortalUtil.generateRandomKey(request, IconTag.class.getName());
+		}
+
+		return id;
 	}
 
 	protected String getImage() {
@@ -323,13 +381,116 @@ public class IconTag extends IncludeTag {
 		return _message;
 	}
 
+	protected String getMethod() {
+		if (Validator.isNotNull(_method)) {
+			return _method;
+		}
+
+		String url = getUrl();
+
+		if (url.contains("p_p_lifecycle=0")) {
+			return "get";
+		}
+
+		return "post";
+	}
+
+	protected String getOnClick() {
+		String onClick = StringPool.BLANK;
+
+		if (Validator.isNotNull(_onClick)) {
+			onClick = _onClick + StringPool.SEMICOLON;
+		}
+
+		if (isForcePost()) {
+			StringBundler sb = new StringBundler(8);
+
+			sb.append("event.preventDefault();");
+			sb.append(onClick);
+			sb.append("submitForm(document.hrefFm, '");
+			sb.append(getUrl());
+			sb.append("')");
+
+			onClick = sb.toString();
+		}
+
+		return onClick;
+	}
+
 	@Override
 	protected String getPage() {
 		return _PAGE;
 	}
 
+	protected String getProcessedMessage() {
+		if (_message != null) {
+			return _message;
+		}
+
+		return StringUtil.replace(
+			_image,
+			new String[] {
+				StringPool.UNDERLINE, _AUI_PATH
+			},
+			new String[] {
+				StringPool.DASH, StringPool.BLANK
+			});
+	}
+
+	protected String getSrc() {
+		if (Validator.isNotNull(_src)) {
+			return _src;
+		}
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (isAUIImage()) {
+			return themeDisplay.getPathThemeImages().concat("/spacer.png");
+		}
+		else if (Validator.isNotNull(_image)) {
+			StringBundler sb = new StringBundler(4);
+
+			sb.append(themeDisplay.getPathThemeImages());
+			sb.append("/common/");
+			sb.append(_image);
+			sb.append(".png");
+
+			return StringUtil.replace(sb.toString(), "common/../", "");
+		}
+
+		return StringPool.BLANK;
+	}
+
+	protected String getSrcHover() {
+		if (Validator.isNotNull(_srcHover) || Validator.isNull(_imageHover)) {
+			return _srcHover;
+		}
+
+		StringBundler sb = new StringBundler(4);
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		sb.append(themeDisplay.getPathThemeImages());
+
+		sb.append("/common/");
+		sb.append(_imageHover);
+		sb.append(".png");
+
+		return sb.toString();
+	}
+
 	protected String getUrl() {
-		return _url;
+		return GetterUtil.getString(_url);
+	}
+
+	protected boolean isAUIImage() {
+		if ((_image != null) && _image.startsWith(_AUI_PATH)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -337,169 +498,52 @@ public class IconTag extends IncludeTag {
 		return _CLEAN_UP_SET_ATTRIBUTES;
 	}
 
+	protected boolean isForcePost() {
+		String method = getMethod();
+
+		if (method.equals("post")) {
+			String url = getUrl();
+
+			if (url.startsWith(Http.HTTP_WITH_SLASH) ||
+				url.startsWith(Http.HTTPS_WITH_SLASH)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		boolean auiImage = false;
-
-		if ((_image != null) && _image.startsWith(_AUI_PATH)) {
-			auiImage = true;
-		}
-
-		if (Validator.isNull(_src)) {
-			if (auiImage) {
-				_src = themeDisplay.getPathThemeImages().concat("/spacer.png");
-			}
-			else if (Validator.isNotNull(_image)) {
-				StringBundler sb = new StringBundler(4);
-
-				sb.append(themeDisplay.getPathThemeImages());
-				sb.append("/common/");
-				sb.append(_image);
-				sb.append(".png");
-
-				_src = StringUtil.replace(sb.toString(), "common/../", "");
-			}
-		}
-
-		if (_data == null) {
-			_data = new HashMap<String, Object>(1);
-		}
-
-		boolean forcePost = false;
-
-		if (_method.equals("post") &&
-			(_url.startsWith(Http.HTTP_WITH_SLASH) ||
-			 _url.startsWith(Http.HTTPS_WITH_SLASH))) {
-
-			forcePost = true;
-		}
-
-		String id = _id;
-
-		if (Validator.isNull(id)) {
-			id = (String)request.getAttribute("liferay-ui:icon-menu:id");
-
-			String message = _message;
-
-			if (Validator.isNull(message)) {
-				message = _image;
-			}
-
-			if (Validator.isNotNull(id) && Validator.isNotNull(message)) {
-				id = id.concat(StringPool.UNDERLINE).concat(
-					FriendlyURLNormalizerUtil.normalize(message));
-
-				PortletResponse portletResponse =
-					(PortletResponse)request.getAttribute(
-						JavaConstants.JAVAX_PORTLET_RESPONSE);
-
-				String namespace = StringPool.BLANK;
-
-				if (portletResponse != null) {
-					namespace = portletResponse.getNamespace();
-				}
-
-				id = PortalUtil.getUniqueElementId(
-					getOriginalServletRequest(), namespace, id);
-			}
-			else {
-				id = PortalUtil.generateRandomKey(
-					request, IconTag.class.getName());
-			}
-		}
-
-		if (_message == null) {
-			_message = StringUtil.replace(
-				_image, StringPool.UNDERLINE, StringPool.DASH);
-			_message = StringUtil.replace(
-				_message, _AUI_PATH, StringPool.BLANK);
-		}
-
-		if (_useDialog && Validator.isNull(_data.get("title"))) {
-			String message = _message;
-
-			if (_localizeMessage) {
-				message = LanguageUtil.get(pageContext, _message);
-			}
-
-			_data.put("title", HtmlUtil.stripHtml(message));
-		}
-
-		if (Validator.isNull(_method)) {
-			if (_url == null) {
-				_url = StringPool.BLANK;
-			}
-
-			int pos = _url.indexOf("p_p_lifecycle=0");
-
-			if (pos != -1) {
-				_method = "get";
-			}
-			else {
-				_method = "post";
-			}
-		}
-
-		String onClick = StringPool.BLANK;
-
-		if (Validator.isNotNull(_onClick)) {
-			onClick = _onClick + StringPool.SEMICOLON;
-		}
-
-		if (forcePost) {
-			StringBundler sb = new StringBundler(8);
-
-			sb.append("event.preventDefault();");
-			sb.append(onClick);
-			sb.append("submitForm(document.hrefFm, '");
-			sb.append(_url);
-			sb.append("')");
-
-			onClick = sb.toString();
-		}
-
-		if (Validator.isNull(_srcHover) && Validator.isNotNull(_imageHover)) {
-			StringBundler sb = new StringBundler(4);
-
-			sb.append(themeDisplay.getPathThemeImages());
-			sb.append("/common/");
-			sb.append(_imageHover);
-			sb.append(".png");
-
-			_srcHover = sb.toString();
-		}
-
 		request.setAttribute("liferay-ui:icon:alt", _alt);
 		request.setAttribute("liferay-ui:icon:ariaRole", _ariaRole);
 		request.setAttribute(
-			"liferay-ui:icon:auiImage", String.valueOf(auiImage));
+			"liferay-ui:icon:auiImage", String.valueOf(isAUIImage()));
 		request.setAttribute("liferay-ui:icon:cssClass", _cssClass);
-		request.setAttribute("liferay-ui:icon:data", _data);
+		request.setAttribute("liferay-ui:icon:data", getData());
 		request.setAttribute("liferay-ui:icon:details", getDetails());
 		request.setAttribute("liferay-ui:icon:iconCssClass", _iconCssClass);
-		request.setAttribute("liferay-ui:icon:id", id);
+		request.setAttribute("liferay-ui:icon:id", getId());
 		request.setAttribute("liferay-ui:icon:image", _image);
 		request.setAttribute("liferay-ui:icon:imageHover", _imageHover);
 		request.setAttribute(
-			"liferay-ui:icon:forcePost", String.valueOf(forcePost));
+			"liferay-ui:icon:forcePost", String.valueOf(isForcePost()));
 		request.setAttribute("liferay-ui:icon:label", String.valueOf(_label));
 		request.setAttribute("liferay-ui:icon:lang", _lang);
 		request.setAttribute("liferay-ui:icon:linkCssClass", _linkCssClass);
 		request.setAttribute(
 			"liferay-ui:icon:localizeMessage",
 			String.valueOf(_localizeMessage));
-		request.setAttribute("liferay-ui:icon:message", _message);
-		request.setAttribute("liferay-ui:icon:method", _method);
-		request.setAttribute("liferay-ui:icon:onClick", onClick);
-		request.setAttribute("liferay-ui:icon:src", _src);
-		request.setAttribute("liferay-ui:icon:srcHover", _srcHover);
+		request.setAttribute("liferay-ui:icon:message", getProcessedMessage());
+		request.setAttribute("liferay-ui:icon:method", getMethod());
+		request.setAttribute("liferay-ui:icon:onClick", getOnClick());
+		request.setAttribute("liferay-ui:icon:src", getSrc());
+		request.setAttribute("liferay-ui:icon:srcHover", getSrcHover());
 		request.setAttribute("liferay-ui:icon:target", _target);
 		request.setAttribute(
 			"liferay-ui:icon:toolTip", String.valueOf(_toolTip));
-		request.setAttribute("liferay-ui:icon:url", _url);
+		request.setAttribute("liferay-ui:icon:url", getUrl());
 		request.setAttribute(
 			"liferay-ui:icon:useDialog", String.valueOf(_useDialog));
 	}

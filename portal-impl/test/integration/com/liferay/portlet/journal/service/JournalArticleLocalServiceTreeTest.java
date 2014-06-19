@@ -27,7 +27,6 @@ import com.liferay.portlet.journal.util.test.JournalTestUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
