@@ -51,7 +51,6 @@ import com.liferay.portal.wab.extender.internal.introspection.ClassLoaderSource;
 import com.liferay.portal.wab.extender.internal.introspection.Source;
 import com.liferay.portal.wab.extender.internal.util.AntUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
-import com.liferay.util.xml.DocUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -111,6 +110,12 @@ public class WabProcessor {
 		// TODO
 
 		return null;
+	}
+
+	protected void addElement(Element element, String name, String text) {
+		Element childElement = element.addElement(name);
+
+		childElement.addText(GetterUtil.getString(text));
 	}
 
 	protected File autoDeploy() {
@@ -602,10 +607,10 @@ public class WabProcessor {
 			Element initParamElement = SAXReaderUtil.createElement(
 				SAXReaderUtil.createQName("init-param", qName.getNamespace()));
 
-			DocUtil.add(
-				initParamElement,"name",
+			addElement(
+				initParamElement, "name",
 				"com.liferay.portal.invokerPortletName");
-			DocUtil.add(initParamElement,"value", invokerPortletName);
+			addElement(initParamElement, "value", invokerPortletName);
 
 			nodes.add(index + 1, initParamElement);
 		}
