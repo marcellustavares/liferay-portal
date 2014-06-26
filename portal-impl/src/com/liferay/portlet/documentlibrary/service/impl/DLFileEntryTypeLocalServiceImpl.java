@@ -609,6 +609,10 @@ public class DLFileEntryTypeLocalServiceImpl
 
 		String definition = ParamUtil.getString(serviceContext, "definition");
 
+		if (Validator.isNull(definition)) {
+			definition = ParamUtil.getString(serviceContext, "xsd");
+		}
+
 		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
 			groupId,
 			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
