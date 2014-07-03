@@ -113,7 +113,6 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 
 	var availableFields;
 	var formEditor;
-	var xmlFormatter;
 
 	var displayMessage = function(type, message) {
 		var messageContainer = A.one('#<portlet:namespace />messageContainer');
@@ -132,14 +131,14 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 		messageContainer.show();
 	};
 
-	var getContentDefinition = function() {
+	var getContentValue = function() {
 		var content;
 
 		if (formEditor && !isViewTabActive()) {
 			content = formEditor.get(STR_VALUE);
 		}
 		else {
-			content = formBuilder.getDefinition();
+			content = formBuilder.getContent();
 		}
 
 		return content;
@@ -196,14 +195,14 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 		if (!isViewTabActive()) {
 			getFormEditor().set('width', A.one('#<portlet:namespace />formBuilderSourceWrapper').get('clientWidth'));
 		}
-	}
+	};
 
 	var switchToSource = function() {
 		setEditorSize();
 
-		var content = formBuilder.getDefinition();
+		var content = formBuilder.getContent();
 
-		getFormEditor().set(STR_VALUE, A.JSON.stringify(content, null, 4));
+		getFormEditor().set(STR_VALUE, content);
 	};
 
 	var switchToView = function() {
@@ -276,12 +275,12 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 
 	window.<portlet:namespace />formBuilder = formBuilder;
 
-	window.<portlet:namespace />getContentDefinition = getContentDefinition;
+	window.<portlet:namespace />getContentValue = getContentValue;
 
 	Liferay.on(
 		'<portlet:namespace />saveTemplate',
 		function(event) {
-			A.one('#<portlet:namespace />scriptContent').val(getContentDefinition());
+			A.one('#<portlet:namespace />scriptContent').val(getContentValue());
 		}
 	);
 

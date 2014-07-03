@@ -9,43 +9,28 @@ AUI.add(
 		var instanceOf = A.instanceOf;
 		var isObject = Lang.isObject;
 
-		var LOCALIZABLE_FIELD_ATTRS = ['label', 'predefinedValue', 'tip'];
+		var DEFAULTS_FORM_VALIDATOR = A.config.FormValidator;
+
+		var LOCALIZABLE_FIELD_ATTRS = ['label', 'predefinedValue', 'style' ,'tip'];
+
+		var UNLOCALIZABLE_FIELD_ATTRS = ['dataType', 'fieldNamespace', 'indexType', 'localizable', 'multiple', 'name', 'readOnly', 'showLabel', 'repeatable', 'required', 'type'];
 
 		var MAP_HIDDEN_FIELD_ATTRS = {
 			checkbox: ['readOnly', 'required'],
 
-			separator: ['readOnly', 'required', 'predefinedValue', 'indexType'],
+			DEFAULT: ['readOnly'],
 
-			DEFAULT: ['readOnly']
+			separator: ['readOnly', 'required', 'predefinedValue', 'indexType']
 		};
 
 		var STR_BLANK = '';
 
 		var STR_SPACE = ' ';
 
-		var UNLOCALIZABLE_FIELD_ATTRS = ['indexType', 'name', 'required', 'repeatable', 'showLabel'];
+		DEFAULTS_FORM_VALIDATOR.STRINGS.structureFieldName = Liferay.Language.get('please-enter-only-alphanumeric-characters');
 
-		var LAYOUT_FIELD_ATTRS = {
-			label: 1,
-			predefinedValue: 1,
-			style: 1,
-			tip: 1,
-			type: 1,
-			visibility: 1,
-			width: 1
-		};
-
-		var STRUCTURE_FIELD_ATTRS = {
-			calculatedValueExpression: 1,
-			dataType: 1,
-			indexType: 1,
-			localizable: 1,
-			multiple: 1,
-			name: 1,
-			nestedFields: 1,
-			repeatable: 1,
-			required: 1,
-			validation: 1
+		DEFAULTS_FORM_VALIDATOR.RULES.structureFieldName = function(value) {
+			return (/^[\w\-]+$/).test(value);
 		};
 
 		var LiferayAvailableField = A.Component.create(
@@ -192,118 +177,45 @@ AUI.add(
 						return field;
 					},
 
-					getContentDefinition: function() {
+					getContentValue: function() {
 						var instance = this;
 
-						return window[instance.get('portletNamespace') + 'getContentDefinition']();
+						return window[instance.get('portletNamespace') + 'getContentValue']();
 					},
 
-					getFieldLocalizedValue: function(field, attribute, locale) {
+					getContent: function() {
 						var instance = this;
 
-						var localizationMap = field.get('localizationMap');
+						var structure = {};
 
-						var value = A.Object.getValue(localizationMap, [locale, attribute]) || field.get(attribute);
+						instance._addStructureAvailableLanguageIds(structure);
+						instance._addStructureDefaultLanguageId(structure);
+						instance._addStructureFields(structure);
 
-						return instance.normalizeValue(value);
-					},
-
-					getDefinition: function() {
-						var instance = this;
-
-						var fields = {};
-
-						var fieldNames = [];
-
-						var layoutFields = {};
-
-						var structureFields = {};
-
-						var translationManager = instance.translationManager;
-
-						var editingLocale = translationManager.get('editingLocale');
-
-						instance._updateFieldsLocalizationMap(editingLocale);
-
-						layoutFields.availableLanguages = translationManager.get('availableLocales');
-						layoutFields.defaultLanguage = translationManager.get('defaultLocale');
-						layoutFields.fieldsLayout = {};
-
-						instance.get('fields').each(
-							function(field) {
-								var name = field.get('name');
-
-								fieldNames.push(name);
-
-								instance._addFieldProperties(field, layoutFields, structureFields);
-							}
-						);
-
-						layoutFields.pages = [
-							{
-								sections: [
-									{
-										fields: fieldNames
-									}
-								]
-							}
-						];
-
-						fields.layout = layoutFields;
-						fields.structure = structureFields;
-
-						return fields;
+						return A.JSON.stringify(structure, null, 4);
 					},
 
 					getParsedDefinition: function(content) {
 						var instance = this;
 
-						var fields = {};
+						var availableLanguageIds = content.availableLanguageIds;
 
-						var layout = content.layout;
+						var fields = content.fields;
 
-						var parsedContent = [];
+						A.each(
+							fields,
+							function(field) {
+								instance._addLocalizationMapField(field, availableLanguageIds);
 
-						var structure = content.structure;
-
-						var translationManager = instance.translationManager;
-
-						for (var prop in layout.fieldsLayout) {
-							fields[prop] = {};
-							fields[prop].id = prop;
-
-							for (var prop2 in layout.fieldsLayout[prop]) {
-								fields[prop][prop2] = layout.fieldsLayout[prop][prop2];
-							}
-
-							for (var index in layout.availableLanguages){
-								var locale = layout.availableLanguages[index];
-								fields[prop]['localizationMap'] = fields[prop]['localizationMap'] || {};
-								fields[prop]['localizationMap'][locale] = fields[prop]['localizationMap'][locale] || {};
-
-								for (var index2 in instance.LOCALIZABLE_FIELD_ATTRS) {
-									var localizableField = instance.LOCALIZABLE_FIELD_ATTRS[index2];
-									fields[prop]['localizationMap'][locale][localizableField] = layout.fieldsLayout[prop][localizableField][locale];
+								if (field.options) {
+									instance._addLocalizationMapFieldForOptions(field, content.availableLanguageIds);
 								}
 							}
+						);
 
-						}
+						instance._addLocalizableFields(fields);
 
-						for (var prop in structure) {
-							for (var prop2 in structure[prop]) {
-								fields[prop][prop2] = structure[prop][prop2];
-							}
-						}
-
-						for (var prop in fields) {
-							for (var index in instance.LOCALIZABLE_FIELD_ATTRS) {
-								var localizableField = instance.LOCALIZABLE_FIELD_ATTRS[index];
-								fields[prop][localizableField] = fields[prop][localizableField][instance.translationManager.get('editingLocale')];
-							}
-							parsedContent.push(fields[prop]);
-						}
-
-						return parsedContent;
+						return fields;
 					},
 
 					normalizeKey: function(str) {
@@ -329,10 +241,133 @@ AUI.add(
 						return value;
 					},
 
-					_addFieldOptions: function(field, layoutFields) {
+					_addLocalizableFields: function(fields) {
 						var instance = this;
 
-						var fieldName = field.get('name');
+						A.each(
+							fields,
+							function(field) {
+								A.each(
+									instance.LOCALIZABLE_FIELD_ATTRS,
+									function(localizableField) {
+										if (field[localizableField]) {
+											field[localizableField] = field[localizableField][instance.translationManager.get('editingLocale')];
+										}
+									}
+								);
+							}
+						);
+					},
+
+					_addLocalizationMapField: function(field, availableLanguageIds) {
+						var instance = this;
+
+						A.each(
+							availableLanguageIds,
+							function(language) {
+
+								field.localizationMap = field.localizationMap || {};
+								field.localizationMap[language] = {};
+
+								A.each(
+									instance.LOCALIZABLE_FIELD_ATTRS,
+									function(localizableField) {
+										if (field[localizableField]) {
+											field.localizationMap[language][localizableField] = field[localizableField][language];
+										}
+
+									}
+								);
+							}
+						);
+					},
+
+					_addLocalizationMapFieldForOptions: function(field, availableLanguageIds) {
+						var instance = this;
+
+						var labels;
+
+						var translationManager = instance.translationManager;
+
+						A.each(
+							field.options,
+							function(option) {
+								labels = option.label;
+								option.label = labels[translationManager.get('editingLocale')];
+								option.localizationMap = {};
+								A.each(
+									availableLanguageIds,
+									function(language) {
+										option.localizationMap[language] = {};
+										option.localizationMap[language]['label'] = labels[language];
+									}
+								);
+							}
+						);
+					},
+
+					_addStructureAvailableLanguageIds: function(structure) {
+						var instance = this;
+
+						var translationManager = instance.translationManager;
+
+						structure.availableLanguageIds = translationManager.get('availableLocales');
+					},
+
+					_addStructureDefaultLanguageId: function(structure) {
+						var instance = this;
+
+						var translationManager = instance.translationManager;
+
+						structure.defaultLanguageId = translationManager.get('defaultLocale');
+					},
+
+					_addStructureFieldLocalizedAttributes: function(field, structureField) {
+						var instance = this;
+
+						AArray.each(
+							LOCALIZABLE_FIELD_ATTRS,
+							function(attr) {
+								var fieldAttr = field.get(attr);
+
+								if (fieldAttr) {
+									structureField[attr] = instance._getLocalizedValue(field, attr);
+								}
+							}
+						);
+					},
+
+					_addStructureFieldNestedFields: function(field, structureField) {
+						var instance = this;
+
+						var nestedFields = [];
+
+						field.get('fields').each(
+							function(childField) {
+								var structureField = instance._toStructureField(childField);
+
+								nestedFields.push(structureField);
+							}
+						);
+
+						if (nestedFields.length > 0) {
+							structureField.nestedFields = nestedFields;
+						}
+					},
+
+					_addStructureFieldUnlocalizedAttributes: function(field, structureField) {
+						var instance = this;
+
+						AArray.each(
+							UNLOCALIZABLE_FIELD_ATTRS,
+							function(attr) {
+								structureField[attr] = field.get(attr);
+							}
+						);
+					},
+
+					_addStructureFieldOptions: function(field, structureField) {
+						var instance = this;
 
 						var options = field.get('options');
 
@@ -347,12 +382,12 @@ AUI.add(
 									var localizationMap = option.localizationMap;
 
 									fieldOption.value = option.value;
-									fieldOption.labels = {};
+									fieldOption.label = {};
 
 									A.each(
 										localizationMap,
 										function(item, index, collection) {
-											fieldOption.labels[index] = instance.normalizeValue(item.label);
+											fieldOption.label[index] = instance.normalizeValue(item.label);
 										}
 									);
 
@@ -360,72 +395,20 @@ AUI.add(
 								}
 							);
 
-							layoutFields.fieldsLayout[fieldName].options = fieldOptions;
+							structureField.options = fieldOptions;
 						}
 					},
 
-					_addFieldProperties: function(field, layoutFields, structureFields) {
+					_addStructureFields: function(structure) {
 						var instance = this;
 
-						var name = field.get('name');
+						structure.fields = [];
 
-						var nestedFieldNames = [];
+						instance.get('fields').each(
+							function(field) {
+								var structureField = instance._toStructureField(field);
 
-						layoutFields.fieldsLayout[name] = {};
-						structureFields[name] = {};
-
-						// Adding nested fields.
-						field.get('fields').each(
-							function(childField) {
-								nestedFieldNames.push(childField.get('name'));
-
-								instance._addFieldProperties(childField, layoutFields, structureFields);
-							}
-						);
-
-						if (nestedFieldNames.length > 0) {
-							structureFields[name].nestedFields = nestedFieldNames;
-						}
-
-						instance._addFieldOptions(field, layoutFields);
-
-						layoutFields.fieldsLayout[name]['visibility'] = '<Visibility-expression-here>';
-						layoutFields.fieldsLayout[name]['validation'] = '<Validation-expression-here>';
-						layoutFields.fieldsLayout[name]['style'] = '<Bootstrap-css-class-here>';
-						structureFields[name]['dataType'] =  field.get('dataType');
-						structureFields[name]['fieldNamespace'] = field.get('fieldNamespace');
-						structureFields[name]['multiple'] = field.get('multiple');
-						structureFields[name]['readOnly'] = field.get('readOnly');
-
-						AArray.each(
-							field.getProperties(),
-							function(item) {
-								var attributeName = item.attributeName;
-
-								if (LAYOUT_FIELD_ATTRS[attributeName]) {
-									layoutFields.fieldsLayout[name][attributeName] = {};
-
-									if (LOCALIZABLE_FIELD_ATTRS.indexOf(attributeName) > -1) {
-										AArray.each(
-											layoutFields.availableLanguages,
-											function(item2) {
-												var attributeValue = instance.getFieldLocalizedValue(field, attributeName, item2);
-
-												if ((attributeName === 'predefinedValue') && instanceOf(field, A.FormBuilderMultipleChoiceField)) {
-													attributeValue = A.JSON.stringify(AArray(attributeValue));
-												}
-
-												layoutFields.fieldsLayout[name][attributeName][item2] = attributeValue;
-											}
-										)
-									}
-									else {
-										layoutFields.fieldsLayout[name][attributeName] = field.get(attributeName);
-									}
-								}
-								else if (STRUCTURE_FIELD_ATTRS[attributeName]) {
-									structureFields[name][attributeName] = field.get(attributeName);
-								}
+								structure.fields.push(structureField);
 							}
 						);
 					},
@@ -440,6 +423,27 @@ AUI.add(
 						instance._syncFieldsLocaleUI(event.newVal);
 
 						instance._toggleInputDirection(event.newVal);
+					},
+
+					_getLocalizedValue: function(field, attribute, locale) {
+						var instance = this;
+
+						var localizationMap = field.get('localizationMap');
+
+						var localizedValue = {};
+
+						var translationManager = instance.translationManager;
+
+						AArray.each(
+							translationManager.get('availableLocales'),
+							function(locale) {
+								var value = A.Object.getValue(localizationMap, [locale, attribute]) || field.get(attribute);
+
+								localizedValue[locale] = instance.normalizeValue(value);
+							}
+						);
+
+						return localizedValue;
 					},
 
 					_getReadOnlyFieldAttributes: function(field) {
@@ -615,6 +619,19 @@ AUI.add(
 
 						BODY.toggleClass('form-builder-ltr-inputs', !rtl);
 						BODY.toggleClass('form-builder-rtl-inputs', rtl);
+					},
+
+					_toStructureField: function(field) {
+						var instance = this;
+
+						var structureField = {};
+
+						instance._addStructureFieldLocalizedAttributes(field, structureField);
+						instance._addStructureFieldUnlocalizedAttributes(field, structureField);
+						instance._addStructureFieldOptions(field, structureField);
+						instance._addStructureFieldNestedFields(field, structureField);
+
+						return structureField;
 					},
 
 					_updateFieldOptionsLocalizationMap: function(field, locale) {
