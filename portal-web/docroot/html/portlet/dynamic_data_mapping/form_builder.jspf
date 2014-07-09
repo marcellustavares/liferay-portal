@@ -178,17 +178,6 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 	};
 
 	var reloadFormBuilderData = function(content) {
-		getLoadingMask().toggle(true);
-
-		if (!Lang.isValue(content)) {
-			content = window.<portlet:namespace />getContentDefinition();
-		}
-
-		content = formBuilder.getParsedDefinition(A.JSON.parse(content));
-
-		formBuilder.set('fields', content);
-
-		getLoadingMask().toggle(false);
 	};
 
 	var setEditorSize = function() {
