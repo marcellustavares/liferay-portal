@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDSerializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
@@ -104,101 +105,75 @@ public class DDMXSDImpl implements DDMXSD {
 			defaultReadOnlyTemplateId, defaultReadOnlyTemplateURL);
 	}
 
-	@Override
-	public String getFieldHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			Element element, Fields fields, String portletNamespace,
-			String namespace, String mode, boolean readOnly, Locale locale)
-		throws Exception {
+	public Map<String, Object> getFieldContext(
+		HttpServletRequest request, HttpServletResponse response,
+		String portletNamespace, String namespace,
+		Element dynamicElementElement, Locale locale) {
 
-		Map<String, Object> freeMarkerContext = getFreeMarkerContext(
-			request, response, portletNamespace, namespace, element, locale);
+		Map<String, Map<String, Object>> fieldsContext = getFieldsContext(
+			request, response, portletNamespace, namespace);
 
-		if (fields != null) {
-			freeMarkerContext.put("fields", fields);
+		String name = dynamicElementElement.attributeValue("name");
+
+		Map<String, Object> fieldContext = fieldsContext.get(name);
+
+		if (fieldContext != null) {
+			return fieldContext;
 		}
 
-		Map<String, Object> fieldStructure =
-			(Map<String, Object>)freeMarkerContext.get("fieldStructure");
+		Document document = dynamicElementElement.getDocument();
 
-		int fieldRepetition = 1;
-		int offset = 0;
+		String[] availableLanguageIds =
+			LocalizationUtil.getAvailableLanguageIds(document);
 
-		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
-			request, response, fields, portletNamespace, namespace);
+		String defaultLanguageId = LocalizationUtil.getDefaultLanguageId(
+			document);
 
-		String name = element.attributeValue("name");
+		String editingLanguageId = LocaleUtil.toLanguageId(locale);
 
-		String fieldDisplayValue = getFieldsDisplayValue(
-			request, response, fields);
+		String structureLanguageId = editingLanguageId;
 
-		String[] fieldsDisplayValues = getFieldsDisplayValues(
-			fieldDisplayValue);
-
-		boolean fieldDisplayable = ArrayUtil.contains(
-			fieldsDisplayValues, name);
-
-		if (fieldDisplayable) {
-			Map<String, Object> parentFieldStructure =
-				(Map<String, Object>)freeMarkerContext.get(
-					"parentFieldStructure");
-
-			String parentFieldName = (String)parentFieldStructure.get("name");
-
-			offset = getFieldOffset(
-				fieldsDisplayValues, name, ddmFieldsCounter.get(name));
-
-			if (offset == fieldsDisplayValues.length) {
-				return StringPool.BLANK;
-			}
-
-			fieldRepetition = countFieldRepetition(
-				fieldsDisplayValues, parentFieldName, offset);
+		if (!ArrayUtil.contains(availableLanguageIds, editingLanguageId)) {
+			structureLanguageId = defaultLanguageId;
 		}
 
-		StringBundler sb = new StringBundler(fieldRepetition);
+		Element metadataElement =
+			(Element)dynamicElementElement.selectSingleNode(
+				"meta-data[@locale='" + structureLanguageId + "']");
 
-		while (fieldRepetition > 0) {
-			offset = getFieldOffset(
-				fieldsDisplayValues, name, ddmFieldsCounter.get(name));
+		fieldContext = new HashMap<String, Object>();
 
-			String fieldNamespace = StringUtil.randomId();
-
-			if (fieldDisplayable) {
-				fieldNamespace = getFieldNamespace(
-					fieldDisplayValue, ddmFieldsCounter, offset);
+		if (metadataElement != null) {
+			for (Element metadataEntry : metadataElement.elements()) {
+				fieldContext.put(
+					metadataEntry.attributeValue("name"),
+					metadataEntry.getText());
 			}
-
-			fieldStructure.put("fieldNamespace", fieldNamespace);
-
-			fieldStructure.put("valueIndex", ddmFieldsCounter.get(name));
-
-			if (fieldDisplayable) {
-				ddmFieldsCounter.incrementKey(name);
-			}
-
-			String childrenHTML = getHTML(
-				request, response, element, fields, portletNamespace, namespace,
-				mode, readOnly, locale);
-
-			fieldStructure.put("children", childrenHTML);
-
-			boolean disabled = GetterUtil.getBoolean(
-				fieldStructure.get("disabled"), false);
-
-			if (disabled) {
-				readOnly = true;
-			}
-
-			sb.append(
-				processFTL(
-					request, response, element, mode, readOnly,
-					freeMarkerContext));
-
-			fieldRepetition--;
 		}
 
-		return sb.toString();
+		for (Attribute attribute : dynamicElementElement.attributes()) {
+			fieldContext.put(attribute.getName(), attribute.getValue());
+		}
+
+		boolean localizable = GetterUtil.getBoolean(
+			dynamicElementElement.attributeValue("localizable"), true);
+
+		if (!localizable && !editingLanguageId.equals(defaultLanguageId)) {
+			fieldContext.put("disabled", Boolean.TRUE.toString());
+		}
+
+		fieldContext.put("fieldNamespace", StringUtil.randomId());
+
+		boolean checkRequired = GetterUtil.getBoolean(
+			request.getAttribute("checkRequired"), true);
+
+		if (!checkRequired) {
+			fieldContext.put("required", Boolean.FALSE.toString());
+		}
+
+		fieldsContext.put(name, fieldContext);
+
+		return fieldContext;
 	}
 
 	@Override
@@ -209,147 +184,70 @@ public class DDMXSDImpl implements DDMXSD {
 			boolean readOnly, Locale locale)
 		throws Exception {
 
-		String xsd = getXSD(classNameId, classPK);
+		long ddmStructureClassNameId = PortalUtil.getClassNameId(
+			DDMStructure.class);
 
-		Document document = SAXReaderUtil.read(xsd);
+		long ddmTemplateClassNameId = PortalUtil.getClassNameId(
+			DDMTemplate.class);
 
-		String xPathExpression =
-			"//dynamic-element[@name=".concat(
-				HtmlUtil.escapeXPathAttribute(fieldName)).concat("]");
-
-		XPath xPathSelector = SAXReaderUtil.createXPath(xPathExpression);
-
-		Node node = xPathSelector.selectSingleNode(document.getRootElement());
-
-		Element element = (Element)node.asXPathResult(node.getParent());
-
-		return getFieldHTML(
-			request, response, element, fields, portletNamespace, namespace,
-			mode, readOnly, locale);
-	}
-
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			DDMStructure ddmStructure, Fields fields, String portletNamespace,
-			String namespace, boolean readOnly, Locale locale)
-		throws Exception {
-
-		return getHTML(
-			request, response, ddmStructure.getDefinition(), fields,
-			portletNamespace, namespace, readOnly, locale);
-	}
-
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			DDMTemplate ddmTemplate, Fields fields, String portletNamespace,
-			String namespace, boolean readOnly, Locale locale)
-		throws Exception {
-
-		return getHTML(
-			request, response, ddmTemplate.getScript(), fields,
-			portletNamespace, namespace, ddmTemplate.getMode(), readOnly,
-			locale);
-	}
-
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			Element element, Fields fields, String portletNamespace,
-			Locale locale)
-		throws Exception {
-
-		return getHTML(
-			request, response, element, fields, portletNamespace,
-			StringPool.BLANK, null, false, locale);
-	}
-
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			Element element, Fields fields, String portletNamespace,
-			String namespace, String mode, boolean readOnly, Locale locale)
-		throws Exception {
-
-		List<Element> dynamicElementElements = element.elements(
-			"dynamic-element");
-
-		StringBundler sb = new StringBundler(dynamicElementElements.size());
-
-		for (Element dynamicElementElement : dynamicElementElements) {
-			sb.append(
-				getFieldHTML(
-					request, response, dynamicElementElement, fields,
-					portletNamespace, namespace, mode, readOnly, locale));
+		if (classNameId == ddmStructureClassNameId) {
+			return getDDMStructureFieldHTMLByName(
+				request, response, classPK, fieldName, fields, portletNamespace,
+				namespace, mode, readOnly, locale);
+		}
+		else if (classNameId == ddmTemplateClassNameId) {
+			return getDDMTemplateFieldHTMLByName(
+				request, response, classPK, fieldName, fields, portletNamespace,
+				namespace, mode, readOnly, locale);
 		}
 
-		return sb.toString();
+		return null;
 	}
 
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			Element element, String portletNamespace, Locale locale)
-		throws Exception {
+	public Map<String, Map<String, Object>> getFieldsContext(
+		HttpServletRequest request, HttpServletResponse response,
+		String portletNamespace, String namespace) {
 
-		return getHTML(
-			request, response, element, null, portletNamespace, locale);
-	}
+		String fieldsContextKey =
+			portletNamespace + namespace + "fieldsContext";
 
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			String xml, Fields fields, String portletNamespace, Locale locale)
-		throws Exception {
+		Map<String, Map<String, Object>> fieldsContext =
+			(Map<String, Map<String, Object>>)request.getAttribute(
+				fieldsContextKey);
 
-		return getHTML(
-			request, response, xml, fields, portletNamespace, StringPool.BLANK,
-			locale);
-	}
+		if (fieldsContext == null) {
+			fieldsContext = new HashMap<String, Map<String, Object>>();
 
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			String xml, Fields fields, String portletNamespace,
-			String namespace, boolean readOnly, Locale locale)
-		throws Exception {
+			request.setAttribute(fieldsContextKey, fieldsContext);
+		}
 
-		return getHTML(
-			request, response, xml, fields, portletNamespace, namespace, null,
-			readOnly, locale);
+		return fieldsContext;
 	}
 
 	@Override
 	public String getHTML(
 			HttpServletRequest request, HttpServletResponse response,
-			String xml, Fields fields, String portletNamespace,
-			String namespace, Locale locale)
+			long classNameId, long classPK, Fields fields,
+			String portletNamespace, String namespace, String mode,
+			boolean readOnly, Locale locale)
 		throws Exception {
 
-		return getHTML(
-			request, response, xml, fields, portletNamespace, namespace, false,
-			locale);
-	}
+		if ((classNameId <= 0) || (classPK <= 0)) {
+			return null;
+		}
 
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			String xml, Fields fields, String portletNamespace,
-			String namespace, String mode, boolean readOnly, Locale locale)
-		throws Exception {
+		if (classNameId == PortalUtil.getClassNameId(DDMStructure.class)) {
+			return getDDMStructureHTML(
+				request, response, classPK, fields, portletNamespace, namespace,
+				mode, readOnly, locale);
+		}
+		else if (classNameId == PortalUtil.getClassNameId(DDMTemplate.class)) {
+			return getDDMTemplateHTML(
+				request, response, classPK, fields, portletNamespace, namespace,
+				mode, readOnly, locale);
+		}
 
-		Document document = SAXReaderUtil.read(xml);
-
-		return getHTML(
-			request, response, document.getRootElement(), fields,
-			portletNamespace, namespace, mode, readOnly, locale);
-	}
-
-	@Override
-	public String getHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			String xml, String portletNamespace, Locale locale)
-		throws Exception {
-
-		return getHTML(request, response, xml, null, locale);
+		return null;
 	}
 
 	@Override
@@ -371,97 +269,6 @@ public class DDMXSDImpl implements DDMXSD {
 	}
 
 	@Override
-	public JSONArray getJSONArray(Document document) throws PortalException {
-		return getJSONArray(document.getRootElement());
-	}
-
-	@Override
-	public JSONArray getJSONArray(Element element) throws PortalException {
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		Document document = element.getDocument();
-
-		String defaultLanguageId = LocalizationUtil.getDefaultLanguageId(
-			document.asXML());
-
-		List<Element> dynamicElementElements = element.elements(
-			"dynamic-element");
-
-		for (Element dynamicElementElement : dynamicElementElements) {
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-			JSONObject localizationMapJSONObject =
-				JSONFactoryUtil.createJSONObject();
-
-			for (Attribute attribute : dynamicElementElement.attributes()) {
-				jsonObject.put(attribute.getName(), attribute.getValue());
-			}
-
-			jsonObject.put("autoGeneratedName", false);
-			jsonObject.put("id", dynamicElementElement.attributeValue("name"));
-
-			String type = jsonObject.getString("type");
-
-			List<Element> metadataElements = dynamicElementElement.elements(
-				"meta-data");
-
-			for (Element metadataElement : metadataElements) {
-				if (metadataElement == null) {
-					continue;
-				}
-
-				String locale = metadataElement.attributeValue("locale");
-
-				JSONObject localeMap = JSONFactoryUtil.createJSONObject();
-
-				for (Element metadataEntryElement :
-						metadataElement.elements()) {
-
-					String attributeName = metadataEntryElement.attributeValue(
-						"name");
-					String attributeValue = metadataEntryElement.getTextTrim();
-
-					putMetadataValue(
-						localeMap, attributeName, attributeValue, type);
-
-					if (defaultLanguageId.equals(locale)) {
-						putMetadataValue(
-							jsonObject, attributeName, attributeValue, type);
-					}
-				}
-
-				localizationMapJSONObject.put(locale, localeMap);
-			}
-
-			jsonObject.put("localizationMap", localizationMapJSONObject);
-
-			JSONArray hiddenAttributesJSONArray =
-				JSONFactoryUtil.createJSONArray();
-
-			if (type.equals(DDMImpl.TYPE_CHECKBOX)) {
-				hiddenAttributesJSONArray.put("required");
-			}
-
-			hiddenAttributesJSONArray.put("readOnly");
-
-			jsonObject.put("hiddenAttributes", hiddenAttributesJSONArray);
-
-			String key = "fields";
-
-			if (type.equals(DDMImpl.TYPE_RADIO) ||
-				type.equals(DDMImpl.TYPE_SELECT)) {
-
-				key = "options";
-			}
-
-			jsonObject.put(key, getJSONArray(dynamicElementElement));
-
-			jsonArray.put(jsonObject);
-		}
-
-		return jsonArray;
-	}
-
-	@Override
 	public JSONArray getJSONArray(String xml) throws PortalException {
 		try {
 			return getJSONArray(SAXReaderUtil.read(xml));
@@ -469,62 +276,6 @@ public class DDMXSDImpl implements DDMXSD {
 		catch (DocumentException de) {
 			throw new SystemException();
 		}
-	}
-
-	@Override
-	public String getSimpleFieldHTML(
-			HttpServletRequest request, HttpServletResponse response,
-			Element element, Field field, String portletNamespace,
-			String namespace, String mode, boolean readOnly, Locale locale)
-		throws Exception {
-
-		Map<String, Object> freeMarkerContext = getFreeMarkerContext(
-			request, response, portletNamespace, namespace, element, locale);
-
-		freeMarkerContext.put("ignoreRepeatable", Boolean.TRUE);
-
-		Map<String, Object> fieldStructure =
-			(Map<String, Object>)freeMarkerContext.get("fieldStructure");
-
-		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
-			request, response, null, portletNamespace, namespace);
-
-		String name = element.attributeValue("name");
-
-		if ((field != null) && Validator.isNotNull(field.getValue())) {
-			Fields fields = new Fields();
-
-			fields.put(field);
-
-			freeMarkerContext.put("fields", fields);
-		}
-
-		fieldStructure.put("fieldNamespace", StringUtil.randomId());
-		fieldStructure.put("valueIndex", ddmFieldsCounter.get(name));
-
-		List<Element> dynamicElementElements = element.elements(
-			"dynamic-element");
-
-		StringBundler sb = new StringBundler(dynamicElementElements.size());
-
-		for (Element dynamicElementElement : dynamicElementElements) {
-			String type = dynamicElementElement.attributeValue("type");
-
-			if (!type.equals("option")) {
-				sb.append(StringPool.BLANK);
-			}
-			else {
-				sb.append(
-					getSimpleFieldHTML(
-						request, response, dynamicElementElement, field,
-						portletNamespace, namespace, mode, readOnly, locale));
-			}
-		}
-
-		fieldStructure.put("children", sb.toString());
-
-		return processFTL(
-			request, response, element, mode, readOnly, freeMarkerContext);
 	}
 
 	@Override
@@ -624,75 +375,238 @@ public class DDMXSDImpl implements DDMXSD {
 		return total;
 	}
 
-	protected Map<String, Object> getFieldContext(
-		HttpServletRequest request, HttpServletResponse response,
-		String portletNamespace, String namespace,
-		Element dynamicElementElement, Locale locale) {
+	protected String getDDMFormFieldHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			DDMFormField ddmFormField, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws PortalException {
 
-		Map<String, Map<String, Object>> fieldsContext = getFieldsContext(
-			request, response, portletNamespace, namespace);
+		DDMFormFieldRenderer renderer =
+			DDMFormFieldRendererRegistryUtil.getDDMFormFieldRenderer(
+				ddmFormField.getType());
 
-		String name = dynamicElementElement.attributeValue("name");
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
+			new DDMFormFieldRenderingContext(
+				request, response, portletNamespace, namespace, mode, readOnly,
+				locale);
 
-		Map<String, Object> fieldContext = fieldsContext.get(name);
+		if (fields != null) {
+			return renderer.renderFilledDDMFormField(
+				ddmFormField, fields, ddmFormFieldRenderingContext);
+		}
+		else {
+			return renderer.renderEmptyDDMFormField(
+				ddmFormField, ddmFormFieldRenderingContext);
+		}
+	}
 
-		if (fieldContext != null) {
-			return fieldContext;
+	protected String getDDMFormHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			DDMForm ddmForm, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws PortalException {
+
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
+		StringBundler sb = new StringBundler(ddmFormFields.size());
+
+		for (DDMFormField ddmFormField : ddmFormFields) {
+			sb.append(
+				getDDMFormFieldHTML(
+					request, response, ddmFormField, fields, portletNamespace,
+					namespace, mode, readOnly, locale));
 		}
 
-		Document document = dynamicElementElement.getDocument();
+		return sb.toString();
+	}
 
-		String[] availableLanguageIds =
-			LocalizationUtil.getAvailableLanguageIds(document);
+	protected String getDDMStructureFieldHTMLByName(
+			HttpServletRequest request, HttpServletResponse response,
+			long classPK, String fieldName, Fields fields,
+			String portletNamespace, String namespace, String mode,
+			boolean readOnly, Locale locale)
+		throws Exception {
 
-		String defaultLanguageId = LocalizationUtil.getDefaultLanguageId(
-			document);
+		DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
+			classPK);
 
-		String editingLanguageId = LocaleUtil.toLanguageId(locale);
+		DDMForm ddmForm = structure.getFullHierarchyDDMForm();
 
-		String structureLanguageId = editingLanguageId;
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
 
-		if (!ArrayUtil.contains(availableLanguageIds, editingLanguageId)) {
-			structureLanguageId = defaultLanguageId;
+		DDMFormField ddmFormField = ddmFormFieldsMap.get(fieldName);
+
+		return getDDMFormFieldHTML(
+			request, response, ddmFormField, fields, portletNamespace,
+			namespace, mode, readOnly, locale);
+	}
+
+	protected String getDDMStructureHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			long classPK, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
+			classPK);
+
+		DDMForm ddmForm = structure.getFullHierarchyDDMForm();
+
+		return getDDMFormHTML(
+			request, response, ddmForm, fields, portletNamespace, namespace,
+			mode, readOnly, locale);
+	}
+
+	protected String getDDMTemplateFieldHTMLByName(
+			HttpServletRequest request, HttpServletResponse response,
+			long classPK, String fieldName, Fields fields,
+			String portletNamespace, String namespace, String mode,
+			boolean readOnly, Locale locale)
+		throws Exception {
+
+		DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(classPK);
+
+		String xsd = template.getScript();
+
+		return getFieldHTML(
+			request, response, xsd, fieldName, fields, portletNamespace,
+			namespace, mode, readOnly, locale);
+	}
+
+	protected String getDDMTemplateHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			long classPK, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(classPK);
+
+		String xsd = template.getScript();
+
+		return getHTML(
+			request, response, xsd, fields, portletNamespace, namespace, mode,
+			readOnly, locale);
+	}
+
+	protected String getFieldHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			Element element, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		Map<String, Object> freeMarkerContext = getFreeMarkerContext(
+			request, response, portletNamespace, namespace, element, locale);
+
+		if (fields != null) {
+			freeMarkerContext.put("fields", fields);
 		}
 
-		Element metadataElement =
-			(Element)dynamicElementElement.selectSingleNode(
-				"meta-data[@locale='" + structureLanguageId + "']");
+		Map<String, Object> fieldStructure =
+			(Map<String, Object>)freeMarkerContext.get("fieldStructure");
 
-		fieldContext = new HashMap<String, Object>();
+		int fieldRepetition = 1;
+		int offset = 0;
 
-		if (metadataElement != null) {
-			for (Element metadataEntry : metadataElement.elements()) {
-				fieldContext.put(
-					metadataEntry.attributeValue("name"),
-					metadataEntry.getText());
+		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
+			request, response, fields, portletNamespace, namespace);
+
+		String name = element.attributeValue("name");
+
+		String fieldDisplayValue = getFieldsDisplayValue(
+			request, response, fields);
+
+		String[] fieldsDisplayValues = getFieldsDisplayValues(
+			fieldDisplayValue);
+
+		boolean fieldDisplayable = ArrayUtil.contains(
+			fieldsDisplayValues, name);
+
+		if (fieldDisplayable) {
+			Map<String, Object> parentFieldStructure =
+				(Map<String, Object>)freeMarkerContext.get(
+					"parentFieldStructure");
+
+			String parentFieldName = (String)parentFieldStructure.get("name");
+
+			offset = getFieldOffset(
+				fieldsDisplayValues, name, ddmFieldsCounter.get(name));
+
+			if (offset == fieldsDisplayValues.length) {
+				return StringPool.BLANK;
 			}
+
+			fieldRepetition = countFieldRepetition(
+				fieldsDisplayValues, parentFieldName, offset);
 		}
 
-		for (Attribute attribute : dynamicElementElement.attributes()) {
-			fieldContext.put(attribute.getName(), attribute.getValue());
+		StringBundler sb = new StringBundler(fieldRepetition);
+
+		while (fieldRepetition > 0) {
+			offset = getFieldOffset(
+				fieldsDisplayValues, name, ddmFieldsCounter.get(name));
+
+			String fieldNamespace = StringUtil.randomId();
+
+			if (fieldDisplayable) {
+				fieldNamespace = getFieldNamespace(
+					fieldDisplayValue, ddmFieldsCounter, offset);
+			}
+
+			fieldStructure.put("fieldNamespace", fieldNamespace);
+
+			fieldStructure.put("valueIndex", ddmFieldsCounter.get(name));
+
+			if (fieldDisplayable) {
+				ddmFieldsCounter.incrementKey(name);
+			}
+
+			String childrenHTML = getHTML(
+				request, response, element, fields, portletNamespace, namespace,
+				mode, readOnly, locale);
+
+			fieldStructure.put("children", childrenHTML);
+
+			boolean disabled = GetterUtil.getBoolean(
+				fieldStructure.get("disabled"), false);
+
+			if (disabled) {
+				readOnly = true;
+			}
+
+			sb.append(
+				processFTL(
+					request, response, element, mode, readOnly,
+					freeMarkerContext));
+
+			fieldRepetition--;
 		}
 
-		boolean localizable = GetterUtil.getBoolean(
-			dynamicElementElement.attributeValue("localizable"), true);
+		return sb.toString();
+	}
 
-		if (!localizable && !editingLanguageId.equals(defaultLanguageId)) {
-			fieldContext.put("disabled", Boolean.TRUE.toString());
-		}
+	protected String getFieldHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			String xsd, String fieldName, Fields fields,
+			String portletNamespace, String namespace, String mode,
+			boolean readOnly, Locale locale)
+		throws DocumentException, Exception {
 
-		fieldContext.put("fieldNamespace", StringUtil.randomId());
+		Document document = SAXReaderUtil.read(xsd);
 
-		boolean checkRequired = GetterUtil.getBoolean(
-			request.getAttribute("checkRequired"), true);
+		String xPathExpression =
+			"//dynamic-element[@name=".concat(
+				HtmlUtil.escapeXPathAttribute(fieldName)).concat("]");
 
-		if (!checkRequired) {
-			fieldContext.put("required", Boolean.FALSE.toString());
-		}
+		XPath xPathSelector = SAXReaderUtil.createXPath(xPathExpression);
 
-		fieldsContext.put(name, fieldContext);
+		Node node = xPathSelector.selectSingleNode(document.getRootElement());
 
-		return fieldContext;
+		Element element = (Element)node.asXPathResult(node.getParent());
+
+		return getFieldHTML(
+			request, response, element, fields, portletNamespace, namespace,
+			mode, readOnly, locale);
 	}
 
 	protected String getFieldNamespace(
@@ -723,26 +637,6 @@ public class DDMXSDImpl implements DDMXSD {
 		}
 
 		return offset;
-	}
-
-	protected Map<String, Map<String, Object>> getFieldsContext(
-		HttpServletRequest request, HttpServletResponse response,
-		String portletNamespace, String namespace) {
-
-		String fieldsContextKey =
-			portletNamespace + namespace + "fieldsContext";
-
-		Map<String, Map<String, Object>> fieldsContext =
-			(Map<String, Map<String, Object>>)request.getAttribute(
-				fieldsContextKey);
-
-		if (fieldsContext == null) {
-			fieldsContext = new HashMap<String, Map<String, Object>>();
-
-			request.setAttribute(fieldsContextKey, fieldsContext);
-		}
-
-		return fieldsContext;
 	}
 
 	protected DDMFieldsCounter getFieldsCounter(
@@ -828,12 +722,190 @@ public class DDMXSDImpl implements DDMXSD {
 		return freeMarkerContext;
 	}
 
+	protected String getHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			Element element, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
+
+		StringBundler sb = new StringBundler(dynamicElementElements.size());
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			sb.append(
+				getFieldHTML(
+					request, response, dynamicElementElement, fields,
+					portletNamespace, namespace, mode, readOnly, locale));
+		}
+
+		return sb.toString();
+	}
+
+	protected String getHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			String xml, Fields fields, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		Document document = SAXReaderUtil.read(xml);
+
+		return getHTML(
+			request, response, document.getRootElement(), fields,
+			portletNamespace, namespace, mode, readOnly, locale);
+	}
+
+	protected JSONArray getJSONArray(Document document) throws PortalException {
+		return getJSONArray(document.getRootElement());
+	}
+
+	protected JSONArray getJSONArray(Element element) throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		Document document = element.getDocument();
+
+		String defaultLanguageId = LocalizationUtil.getDefaultLanguageId(
+			document.asXML());
+
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+			JSONObject localizationMapJSONObject =
+				JSONFactoryUtil.createJSONObject();
+
+			for (Attribute attribute : dynamicElementElement.attributes()) {
+				jsonObject.put(attribute.getName(), attribute.getValue());
+			}
+
+			jsonObject.put("autoGeneratedName", false);
+			jsonObject.put("id", dynamicElementElement.attributeValue("name"));
+
+			String type = jsonObject.getString("type");
+
+			List<Element> metadataElements = dynamicElementElement.elements(
+				"meta-data");
+
+			for (Element metadataElement : metadataElements) {
+				if (metadataElement == null) {
+					continue;
+				}
+
+				String locale = metadataElement.attributeValue("locale");
+
+				JSONObject localeMap = JSONFactoryUtil.createJSONObject();
+
+				for (Element metadataEntryElement :
+						metadataElement.elements()) {
+
+					String attributeName = metadataEntryElement.attributeValue(
+						"name");
+					String attributeValue = metadataEntryElement.getTextTrim();
+
+					putMetadataValue(
+						localeMap, attributeName, attributeValue, type);
+
+					if (defaultLanguageId.equals(locale)) {
+						putMetadataValue(
+							jsonObject, attributeName, attributeValue, type);
+					}
+				}
+
+				localizationMapJSONObject.put(locale, localeMap);
+			}
+
+			jsonObject.put("localizationMap", localizationMapJSONObject);
+
+			JSONArray hiddenAttributesJSONArray =
+				JSONFactoryUtil.createJSONArray();
+
+			if (type.equals(DDMImpl.TYPE_CHECKBOX)) {
+				hiddenAttributesJSONArray.put("required");
+			}
+
+			hiddenAttributesJSONArray.put("readOnly");
+
+			jsonObject.put("hiddenAttributes", hiddenAttributesJSONArray);
+
+			String key = "fields";
+
+			if (type.equals(DDMImpl.TYPE_RADIO) ||
+				type.equals(DDMImpl.TYPE_SELECT)) {
+
+				key = "options";
+			}
+
+			jsonObject.put(key, getJSONArray(dynamicElementElement));
+
+			jsonArray.put(jsonObject);
+		}
+
+		return jsonArray;
+	}
+
 	protected URL getResource(String name) {
 		Class<?> clazz = getClass();
 
 		ClassLoader classLoader = clazz.getClassLoader();
 
 		return classLoader.getResource(name);
+	}
+
+	protected String getSimpleFieldHTML(
+			HttpServletRequest request, HttpServletResponse response,
+			Element element, Field field, String portletNamespace,
+			String namespace, String mode, boolean readOnly, Locale locale)
+		throws Exception {
+
+		Map<String, Object> freeMarkerContext = getFreeMarkerContext(
+			request, response, portletNamespace, namespace, element, locale);
+
+		freeMarkerContext.put("ignoreRepeatable", Boolean.TRUE);
+
+		Map<String, Object> fieldStructure =
+			(Map<String, Object>)freeMarkerContext.get("fieldStructure");
+
+		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
+			request, response, null, portletNamespace, namespace);
+
+		String name = element.attributeValue("name");
+
+		if ((field != null) && Validator.isNotNull(field.getValue())) {
+			Fields fields = new Fields();
+
+			fields.put(field);
+
+			freeMarkerContext.put("fields", fields);
+		}
+
+		fieldStructure.put("fieldNamespace", StringUtil.randomId());
+		fieldStructure.put("valueIndex", ddmFieldsCounter.get(name));
+
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
+
+		StringBundler sb = new StringBundler(dynamicElementElements.size());
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			String type = dynamicElementElement.attributeValue("type");
+
+			if (!type.equals("option")) {
+				sb.append(StringPool.BLANK);
+			}
+			else {
+				sb.append(
+					getSimpleFieldHTML(
+						request, response, dynamicElementElement, field,
+						portletNamespace, namespace, mode, readOnly, locale));
+			}
+		}
+
+		fieldStructure.put("children", sb.toString());
+
+		return processFTL(
+			request, response, element, mode, readOnly, freeMarkerContext);
 	}
 
 	protected JSONArray getStructureFieldReadOnlyAttributes(

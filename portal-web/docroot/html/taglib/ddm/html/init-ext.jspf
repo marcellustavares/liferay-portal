@@ -32,8 +32,6 @@ if (classNameId == PortalUtil.getClassNameId(DDMTemplate.class)) {
 	mode = ddmTemplate.getMode();
 }
 
-String xsd = DDMXSDUtil.getXSD(classNameId, classPK);
-
 if (requestedLocale == null) {
 	requestedLocale = locale;
 }

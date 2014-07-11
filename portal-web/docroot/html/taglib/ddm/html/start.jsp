@@ -17,29 +17,27 @@
 <%@ include file="/html/taglib/ddm/html/init.jsp" %>
 
 <div class="lfr-ddm-container" id="<%= randomNamespace %>">
-	<c:if test="<%= Validator.isNotNull(xsd) %>">
 
-		<%
-		pageContext.setAttribute("checkRequired", checkRequired);
-		%>
+	<%
+	pageContext.setAttribute("checkRequired", checkRequired);
+	%>
 
-		<%= DDMXSDUtil.getHTML(request, response, xsd, fields, portletResponse.getNamespace(), fieldsNamespace, mode, readOnly, requestedLocale) %>
+	<%= DDMXSDUtil.getHTML(request, response, classNameId, classPK, fields, portletResponse.getNamespace(), fieldsNamespace, mode, readOnly, requestedLocale) %>
 
-		<aui:input name="<%= fieldsDisplayInputName %>" type="hidden" />
+	<aui:input name="<%= fieldsDisplayInputName %>" type="hidden" />
 
-		<aui:script use="liferay-ddm-repeatable-fields">
-			new Liferay.DDM.RepeatableFields(
-				{
-					classNameId: <%= classNameId %>,
-					classPK: <%= classPK %>,
-					container: '#<%= randomNamespace %>',
-					doAsGroupId: <%= scopeGroupId %>,
-					fieldsDisplayInput: '#<portlet:namespace /><%= fieldsDisplayInputName %>',
-					namespace: '<%= fieldsNamespace %>',
-					p_l_id: <%= themeDisplay.getPlid() %>,
-					portletNamespace: '<portlet:namespace />',
-					repeatable: <%= repeatable %>
-				}
-			);
-		</aui:script>
-	</c:if>
+	<aui:script use="liferay-ddm-repeatable-fields">
+		new Liferay.DDM.RepeatableFields(
+			{
+				classNameId: <%= classNameId %>,
+				classPK: <%= classPK %>,
+				container: '#<%= randomNamespace %>',
+				doAsGroupId: <%= scopeGroupId %>,
+				fieldsDisplayInput: '#<portlet:namespace /><%= fieldsDisplayInputName %>',
+				namespace: '<%= fieldsNamespace %>',
+				p_l_id: <%= themeDisplay.getPlid() %>,
+				portletNamespace: '<portlet:namespace />',
+				repeatable: <%= repeatable %>
+			}
+		);
+	</aui:script>
