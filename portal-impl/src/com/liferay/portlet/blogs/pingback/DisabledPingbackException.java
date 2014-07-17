@@ -12,28 +12,28 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping;
+package com.liferay.portlet.blogs.pingback;
 
 import com.liferay.portal.kernel.exception.PortalException;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author Marcellus Tavares
  */
-public class ContentXmlException extends PortalException {
+public class DisabledPingbackException extends PortalException {
 
-	public ContentXmlException() {
+	public DisabledPingbackException() {
 		super();
 	}
 
-	public ContentXmlException(String msg) {
+	public DisabledPingbackException(String msg) {
 		super(msg);
 	}
 
-	public ContentXmlException(String msg, Throwable cause) {
+	public DisabledPingbackException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public ContentXmlException(Throwable cause) {
+	public DisabledPingbackException(Throwable cause) {
 		super(cause);
 	}
 

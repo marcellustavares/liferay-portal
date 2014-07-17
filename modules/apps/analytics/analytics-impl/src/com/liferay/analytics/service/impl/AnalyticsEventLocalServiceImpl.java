@@ -17,24 +17,8 @@ package com.liferay.analytics.service.impl;
 import com.liferay.analytics.service.base.AnalyticsEventLocalServiceBaseImpl;
 
 /**
- * The implementation of the analytics event local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.liferay.analytics.service.AnalyticsEventLocalService} interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
- *
  * @author Brian Wing Shun Chan
- * @see com.liferay.analytics.service.base.AnalyticsEventLocalServiceBaseImpl
- * @see com.liferay.analytics.service.AnalyticsEventLocalServiceUtil
  */
 public class AnalyticsEventLocalServiceImpl
 	extends AnalyticsEventLocalServiceBaseImpl {
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use {@link com.liferay.analytics.service.AnalyticsEventLocalServiceUtil} to access the analytics event local service.
-	 */
 }

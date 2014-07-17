@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.blogs.util;
 
+import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -27,7 +29,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.kernel.xmlrpc.Response;
 import com.liferay.portal.kernel.xmlrpc.XmlRpcConstants;
@@ -41,11 +42,10 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
+import com.liferay.portlet.blogs.pingback.DisabledPingbackException;
+import com.liferay.portlet.blogs.pingback.InvalidSourceURIException;
+import com.liferay.portlet.blogs.pingback.UnavailableSourceURIException;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
-import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 
 import java.io.IOException;
 
@@ -83,90 +83,26 @@ public class PingbackMethodImpl implements Method {
 
 	@Override
 	public Response execute(long companyId) {
-		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
-			return XmlRpcUtil.createFault(
-				XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-				"Pingbacks are disabled");
-		}
-
-		Response response = validateSource();
-
-		if (response != null) {
-			return response;
-		}
-
 		try {
-			BlogsEntry entry = getBlogsEntry(companyId);
-
-			if (!entry.isAllowPingbacks()) {
-				return XmlRpcUtil.createFault(
-					XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND,
-					"Pingbacks are disabled");
-			}
-
-			long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
-			long groupId = entry.getGroupId();
-			String className = BlogsEntry.class.getName();
-			long classPK = entry.getEntryId();
-
-			MBMessageDisplay messageDisplay =
-				MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
-					userId, groupId, className, classPK,
-					WorkflowConstants.STATUS_APPROVED);
-
-			MBThread thread = messageDisplay.getThread();
-
-			long threadId = thread.getThreadId();
-			long parentMessageId = thread.getRootMessageId();
-			String body =
-				"[...] " + getExcerpt() + " [...] [url=" + _sourceUri + "]" +
-					LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
-						"[/url]";
-
-			List<MBMessage> messages =
-				MBMessageLocalServiceUtil.getThreadMessages(
-					threadId, WorkflowConstants.STATUS_APPROVED);
-
-			for (MBMessage message : messages) {
-				if (message.getBody().equals(body)) {
-					return XmlRpcUtil.createFault(
-						PINGBACK_ALREADY_REGISTERED,
-						"Pingback previously registered");
-				}
-			}
-
-			ServiceContext serviceContext = new ServiceContext();
-
-			String pingbackUserName = LanguageUtil.get(
-				LocaleUtil.getSiteDefault(), "pingback");
-
-			serviceContext.setAttribute("pingbackUserName", pingbackUserName);
-
-			StringBundler sb = new StringBundler(5);
-
-			String layoutFullURL = PortalUtil.getLayoutFullURL(
-				groupId, PortletKeys.BLOGS);
-
-			sb.append(layoutFullURL);
-
-			sb.append(Portal.FRIENDLY_URL_SEPARATOR);
-
-			Portlet portlet = PortletLocalServiceUtil.getPortletById(
-				companyId, PortletKeys.BLOGS);
-
-			sb.append(portlet.getFriendlyURLMapping());
-			sb.append(StringPool.SLASH);
-			sb.append(entry.getUrlTitle());
-
-			serviceContext.setAttribute("redirect", sb.toString());
-
-			serviceContext.setLayoutFullURL(layoutFullURL);
-
-			MBMessageLocalServiceUtil.addDiscussionMessage(
-				userId, StringPool.BLANK, groupId, className, classPK, threadId,
-				parentMessageId, StringPool.BLANK, body, serviceContext);
+			addPingback(companyId);
 
 			return XmlRpcUtil.createSuccess("Pingback accepted");
+		}
+		catch (DuplicateCommentException dce) {
+			return XmlRpcUtil.createFault(
+				PINGBACK_ALREADY_REGISTERED, "Pingback is already registered");
+		}
+		catch (InvalidSourceURIException isue) {
+			return XmlRpcUtil.createFault(
+				SOURCE_URI_INVALID, isue.getMessage());
+		}
+		catch (DisabledPingbackException pde) {
+			return XmlRpcUtil.createFault(
+				XmlRpcConstants.REQUESTED_METHOD_NOT_FOUND, pde.getMessage());
+		}
+		catch (UnavailableSourceURIException usue) {
+			return XmlRpcUtil.createFault(
+				SOURCE_URI_DOES_NOT_EXIST, usue.getMessage());
 		}
 		catch (Exception e) {
 			if (_log.isDebugEnabled()) {
@@ -174,7 +110,7 @@ public class PingbackMethodImpl implements Method {
 			}
 
 			return XmlRpcUtil.createFault(
-				TARGET_URI_INVALID, "Error parsing target URI");
+				TARGET_URI_INVALID, "Unable to parse target URI");
 		}
 	}
 
@@ -191,20 +127,92 @@ public class PingbackMethodImpl implements Method {
 	@Override
 	public boolean setArguments(Object[] arguments) {
 		try {
-			_sourceUri = (String)arguments[0];
-			_targetUri = (String)arguments[1];
+			_sourceURI = (String)arguments[0];
+			_targetURI = (String)arguments[1];
 
 			return true;
 		}
 		catch (Exception e) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+
 			return false;
 		}
+	}
+
+	public void setCommentManager(CommentManager commentManager) {
+		_commentManager = commentManager;
+	}
+
+	protected void addPingback(long companyId) throws Exception {
+		if (!PropsValues.BLOGS_PINGBACK_ENABLED) {
+			throw new DisabledPingbackException("Pingbacks are disabled");
+		}
+
+		validateSource();
+
+		BlogsEntry entry = getBlogsEntry(companyId);
+
+		if (!entry.isAllowPingbacks()) {
+			throw new DisabledPingbackException("Pingbacks are disabled");
+		}
+
+		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
+		long groupId = entry.getGroupId();
+		String className = BlogsEntry.class.getName();
+		long classPK = entry.getEntryId();
+
+		String body =
+			"[...] " + getExcerpt() + " [...] [url=" + _sourceURI + "]" +
+				LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more") +
+					"[/url]";
+
+		ServiceContext serviceContext = buildServiceContext(
+			companyId, groupId, entry.getUrlTitle());
+
+		_commentManager.addComment(
+			userId, groupId, className, classPK, body, serviceContext);
+	}
+
+	protected ServiceContext buildServiceContext(
+			long companyId, long groupId, String urlTitle)
+		throws Exception {
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		String pingbackUserName = LanguageUtil.get(
+			LocaleUtil.getSiteDefault(), "pingback");
+
+		serviceContext.setAttribute("pingbackUserName", pingbackUserName);
+
+		StringBundler sb = new StringBundler(5);
+
+		String layoutFullURL = PortalUtil.getLayoutFullURL(
+			groupId, PortletKeys.BLOGS);
+
+		sb.append(layoutFullURL);
+
+		sb.append(Portal.FRIENDLY_URL_SEPARATOR);
+
+		Portlet portlet = PortletLocalServiceUtil.getPortletById(
+			companyId, PortletKeys.BLOGS);
+
+		sb.append(portlet.getFriendlyURLMapping());
+		sb.append(StringPool.SLASH);
+		sb.append(urlTitle);
+
+		serviceContext.setAttribute("redirect", sb.toString());
+
+		serviceContext.setLayoutFullURL(layoutFullURL);
+
+		return serviceContext;
 	}
 
 	protected BlogsEntry getBlogsEntry(long companyId) throws Exception {
 		BlogsEntry entry = null;
 
-		URL url = new URL(_targetUri);
+		URL url = new URL(_targetURI);
 
 		String friendlyURL = url.getPath();
 
@@ -258,7 +266,7 @@ public class PingbackMethodImpl implements Method {
 	}
 
 	protected String getExcerpt() throws IOException {
-		String html = HttpUtil.URLtoString(_sourceUri);
+		String html = HttpUtil.URLtoString(_sourceURI);
 
 		Source source = new Source(html);
 
@@ -270,7 +278,7 @@ public class PingbackMethodImpl implements Method {
 			String href = GetterUtil.getString(
 				element.getAttributeValue("href"));
 
-			if (href.equals(_targetUri)) {
+			if (href.equals(_targetURI)) {
 				element = element.getParentElement();
 
 				TextExtractor textExtractor = new TextExtractor(element);
@@ -313,17 +321,21 @@ public class PingbackMethodImpl implements Method {
 		}
 	}
 
-	protected Response validateSource() {
+	protected void validateSource() throws Exception {
 		Source source = null;
 
 		try {
-			String html = HttpUtil.URLtoString(_sourceUri);
+			String html = HttpUtil.URLtoString(_sourceURI);
 
 			source = new Source(html);
 		}
 		catch (Exception e) {
-			return XmlRpcUtil.createFault(
-				SOURCE_URI_DOES_NOT_EXIST, "Error accessing source URI");
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
+
+			throw new UnavailableSourceURIException(
+				"Error accessing source URI", e);
 		}
 
 		List<StartTag> startTags = source.getAllStartTags("a");
@@ -332,18 +344,19 @@ public class PingbackMethodImpl implements Method {
 			String href = GetterUtil.getString(
 				startTag.getAttributeValue("href"));
 
-			if (href.equals(_targetUri)) {
-				return null;
+			if (href.equals(_targetURI)) {
+				return;
 			}
 		}
 
-		return XmlRpcUtil.createFault(
-			SOURCE_URI_INVALID, "Could not find target URI in source");
+		throw new InvalidSourceURIException(
+			"Unable to find target URI in source");
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(PingbackMethodImpl.class);
 
-	private String _sourceUri;
-	private String _targetUri;
+	private CommentManager _commentManager = BlogsUtil.getCommentManager();
+	private String _sourceURI;
+	private String _targetURI;
 
 }

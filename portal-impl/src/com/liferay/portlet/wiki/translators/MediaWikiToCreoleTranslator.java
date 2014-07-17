@@ -314,15 +314,15 @@ public class MediaWikiToCreoleTranslator extends BaseTranslator {
 		"(\\[{2})(Image|File)(:)", Pattern.DOTALL);
 	private Pattern _linkPattern = Pattern.compile(
 		"\\[{2}([^\\]]*)\\]{2}", Pattern.DOTALL);
-	private boolean _strictImportMode;
-	private Pattern _tablePattern = Pattern.compile(
-		"\\{\\|(.*?)\\|\\}", Pattern.DOTALL);
-	private Pattern _titlePattern = Pattern.compile(
-		"^=([^=]+)=", Pattern.MULTILINE);
 	private Pattern _mediaWikiTablePattern1 = Pattern.compile(
 		"class=(.*?)[|\n\r]");
 	private Pattern _mediaWikiTablePattern2 = Pattern.compile("(\\|\\-)(.*)");
 	private Pattern _mediaWikiTablePattern3 = Pattern.compile("\\|\\+(.*)");
 	private Pattern _mediaWikiTablePattern4 = Pattern.compile("(?m)^!(.+)");
+	private boolean _strictImportMode;
+	private Pattern _tablePattern = Pattern.compile(
+		"\\{\\|(.*?)\\|\\}", Pattern.DOTALL);
+	private Pattern _titlePattern = Pattern.compile(
+		"^=([^=]+)=", Pattern.MULTILINE);
 
 }
