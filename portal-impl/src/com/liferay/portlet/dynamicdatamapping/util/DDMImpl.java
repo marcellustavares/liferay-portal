@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.upload.UploadRequest;
@@ -64,9 +66,11 @@ import java.text.DateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -366,24 +370,54 @@ public class DDMImpl implements DDM {
 	public Fields mergeFields(Fields newFields, Fields existingFields) {
 		Iterator<Field> itr = newFields.iterator(true);
 
-		while (itr.hasNext()) {
-			Field newField = itr.next();
+		try {
+			String[] newFieldsDisplayValues = StringUtil.split(
+				(String)newFields.get(DDMImpl.FIELDS_DISPLAY_NAME).getValue());
 
-			Field existingField = existingFields.get(newField.getName());
+			String[] existingFieldsDisplayValues = StringUtil.split(
+				(String)existingFields.get(DDMImpl.FIELDS_DISPLAY_NAME).getValue());
 
-			if (existingField == null) {
-				existingFields.put(newField);
-			}
-			else {
-				for (Locale locale : newField.getAvailableLocales()) {
-					existingField.setValues(locale, newField.getValues(locale));
+			while (itr.hasNext()) {
+				Field newField = itr.next();
+
+				Field existingField = existingFields.get(newField.getName());
+
+				if ((existingField == null) || newField.isPrivate() ||
+					Validator.isNull(newField.getDataType())) {
+
+					existingFields.put(newField);
+
+					continue;
 				}
+
+				mergeFieldValues(
+					newField, newFieldsDisplayValues, existingField,
+					existingFieldsDisplayValues);
 
 				existingField.setDefaultLocale(newField.getDefaultLocale());
 			}
+
+			return existingFields;
+		}
+		catch (Exception e) {
+			_log.error("Unable to merge fields", e);
 		}
 
-		return existingFields;
+		return null;
+	}
+
+	protected int coundFieldRepetition(String[] fieldsDisplayValues, String fieldName) {
+		int count = 0;
+
+		for (String fieldsDisplayValue : fieldsDisplayValues) {
+			String prefix = StringUtil.extractFirst(fieldsDisplayValue, INSTANCE_SEPARATOR);
+
+			if (prefix.equals(fieldName)) {
+				count++;
+			}
+		}
+
+		return count;
 	}
 
 	protected Field createField(
@@ -442,6 +476,26 @@ public class DDMImpl implements DDM {
 		return ddmStructure;
 	}
 
+	protected String getFieldDisplayValue(
+		String[] fieldsDisplayValues, String fieldName, int index) {
+
+		String prefix = fieldName.concat(INSTANCE_SEPARATOR);
+
+		for (String fieldsDisplayValue : fieldsDisplayValues) {
+			if (fieldsDisplayValue.startsWith(prefix)) {
+				index--;
+
+				if (index < 0) {
+					return fieldsDisplayValue;
+//					return StringUtil.extractLast(
+//						fieldsDisplayValue, INSTANCE_SEPARATOR);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	protected List<String> getFieldNames(
 		String fieldNamespace, String fieldName,
 		ServiceContext serviceContext) {
@@ -472,6 +526,24 @@ public class DDMImpl implements DDM {
 		}
 
 		return fieldNames;
+	}
+
+	protected int getFieldsDisplayValueOffset(String[] fieldsDisplayValues, String fieldsDisplayValue) {
+		String prefix = StringUtil.extractFirst(fieldsDisplayValue, INSTANCE_SEPARATOR);
+
+		int offset = 0;
+
+		for (String string : fieldsDisplayValues) {
+			if (string.startsWith(prefix)) {
+				if (string.equals(fieldsDisplayValue)) {
+					return offset;
+				}
+
+				offset++;
+			}
+		}
+
+		return -1;
 	}
 
 	protected List<Serializable> getFieldValues(
@@ -597,5 +669,68 @@ public class DDMImpl implements DDM {
 
 		return jsonObject.toString();
 	}
+
+	protected void mergeFieldValues(
+		Field newField, String[] newFieldsDisplayValues, Field existingField,
+		String[] existingFieldsDisplayValues) {
+
+		Map<Locale, List<Serializable>> newValuesMap = newField.getValuesMap();
+
+		Map<Locale, List<Serializable>> existingValuesMap =
+			existingField.getValuesMap();
+
+		List<Serializable> defaultValuesList = newField.getValues(newField.getDefaultLocale());
+
+		Set<Locale> availableLocales = new HashSet<Locale>();
+
+		availableLocales.addAll(newField.getAvailableLocales());
+		availableLocales.addAll(existingField.getAvailableLocales());
+
+		for (Locale locale : availableLocales) {
+			List<Serializable> existingValuesList = existingValuesMap.get(
+				locale);
+
+			if (existingValuesList == null) {
+				existingField.setValues(locale, newField.getValues(locale));
+
+				continue;
+			}
+
+			List<Serializable> newValuesList = newValuesMap.get(locale);
+			
+//			if (newValuesList == null) {
+//				continue;
+//			}
+			
+			List<Serializable> returnValuesList = new ArrayList<Serializable>();
+
+
+			int repetition = coundFieldRepetition(newFieldsDisplayValues, newField.getName());
+
+			for (int i = 0; i < repetition; i++) {
+				String fieldsDisplayValue = getFieldDisplayValue(
+					newFieldsDisplayValues, newField.getName(), i);
+
+				int existingFieldsDisplayOffset = getFieldsDisplayValueOffset(
+					existingFieldsDisplayValues, fieldsDisplayValue);
+
+				if (existingFieldsDisplayOffset == -1) {
+					returnValuesList.add(i, defaultValuesList.get(i));
+				}
+				else {
+					if (newValuesList != null) {
+						returnValuesList.add(i, newValuesList.get(i));
+					}
+					else {
+						returnValuesList.add(i, existingValuesList.get(existingFieldsDisplayOffset));
+					}
+				}
+			}
+
+			existingField.setValues(locale, returnValuesList);
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(DDMImpl.class);
 
 }

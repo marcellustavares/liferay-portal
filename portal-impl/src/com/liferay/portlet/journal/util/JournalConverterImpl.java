@@ -239,6 +239,7 @@ public class JournalConverterImpl implements JournalConverter {
 		throws Exception {
 
 		String name = dynamicElementElement.attributeValue("name");
+		String instanceId = dynamicElementElement.attributeValue("instance-id");
 
 		if (!ddmStructure.hasField(name)) {
 			return;
@@ -263,7 +264,7 @@ public class JournalConverterImpl implements JournalConverter {
 			}
 		}
 
-		updateFieldsDisplay(ddmFields, name);
+		updateFieldsDisplay(ddmFields, name, instanceId);
 
 		List<Element> childrenDynamicElementElements =
 			dynamicElementElement.elements("dynamic-element");
@@ -536,7 +537,7 @@ public class JournalConverterImpl implements JournalConverter {
 		throws Exception {
 
 		String fieldName = dynamicElementElement.attributeValue("name");
-
+		
 		for (String childFieldName :
 				ddmStructure.getChildrenFieldNames(fieldName)) {
 
@@ -552,6 +553,12 @@ public class JournalConverterImpl implements JournalConverter {
 				childDynamicElementElement.addAttribute("name", childFieldName);
 				childDynamicElementElement.addAttribute(
 					"index", String.valueOf(i));
+				
+				String instanceId = getFieldDisplayInstanceId(
+					ddmFields, fieldName, (count + i));
+				
+				childDynamicElementElement.addAttribute(
+					"instance-id", instanceId);
 
 				updateContentDynamicElement(
 					childDynamicElementElement, ddmStructure, ddmFields,
@@ -564,6 +571,30 @@ public class JournalConverterImpl implements JournalConverter {
 			ddmFieldsCounter);
 	}
 
+	protected String getFieldDisplayInstanceId(
+		Fields ddmFields, String fieldName, int index) {
+		
+		Field fieldsDisplayField = ddmFields.get(DDMImpl.FIELDS_DISPLAY_NAME);
+		
+		String prefix = fieldName.concat(DDMImpl.INSTANCE_SEPARATOR);
+		
+		String[] fieldsDisplayValues = StringUtil.split(
+				(String)fieldsDisplayField.getValue());
+		
+		for (String fieldsDisplayValue : fieldsDisplayValues) {
+			if (fieldsDisplayValue.startsWith(prefix)) {
+				index--;
+
+				if (index < 0) {
+						return StringUtil.extractLast(
+							fieldsDisplayValue, DDMImpl.INSTANCE_SEPARATOR);
+				}
+			}
+		}
+
+		return null;
+	}
+	
 	protected void updateContentDynamicElement(
 			Element dynamicElementElement, DDMStructure ddmStructure,
 			Fields ddmFields, String fieldName,
@@ -587,6 +618,10 @@ public class JournalConverterImpl implements JournalConverter {
 		int count = ddmFieldsCounter.get(fieldName);
 
 		dynamicElementElement.addAttribute("index", String.valueOf(count));
+		
+		String instanceId = getFieldDisplayInstanceId(ddmFields, fieldName, count);
+		
+		dynamicElementElement.addAttribute("instance-id", instanceId);
 
 		Field ddmField = ddmFields.get(fieldName);
 
@@ -814,10 +849,11 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 	}
 
-	protected void updateFieldsDisplay(Fields ddmFields, String fieldName) {
+	protected void updateFieldsDisplay(
+		Fields ddmFields, String fieldName, String instanceId) {
+		
 		String fieldsDisplayValue =
-			fieldName.concat(DDMImpl.INSTANCE_SEPARATOR).concat(
-				StringUtil.randomString());
+			fieldName.concat(DDMImpl.INSTANCE_SEPARATOR).concat(instanceId);
 
 		Field fieldsDisplayField = ddmFields.get(DDMImpl.FIELDS_DISPLAY_NAME);
 
