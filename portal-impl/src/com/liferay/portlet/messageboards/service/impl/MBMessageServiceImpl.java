@@ -99,6 +99,7 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 	 *             String, String, java.util.List, boolean, double, boolean,
 	 *             com.liferay.portal.service.ServiceContext)}
 	 */
+	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Deprecated
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Override
