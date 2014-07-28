@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -171,7 +172,7 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		DDMFormValues ddmFormValues = new DDMFormValues();
 
 		ddmFormValues.setAvailableLocales(
-			createAvailableLocales(LocaleUtil.US));
+			SetUtil.fromList(createAvailableLocales(LocaleUtil.US)));
 		ddmFormValues.setDDMForm(ddmForm);
 		ddmFormValues.setDefaultLocale(LocaleUtil.US);
 

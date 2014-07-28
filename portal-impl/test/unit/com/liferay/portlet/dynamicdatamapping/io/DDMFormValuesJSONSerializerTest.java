@@ -17,6 +17,7 @@ package com.liferay.portlet.dynamicdatamapping.io;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
@@ -27,6 +28,7 @@ import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,13 +63,11 @@ public class DDMFormValuesJSONSerializerTest extends BaseDDMTestCase {
 		JSONAssert.assertEquals(expectedJSON, actualJSON, false);
 	}
 
-	protected List<Locale> createAvailableLocales() {
-		List<Locale> availableLocales = new ArrayList<Locale>();
+	protected Set<Locale> createAvailableLocales() {
+		List<Locale> availableLocales = createAvailableLocales(
+			LocaleUtil.US, LocaleUtil.BRAZIL);
 
-		availableLocales.add(LocaleUtil.US);
-		availableLocales.add(LocaleUtil.BRAZIL);
-
-		return availableLocales;
+		return SetUtil.fromList(availableLocales);
 	}
 
 	protected DDMFormFieldValue createBooleanDDMFormFieldValue() {
