@@ -21,6 +21,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
@@ -40,6 +41,13 @@ public class DDMUtil {
 
 	public static DDMDisplay getDDMDisplay(ServiceContext serviceContext) {
 		return getDDM().getDDMDisplay(serviceContext);
+	}
+
+	public static DDMFormValues getDDMFormValues(
+			long structureId, ServiceContext serviceContext)
+		throws PortalException {
+
+		return getDDM().getDDMFormValues(structureId, serviceContext);
 	}
 
 	public static Serializable getDisplayFieldValue(
@@ -108,8 +116,24 @@ public class DDMUtil {
 		return getDDM().getTemplateOrderByComparator(orderByCol, orderByType);
 	}
 
+	public static DDMFormValues mergeDDMFormValues(
+		DDMFormValues ddmFormValues, DDMFormValues existingDDMFormValues) {
+
+		return getDDM().mergeDDMFormValues(
+			ddmFormValues, existingDDMFormValues);
+	}
+
 	public static Fields mergeFields(Fields newFields, Fields existingFields) {
 		return getDDM().mergeFields(newFields, existingFields);
+	}
+
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, long ddmTemplateId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return getDDM().getDDMFormValues(
+			ddmStructureId, ddmTemplateId, serviceContext);
 	}
 
 	public void setDDM(DDM ddm) {
