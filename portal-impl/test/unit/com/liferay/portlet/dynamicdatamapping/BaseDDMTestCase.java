@@ -157,23 +157,36 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 	}
 
 	protected DDMFormFieldValue createDDMFormFieldValue(
-		String name, Value value) {
+		String instanceId, String name, Value value) {
 
 		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
 
+		ddmFormFieldValue.setInstanceId(instanceId);
 		ddmFormFieldValue.setName(name);
 		ddmFormFieldValue.setValue(value);
 
 		return ddmFormFieldValue;
 	}
 
+	protected DDMFormFieldValue createDDMFormFieldValue(
+		String name, Value value) {
+
+		return createDDMFormFieldValue(StringUtil.randomString(), name, value);
+	}
+
 	protected DDMFormValues createDDMFormValues(DDMForm ddmForm) {
+		return createDDMFormValues(
+			ddmForm, createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
+	}
+
+	protected DDMFormValues createDDMFormValues(
+		DDMForm ddmForm, List<Locale> availableLocales, Locale defaultLocale) {
+
 		DDMFormValues ddmFormValues = new DDMFormValues();
 
-		ddmFormValues.setAvailableLocales(
-			createAvailableLocales(LocaleUtil.US));
+		ddmFormValues.setAvailableLocales(availableLocales);
 		ddmFormValues.setDDMForm(ddmForm);
-		ddmFormValues.setDefaultLocale(LocaleUtil.US);
+		ddmFormValues.setDefaultLocale(defaultLocale);
 
 		return ddmFormValues;
 	}
