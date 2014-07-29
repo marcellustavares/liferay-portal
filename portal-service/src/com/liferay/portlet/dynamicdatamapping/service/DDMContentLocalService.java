@@ -63,6 +63,12 @@ public interface DDMContentLocalService extends BaseLocalService,
 	public com.liferay.portlet.dynamicdatamapping.model.DDMContent addDDMContent(
 		com.liferay.portlet.dynamicdatamapping.model.DDMContent ddmContent);
 
+	public com.liferay.portlet.dynamicdatamapping.model.DDMContent addJSONContent(
+		long userId, long groupId, java.lang.String name,
+		java.lang.String description, java.lang.String data,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
 	/**
 	* Creates a new d d m content with the primary key. Does not add the d d m content to the database.
 	*
