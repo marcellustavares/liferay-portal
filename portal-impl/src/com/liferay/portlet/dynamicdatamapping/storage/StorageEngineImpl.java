@@ -34,6 +34,19 @@ public class StorageEngineImpl implements StorageEngine {
 
 	@Override
 	public long create(
+			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.create(
+			companyId, ddmStructureId, ddmFormValues, serviceContext);
+	}
+
+	@Override
+	public long create(
 			long companyId, long ddmStructureId, Fields fields,
 			ServiceContext serviceContext)
 		throws StorageException {
@@ -60,6 +73,95 @@ public class StorageEngineImpl implements StorageEngine {
 			ddmStructureId);
 
 		storageAdapter.deleteByDDMStructure(ddmStructureId);
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(long classPK)
+		throws StorageException {
+
+		return getDDMFormValues(classPK, null);
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(long classPK, List<String> fieldNames)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getClassStorageAdapter(classPK);
+
+		return storageAdapter.getDDMFormValues(classPK, fieldNames);
+	}
+
+	@Override
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesList(ddmStructureId, fieldNames);
+	}
+
+	@Override
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesList(
+			ddmStructureId, fieldNames, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesList(
+			ddmStructureId, classPKs, fieldNames, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesList(
+			ddmStructureId, classPKs, orderByComparator);
+	}
+
+	@Override
+	public Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesMap(ddmStructureId, classPKs);
+	}
+
+	@Override
+	public Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.getDDMFormValuesMap(
+			ddmStructureId, classPKs, fieldNames);
 	}
 
 	@Override
@@ -171,6 +273,19 @@ public class StorageEngineImpl implements StorageEngine {
 		return storageAdapter.queryCount(ddmStructureId, condition);
 	}
 
+	@Override
+	public List<DDMFormValues> queryDDMFormValues(
+			long ddmStructureId, List<String> fieldNames, Condition condition,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getStructureStorageAdapter(
+			ddmStructureId);
+
+		return storageAdapter.queryDDMFormValues(
+			ddmStructureId, fieldNames, condition, orderByComparator);
+	}
+
 	public void setDefaultStorageAdapter(StorageAdapter defaultStorageAdapter) {
 		_defaultStorageAdapter = defaultStorageAdapter;
 	}
@@ -179,6 +294,29 @@ public class StorageEngineImpl implements StorageEngine {
 		Map<String, StorageAdapter> storageAdapters) {
 
 		_storageAdapters = storageAdapters;
+	}
+
+	@Override
+	public void update(
+			long classPK, DDMFormValues ddmFormValues, boolean mergeFields,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getClassStorageAdapter(classPK);
+
+		storageAdapter.update(
+			classPK, ddmFormValues, mergeFields, serviceContext);
+	}
+
+	@Override
+	public void update(
+			long classPK, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		StorageAdapter storageAdapter = getClassStorageAdapter(classPK);
+
+		storageAdapter.update(classPK, ddmFormValues, serviceContext);
 	}
 
 	@Override

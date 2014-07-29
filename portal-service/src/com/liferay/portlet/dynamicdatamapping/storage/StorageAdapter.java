@@ -30,6 +30,12 @@ import java.util.Map;
 public interface StorageAdapter {
 
 	public long create(
+			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws StorageException;
+
+	@Deprecated
+	public long create(
 			long companyId, long ddmStructureId, Fields fields,
 			ServiceContext serviceContext)
 		throws StorageException;
@@ -37,6 +43,38 @@ public interface StorageAdapter {
 	public void deleteByClass(long classPK) throws StorageException;
 
 	public void deleteByDDMStructure(long ddmStructureId)
+		throws StorageException;
+
+	public DDMFormValues getDDMFormValues(long classPK) throws StorageException;
+
+	public DDMFormValues getDDMFormValues(long classPK, List<String> fieldNames)
+		throws StorageException;
+
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames)
+		throws StorageException;
+
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException;
+
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException;
+
+	public List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException;
+
+	public Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs)
+		throws StorageException;
+
+	public Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames)
 		throws StorageException;
 
 	public Fields getFields(long classPK) throws StorageException;
@@ -76,6 +114,21 @@ public interface StorageAdapter {
 		throws StorageException;
 
 	public int queryCount(long ddmStructureId, Condition condition)
+		throws StorageException;
+
+	public List<DDMFormValues> queryDDMFormValues(
+			long ddmStructureId, List<String> fieldNames, Condition condition,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException;
+
+	public void update(
+			long classPK, DDMFormValues ddmFormValues, boolean mergeFields,
+			ServiceContext serviceContext)
+		throws StorageException;
+
+	public void update(
+			long classPK, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
 		throws StorageException;
 
 	public void update(
