@@ -1,0 +1,627 @@
+{
+    "layout": {
+        "availableLanguages": [
+            "en_US",
+            "pt_BR"
+        ],
+        "defaultLanguage": "pt_BR",
+        "fieldsLayout": {
+            "Boolean1893": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "checkbox",
+                "label": {
+                    "en_US": "Boolean",
+                    "pt_BR": "Boolean"
+                },
+                "predefinedValue": {
+                    "en_US": false,
+                    "pt_BR": "false"
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Date2127": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-date",
+                "label": {
+                    "en_US": "Date",
+                    "pt_BR": "Date"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Decimal2469": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-decimal",
+                "label": {
+                    "en_US": "Decimal",
+                    "pt_BR": "Decimal"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Documents_and_Media2690": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-documentlibrary",
+                "label": {
+                    "en_US": "Documents and Media",
+                    "pt_BR": "Documents and Media"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Geolocation2913": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-geolocation",
+                "label": {
+                    "en_US": "Geolocation",
+                    "pt_BR": "Geolocation"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "HTML3138": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-text-html",
+                "label": {
+                    "en_US": "HTML",
+                    "pt_BR": "HTML"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Image3595": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-image",
+                "label": {
+                    "en_US": "Image",
+                    "pt_BR": "Image"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Integer3832": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-integer",
+                "label": {
+                    "en_US": "Integer",
+                    "pt_BR": "Integer"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Link_to_Page4071": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-link-to-page",
+                "label": {
+                    "en_US": "Link to Page",
+                    "pt_BR": "Link to Page"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Number4325": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-number",
+                "label": {
+                    "en_US": "Number en_US",
+                    "pt_BR": "Number pt_BR"
+                },
+                "predefinedValue": {
+                    "en_US": "1",
+                    "pt_BR": "2"
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Radio4565": {
+                "options": [
+                    {
+                        "value": "value 1",
+                        "labels": {
+                            "pt_BR": "opcao 1",
+                            "en_US": "option 1"
+                        }
+                    },
+                    {
+                        "value": "value 2",
+                        "labels": {
+                            "pt_BR": "opcao 2",
+                            "en_US": "option 2"
+                        }
+                    },
+                    {
+                        "value": "value 3",
+                        "labels": {
+                            "pt_BR": "opcao 3",
+                            "en_US": "option 3"
+                        }
+                    }
+                ],
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "radio",
+                "label": {
+                    "en_US": "Radio",
+                    "pt_BR": "Radio"
+                },
+                "predefinedValue": {
+                    "en_US": "[\"value 1\"]",
+                    "pt_BR": "[\"value 1\"]"
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Select4844": {
+                "options": [
+                    {
+                        "value": "value 1",
+                        "labels": {
+                            "pt_BR": "option 1",
+                            "en_US": "option 1"
+                        }
+                    },
+                    {
+                        "value": "value 2",
+                        "labels": {
+                            "pt_BR": "option 2",
+                            "en_US": "option 2"
+                        }
+                    },
+                    {
+                        "value": "value 3",
+                        "labels": {
+                            "pt_BR": "option 3",
+                            "en_US": "option 3"
+                        }
+                    }
+                ],
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "select",
+                "label": {
+                    "en_US": "Select",
+                    "pt_BR": "Select"
+                },
+                "predefinedValue": {
+                    "en_US": "[\"\"]",
+                    "pt_BR": "[\"\"]"
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Separator5147": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "",
+                "type": "ddm-separator",
+                "label": {
+                    "en_US": "Separator",
+                    "pt_BR": "Separator"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Text5386": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "text",
+                "label": {
+                    "en_US": "Text",
+                    "pt_BR": "Text"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Text_Box5623": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "textarea",
+                "label": {
+                    "en_US": "Text Box",
+                    "pt_BR": "Text Box"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Text5857": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "text",
+                "label": {
+                    "en_US": "Text",
+                    "pt_BR": "Text"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Integer16693": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "ddm-integer",
+                "label": {
+                    "en_US": "Integer",
+                    "pt_BR": "Integer"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            },
+            "Separator6091": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "",
+                "type": "ddm-separator",
+                "label": {
+                    "en_US": "Separator",
+                    "pt_BR": "Separator"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                }
+            },
+            "Text_Box6326": {
+                "visibility": "<Visibility-expression-here>",
+                "validation": "<Validation-expression-here>",
+                "style": "<Bootstrap-css-class-here>",
+                "type": "textarea",
+                "label": {
+                    "en_US": "Text Box",
+                    "pt_BR": "Text Box"
+                },
+                "predefinedValue": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "tip": {
+                    "en_US": "",
+                    "pt_BR": ""
+                },
+                "width": "small"
+            }
+        },
+        "pages": [
+            {
+                "sections": [
+                    {
+                        "fields": [
+                            "Boolean1893",
+                            "Date2127",
+                            "Decimal2469",
+                            "Documents_and_Media2690",
+                            "Geolocation2913",
+                            "HTML3138",
+                            "Image3595",
+                            "Integer3832",
+                            "Link_to_Page4071",
+                            "Number4325",
+                            "Radio4565",
+                            "Select4844",
+                            "Separator5147",
+                            "Text5386",
+                            "Text_Box5623",
+                            "Text5857"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "structure": {
+        "Boolean1893": {
+            "dataType": "boolean",
+            "readOnly": false,
+            "name": "Boolean1893",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Date2127": {
+            "dataType": "date",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Date2127",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Decimal2469": {
+            "dataType": "double",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Decimal2469",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Documents_and_Media2690": {
+            "dataType": "document-library",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Documents_and_Media2690",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Geolocation2913": {
+            "dataType": "geolocation",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Geolocation2913",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "HTML3138": {
+            "dataType": "html",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "HTML3138",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Image3595": {
+            "dataType": "image",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Image3595",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Integer3832": {
+            "dataType": "integer",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Integer3832",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Link_to_Page4071": {
+            "dataType": "link-to-page",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Link_to_Page4071",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Number4325": {
+            "dataType": "number",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Number4325",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Radio4565": {
+            "dataType": "string",
+            "readOnly": false,
+            "required": false,
+            "name": "Radio4565",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Select4844": {
+            "dataType": "string",
+            "multiple": false,
+            "readOnly": false,
+            "required": false,
+            "name": "Select4844",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Separator5147": {
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Separator5147",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Text5386": {
+            "dataType": "string",
+            "readOnly": false,
+            "required": false,
+            "name": "Text5386",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Text_Box5623": {
+            "dataType": "string",
+            "readOnly": false,
+            "required": false,
+            "name": "Text_Box5623",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Text5857": {
+            "nestedFields": [
+                "Integer16693",
+                "Separator6091"
+            ],
+            "dataType": "string",
+            "readOnly": false,
+            "required": false,
+            "name": "Text5857",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Integer16693": {
+            "dataType": "integer",
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Integer16693",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Separator6091": {
+            "nestedFields": [
+                "Text_Box6326"
+            ],
+            "fieldNamespace": "ddm",
+            "readOnly": false,
+            "required": false,
+            "name": "Separator6091",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        },
+        "Text_Box6326": {
+            "dataType": "string",
+            "readOnly": false,
+            "required": false,
+            "name": "Text_Box6326",
+            "indexType": "keyword",
+            "localizable": "true",
+            "repeatable": false
+        }
+    }
+} 
