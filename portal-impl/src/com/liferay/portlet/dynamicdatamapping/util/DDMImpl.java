@@ -406,7 +406,7 @@ public class DDMImpl implements DDM {
 			String prefix = StringUtil.extractFirst(
 				fieldsDisplayValue, INSTANCE_SEPARATOR);
 
-			if (prefix.equals(fieldName)) {
+			if (prefix != null && prefix.equals(fieldName)) {
 				count++;
 			}
 		}
