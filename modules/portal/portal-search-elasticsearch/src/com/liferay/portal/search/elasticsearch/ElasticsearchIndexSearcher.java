@@ -14,6 +14,9 @@
 
 package com.liferay.portal.search.elasticsearch;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
+import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -52,14 +55,19 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.time.StopWatch;
 
 import org.elasticsearch.action.ActionFuture;
+import org.elasticsearch.action.ListenableActionFuture;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
@@ -82,52 +90,32 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		stopWatch.start();
 
-		Client client = _elasticsearchConnectionManager.getClient();
+		/*
+		 * Temporary code, will be replaced when problem of search without
+		 * results being resolved.
+		 *
+		 * Now the same query used through java API shown different results than
+		 * pure REST API.
+		 *
+		 * This issues is registered in issues on elasticsearch github.
+		 */
+		QueryBuilder queryBuilder = nestedQuery("fields", matchAllQuery());
 
-		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
-			String.valueOf(searchContext.getCompanyId()));
-
-		addFacets(searchRequestBuilder, searchContext);
-		addHighlights(searchRequestBuilder, query.getQueryConfig());
-		addPagination(
-			searchRequestBuilder, searchContext.getStart(),
-			searchContext.getEnd());
-		addSelectedFields(searchRequestBuilder, query.getQueryConfig());
-		addSort(searchRequestBuilder, searchContext.getSorts());
-
-		QueryBuilder queryBuilder = QueryBuilders.queryString(query.toString());
-
-		searchRequestBuilder.setQuery(queryBuilder);
-
-		searchRequestBuilder.setTypes(DocumentTypes.LIFERAY);
+		SearchRequestBuilder searchRequestBuilder = buildSearchRequestBuilder(
+			searchContext, query, queryBuilder);
 
 		SearchRequest searchRequest = searchRequestBuilder.request();
 
-		ActionFuture<SearchResponse> future = client.search(searchRequest);
-
-		SearchResponse searchResponse = future.actionGet();
+		SearchResponse searchResponse = getSearchResponse(
+			searchContext, searchRequest);
 
 		updateFacetCollectors(searchContext, searchResponse);
 
-		Hits hits = processSearchHits(
-			searchResponse.getHits(), query.getQueryConfig());
-
-		hits.setQuery(query);
-
-		TimeValue timeValue = searchResponse.getTook();
-
-		hits.setSearchTime((float)timeValue.getSecondsFrac());
+		Hits hits = processSearchHits(searchResponse, query);
 
 		hits.setStart(stopWatch.getStartTime());
 
-		if (_log.isInfoEnabled()) {
-			stopWatch.stop();
-
-			_log.info(
-				"Searching " + queryBuilder.toString() + " took " +
-					stopWatch.getTime() + " ms with the search engine using " +
-						hits.getSearchTime() + " s");
-		}
+		logSearchDetails(searchContext, stopWatch, queryBuilder, hits);
 
 		return hits;
 	}
@@ -338,6 +326,80 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 	}
 
+	protected SearchRequestBuilder buildSearchRequestBuilder(
+		SearchContext searchContext, Query query, QueryBuilder queryBuilder) {
+
+		Client client = _elasticsearchConnectionManager.getClient();
+
+		String companyId = String.valueOf(searchContext.getCompanyId());
+
+		SearchRequestBuilder searchRequestBuilder = client.prepareSearch(
+			companyId);
+
+		configureSearch(searchContext, query, searchRequestBuilder);
+
+		searchRequestBuilder.setQuery(queryBuilder);
+
+		searchRequestBuilder.setTypes(DocumentTypes.LIFERAY);
+
+		searchRequestBuilder.setSearchType(SearchType.QUERY_THEN_FETCH);
+
+		return searchRequestBuilder;
+	}
+
+	protected void configureSearch(
+		SearchContext searchContext, Query query,
+		SearchRequestBuilder searchRequestBuilder) {
+
+		addFacets(searchRequestBuilder, searchContext);
+		addHighlights(searchRequestBuilder, query.getQueryConfig());
+		addPagination(
+			searchRequestBuilder, searchContext.getStart(),
+			searchContext.getEnd());
+		addSelectedFields(searchRequestBuilder, query.getQueryConfig());
+		addSort(searchRequestBuilder, searchContext.getSorts());
+	}
+
+	protected SearchResponse getSearchResponse(
+		SearchContext searchContext, SearchRequest searchRequest) {
+
+		Client client = _elasticsearchConnectionManager.getClient();
+
+		refreshIndex(searchContext);
+
+		ClusterHealthRequest request = Requests.clusterHealthRequest();
+		request.waitForStatus(ClusterHealthStatus.GREEN);
+		client.admin().cluster().health(request).actionGet();
+
+		ActionFuture<SearchResponse> future = client.search(searchRequest);
+
+		SearchResponse searchResponse = future.actionGet();
+
+		return searchResponse;
+	}
+
+	protected void logSearchDetails(
+		SearchContext searchContext, StopWatch stopWatch,
+		QueryBuilder queryBuilder, Hits hits) {
+
+		if (_log.isInfoEnabled()) {
+			stopWatch.stop();
+
+			String msgTemplate =
+				"Searching \nIndex: %S \nDocument type: %S \nQuery: \n%S\nHit" +
+				"s: %S\ntook %S s with the search engine using %S s.";
+
+			String index = String.valueOf(searchContext.getCompanyId());
+			double startTime = (double)stopWatch.getTime() / 1000;
+
+			String msg = String.format(msgTemplate, index,
+			DocumentTypes.LIFERAY, queryBuilder.toString(), hits.getLength(),
+			startTime, hits.getSearchTime());
+
+			_log.info(msg);
+		}
+	}
+
 	protected Document processSearchHit(SearchHit hit) {
 		Document document = new DocumentImpl();
 
@@ -362,7 +424,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	protected Hits processSearchHits(
-		SearchHits searchHits, QueryConfig queryConfig) {
+		SearchResponse searchResponse, Query query) {
+
+		SearchHits searchHits = searchResponse.getHits();
+		QueryConfig queryConfig = query.getQueryConfig();
 
 		Hits hits = new HitsImpl();
 
@@ -388,8 +453,23 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		hits.setLength((int)searchHits.getTotalHits());
 		hits.setQueryTerms(queryTerms.toArray(new String[queryTerms.size()]));
 		hits.setScores(scores.toArray(new Float[scores.size()]));
+		hits.setQuery(query);
+
+		TimeValue timeValue = searchResponse.getTook();
+
+		hits.setSearchTime((float)timeValue.getSecondsFrac());
 
 		return hits;
+	}
+
+	protected void refreshIndex(SearchContext searchContext) {
+		Client client = _elasticsearchConnectionManager.getClient();
+		String companyId = String.valueOf(searchContext.getCompanyId());
+
+		ListenableActionFuture<RefreshResponse> future =
+			client.admin().indices().prepareRefresh(companyId).execute();
+
+		future.actionGet();
 	}
 
 	protected void updateFacetCollectors(

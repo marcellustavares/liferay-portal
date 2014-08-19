@@ -1,5 +1,8 @@
 {
 	"LiferayDocumentType": {
+		"_all" : {"enabled" : true},
+		"_type": {"store": "yes"},
+		"numeric_detection": true,
 		"properties": {
 			"articleId": {
 				"index": "not_analyzed",
@@ -51,6 +54,37 @@
 				"store": "yes",
 				"type": "string"
 			}
-		}
+		},
+		"dynamic_templates": [
+			{
+				"template_nested_root": {
+					"path_match": "fields",
+					"mapping": {
+						"type": "nested"
+					}
+				}
+			},
+			{
+				"template_nested_nodes": {
+					"path_match": "fields.*",
+					"path_unmatch": "fields.*.value",
+					"mapping": {
+						"type": "nested"
+					}
+				}
+			},
+			{
+ 				"template_nested_value": {
+ 					"path_match": "fields.*.value",
+					"mapping_type": "{dynamic_type}",
+ 					"mapping": {
+ 						"index": "analyzed",
+ 						"store": "yes",
+ 						"type": "{dynamic_type}",
+ 						"analizer": "standard"
+ 					}
+				}
+			}
+		]
 	}
 }
