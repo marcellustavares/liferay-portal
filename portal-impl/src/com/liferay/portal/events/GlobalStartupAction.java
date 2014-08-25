@@ -50,6 +50,8 @@ import com.liferay.portal.util.ClassLoaderUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderer;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryUtil;
 
 import java.io.File;
 
@@ -258,6 +260,23 @@ public class GlobalStartupAction extends SimpleAction {
 		// Authentication
 
 		AuthPublicPathRegistry.register(PropsValues.AUTH_PUBLIC_PATHS);
+
+		// Dynamic Data Mapping
+
+		for (String ddmFormFieldRendererClassName :
+				PropsValues.DYNAMIC_DATA_MAPPING_FORM_FIELD_RENDERERS) {
+
+			try {
+				DDMFormFieldRenderer ddmFormFieldRenderer =
+					(DDMFormFieldRenderer)InstanceFactory.newInstance(
+						ddmFormFieldRendererClassName);
+
+				DDMFormFieldRendererRegistryUtil.register(ddmFormFieldRenderer);
+			}
+			catch (Exception e) {
+				_log.error(e);
+			}
+		}
 
 		// JAMWiki
 
