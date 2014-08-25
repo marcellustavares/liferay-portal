@@ -194,13 +194,13 @@ public class HookHotDeployListener
 		"company.settings.form.identification",
 		"company.settings.form.miscellaneous", "company.settings.form.social",
 		"control.panel.entry.class.default", "convert.processes",
-		"ddm.form.field.renderers", "default.landing.page.path",
-		"default.regular.color.scheme.id", "default.regular.theme.id",
-		"default.wap.color.scheme.id", "default.wap.theme.id",
-		"dl.file.entry.drafts.enabled",
+		"default.landing.page.path", "default.regular.color.scheme.id",
+		"default.regular.theme.id", "default.wap.color.scheme.id",
+		"default.wap.theme.id", "dl.file.entry.drafts.enabled",
 		"dl.file.entry.open.in.ms.office.manual.check.in.required",
 		"dl.file.entry.processors", "dl.repository.impl",
 		"dl.store.antivirus.impl", "dl.store.impl", "dockbar.add.portlets",
+		"dynamic.data.mapping.form.field.renderers",
 		"field.enable.com.liferay.portal.model.Contact.birthday",
 		"field.enable.com.liferay.portal.model.Contact.male",
 		"field.enable.com.liferay.portal.model.Organization.status",
@@ -476,13 +476,6 @@ public class HookHotDeployListener
 			captchaImpl.setCaptcha(null);
 		}
 
-		if (portalProperties.containsKey(PropsKeys.DDM_FORM_FIELD_RENDERERS)) {
-			DDMFormFieldRenderersContainer ddmFormFieldRenderersContainer =
-				_ddmFormFieldRenderersContainerMap.remove(servletContextName);
-
-			ddmFormFieldRenderersContainer.unregisterDDMFormFieldRenderers();
-		}
-
 		if (portalProperties.containsKey(PropsKeys.DL_FILE_ENTRY_PROCESSORS)) {
 			DLFileEntryProcessorContainer dlFileEntryProcessorContainer =
 				_dlFileEntryProcessorContainerMap.remove(servletContextName);
@@ -507,6 +500,15 @@ public class HookHotDeployListener
 
 		if (portalProperties.containsKey(PropsKeys.DL_STORE_IMPL)) {
 			StoreFactory.setInstance(null);
+		}
+
+		if (portalProperties.containsKey(
+				PropsKeys.DYNAMIC_DATA_MAPPING_FORM_FIELD_RENDERERS)) {
+
+			DDMFormFieldRenderersContainer ddmFormFieldRenderersContainer =
+				_ddmFormFieldRenderersContainerMap.remove(servletContextName);
+
+			ddmFormFieldRenderersContainer.unregisterDDMFormFieldRenderers();
 		}
 
 		Set<String> liferayFilterClassNames =
@@ -1509,30 +1511,6 @@ public class HookHotDeployListener
 				ControlPanelEntry.class, controlPanelEntry);
 		}
 
-		if (portalProperties.containsKey(PropsKeys.DDM_FORM_FIELD_RENDERERS)) {
-			String[] ddmFormFieldRendererClassNames = StringUtil.split(
-				portalProperties.getProperty(
-					PropsKeys.DDM_FORM_FIELD_RENDERERS));
-
-			DDMFormFieldRenderersContainer ddmFormFieldRenderersContainer =
-				new DDMFormFieldRenderersContainer();
-
-			_ddmFormFieldRenderersContainerMap.put(
-				servletContextName, ddmFormFieldRenderersContainer);
-
-			for (String ddmFormFieldRendererClassName
-							: ddmFormFieldRendererClassNames) {
-
-				DDMFormFieldRenderer ddmFormFieldRenderer =
-					(DDMFormFieldRenderer)newInstance(
-						portletClassLoader, DDMFormFieldRenderer.class,
-						ddmFormFieldRendererClassName);
-
-				ddmFormFieldRenderersContainer.registerDDMFormFieldRenderer(
-					ddmFormFieldRenderer);
-			}
-		}
-
 		if (portalProperties.containsKey(PropsKeys.DL_FILE_ENTRY_PROCESSORS)) {
 			String[] dlProcessorClassNames = StringUtil.split(
 				portalProperties.getProperty(
@@ -1596,6 +1574,32 @@ public class HookHotDeployListener
 				portletClassLoader, Store.class, storeClassName);
 
 			StoreFactory.setInstance(store);
+		}
+
+		if (portalProperties.containsKey(
+				PropsKeys.DYNAMIC_DATA_MAPPING_FORM_FIELD_RENDERERS)) {
+
+			String[] ddmFormFieldRendererClassNames = StringUtil.split(
+				portalProperties.getProperty(
+					PropsKeys.DYNAMIC_DATA_MAPPING_FORM_FIELD_RENDERERS));
+
+			DDMFormFieldRenderersContainer ddmFormFieldRenderersContainer =
+				new DDMFormFieldRenderersContainer();
+
+			_ddmFormFieldRenderersContainerMap.put(
+				servletContextName, ddmFormFieldRenderersContainer);
+
+			for (String ddmFormFieldRendererClassName :
+					ddmFormFieldRendererClassNames) {
+
+				DDMFormFieldRenderer ddmFormFieldRenderer =
+					(DDMFormFieldRenderer)newInstance(
+						portletClassLoader, DDMFormFieldRenderer.class,
+						ddmFormFieldRendererClassName);
+
+				ddmFormFieldRenderersContainer.registerDDMFormFieldRenderer(
+					ddmFormFieldRenderer);
+			}
 		}
 
 		if (portalProperties.containsKey(

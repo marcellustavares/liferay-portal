@@ -43,7 +43,6 @@ company.settings.form.miscellaneous
 company.settings.form.social
 control.panel.entry.class.default
 convert.processes
-ddm.form.field.renderers
 default.landing.page.path
 default.regular.color.scheme.id
 default.regular.theme.id
@@ -55,6 +54,7 @@ dl.repository.impl
 dl.store.antivirus.impl
 dl.store.impl
 dockbar.add.portlets
+dynamic.data.mapping.form.field.renderers
 field.enable.com.liferay.portal.model.Contact.birthday
 field.enable.com.liferay.portal.model.Contact.male
 field.enable.com.liferay.portal.model.Organization.status
