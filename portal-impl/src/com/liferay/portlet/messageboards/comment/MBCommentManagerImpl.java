@@ -14,13 +14,20 @@
 
 package com.liferay.portlet.messageboards.comment;
 
+import com.liferay.portal.comment.CommentSectionDisplayImpl;
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.CommentSectionDisplay;
+import com.liferay.portal.kernel.comment.DiscussionThreadView;
 import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.Company;
+import com.liferay.portal.model.User;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageDisplay;
@@ -101,6 +108,21 @@ public class MBCommentManagerImpl implements CommentManager {
 		_mbMessageLocalService.addDiscussionMessage(
 			userId, userName, groupId, className, classPK,
 			WorkflowConstants.ACTION_PUBLISH);
+	}
+
+	@Override
+	public CommentSectionDisplay createCommentSectionDisplay(
+			long userId, long scopeGroupId, String className, long classPK,
+			PermissionChecker permissionChecker, Company company,
+			String permissionClassName, long permissionClassPK,
+			ThemeDisplay themeDisplay, User user, boolean hideControls,
+			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
+		throws PortalException {
+
+		return new CommentSectionDisplayImpl(
+			userId, scopeGroupId, className, classPK, permissionChecker,
+			company, permissionClassName, permissionClassPK, themeDisplay, user,
+			hideControls, ratingsEnabled, discussionThreadView);
 	}
 
 	@Override
