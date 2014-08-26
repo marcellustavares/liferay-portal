@@ -46,6 +46,7 @@
 					classNameId: <%= classNameId %>,
 					classPK: <%= classPK %>,
 					container: '#<%= randomNamespace %>',
+					definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 					doAsGroupId: <%= scopeGroupId %>,
 					fieldsDisplayInput: '#<portlet:namespace /><%= fieldsDisplayInputName %>',
 					namespace: '<%= fieldsNamespace %>',
