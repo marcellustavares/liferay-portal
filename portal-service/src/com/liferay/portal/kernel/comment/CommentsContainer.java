@@ -14,25 +14,17 @@
 
 package com.liferay.portal.kernel.comment;
 
-import com.liferay.portal.kernel.exception.PortalException;
+import java.util.List;
 
 /**
  * @author André de Oliveira
  */
-public interface DiscussionDisplay {
+public interface CommentsContainer {
 
-	public DiscussionRoot createDiscussionRoot() throws PortalException;
+	List<Long> getClassPKs();
 
-	public Comment getParent(Comment comment) throws PortalException;
+	List<Comment> getComments();
 
-	public String getRatingsClassName();
-
-	public long getThreadId();
-
-	public String getWorkflowDefinitionLinkClassName();
-
-	public boolean isInTrash() throws PortalException;
-
-	public boolean isInTrash(Comment comment) throws PortalException;
+	List getSearchContainerResults();
 
 }
