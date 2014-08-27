@@ -23,6 +23,8 @@ public interface DiscussionDisplay {
 
 	public DiscussionRoot createDiscussionRoot() throws PortalException;
 
+	public Comment getParent(Comment comment) throws PortalException;
+
 	public long getThreadId();
 
 	public boolean isInTrash() throws PortalException;
