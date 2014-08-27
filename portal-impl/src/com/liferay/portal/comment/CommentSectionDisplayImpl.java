@@ -18,11 +18,10 @@ import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.comment.CommentPermissionChecker;
 import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.CommentTreeNodeDisplay;
-import com.liferay.portal.kernel.comment.DiscussionThreadView;
+import com.liferay.portal.kernel.comment.DiscussionDisplay;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.User;
@@ -32,9 +31,9 @@ import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.PortletURLUtil;
 import com.liferay.portlet.messageboards.comment.MBCommentImpl;
+import com.liferay.portlet.messageboards.comment.MBDiscussionDisplayImpl;
 import com.liferay.portlet.messageboards.model.MBDiscussion;
 import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.model.MBMessageDisplay;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.model.MBTreeWalker;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
@@ -64,24 +63,24 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 			PermissionChecker permissionChecker, Company company,
 			String permissionClassName, long permissionClassPK,
 			ThemeDisplay themeDisplay, User user, boolean hideControls,
-			boolean ratingsEnabled,
-			CommentPermissionChecker commentPermissionChecker,
-			DiscussionThreadView discussionThreadView)
+			boolean ratingsEnabled, DiscussionDisplay discussionDisplay,
+			CommentPermissionChecker commentPermissionChecker)
 		throws PortalException {
 
-		String threadView = StringUtil.toLowerCase(discussionThreadView.name());
-
-		MBMessageDisplay messageDisplay =
-			MBMessageLocalServiceUtil.getDiscussionMessageDisplay(
-				userId, scopeGroupId, className, classPK,
-				WorkflowConstants.STATUS_ANY, threadView);
-
-		MBThread thread = messageDisplay.getThread();
-		MBTreeWalker treeWalker = messageDisplay.getTreeWalker();
-		MBMessage rootMessage = null;
 		List<MBMessage> messages = null;
 		int messagesCount = 0;
+		MBMessage rootMessage = null;
+		MBThread thread = null;
+		MBTreeWalker treeWalker = null;
 		SearchContainer searchContainer = null;
+
+		// TODO This cast is going away in a few commits
+
+		MBDiscussionDisplayImpl mbDiscussionDisplay =
+			(MBDiscussionDisplayImpl)discussionDisplay;
+
+		thread = mbDiscussionDisplay.getThread();
+		treeWalker = mbDiscussionDisplay.getTreeWalker();
 
 		if (treeWalker != null) {
 			rootMessage = treeWalker.getRoot();
@@ -91,13 +90,13 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 		else {
 			rootMessage = MBMessageLocalServiceUtil.getMessage(
 				thread.getRootMessageId());
-			messagesCount = MBMessageLocalServiceUtil.getThreadMessagesCount(
-				rootMessage.getThreadId(), WorkflowConstants.STATUS_ANY);
+			messagesCount =
+				MBMessageLocalServiceUtil.getThreadMessagesCount(
+					rootMessage.getThreadId(), WorkflowConstants.STATUS_ANY);
 		}
 
-		_className = className;
-		_classPK = classPK;
 		_commentPermissionChecker = commentPermissionChecker;
+		_discussionDisplay = discussionDisplay;
 		_hideControls = hideControls;
 		_messages = messages;
 		_messagesCount = messagesCount;
@@ -139,8 +138,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean canViewSubscribeUnsubscribe() throws PortalException {
-		return _themeDisplay.isSignedIn() &&
-			!TrashUtil.isInTrash(_className, _classPK);
+		return _themeDisplay.isSignedIn() && !_discussionDisplay.isInTrash();
 	}
 
 	@Override
@@ -329,9 +327,8 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 		return ((MBCommentImpl)comment).getMBMessage();
 	}
 
-	private final String _className;
-	private final long _classPK;
 	private final CommentPermissionChecker _commentPermissionChecker;
+	private final DiscussionDisplay _discussionDisplay;
 	private final boolean _hideControls;
 	private final List<MBMessage> _messages;
 	private final int _messagesCount;

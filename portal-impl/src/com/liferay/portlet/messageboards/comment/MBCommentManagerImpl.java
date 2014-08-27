@@ -18,11 +18,13 @@ import com.liferay.portal.comment.CommentSectionDisplayImpl;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.comment.CommentPermissionChecker;
 import com.liferay.portal.kernel.comment.CommentSectionDisplay;
+import com.liferay.portal.kernel.comment.DiscussionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionThreadView;
 import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.User;
@@ -120,6 +122,10 @@ public class MBCommentManagerImpl implements CommentManager {
 			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
 		throws PortalException {
 
+		DiscussionDisplay discussionDisplay =
+			this.createDiscussionDisplay(
+				userId, scopeGroupId, className, classPK, discussionThreadView);
+
 		CommentPermissionChecker commentPermissionChecker =
 			new MBCommentPermissionCheckerImpl(
 				userId, scopeGroupId, permissionChecker, company.getCompanyId(),
@@ -128,8 +134,8 @@ public class MBCommentManagerImpl implements CommentManager {
 		return new CommentSectionDisplayImpl(
 			userId, scopeGroupId, className, classPK, permissionChecker,
 			company, permissionClassName, permissionClassPK, themeDisplay, user,
-			hideControls, ratingsEnabled, commentPermissionChecker,
-			discussionThreadView);
+			hideControls, ratingsEnabled, discussionDisplay,
+			commentPermissionChecker);
 	}
 
 	@Override
@@ -156,6 +162,22 @@ public class MBCommentManagerImpl implements CommentManager {
 		MBMessageLocalService mbMessageLocalService) {
 
 		_mbMessageLocalService = mbMessageLocalService;
+	}
+
+	protected DiscussionDisplay createDiscussionDisplay(
+			long userId, long groupId, String className, long classPK,
+			DiscussionThreadView discussionThreadView)
+		throws PortalException {
+
+		String threadView = StringUtil.toLowerCase(discussionThreadView.name());
+
+		MBMessageDisplay mbMessageDisplay =
+			_mbMessageLocalService.getDiscussionMessageDisplay(
+				userId, groupId, className, classPK,
+				WorkflowConstants.STATUS_ANY, threadView);
+
+		return new MBDiscussionDisplayImpl(
+			className, classPK, mbMessageDisplay);
 	}
 
 	private MBMessageLocalService _mbMessageLocalService;
