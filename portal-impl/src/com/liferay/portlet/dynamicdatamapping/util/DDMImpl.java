@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
@@ -57,7 +58,6 @@ import com.liferay.portlet.dynamicdatamapping.util.comparator.StructureModifiedD
 import com.liferay.portlet.dynamicdatamapping.util.comparator.TemplateIdComparator;
 import com.liferay.portlet.dynamicdatamapping.util.comparator.TemplateModifiedDateComparator;
 
-import java.io.File;
 import java.io.Serializable;
 
 import java.text.DateFormat;
@@ -595,9 +595,7 @@ public class DDMImpl implements DDM {
 					fieldValue = String.valueOf(fieldValueDate.getTime());
 				}
 			}
-			else if (fieldDataType.equals(FieldConstants.IMAGE) &&
-					 Validator.isNull(fieldValue)) {
-
+			else if (fieldDataType.equals(FieldConstants.IMAGE)) {
 				HttpServletRequest request = serviceContext.getRequest();
 
 				if (!(request instanceof UploadRequest)) {
@@ -642,15 +640,24 @@ public class DDMImpl implements DDM {
 			UploadRequest uploadRequest, String fieldNameValue)
 		throws Exception {
 
-		File file = uploadRequest.getFile(fieldNameValue + "File");
+		String json = ParamUtil.getString(uploadRequest, fieldNameValue);
 
-		byte[] bytes = FileUtil.getBytes(file);
-
-		if (ArrayUtil.isNotEmpty(bytes)) {
-			return bytes;
+		if (Validator.isNull(json)) {
+			return null;
 		}
 
-		String url = uploadRequest.getParameter(fieldNameValue + "URL");
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+
+		long fileEntryId = jsonObject.getLong("fileEntryId");
+
+		if (fileEntryId > 0) {
+			FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
+				fileEntryId);
+
+			return FileUtil.getBytes(fileEntry.getContentStream());
+		}
+
+		String url = jsonObject.getString("data");
 
 		long imageId = GetterUtil.getLong(
 			HttpUtil.getParameter(url, "img_id", false));
