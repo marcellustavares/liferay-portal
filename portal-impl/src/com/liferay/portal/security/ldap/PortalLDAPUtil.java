@@ -146,12 +146,9 @@ public class PortalLDAPUtil {
 			String groupFilter = PrefsPropsUtil.getString(
 				companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
 
-			int limit = _getStringBundlerCapacityForFilter(groupFilter);
+			Object[] sbForFilter = _createStringBundlerForFilter(groupFilter);
 
-			StringBundler sb = new StringBundler(limit);
-
-			boolean encloseFilter =
-				(limit != _ENCLOSED_FILTER_STRING_BUNDLER_CAPACITY);
+			StringBundler sb = (StringBundler)sbForFilter[0];
 
 			if (Validator.isNotNull(groupFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
@@ -168,6 +165,8 @@ public class PortalLDAPUtil {
 			sb.append(StringPool.EQUAL);
 			sb.append(groupName);
 			sb.append(StringPool.CLOSE_PARENTHESIS);
+
+			boolean encloseFilter = (Boolean)sbForFilter[1];
 
 			if (Validator.isNotNull(groupFilter)) {
 				if (encloseFilter) {
@@ -476,12 +475,9 @@ public class PortalLDAPUtil {
 			String userFilter = PrefsPropsUtil.getString(
 				companyId, PropsKeys.LDAP_IMPORT_USER_SEARCH_FILTER + postfix);
 
-			int limit = _getStringBundlerCapacityForFilter(userFilter);
+			Object[] sbForFilter = _createStringBundlerForFilter(userFilter);
 
-			StringBundler sb = new StringBundler(limit);
-
-			boolean encloseFilter =
-				(limit != _ENCLOSED_FILTER_STRING_BUNDLER_CAPACITY);
+			StringBundler sb = (StringBundler)sbForFilter[0];
 
 			if (Validator.isNotNull(userFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
@@ -518,6 +514,8 @@ public class PortalLDAPUtil {
 			sb.append(login);
 
 			sb.append(StringPool.CLOSE_PARENTHESIS);
+
+			boolean encloseFilter = (Boolean)sbForFilter[1];
 
 			if (Validator.isNotNull(userFilter)) {
 				if (encloseFilter) {
@@ -853,6 +851,21 @@ public class PortalLDAPUtil {
 		return null;
 	}
 
+	private static Object[] _createStringBundlerForFilter(String filter) {
+		if (Validator.isNull(filter)) {
+			return new Object[] {new StringBundler(5), Boolean.FALSE};
+		}
+
+		if (StringUtil.isEnclosed(
+				filter, CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS)) {
+
+			return new Object[] {new StringBundler(9), Boolean.TRUE};
+		}
+
+		return new Object[] {new StringBundler(11), Boolean.FALSE};
+	}
+
 	private static Attributes _getAttributes(
 			LdapContext ldapContext, String fullDistinguishedName,
 			String[] attributeIds)
@@ -962,25 +975,6 @@ public class PortalLDAPUtil {
 
 		return sb.toString();
 	}
-
-	private static int _getStringBundlerCapacityForFilter(String filter) {
-		int limit = 5;
-
-		if (Validator.isNotNull(filter)) {
-			limit = 11;
-
-			if (StringUtil.isEnclosed(
-					filter, CharPool.OPEN_PARENTHESIS,
-					CharPool.CLOSE_PARENTHESIS)) {
-
-				limit = _ENCLOSED_FILTER_STRING_BUNDLER_CAPACITY;
-			}
-		}
-
-		return limit;
-	}
-
-	private static final int _ENCLOSED_FILTER_STRING_BUNDLER_CAPACITY = 9;
 
 	private static Log _log = LogFactoryUtil.getLog(PortalLDAPUtil.class);
 
