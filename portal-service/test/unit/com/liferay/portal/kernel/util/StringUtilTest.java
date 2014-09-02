@@ -24,6 +24,7 @@ import org.junit.Test;
  * @author Alexander Chow
  * @author Shuyang Zhou
  * @author Hugo Huijser
+ * @author Vilmos Papp
  */
 public class StringUtilTest {
 
@@ -114,6 +115,36 @@ public class StringUtilTest {
 			2, StringUtil.indexOfAny("1234", new String[] {""}, 2));
 		Assert.assertEquals(
 			2, StringUtil.indexOfAny("1234", new String[] {""}, 2, 4));
+	}
+
+	@Test
+	public void testIsEnclosed() throws Exception {
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				null, CharPool.OPEN_PARENTHESIS, CharPool.CLOSE_PARENTHESIS));
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				StringPool.BLANK, CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS));
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				"()", CharPool.OPEN_PARENTHESIS, CharPool.CLOSE_PARENTHESIS));
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				"(a+b)(c+d)", CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS));
+		Assert.assertTrue(
+			StringUtil.isEnclosed(
+				"(a(b+c)*(e+f+(g-h)-i*(j+k)))", CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS));
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				"(a(b+c)*(e+f+(g-h)-i*(j+k))", CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS));
+		Assert.assertFalse(
+			StringUtil.isEnclosed(
+				"(a(b+c)*(e+f+g-h)-i*(j+k)))", CharPool.OPEN_PARENTHESIS,
+				CharPool.CLOSE_PARENTHESIS));
 	}
 
 	@Test

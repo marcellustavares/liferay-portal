@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 /**
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
  * @author Ganesh Ram
  * @author Shuyang Zhou
  * @author Hugo Huijser
+ * @author Vilmos Papp
  */
 public class StringUtil {
 
@@ -1061,6 +1063,60 @@ public class StringUtil {
 		String postfix = s.substring(offset);
 
 		return prefix.concat(insert).concat(postfix);
+	}
+
+	/**
+	 * Returns <code>true</code> if the string <code>s</code>
+	 * is enclosed with character <code>openChar</code> and
+	 * <code>closeChar</code> we assume that "()" is not an enclosed string as
+	 * there are no characters between the brackets
+	 *
+	 * @param s the string in which to search
+	 * @param openChar the character to start the enclosed string
+	 * @param closeChar the character to end the enclosed string
+	 * @return <code>true</code> if <code>openChar</code> and
+	 *         <code>closeChar</code> pairs are balanced in <code>s</code>
+	 *         and <code>openChar</code> is the first character of
+	 *         <code>s</code> and <code>closeChar</code> is the last character
+	 *         of <code>s</code>;
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isEnclosed(String s, char openChar, char closeChar) {
+		if (Validator.isNull(s)) {
+			return false;
+		}
+
+		if (s.length() < 3) {
+			return false;
+		}
+
+		if ((s.charAt(0) != openChar) ||
+			(s.charAt(s.length() - 1) != closeChar)) {
+
+			return false;
+		}
+
+		Stack<Character> stack = new Stack<Character>();
+
+		for (int i = 1; i < s.length() - 1; i++) {
+			char c = s.charAt(i);
+
+			if (c == openChar) {
+				stack.push(openChar);
+
+				continue;
+			}
+
+			if (c == closeChar) {
+				if (stack.isEmpty()) {
+					return false;
+				}
+
+				stack.pop();
+			}
+		}
+
+		return stack.isEmpty();
 	}
 
 	/**
