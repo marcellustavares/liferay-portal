@@ -53,7 +53,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.time.StopWatch;
-
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -61,6 +60,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -73,7 +73,6 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.ScoreSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -422,7 +421,18 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchRequestBuilder.setSize(0);
 		}
 
-		QueryBuilder queryBuilder = QueryBuilders.queryString(query.toString());
+		/*
+		 * Temporary code, will be replaced when problem of search without
+		 * results being resolved.
+		 *
+		 * Now the same query used through java API shown different results than
+		 * pure REST API.
+		 *
+		 * This issues is registered in issues on elasticsearch github.
+		 */
+
+		QueryBuilder queryBuilder = QueryBuilders.nestedQuery("fields",
+			QueryBuilders.queryString(query.toString()));
 
 		searchRequestBuilder.setQuery(queryBuilder);
 
@@ -441,6 +451,28 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		}
 
 		return searchResponse;
+	}
+
+	protected void logSearchDetails(
+		SearchContext searchContext, StopWatch stopWatch,
+		QueryBuilder queryBuilder, Hits hits) {
+
+		if (_log.isInfoEnabled()) {
+			stopWatch.stop();
+
+			String msgTemplate =
+				"Searching \nIndex: %S \nDocument type: %S \nQuery: \n%S\nHit" +
+				"s: %S\ntook %S s with the search engine using %S s.";
+
+			String index = String.valueOf(searchContext.getCompanyId());
+			double startTime = (double)stopWatch.getTime() / 1000;
+
+			String msg = String.format(msgTemplate, index,
+			DocumentTypes.LIFERAY, queryBuilder.toString(), hits.getLength(),
+			startTime, hits.getSearchTime());
+
+			_log.info(msg);
+		}
 	}
 
 	protected Document processSearchHit(SearchHit hit) {
