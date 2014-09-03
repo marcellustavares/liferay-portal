@@ -689,6 +689,16 @@ public class DDMImpl implements DDM {
 
 			return FileUtil.getBytes(fileEntry.getContentStream());
 		}
+		else if (jsonObject.has("uuid")) {
+			String uuid = jsonObject.getString("uuid");
+			long groupId = jsonObject.getLong("groupId");
+
+			FileEntry fileEntry =
+				DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
+					uuid, groupId);
+
+			return FileUtil.getBytes(fileEntry.getContentStream());
+		}
 
 		String url = jsonObject.getString("data");
 
