@@ -29,6 +29,15 @@ import java.util.Map;
 public class StorageEngineUtil {
 
 	public static long create(
+			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		return getStorageEngine().create(
+			companyId, ddmStructureId, ddmFormValues, serviceContext);
+	}
+
+	public static long create(
 			long companyId, long ddmStructureId, Fields fields,
 			ServiceContext serviceContext)
 		throws StorageException {
@@ -45,6 +54,69 @@ public class StorageEngineUtil {
 		throws StorageException {
 
 		getStorageEngine().deleteByDDMStructure(ddmStructureId);
+	}
+
+	public static DDMFormValues getDDMFormValues(long classPK)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValues(classPK);
+	}
+
+	public static DDMFormValues getDDMFormValues(
+			long classPK, List<String> fieldNames)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValues(classPK, fieldNames);
+	}
+
+	public static List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesList(
+			ddmStructureId, fieldNames);
+	}
+
+	public static List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesList(
+			ddmStructureId, fieldNames, orderByComparator);
+	}
+
+	public static List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesList(
+			ddmStructureId, classPKs, fieldNames, orderByComparator);
+	}
+
+	public static List<DDMFormValues> getDDMFormValuesList(
+			long ddmStructureId, long[] classPKs,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesList(
+			ddmStructureId, classPKs, orderByComparator);
+	}
+
+	public static Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesMap(ddmStructureId, classPKs);
+	}
+
+	public static Map<Long, DDMFormValues> getDDMFormValuesMap(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames)
+		throws StorageException {
+
+		return getStorageEngine().getDDMFormValuesMap(
+			ddmStructureId, classPKs, fieldNames);
 	}
 
 	public static Fields getFields(long classPK) throws StorageException {
@@ -125,6 +197,32 @@ public class StorageEngineUtil {
 		throws StorageException {
 
 		return getStorageEngine().queryCount(ddmStructureId, condition);
+	}
+
+	public static List<DDMFormValues> queryDDMFormValues(
+			long ddmStructureId, List<String> fieldNames, Condition condition,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws StorageException {
+
+		return getStorageEngine().queryDDMFormValues(
+			ddmStructureId, fieldNames, condition, orderByComparator);
+	}
+
+	public static void update(
+			long classPK, DDMFormValues ddmFormValues, boolean mergeFields,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		getStorageEngine().update(
+			classPK, ddmFormValues, mergeFields, serviceContext);
+	}
+
+	public static void update(
+			long classPK, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws StorageException {
+
+		getStorageEngine().update(classPK, ddmFormValues, serviceContext);
 	}
 
 	public static void update(

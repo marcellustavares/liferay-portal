@@ -55,6 +55,15 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 
 	@Override
 	protected long doCreate(
+			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected long doCreate(
 			long companyId, long ddmStructureId, Fields fields,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -96,6 +105,32 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 
 		DDMStorageLinkLocalServiceUtil.deleteStructureStorageLinks(
 			ddmStructureId);
+	}
+
+	@Override
+	protected List<DDMFormValues> doGetDDMFormValuesListByClasses(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected List<DDMFormValues> doGetDDMFormValuesListByDDMStructure(
+			long ddmStructureId, List<String> fieldNames,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected Map<Long, DDMFormValues> doGetDDMFormValuesMapByClasses(
+			long ddmStructureId, long[] classPKs, List<String> fieldNames)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -164,6 +199,24 @@ public class XMLStorageAdapter extends BaseStorageAdapter {
 		}
 
 		return count;
+	}
+
+	@Override
+	protected List<DDMFormValues> doQueryDDMFormValues(
+			long ddmStructureId, List<String> fieldNames, Condition condition,
+			OrderByComparator<DDMFormValues> orderByComparator)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void doUpdate(
+			long classPK, DDMFormValues ddmFormValues, boolean mergeFields,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
