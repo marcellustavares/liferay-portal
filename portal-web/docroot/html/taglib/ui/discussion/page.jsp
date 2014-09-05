@@ -17,7 +17,7 @@
 <%@ include file="/html/taglib/ui/discussion/init.jsp" %>
 
 <%
-	String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
+String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
 
 boolean assetEntryVisible = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:discussion:assetEntryVisible"));
 String className = (String)request.getAttribute("liferay-ui:discussion:className");
@@ -33,23 +33,18 @@ long userId = GetterUtil.getLong((String)request.getAttribute("liferay-ui:discus
 
 String strutsAction = ParamUtil.getString(request, "struts_action");
 
-DiscussionThreadView discussionThreadView = DiscussionThreadView.valueOf(
-	StringUtil.toUpperCase(PropsValues.DISCUSSION_THREAD_VIEW));
+DiscussionThreadView discussionThreadView = DiscussionThreadView.valueOf(StringUtil.toUpperCase(PropsValues.DISCUSSION_THREAD_VIEW));
 
 CommentManager commentManager = CommentManagerUtil.getCommentManager();
 
-CommentSectionDisplay commentsSectionDisplay =
-	commentManager.createCommentSectionDisplay(
-		userId, scopeGroupId, className, classPK, permissionChecker, company,
-		permissionClassName, permissionClassPK, themeDisplay, user,
-		hideControls, ratingsEnabled, discussionThreadView);
+CommentSectionDisplay commentSectionDisplay = commentManager.createCommentSectionDisplay(userId, scopeGroupId, className, classPK, permissionChecker, company, permissionClassName, permissionClassPK, themeDisplay, user, hideControls, ratingsEnabled, discussionThreadView);
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>
 
 <div class="hide lfr-message-response" id="<portlet:namespace />discussion-status-messages"></div>
 
-<c:if test="<%= commentsSectionDisplay.canViewDiscussion() %>">
+<c:if test="<%= commentSectionDisplay.canViewDiscussion() %>">
 	<div class="taglib-discussion" id="<portlet:namespace />discussion-container">
 		<aui:form action="<%= formAction %>" method="post" name="<%= formName %>">
 			<aui:input name="randomNamespace" type="hidden" value="<%= randomNamespace %>" />
@@ -63,7 +58,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 			<aui:input name="permissionClassPK" type="hidden" value="<%= permissionClassPK %>" />
 			<aui:input name="permissionOwnerId" type="hidden" value="<%= String.valueOf(userId) %>" />
 			<aui:input name="messageId" type="hidden" />
-			<aui:input name="threadId" type="hidden" value="<%= commentsSectionDisplay.getThreadId() %>" />
+			<aui:input name="threadId" type="hidden" value="<%= commentSectionDisplay.getThreadId() %>" />
 			<aui:input name="parentMessageId" type="hidden" />
 			<aui:input name="body" type="hidden" />
 			<aui:input name="workflowAction" type="hidden" value="<%= String.valueOf(WorkflowConstants.ACTION_PUBLISH) %>" />
@@ -73,11 +68,11 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 			int i = 0;
 			%>
 
-			<c:if test="<%= !hideControls && commentsSectionDisplay.hasPermissionToAdd() %>">
+			<c:if test="<%= !hideControls && commentSectionDisplay.hasPermissionToAdd() %>">
 				<aui:fieldset cssClass="add-comment" id='<%= randomNamespace + "messageScroll0" %>'>
 
 					<%
-					long rootMessageId = commentsSectionDisplay.getRootCommentMessageId();
+					long rootMessageId = commentSectionDisplay.getRootCommentMessageId();
 					%>
 
 					<div id="<%= randomNamespace %>messageScroll<%= rootMessageId %>">
@@ -97,7 +92,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 						</c:when>
 						<c:otherwise>
 							<c:choose>
-								<c:when test="<%= commentsSectionDisplay.noCommentsYet() %>">
+								<c:when test="<%= commentSectionDisplay.noCommentsYet() %>">
 									<liferay-ui:message key="no-comments-yet" /> <a href="<%= taglibPostReplyURL %>"><liferay-ui:message key="be-the-first" /></a>
 								</c:when>
 								<c:otherwise>
@@ -118,7 +113,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 					String subscriptionURL = "javascript:" + randomNamespace + "subscribeToComments(" + !subscribed + ");";
 					%>
 
-					<c:if test="<%= commentsSectionDisplay.canViewSubscribeUnsubscribe() %>">
+					<c:if test="<%= commentSectionDisplay.canViewSubscribeUnsubscribe() %>">
 						<c:choose>
 							<c:when test="<%= subscribed %>">
 								<liferay-ui:icon
@@ -153,7 +148,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 							postReplyButtonLabel = LanguageUtil.get(request, "reply-as");
 						}
 
-						if (commentsSectionDisplay.hasWorkflowDefinitionLink() && !strutsAction.contains("workflow")) {
+						if (commentSectionDisplay.hasWorkflowDefinitionLink() && !strutsAction.contains("workflow")) {
 							postReplyButtonLabel = LanguageUtil.get(request, "submit-for-publication");
 						}
 						%>
@@ -175,10 +170,10 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 				</aui:fieldset>
 			</c:if>
 
-			<c:if test="<%= commentsSectionDisplay.hasCommentsToView() %>">
+			<c:if test="<%= commentSectionDisplay.hasCommentsToView() %>">
 				<a name="<%= randomNamespace %>messages_top"></a>
 
-				<c:if test="<%= commentsSectionDisplay.canViewThreadedReplies() %>">
+				<c:if test="<%= commentSectionDisplay.canViewThreadedReplies() %>">
 				<table class="table table-bordered table-hover table-striped tree-walker">
 					<thead class="table-columns">
 					<tr>
@@ -197,7 +192,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 					<tbody class="table-data">
 
 					<%
-					for (CommentTreeNodeDisplay commentTreeNodeDisplay : commentsSectionDisplay.getCommentTreeNodeDisplays()) {
+					for (CommentTreeNodeDisplay commentTreeNodeDisplay : commentSectionDisplay.getCommentTreeNodeDisplays()) {
 						request.setAttribute(DiscussionWebKeys.COMMENT_TREE_NODE_DISPLAY, commentTreeNodeDisplay);
 					%>
 
@@ -216,14 +211,14 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 				<aui:row>
 
 					<%
-					List<Comment> comments = commentsSectionDisplay.initComments(renderRequest, renderResponse);
+					List<Comment> comments = commentSectionDisplay.initComments(renderRequest, renderResponse);
 
 					int size = comments.size();
 
 					for (i = 1; i <= size; i++) {
 						final Comment message = comments.get(i - 1);
 
-						if (commentsSectionDisplay.shouldSkipComment(message)) {
+						if (commentSectionDisplay.shouldSkipComment(message)) {
 							continue;
 						}
 
@@ -260,7 +255,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 								</aui:col>
 
 								<aui:col cssClass="lfr-discussion-body" width="75">
-									<c:if test="<%= commentsSectionDisplay.canViewWorkflowStatus(message) %>">
+									<c:if test="<%= commentSectionDisplay.canViewWorkflowStatus(message) %>">
 										<aui:model-context bean="<%= message %>" model="<%= message.getWorkflowStatusModelContextClass() %>" />
 
 										<div>
@@ -269,23 +264,23 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 									</c:if>
 
 									<div class="lfr-discussion-message">
-										<%= commentsSectionDisplay.getBodyFormatted(message) %>
+										<%= commentSectionDisplay.getBodyFormatted(message) %>
 									</div>
 
 									<div class="lfr-discussion-controls">
-										<c:if test="<%= commentsSectionDisplay.canViewRatings(message) %>">
+										<c:if test="<%= commentSectionDisplay.canViewRatings(message) %>">
 											<liferay-ui:ratings
-												className="<%= commentsSectionDisplay.getRatingsClassName() %>"
+												className="<%= commentSectionDisplay.getRatingsClassName() %>"
 												classPK="<%= message.getRatingsClassPK() %>"
-												ratingsEntry="<%= commentsSectionDisplay.getRatingsEntry(message) %>"
-												ratingsStats="<%= commentsSectionDisplay.getRatingsStats(message) %>"
+												ratingsEntry="<%= commentSectionDisplay.getRatingsEntry(message) %>"
+												ratingsStats="<%= commentSectionDisplay.getRatingsStats(message) %>"
 												type="thumbs"
 											/>
 										</c:if>
 
-										<c:if test="<%= commentsSectionDisplay.canViewControls(message) %>">
+										<c:if test="<%= commentSectionDisplay.canViewControls(message) %>">
 											<ul class="lfr-discussion-actions">
-												<c:if test="<%= commentsSectionDisplay.hasPermissionToAdd() %>">
+												<c:if test="<%= commentSectionDisplay.hasPermissionToAdd() %>">
 													<li class="lfr-discussion-reply-to">
 
 														<%
@@ -316,7 +311,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 														/>
 													</li>
 
-													<c:if test="<%= commentsSectionDisplay.hasPermissionToEdit(message) %>">
+													<c:if test="<%= commentSectionDisplay.hasPermissionToEdit(message) %>">
 
 														<%
 														String taglibEditURL = "javascript:" + randomNamespace + "showForm('" + randomNamespace + "editForm" + i + "', '" + namespace + randomNamespace + "editReplyBody" + i + "');" + randomNamespace + "hideForm('" + randomNamespace + "postReplyForm" + i + "', '" + namespace + randomNamespace + "postReplyBody" + i + "', '')";
@@ -332,7 +327,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 														</li>
 													</c:if>
 
-													<c:if test="<%= commentsSectionDisplay.hasPermissionToDelete(message) %>">
+													<c:if test="<%= commentSectionDisplay.hasPermissionToDelete(message) %>">
 
 														<%
 														String taglibDeleteURL = "javascript:" + randomNamespace + "deleteMessage(" + i + ");";
@@ -374,14 +369,14 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 									</aui:button-row>
 								</div>
 
-								<c:if test="<%= !hideControls && commentsSectionDisplay.hasPermissionToEdit(message) %>">
+								<c:if test="<%= !hideControls && commentSectionDisplay.hasPermissionToEdit(message) %>">
 									<div class="col-md-12 lfr-discussion-form lfr-discussion-form-edit" id="<%= randomNamespace %>editForm<%= i %>" style='<%= "display: none; max-width: " + ModelHintsConstants.TEXTAREA_DISPLAY_WIDTH + "px;" %>'>
 										<aui:input id='<%= randomNamespace + "editReplyBody" + i %>' label="" name='<%= "editReplyBody" + i %>' style='<%= "height: " + ModelHintsConstants.TEXTAREA_DISPLAY_HEIGHT + "px;" %>' title="reply-body" type="textarea" value="<%= message.getBody() %>" wrap="soft" />
 
 										<%
 										String publishButtonLabel = LanguageUtil.get(request, "publish");
 
-										if (commentsSectionDisplay.hasWorkflowDefinitionLink()) {
+										if (commentSectionDisplay.hasWorkflowDefinitionLink()) {
 											if (message.isPending()) {
 												publishButtonLabel = "save";
 											}
@@ -406,13 +401,13 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 
 							<div class="lfr-discussion-posted-on">
 								<c:choose>
-									<c:when test="<%= commentsSectionDisplay.isTopChild(message) %>">
+									<c:when test="<%= commentSectionDisplay.isTopChild(message) %>">
 										<%= LanguageUtil.format(request, "posted-on-x", dateFormatDateTime.format(message.getModifiedDate()), false) %>
 									</c:when>
 									<c:otherwise>
 
 										<%
-										Comment parentMessage = commentsSectionDisplay.getParentComment(message);
+										Comment parentMessage = commentSectionDisplay.getParentComment(message);
 										%>
 
 										<liferay-util:buffer var="buffer">
@@ -464,8 +459,8 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 
 				</aui:row>
 
-				<c:if test="<%= commentsSectionDisplay.canViewSearchPaginator() %>">
-					<liferay-ui:search-paginator searchContainer="<%= commentsSectionDisplay.getSearchContainer() %>" />
+				<c:if test="<%= commentSectionDisplay.canViewSearchPaginator() %>">
+					<liferay-ui:search-paginator searchContainer="<%= commentSectionDisplay.getSearchContainer() %>" />
 				</c:if>
 			</c:if>
 		</aui:form>

@@ -19,20 +19,16 @@
 <%
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 
-CommentTreeNodeDisplay commentTreeNodeDisplay =
-	(CommentTreeNodeDisplay)
-	request.getAttribute(DiscussionWebKeys.COMMENT_TREE_NODE_DISPLAY);
+CommentTreeNodeDisplay commentTreeNodeDisplay =(CommentTreeNodeDisplay)request.getAttribute(DiscussionWebKeys.COMMENT_TREE_NODE_DISPLAY);
 
-boolean lastNode = commentTreeNodeDisplay.isLastNode();
-int depth = commentTreeNodeDisplay.getDepth();
 Comment message = commentTreeNodeDisplay.getComment();
 %>
 
 <tr>
-	<td class="table-cell" style="padding-left: <%= depth * 10 %>px; width: 90%">
+	<td class="table-cell" style="padding-left: <%= commentTreeNodeDisplay.getDepth() * 10 %>px; width: 90%">
 		<c:if test="<%= !message.isRoot() %>">
 			<c:choose>
-				<c:when test="<%= !lastNode %>">
+				<c:when test="<%= !commentTreeNodeDisplay.isLastNode() %>">
 					<img alt="" src="<%= themeDisplay.getPathThemeImages() %>/message_boards/t.png" />
 				</c:when>
 				<c:otherwise>
