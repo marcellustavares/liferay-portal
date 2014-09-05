@@ -174,37 +174,35 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 				<a name="<%= randomNamespace %>messages_top"></a>
 
 				<c:if test="<%= commentSectionDisplay.isThreadedRepliesVisible() %>">
-				<table class="table table-bordered table-hover table-striped tree-walker">
-					<thead class="table-columns">
-					<tr>
-						<th class="table-header" colspan="2">
-							<liferay-ui:message key="threaded-replies" />
-						</th>
-						<th class="table-header" colspan="2">
-							<liferay-ui:message key="author" />
-						</th>
-						<th class="table-header">
-							<liferay-ui:message key="date" />
-						</th>
-					</tr>
-					</thead>
+					<table class="table table-bordered table-hover table-striped tree-walker">
+						<thead class="table-columns">
+							<tr>
+								<th class="table-header" colspan="2">
+									<liferay-ui:message key="threaded-replies" />
+								</th>
+								<th class="table-header" colspan="2">
+									<liferay-ui:message key="author" />
+								</th>
+								<th class="table-header">
+									<liferay-ui:message key="date" />
+								</th>
+							</tr>
+						</thead>
+						<tbody class="table-data">
 
-					<tbody class="table-data">
+						<%
+						for (CommentTreeNodeDisplay commentTreeNodeDisplay : commentSectionDisplay.getCommentTreeNodeDisplays()) {
+							request.setAttribute(DiscussionWebKeys.COMMENT_TREE_NODE_DISPLAY, commentTreeNodeDisplay);
+						%>
 
-					<%
-					for (CommentTreeNodeDisplay commentTreeNodeDisplay : commentSectionDisplay.getCommentTreeNodeDisplays()) {
-						request.setAttribute(DiscussionWebKeys.COMMENT_TREE_NODE_DISPLAY, commentTreeNodeDisplay);
-					%>
+							<liferay-util:include page="/html/taglib/ui/discussion/view_message_thread.jsp" />
 
-						<liferay-util:include page="/html/taglib/ui/discussion/view_message_thread.jsp" />
+						<%
+						}
+						%>
 
-					<%
-					}
-					%>
-
-					</tbody>
-				</table>
-
+						</tbody>
+					</table>
 					<br />
 				</c:if>
 
@@ -216,7 +214,7 @@ Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZo
 					int size = comments.size();
 
 					for (i = 1; i <= size; i++) {
-						final Comment message = comments.get(i - 1);
+						Comment message = comments.get(i - 1);
 
 						if (!commentSectionDisplay.isVisible(message)) {
 							continue;
