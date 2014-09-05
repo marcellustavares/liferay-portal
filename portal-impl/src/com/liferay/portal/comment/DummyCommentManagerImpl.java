@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionThreadView;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Function;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -53,11 +51,11 @@ public class DummyCommentManagerImpl implements CommentManager {
 
 	@Override
 	public CommentSectionDisplay createCommentSectionDisplay(
-			long userId, long scopeGroupId, String className, long classPK,
-			PermissionChecker permissionChecker, Company company,
-			String permissionClassName, long permissionClassPK,
-			ThemeDisplay themeDisplay, User user, boolean hideControls,
-			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
+			long companyId, long userId, long scopeGroupId, String className,
+			long classPK, String permissionClassName, long permissionClassPK,
+			PermissionChecker permissionChecker, boolean hideControls,
+			boolean ratingsEnabled, DiscussionThreadView discussionThreadView,
+			ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		return new DummyCommentSectionDisplayImpl();

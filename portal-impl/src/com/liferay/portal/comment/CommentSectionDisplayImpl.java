@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.comment.DiscussionRoot;
 import com.liferay.portal.kernel.comment.DiscussionTree;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.model.Company;
 import com.liferay.portal.model.User;
 import com.liferay.portal.parsers.bbcode.BBCodeUtil;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -52,21 +51,22 @@ import javax.portlet.RenderResponse;
 public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	public CommentSectionDisplayImpl(
-			long scopeGroupId, PermissionChecker permissionChecker,
-			ThemeDisplay themeDisplay, User user, boolean hideControls,
+			long scopeGroupId, User user, boolean hideControls,
 			boolean ratingsEnabled, DiscussionDisplay discussionDisplay,
-			CommentPermissionChecker commentPermissionChecker)
+			ThemeDisplay themeDisplay,
+			CommentPermissionChecker commentPermissionChecker,
+			PermissionChecker permissionChecker)
 		throws PortalException {
 
 		_scopeGroupId = scopeGroupId;
-		_permissionChecker = permissionChecker;
-		_themeDisplay = themeDisplay;
 		_user = user;
+		_themeDisplay = themeDisplay;
 		_hideControls = hideControls;
 		_ratingsEnabled = ratingsEnabled;
 		_discussionDisplay = discussionDisplay;
 		_discussionRoot = discussionDisplay.createDiscussionRoot();
 		_commentPermissionChecker = commentPermissionChecker;
+		_permissionChecker = permissionChecker;
 	}
 
 	@Override

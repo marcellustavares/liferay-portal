@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.util.Function;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -115,11 +113,11 @@ public class MBCommentManagerImpl implements CommentManager {
 
 	@Override
 	public CommentSectionDisplay createCommentSectionDisplay(
-			long userId, long scopeGroupId, String className, long classPK,
-			PermissionChecker permissionChecker, Company company,
-			String permissionClassName, long permissionClassPK,
-			ThemeDisplay themeDisplay, User user, boolean hideControls,
-			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
+			long companyId, long userId, long scopeGroupId, String className,
+			long classPK, String permissionClassName, long permissionClassPK,
+			PermissionChecker permissionChecker, boolean hideControls,
+			boolean ratingsEnabled, DiscussionThreadView discussionThreadView,
+			ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		DiscussionDisplay discussionDisplay = createDiscussionDisplay(
@@ -127,13 +125,13 @@ public class MBCommentManagerImpl implements CommentManager {
 
 		CommentPermissionChecker commentPermissionChecker =
 			new MBCommentPermissionCheckerImpl(
-				company.getCompanyId(), userId, scopeGroupId, permissionChecker,
-				permissionClassName, permissionClassPK);
+				companyId, userId, scopeGroupId, permissionClassName,
+				permissionClassPK, permissionChecker);
 
 		return new CommentSectionDisplayImpl(
-			scopeGroupId, permissionChecker, themeDisplay, user,
-			hideControls, ratingsEnabled, discussionDisplay,
-			commentPermissionChecker);
+			scopeGroupId, themeDisplay.getUser(), hideControls, ratingsEnabled,
+			discussionDisplay, themeDisplay, commentPermissionChecker,
+			permissionChecker);
 	}
 
 	@Override

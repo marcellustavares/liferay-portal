@@ -37,7 +37,7 @@ DiscussionThreadView discussionThreadView = DiscussionThreadView.valueOf(StringU
 
 CommentManager commentManager = CommentManagerUtil.getCommentManager();
 
-CommentSectionDisplay commentSectionDisplay = commentManager.createCommentSectionDisplay(userId, scopeGroupId, className, classPK, permissionChecker, company, permissionClassName, permissionClassPK, themeDisplay, user, hideControls, ratingsEnabled, discussionThreadView);
+CommentSectionDisplay commentSectionDisplay = commentManager.createCommentSectionDisplay(company.getCompanyId(), userId, scopeGroupId, className, classPK, permissionClassName, permissionClassPK, permissionChecker, hideControls, ratingsEnabled, discussionThreadView, themeDisplay);
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>

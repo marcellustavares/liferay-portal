@@ -59,15 +59,15 @@ public class MBCommentPermissionCheckerImpl
 
 	MBCommentPermissionCheckerImpl(
 		long companyId, long userId, long scopeGroupId,
-		PermissionChecker permissionChecker, String permissionClassName,
-		long permissionClassPK) {
+		String permissionClassName, long permissionClassPK,
+		PermissionChecker permissionChecker) {
 
 		_companyId = companyId;
 		_userId = userId;
 		_scopeGroupId = scopeGroupId;
-		_permissionChecker = permissionChecker;
 		_permissionClassName = permissionClassName;
 		_permissionClassPK = permissionClassPK;
+		_permissionChecker = permissionChecker;
 	}
 
 	private final long _companyId;
