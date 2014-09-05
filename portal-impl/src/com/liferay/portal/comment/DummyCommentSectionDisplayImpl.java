@@ -15,8 +15,8 @@
 package com.liferay.portal.comment;
 
 import com.liferay.portal.kernel.comment.Comment;
+import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.CommentTreeNodeDisplay;
-import com.liferay.portal.kernel.comment.CommentsSectionDisplay;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.ratings.model.RatingsEntry;
@@ -31,7 +31,7 @@ import javax.portlet.RenderResponse;
 /**
  * @author André de Oliveira
  */
-public class DummyCommentsSectionDisplayImpl implements CommentsSectionDisplay {
+public class DummyCommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean canViewControls(Comment comment) throws PortalException {

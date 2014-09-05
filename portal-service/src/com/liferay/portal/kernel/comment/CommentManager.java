@@ -43,7 +43,7 @@ public interface CommentManager {
 			String userName)
 		throws PortalException;
 
-	public CommentsSectionDisplay createCommentsSectionDisplay(
+	public CommentSectionDisplay createCommentSectionDisplay(
 			long userId, long scopeGroupId, String className, long classPK,
 			PermissionChecker permissionChecker, Company company,
 			String permissionClassName, long permissionClassPK,

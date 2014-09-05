@@ -38,8 +38,8 @@ DiscussionThreadView discussionThreadView = DiscussionThreadView.valueOf(
 
 CommentManager commentManager = CommentManagerUtil.getCommentManager();
 
-CommentsSectionDisplay commentsSectionDisplay =
-	commentManager.createCommentsSectionDisplay(
+CommentSectionDisplay commentsSectionDisplay =
+	commentManager.createCommentSectionDisplay(
 		userId, scopeGroupId, className, classPK, permissionChecker, company,
 		permissionClassName, permissionClassPK, themeDisplay, user,
 		hideControls, ratingsEnabled, discussionThreadView);

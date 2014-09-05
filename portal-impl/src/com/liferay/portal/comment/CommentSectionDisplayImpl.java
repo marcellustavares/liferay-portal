@@ -16,10 +16,10 @@ package com.liferay.portal.comment;
 
 import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.comment.CommentPermissionChecker;
+import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.CommentTreeNode;
 import com.liferay.portal.kernel.comment.CommentTreeNodeDisplay;
 import com.liferay.portal.kernel.comment.CommentsContainer;
-import com.liferay.portal.kernel.comment.CommentsSectionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionPage;
 import com.liferay.portal.kernel.comment.DiscussionRoot;
@@ -49,9 +49,9 @@ import javax.portlet.RenderResponse;
 /**
  * @author André de Oliveira
  */
-public class CommentsSectionDisplayImpl implements CommentsSectionDisplay {
+public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
-	public CommentsSectionDisplayImpl(
+	public CommentSectionDisplayImpl(
 			long userId, long scopeGroupId, String className, long classPK,
 			PermissionChecker permissionChecker, Company company,
 			String permissionClassName, long permissionClassPK,

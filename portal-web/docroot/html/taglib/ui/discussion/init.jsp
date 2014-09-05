@@ -20,8 +20,8 @@
 page import="com.liferay.portal.kernel.comment.Comment" %><%@
 page import="com.liferay.portal.kernel.comment.CommentManager" %><%@
 page import="com.liferay.portal.kernel.comment.CommentManagerUtil" %><%@
+page import="com.liferay.portal.kernel.comment.CommentSectionDisplay" %><%@
 page import="com.liferay.portal.kernel.comment.CommentTreeNodeDisplay" %><%@
-page import="com.liferay.portal.kernel.comment.CommentsSectionDisplay" %><%@
 page import="com.liferay.portal.kernel.comment.DiscussionThreadView" %>
 
 <portlet:defineObjects />

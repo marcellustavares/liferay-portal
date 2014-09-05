@@ -14,10 +14,10 @@
 
 package com.liferay.portlet.messageboards.comment;
 
-import com.liferay.portal.comment.CommentsSectionDisplayImpl;
+import com.liferay.portal.comment.CommentSectionDisplayImpl;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.comment.CommentPermissionChecker;
-import com.liferay.portal.kernel.comment.CommentsSectionDisplay;
+import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionThreadView;
 import com.liferay.portal.kernel.comment.DuplicateCommentException;
@@ -114,7 +114,7 @@ public class MBCommentManagerImpl implements CommentManager {
 	}
 
 	@Override
-	public CommentsSectionDisplay createCommentsSectionDisplay(
+	public CommentSectionDisplay createCommentSectionDisplay(
 			long userId, long scopeGroupId, String className, long classPK,
 			PermissionChecker permissionChecker, Company company,
 			String permissionClassName, long permissionClassPK,
@@ -131,7 +131,7 @@ public class MBCommentManagerImpl implements CommentManager {
 				userId, scopeGroupId, permissionChecker, company.getCompanyId(),
 				permissionClassName, permissionClassPK);
 
-		return new CommentsSectionDisplayImpl(
+		return new CommentSectionDisplayImpl(
 			userId, scopeGroupId, className, classPK, permissionChecker,
 			company, permissionClassName, permissionClassPK, themeDisplay, user,
 			hideControls, ratingsEnabled, discussionDisplay,

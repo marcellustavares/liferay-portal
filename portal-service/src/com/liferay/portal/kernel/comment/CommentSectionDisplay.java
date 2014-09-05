@@ -27,7 +27,7 @@ import javax.portlet.RenderResponse;
 /**
  * @author André de Oliveira
  */
-public interface CommentsSectionDisplay {
+public interface CommentSectionDisplay {
 
 	public boolean canViewControls(Comment comment) throws PortalException;
 

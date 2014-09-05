@@ -15,7 +15,7 @@
 package com.liferay.portal.comment;
 
 import com.liferay.portal.kernel.comment.CommentManager;
-import com.liferay.portal.kernel.comment.CommentsSectionDisplay;
+import com.liferay.portal.kernel.comment.CommentSectionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionThreadView;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Function;
@@ -52,7 +52,7 @@ public class DummyCommentManagerImpl implements CommentManager {
 	}
 
 	@Override
-	public CommentsSectionDisplay createCommentsSectionDisplay(
+	public CommentSectionDisplay createCommentSectionDisplay(
 			long userId, long scopeGroupId, String className, long classPK,
 			PermissionChecker permissionChecker, Company company,
 			String permissionClassName, long permissionClassPK,
@@ -60,7 +60,7 @@ public class DummyCommentManagerImpl implements CommentManager {
 			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
 		throws PortalException {
 
-		return new DummyCommentsSectionDisplayImpl();
+		return new DummyCommentSectionDisplayImpl();
 	}
 
 	@Override
