@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.comment.CommentTreeNodeDisplay;
 import com.liferay.portal.kernel.comment.CommentsContainer;
 import com.liferay.portal.kernel.comment.DiscussionDisplay;
 import com.liferay.portal.kernel.comment.DiscussionPage;
-import com.liferay.portal.kernel.comment.DiscussionRoot;
+import com.liferay.portal.kernel.comment.DiscussionRootComment;
 import com.liferay.portal.kernel.comment.DiscussionTree;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -64,7 +64,8 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 		_hideControls = hideControls;
 		_ratingsEnabled = ratingsEnabled;
 		_discussionDisplay = discussionDisplay;
-		_discussionRoot = discussionDisplay.createDiscussionRoot();
+		_discussionRootComment =
+			discussionDisplay.createDiscussionRootComment();
 		_commentPermissionChecker = commentPermissionChecker;
 		_permissionChecker = permissionChecker;
 	}
@@ -81,7 +82,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public List<CommentTreeNodeDisplay> getCommentTreeNodeDisplays() {
-		DiscussionTree discussionTree = (DiscussionTree)_discussionRoot;
+		DiscussionTree discussionTree = (DiscussionTree)_discussionRootComment;
 
 		CommentTreeNode commentTreeNode =
 			discussionTree.getRootCommentTreeNode();
@@ -130,7 +131,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public long getRootCommentMessageId() {
-		return _discussionRoot.getRootCommentId();
+		return _discussionRootComment.getRootCommentId();
 	}
 
 	@Override
@@ -150,7 +151,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean hasComments() {
-		return _discussionRoot.getCommentsCount() > 0;
+		return _discussionRootComment.getCommentsCount() > 0;
 	}
 
 	@Override
@@ -176,9 +177,11 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 		CommentsContainer commentsContainer;
 
-		if (_discussionRoot instanceof DiscussionTree) {
-			commentsContainer =
-				((DiscussionTree)_discussionRoot).createCommentsContainer();
+		if (_discussionRootComment instanceof DiscussionTree) {
+			DiscussionTree discussionTree =
+				(DiscussionTree)_discussionRootComment;
+
+			commentsContainer = discussionTree.createCommentsContainer();
 		}
 		else {
 			PortletURL currentURLObj = PortletURLUtil.getCurrent(
@@ -188,11 +191,13 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 				renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM,
 				SearchContainer.DEFAULT_DELTA, currentURLObj, null, null);
 
-			searchContainer.setTotal(_discussionRoot.getCommentsCount());
+			searchContainer.setTotal(_discussionRootComment.getCommentsCount());
 
-			commentsContainer =
-				((DiscussionPage)_discussionRoot).createCommentsContainer(
-					searchContainer.getStart(), searchContainer.getEnd());
+			DiscussionPage discussionPage =
+				(DiscussionPage)_discussionRootComment;
+
+			commentsContainer = discussionPage.createCommentsContainer(
+				searchContainer.getStart(), searchContainer.getEnd());
 
 			searchContainer.setResults(
 				commentsContainer.getSearchContainerResults());
@@ -265,7 +270,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean isThreadedRepliesVisible() {
-		if (_discussionRoot instanceof DiscussionTree) {
+		if (_discussionRootComment instanceof DiscussionTree) {
 			return true;
 		}
 
@@ -274,7 +279,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean isTopChild(Comment comment) throws PortalException {
-		if (comment.isChildOf(_discussionRoot.getRootCommentId())) {
+		if (comment.isChildOf(_discussionRootComment.getRootCommentId())) {
 			return true;
 		}
 
@@ -313,7 +318,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	private CommentPermissionChecker _commentPermissionChecker;
 	private DiscussionDisplay _discussionDisplay;
-	private DiscussionRoot _discussionRoot;
+	private DiscussionRootComment _discussionRootComment;
 	private boolean _hideControls;
 	private PermissionChecker _permissionChecker;
 	private boolean _ratingsEnabled;

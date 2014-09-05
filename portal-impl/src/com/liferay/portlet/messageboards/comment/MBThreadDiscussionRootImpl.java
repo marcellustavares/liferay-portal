@@ -16,7 +16,7 @@ package com.liferay.portlet.messageboards.comment;
 
 import com.liferay.portal.kernel.comment.CommentsContainer;
 import com.liferay.portal.kernel.comment.DiscussionPage;
-import com.liferay.portal.kernel.comment.DiscussionRoot;
+import com.liferay.portal.kernel.comment.DiscussionRootComment;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author André de Oliveira
  */
 public class MBThreadDiscussionRootImpl
-	implements DiscussionRoot, DiscussionPage {
+	implements DiscussionRootComment, DiscussionPage {
 
 	@Override
 	public CommentsContainer createCommentsContainer(int start, int end) {

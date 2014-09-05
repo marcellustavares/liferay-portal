@@ -17,7 +17,7 @@ package com.liferay.portal.kernel.comment;
 /**
  * @author André de Oliveira
  */
-public interface DiscussionRoot {
+public interface DiscussionRootComment {
 
 	public int getCommentsCount();
 

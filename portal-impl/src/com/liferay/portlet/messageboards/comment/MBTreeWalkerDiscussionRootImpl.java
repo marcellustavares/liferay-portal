@@ -16,7 +16,7 @@ package com.liferay.portlet.messageboards.comment;
 
 import com.liferay.portal.kernel.comment.CommentTreeNode;
 import com.liferay.portal.kernel.comment.CommentsContainer;
-import com.liferay.portal.kernel.comment.DiscussionRoot;
+import com.liferay.portal.kernel.comment.DiscussionRootComment;
 import com.liferay.portal.kernel.comment.DiscussionTree;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author André de Oliveira
  */
 public class MBTreeWalkerDiscussionRootImpl
-	implements DiscussionRoot, DiscussionTree {
+	implements DiscussionRootComment, DiscussionTree {
 
 	@Override
 	public CommentsContainer createCommentsContainer() {

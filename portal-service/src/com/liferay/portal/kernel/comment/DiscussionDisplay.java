@@ -21,7 +21,8 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public interface DiscussionDisplay {
 
-	public DiscussionRoot createDiscussionRoot() throws PortalException;
+	public DiscussionRootComment createDiscussionRootComment()
+		throws PortalException;
 
 	public Comment getParent(Comment comment) throws PortalException;
 

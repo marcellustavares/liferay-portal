@@ -16,7 +16,7 @@ package com.liferay.portlet.messageboards.comment;
 
 import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.comment.DiscussionDisplay;
-import com.liferay.portal.kernel.comment.DiscussionRoot;
+import com.liferay.portal.kernel.comment.DiscussionRootComment;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.messageboards.model.MBDiscussion;
 import com.liferay.portlet.messageboards.model.MBMessage;
@@ -43,7 +43,9 @@ public class MBDiscussionDisplayImpl implements DiscussionDisplay {
 	}
 
 	@Override
-	public DiscussionRoot createDiscussionRoot() throws PortalException {
+	public DiscussionRootComment createDiscussionRootComment()
+		throws PortalException {
+
 		MBTreeWalker mbTreeWalker = _mbMessageDisplay.getTreeWalker();
 
 		if (mbTreeWalker != null) {
