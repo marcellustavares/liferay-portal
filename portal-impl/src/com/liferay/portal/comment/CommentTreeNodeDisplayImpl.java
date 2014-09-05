@@ -81,8 +81,8 @@ public class CommentTreeNodeDisplayImpl implements CommentTreeNodeDisplay {
 			_depth + 1, lastNode, commentTreeNode);
 	}
 
-	private final CommentTreeNode _commentTreeNode;
-	private final int _depth;
-	private final boolean _lastNode;
+	private CommentTreeNode _commentTreeNode;
+	private int _depth;
+	private boolean _lastNode;
 
 }
