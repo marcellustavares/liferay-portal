@@ -34,41 +34,6 @@ import javax.portlet.RenderResponse;
 public class DummyCommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
-	public boolean canViewControls(Comment comment) throws PortalException {
-		return false;
-	}
-
-	@Override
-	public boolean canViewDiscussion() {
-		return false;
-	}
-
-	@Override
-	public boolean canViewRatings(Comment comment) throws PortalException {
-		return false;
-	}
-
-	@Override
-	public boolean canViewSearchPaginator() {
-		return false;
-	}
-
-	@Override
-	public boolean canViewSubscribeUnsubscribe() throws PortalException {
-		return false;
-	}
-
-	@Override
-	public boolean canViewThreadedReplies() {
-		return false;
-	}
-
-	@Override
-	public boolean canViewWorkflowStatus(Comment comment) {
-		return false;
-	}
-
-	@Override
 	public String getBodyFormatted(Comment comment) {
 		throw new UnsupportedOperationException();
 	}
@@ -114,24 +79,22 @@ public class DummyCommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
-	public boolean hasCommentsToView() {
+	public boolean hasAddPermission() {
 		return false;
 	}
 
 	@Override
-	public boolean hasPermissionToAdd() {
+	public boolean hasComments() {
 		return false;
 	}
 
 	@Override
-	public boolean hasPermissionToDelete(Comment comment)
-		throws PortalException {
-
+	public boolean hasDeletePermission(Comment comment) throws PortalException {
 		return false;
 	}
 
 	@Override
-	public boolean hasPermissionToEdit(Comment comment) throws PortalException {
+	public boolean hasEditPermission(Comment comment) throws PortalException {
 		return false;
 	}
 
@@ -148,18 +111,50 @@ public class DummyCommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
+	public boolean isDiscussionActionsVisible(Comment comment)
+		throws PortalException {
+
+		return false;
+	}
+
+	@Override
+	public boolean isDiscussionVisible() {
+		return false;
+	}
+
+	@Override
+	public boolean isRatingsVisible(Comment comment) throws PortalException {
+		return false;
+	}
+
+	@Override
+	public boolean isSearchPaginatorVisible() {
+		return false;
+	}
+
+	@Override
+	public boolean isSubscriptionButtonVisible() throws PortalException {
+		return false;
+	}
+
+	@Override
+	public boolean isThreadedRepliesVisible() {
+		return false;
+	}
+
+	@Override
 	public boolean isTopChild(Comment comment) throws PortalException {
 		return false;
 	}
 
 	@Override
-	public boolean noCommentsYet() {
-		return true;
+	public boolean isVisible(Comment comment) {
+		return false;
 	}
 
 	@Override
-	public boolean shouldSkipComment(Comment comment) {
-		return true;
+	public boolean isWorkflowStatusVisible(Comment comment) {
+		return false;
 	}
 
 }

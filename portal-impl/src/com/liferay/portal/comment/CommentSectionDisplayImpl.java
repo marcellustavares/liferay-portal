@@ -72,42 +72,6 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
-	public boolean canViewControls(Comment comment) throws PortalException {
-		return !_hideControls && !_discussionDisplay.isInTrash(comment);
-	}
-
-	@Override
-	public boolean canViewDiscussion() {
-		return hasCommentsToView() || _commentPermissionChecker.canView();
-	}
-
-	@Override
-	public boolean canViewRatings(Comment comment) throws PortalException {
-		return _ratingsEnabled && !_discussionDisplay.isInTrash(comment);
-	}
-
-	@Override
-	public boolean canViewSearchPaginator() {
-		return (_searchContainer != null) &&
-			(_searchContainer.getTotal() > _searchContainer.getDelta());
-	}
-
-	@Override
-	public boolean canViewSubscribeUnsubscribe() throws PortalException {
-		return _themeDisplay.isSignedIn() && !_discussionDisplay.isInTrash();
-	}
-
-	@Override
-	public boolean canViewThreadedReplies() {
-		return _discussionRoot instanceof DiscussionTree;
-	}
-
-	@Override
-	public boolean canViewWorkflowStatus(Comment comment) {
-		return !comment.isApproved();
-	}
-
-	@Override
 	public String getBodyFormatted(Comment comment) {
 		String msgBody = comment.getBody();
 
@@ -182,24 +146,22 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
-	public boolean hasCommentsToView() {
-		return _discussionRoot.getCommentsCount() > 0;
-	}
-
-	@Override
-	public boolean hasPermissionToAdd() {
+	public boolean hasAddPermission() {
 		return _commentPermissionChecker.canAdd();
 	}
 
 	@Override
-	public boolean hasPermissionToDelete(Comment comment)
-		throws PortalException {
+	public boolean hasComments() {
+		return _discussionRoot.getCommentsCount() > 0;
+	}
 
+	@Override
+	public boolean hasDeletePermission(Comment comment) throws PortalException {
 		return _commentPermissionChecker.canDelete(comment);
 	}
 
 	@Override
-	public boolean hasPermissionToEdit(Comment comment) throws PortalException {
+	public boolean hasEditPermission(Comment comment) throws PortalException {
 		return _commentPermissionChecker.canEdit(comment);
 	}
 
@@ -253,22 +215,55 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
+	public boolean isDiscussionActionsVisible(Comment comment)
+		throws PortalException {
+
+		return !_hideControls && !_discussionDisplay.isInTrash(comment);
+	}
+
+	@Override
+	public boolean isDiscussionVisible() {
+		return hasComments() || _commentPermissionChecker.canView();
+	}
+
+	@Override
+	public boolean isRatingsVisible(Comment comment) throws PortalException {
+		return _ratingsEnabled && !_discussionDisplay.isInTrash(comment);
+	}
+
+	@Override
+	public boolean isSearchPaginatorVisible() {
+		return (_searchContainer != null) &&
+			(_searchContainer.getTotal() > _searchContainer.getDelta());
+	}
+
+	@Override
+	public boolean isSubscriptionButtonVisible() throws PortalException {
+		return _themeDisplay.isSignedIn() && !_discussionDisplay.isInTrash();
+	}
+
+	@Override
+	public boolean isThreadedRepliesVisible() {
+		return _discussionRoot instanceof DiscussionTree;
+	}
+
+	@Override
 	public boolean isTopChild(Comment comment) throws PortalException {
 		return comment.isChildOf(_discussionRoot.getRootCommentId());
 	}
 
 	@Override
-	public boolean noCommentsYet() {
-		return _discussionRoot.getCommentsCount() == 0;
-	}
-
-	@Override
-	public boolean shouldSkipComment(Comment comment) {
-		return (!comment.isApproved() &&
+	public boolean isVisible(Comment comment) {
+		return !((!comment.isApproved() &&
 			((comment.getUserId() != _user.getUserId()) ||
 				_user.isDefaultUser()) &&
 					!_permissionChecker.isGroupAdmin(_scopeGroupId)) ||
-						!_commentPermissionChecker.canView();
+						!_commentPermissionChecker.canView());
+	}
+
+	@Override
+	public boolean isWorkflowStatusVisible(Comment comment) {
+		return !comment.isApproved();
 	}
 
 	private final CommentPermissionChecker _commentPermissionChecker;

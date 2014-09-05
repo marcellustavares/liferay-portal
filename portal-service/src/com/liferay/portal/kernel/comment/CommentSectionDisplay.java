@@ -29,20 +29,6 @@ import javax.portlet.RenderResponse;
  */
 public interface CommentSectionDisplay {
 
-	public boolean canViewControls(Comment comment) throws PortalException;
-
-	public boolean canViewDiscussion();
-
-	public boolean canViewRatings(Comment comment) throws PortalException;
-
-	public boolean canViewSearchPaginator();
-
-	public boolean canViewSubscribeUnsubscribe() throws PortalException;
-
-	public boolean canViewThreadedReplies();
-
-	public boolean canViewWorkflowStatus(Comment comment);
-
 	public String getBodyFormatted(Comment comment);
 
 	public List<CommentTreeNodeDisplay> getCommentTreeNodeDisplays();
@@ -61,24 +47,36 @@ public interface CommentSectionDisplay {
 
 	public long getThreadId();
 
-	public boolean hasCommentsToView();
+	public boolean hasAddPermission();
 
-	public boolean hasPermissionToAdd();
+	public boolean hasComments();
 
-	public boolean hasPermissionToDelete(Comment comment)
-		throws PortalException;
+	public boolean hasDeletePermission(Comment comment) throws PortalException;
 
-	public boolean hasPermissionToEdit(Comment comment) throws PortalException;
+	public boolean hasEditPermission(Comment comment) throws PortalException;
 
 	public boolean hasWorkflowDefinitionLink();
 
 	public List<Comment> initComments(
 		RenderRequest renderRequest, RenderResponse renderResponse);
 
+	public boolean isDiscussionActionsVisible(Comment comment)
+		throws PortalException;
+
+	public boolean isDiscussionVisible();
+
+	public boolean isRatingsVisible(Comment comment) throws PortalException;
+
+	public boolean isSearchPaginatorVisible();
+
+	public boolean isSubscriptionButtonVisible() throws PortalException;
+
+	public boolean isThreadedRepliesVisible();
+
 	public boolean isTopChild(Comment comment) throws PortalException;
 
-	public boolean noCommentsYet();
+	public boolean isVisible(Comment comment);
 
-	public boolean shouldSkipComment(Comment comment);
+	public boolean isWorkflowStatusVisible(Comment comment);
 
 }
