@@ -131,8 +131,7 @@ public class MBCommentManagerImpl implements CommentManager {
 				permissionClassName, permissionClassPK);
 
 		return new CommentSectionDisplayImpl(
-			userId, scopeGroupId, className, classPK, permissionChecker,
-			company, permissionClassName, permissionClassPK, themeDisplay, user,
+			scopeGroupId, permissionChecker, themeDisplay, user,
 			hideControls, ratingsEnabled, discussionDisplay,
 			commentPermissionChecker);
 	}

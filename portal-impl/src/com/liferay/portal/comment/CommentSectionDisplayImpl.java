@@ -52,9 +52,7 @@ import javax.portlet.RenderResponse;
 public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	public CommentSectionDisplayImpl(
-			long userId, long scopeGroupId, String className, long classPK,
-			PermissionChecker permissionChecker, Company company,
-			String permissionClassName, long permissionClassPK,
+			long scopeGroupId, PermissionChecker permissionChecker,
 			ThemeDisplay themeDisplay, User user, boolean hideControls,
 			boolean ratingsEnabled, DiscussionDisplay discussionDisplay,
 			CommentPermissionChecker commentPermissionChecker)
