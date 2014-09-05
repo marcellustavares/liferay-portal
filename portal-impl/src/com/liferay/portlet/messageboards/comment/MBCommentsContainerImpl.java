@@ -50,7 +50,7 @@ public class MBCommentsContainerImpl implements CommentsContainer {
 	}
 
 	@Override
-	public List getSearchContainerResults() {
+	public List<?> getSearchContainerResults() {
 		return _mbMessages;
 	}
 

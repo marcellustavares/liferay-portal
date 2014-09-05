@@ -41,9 +41,9 @@ public interface Comment {
 
 	public String getUserNameNonAnonymous();
 
-	public Class getWorkflowStatusModelClass();
+	public Class<?> getWorkflowStatusModelClass();
 
-	public Class getWorkflowStatusModelContextClass();
+	public Class<?> getWorkflowStatusModelContextClass();
 
 	public boolean isAnonymous();
 

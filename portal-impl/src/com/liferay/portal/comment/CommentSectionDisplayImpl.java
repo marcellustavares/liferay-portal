@@ -60,33 +60,33 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 			CommentPermissionChecker commentPermissionChecker)
 		throws PortalException {
 
-		_commentPermissionChecker = commentPermissionChecker;
-		_discussionDisplay = discussionDisplay;
-		_discussionRoot = discussionDisplay.createDiscussionRoot();
-		_hideControls = hideControls;
-		_permissionChecker = permissionChecker;
-		_ratingsEnabled = ratingsEnabled;
 		_scopeGroupId = scopeGroupId;
+		_permissionChecker = permissionChecker;
 		_themeDisplay = themeDisplay;
 		_user = user;
+		_hideControls = hideControls;
+		_ratingsEnabled = ratingsEnabled;
+		_discussionDisplay = discussionDisplay;
+		_discussionRoot = discussionDisplay.createDiscussionRoot();
+		_commentPermissionChecker = commentPermissionChecker;
 	}
 
 	@Override
 	public String getBodyFormatted(Comment comment) {
-		String msgBody = comment.getBody();
-
 		if (comment.isFormatBBCode()) {
-			msgBody = BBCodeUtil.getBBCodeHTML(
-				msgBody, _themeDisplay.getPathThemeImages());
+			return BBCodeUtil.getBBCodeHTML(
+				comment.getBody(), _themeDisplay.getPathThemeImages());
 		}
 
-		return msgBody;
+		return comment.getBody();
 	}
 
 	@Override
 	public List<CommentTreeNodeDisplay> getCommentTreeNodeDisplays() {
+		DiscussionTree discussionTree = (DiscussionTree)_discussionRoot;
+
 		CommentTreeNode commentTreeNode =
-			((DiscussionTree)_discussionRoot).getRootCommentTreeNode();
+			discussionTree.getRootCommentTreeNode();
 
 		CommentTreeNodeDisplay commentTreeNodeDisplay =
 			new CommentTreeNodeDisplayImpl(commentTreeNode);
@@ -136,7 +136,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 	}
 
 	@Override
-	public SearchContainer getSearchContainer() {
+	public SearchContainer<?> getSearchContainer() {
 		return _searchContainer;
 	}
 
@@ -147,7 +147,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean hasAddPermission() {
-		return _commentPermissionChecker.canAdd();
+		return _commentPermissionChecker.hasAddPermission();
 	}
 
 	@Override
@@ -157,12 +157,12 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 
 	@Override
 	public boolean hasDeletePermission(Comment comment) throws PortalException {
-		return _commentPermissionChecker.canDelete(comment);
+		return _commentPermissionChecker.hasDeletePermission(comment);
 	}
 
 	@Override
 	public boolean hasEditPermission(Comment comment) throws PortalException {
-		return _commentPermissionChecker.canEdit(comment);
+		return _commentPermissionChecker.hasEditPermission(comment);
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 			PortletURL currentURLObj = PortletURLUtil.getCurrent(
 				renderRequest, renderResponse);
 
-			SearchContainer searchContainer = new SearchContainer(
+			SearchContainer searchContainer = new SearchContainer<>(
 				renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM,
 				SearchContainer.DEFAULT_DELTA, currentURLObj, null, null);
 
@@ -218,65 +218,112 @@ public class CommentSectionDisplayImpl implements CommentSectionDisplay {
 	public boolean isDiscussionActionsVisible(Comment comment)
 		throws PortalException {
 
-		return !_hideControls && !_discussionDisplay.isInTrash(comment);
+		if (_hideControls || _discussionDisplay.isInTrash(comment)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
 	public boolean isDiscussionVisible() {
-		return hasComments() || _commentPermissionChecker.canView();
+		if (hasComments()) {
+			return true;
+		}
+
+		return _commentPermissionChecker.hasViewPermission();
 	}
 
 	@Override
 	public boolean isRatingsVisible(Comment comment) throws PortalException {
-		return _ratingsEnabled && !_discussionDisplay.isInTrash(comment);
+		if (_ratingsEnabled && !_discussionDisplay.isInTrash(comment)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isSearchPaginatorVisible() {
-		return (_searchContainer != null) &&
-			(_searchContainer.getTotal() > _searchContainer.getDelta());
+		if (_searchContainer == null) {
+			return false;
+		}
+
+		if (_searchContainer.getTotal() > _searchContainer.getDelta()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isSubscriptionButtonVisible() throws PortalException {
-		return _themeDisplay.isSignedIn() && !_discussionDisplay.isInTrash();
+		if (_themeDisplay.isSignedIn() && !_discussionDisplay.isInTrash()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isThreadedRepliesVisible() {
-		return _discussionRoot instanceof DiscussionTree;
+		if (_discussionRoot instanceof DiscussionTree) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isTopChild(Comment comment) throws PortalException {
-		return comment.isChildOf(_discussionRoot.getRootCommentId());
+		if (comment.isChildOf(_discussionRoot.getRootCommentId())) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isVisible(Comment comment) {
-		return !((!comment.isApproved() &&
-			((comment.getUserId() != _user.getUserId()) ||
-				_user.isDefaultUser()) &&
-					!_permissionChecker.isGroupAdmin(_scopeGroupId)) ||
-						!_commentPermissionChecker.canView());
+		if (comment.isApproved()) {
+			return true;
+		}
+
+		if ((comment.getUserId() == _user.getUserId()) ||
+			_user.isDefaultUser()) {
+
+			return true;
+		}
+
+		if (_permissionChecker.isGroupAdmin(_scopeGroupId) ||
+			_commentPermissionChecker.hasViewPermission()) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public boolean isWorkflowStatusVisible(Comment comment) {
-		return !comment.isApproved();
+		if (comment.isApproved()) {
+			return false;
+		}
+
+		return true;
 	}
 
-	private final CommentPermissionChecker _commentPermissionChecker;
-	private final DiscussionDisplay _discussionDisplay;
-	private final DiscussionRoot _discussionRoot;
-	private final boolean _hideControls;
-	private final PermissionChecker _permissionChecker;
-	private final boolean _ratingsEnabled;
+	private CommentPermissionChecker _commentPermissionChecker;
+	private DiscussionDisplay _discussionDisplay;
+	private DiscussionRoot _discussionRoot;
+	private boolean _hideControls;
+	private PermissionChecker _permissionChecker;
+	private boolean _ratingsEnabled;
 	private List<RatingsEntry> _ratingsEntries;
 	private List<RatingsStats> _ratingsStatsList;
-	private final long _scopeGroupId;
-	private SearchContainer _searchContainer;
-	private final ThemeDisplay _themeDisplay;
-	private final User _user;
+	private long _scopeGroupId;
+	private SearchContainer<?> _searchContainer;
+	private ThemeDisplay _themeDisplay;
+	private User _user;
 
 }

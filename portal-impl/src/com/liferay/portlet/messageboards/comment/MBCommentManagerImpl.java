@@ -122,13 +122,12 @@ public class MBCommentManagerImpl implements CommentManager {
 			boolean ratingsEnabled, DiscussionThreadView discussionThreadView)
 		throws PortalException {
 
-		DiscussionDisplay discussionDisplay =
-			this.createDiscussionDisplay(
-				userId, scopeGroupId, className, classPK, discussionThreadView);
+		DiscussionDisplay discussionDisplay = createDiscussionDisplay(
+			userId, scopeGroupId, className, classPK, discussionThreadView);
 
 		CommentPermissionChecker commentPermissionChecker =
 			new MBCommentPermissionCheckerImpl(
-				userId, scopeGroupId, permissionChecker, company.getCompanyId(),
+				company.getCompanyId(), userId, scopeGroupId, permissionChecker,
 				permissionClassName, permissionClassPK);
 
 		return new CommentSectionDisplayImpl(

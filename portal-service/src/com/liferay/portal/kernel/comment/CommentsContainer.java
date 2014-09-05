@@ -21,10 +21,10 @@ import java.util.List;
  */
 public interface CommentsContainer {
 
-	List<Long> getClassPKs();
+	public List<Long> getClassPKs();
 
-	List<Comment> getComments();
+	public List<Comment> getComments();
 
-	List getSearchContainerResults();
+	public List<?> getSearchContainerResults();
 
 }

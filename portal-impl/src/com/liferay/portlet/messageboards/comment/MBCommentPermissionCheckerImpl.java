@@ -28,15 +28,14 @@ public class MBCommentPermissionCheckerImpl
 	implements CommentPermissionChecker {
 
 	@Override
-	public boolean canAdd() {
+	public boolean hasAddPermission() {
 		return MBDiscussionPermission.contains(
 			_permissionChecker, _companyId, _scopeGroupId, _permissionClassName,
 			_permissionClassPK, _userId, ActionKeys.ADD_DISCUSSION);
 	}
 
 	@Override
-	public boolean canDelete(Comment comment) throws PortalException {
-
+	public boolean hasDeletePermission(Comment comment) throws PortalException {
 		return MBDiscussionPermission.contains(
 			_permissionChecker, _companyId, _scopeGroupId, _permissionClassName,
 			_permissionClassPK, comment.getMessageId(), comment.getUserId(),
@@ -44,7 +43,7 @@ public class MBCommentPermissionCheckerImpl
 	}
 
 	@Override
-	public boolean canEdit(Comment comment) throws PortalException {
+	public boolean hasEditPermission(Comment comment) throws PortalException {
 		return MBDiscussionPermission.contains(
 			_permissionChecker, _companyId, _scopeGroupId, _permissionClassName,
 			_permissionClassPK, comment.getMessageId(), comment.getUserId(),
@@ -52,22 +51,23 @@ public class MBCommentPermissionCheckerImpl
 	}
 
 	@Override
-	public boolean canView() {
+	public boolean hasViewPermission() {
 		return MBDiscussionPermission.contains(
 			_permissionChecker, _companyId, _scopeGroupId, _permissionClassName,
 			_permissionClassPK, _userId, ActionKeys.VIEW);
 	}
 
 	MBCommentPermissionCheckerImpl(
-		long userId, long scopeGroupId, PermissionChecker permissionChecker,
-		long companyId, String permissionClassName, long permissionClassPK) {
+		long companyId, long userId, long scopeGroupId,
+		PermissionChecker permissionChecker, String permissionClassName,
+		long permissionClassPK) {
 
 		_companyId = companyId;
+		_userId = userId;
+		_scopeGroupId = scopeGroupId;
 		_permissionChecker = permissionChecker;
 		_permissionClassName = permissionClassName;
 		_permissionClassPK = permissionClassPK;
-		_scopeGroupId = scopeGroupId;
-		_userId = userId;
 	}
 
 	private final long _companyId;

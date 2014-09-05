@@ -43,7 +43,7 @@ public interface CommentSectionDisplay {
 
 	public long getRootCommentMessageId();
 
-	public SearchContainer getSearchContainer();
+	public SearchContainer<?> getSearchContainer();
 
 	public long getThreadId();
 

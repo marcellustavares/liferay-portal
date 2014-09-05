@@ -81,12 +81,12 @@ public class MBCommentImpl implements Comment {
 	}
 
 	@Override
-	public Class getWorkflowStatusModelClass() {
+	public Class<?> getWorkflowStatusModelClass() {
 		return MBDiscussion.class;
 	}
 
 	@Override
-	public Class getWorkflowStatusModelContextClass() {
+	public Class<?> getWorkflowStatusModelContextClass() {
 		return MBMessage.class;
 	}
 

@@ -21,12 +21,12 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public interface CommentPermissionChecker {
 
-	boolean canAdd();
+	boolean hasAddPermission();
 
-	boolean canDelete(Comment comment) throws PortalException;
+	boolean hasDeletePermission(Comment comment) throws PortalException;
 
-	boolean canEdit(Comment comment) throws PortalException;
+	boolean hasEditPermission(Comment comment) throws PortalException;
 
-	boolean canView();
+	boolean hasViewPermission();
 
 }
