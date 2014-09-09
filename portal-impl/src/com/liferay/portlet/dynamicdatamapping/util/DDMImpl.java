@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Image;
@@ -43,6 +44,8 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.util.WebKeys;
+import com.liferay.portlet.documentlibrary.action.EditFileEntryAction;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateException;
@@ -673,6 +676,9 @@ public class DDMImpl implements DDM {
 			UploadRequest uploadRequest, String fieldNameValue)
 		throws Exception {
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)uploadRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+		
 		String json = ParamUtil.getString(uploadRequest, fieldNameValue);
 
 		if (Validator.isNull(json)) {
@@ -681,13 +687,14 @@ public class DDMImpl implements DDM {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
-		long fileEntryId = jsonObject.getLong("fileEntryId");
+		if (jsonObject.has("name")) {
+			String name = jsonObject.getString("name");
+			
+			FileEntry tempFileEntry = TempFileEntryUtil.getTempFileEntry(
+				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
+				EditFileEntryAction.TEMP_FOLDER_NAME, name);
 
-		if (fileEntryId > 0) {
-			FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
-				fileEntryId);
-
-			return FileUtil.getBytes(fileEntry.getContentStream());
+			return FileUtil.getBytes(tempFileEntry.getContentStream());
 		}
 		else if (jsonObject.has("uuid")) {
 			String uuid = jsonObject.getString("uuid");

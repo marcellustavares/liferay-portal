@@ -118,6 +118,9 @@ import org.apache.struts.action.ActionMapping;
  */
 public class EditFileEntryAction extends PortletAction {
 
+	public static final String TEMP_FOLDER_NAME = 
+		EditFileEntryAction.class.getName();
+
 	public static final String TEMP_RANDOM_SUFFIX = "--tempRandomSuffix--";
 
 	@Override
@@ -369,7 +372,7 @@ public class EditFileEntryAction extends PortletAction {
 		try {
 			tempFileEntry = TempFileEntryUtil.getTempFileEntry(
 				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
-				_TEMP_FOLDER_NAME, selectedFileName);
+				TEMP_FOLDER_NAME, selectedFileName);
 
 			String mimeType = tempFileEntry.getMimeType();
 
@@ -486,7 +489,7 @@ public class EditFileEntryAction extends PortletAction {
 			String contentType = uploadPortletRequest.getContentType("file");
 
 			DLAppServiceUtil.addTempFileEntry(
-				themeDisplay.getScopeGroupId(), folderId, _TEMP_FOLDER_NAME,
+				themeDisplay.getScopeGroupId(), folderId, TEMP_FOLDER_NAME,
 				sourceFileName, inputStream, contentType);
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
@@ -633,7 +636,7 @@ public class EditFileEntryAction extends PortletAction {
 
 		try {
 			DLAppServiceUtil.deleteTempFileEntry(
-				themeDisplay.getScopeGroupId(), folderId, _TEMP_FOLDER_NAME,
+				themeDisplay.getScopeGroupId(), folderId, TEMP_FOLDER_NAME,
 				fileName);
 
 			jsonObject.put("deleted", Boolean.TRUE);
@@ -1109,8 +1112,5 @@ public class EditFileEntryAction extends PortletAction {
 			StreamUtil.cleanUp(inputStream);
 		}
 	}
-
-	private static final String _TEMP_FOLDER_NAME =
-		EditFileEntryAction.class.getName();
 
 }
