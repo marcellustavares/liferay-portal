@@ -146,10 +146,9 @@ public class PortalLDAPUtil {
 				companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
 
 			StringBundler sb = new StringBundler(
-				Validator.isNotNull(groupFilter) ? 11 : 5);
+				Validator.isNotNull(groupFilter) ? 9 : 5);
 
 			if (Validator.isNotNull(groupFilter)) {
-				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(StringPool.AMPERSAND);
 			}
 
@@ -167,7 +166,6 @@ public class PortalLDAPUtil {
 			if (Validator.isNotNull(groupFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(groupFilter);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 
@@ -461,10 +459,9 @@ public class PortalLDAPUtil {
 				companyId, PropsKeys.LDAP_IMPORT_USER_SEARCH_FILTER + postfix);
 
 			StringBundler sb = new StringBundler(
-				Validator.isNotNull(userFilter) ? 11 : 5);
+				Validator.isNotNull(userFilter) ? 9 : 5);
 
 			if (Validator.isNotNull(userFilter)) {
-				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(StringPool.AMPERSAND);
 			}
 
@@ -502,7 +499,6 @@ public class PortalLDAPUtil {
 			if (Validator.isNotNull(userFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(userFilter);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 
