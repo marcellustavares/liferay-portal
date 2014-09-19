@@ -118,7 +118,7 @@ import org.apache.struts.action.ActionMapping;
  */
 public class EditFileEntryAction extends PortletAction {
 
-	public static final String TEMP_FOLDER_NAME = 
+	public static final String TEMP_FOLDER_NAME =
 		EditFileEntryAction.class.getName();
 
 	public static final String TEMP_RANDOM_SUFFIX = "--tempRandomSuffix--";

@@ -678,7 +678,7 @@ public class DDMImpl implements DDM {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)uploadRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
-		
+
 		String json = ParamUtil.getString(uploadRequest, fieldNameValue);
 
 		if (Validator.isNull(json)) {
@@ -689,7 +689,7 @@ public class DDMImpl implements DDM {
 
 		if (jsonObject.has("name")) {
 			String name = jsonObject.getString("name");
-			
+
 			FileEntry tempFileEntry = TempFileEntryUtil.getTempFileEntry(
 				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
 				EditFileEntryAction.TEMP_FOLDER_NAME, name);
