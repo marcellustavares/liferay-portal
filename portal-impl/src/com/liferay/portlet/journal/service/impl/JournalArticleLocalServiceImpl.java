@@ -7084,26 +7084,35 @@ public class JournalArticleLocalServiceImpl
 			return;
 		}
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
+		try {
+			DDMForm ddmForm = ddmStructure.getDDMForm();
 
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			ddmForm.getDDMFormFieldsMap(true);
+			Map<String, DDMFormField> ddmFormFieldsMap =
+				ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
 
-		Map<String, String> fieldsValuesMap = createFieldsValuesMap(content);
+			Map<String, String> fieldsValuesMap = createFieldsValuesMap(
+				content);
 
-		for (Map.Entry<String, String> fieldValue :
-				fieldsValuesMap.entrySet()) {
+			for (Map.Entry<String, String> fieldValue :
+					fieldsValuesMap.entrySet()) {
 
-			String ddmFormFieldName = fieldValue.getKey();
-			String ddmFormFieldValue = fieldValue.getValue();
+				String ddmFormFieldName = fieldValue.getKey();
+				String ddmFormFieldValue = fieldValue.getValue();
 
-			updateDDMFormFieldPredefinedValue(
-				ddmFormFieldsMap.get(ddmFormFieldName), ddmFormFieldValue);
+				updateDDMFormFieldPredefinedValue(
+					ddmFormFieldsMap.get(ddmFormFieldName), ddmFormFieldValue);
+			}
+
+			ddmStructure.updateDDMForm(ddmForm);
+
+			ddmStructureLocalService.updateDDMStructure(ddmStructure);
 		}
+		catch (PortalException e) {
 
-		ddmStructure.updateDDMForm(ddmForm);
+			// TODO Auto-generated catch block
 
-		ddmStructureLocalService.updateDDMStructure(ddmStructure);
+			e.printStackTrace();
+		}
 	}
 
 	protected void updatePreviousApprovedArticle(JournalArticle article)
