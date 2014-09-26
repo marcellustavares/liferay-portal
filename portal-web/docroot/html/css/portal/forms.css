@@ -118,6 +118,10 @@
 			}
 		}
 
+		.image-upload-progress {
+			height: 6px;
+		}
+
 		.lfr-ddm-repeatable-add-button, .lfr-ddm-repeatable-delete-button {
 			display: block;
 			height: 16px;

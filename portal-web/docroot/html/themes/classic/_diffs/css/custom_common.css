@@ -800,6 +800,10 @@ $dockbarOpenGradientStart: #0EA6F9;
 	}
 
 	body.yui3-skin-sam .yui3-widget-mask {
+		&.image-viewer-mask {
+			background-color: #000;
+		}
+
 		background-color: #FFF;
 	}
 
