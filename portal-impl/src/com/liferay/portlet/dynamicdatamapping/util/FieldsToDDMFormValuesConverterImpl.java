@@ -76,6 +76,10 @@ public class FieldsToDDMFormValuesConverterImpl
 		Field ddmFieldsDisplayField = ddmFields.get(
 			DDMImpl.FIELDS_DISPLAY_NAME);
 
+		if (ddmFieldsDisplayField == null) {
+			return 0;
+		}
+
 		String[] ddmFieldsDisplayValues = getDDMFieldsDisplayValues(
 			ddmFieldsDisplayField);
 
