@@ -7075,7 +7075,8 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void updateDDMStructurePredefinedValues(
-		long ddmStructureId, String content, ServiceContext serviceContext) {
+			long ddmStructureId, String content, ServiceContext serviceContext)
+		throws PortalException {
 
 		DDMStructure ddmStructure = ddmStructureLocalService.fetchDDMStructure(
 			ddmStructureId);
@@ -7087,7 +7088,7 @@ public class JournalArticleLocalServiceImpl
 		DDMForm ddmForm = ddmStructure.getDDMForm();
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
-			ddmForm.getDDMFormFieldsMap(true);
+			ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
 
 		Map<String, String> fieldsValuesMap = createFieldsValuesMap(content);
 
