@@ -20,6 +20,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
@@ -32,6 +33,15 @@ import java.io.Serializable;
 public interface DDM {
 
 	public DDMDisplay getDDMDisplay(ServiceContext serviceContext);
+
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, long ddmTemplateId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, ServiceContext serviceContext)
+		throws PortalException;
 
 	public Serializable getDisplayFieldValue(
 			ThemeDisplay themeDisplay, Serializable fieldValue, String type)
@@ -67,6 +77,9 @@ public interface DDM {
 
 	public OrderByComparator<DDMTemplate> getTemplateOrderByComparator(
 		String orderByCol, String orderByType);
+
+	public DDMFormValues mergeDDMFormValues(
+		DDMFormValues ddmFormValues, DDMFormValues existingDDMFormValues);
 
 	public Fields mergeFields(Fields newFields, Fields existingFields);
 

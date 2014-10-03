@@ -55,6 +55,16 @@ public class DDMContentLocalServiceWrapper implements DDMContentLocalService,
 		return _ddmContentLocalService.addDDMContent(ddmContent);
 	}
 
+	@Override
+	public com.liferay.portlet.dynamicdatamapping.model.DDMContent addJSONContent(
+		long userId, long groupId, java.lang.String name,
+		java.lang.String description, java.lang.String data,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmContentLocalService.addJSONContent(userId, groupId, name,
+			description, data, serviceContext);
+	}
+
 	/**
 	* Creates a new d d m content with the primary key. Does not add the d d m content to the database.
 	*

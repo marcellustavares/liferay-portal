@@ -14,7 +14,10 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
+import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -42,37 +45,27 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 			String data, ServiceContext serviceContext)
 		throws PortalException {
 
-		User user = userPersistence.findByPrimaryKey(userId);
-
 		try {
-			data = DDMXMLUtil.formatXML(data);
+			String formattedData = DDMXMLUtil.formatXML(data);
+
+			return addFormattedContent(
+				userId, name, description, formattedData, serviceContext);
 		}
 		catch (Exception e) {
 			throw new ContentDataException(e);
 		}
+	}
 
-		Date now = new Date();
+	@Override
+	public DDMContent addJSONContent(
+			long userId, long groupId, String name, String description,
+			String data, ServiceContext serviceContext)
+		throws PortalException {
 
-		validate(name, data);
+		String formattedData = formatJSON(data);
 
-		long contentId = counterLocalService.increment();
-
-		DDMContent content = ddmContentPersistence.create(contentId);
-
-		content.setUuid(serviceContext.getUuid());
-		content.setGroupId(serviceContext.getScopeGroupId());
-		content.setCompanyId(user.getCompanyId());
-		content.setUserId(user.getUserId());
-		content.setUserName(user.getFullName());
-		content.setCreateDate(serviceContext.getCreateDate(now));
-		content.setModifiedDate(serviceContext.getModifiedDate(now));
-		content.setName(name);
-		content.setDescription(description);
-		content.setData(data);
-
-		ddmContentPersistence.update(content);
-
-		return content;
+		return addFormattedContent(
+			userId, name, description, formattedData, serviceContext);
 	}
 
 	@Override
@@ -140,6 +133,41 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 		ddmContentPersistence.update(content);
 
 		return content;
+	}
+
+	protected DDMContent addFormattedContent(
+			long userId, String name, String description, String formattedData,
+			ServiceContext serviceContext)
+		throws NoSuchUserException {
+
+		User user = userPersistence.findByPrimaryKey(userId);
+
+		Date now = new Date();
+
+		long contentId = counterLocalService.increment();
+
+		DDMContent content = ddmContentPersistence.create(contentId);
+
+		content.setUuid(serviceContext.getUuid());
+		content.setGroupId(serviceContext.getScopeGroupId());
+		content.setCompanyId(user.getCompanyId());
+		content.setUserId(user.getUserId());
+		content.setUserName(user.getFullName());
+		content.setCreateDate(serviceContext.getCreateDate(now));
+		content.setModifiedDate(serviceContext.getModifiedDate(now));
+		content.setName(name);
+		content.setDescription(description);
+		content.setData(formattedData);
+
+		ddmContentPersistence.update(content);
+
+		return content;
+	}
+
+	protected String formatJSON(String data) throws PortalException {
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(data);
+
+		return jsonObject.toString();
 	}
 
 	protected void validate(String name, String xml) throws PortalException {

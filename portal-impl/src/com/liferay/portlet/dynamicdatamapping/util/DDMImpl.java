@@ -48,8 +48,11 @@ import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateException;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.model.Value;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
@@ -114,6 +117,24 @@ public class DDMImpl implements DDM {
 		}
 
 		return DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, long ddmTemplateId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return getDDMFormValues(
+			ddmStructureId, ddmTemplateId, StringPool.BLANK, serviceContext);
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, ServiceContext serviceContext)
+		throws PortalException {
+
+		return getDDMFormValues(ddmStructureId, 0, serviceContext);
 	}
 
 	@Override
@@ -382,6 +403,19 @@ public class DDMImpl implements DDM {
 	}
 
 	@Override
+	public DDMFormValues mergeDDMFormValues(
+		DDMFormValues ddmFormValues, DDMFormValues existingDDMFormValues) {
+
+		for (DDMFormFieldValue newDDMFormFieldValue
+				: ddmFormValues.getDDMFormFieldValues()) {
+
+			existingDDMFormValues.addDDMFormFieldValue(newDDMFormFieldValue);
+		}
+
+		return existingDDMFormValues;
+	}
+
+	@Override
 	public Fields mergeFields(Fields newFields, Fields existingFields) {
 		String[] newFieldsDisplayValues = splitFieldsDisplayValue(
 			newFields.get(DDMImpl.FIELDS_DISPLAY_NAME));
@@ -432,6 +466,37 @@ public class DDMImpl implements DDM {
 		return count;
 	}
 
+	protected List<DDMFormFieldValue> createDDMFormFieldValues(
+			DDMStructure ddmStructure, String fieldName,
+			List<Serializable> fieldValues, ServiceContext serviceContext)
+		throws PortalException {
+
+		List<DDMFormFieldValue> ddmFormFieldValues =
+			new ArrayList<DDMFormFieldValue>();
+
+		for (Serializable fieldValue : fieldValues) {
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+
+			String languageId = GetterUtil.getString(
+				serviceContext.getAttribute("languageId"),
+				serviceContext.getLanguageId());
+
+			Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+			ddmFormFieldValue.setName(fieldName);
+
+			Value value = new LocalizedValue();
+
+			value.addString(locale, fieldValue.toString());
+
+			ddmFormFieldValue.setValue(value);
+
+			ddmFormFieldValues.add(ddmFormFieldValue);
+		}
+
+		return ddmFormFieldValues;
+	}
+
 	protected Field createField(
 		DDMStructure ddmStructure, String fieldName,
 		List<Serializable> fieldValues, ServiceContext serviceContext) {
@@ -463,6 +528,72 @@ public class DDMImpl implements DDM {
 		field.setValues(locale, fieldValues);
 
 		return field;
+	}
+
+	protected DDMFormValues getDDMFormValues(
+			long ddmStructureId, long ddmTemplateId, String fieldNamespace,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		DDMStructure ddmStructure = getDDMStructure(
+			ddmStructureId, ddmTemplateId);
+
+		Set<String> fieldNames = ddmStructure.getFieldNames();
+
+		boolean translating = true;
+
+		String defaultLanguageId = (String)serviceContext.getAttribute(
+			"defaultLanguageId");
+		String toLanguageId = (String)serviceContext.getAttribute(
+			"toLanguageId");
+
+		if (Validator.isNull(toLanguageId) ||
+			Validator.equals(defaultLanguageId, toLanguageId)) {
+
+			translating = false;
+		}
+
+		DDMFormValues ddmFormValues = new DDMFormValues();
+
+		Locale defaultLocale = LocaleUtil.fromLanguageId(defaultLanguageId);
+
+		ddmFormValues.setDefaultLocale(defaultLocale);
+
+		Set<Locale> availableLocales = new HashSet<Locale>();
+
+		availableLocales.add(defaultLocale);
+
+		if (translating) {
+			availableLocales.add(LocaleUtil.fromLanguageId(toLanguageId));
+		}
+
+		ddmFormValues.setAvailableLocales(availableLocales);
+
+		for (String fieldName : fieldNames) {
+			boolean localizable = GetterUtil.getBoolean(
+				ddmStructure.getFieldProperty(fieldName, "localizable"), true);
+
+			if (!localizable && translating) {
+				continue;
+			}
+
+			List<Serializable> fieldValues = getFieldValues(
+				ddmStructure, fieldName, fieldNamespace, serviceContext);
+
+			if ((fieldValues == null) || fieldValues.isEmpty()) {
+				continue;
+			}
+
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				createDDMFormFieldValues(
+					ddmStructure, fieldName, fieldValues, serviceContext);
+
+			for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+				ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+			}
+		}
+
+		return ddmFormValues;
 	}
 
 	protected DDMStructure getDDMStructure(
