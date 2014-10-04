@@ -17,7 +17,7 @@ package com.liferay.osgi.config.admin.portlet;
 import com.liferay.osgi.config.admin.util.MetaTypeInfoUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.util.bridges.freemarker.FreeMarkerPortlet;
 
 import java.io.IOException;
 
@@ -47,13 +47,13 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.init-param.view-template=/view.vm",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )
-public class LiferayOsgiConfigAdminPortlet extends MVCPortlet {
+public class LiferayOsgiConfigAdminPortlet extends FreeMarkerPortlet {
 
 	@Activate
 	public void activate(BundleContext context) {
