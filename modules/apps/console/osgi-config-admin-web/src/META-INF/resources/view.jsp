@@ -14,19 +14,12 @@
  */
 --%>
 
-<%@ page import="org.osgi.service.metatype.ObjectClassDefinition" %>
-
 <%@ include file="/init.jsp" %>
 
-<%@ page import="java.util.ListIterator" %>
-<%@ page import="java.util.List" %>
-
-<portlet:actionURL var="editActionURL">
-</portlet:actionURL>
+<portlet:actionURL var="editActionURL" />
 
 <%
-	List<ObjectClassDefinition> ocds =
-		(List<ObjectClassDefinition>)request.getAttribute("METATYPE_OCD_CONTAINER");
+List<ObjectClassDefinition> ocds = (List<ObjectClassDefinition>)request.getAttribute("METATYPE_OCD_CONTAINER");
 %>
 
 <aui:form name="fm1">
@@ -37,14 +30,15 @@
 
 		<liferay-ui:search-container-row
 			className="org.osgi.service.metatype.ObjectClassDefinition"
-			keyProperty="ID" modelVar="ocd">
+			keyProperty="ID"
+			modelVar="ocd"
+		>
 
 			<liferay-ui:search-container-column-text name="ID" property="ID" />
 
 			<liferay-ui:search-container-column-text name="name" property="name" />
 
-			<liferay-ui:search-container-column-jsp name="actions" align="center"
-				path="/actions.jsp" />
+			<liferay-ui:search-container-column-jsp name="actions" align="center" path="/actions.jsp" />
 
 		</liferay-ui:search-container-row>
 

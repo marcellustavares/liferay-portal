@@ -23,7 +23,24 @@
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 
+<%@ page import="com.liferay.osgi.config.admin.util.MetaTypeInfoUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.LocaleUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
+<%@ page import="com.liferay.portal.util.PortalUtil" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues" %>
+<%@ page import="com.liferay.taglib.search.ResultRow" %>
+
+<%@ page import="java.util.ListIterator" %>
+<%@ page import="java.util.List" %>
+
 <%@ page import="javax.portlet.WindowState" %>
+
+<%@ page import="org.osgi.service.metatype.ObjectClassDefinition" %>
 
 <liferay-theme:defineObjects />
 <portlet:defineObjects />
@@ -31,5 +48,3 @@
 <%
 WindowState windowState = liferayPortletRequest.getWindowState();
 %>
-
-<%@ include file="/init-ext.jsp" %>

@@ -13,25 +13,82 @@
  * details.
  */
 --%>
-<%@ page import="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext" %>
 
+<%@page import="com.liferay.portal.kernel.util.SetUtil"%>
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
+<%@page import="com.liferay.portal.kernel.util.LocaleUtil"%>
 <%@ include file="/init.jsp" %>
-<%@page
-	import="com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil" %>
-<%@ page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm" %>
-<%@ page import="com.liferay.osgi.config.admin.util.MetaTypeInfoUtil" %>
-<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
-<%@ page import="org.osgi.service.metatype.ObjectClassDefinition" %>
 
 <%
-	String servicePID = request.getParameter("servicePID");
-	DDMForm attributeForm = MetaTypeInfoUtil.attributeForm(servicePID);
-	DDMFormFieldRenderingContext context = new DDMFormFieldRenderingContext();
+String servicePID = request.getParameter("servicePID");
+DDMForm ddmForm = MetaTypeInfoUtil.attributeForm(servicePID);
+
+ddmForm.setAvailableLocales(SetUtil.fromArray(LanguageUtil.getAvailableLocales()));
+ddmForm.setDefaultLocale(LocaleUtil.getDefault());
+
+String ddmFormValuesInputName = "PID";
+String fieldsNamespace = "FN";
+boolean readOnly = false;
+boolean showEmptyFieldLabel = true;
+long classNameId = 0;
+long classPK = 0;
+String randomNamespace = "blah";
+boolean repeatable = false;
 %>
+
+Editing: <%= servicePID %>
+
+<br />
 
 <aui:form name="fm1">
 	<aui:input name="servicePID" type="hidden" value="<%= servicePID %>" />
-	<aui:fieldset>
 
-	</aui:fieldset>
+	<%
+	DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
+
+	ddmFormFieldRenderingContext.setFields(null);
+	ddmFormFieldRenderingContext.setHttpServletRequest(request);
+	ddmFormFieldRenderingContext.setHttpServletResponse(response);
+	ddmFormFieldRenderingContext.setLocale(themeDisplay.getLocale());
+	// ?? ddmFormFieldRenderingContext.setMode(mode);
+	ddmFormFieldRenderingContext.setNamespace(fieldsNamespace);
+	ddmFormFieldRenderingContext.setPortletNamespace(renderResponse.getNamespace());
+	ddmFormFieldRenderingContext.setReadOnly(readOnly);
+	ddmFormFieldRenderingContext.setShowEmptyFieldLabel(showEmptyFieldLabel);
+	%>
+
+	<%= DDMFormRendererUtil.render(ddmForm, ddmFormFieldRenderingContext) %>
+
+	<aui:input name="<%= ddmFormValuesInputName %>" type="hidden" />
+
+	<aui:script use="liferay-ddm-form">
+		new Liferay.DDM.Form(
+			{
+				classNameId: <%= classNameId %>,
+				classPK: <%= classPK %>,
+				container: '#<%= randomNamespace %>',
+				ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
+				definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
+				doAsGroupId: <%= scopeGroupId %>,
+				fieldsNamespace: '<%= fieldsNamespace %>',
+				p_l_id: <%= themeDisplay.getPlid() %>,
+				portletNamespace: '<portlet:namespace />',
+				repeatable: <%= repeatable %>
+
+				<%
+
+				DDMFormValues ddmFormValues = new DDMFormValues();
+
+				ddmFormValues.setDDMForm(ddmForm);
+				ddmFormValues.setAvailableLocales(SetUtil.fromArray(LanguageUtil.getAvailableLocales()));
+				ddmFormValues.setDefaultLocale(LocaleUtil.getDefault());
+				%>
+
+				<c:if test="<%= ddmFormValues != null %>">
+					, values: <%= DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues) %>
+				</c:if>
+			}
+		);
+	</aui:script>
+
 </aui:form>

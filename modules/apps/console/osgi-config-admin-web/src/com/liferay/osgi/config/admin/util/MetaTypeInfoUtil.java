@@ -20,6 +20,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.service.metatype.AttributeDefinition;
@@ -67,18 +68,28 @@ public class MetaTypeInfoUtil {
 		DDMForm ddmForm, AttributeDefinition[] attributeDefinitions,
 		boolean required) {
 
+		if (attributeDefinitions == null) {
+			return;
+		}
+
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
 			String name = attributeDefinition.getName();
 			String type = _attributeToDDMType(attributeDefinition);
+			int cardinality = attributeDefinition.getCardinality();
 
 			DDMFormField ddmFormField = new DDMFormField(name, type);
+
+			ddmFormField.setDDMForm(ddmForm);
+
 			ddmFormField.setRequired(required);
 
-			if (attributeDefinition.getCardinality() > 1) {
+			if (cardinality != 0) {
 				ddmFormField.setRepeatable(true);
 			}
 
-			ddmForm.getDDMFormFields().add(ddmFormField);
+			ddmFormFields.add(ddmFormField);
 		}
 	}
 

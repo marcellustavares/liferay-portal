@@ -38,17 +38,21 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
-@Component(immediate = true, service = Portlet.class, property = {
-	"com.liferay.portlet.display-category=category.hidden",
-	"com.liferay.portlet.instanceable=false",
-	"javax.portlet.init-param.template-path=/",
-	"javax.portlet.init-param.view-template=/view.jsp",
-	"javax.portlet.resource-bundle=content.Language",
-	"javax.portlet.security-role-ref=power-user,user",
-	"com.liferay.portlet.control-panel-entry-category=configuration",
-	"com.liferay.portlet.control-panel-entry-weight=11"
 
-})
+@Component(
+	immediate = true,
+	property = {
+		"com.liferay.portlet.control-panel-entry-category=configuration",
+		"com.liferay.portlet.control-panel-entry-weight=11",
+		"com.liferay.portlet.display-category=category.hidden",
+		"com.liferay.portlet.instanceable=false",
+		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.resource-bundle=content.Language",
+		"javax.portlet.security-role-ref=power-user,user"
+	},
+	service = Portlet.class
+)
 public class LiferayOsgiConfigAdminPortlet extends MVCPortlet {
 
 	@Activate
@@ -66,9 +70,7 @@ public class LiferayOsgiConfigAdminPortlet extends MVCPortlet {
 		List<ObjectClassDefinition> ocdContainer =
 			new ArrayList<ObjectClassDefinition>();
 
-		for (int i = 0; i < bundles.length; i++) {
-			Bundle bundle = bundles[i];
-
+		for (Bundle bundle : bundles) {
 			MetaTypeInformation mInfo = _metaTypeService.getMetaTypeInformation(
 				bundle);
 

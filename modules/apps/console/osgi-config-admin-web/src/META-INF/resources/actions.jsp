@@ -13,28 +13,20 @@
  * details.
  */
 --%>
-<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
-<%@ page import="com.liferay.taglib.search.ResultRow" %>
-
-<%@ page import="org.osgi.service.metatype.ObjectClassDefinition" %>
 
 <%@ include file="/init.jsp" %>
 
 <%
-	ResultRow resultRow =
-		(ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-	ObjectClassDefinition ocd =
-		(ObjectClassDefinition)resultRow.getObject();
+ResultRow resultRow = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+ObjectClassDefinition ocd = (ObjectClassDefinition)resultRow.getObject();
 %>
 
 <portlet:renderURL var="editAttributesURL">
 	<portlet:param name="mvcPath" value="/edit_attributes.jsp" />
-	<portlet:param name="servicePID"
-		value="<%= String.valueOf(ocd.getID()) %>" />
+	<portlet:param name="servicePID" value="<%= String.valueOf(ocd.getID()) %>" />
 </portlet:renderURL>
 
 <liferay-ui:icon-menu>
-	<liferay-ui:icon message="edit"
-		url="<%= editAttributesURL.toString() %>" />
+	<liferay-ui:icon message="edit" url="<%= editAttributesURL.toString() %>" />
 	<liferay-ui:icon message="show" url="#" />
 </liferay-ui:icon-menu>
