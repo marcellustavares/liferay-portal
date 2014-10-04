@@ -14,57 +14,40 @@
  */
 --%>
 
-<%@page import="java.util.ListIterator"%>
-<%@page import="org.osgi.service.metatype.AttributeDefinition"%>
-<%@page import="org.osgi.service.metatype.ObjectClassDefinition"%>
-<%@page import="com.liferay.osgi.console.web.model.MetatypeInfoForm"%>
-<%@page import="java.util.List"%>
-<%@ include file="/init.jsp"%>
+<%@ page import="org.osgi.service.metatype.ObjectClassDefinition" %>
 
-<table>
-	<%
-		List<MetatypeInfoForm> metatypeInfoForms =
-			(List<MetatypeInfoForm>)request.getAttribute("METATYPE_INFO");
-		ListIterator<MetatypeInfoForm> iterator =
-			metatypeInfoForms.listIterator();
-		while (iterator.hasNext()) {
-			MetatypeInfoForm infoForm = iterator.next();
-			ObjectClassDefinition ocd = infoForm.getOcd();
-	%>
-	<tr>
-		<td>Service PID</td>
-		<td><b><%=infoForm.getPid()%></b></td>
-	</tr>
-	<tr>
-		<th colspan="2">Attributes Info</th>
-	</tr>
-	<tr>
-		<td>
-			<table border="1">
-				<tr>
-					<td>ID</td>
-					<td>Name</td>
-				</tr>
-				<%
-					AttributeDefinition[] attrDefs =
-							ocd.getAttributeDefinitions(ObjectClassDefinition.ALL);
-						for (int i = 0; i < attrDefs.length; i++) {
-							AttributeDefinition attrDef = attrDefs[i];
-				%>
+<%@ include file="/init.jsp" %>
 
+<%@ page import="java.util.ListIterator" %>
+<%@ page import="java.util.List" %>
 
-				<tr>
-					<td><%=attrDef.getID()%>
-					<td><%=attrDef.getName()%></td>
-				</tr>
-				<%
-					}
-				%>
+<portlet:actionURL var="editActionURL">
+</portlet:actionURL>
 
-			</table>
-		</td>
-	</tr>
-	<%
-		}
-	%>
-</table>
+<%
+	List<ObjectClassDefinition> ocds =
+		(List<ObjectClassDefinition>)request.getAttribute("METATYPE_OCD_CONTAINER");
+%>
+
+<aui:form name="fm1">
+
+	<liferay-ui:search-container delta="10">
+
+		<liferay-ui:search-container-results results="<%= ocds %>" />
+
+		<liferay-ui:search-container-row
+			className="org.osgi.service.metatype.ObjectClassDefinition"
+			keyProperty="ID" modelVar="ocd">
+
+			<liferay-ui:search-container-column-text name="ID" property="ID" />
+
+			<liferay-ui:search-container-column-text name="name" property="name" />
+
+			<liferay-ui:search-container-column-jsp name="actions" align="center"
+				path="/actions.jsp" />
+
+		</liferay-ui:search-container-row>
+
+		<liferay-ui:search-iterator />
+	</liferay-ui:search-container>
+</aui:form>

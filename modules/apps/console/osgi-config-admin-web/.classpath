@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="lib/org.osgi.compendium.jar"/>
 	<classpathentry kind="lib" path="lib/org.osgi.core.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/portal-master/util-taglib/util-taglib.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

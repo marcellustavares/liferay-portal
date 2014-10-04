@@ -23,29 +23,13 @@
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<%@
-page import="com.liferay.portal.kernel.util.CharPool" %><%@
-page import="com.liferay.portal.kernel.util.Constants" %><%@
-page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
-page import="com.liferay.portal.kernel.util.StringPool" %><%@
-page import="com.liferay.portal.kernel.util.StringUtil" %><%@
-page import="com.liferay.portal.kernel.util.Validator" %>
-
-<%@ page import="java.text.NumberFormat" %>
-
-<%@ page import="java.util.Enumeration" %><%@
-page import="java.util.Set" %><%@
-page import="java.util.TreeSet" %>
-
-<%@ page import="javax.portlet.ValidatorException" %><%@
-page import="javax.portlet.WindowState" %>
+<%@ page import="javax.portlet.WindowState" %>
 
 <liferay-theme:defineObjects />
 <portlet:defineObjects />
 
 <%
 WindowState windowState = liferayPortletRequest.getWindowState();
-
 %>
 
 <%@ include file="/init-ext.jsp" %>

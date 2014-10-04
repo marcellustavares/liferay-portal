@@ -1,11 +1,28 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 
 package com.liferay.osgi.config.admin.portlet;
 
+import com.liferay.osgi.config.admin.util.MetaTypeInfoUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -18,8 +35,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
-
+import org.osgi.service.metatype.ObjectClassDefinition;
 @Component(immediate = true, service = Portlet.class, property = {
 	"com.liferay.portlet.display-category=category.hidden",
 	"com.liferay.portlet.instanceable=false",
@@ -40,15 +58,40 @@ public class LiferayOsgiConfigAdminPortlet extends MVCPortlet {
 
 	@Override
 	public void doView(
-		RenderRequest renderRequest, RenderResponse renderResponse)
+			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
+
 		Bundle[] bundles = _context.getBundles();
-		//TODO build a static class that will tear this MetatypeInfo
+
+		List<ObjectClassDefinition> ocdContainer =
+			new ArrayList<ObjectClassDefinition>();
+
+		for (int i = 0; i < bundles.length; i++) {
+			Bundle bundle = bundles[i];
+
+			MetaTypeInformation mInfo = _metaTypeService.getMetaTypeInformation(
+				bundle);
+
+			if (mInfo != null) {
+				String[] pids = mInfo.getPids();
+
+				MetaTypeInfoUtil.fillOCD(mInfo, ocdContainer, pids);
+
+				String[] factoryPids = mInfo.getFactoryPids();
+
+				MetaTypeInfoUtil.fillOCD(mInfo, ocdContainer, factoryPids);
+			}
+		}
+
+		renderRequest.setAttribute("METATYPE_OCD_CONTAINER", ocdContainer);
+
 		super.doView(renderRequest, renderResponse);
 	}
 
 	@Reference
-	protected void setConfigAdminService(ConfigurationAdmin configurationAdmin) {
+	protected void setConfigAdminService(
+		ConfigurationAdmin configurationAdmin) {
+
 		_configurationAdmin = configurationAdmin;
 	}
 
@@ -57,7 +100,9 @@ public class LiferayOsgiConfigAdminPortlet extends MVCPortlet {
 		_metaTypeService = metaTypeService;
 	}
 
-	private Log _log = LogFactoryUtil.getLog(LiferayOsgiConfigAdminPortlet.class);
+	private static Log _log = LogFactoryUtil.getLog(
+		LiferayOsgiConfigAdminPortlet.class);
+
 	private ConfigurationAdmin _configurationAdmin;
 	private BundleContext _context;
 	private MetaTypeService _metaTypeService;
