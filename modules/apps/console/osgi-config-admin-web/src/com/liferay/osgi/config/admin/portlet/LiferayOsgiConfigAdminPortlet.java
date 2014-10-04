@@ -47,7 +47,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.vm",
+		"javax.portlet.init-param.view-template=/view.ftl",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
