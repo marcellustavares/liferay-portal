@@ -16,11 +16,20 @@ package com.liferay.osgi.config.admin.util;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.service.metatype.AttributeDefinition;
@@ -35,6 +44,14 @@ public class MetaTypeInfoUtil {
 
 	public static DDMForm attributeForm(String servicePID) {
 		DDMForm ddmForm = new DDMForm();
+
+		Set<Locale> availableLocales = new HashSet<>();
+
+		availableLocales.add(LocaleUtil.getDefault());
+
+		ddmForm.setAvailableLocales(availableLocales);
+
+		ddmForm.setDefaultLocale(LocaleUtil.getDefault());
 
 		AttributeDefinition[] attributeDefinitions = _attributeDefinition(
 			servicePID, ObjectClassDefinition.REQUIRED);
@@ -75,15 +92,32 @@ public class MetaTypeInfoUtil {
 		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
 
 		for (AttributeDefinition attributeDefinition : attributeDefinitions) {
-			String name = attributeDefinition.getName();
+			String name = _attributeToName(attributeDefinition);
 			String type = _attributeToDDMType(attributeDefinition);
-			int cardinality = attributeDefinition.getCardinality();
 
 			DDMFormField ddmFormField = new DDMFormField(name, type);
 
+			ddmFormField.setDataType(
+				_attributeToDDMDataType(attributeDefinition));
 			ddmFormField.setDDMForm(ddmForm);
+			ddmFormField.setLabel(_attributeToLabel(attributeDefinition));
+			ddmFormField.setLocalizable(true);
+
+			DDMFormFieldOptions ddmFormFieldOptions = _getDDMFieldOptions(
+				attributeDefinition);
+
+			if ((type.equals("radio") || type.equals("select")) &&
+				!_hasDDMFormFieldOptionsAvailable(ddmFormFieldOptions)) {
+
+				continue;
+			}
+
+			_setDDMFormFieldOptions(ddmFormField, ddmFormFieldOptions);
 
 			ddmFormField.setRequired(required);
+			ddmFormField.setShowLabel(true);
+
+			int cardinality = attributeDefinition.getCardinality();
 
 			if (cardinality != 0) {
 				ddmFormField.setRepeatable(true);
@@ -104,6 +138,42 @@ public class MetaTypeInfoUtil {
 		}
 
 		return attributeDefinitions;
+	}
+
+	private static String _attributeToDDMDataType(
+		AttributeDefinition attributeDefinition) {
+
+		int type = attributeDefinition.getType();
+
+		switch (type) {
+			case AttributeDefinition.DOUBLE: {
+				return FieldConstants.DOUBLE;
+			}
+
+			case AttributeDefinition.FLOAT: {
+				return FieldConstants.FLOAT;
+			}
+
+			case AttributeDefinition.INTEGER: {
+				return FieldConstants.INTEGER;
+			}
+
+			case AttributeDefinition.LONG: {
+				return FieldConstants.LONG;
+			}
+
+			case AttributeDefinition.SHORT: {
+				return FieldConstants.SHORT;
+			}
+
+			case AttributeDefinition.BOOLEAN: {
+				return FieldConstants.BOOLEAN;
+			}
+
+			default: {
+				return FieldConstants.STRING;
+			}
+		}
 	}
 
 	private static String _attributeToDDMType(
@@ -131,6 +201,65 @@ public class MetaTypeInfoUtil {
 				return "text";
 			}
 		}
+	}
+
+	private static LocalizedValue _attributeToLabel(
+		AttributeDefinition attributeDefinition) {
+
+		LocalizedValue localizedValue = new LocalizedValue(
+			LocaleUtil.getDefault());
+
+		localizedValue.addString(
+			LocaleUtil.getDefault(), attributeDefinition.getName());
+
+		return localizedValue;
+	}
+
+	private static String _attributeToName(
+		AttributeDefinition attributeDefinition) {
+
+		String id = attributeDefinition.getID();
+
+		return StringUtil.replace(id, StringPool.PERIOD, StringPool.BLANK);
+	}
+
+	private static DDMFormFieldOptions _getDDMFieldOptions(
+		AttributeDefinition attributeDefinition) {
+
+		DDMFormFieldOptions ddmFormFieldOptions = new DDMFormFieldOptions();
+
+		String[] labels = attributeDefinition.getOptionLabels();
+		String[] values = attributeDefinition.getOptionValues();
+
+		if (labels != null && values != null) {
+			for (int i = 0; i < labels.length; i++) {
+				ddmFormFieldOptions.addOptionLabel(
+					values[i], LocaleUtil.getDefault(), labels[i]);
+			}
+		}
+
+		return ddmFormFieldOptions;
+	}
+
+	private static boolean _hasDDMFormFieldOptionsAvailable(
+		DDMFormFieldOptions ddmFormFieldOptions) {
+
+		Set<String> optionValues = ddmFormFieldOptions.getOptionsValues();
+
+		if (optionValues.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private static void _setDDMFormFieldOptions(
+		DDMFormField ddmFormField, DDMFormFieldOptions ddmFormFieldOptions) {
+
+		ddmFormField.setType("radio");
+		ddmFormField.setDataType("string");
+
+		ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(MetaTypeInfoUtil.class);

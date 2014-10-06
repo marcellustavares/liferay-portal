@@ -20,18 +20,14 @@ import com.liferay.osgi.config.admin.util.ObjectClassDefinitonsIterator;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil;
-
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletRequest;
@@ -61,8 +57,7 @@ import org.osgi.service.metatype.MetaTypeService;
 					"javax.portlet.security-role-ref=power-user,user"
 				},
 				service = Portlet.class)
-public class LiferayOsgiConfigAdminPortlet
-	extends OsgiFreeMarkerPortlet {
+public class LiferayOsgiConfigAdminPortlet extends OsgiFreeMarkerPortlet {
 
 	@Activate
 	public void activate(BundleContext context) {
@@ -71,37 +66,29 @@ public class LiferayOsgiConfigAdminPortlet
 
 	@Override
 	protected void populateContext(
-		String path, PortletRequest portletRequest,
-		PortletResponse portletResponse, Template template)
+			String path, PortletRequest portletRequest,
+			PortletResponse portletResponse, Template template)
 		throws Exception {
+
 		super.populateContext(path, portletRequest, portletResponse, template);
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Path:" + path);
 		}
 
 		if ("/edit_attributes.ftl".equals(path)) {
-			String servicePID =
-				ParamUtil.getString(portletRequest, "servicePID");
+			String servicePID = ParamUtil.getString(
+				portletRequest, "servicePID");
 			template.put("servicePID", servicePID);
 
 			if (_log.isDebugEnabled()) {
 				_log.debug("Editing Service:" + servicePID);
 			}
 
-			Set<Locale> availableLocales = new HashSet<>();
-			availableLocales.add(Locale.US);
-			availableLocales.add(Locale.UK);
-			availableLocales.add(Locale.FRENCH);
-
 			DDMForm ddmForm = MetaTypeInfoUtil.attributeForm(servicePID);
-
-			ddmForm.setAvailableLocales(availableLocales);
-
-			ddmForm.setDefaultLocale(LocaleUtil.getDefault());
 
 			DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
 				new DDMFormFieldRenderingContext();
@@ -119,12 +106,14 @@ public class LiferayOsgiConfigAdminPortlet
 			ddmFormFieldRenderingContext.setPortletNamespace(
 				portletResponse.getNamespace());
 
-			ddmFormFieldRenderingContext.setNamespace(
-				"com.liferay.osgi.config.admin.portlet.LiferayOsgiConfigAdmin");
-
 			// ??ddmFormFieldRenderingContext.setMode(null);
 
 			ddmFormFieldRenderingContext.setLocale(themeDisplay.getLocale());
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"DDMForm: " + DDMFormJSONSerializerUtil.serialize(ddmForm));
+			}
 
 			String editAttributeFormContent =
 				DDMFormRendererUtil.render(
@@ -147,6 +136,7 @@ public class LiferayOsgiConfigAdminPortlet
 	@Reference
 	protected void setConfigAdminService(
 		ConfigurationAdmin configurationAdmin) {
+
 		_configurationAdmin = configurationAdmin;
 	}
 
