@@ -464,8 +464,6 @@ public class EditFileEntryAction extends PortletAction {
 		long folderId = ParamUtil.getLong(uploadPortletRequest, "folderId");
 		String sourceFileName = uploadPortletRequest.getFileName("file");
 
-		String title = sourceFileName;
-
 		StringBundler sb = new StringBundler(5);
 
 		sb.append(FileUtil.stripExtension(sourceFileName));
@@ -479,8 +477,6 @@ public class EditFileEntryAction extends PortletAction {
 			sb.append(extension);
 		}
 
-		sourceFileName = sb.toString();
-
 		InputStream inputStream = null;
 
 		try {
@@ -488,14 +484,16 @@ public class EditFileEntryAction extends PortletAction {
 
 			String contentType = uploadPortletRequest.getContentType("file");
 
-			DLAppServiceUtil.addTempFileEntry(
+			FileEntry fileEntry = DLAppServiceUtil.addTempFileEntry(
 				themeDisplay.getScopeGroupId(), folderId, TEMP_FOLDER_NAME,
-				sourceFileName, inputStream, contentType);
+				sb.toString(), inputStream, contentType);
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
+			jsonObject.put("groupId", fileEntry.getGroupId());
 			jsonObject.put("name", sourceFileName);
-			jsonObject.put("title", title);
+			jsonObject.put("title", fileEntry.getTitle());
+			jsonObject.put("uuid", fileEntry.getUuid());
 
 			writeJSON(actionRequest, actionResponse, jsonObject);
 		}
