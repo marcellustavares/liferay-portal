@@ -17,6 +17,7 @@ package com.liferay.osgi.config.admin.portlet.internal.freemarker;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
@@ -84,6 +85,9 @@ public class OsgiFreeMarkerPortlet extends FreeMarkerPortlet {
 		try {
 			Template template = TemplateManagerUtil.getTemplate(
 				TemplateConstants.LANG_TYPE_FTL, templateResource, false);
+
+			_servletContext =
+				PortletBagPool.get(getPortletName()).getServletContext();
 
 			TemplateTaglibSupportProvider templateTaglibSupportProvider =
 				_taglibSupportProvider();

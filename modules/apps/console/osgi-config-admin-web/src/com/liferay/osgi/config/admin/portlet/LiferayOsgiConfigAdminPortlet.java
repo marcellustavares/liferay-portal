@@ -15,34 +15,21 @@
 package com.liferay.osgi.config.admin.portlet;
 
 import com.liferay.osgi.config.admin.portlet.internal.freemarker.OsgiFreeMarkerPortlet;
-import com.liferay.osgi.config.admin.util.MetaTypeInfoUtil;
+import com.liferay.osgi.config.admin.util.ObjectClassDefinitonsIterator;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
-
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.context.ServletContextHelper;
-import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
-import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
-import org.osgi.service.metatype.ObjectClassDefinition;
 
 /**
  * @author Kamesh Sampath
@@ -61,40 +48,11 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 				},
 				service = Portlet.class)
 public class LiferayOsgiConfigAdminPortlet
-	extends OsgiFreeMarkerPortlet implements ServletContextListener {
-
-	@Override
-	public void contextDestroyed(ServletContextEvent servletContextEvent) {
-		_servletContext = null;
-
-	}
-
-	@Override
-	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		_servletContext = servletContextEvent.getServletContext();
-	}
+	extends OsgiFreeMarkerPortlet {
 
 	@Activate
 	public void activate(BundleContext context) {
 		_context = context;
-
-		Bundle bundle = context.getBundle();
-
-		Dictionary<String, Object> properties = new Hashtable<String, Object>();
-
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME,
-			"osgi-configadmin-web");
-		properties.put(
-			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH,
-			"/osgi-configadmin-web");
-
-		ServletContextHelper servletContextHelper =
-			new ServletContextHelper(bundle) {
-			};
-
-		_context.registerService(
-			ServletContextHelper.class, servletContextHelper, properties);
 	}
 
 	@Override
@@ -104,7 +62,7 @@ public class LiferayOsgiConfigAdminPortlet
 		throws Exception {
 		super.populateContext(path, portletRequest, portletResponse, template);
 		template.put(
-			"listOfObjectclassDefinitions", _objectDefinitions());
+			"ocdIterator", new ObjectClassDefinitonsIterator(_context,_metaTypeService));
 	}
 
 	@Reference
@@ -118,30 +76,7 @@ public class LiferayOsgiConfigAdminPortlet
 		_metaTypeService = metaTypeService;
 	}
 
-	private List<ObjectClassDefinition> _objectDefinitions() {
-		Bundle[] bundles = _context.getBundles();
 
-		List<ObjectClassDefinition> ocdContainer =
-			new ArrayList<ObjectClassDefinition>();
-
-		for (Bundle bundle : bundles) {
-			MetaTypeInformation mInfo =
-				_metaTypeService.getMetaTypeInformation(
-					bundle);
-
-			if (mInfo != null) {
-				String[] pids = mInfo.getPids();
-
-				MetaTypeInfoUtil.fillOCD(mInfo, ocdContainer, pids);
-
-				String[] factoryPids = mInfo.getFactoryPids();
-
-				MetaTypeInfoUtil.fillOCD(mInfo, ocdContainer, factoryPids);
-			}
-		}
-
-		return ocdContainer;
-	}
 
 	private static Log _log = LogFactoryUtil.getLog(
 		LiferayOsgiConfigAdminPortlet.class);

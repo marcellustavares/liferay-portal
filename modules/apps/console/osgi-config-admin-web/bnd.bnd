@@ -10,6 +10,4 @@ Import-Package:\
 Include-Resource:\
 	classes,\
 	META-INF/resources=src/META-INF/resources,\
-	META-INF/resources/tld=src/META-INF/tld,\
-	@../../../../util-java/util-java.jar!/com/liferay/util/ContentUtil,\
 	@../../../../util-bridges/util-bridges.jar!/com/liferay/util/bridges/freemarker/FreeMarkerPortlet

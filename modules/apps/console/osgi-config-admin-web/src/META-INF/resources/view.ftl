@@ -16,13 +16,13 @@
 
 <#-- TODO unable to include init.ftl, debug to fix it -->
 
-<#assign aui = PortletJspTagLibs["/META-INF/tld/aui.tld"] />
-<#assign liferay_portlet = PortletJspTagLibs["/META-INF/tld/liferay-portlet-ext.tld"] />
-<#assign liferay_security = PortletJspTagLibs["/META-INF/tld/liferay-security.tld"] />
-<#assign liferay_theme = PortletJspTagLibs["/META-INF/tld/liferay-theme.tld"] />
-<#assign liferay_ui = PortletJspTagLibs["/META-INF/tld/liferay-ui.tld"] />
-<#assign liferay_util = PortletJspTagLibs["/META-INF/tld/liferay-util.tld"] />
-<#assign portlet = PortletJspTagLibs["/META-INF/tld/liferay-portlet.tld"] />
+<#assign aui = PortletJspTagLibs["/WEB-INF/tld/aui.tld"] />
+<#assign liferay_portlet = PortletJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"] />
+<#assign liferay_security = PortletJspTagLibs["/WEB-INF/tld/liferay-security.tld"] />
+<#assign liferay_theme = PortletJspTagLibs["/WEB-INF/tld/liferay-theme.tld"] />
+<#assign liferay_ui = PortletJspTagLibs["/WEB-INF/tld/liferay-ui.tld"] />
+<#assign liferay_util = PortletJspTagLibs["/WEB-INF/tld/liferay-util.tld"] />
+<#assign portlet = PortletJspTagLibs["/WEB-INF/tld/liferay-portlet.tld"] />
 
 <@portlet["defineObjects"] />
 
@@ -31,10 +31,10 @@
 <@liferay_ui["search-container"]
 	emptyResultsMessage="no-services-were-found"
 	iteratorURL=showAttributesURL
-	total=listOfObjectclassDefinitions.size()
+	total=ocdIterator.getTotal()
 >
 	<@liferay_ui["search-container-results"]
-		results=listOfObjectclassDefinitions
+		results=ocdIterator.getResults(searchContainer.getStart(), searchContainer.getEnd())
 	/>
 
 	<@liferay_ui["search-container-row"]
@@ -43,8 +43,7 @@
 		modelVar="ocd">
 
 		<@portlet["renderURL"] varImpl="showAttributesURL">
-			<@portlet["param"] name="mvcPath" value="show_attributes.ftl" />
-			<@portlet["param"] name="backURL" value="${currentURL}" />
+			<@portlet["param"] name="mvcPath" value="/show_attributes.ftl" />
 			<@portlet["param"] name="reportKey" value="${ocd.getID()}" />
 		</@>
 
@@ -73,7 +72,7 @@
 				/>
 
 				<@portlet["actionURL"] name="editAttributes" var="editAttributeURL">
-					<@portlet["param"] name="redirect" value="${currentURL}" />
+					<@portlet["param"] name="mvcPath" value="/edit_attributes.ftl" />
 					<@portlet["param"] name="servicePID" value="${ocd.getID()}" />
 				</@>
 

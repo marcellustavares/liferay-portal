@@ -59,7 +59,7 @@ public class OsgiFreeMarkerTaglibSupportProvider
 		template.prepare(request);
 
 		template.put(
-			"fullTemplatesPath", "/");
+			"fullTemplatesPath", "META-INF/resources");
 
 		GenericServlet freemarkerOsgiServlet =
 			new JSPSupportServlet(servletContext);
