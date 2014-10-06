@@ -16,6 +16,7 @@
 
 <#-- TODO unable to include init.ftl, debug to fix it -->
 
+
 <#assign aui = PortletJspTagLibs["/WEB-INF/tld/aui.tld"] />
 <#assign liferay_portlet = PortletJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"] />
 <#assign liferay_security = PortletJspTagLibs["/WEB-INF/tld/liferay-security.tld"] />
@@ -71,7 +72,7 @@
 					url="${showAttributesURL}"
 				/>
 
-				<@portlet["actionURL"] name="editAttributes" var="editAttributeURL">
+				<@portlet["renderURL"] name="editAttributes" var="editAttributeURL">
 					<@portlet["param"] name="mvcPath" value="/edit_attributes.ftl" />
 					<@portlet["param"] name="servicePID" value="${ocd.getID()}" />
 				</@>

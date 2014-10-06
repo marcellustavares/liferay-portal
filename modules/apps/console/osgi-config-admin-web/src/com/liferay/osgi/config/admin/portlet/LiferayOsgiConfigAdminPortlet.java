@@ -15,10 +15,23 @@
 package com.liferay.osgi.config.admin.portlet;
 
 import com.liferay.osgi.config.admin.portlet.internal.freemarker.OsgiFreeMarkerPortlet;
+import com.liferay.osgi.config.admin.util.MetaTypeInfoUtil;
 import com.liferay.osgi.config.admin.util.ObjectClassDefinitonsIterator;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormRendererUtil;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletRequest;
@@ -41,6 +54,7 @@ import org.osgi.service.metatype.MetaTypeService;
 					"com.liferay.portlet.control-panel-entry-weight=11",
 					"com.liferay.portlet.display-category=category.hidden",
 					"com.liferay.portlet.instanceable=false",
+					"javax.portlet.portlet-name=liferay_osgi_config_admin",
 					"javax.portlet.init-param.template-path=/",
 					"javax.portlet.init-param.view-template=/view.ftl",
 					"javax.portlet.resource-bundle=content.Language",
@@ -61,8 +75,73 @@ public class LiferayOsgiConfigAdminPortlet
 		PortletResponse portletResponse, Template template)
 		throws Exception {
 		super.populateContext(path, portletRequest, portletResponse, template);
-		template.put(
-			"ocdIterator", new ObjectClassDefinitonsIterator(_context,_metaTypeService));
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Path:" + path);
+		}
+
+		if ("/edit_attributes.ftl".equals(path)) {
+			String servicePID =
+				ParamUtil.getString(portletRequest, "servicePID");
+			template.put("servicePID", servicePID);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug("Editing Service:" + servicePID);
+			}
+
+			Set<Locale> availableLocales = new HashSet<>();
+			availableLocales.add(Locale.US);
+			availableLocales.add(Locale.UK);
+			availableLocales.add(Locale.FRENCH);
+
+			DDMForm ddmForm = MetaTypeInfoUtil.attributeForm(servicePID);
+
+			ddmForm.setAvailableLocales(availableLocales);
+
+			ddmForm.setDefaultLocale(LocaleUtil.getDefault());
+
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
+				new DDMFormFieldRenderingContext();
+
+			ddmFormFieldRenderingContext.setHttpServletRequest(
+				PortalUtil.getHttpServletRequest(portletRequest));
+
+			ddmFormFieldRenderingContext.setHttpServletResponse(
+				PortalUtil.getHttpServletResponse(portletResponse));
+
+			ddmFormFieldRenderingContext.setReadOnly(false);
+
+			ddmFormFieldRenderingContext.setShowEmptyFieldLabel(true);
+
+			ddmFormFieldRenderingContext.setPortletNamespace(
+				portletResponse.getNamespace());
+
+			ddmFormFieldRenderingContext.setNamespace(
+				"com.liferay.osgi.config.admin.portlet.LiferayOsgiConfigAdmin");
+
+			// ??ddmFormFieldRenderingContext.setMode(null);
+
+			ddmFormFieldRenderingContext.setLocale(themeDisplay.getLocale());
+
+			String editAttributeFormContent =
+				DDMFormRendererUtil.render(
+					ddmForm, ddmFormFieldRenderingContext);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(editAttributeFormContent);
+			}
+
+			template.put("editAttributeForm", ddmForm);
+			template.put("editAttributeFormContent", editAttributeFormContent);
+		}
+		else {
+			template.put(
+				"ocdIterator", new ObjectClassDefinitonsIterator(
+					_context, _metaTypeService));
+		}
 	}
 
 	@Reference
@@ -75,8 +154,6 @@ public class LiferayOsgiConfigAdminPortlet
 	protected void setMetaTypeService(MetaTypeService metaTypeService) {
 		_metaTypeService = metaTypeService;
 	}
-
-
 
 	private static Log _log = LogFactoryUtil.getLog(
 		LiferayOsgiConfigAdminPortlet.class);

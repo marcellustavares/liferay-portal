@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.util.PortalUtil;
@@ -92,7 +93,10 @@ public class OsgiFreeMarkerPortlet extends FreeMarkerPortlet {
 			TemplateTaglibSupportProvider templateTaglibSupportProvider =
 				_taglibSupportProvider();
 
-			_log.debug("Adding taglib support to context:" + _servletContext);
+			if (_log.isDebugEnabled()) {
+				_log.debug("Adding taglib support to context:" +
+					_servletContext);
+			}
 
 			if (templateTaglibSupportProvider != null) {
 				templateTaglibSupportProvider.addTaglibSupport(
@@ -150,6 +154,8 @@ public class OsgiFreeMarkerPortlet extends FreeMarkerPortlet {
 		PortletResponse portletResponse, Template template)
 		throws Exception {
 
+		template.put("backURL", ParamUtil.getString(portletRequest, "backURL"));
+		template.put("currentURL", PortalUtil.getCurrentURL(portletRequest));
 		template.put("portletConfig", getPortletConfig());
 		template.put("portletContext", getPortletContext());
 		template.put("preferences", portletRequest.getPreferences());

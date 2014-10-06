@@ -14,6 +14,8 @@
  */
 -->
 
+<#-- TODO unable to include init.ftl, debug to fix it -->
+
 <#assign aui = PortletJspTagLibs["/WEB-INF/tld/aui.tld"] />
 <#assign liferay_portlet = PortletJspTagLibs["/WEB-INF/tld/liferay-portlet-ext.tld"] />
 <#assign liferay_security = PortletJspTagLibs["/WEB-INF/tld/liferay-security.tld"] />
@@ -25,3 +27,14 @@
 <@portlet["defineObjects"] />
 
 <@liferay_theme["defineObjects"] />
+
+<h4>
+<@liferay_ui["message"] key="editing-service" arguments="${servicePID}"/>
+</h4>
+
+<@aui["form"] method="post" name="fmOCDAttribute">
+<@aui["input"] name="servicePID" type="hidden" value="${servicePID}" />
+<@aui["fieldset"]>
+${editAttributeFormContent}
+</@>
+</@>
