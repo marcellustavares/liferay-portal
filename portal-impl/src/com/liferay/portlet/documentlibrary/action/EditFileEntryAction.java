@@ -118,6 +118,9 @@ import org.apache.struts.action.ActionMapping;
  */
 public class EditFileEntryAction extends PortletAction {
 
+	public static final String TEMP_FOLDER_NAME =
+		EditFileEntryAction.class.getName();
+
 	public static final String TEMP_RANDOM_SUFFIX = "--tempRandomSuffix--";
 
 	@Override
@@ -369,7 +372,7 @@ public class EditFileEntryAction extends PortletAction {
 		try {
 			tempFileEntry = TempFileEntryUtil.getTempFileEntry(
 				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
-				_TEMP_FOLDER_NAME, selectedFileName);
+				TEMP_FOLDER_NAME, selectedFileName);
 
 			String mimeType = tempFileEntry.getMimeType();
 
@@ -461,8 +464,6 @@ public class EditFileEntryAction extends PortletAction {
 		long folderId = ParamUtil.getLong(uploadPortletRequest, "folderId");
 		String sourceFileName = uploadPortletRequest.getFileName("file");
 
-		String title = sourceFileName;
-
 		StringBundler sb = new StringBundler(5);
 
 		sb.append(FileUtil.stripExtension(sourceFileName));
@@ -476,8 +477,6 @@ public class EditFileEntryAction extends PortletAction {
 			sb.append(extension);
 		}
 
-		sourceFileName = sb.toString();
-
 		InputStream inputStream = null;
 
 		try {
@@ -485,14 +484,16 @@ public class EditFileEntryAction extends PortletAction {
 
 			String contentType = uploadPortletRequest.getContentType("file");
 
-			DLAppServiceUtil.addTempFileEntry(
-				themeDisplay.getScopeGroupId(), folderId, _TEMP_FOLDER_NAME,
-				sourceFileName, inputStream, contentType);
+			FileEntry fileEntry = DLAppServiceUtil.addTempFileEntry(
+				themeDisplay.getScopeGroupId(), folderId, TEMP_FOLDER_NAME,
+				sb.toString(), inputStream, contentType);
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
+			jsonObject.put("groupId", fileEntry.getGroupId());
 			jsonObject.put("name", sourceFileName);
-			jsonObject.put("title", title);
+			jsonObject.put("title", fileEntry.getTitle());
+			jsonObject.put("uuid", fileEntry.getUuid());
 
 			writeJSON(actionRequest, actionResponse, jsonObject);
 		}
@@ -633,7 +634,7 @@ public class EditFileEntryAction extends PortletAction {
 
 		try {
 			DLAppServiceUtil.deleteTempFileEntry(
-				themeDisplay.getScopeGroupId(), folderId, _TEMP_FOLDER_NAME,
+				themeDisplay.getScopeGroupId(), folderId, TEMP_FOLDER_NAME,
 				fileName);
 
 			jsonObject.put("deleted", Boolean.TRUE);
@@ -1109,8 +1110,5 @@ public class EditFileEntryAction extends PortletAction {
 			StreamUtil.cleanUp(inputStream);
 		}
 	}
-
-	private static final String _TEMP_FOLDER_NAME =
-		EditFileEntryAction.class.getName();
 
 }
