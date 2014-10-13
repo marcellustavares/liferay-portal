@@ -1365,55 +1365,6 @@ public class JournalArticleServiceImpl extends JournalArticleServiceBaseImpl {
 	}
 
 	/**
-	 * Removes the web content of all the company's web content articles
-	 * matching the language.
-	 *
-	 * @param  companyId the primary key of the web content article's company
-	 * @param  languageId the primary key of the language locale to remove
-	 * @throws PortalException if the user did not have permission to update any
-	 *         one of the the web content articles or if web content matching
-	 *         the language could not be found for any one of the articles
-	 */
-	@Override
-	public void removeArticleLocale(long companyId, String languageId)
-		throws PortalException {
-
-		for (JournalArticle article :
-				journalArticlePersistence.findByCompanyId(companyId)) {
-
-			removeArticleLocale(
-				article.getGroupId(), article.getArticleId(),
-				article.getVersion(), languageId);
-		}
-	}
-
-	/**
-	 * Removes the web content of the web content article matching the group,
-	 * article ID, and version, and language.
-	 *
-	 * @param  groupId the primary key of the web content article's group
-	 * @param  articleId the primary key of the web content article
-	 * @param  version the web content article's version
-	 * @param  languageId the primary key of the language locale to remove
-	 * @return the updated web content article with the locale removed
-	 * @throws PortalException if the user did not have permission to update the
-	 *         web content article or if a matching web content article could
-	 *         not be found
-	 */
-	@Override
-	public JournalArticle removeArticleLocale(
-			long groupId, String articleId, double version, String languageId)
-		throws PortalException {
-
-		JournalArticlePermission.check(
-			getPermissionChecker(), groupId, articleId, version,
-			ActionKeys.UPDATE);
-
-		return journalArticleLocalService.removeArticleLocale(
-			groupId, articleId, version, languageId);
-	}
-
-	/**
 	 * Restores the web content article associated with the resource primary key
 	 * from the Recycle Bin.
 	 *

@@ -1360,68 +1360,6 @@ public class JournalUtil {
 		return content;
 	}
 
-	public static String removeArticleLocale(
-		Document document, String content, String languageId) {
-
-		try {
-			Element rootElement = document.getRootElement();
-
-			String availableLocales = rootElement.attributeValue(
-				"available-locales");
-
-			if (availableLocales == null) {
-				return content;
-			}
-
-			availableLocales = StringUtil.removeFromList(
-				availableLocales, languageId);
-
-			if (availableLocales.endsWith(",")) {
-				availableLocales = availableLocales.substring(
-					0, availableLocales.length() - 1);
-			}
-
-			rootElement.addAttribute("available-locales", availableLocales);
-
-			removeArticleLocale(rootElement, languageId);
-
-			content = DDMXMLUtil.formatXML(document);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		return content;
-	}
-
-	public static void removeArticleLocale(Element element, String languageId)
-		throws PortalException {
-
-		for (Element dynamicElementElement :
-				element.elements("dynamic-element")) {
-
-			for (Element dynamicContentElement :
-					dynamicElementElement.elements("dynamic-content")) {
-
-				String curLanguageId = GetterUtil.getString(
-					dynamicContentElement.attributeValue("language-id"));
-
-				if (curLanguageId.equals(languageId)) {
-					long id = GetterUtil.getLong(
-						dynamicContentElement.attributeValue("id"));
-
-					if (id > 0) {
-						ImageLocalServiceUtil.deleteImage(id);
-					}
-
-					dynamicContentElement.detach();
-				}
-			}
-
-			removeArticleLocale(dynamicElementElement, languageId);
-		}
-	}
-
 	public static String removeOldContent(String content, String xsd) {
 		try {
 			Document contentDoc = SAXReaderUtil.read(content);

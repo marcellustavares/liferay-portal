@@ -3489,57 +3489,6 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	/**
-	 * Removes the web content of the web content article matching the group,
-	 * article ID, and version, and language.
-	 *
-	 * @param  groupId the primary key of the web content article's group
-	 * @param  articleId the primary key of the web content article
-	 * @param  version the web content article's version
-	 * @param  languageId the primary key of the language locale to remove
-	 * @return the updated web content article with the locale removed
-	 * @throws PortalException if a matching web content article could not be
-	 *         found
-	 */
-	@Indexable(type = IndexableType.REINDEX)
-	@Override
-	public JournalArticle removeArticleLocale(
-			long groupId, String articleId, double version, String languageId)
-		throws PortalException {
-
-		JournalArticle article = journalArticlePersistence.findByG_A_V(
-			groupId, articleId, version);
-
-		String title = article.getTitle();
-
-		title = LocalizationUtil.removeLocalization(
-			title, "static-content", languageId, true);
-
-		article.setTitle(title);
-
-		String description = article.getDescription();
-
-		description = LocalizationUtil.removeLocalization(
-			description, "static-content", languageId, true);
-
-		article.setDescription(description);
-
-		String content = article.getContent();
-
-		Document document = article.getDocument();
-
-		if (document != null) {
-			content = JournalUtil.removeArticleLocale(
-				document, content, languageId);
-
-			article.setContent(content);
-		}
-
-		journalArticlePersistence.update(article);
-
-		return article;
-	}
-
-	/**
 	 * Restores the web content article from the Recycle Bin.
 	 *
 	 * @param  userId the primary key of the user restoring the web content

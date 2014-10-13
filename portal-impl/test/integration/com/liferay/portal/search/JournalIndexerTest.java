@@ -354,9 +354,11 @@ public class JournalIndexerTest {
 			initialSearchCount1 + 1,
 			searchCount(_group.getGroupId(), searchContext1));
 
-		JournalArticleLocalServiceUtil.removeArticleLocale(
-			_group.getGroupId(), article.getArticleId(), article.getVersion(),
-			LocaleUtil.toLanguageId(LocaleUtil.SPAIN));
+		// We should do this using a DDM API, right?
+
+		//JournalArticleLocalServiceUtil.removeArticleLocale(
+		//	_group.getGroupId(), article.getArticleId(), article.getVersion(),
+		//	LocaleUtil.toLanguageId(LocaleUtil.SPAIN));
 
 		Assert.assertEquals(
 			initialSearchCount1,
