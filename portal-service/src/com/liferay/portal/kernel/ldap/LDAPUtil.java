@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.ldap;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -37,6 +38,7 @@ import javax.naming.directory.Attributes;
  * @author Michael Young
  * @author Brian Wing Shun Chan
  * @author James Lefeu
+ * @author Vilmos Papp
  */
 public class LDAPUtil {
 
@@ -225,6 +227,10 @@ public class LDAPUtil {
 			return false;
 		}
 
+		if (hasMultipleEnclosingBrackets(filter)) {
+			return false;
+		}
+
 		// Cannot have two filter types in a sequence
 
 		Matcher matcher = _pattern1.matcher(filter);
@@ -303,6 +309,59 @@ public class LDAPUtil {
 				"Invalid filter " + filter + " defined by " +
 					filterPropertyName);
 		}
+	}
+
+	protected static String extractBrackets(String s) {
+		StringBundler sb = new StringBundler(s.length());
+
+		for (int i = 0; i < s.length(); i++) {
+			if ((s.charAt(i) == CharPool.OPEN_PARENTHESIS) ||
+				(s.charAt(i) == CharPool.CLOSE_PARENTHESIS)) {
+
+				sb.append(s.charAt(i));
+			}
+		}
+
+		return sb.toString();
+	}
+
+	protected static boolean hasMultipleEnclosingBrackets(String s) {
+		if (Validator.isNull(s)) {
+			return false;
+		}
+
+		if (s.length() < 3) {
+			return false;
+		}
+
+		if ((s.charAt(0) != CharPool.OPEN_PARENTHESIS) ||
+			(s.charAt(s.length() - 1) != CharPool.CLOSE_PARENTHESIS)) {
+
+			return false;
+		}
+
+		String brackets = extractBrackets(s);
+
+		while (brackets.endsWith("()")) {
+			brackets = brackets.substring(0, brackets.length()-2);
+		}
+
+		while (brackets.startsWith("()")) {
+			brackets = brackets.substring(2);
+		}
+
+		while ((brackets.length() > 2) && (brackets.indexOf("()") > -1)) {
+			if (brackets.indexOf("()") == brackets.lastIndexOf("()")) {
+				return true;
+			}
+
+			String start = brackets.substring(0, brackets.indexOf("()"));
+			String end = brackets.substring(brackets.indexOf("()")+2);
+
+			brackets = start + end;
+		}
+
+		return false;
 	}
 
 	private static Pattern _pattern1 = Pattern.compile(".*[~<>]*=[~<>]*=.*");
