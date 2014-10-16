@@ -25,6 +25,7 @@ import java.text.DateFormat;
 
 import java.util.Date;
 import java.util.Properties;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ import javax.naming.directory.Attributes;
  * @author Michael Young
  * @author Brian Wing Shun Chan
  * @author James Lefeu
+ * @author Vilmos Papp
  */
 public class LDAPUtil {
 
@@ -225,6 +227,10 @@ public class LDAPUtil {
 			return false;
 		}
 
+		if (hasMoreEnclosingBrackets(filter)) {
+			return false;
+		}
+
 		// Cannot have two filter types in a sequence
 
 		Matcher matcher = _pattern1.matcher(filter);
@@ -303,6 +309,44 @@ public class LDAPUtil {
 				"Invalid filter " + filter + " defined by " +
 					filterPropertyName);
 		}
+	}
+
+	protected static boolean hasMoreEnclosingBrackets(String s) {
+		if (Validator.isNull(s)) {
+			return false;
+		}
+
+		if (s.length() < 3) {
+			return false;
+		}
+
+		if ((s.charAt(0) != CharPool.OPEN_PARENTHESIS) ||
+			(s.charAt(s.length() - 1) != CharPool.CLOSE_PARENTHESIS)) {
+
+			return false;
+		}
+
+		Stack<Character> stack = new Stack<Character>();
+
+		for (int i = 1; i < s.length() - 1; i++) {
+			char c = s.charAt(i);
+
+			if (c == CharPool.OPEN_PARENTHESIS) {
+				stack.push(CharPool.OPEN_PARENTHESIS);
+
+				continue;
+			}
+
+			if (c == CharPool.CLOSE_PARENTHESIS) {
+				if (stack.isEmpty()) {
+					return false;
+				}
+
+				stack.pop();
+			}
+		}
+
+		return stack.isEmpty();
 	}
 
 	private static Pattern _pattern1 = Pattern.compile(".*[~<>]*=[~<>]*=.*");
