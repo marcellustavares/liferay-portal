@@ -14,6 +14,7 @@
 
 package com.liferay.portal.verify;
 
+import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -36,6 +37,7 @@ import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
@@ -69,8 +71,10 @@ import java.io.File;
 import java.io.Serializable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Marcellus Tavares
@@ -145,6 +149,27 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 			return DLAppLocalServiceUtil.addFolder(
 				userId, groupId, parentFolderId, name, description,
 				createServiceContext());
+		}
+	}
+
+	protected boolean checkUserId(long userId) throws Exception {
+		if (_missingUserIds.contains(userId)) {
+			return false;
+		}
+
+		try {
+			UserLocalServiceUtil.getUser(userId);
+
+			return true;
+		}
+		catch (NoSuchUserException nsue) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(nsue.getMessage());
+			}
+
+			_missingUserIds.add(userId);
+
+			return false;
 		}
 	}
 
@@ -447,6 +472,26 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 
 		Fields fields = StorageEngineUtil.getFields(storageId);
 
+		if (!checkUserId(userId)) {
+			userId = UserLocalServiceUtil.getDefaultUserId(companyId);
+
+			if (_log.isWarnEnabled()) {
+				StringBundler sb = new StringBundler(9);
+
+				sb.append("Using default user (userId=");
+				sb.append(userId);
+				sb.append(", companyId=");
+				sb.append(companyId);
+				sb.append(") for model ");
+				sb.append(baseModel.getModelClassName());
+				sb.append(" with primary key ");
+				sb.append(baseModel.getPrimaryKeyObj());
+				sb.append(StringPool.PERIOD);
+
+				_log.warn(sb.toString());
+			}
+		}
+
 		for (Field field : fields) {
 			String dataType = field.getDataType();
 
@@ -599,5 +644,6 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 	private long _ddlRecordSetClassNameId;
 	private long _ddmStructureClassNameId;
 	private long _dlFileEntryMetadataClassNameId;
+	private final Set<Long> _missingUserIds = new HashSet<Long>();
 
 }
