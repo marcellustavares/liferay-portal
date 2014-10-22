@@ -168,7 +168,9 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 					ddmFormField.getName());
 		}
 
-		if (!defaultLocale.equals(value.getDefaultLocale())) {
+		if (defaultLocale == null ||
+			!defaultLocale.equals(value.getDefaultLocale())) {
+
 			throw new StorageFieldValueException(
 				"Invalid default locale set for field " +
 					ddmFormField.getName());
