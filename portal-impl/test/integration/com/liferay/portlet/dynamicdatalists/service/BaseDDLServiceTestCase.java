@@ -45,6 +45,17 @@ public class BaseDDLServiceTestCase  extends BaseDDMServiceTestCase {
 			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields, serviceContext);
 	}
 
+	protected DDLRecord addRecord(
+			long recordSetId, DDMFormValues ddmFormValues, int workflowAction)
+		throws Exception {
+
+		ServiceContext serviceContext = getServiceContext(workflowAction);
+
+		return DDLRecordLocalServiceUtil.addRecord(
+			TestPropsValues.getUserId(), group.getGroupId(), recordSetId,
+			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues, serviceContext);
+	}
+
 	protected DDLRecordSet addRecordSet(long ddmStructureId) throws Exception {
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 
