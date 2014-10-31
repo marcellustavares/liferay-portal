@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.model;
 
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -53,7 +54,7 @@ public class LocalizedValue implements Value {
 	public String getString(Locale locale) {
 		String value = _values.get(locale);
 
-		if (value == null) {
+		if (Validator.isNull(value)) {
 			value = _values.get(_defaultLocale);
 		}
 
