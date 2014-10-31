@@ -43,6 +43,10 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			throw new NullPointerException("A DDM Form instance was never set");
 		}
 
+		validateDDMFormValuesLocales(
+			ddmFormValues, ddmForm.getAvailableLocales(),
+			ddmForm.getDefaultLocale());
+
 		traverseDDMFormFields(
 			ddmForm.getDDMFormFields(),
 			ddmFormValues.getDDMFormFieldValuesMap());
@@ -193,6 +197,23 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			throw new StorageFieldValueException(
 				"Incorrect number of values set for field " +
 					ddmFormField.getName());
+		}
+	}
+
+	private void validateDDMFormValuesLocales(
+			DDMFormValues ddmFormValues, Set<Locale> availableLocales,
+			Locale defaultLocale)
+		throws StorageException {
+
+		if (!ddmFormValues.getAvailableLocales().equals(availableLocales)) {
+			throw new StorageException(
+				"Field available locales should euqual the values available" +
+				"locales");
+		}
+
+		if (!ddmFormValues.getDefaultLocale().equals(defaultLocale)) {
+			throw new StorageException(
+				"Field default locale should equal the values default locale");
 		}
 	}
 
