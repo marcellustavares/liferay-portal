@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
@@ -28,7 +29,6 @@ import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
 import java.io.Serializable;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -182,7 +182,7 @@ public class FieldsToDDMFormValuesConverterImpl
 			fieldValue = valueDate.getTime();
 		}
 
-		return String.valueOf(fieldValue);
+		return GetterUtil.getString(fieldValue);
 	}
 
 	protected void setDDMFormFieldValueInstanceId(
