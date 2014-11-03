@@ -1442,6 +1442,34 @@ public class PropsValues {
 
 	public static final String POP_SERVER_SUBDOMAIN = PropsUtil.get(PropsKeys.POP_SERVER_SUBDOMAIN);
 
+	public static final String PORTAL_FABRIC_AGENT_SELECTOR_CLASS = PropsUtil.get(PropsKeys.PORTAL_FABRIC_AGENT_SELECTOR_CLASS);
+
+	public static final boolean PORTAL_FABRIC_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.PORTAL_FABRIC_ENABLED));
+
+	public static final int PORTAL_FABRIC_SERVER_BOSS_GROUP_THREAD_COUNT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_BOSS_GROUP_THREAD_COUNT));
+
+	public static final int PORTAL_FABRIC_SERVER_FILE_SERVER_FOLDER_COMPRESSION_LEVEL = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_FILE_SERVER_FOLDER_COMPRESSION_LEVEL));
+	
+	public static final int PORTAL_FABRIC_SERVER_FILE_SERVER_GROUP_THREAD_COUNT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_FILE_SERVER_GROUP_THREAD_COUNT));
+
+	public static final String PORTAL_FABRIC_SERVER_HOST = PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_HOST);
+
+	public static final int PORTAL_FABRIC_SERVER_PORT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_PORT));
+
+	public static final int PORTAL_FABRIC_SERVER_REGISTRATION_GROUP_THREAD_COUNT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_REGISTRATION_GROUP_THREAD_COUNT));
+
+	public static final long PORTAL_FABRIC_SERVER_REPOSITORY_GET_FILE_TIMEOUT = GetterUtil.getLong(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_REPOSITORY_GET_FILE_TIMEOUT));
+
+	public static final String PORTAL_FABRIC_SERVER_REPOSITORY_PARENT_FOLDER = PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_REPOSITORY_PARENT_FOLDER);
+
+	public static final int PORTAL_FABRIC_SERVER_RPC_GROUP_THREAD_COUNT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_RPC_GROUP_THREAD_COUNT));
+
+	public static final long PORTAL_FABRIC_SERVER_RPC_RELAY_TIMEOUT = GetterUtil.getLong(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_RPC_RELAY_TIMEOUT));
+
+	public static final boolean PORTAL_FABRIC_SERVER_WARMUP_AGENT_ON_REGISTER = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_WARMUP_AGENT_ON_REGISTER));
+
+	public static final int PORTAL_FABRIC_SERVER_WORKER_GROUP_THREAD_COUNT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.PORTAL_FABRIC_SERVER_WORKER_GROUP_THREAD_COUNT));
+
 	public static final boolean PORTAL_IMPERSONATION_ENABLE = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.PORTAL_IMPERSONATION_ENABLE));
 
 	public static final String PORTAL_INSTANCE_HTTP_INET_SOCKET_ADDRESS = PropsUtil.get(PropsKeys.PORTAL_INSTANCE_HTTP_INET_SOCKET_ADDRESS);
@@ -1518,9 +1546,7 @@ public class PropsValues {
 
 	public static final int RATINGS_DEFAULT_NUMBER_OF_STARS = GetterUtil.getInteger(PropsUtil.get(PropsKeys.RATINGS_DEFAULT_NUMBER_OF_STARS));
 
-	public static final int RATINGS_MAX_SCORE = GetterUtil.getInteger(PropsUtil.get(PropsKeys.RATINGS_MAX_SCORE));
-
-	public static final int RATINGS_MIN_SCORE = GetterUtil.getInteger(PropsUtil.get(PropsKeys.RATINGS_MIN_SCORE));
+	public static final String[] RATINGS_UPGRADE_THUMBS_CLASS_NAMES = PropsUtil.getArray(PropsKeys.RATINGS_UPGRADE_THUMBS_CLASS_NAMES);
 
 	public static final int RECENT_CONTENT_MAX_DISPLAY_ITEMS = GetterUtil.getInteger(PropsUtil.get(PropsKeys.RECENT_CONTENT_MAX_DISPLAY_ITEMS));
 
