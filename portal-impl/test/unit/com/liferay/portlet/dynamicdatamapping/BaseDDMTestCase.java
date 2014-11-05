@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -183,8 +184,16 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 	}
 
 	protected DDMFormValues createDDMFormValues(DDMForm ddmForm) {
-		return createDDMFormValues(
-			ddmForm, ddmForm.getAvailableLocales(), ddmForm.getDefaultLocale());
+		Set<Locale> availableLocales = createAvailableLocales(LocaleUtil.US);
+
+		Locale defaultLocale = LocaleUtil.US;
+
+		if (ddmForm != null) {
+			availableLocales = ddmForm.getAvailableLocales();
+			defaultLocale = ddmForm.getDefaultLocale();
+		}
+
+		return createDDMFormValues(ddmForm, availableLocales, defaultLocale);
 	}
 
 	protected DDMFormValues createDDMFormValues(
@@ -340,9 +349,31 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		ddmFormField.setRepeatable(repeatable);
 		ddmFormField.setRequired(required);
 
-		LocalizedValue localizedValue = ddmFormField.getLabel();
+		// Label
 
-		localizedValue.addString(LocaleUtil.US, label);
+		LocalizedValue labelLocalizedValue = ddmFormField.getLabel();
+
+		labelLocalizedValue.setDefaultLocale(LocaleUtil.US);
+
+		labelLocalizedValue.addString(LocaleUtil.US, label);
+
+		// Predefined Value
+
+		LocalizedValue predefinedValueLocalizedValue =
+			ddmFormField.getPredefinedValue();
+
+		predefinedValueLocalizedValue.setDefaultLocale(LocaleUtil.US);
+
+		predefinedValueLocalizedValue.addString(
+			LocaleUtil.US, StringPool.BLANK);
+
+		// Tip
+
+		LocalizedValue tipLocalizedValue = ddmFormField.getTip();
+
+		tipLocalizedValue.setDefaultLocale(LocaleUtil.US);
+
+		tipLocalizedValue.addString(LocaleUtil.US, StringPool.BLANK);
 
 		return ddmFormField;
 	}
