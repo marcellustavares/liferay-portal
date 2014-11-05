@@ -24,11 +24,13 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GroupThreadLocal;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.lar.backgroundtask.BackgroundTaskContextMapFactory;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
@@ -56,9 +58,14 @@ import com.liferay.portlet.dynamicdatamapping.util.DDMFormTemplateSynchonizer;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
+import com.liferay.portlet.journal.util.JournalArticleIndexer;
+import com.liferay.portlet.journal.util.JournalArticleIndexerBackgroundTaskExecutor;
+
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -90,6 +97,7 @@ import java.util.concurrent.Callable;
  * @author Bruno Basto
  * @author Marcellus Tavares
  * @author Juan Fernández
+ * @author Vilmos Papp
  */
 public class DDMStructureLocalServiceImpl
 	extends DDMStructureLocalServiceBaseImpl {
@@ -1476,15 +1484,7 @@ public class DDMStructureLocalServiceImpl
 
 		// Indexer
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(
-			structure.getClassName());
-
-		if (indexer != null) {
-			List<Long> ddmStructureIds = getChildrenStructureIds(
-				structure.getGroupId(), structure.getStructureId());
-
-			indexer.reindexDDMStructures(ddmStructureIds);
-		}
+		reindexStructuresInBackground(structure);
 
 		return structure;
 	}
@@ -1575,6 +1575,50 @@ public class DDMStructureLocalServiceImpl
 		return ddmTemplateLocalService.getTemplates(
 			structure.getGroupId(), classNameId, structure.getStructureId(),
 			type);
+	}
+
+	protected void reindexStructuresInBackground(DDMStructure structure)
+		throws PortalException {
+
+		Indexer indexer = IndexerRegistryUtil.getIndexer(
+			structure.getClassName());
+
+		if (indexer != null) {
+			List<Long> ddmStructureIds = getChildrenStructureIds(
+				structure.getGroupId(), structure.getStructureId());
+
+			if (indexer instanceof JournalArticleIndexer) {
+				Map<String, String[]> parameterMap =
+					new HashMap<String, String[]>();
+
+				Map<String, Serializable> taskContextMap =
+					BackgroundTaskContextMapFactory.buildTaskContextMap(
+						0, structure.getGroupId(), false, null, parameterMap,
+						null, null, null, StringPool.BLANK);
+
+				taskContextMap.put("className", structure.getClassName());
+				taskContextMap.put(
+					"ddmStructureIds",
+					ListUtil.toString(ddmStructureIds, StringPool.BLANK));
+
+				long userId = structure.getUserId();
+
+				User user = userLocalService.fetchUser(structure.getUserId());
+
+				if (user == null) {
+					userId = userLocalService.getDefaultUserId(
+						structure.getCompanyId());
+				}
+
+				backgroundTaskLocalService.addBackgroundTask(
+					userId, structure.getGroupId(), StringPool.BLANK, null,
+					JournalArticleIndexerBackgroundTaskExecutor.class,
+					taskContextMap, new ServiceContext());
+			}
+			else {
+				indexer.reindexDDMStructures(ddmStructureIds);
+			}
+		}
 	}
 
 	protected void syncStructureTemplatesFields(final DDMStructure structure) {
