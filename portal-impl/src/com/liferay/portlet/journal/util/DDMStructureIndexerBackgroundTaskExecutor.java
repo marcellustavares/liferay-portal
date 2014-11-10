@@ -19,14 +19,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.lar.backgroundtask.BaseStagingBackgroundTaskExecutor;
 import com.liferay.portal.model.BackgroundTask;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,51 +33,42 @@ import org.apache.commons.lang.time.StopWatch;
 /**
  * @author Vilmos Papp
  */
-public class JournalArticleIndexerBackgroundTaskExecutor
+public class DDMStructureIndexerBackgroundTaskExecutor
 	extends BaseStagingBackgroundTaskExecutor {
 
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
 		throws Exception {
 
+		Map<String, Serializable> taskContextMap =
+			backgroundTask.getTaskContextMap();
+
+		String className = MapUtil.getString(taskContextMap, "className");
+		List<Long> ddmStructureIds = (List<Long>)taskContextMap.get(
+			"ddmStructureIds");
+
+		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+
 		StopWatch stopWatch = new StopWatch();
 
 		stopWatch.start();
 
 		if (_log.isInfoEnabled()) {
-			_log.info(
-				"Start DDMStructure based article indexing in background.");
+			_log.info("Start journal article indexing in background.");
 		}
 
-		Map<String, Serializable> taskContextMap =
-			backgroundTask.getTaskContextMap();
-
-		String className = MapUtil.getString(taskContextMap, "className");
-		String ddmStructureIds = MapUtil.getString(
-			taskContextMap, "ddmStructureIds");
-
-		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
-
-		List<String> structureIds = ListUtil.fromString(ddmStructureIds);
-		List<Long> ddmStructureIdsList = new ArrayList<Long>(
-			structureIds.size());
-
-		for (String structureId : structureIds) {
-			ddmStructureIdsList.add(Long.parseLong(structureId));
-		}
-
-		indexer.reindexDDMStructures(ddmStructureIdsList);
+		indexer.reindexDDMStructures(ddmStructureIds);
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"Finished DDMStructure based article indexing in " +
-				stopWatch.getTime() + " ms");
+				"Finished journal article indexing in " + stopWatch.getTime() +
+					" ms");
 		}
 
 		return BackgroundTaskResult.SUCCESS;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		JournalArticleIndexerBackgroundTaskExecutor.class);
+		DDMStructureIndexerBackgroundTaskExecutor.class);
 
 }

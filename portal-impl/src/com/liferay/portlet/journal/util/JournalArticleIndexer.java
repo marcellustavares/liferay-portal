@@ -559,10 +559,6 @@ public class JournalArticleIndexer extends BaseIndexer {
 				ddmStructureKeys);
 
 		for (JournalArticle article : articles) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Reindexing article: " + article.getArticleId());
-			}
-
 			doReindex(article, false);
 		}
 	}
