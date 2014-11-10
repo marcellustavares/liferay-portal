@@ -25,9 +25,9 @@ public class LDAPUtilTest {
 	@Test
 	public void testIsValidFilterBalancedParentheses() {
 		Assert.assertTrue(isValidFilter("(object=value)"));
-		Assert.assertTrue(isValidFilter("((((object=value))))"));
-		Assert.assertTrue(isValidFilter("((((object=value))(org=liferay)))"));
-		Assert.assertTrue(
+		Assert.assertFalse(isValidFilter("((((object=value))))"));
+		Assert.assertFalse(isValidFilter("((((object=value))(org=liferay)))"));
+		Assert.assertFalse(
 			isValidFilter(
 				"(((inetorg=www)((object=value))(org=liferay)))(user=test)"));
 		Assert.assertFalse(isValidFilter("(object=value))"));
