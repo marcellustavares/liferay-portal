@@ -643,7 +643,11 @@ public class JournalConverterImpl implements JournalConverter {
 					fieldValue = valueDate.getTime();
 				}
 
-				String valueString = String.valueOf(fieldValue);
+				String valueString = StringPool.BLANK;
+
+				if (fieldValue != null) {
+					valueString = String.valueOf(fieldValue);
+				}
 
 				updateDynamicContentValue(
 					dynamicContentElement, fieldType, valueString.trim());
