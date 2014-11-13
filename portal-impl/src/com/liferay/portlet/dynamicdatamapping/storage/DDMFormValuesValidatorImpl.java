@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage;
 
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.dynamicdatamapping.StorageException;
 import com.liferay.portlet.dynamicdatamapping.StorageFieldNameException;
@@ -43,6 +42,10 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			throw new NullPointerException("A DDM Form instance was never set");
 		}
 
+		validateDDMFormValuesLocales(
+			ddmFormValues, ddmForm.getAvailableLocales(),
+			ddmForm.getDefaultLocale());
+
 		traverseDDMFormFields(
 			ddmForm.getDDMFormFields(),
 			ddmFormValues.getDDMFormFieldValuesMap());
@@ -67,7 +70,9 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 	}
 
 	protected boolean isNull(Value value) {
-		if ((value == null) || MapUtil.isEmpty(value.getValues())) {
+		if ((value == null) ||
+			Validator.isNull(value.getString(value.getDefaultLocale()))) {
+
 			return true;
 		}
 
@@ -132,17 +137,19 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			Locale defaultLocale, Value value)
 		throws StorageException {
 
-		if (isNull(value)) {
-			if (Validator.isNotNull(ddmFormField.getDataType())) {
-				throw new StorageFieldValueException(
-					"No value defined for field " + ddmFormField.getName());
-			}
-		}
-		else {
-			if (Validator.isNull(ddmFormField.getDataType())) {
+		if (Validator.isNull(ddmFormField.getDataType())) {
+			if (value != null) {
 				throw new StorageFieldValueException(
 					"Value should not be set for field " +
 						ddmFormField.getName());
+			}
+		}
+		else {
+			if ((value == null) ||
+				(ddmFormField.isRequired() && isNull(value))) {
+
+				throw new StorageFieldValueException(
+					"No value defined for field " + ddmFormField.getName());
 			}
 
 			if ((ddmFormField.isLocalizable() && !value.isLocalized()) ||
@@ -193,6 +200,23 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			throw new StorageFieldValueException(
 				"Incorrect number of values set for field " +
 					ddmFormField.getName());
+		}
+	}
+
+	private void validateDDMFormValuesLocales(
+			DDMFormValues ddmFormValues, Set<Locale> availableLocales,
+			Locale defaultLocale)
+		throws StorageException {
+
+		if (!ddmFormValues.getAvailableLocales().equals(availableLocales)) {
+			throw new StorageException(
+				"Field available locales should euqual the values available" +
+				"locales");
+		}
+
+		if (!ddmFormValues.getDefaultLocale().equals(defaultLocale)) {
+			throw new StorageException(
+				"Field default locale should equal the values default locale");
 		}
 	}
 
