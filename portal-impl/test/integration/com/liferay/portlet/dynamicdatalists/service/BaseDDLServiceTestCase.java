@@ -35,6 +35,18 @@ import java.util.Map;
 public class BaseDDLServiceTestCase  extends BaseDDMServiceTestCase {
 
 	protected DDLRecord addRecord(
+			long recordSetId, DDMFormValues ddmFormValues, int workflowAction)
+		throws Exception {
+
+		ServiceContext serviceContext = getServiceContext(workflowAction);
+
+		return DDLRecordLocalServiceUtil.addRecord(
+			TestPropsValues.getUserId(), group.getGroupId(), recordSetId,
+			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
+			serviceContext);
+	}
+
+	protected DDLRecord addRecord(
 			long recordSetId, Fields fields, int workflowAction)
 		throws Exception {
 
@@ -43,17 +55,6 @@ public class BaseDDLServiceTestCase  extends BaseDDMServiceTestCase {
 		return DDLRecordLocalServiceUtil.addRecord(
 			TestPropsValues.getUserId(), group.getGroupId(), recordSetId,
 			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields, serviceContext);
-	}
-
-	protected DDLRecord addRecord(
-			long recordSetId, DDMFormValues ddmFormValues, int workflowAction)
-		throws Exception {
-
-		ServiceContext serviceContext = getServiceContext(workflowAction);
-
-		return DDLRecordLocalServiceUtil.addRecord(
-			TestPropsValues.getUserId(), group.getGroupId(), recordSetId,
-			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues, serviceContext);
 	}
 
 	protected DDLRecordSet addRecordSet(long ddmStructureId) throws Exception {
