@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUt
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.WorkflowDefinitionLink;
 import com.liferay.portal.model.WorkflowInstanceLink;
 import com.liferay.portal.service.ServiceContext;
@@ -145,6 +146,16 @@ public class WorkflowHandlerRegistryUtil {
 
 		if (workflowDefinitionLink == null) {
 			status = WorkflowConstants.STATUS_APPROVED;
+		}
+
+		serviceContext = (ServiceContext)serviceContext.clone();
+
+		Map<String, String> headers = serviceContext.getHeaders();
+
+		if (headers != null) {
+			headers.remove(WebKeys.COOKIE);
+
+			serviceContext.setHeaders(headers);
 		}
 
 		workflowContext = new HashMap<String, Serializable>(workflowContext);
