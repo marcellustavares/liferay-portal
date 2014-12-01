@@ -186,76 +186,7 @@ public class LDAPUtil {
 	}
 
 	public static boolean isValidFilter(String filter) {
-		if (Validator.isNull(filter)) {
-			return true;
-		}
-
-		filter = filter.trim();
-
-		if (filter.equals(StringPool.STAR)) {
-			return true;
-		}
-
-		filter = StringUtil.replace(filter, StringPool.SPACE, StringPool.BLANK);
-
-		if (!filter.startsWith(StringPool.OPEN_PARENTHESIS) ||
-			!filter.endsWith(StringPool.CLOSE_PARENTHESIS)) {
-
-			return false;
-		}
-
-		int count = 0;
-
-		for (int i = 0; i < filter.length(); i++) {
-			char c = filter.charAt(i);
-
-			if (c == CharPool.CLOSE_PARENTHESIS) {
-				count--;
-			}
-			else if (c == CharPool.OPEN_PARENTHESIS) {
-				count++;
-			}
-
-			if (count < 0) {
-				return false;
-			}
-		}
-
-		if (count > 0) {
-			return false;
-		}
-
-		// Cannot have two filter types in a sequence
-
-		Matcher matcher = _pattern1.matcher(filter);
-
-		if (matcher.matches()) {
-			return false;
-		}
-
-		// Cannot have a filter type after an opening parenthesis
-
-		matcher = _pattern2.matcher(filter);
-
-		if (matcher.matches()) {
-			return false;
-		}
-
-		// Cannot have an attribute without a filter type or extensible
-
-		matcher = _pattern3.matcher(filter);
-
-		if (matcher.matches()) {
-			return false;
-		}
-
-		matcher = _pattern4.matcher(filter);
-
-		if (matcher.matches()) {
-			return false;
-		}
-
-		return true;
+		return isValidFilter(filter, 0);
 	}
 
 	public static Date parseDate(String date) throws Exception {
@@ -305,9 +236,94 @@ public class LDAPUtil {
 		}
 	}
 
-	private static Pattern _pattern1 = Pattern.compile(".*[~<>]*=[~<>]*=.*");
-	private static Pattern _pattern2 = Pattern.compile("\\([~<>]*=.*");
-	private static Pattern _pattern3 = Pattern.compile("\\([^~<>=]*\\)");
-	private static Pattern _pattern4 = Pattern.compile(".*[^~<>=]*[~<>]*=\\)");
+	protected static boolean checkCharacter(
+		String string, int index, char expected) {
+
+		if ((index < 0) || (index >= string.length())) {
+			return false;
+		}
+
+		return string.charAt(index) == expected;
+	}
+
+	protected static boolean isValidFilter(String filter, int start) {
+		filter = StringUtil.replace(filter, StringPool.SPACE, StringPool.BLANK);
+
+		if (filter.equals(StringPool.BLANK) || filter.equals(StringPool.STAR)) {
+			return true;
+		}
+
+		try {
+			return validateParenthesisExpression(filter, start) ==
+				filter.length();
+		}
+		catch (PortalException pe) {
+			return false;
+		}
+	}
+
+	protected static int validateParenthesisExpression(String filter, int start)
+		throws PortalException {
+
+		if ((start >= filter.length()) ||
+			(filter.charAt(start) != CharPool.OPEN_PARENTHESIS)) {
+
+			throw new LDAPFilterException(
+				"Invalid filter " + filter + ": '(' was expected at position " +
+					start);
+		}
+
+		if (start == (filter.length() - 1)) {
+			throw new LDAPFilterException(
+				"Invalid filter " + filter + ": unexpected end of filter at " +
+					start);
+		}
+
+		int end;
+
+		switch (filter.charAt(start + 1)) {
+			case '!':
+				end = validateParenthesisExpression(filter, start+2);
+			break;
+
+			case '&': case '|':
+				end = validateParenthesisExpression(filter, start+2);
+
+				do {
+					end = validateParenthesisExpression(filter, end);
+				} while (checkCharacter(filter, end, '('));
+
+			break;
+
+			default:
+				end = validateSimpleExpression(filter, start+1);
+		}
+
+		if (!checkCharacter(filter, end, ')')) {
+			throw new LDAPFilterException(
+				"Invalid filter " + filter + ": ')' was expected at position " +
+					end);
+		}
+
+		return end+1;
+	}
+
+	protected static int validateSimpleExpression(String filter, int pos)
+		throws LDAPFilterException {
+
+		Matcher matcher = _LDAP_FILTER_SIMPLE_EXPRESSION.matcher(
+			filter.substring(pos));
+
+		if (!matcher.lookingAt()) {
+			throw new LDAPFilterException(
+				"Invalid filter " + filter +
+					": identifier was expected at position " + pos);
+		}
+
+		return matcher.end() + pos;
+	}
+
+	private static final Pattern _LDAP_FILTER_SIMPLE_EXPRESSION =
+		Pattern.compile("(\\p{Alpha}\\w+(<|>|~)?=)+(\\*|\\w)+");
 
 }

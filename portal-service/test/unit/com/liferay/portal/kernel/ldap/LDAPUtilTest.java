@@ -25,9 +25,10 @@ public class LDAPUtilTest {
 	@Test
 	public void testIsValidFilterBalancedParentheses() {
 		Assert.assertTrue(isValidFilter("(object=value)"));
-		Assert.assertTrue(isValidFilter("((((object=value))))"));
-		Assert.assertTrue(isValidFilter("((((object=value))(org=liferay)))"));
-		Assert.assertTrue(
+
+		Assert.assertFalse(isValidFilter("((((object=value))))"));
+		Assert.assertFalse(isValidFilter("((((object=value))(org=liferay)))"));
+		Assert.assertFalse(
 			isValidFilter(
 				"(((inetorg=www)((object=value))(org=liferay)))(user=test)"));
 		Assert.assertFalse(isValidFilter("(object=value))"));
@@ -41,6 +42,7 @@ public class LDAPUtilTest {
 	@Test
 	public void testIsValidFilterNoFilterType() {
 		Assert.assertTrue(isValidFilter("(object=value)"));
+
 		Assert.assertFalse(isValidFilter("(object)"));
 		Assert.assertFalse(isValidFilter("(object)(value)"));
 		Assert.assertFalse(isValidFilter("(!object)"));
@@ -51,6 +53,7 @@ public class LDAPUtilTest {
 		Assert.assertTrue(isValidFilter("(object=value)"));
 		Assert.assertTrue(isValidFilter("  (object=value)"));
 		Assert.assertTrue(isValidFilter("(object=value)  "));
+
 		Assert.assertFalse(isValidFilter("object=value)"));
 		Assert.assertFalse(isValidFilter("(object=value"));
 		Assert.assertFalse(isValidFilter("object=value"));
@@ -69,6 +72,7 @@ public class LDAPUtilTest {
 	@Test
 	public void testIsValidFilterTypeAfterOpenParenthesis() {
 		Assert.assertTrue(isValidFilter("(object=value)"));
+
 		Assert.assertFalse(isValidFilter("(=value)"));
 		Assert.assertFalse(isValidFilter("(<=value)"));
 		Assert.assertFalse(isValidFilter("(>=value)"));
@@ -81,6 +85,7 @@ public class LDAPUtilTest {
 		Assert.assertTrue(isValidFilter("(object=value)"));
 		Assert.assertTrue(isValidFilter("(object=*)"));
 		Assert.assertTrue(isValidFilter("(object=subobject=*)"));
+
 		Assert.assertFalse(isValidFilter("(object=)"));
 		Assert.assertFalse(isValidFilter("(object<=)"));
 		Assert.assertFalse(isValidFilter("(object>=)"));
@@ -101,6 +106,7 @@ public class LDAPUtilTest {
 		Assert.assertTrue(isValidFilter("(object~=value~=subvalue)"));
 		Assert.assertTrue(
 			isValidFilter("(object~=value>=subvalue<=subsubvalue)"));
+
 		Assert.assertFalse(isValidFilter("(object==value)"));
 		Assert.assertFalse(isValidFilter("(object=value=<=subvalue)"));
 		Assert.assertFalse(isValidFilter("(object~==value)"));
