@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
+import com.liferay.portal.kernel.template.TemplateHandler;
+import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
@@ -105,21 +107,18 @@ public class DDMImpl implements DDM {
 	public static final String TYPE_SELECT = "select";
 
 	@Override
-	public DDMDisplay getDDMDisplay(ServiceContext serviceContext) {
-		String refererPortletName = (String)serviceContext.getAttribute(
-			"refererPortletName");
+	public DDMDisplay getDDMDisplay(long classNameId) {
+		TemplateHandler templateHandler =
+			TemplateHandlerRegistryUtil.getTemplateHandler(classNameId);
 
-		if (refererPortletName == null) {
-			refererPortletName = serviceContext.getPortletId();
-
-			if (refererPortletName == null) {
-				throw new IllegalArgumentException(
-					"Service context must have values for either " +
-						"the referer portlet nme or portlet preference IDs");
-			}
+		if (templateHandler == null) {
+			throw new IllegalArgumentException(
+				"Class name ID " + classNameId + " must have a registered " +
+					"template handler");
 		}
 
-		return DDMDisplayRegistryUtil.getDDMDisplay(refererPortletName);
+		return DDMDisplayRegistryUtil.getDDMDisplay(
+			templateHandler.getPortletId());
 	}
 
 	@Override
