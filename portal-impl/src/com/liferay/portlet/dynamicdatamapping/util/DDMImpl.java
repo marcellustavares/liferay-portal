@@ -43,6 +43,7 @@ import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
@@ -117,8 +118,15 @@ public class DDMImpl implements DDM {
 					"template handler");
 		}
 
-		return DDMDisplayRegistryUtil.getDDMDisplay(
+		DDMDisplay ddmDisplay = DDMDisplayRegistryUtil.getDDMDisplay(
 			templateHandler.getPortletId());
+
+		if (ddmDisplay != null) {
+			return ddmDisplay;
+		}
+
+		return DDMDisplayRegistryUtil.getDDMDisplay(
+			PortletKeys.PORTLET_DISPLAY_TEMPLATES);
 	}
 
 	@Override
