@@ -27,6 +27,8 @@ public interface Template {
 
 	public Object get(String key);
 
+	public String getJavaScriptProcessor() throws TemplateException;
+
 	public String[] getKeys();
 
 	public void prepare(HttpServletRequest request);
