@@ -17,6 +17,8 @@ package com.liferay.portal.soy;
 import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyFileSet.Builder;
 import com.google.template.soy.data.SoyMapData;
+import com.google.template.soy.jssrc.SoyJsSrcOptions;
+import com.google.template.soy.jssrc.SoyJsSrcOptions.CodeStyle;
 import com.google.template.soy.tofu.SoyTofu;
 import com.google.template.soy.tofu.SoyTofu.Renderer;
 
@@ -29,7 +31,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.template.AbstractTemplate;
 import com.liferay.portal.template.TemplateContextHelper;
 import com.liferay.portal.template.TemplateResourceThreadLocal;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.Writer;
 
@@ -39,6 +40,7 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,11 +56,32 @@ public class SoyTemplate extends AbstractTemplate {
 
 		super(
 			templateResource, errorTemplateResource, context,
-			templateContextHelper, TemplateConstants.LANG_TYPE_SOY,
-			PropsValues.FREEMARKER_ENGINE_RESOURCE_MODIFICATION_CHECK_INTERVAL);
+			templateContextHelper, TemplateConstants.LANG_TYPE_SOY, 0);
 
 		_builder = builder;
 		_privileged = privileged;
+	}
+
+	@Override
+	public String getJavaScriptProcessor() throws TemplateException {
+		try {
+			SoyFileSet soyFileSet = getSoyFileSet();
+
+			SoyJsSrcOptions jsSrcOptions = new SoyJsSrcOptions();
+
+			jsSrcOptions.setCodeStyle(CodeStyle.STRINGBUILDER);
+			jsSrcOptions.setShouldProvideRequireSoyNamespaces(false);
+			jsSrcOptions.setShouldDeclareTopLevelNamespaces(true);
+			jsSrcOptions.setBidiGlobalDir(0);
+
+			List<String> javaScriptSources = soyFileSet.compileToJsSrc(
+				jsSrcOptions, null);
+
+			return javaScriptSources.get(0);
+		}
+		catch (PrivilegedActionException pae) {
+			throw new TemplateException(pae);
+		}
 	}
 
 	protected SoyMapData getSoyContext() {
