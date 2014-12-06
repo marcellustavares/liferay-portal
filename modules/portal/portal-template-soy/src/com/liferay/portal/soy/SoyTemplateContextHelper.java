@@ -12,29 +12,36 @@
  * details.
  */
 
-package com.liferay.portal.kernel.template;
+package com.liferay.portal.soy;
 
-import java.io.Writer;
+import com.liferay.portal.kernel.template.Template;
+import com.liferay.portal.template.TemplateContextHelper;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author Tina Tian
+ * @author Bruno Basto
  */
-public interface Template {
+public class SoyTemplateContextHelper extends TemplateContextHelper {
 
-	public void doProcessTemplate(Writer writer) throws Exception;
+	@Override
+	public Map<String, Object> getHelperUtilities(
+		ClassLoader classLoader, boolean restricted) {
 
-	public Object get(String key);
+		return Collections.emptyMap();
+	}
 
-	public String getJavaScriptProcessor() throws TemplateException;
+	@Override
+	public Set<String> getRestrictedVariables() {
+		return Collections.emptySet();
+	}
 
-	public String[] getKeys();
-
-	public void prepare(HttpServletRequest request);
-
-	public void processTemplate(Writer writer) throws TemplateException;
-
-	public void put(String key, Object value);
+	@Override
+	public void prepare(Template template, HttpServletRequest request) {
+	}
 
 }

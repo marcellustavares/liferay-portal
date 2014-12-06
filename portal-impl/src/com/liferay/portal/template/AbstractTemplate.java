@@ -103,6 +103,11 @@ public abstract class AbstractTemplate implements Template {
 	}
 
 	@Override
+	public String getJavaScriptProcessor() throws TemplateException {
+		throw new TemplateException("JavaScript processor is not available");
+	}
+
+	@Override
 	public String[] getKeys() {
 		Set<String> keys = context.keySet();
 

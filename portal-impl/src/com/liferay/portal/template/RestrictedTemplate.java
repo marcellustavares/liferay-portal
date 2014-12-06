@@ -46,6 +46,11 @@ public class RestrictedTemplate implements Template {
 	}
 
 	@Override
+	public String getJavaScriptProcessor() throws TemplateException {
+		return _template.getJavaScriptProcessor();
+	}
+
+	@Override
 	public String[] getKeys() {
 		return _template.getKeys();
 	}

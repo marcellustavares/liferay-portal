@@ -52,6 +52,19 @@ public class PrivilegedTemplateWrapper implements Template {
 	}
 
 	@Override
+	public String getJavaScriptProcessor() throws TemplateException {
+		try {
+			return doGetJavaScriptProcessor();
+		}
+		catch (PrivilegedActionException pae) {
+			throw (TemplateException)pae.getException();
+		}
+		catch (Exception e) {
+			throw new TemplateException();
+		}
+	}
+
+	@Override
 	public String[] getKeys() {
 		return _template.getKeys();
 	}
@@ -79,8 +92,34 @@ public class PrivilegedTemplateWrapper implements Template {
 		_template.put(key, value);
 	}
 
+	protected String doGetJavaScriptProcessor()
+		throws PrivilegedActionException {
+
+		return AccessController.doPrivileged(
+			new GetJavaScriptProcessorPrivilegedExceptionAction(_template),
+			_accessControlContext);
+	}
+
 	private final AccessControlContext _accessControlContext;
 	private Template _template;
+
+	private static class GetJavaScriptProcessorPrivilegedExceptionAction
+		implements PrivilegedExceptionAction<String> {
+
+		public GetJavaScriptProcessorPrivilegedExceptionAction(
+			Template template) {
+
+			_template = template;
+		}
+
+		@Override
+		public String run() throws Exception {
+			return _template.getJavaScriptProcessor();
+		}
+
+		private Template _template;
+
+	}
 
 	private static class ProcessTemplatePrivilegedExceptionAction
 		implements PrivilegedExceptionAction<Void> {
