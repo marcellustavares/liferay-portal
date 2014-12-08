@@ -59,6 +59,11 @@ public abstract class BaseTemplateHandler implements TemplateHandler {
 	}
 
 	@Override
+	public String getPortletId() {
+		return _portletId;
+	}
+
+	@Override
 	public String[] getRestrictedVariables(String language) {
 		if (language.equals(TemplateConstants.LANG_TYPE_FTL)) {
 			return PropsUtil.getArray(
@@ -106,8 +111,15 @@ public abstract class BaseTemplateHandler implements TemplateHandler {
 		return PropsKeys.PORTLET_DISPLAY_TEMPLATES_HELP;
 	}
 
+	@Override
+	public void setPortletId(String portletId) {
+		_portletId = portletId;
+	}
+
 	protected String getTemplatesConfigPath() {
 		return null;
 	}
+
+	private String _portletId;
 
 }

@@ -869,6 +869,8 @@ public class PortletBagFactory {
 			TemplateHandler templateHandler = (TemplateHandler)newInstance(
 				TemplateHandler.class, portlet.getTemplateHandlerClass());
 
+			templateHandler.setPortletId(portlet.getPortletId());
+
 			templateHandlerInstances.add(templateHandler);
 		}
 

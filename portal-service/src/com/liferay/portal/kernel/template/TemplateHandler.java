@@ -56,6 +56,11 @@ public interface TemplateHandler {
 	public String getName(Locale locale);
 
 	/**
+	 * Returns the portlet ID associated with the template.
+	 */
+	public String getPortletId();
+
+	/**
 	 * Returns the name of the resource associated with the template.
 	 * Permissions on the resource are checked when adding a new template.
 	 *
@@ -140,5 +145,10 @@ public interface TemplateHandler {
 	public Map<String, TemplateVariableGroup> getTemplateVariableGroups(
 			long classPK, String language, Locale locale)
 		throws Exception;
+
+	/**
+	 * Sets the portlet ID associated with the template.
+	 */
+	public void setPortletId(String portletId);
 
 }
