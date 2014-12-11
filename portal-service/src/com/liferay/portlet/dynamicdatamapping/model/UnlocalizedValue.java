@@ -36,6 +36,11 @@ public class UnlocalizedValue implements Value {
 	}
 
 	@Override
+	public Object clone() {
+		return new UnlocalizedValue(_values.get(LocaleUtil.ROOT));
+	}
+
+	@Override
 	public Set<Locale> getAvailableLocales() {
 		return _values.keySet();
 	}

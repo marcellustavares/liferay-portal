@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author Pablo Carvalho
  */
-public class DDMFormField implements Serializable {
+public class DDMFormField implements Cloneable, Serializable {
 
 	public DDMFormField(String name, String type) {
 		_name = name;
@@ -35,6 +35,35 @@ public class DDMFormField implements Serializable {
 		nestedDDMFormField.setDDMForm(_ddmForm);
 
 		_nestedDDMFormFields.add(nestedDDMFormField);
+	}
+
+	@Override
+	public Object clone() {
+		DDMFormField ddmFormField = new DDMFormField(_name, _type);
+
+		ddmFormField.setDataType(_dataType);
+		ddmFormField.setDDMForm(_ddmForm);
+		ddmFormField.setDDMFormFieldOptions(
+			(DDMFormFieldOptions)_ddmFormFieldOptions.clone());
+		ddmFormField.setIndexType(_indexType);
+		ddmFormField.setLabel((LocalizedValue)_label.clone());
+		ddmFormField.setMultiple(_multiple);
+		ddmFormField.setNamespace(_namespace);
+		ddmFormField.setPredefinedValue(
+			(LocalizedValue)_predefinedValue.clone());
+		ddmFormField.setReadOnly(_readOnly);
+		ddmFormField.setRepeatable(_repeatable);
+		ddmFormField.setRepeatable(_required);
+		ddmFormField.setShowLabel(_showLabel);
+		ddmFormField.setStyle((LocalizedValue)_style.clone());
+		ddmFormField.setTip((LocalizedValue)_tip.clone());
+
+		for (DDMFormField nestedDDMFormField : _nestedDDMFormFields) {
+			ddmFormField.addNestedDDMFormField(
+				(DDMFormField)nestedDDMFormField.clone());
+		}
+
+		return ddmFormField;
 	}
 
 	public String getDataType() {

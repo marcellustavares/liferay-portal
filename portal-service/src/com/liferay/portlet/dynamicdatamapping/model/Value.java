@@ -23,9 +23,11 @@ import java.util.Set;
 /**
  * @author Marcellus Tavares
  */
-public interface Value extends Serializable {
+public interface Value extends Cloneable, Serializable {
 
 	public void addString(Locale locale, String value);
+
+	public Object clone();
 
 	public Set<Locale> getAvailableLocales();
 

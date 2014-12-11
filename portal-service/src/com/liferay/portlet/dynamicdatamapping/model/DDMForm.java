@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.Set;
 /**
  * @author Pablo Carvalho
  */
-public class DDMForm implements Serializable {
+public class DDMForm implements Cloneable, Serializable {
 
 	public void addAvailableLocale(Locale locale) {
 		_availableLocales.add(locale);
@@ -36,6 +37,21 @@ public class DDMForm implements Serializable {
 		ddmFormField.setDDMForm(this);
 
 		_ddmFormFields.add(ddmFormField);
+	}
+
+	@Override
+	public Object clone() {
+		DDMForm ddmForm = new DDMForm();
+
+		ddmForm.setAvailableLocales(
+			new LinkedHashSet<Locale>(_availableLocales));
+		ddmForm.setDefaultLocale(_defaultLocale);
+
+		for (DDMFormField ddmFormField : _ddmFormFields) {
+			ddmForm.addDDMFormField((DDMFormField)ddmFormField.clone());
+		}
+
+		return ddmForm;
 	}
 
 	public Set<Locale> getAvailableLocales() {

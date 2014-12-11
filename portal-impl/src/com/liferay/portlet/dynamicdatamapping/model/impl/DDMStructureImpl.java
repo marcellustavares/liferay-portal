@@ -101,10 +101,12 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public DDMForm getDDMForm() {
 		if (_ddmForm == null) {
 			try {
-				_ddmForm = DDMFormXSDDeserializerUtil.deserialize(
+				DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
 					getDefinition());
 
-				addDDMFormPrivateDDMFormFields(_ddmForm);
+				addDDMFormPrivateDDMFormFields(ddmForm);
+
+				_ddmForm = (DDMForm)ddmForm.clone();
 			}
 			catch (Exception e) {
 				_log.error(e, e);
@@ -238,9 +240,11 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public DDMForm getFullHierarchyDDMForm() {
 		if (_fullHierarchyDDMForm == null) {
 			try {
-				_fullHierarchyDDMForm = createFullHierarchyDDMForm();
+				DDMForm fullHierarchyDDMForm = createFullHierarchyDDMForm();
 
-				addDDMFormPrivateDDMFormFields(_fullHierarchyDDMForm);
+				addDDMFormPrivateDDMFormFields(fullHierarchyDDMForm);
+
+				_fullHierarchyDDMForm = (DDMForm)fullHierarchyDDMForm.clone();
 			}
 			catch (Exception e) {
 				_log.error(e, e);

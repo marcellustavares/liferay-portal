@@ -40,6 +40,17 @@ public class LocalizedValue implements Value {
 	}
 
 	@Override
+	public Object clone() {
+		LocalizedValue localizedValue = new LocalizedValue(_defaultLocale);
+
+		for (Map.Entry<Locale, String> entry : _values.entrySet()) {
+			localizedValue.addString(entry.getKey(), entry.getValue());
+		}
+
+		return localizedValue;
+	}
+
+	@Override
 	public Set<Locale> getAvailableLocales() {
 		return _values.keySet();
 	}
