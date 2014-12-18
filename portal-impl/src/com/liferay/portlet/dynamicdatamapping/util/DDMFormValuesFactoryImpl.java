@@ -338,7 +338,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		List<DDMFormFieldValue> ddmFormFieldValues, int index,
 		DDMFormFieldValue ddmFormFieldValue) {
 
-		if (ddmFormFieldValues.size() < index + 1) {
+		if (ddmFormFieldValues.size() < (index + 1)) {
 			for (int i = ddmFormFieldValues.size(); i <= index; i++) {
 				ddmFormFieldValues.add(null);
 			}
