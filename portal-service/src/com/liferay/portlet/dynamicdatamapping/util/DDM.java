@@ -20,6 +20,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
@@ -46,11 +47,21 @@ public interface DDM {
 			long ddmStructureId, long ddmTemplateId, String fieldNamespace,
 			ServiceContext serviceContext)
 		throws PortalException;
+	
+	public DDMFormValues getDDMFormValues(
+			long ddmStructureId, long ddmTemplateId, String fieldNamespace,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	public Fields getFields(long ddmStructureId, ServiceContext serviceContext)
 		throws PortalException;
 
 	public Fields getFields(
+			long ddmStructureId, String fieldNamespace,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	public DDMFormValues getDDMFormValues(
 			long ddmStructureId, String fieldNamespace,
 			ServiceContext serviceContext)
 		throws PortalException;
