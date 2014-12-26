@@ -17,6 +17,7 @@ package com.liferay.portlet.dynamicdatamapping.storage;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
