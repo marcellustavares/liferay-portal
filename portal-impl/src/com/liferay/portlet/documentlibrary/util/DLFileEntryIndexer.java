@@ -82,7 +82,6 @@ import com.liferay.portlet.messageboards.model.MBMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
