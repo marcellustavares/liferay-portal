@@ -377,7 +377,7 @@ DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext = DLViewFileVers
 								Fields fields = null;
 
 								try {
-									fields = dlViewFileVersionDisplayContext.getFields(ddmStructure);
+									fields = DDMFormValuesToFieldsConverterUtil.convert(ddmStructure, dlViewFileVersionDisplayContext.getDDMFormValues(ddmStructure));
 								}
 								catch (Exception e) {
 								}
