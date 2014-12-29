@@ -26,12 +26,12 @@
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
 
-		ddmFormFieldRenderingContext.setFields(fields);
+		ddmFormFieldRenderingContext.setDDMFormValues(ddmFormValues);
 		ddmFormFieldRenderingContext.setHttpServletRequest(request);
 		ddmFormFieldRenderingContext.setHttpServletResponse(response);
 		ddmFormFieldRenderingContext.setLocale(requestedLocale);
 		ddmFormFieldRenderingContext.setMode(mode);
-		ddmFormFieldRenderingContext.setNamespace(fieldsNamespace);
+		ddmFormFieldRenderingContext.setNamespace(ddmFormValuesNamespace);
 		ddmFormFieldRenderingContext.setPortletNamespace(portletResponse.getNamespace());
 		ddmFormFieldRenderingContext.setReadOnly(readOnly);
 		ddmFormFieldRenderingContext.setShowEmptyFieldLabel(showEmptyFieldLabel);
@@ -48,7 +48,7 @@
 					ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
 					definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 					doAsGroupId: <%= scopeGroupId %>,
-					fieldsNamespace: '<%= fieldsNamespace %>',
+					ddmFormValuesNamespace: '<%= ddmFormValuesNamespace %>',
 					mode: '<%= mode %>',
 					p_l_id: <%= themeDisplay.getPlid() %>,
 					portletNamespace: '<portlet:namespace />',
@@ -64,12 +64,6 @@
 					}
 
 					DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(ddmStructureId);
-
-					DDMFormValues ddmFormValues = null;
-
-					if (fields != null) {
-						ddmFormValues = FieldsToDDMFormValuesConverterUtil.convert(ddmStructure, fields);
-					}
 					%>
 
 					<c:if test="<%= ddmFormValues != null %>">
