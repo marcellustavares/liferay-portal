@@ -387,6 +387,26 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		return sb.toString();
 	}
 
+	protected String getFieldname(DDMFormField ddmFormField, Locale locale) {
+		String name = "";
+		DDMFormField parent = ddmFormField.getParent();
+
+		String instanceId;
+
+		while (parent != null) {
+			instanceId = StringUtil.randomId();
+			name += parent.getName() + "_INSTANCE_" + instanceId + "_" + this.getNestedFormFieldIndex(parent) + "__";
+			parent = parent.getParent();
+		}
+
+		instanceId = StringUtil.randomId();
+
+		name += ddmFormField.getName() + "_INSTANCE_" + instanceId +
+			"_" + this.getNestedFormFieldIndex(ddmFormField) + "_" + locale;
+
+		return name;
+	}
+
 	protected String getFieldNamespace(
 		String fieldDisplayValue, DDMFieldsCounter ddmFieldsCounter,
 		int offset) {
@@ -537,6 +557,30 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		}
 
 		return sb.toString();
+	}
+
+	protected int getNestedFormFieldIndex(DDMFormField ddmFormField) {
+		int index = -1;
+
+		DDMFormField parent = ddmFormField.getParent();
+
+		List<DDMFormField> siblings;
+
+		if (parent == null) {
+			return 0;
+		}
+
+		siblings = parent.getNestedDDMFormFields();
+
+		for (DDMFormField sibling : siblings) {
+			index += 1;
+
+			if (sibling.equals(ddmFormField)) {
+				break;
+			}
+		}
+
+		return index;
 	}
 
 	protected URL getResource(String name) {
