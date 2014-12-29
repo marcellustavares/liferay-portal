@@ -29,7 +29,7 @@
 <%
 String randomNamespace = PortalUtil.generateRandomKey(request, "taglib_ddm_init-ext");
 
-String ddmFormValuesInputName = fieldsNamespace + "ddmFormValues";
+String ddmFormValuesInputName = ddmFormValuesNamespace + "ddmFormValues";
 
 String mode = null;
 

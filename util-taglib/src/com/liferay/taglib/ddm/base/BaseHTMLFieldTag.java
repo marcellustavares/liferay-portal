@@ -38,12 +38,14 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		return _classPK;
 	}
 
-	public com.liferay.portlet.dynamicdatamapping.storage.Field getField() {
-		return _field;
+	public com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue
+	getDDMFormFieldValue() {
+
+		return _ddmFormFieldValue;
 	}
 
-	public java.lang.String getFieldsNamespace() {
-		return _fieldsNamespace;
+	public java.lang.String getDDMFormValuesNamespace() {
+		return _ddmFormValuesNamespace;
 	}
 
 	public boolean getReadOnly() {
@@ -74,16 +76,21 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		setScopedAttribute("classPK", classPK);
 	}
 
-	public void setField(com.liferay.portlet.dynamicdatamapping.storage.Field field) {
-		_field = field;
+	public void setDDMFormFieldValue(
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue
+			ddmFormFieldValue) {
+		
+		_ddmFormFieldValue = ddmFormFieldValue;
 
-		setScopedAttribute("field", field);
+		setScopedAttribute("ddmFormFieldValue", ddmFormFieldValue);
 	}
 
-	public void setFieldsNamespace(java.lang.String fieldsNamespace) {
-		_fieldsNamespace = fieldsNamespace;
+	public void setDDMFormValuesNamespace(
+			java.lang.String ddmFormValuesNamespace) {
 
-		setScopedAttribute("fieldsNamespace", fieldsNamespace);
+		_ddmFormValuesNamespace = ddmFormValuesNamespace;
+
+		setScopedAttribute("ddmFormValuesNamespace", ddmFormValuesNamespace);
 	}
 
 	public void setReadOnly(boolean readOnly) {
@@ -116,8 +123,8 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 
 		_classNameId = 0;
 		_classPK = 0;
-		_field = null;
-		_fieldsNamespace = null;
+		_ddmFormFieldValue = null;
+		_ddmFormValuesNamespace = null;
 		_readOnly = false;
 		_repeatable = true;
 		_requestedLocale = null;
@@ -138,12 +145,15 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 	protected void setAttributes(HttpServletRequest request) {
 		setNamespacedAttribute(request, "classNameId", _classNameId);
 		setNamespacedAttribute(request, "classPK", _classPK);
-		setNamespacedAttribute(request, "field", _field);
-		setNamespacedAttribute(request, "fieldsNamespace", _fieldsNamespace);
+		setNamespacedAttribute(request, "ddmFormFieldValue",
+			_ddmFormFieldValue);
+		setNamespacedAttribute(request, "ddmFormValuesNamespace",
+			_ddmFormValuesNamespace);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 		setNamespacedAttribute(request, "repeatable", _repeatable);
 		setNamespacedAttribute(request, "requestedLocale", _requestedLocale);
-		setNamespacedAttribute(request, "showEmptyFieldLabel", _showEmptyFieldLabel);
+		setNamespacedAttribute(request, "showEmptyFieldLabel",
+			_showEmptyFieldLabel);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:html-field:";
@@ -156,8 +166,8 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 
 	private long _classNameId = 0;
 	private long _classPK = 0;
-	private com.liferay.portlet.dynamicdatamapping.storage.Field _field = null;
-	private java.lang.String _fieldsNamespace = null;
+	private com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue _ddmFormFieldValue = null;
+	private java.lang.String _ddmFormValuesNamespace = null;
 	private boolean _readOnly = false;
 	private boolean _repeatable = true;
 	private java.util.Locale _requestedLocale = null;

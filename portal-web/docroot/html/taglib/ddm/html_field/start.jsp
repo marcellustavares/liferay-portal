@@ -24,18 +24,18 @@
 
 		Map<String, DDMFormField> ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 
-		DDMFormField ddmFormField = ddmFormFieldsMap.get(field.getName());
+		DDMFormField ddmFormField = ddmFormFieldsMap.get(ddmFormFieldValue.getName());
 
 		DDMFormFieldRenderer ddmFormFieldRenderer = DDMFormFieldRendererRegistryUtil.getDDMFormFieldRenderer(ddmFormField.getType());
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
 
-		ddmFormFieldRenderingContext.setField(field);
+		ddmFormFieldRenderingContext.setDDMFormFieldValue(ddmFormFieldValue);
 		ddmFormFieldRenderingContext.setHttpServletRequest(request);
 		ddmFormFieldRenderingContext.setHttpServletResponse(response);
 		ddmFormFieldRenderingContext.setLocale(requestedLocale);
 		ddmFormFieldRenderingContext.setMode(mode);
-		ddmFormFieldRenderingContext.setNamespace(fieldsNamespace);
+		ddmFormFieldRenderingContext.setNamespace(ddmFormValuesNamespace);
 		ddmFormFieldRenderingContext.setPortletNamespace(portletResponse.getNamespace());
 		ddmFormFieldRenderingContext.setReadOnly(readOnly);
 		ddmFormFieldRenderingContext.setShowEmptyFieldLabel(showEmptyFieldLabel);
@@ -47,7 +47,7 @@
 
 		<aui:script use="liferay-ddm-form">
 			Liferay.component(
-				'<portlet:namespace /><%= fieldsNamespace %>ddmForm',
+				'<portlet:namespace /><%= ddmFormValuesNamespace %>ddmForm',
 				function() {
 					return new Liferay.DDM.Form(
 						{
@@ -55,7 +55,7 @@
 							ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
 							definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 							doAsGroupId: <%= scopeGroupId %>,
-							fieldsNamespace: '<%= fieldsNamespace %>',
+							ddmFormValuesNamespace: '<%= ddmFormValuesNamespace %>',
 							mode: '<%= mode %>',
 							p_l_id: <%= themeDisplay.getPlid() %>,
 							portletNamespace: '<portlet:namespace />',
