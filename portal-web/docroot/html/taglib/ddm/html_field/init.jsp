@@ -21,8 +21,8 @@
 <%
 long classNameId = GetterUtil.getLong(String.valueOf(request.getAttribute("ddm:html-field:classNameId")));
 long classPK = GetterUtil.getLong(String.valueOf(request.getAttribute("ddm:html-field:classPK")));
-com.liferay.portlet.dynamicdatamapping.storage.Field field = (com.liferay.portlet.dynamicdatamapping.storage.Field)request.getAttribute("ddm:html-field:field");
-java.lang.String fieldsNamespace = GetterUtil.getString((java.lang.String)request.getAttribute("ddm:html-field:fieldsNamespace"));
+com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue = (com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue)request.getAttribute("ddm:html-field:ddmFormFieldValue");
+java.lang.String ddmFormValuesNamespace = GetterUtil.getString((java.lang.String)request.getAttribute("ddm:html-field:ddmFormValuesNamespace"));
 boolean readOnly = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html-field:readOnly")));
 boolean repeatable = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html-field:repeatable")), true);
 java.util.Locale requestedLocale = (java.util.Locale)request.getAttribute("ddm:html-field:requestedLocale");
