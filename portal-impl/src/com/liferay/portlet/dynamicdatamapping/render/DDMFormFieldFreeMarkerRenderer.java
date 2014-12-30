@@ -36,8 +36,8 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.Field;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
 import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
 
@@ -92,7 +92,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 				ddmFormFieldRenderingContext.getHttpServletRequest();
 			HttpServletResponse response =
 				ddmFormFieldRenderingContext.getHttpServletResponse();
-			Fields fields = ddmFormFieldRenderingContext.getFields();
+			DDMFormValues ddmFormValues =
+				ddmFormFieldRenderingContext.getDDMFormValues();
 			String portletNamespace =
 				ddmFormFieldRenderingContext.getPortletNamespace();
 			String namespace = ddmFormFieldRenderingContext.getNamespace();
@@ -103,8 +104,9 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			Locale locale = ddmFormFieldRenderingContext.getLocale();
 
 			return getFieldHTML(
-				request, response, ddmFormField, fields, null, portletNamespace,
-				namespace, mode, readOnly, showEmptyFieldLabel, locale);
+				request, response, ddmFormField, ddmFormValues, null,
+				portletNamespace, namespace, mode, readOnly,
+				showEmptyFieldLabel, locale);
 		}
 		catch (Exception e) {
 			throw new PortalException(e);
@@ -265,7 +267,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getFieldHTML(
 			HttpServletRequest request, HttpServletResponse response,
-			DDMFormField ddmFormField, Fields fields,
+			DDMFormField ddmFormField, DDMFormValues ddmFormValues,
 			DDMFormField parentDDMFormField, String portletNamespace,
 			String namespace, String mode, boolean readOnly,
 			boolean showEmptyFieldLabel, Locale locale)
@@ -275,8 +277,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			request, response, portletNamespace, namespace, ddmFormField,
 			parentDDMFormField, showEmptyFieldLabel, locale);
 
-		if (fields != null) {
-			freeMarkerContext.put("fields", fields);
+		if (ddmFormValues != null) {
+			freeMarkerContext.put("ddmFormValues", ddmFormValues);
 		}
 
 		Map<String, Object> fieldStructure =
@@ -286,12 +288,12 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		int offset = 0;
 
 		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
-			request, response, fields, portletNamespace, namespace);
+			request, portletNamespace, namespace);
 
 		String name = ddmFormField.getName();
 
 		String fieldDisplayValue = getFieldsDisplayValue(
-			request, response, fields);
+			request, response, ddmFormValues, locale);
 
 		String[] fieldsDisplayValues = getFieldsDisplayValues(
 			fieldDisplayValue);
@@ -342,8 +344,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			childrenHTML.append(
 				getHTML(
 					request, response, ddmFormField.getNestedDDMFormFields(),
-					fields, ddmFormField, portletNamespace, namespace, mode,
-					readOnly, showEmptyFieldLabel, locale));
+					ddmFormValues, ddmFormField, portletNamespace, namespace,
+					mode, readOnly, showEmptyFieldLabel, locale));
 
 			if (Validator.equals(ddmFormField.getType(), "select") ||
 				Validator.equals(ddmFormField.getType(), "radio")) {
@@ -431,8 +433,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 	}
 
 	protected DDMFieldsCounter getFieldsCounter(
-		HttpServletRequest request, HttpServletResponse response, Fields fields,
-		String portletNamespace, String namespace) {
+		HttpServletRequest request, String portletNamespace, String namespace) {
 
 		String fieldsCounterKey = portletNamespace + namespace + "fieldsCount";
 
@@ -450,16 +451,27 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getFieldsDisplayValue(
 		HttpServletRequest request, HttpServletResponse response,
-		Fields fields) {
+		DDMFormValues ddmFormValues, Locale locale) {
 
 		String defaultFieldsDisplayValue = null;
 
-		if (fields != null) {
-			Field fieldsDisplayField = fields.get(DDMImpl.FIELDS_DISPLAY_NAME);
+		if (ddmFormValues != null) {
+			DDMFormFieldValue fieldsDisplayField = null;
+
+			for (DDMFormFieldValue ddmFormFieldValue :
+					ddmFormValues.getDDMFormFieldValues()) {
+
+				if (ddmFormFieldValue.getName().equals(
+						DDMImpl.FIELDS_DISPLAY_NAME)) {
+
+					fieldsDisplayField = ddmFormFieldValue;
+					break;
+				}
+			}
 
 			if (fieldsDisplayField != null) {
 				defaultFieldsDisplayValue =
-					(String)fieldsDisplayField.getValue();
+					fieldsDisplayField.getValue().getString(locale);
 			}
 		}
 
@@ -515,7 +527,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getHTML(
 			HttpServletRequest request, HttpServletResponse response,
-			List<DDMFormField> ddmFormFields, Fields fields,
+			List<DDMFormField> ddmFormFields, DDMFormValues ddmFormValues,
 			DDMFormField parentDDMFormField, String portletNamespace,
 			String namespace, String mode, boolean readOnly,
 			boolean showEmptyFieldLabel, Locale locale)
@@ -526,9 +538,9 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			sb.append(
 				getFieldHTML(
-					request, response, ddmFormField, fields, parentDDMFormField,
-					portletNamespace, namespace, mode, readOnly,
-					showEmptyFieldLabel, locale));
+					request, response, ddmFormField, ddmFormValues,
+					parentDDMFormField, portletNamespace, namespace, mode,
+					readOnly, showEmptyFieldLabel, locale));
 		}
 
 		return sb.toString();
