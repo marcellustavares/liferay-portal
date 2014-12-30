@@ -21,23 +21,15 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.storage.Field;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
-import java.io.Serializable;
-
-import java.text.Format;
-
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -47,12 +39,15 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	@Override
 	public void addAttributes(
-		Document document, DDMStructure ddmStructure, Fields fields) {
+		Document document, DDMStructure ddmStructure,
+		DDMFormValues ddmFormValues) {
 
-		for (Field field : fields) {
+		for (DDMFormFieldValue ddmFormFieldValue :
+			ddmFormValues.getDDMFormFieldValues()) {
+
 			try {
 				String indexType = ddmStructure.getFieldProperty(
-					field.getName(), "indexType");
+					ddmFormFieldValue.getName(), "indexType");
 
 				if (Validator.isNull(indexType)) {
 					continue;
@@ -60,89 +55,41 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 				for (Locale locale : LanguageUtil.getAvailableLocales()) {
 					String name = encodeName(
-						ddmStructure.getStructureId(), field.getName(), locale);
+						ddmStructure.getStructureId(),
+						ddmFormFieldValue.getName(), locale);
 
-					Serializable value = field.getValue(locale);
+					String valueString = ddmFormFieldValue.getValue().getString(
+						locale);
 
-					if (value instanceof Boolean) {
-						document.addKeyword(name, (Boolean)value);
-					}
-					else if (value instanceof Boolean[]) {
-						document.addKeyword(name, (Boolean[])value);
-					}
-					else if (value instanceof Date) {
-						document.addDate(name, (Date)value);
-					}
-					else if (value instanceof Date[]) {
-						document.addDate(name, (Date[])value);
-					}
-					else if (value instanceof Double) {
-						document.addNumber(name, (Double)value);
-					}
-					else if (value instanceof Double[]) {
-						document.addNumber(name, (Double[])value);
-					}
-					else if (value instanceof Integer) {
-						document.addNumber(name, (Integer)value);
-					}
-					else if (value instanceof Integer[]) {
-						document.addNumber(name, (Integer[])value);
-					}
-					else if (value instanceof Long) {
-						document.addNumber(name, (Long)value);
-					}
-					else if (value instanceof Long[]) {
-						document.addNumber(name, (Long[])value);
-					}
-					else if (value instanceof Float) {
-						document.addNumber(name, (Float)value);
-					}
-					else if (value instanceof Float[]) {
-						document.addNumber(name, (Float[])value);
-					}
-					else if (value instanceof Object[]) {
-						String[] valuesString = ArrayUtil.toStringArray(
-							(Object[])value);
+					String type = ddmStructure.getDDMFormField(
+						ddmFormFieldValue.getName()).getType();
+
+					if (type.equals(DDMImpl.TYPE_RADIO) ||
+						type.equals(DDMImpl.TYPE_SELECT)) {
+
+						JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+							valueString);
+
+						String[] stringArray = ArrayUtil.toStringArray(
+							jsonArray);
 
 						if (indexType.equals("keyword")) {
-							document.addKeyword(name, valuesString);
+							document.addKeyword(name, stringArray);
 						}
 						else {
-							document.addText(name, valuesString);
+							document.addText(name, stringArray);
 						}
 					}
 					else {
-						String valueString = String.valueOf(value);
+						if (type.equals(DDMImpl.TYPE_DDM_TEXT_HTML)) {
+							valueString = HtmlUtil.extractText(valueString);
+						}
 
-						String type = field.getType();
-
-						if (type.equals(DDMImpl.TYPE_RADIO) ||
-							type.equals(DDMImpl.TYPE_SELECT)) {
-
-							JSONArray jsonArray =
-								JSONFactoryUtil.createJSONArray(valueString);
-
-							String[] stringArray = ArrayUtil.toStringArray(
-								jsonArray);
-
-							if (indexType.equals("keyword")) {
-								document.addKeyword(name, stringArray);
-							}
-							else {
-								document.addText(name, stringArray);
-							}
+						if (indexType.equals("keyword")) {
+							document.addKeyword(name, valueString);
 						}
 						else {
-							if (type.equals(DDMImpl.TYPE_DDM_TEXT_HTML)) {
-								valueString = HtmlUtil.extractText(valueString);
-							}
-
-							if (indexType.equals("keyword")) {
-								document.addKeyword(name, valueString);
-							}
-							else {
-								document.addText(name, valueString);
-							}
+							document.addText(name, valueString);
 						}
 					}
 				}
@@ -182,76 +129,45 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	@Override
 	public String extractIndexableAttributes(
-		DDMStructure ddmStructure, Fields fields, Locale locale) {
-
-		Format dateFormat = FastDateFormatFactoryUtil.getSimpleDateFormat(
-			PropsUtil.get(PropsKeys.INDEX_DATE_FORMAT_PATTERN));
+		DDMStructure ddmStructure, DDMFormValues ddmFormValues, Locale locale) {
 
 		StringBundler sb = new StringBundler();
 
-		for (Field field : fields) {
+		for (DDMFormFieldValue ddmFormFieldValue :
+			ddmFormValues.getDDMFormFieldValues()) {
+
 			try {
 				String indexType = ddmStructure.getFieldProperty(
-					field.getName(), "indexType");
+					ddmFormFieldValue.getName(), "indexType");
 
 				if (Validator.isNull(indexType)) {
 					continue;
 				}
 
-				Serializable value = field.getValue(locale);
+				String valueString = ddmFormFieldValue.getValue().getString(
+					locale);
 
-				if ((value instanceof Boolean) || (value instanceof Double) ||
-					(value instanceof Integer) || (value instanceof Long) ||
-					(value instanceof Float)) {
+				String type = ddmStructure.getDDMFormField(
+					ddmFormFieldValue.getName()).getType();
 
-					sb.append(value);
+				if (type.equals(DDMImpl.TYPE_RADIO) ||
+					type.equals(DDMImpl.TYPE_SELECT)) {
+
+					JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+						valueString);
+
+					String[] stringArray = ArrayUtil.toStringArray(jsonArray);
+
+					sb.append(stringArray);
 					sb.append(StringPool.SPACE);
-				}
-				else if (value instanceof Date) {
-					sb.append(dateFormat.format(value));
-					sb.append(StringPool.SPACE);
-				}
-				else if (value instanceof Date[]) {
-					Date[] dates = (Date[])value;
-
-					for (Date date : dates) {
-						sb.append(dateFormat.format(date));
-						sb.append(StringPool.SPACE);
-					}
-				}
-				else if (value instanceof Object[]) {
-					Object[] values = (Object[])value;
-
-					for (Object object : values) {
-						sb.append(object);
-						sb.append(StringPool.SPACE);
-					}
 				}
 				else {
-					String valueString = String.valueOf(value);
-
-					String type = field.getType();
-
-					if (type.equals(DDMImpl.TYPE_RADIO) ||
-						type.equals(DDMImpl.TYPE_SELECT)) {
-
-						JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-							valueString);
-
-						String[] stringArray = ArrayUtil.toStringArray(
-							jsonArray);
-
-						sb.append(stringArray);
-						sb.append(StringPool.SPACE);
+					if (type.equals(DDMImpl.TYPE_DDM_TEXT_HTML)) {
+						valueString = HtmlUtil.extractText(valueString);
 					}
-					else {
-						if (type.equals(DDMImpl.TYPE_DDM_TEXT_HTML)) {
-							valueString = HtmlUtil.extractText(valueString);
-						}
 
-						sb.append(valueString);
-						sb.append(StringPool.SPACE);
-					}
+					sb.append(valueString);
+					sb.append(StringPool.SPACE);
 				}
 			}
 			catch (Exception e) {

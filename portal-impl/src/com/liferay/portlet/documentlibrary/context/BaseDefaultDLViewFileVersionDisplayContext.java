@@ -58,13 +58,12 @@ import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,7 +74,6 @@ import java.util.UUID;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,6 +112,18 @@ public abstract class BaseDefaultDLViewFileVersionDisplayContext
 	}
 
 	@Override
+	public DDMFormValues getDDMFormValues(DDMStructure ddmStructure)
+		throws PortalException {
+
+		DLFileEntryMetadata dlFileEntryMetadata =
+			DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(
+				ddmStructure.getStructureId(), _fileVersion.getFileVersionId());
+
+		return StorageEngineUtil.getDDMFormValues(
+			dlFileEntryMetadata.getDDMStorageId());
+	}
+
+	@Override
 	public List<DDMStructure> getDDMStructures() throws PortalException {
 		if (_fileVersionDisplayContextHelper.isDLFileVersion()) {
 			DLFileVersion dlFileVersion =
@@ -123,16 +133,6 @@ public abstract class BaseDefaultDLViewFileVersionDisplayContext
 		}
 
 		return Collections.emptyList();
-	}
-
-	@Override
-	public Fields getFields(DDMStructure ddmStructure) throws PortalException {
-		DLFileEntryMetadata dlFileEntryMetadata =
-			DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(
-				ddmStructure.getStructureId(), _fileVersion.getFileVersionId());
-
-		return StorageEngineUtil.getFields(
-			dlFileEntryMetadata.getDDMStorageId());
 	}
 
 	@Override
