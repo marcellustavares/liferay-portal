@@ -3,7 +3,6 @@ package com.liferay.portlet.dynamicdatamapping.render;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldType;
@@ -24,7 +23,7 @@ public class DDMFormFieldFreeMarkerRendererTest extends BaseDDMTestCase {
 
 		// Expected: Foo_INSTANCE_<random>_0_en_US
 
-		name = renderer.getFieldname(nameDDMFormField, LocaleUtil.US);
+		name = renderer.getFieldname(nameDDMFormField, null);
 
 		pieces = name.split("_");
 
@@ -34,8 +33,6 @@ public class DDMFormFieldFreeMarkerRendererTest extends BaseDDMTestCase {
 		assertTrue(StringUtils.isAlphanumeric(pieces[2]));
 
 		assertEquals("0", pieces[3]);
-		assertEquals("en", pieces[4]);
-		assertEquals("US", pieces[5]);
 	}
 
 	@Test
@@ -53,9 +50,10 @@ public class DDMFormFieldFreeMarkerRendererTest extends BaseDDMTestCase {
 		DDMFormFieldFreeMarkerRenderer renderer =
 			new DDMFormFieldFreeMarkerRenderer();
 
-		// Expected: Name_INSTANCE_<random>_0__Phone_INSTANCE_<random>_0_en_US
+		// Expected: Name_INSTANCE_<random>_0__Phone_INSTANCE_<random>_0
 
-		phone = renderer.getFieldname(phoneDDMFormField, LocaleUtil.US);
+		phone = renderer.getFieldname(
+			phoneDDMFormField, renderer.getFieldname(nameDDMFormField, null));
 
 		pieces = phone.split("_");
 
@@ -68,8 +66,6 @@ public class DDMFormFieldFreeMarkerRendererTest extends BaseDDMTestCase {
 		assertEquals("INSTANCE", pieces[6]);
 		assertTrue(StringUtils.isAlphanumeric(pieces[7]));
 		assertEquals("0", pieces[8]);
-		assertEquals("en", pieces[9]);
-		assertEquals("US", pieces[10]);
 	}
 
 	@Test
