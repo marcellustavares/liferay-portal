@@ -35,7 +35,7 @@ AUI.add(
 			doAsGroupId: {
 			},
 
-			fieldsNamespace: {
+			ddmFormValuesNamespace: {
 			},
 
 			p_l_id: {
@@ -371,12 +371,12 @@ AUI.add(
 						var instance = this;
 
 						var portletNamespace = instance.get('portletNamespace');
-						var fieldsNamespace = instance.get('fieldsNamespace');
+						var ddmFormValuesNamespace = instance.get('ddmFormValuesNamespace');
 
 						var prefix = [portletNamespace];
 
-						if (fieldsNamespace) {
-							prefix.push(fieldsNamespace);
+						if (ddmFormValuesNamespace) {
+							prefix.push(ddmFormValuesNamespace);
 						}
 
 						return prefix.concat(
