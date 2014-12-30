@@ -29,7 +29,7 @@
 
 <#-- Field name -->
 
-<#assign fieldNamespace = "_INSTANCE_" + fieldStructure.fieldNamespace>
+<#assign fieldNamespace = fieldStructure.fieldName>
 
 <#assign fieldName = fieldStructure.name>
 
@@ -44,7 +44,7 @@
 
 <#assign namespace = namespace!"">
 
-<#assign namespacedFieldName = "${namespace}${fieldName}${fieldNamespace}">
+<#assign namespacedFieldName = fieldStructure.fieldName>
 
 <#assign namespacedParentName = "${namespace}${parentName}">
 
