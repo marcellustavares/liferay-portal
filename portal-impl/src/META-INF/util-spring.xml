@@ -979,6 +979,11 @@
 			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDSerializerImpl" />
 		</property>
 	</bean>
+	<bean id="com.liferay.portlet.dynamicdatamapping.query.DDMQueryCompilerUtil" class="com.liferay.portlet.dynamicdatamapping.query.DDMQueryCompilerUtil">
+		<property name="DDMQueryCompiler">
+			<bean class="com.liferay.portlet.dynamicdatamapping.query.DDMQueryCompilerImpl" />
+		</property>
+	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryImpl" class="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryImpl">
 		<property name="defaultDDMFormFieldRenderer">
 			<bean class="com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldFreeMarkerRenderer" />
