@@ -29,7 +29,7 @@
 
 <#-- Field name -->
 
-<#assign fieldNamespace = fieldStructure.fieldName>
+<#assign fieldNamespace = fieldStructure.fieldName + "__" + requestedLocale>
 
 <#assign fieldName = fieldStructure.name>
 
@@ -44,7 +44,7 @@
 
 <#assign namespace = namespace!"">
 
-<#assign namespacedFieldName = fieldStructure.fieldName>
+<#assign namespacedFieldName = fieldStructure.fieldName + "__" + requestedLocale>
 
 <#assign namespacedParentName = "${namespace}${parentName}">
 

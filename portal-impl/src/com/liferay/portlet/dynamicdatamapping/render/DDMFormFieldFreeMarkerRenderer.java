@@ -338,7 +338,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			}
 
 			String fieldName =
-				this.getFieldname(ddmFormField, parentName) + "_" + locale;
+				this.getFieldname(ddmFormField, parentName);
 
 			fieldStructure.put("fieldName", fieldName);
 			fieldStructure.put("fieldNamespace", fieldNamespace);
