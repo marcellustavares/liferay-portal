@@ -83,7 +83,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 					<aui:input disabled="<%= true %>" name="buttonId" type="hidden" value='<%= renderResponse.getNamespace() + "applyButton" + name %>' />
 
 					<%
-					com.liferay.portlet.dynamicdatamapping.storage.Field ddmField = new com.liferay.portlet.dynamicdatamapping.storage.Field();
+					/* com.liferay.portlet.dynamicdatamapping.storage.Field ddmField = new com.liferay.portlet.dynamicdatamapping.storage.Field();
 
 					ddmField.setDefaultLocale(themeDisplay.getLocale());
 					ddmField.setDDMStructureId(ddmStructureId);
@@ -97,14 +97,28 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 						}
 
 						ddmField.setValue(themeDisplay.getLocale(), ddmStructureFieldValue);
+					}*/
+
+					com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue = new com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue();
+
+					ddmFormFieldValue.setName(name);
+
+					String ddmStructureFieldValue = assetPublisherDisplayContext.getDDMStructureFieldValue();
+
+					if (name.equals(assetPublisherDisplayContext.getDDMStructureFieldName())) {
+						LocalizedValue value = new LocalizedValue();
+
+						value.addString(themeDisplay.getLocale(), ddmStructureFieldValue);
+
+						ddmFormFieldValue.setValue(value);
 					}
 					%>
 
 					<liferay-ddm:html-field
 						classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 						classPK="<%= ddmStructureId %>"
-						field="<%= ddmField %>"
-						fieldsNamespace="<%= fieldsNamespace %>"
+						ddmFormFieldValue="<%= ddmFormFieldValue %>"
+						ddmFormValuesNamespace="<%= fieldsNamespace %>"
 					/>
 				</aui:form>
 			</liferay-ui:search-container-column-text>
