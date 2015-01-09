@@ -21,7 +21,7 @@ public class DDMFormFieldFreeMarkerRendererTest extends BaseDDMTestCase {
 		DDMFormFieldFreeMarkerRenderer renderer =
 			new DDMFormFieldFreeMarkerRenderer();
 
-		// Expected: Foo_INSTANCE_<random>_0_en_US
+		// Expected: Foo_INSTANCE_<random>_0
 
 		name = renderer.getFieldname(nameDDMFormField, null);
 
