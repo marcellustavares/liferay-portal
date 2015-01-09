@@ -76,7 +76,7 @@ AUI.add(
 
 				var fieldInstanceId = fieldNode.getData('fieldNamespace');
 
-				return fieldInstanceId.replace(INSTANCE_ID_PREFIX, '');
+				return fieldInstanceId;
 			},
 
 			getFieldInfo: function(tree, key, value) {
@@ -379,13 +379,7 @@ AUI.add(
 							prefix.push(fieldsNamespace);
 						}
 
-						return prefix.concat(
-							[
-								instance.get('name'),
-								INSTANCE_ID_PREFIX,
-								instance.get('instanceId')
-							]
-						).join('');
+						return prefix.concat(instance.get('instanceId')).join('');
 					},
 
 					getInputNode: function() {
