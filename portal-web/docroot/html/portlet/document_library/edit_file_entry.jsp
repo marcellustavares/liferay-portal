@@ -380,12 +380,12 @@ else {
 						List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
 
 						for (DDMStructure ddmStructure : ddmStructures) {
-								Fields fields = null;
+								DDMFormValues ddmFormValues = null;
 
 								try {
 									DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
-									fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
+									ddmFormValues = StorageEngineUtil.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
 								}
 								catch (Exception e) {
 								}
@@ -398,8 +398,8 @@ else {
 								<liferay-ddm:html
 									classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 									classPK="<%= ddmStructure.getPrimaryKey() %>"
-									fields="<%= fields %>"
-									fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
+									ddmFormValues="<%= ddmFormValues %>"
+									ddmFormValuesNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
 									requestedLocale="<%= locale %>"
 								/>
 
