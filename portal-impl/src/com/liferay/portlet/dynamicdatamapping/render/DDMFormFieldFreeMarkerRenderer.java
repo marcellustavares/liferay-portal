@@ -36,15 +36,13 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.storage.Field;
+import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
 import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
 
 import java.io.Writer;
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,8 +90,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 				ddmFormFieldRenderingContext.getHttpServletRequest();
 			HttpServletResponse response =
 				ddmFormFieldRenderingContext.getHttpServletResponse();
-			DDMFormValues ddmFormValues =
-				ddmFormFieldRenderingContext.getDDMFormValues();
+			Fields fields = ddmFormFieldRenderingContext.getFields();
 			String portletNamespace =
 				ddmFormFieldRenderingContext.getPortletNamespace();
 			String namespace = ddmFormFieldRenderingContext.getNamespace();
@@ -104,9 +101,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			Locale locale = ddmFormFieldRenderingContext.getLocale();
 
 			return getFieldHTML(
-				request, response, ddmFormField, ddmFormValues, null,
-				portletNamespace, namespace, mode, readOnly,
-				showEmptyFieldLabel, locale);
+				request, response, ddmFormField, fields, null, portletNamespace,
+				namespace, mode, readOnly, showEmptyFieldLabel, locale);
 		}
 		catch (Exception e) {
 			throw new PortalException(e);
@@ -267,7 +263,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getFieldHTML(
 			HttpServletRequest request, HttpServletResponse response,
-			DDMFormField ddmFormField, DDMFormValues ddmFormValues,
+			DDMFormField ddmFormField, Fields fields,
 			DDMFormField parentDDMFormField, String portletNamespace,
 			String namespace, String mode, boolean readOnly,
 			boolean showEmptyFieldLabel, Locale locale)
@@ -277,8 +273,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			request, response, portletNamespace, namespace, ddmFormField,
 			parentDDMFormField, showEmptyFieldLabel, locale);
 
-		if (ddmFormValues != null) {
-			freeMarkerContext.put("ddmFormValues", ddmFormValues);
+		if (fields != null) {
+			freeMarkerContext.put("fields", fields);
 		}
 
 		Map<String, Object> fieldStructure =
@@ -293,7 +289,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		String name = ddmFormField.getName();
 
 		String fieldDisplayValue = getFieldsDisplayValue(
-			request, response, ddmFormValues, locale);
+			request, response, fields);
 
 		String[] fieldsDisplayValues = getFieldsDisplayValues(
 			fieldDisplayValue);
@@ -344,8 +340,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			childrenHTML.append(
 				getHTML(
 					request, response, ddmFormField.getNestedDDMFormFields(),
-					ddmFormValues, ddmFormField, portletNamespace, namespace,
-					mode, readOnly, showEmptyFieldLabel, locale));
+					fields, ddmFormField, portletNamespace, namespace, mode,
+					readOnly, showEmptyFieldLabel, locale));
 
 			if (Validator.equals(ddmFormField.getType(), "select") ||
 				Validator.equals(ddmFormField.getType(), "radio")) {
@@ -451,27 +447,16 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getFieldsDisplayValue(
 		HttpServletRequest request, HttpServletResponse response,
-		DDMFormValues ddmFormValues, Locale locale) {
+		Fields fields) {
 
 		String defaultFieldsDisplayValue = null;
 
-		if (ddmFormValues != null) {
-			DDMFormFieldValue fieldsDisplayField = null;
-
-			for (DDMFormFieldValue ddmFormFieldValue :
-					ddmFormValues.getDDMFormFieldValues()) {
-
-				if (ddmFormFieldValue.getName().equals(
-						DDMImpl.FIELDS_DISPLAY_NAME)) {
-
-					fieldsDisplayField = ddmFormFieldValue;
-					break;
-				}
-			}
+		if (fields != null) {
+			Field fieldsDisplayField = fields.get(DDMImpl.FIELDS_DISPLAY_NAME);
 
 			if (fieldsDisplayField != null) {
 				defaultFieldsDisplayValue =
-					fieldsDisplayField.getValue().getString(locale);
+					(String)fieldsDisplayField.getValue();
 			}
 		}
 
@@ -527,7 +512,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 
 	protected String getHTML(
 			HttpServletRequest request, HttpServletResponse response,
-			List<DDMFormField> ddmFormFields, DDMFormValues ddmFormValues,
+			List<DDMFormField> ddmFormFields, Fields fields,
 			DDMFormField parentDDMFormField, String portletNamespace,
 			String namespace, String mode, boolean readOnly,
 			boolean showEmptyFieldLabel, Locale locale)
@@ -538,9 +523,9 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			sb.append(
 				getFieldHTML(
-					request, response, ddmFormField, ddmFormValues,
-					parentDDMFormField, portletNamespace, namespace, mode,
-					readOnly, showEmptyFieldLabel, locale));
+					request, response, ddmFormField, fields, parentDDMFormField,
+					portletNamespace, namespace, mode, readOnly,
+					showEmptyFieldLabel, locale));
 		}
 
 		return sb.toString();
