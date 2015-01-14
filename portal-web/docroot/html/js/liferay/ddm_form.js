@@ -1381,6 +1381,7 @@ AUI.add(
 
 						instance.bindUI();
 						instance.renderUI();
+						instance.syncFieldsNames();
 					},
 
 					renderUI: function() {
@@ -1479,6 +1480,8 @@ AUI.add(
 
 							liferayForm.formValidator.set('rules', validatorRules);
 						}
+
+						instance.syncFieldsNames();
 					},
 
 					_onLiferaySubmitForm: function(event) {
@@ -1527,6 +1530,7 @@ AUI.add(
 						var fields = parentField.get('fields');
 
 						fields.splice(newIndex, 0, fields.splice(oldIndex, 1)[0]);
+						instance.syncFieldsNames();
 					},
 
 					registerRepeatable: function(field) {
@@ -1584,6 +1588,49 @@ AUI.add(
 						var ddmFormValuesInput = instance.get('ddmFormValuesInput');
 
 						ddmFormValuesInput.val(AJSON.stringify(instance.toJSON()));
+					},
+
+					_syncFields: function(current) {
+						var parent = current.get('parent');
+						var position = parent.get('fields').indexOf(current);
+						var oldInstanceId = current.get('instanceId');
+						var last = oldInstanceId.lastIndexOf(INSTANCE_ID_PREFIX);
+						var end = oldInstanceId.substr(oldInstanceId.lastIndexOf(INSTANCE_ID_PREFIX) + INSTANCE_ID_PREFIX.length);
+						var localeBegin = end.indexOf('__');
+						var locale = end.substr(localeBegin + 2);
+						var hash = end.substr(0, localeBegin);
+						var parentInstanceId = parent.get('instanceId');
+						var newInputName;
+						var rec = '';
+						var container = current.get('container');
+						var input = container.one('#' + current.getInputName());
+
+						if (parentInstanceId) {
+							parentInstanceId = parentInstanceId.substr(0, parentInstanceId.lastIndexOf('__'));
+							rec = parentInstanceId + '__';
+						}
+
+						hash = hash.substr(0, hash.indexOf('_'));
+
+						rec += current.get('name') + INSTANCE_ID_PREFIX + hash + '_' + position + '__' + locale;
+
+						current.set('instanceId', rec);
+
+						newInputName = current.getInputName();
+
+						container.setData('fieldNamespace', rec);
+						container.one('label').set('for', newInputName);
+						input.set('id', newInputName);
+						input.set('name', newInputName);
+					},
+
+					_syncFieldsRecursive: function(node) {
+						this._syncFields(node);
+						node.get('fields').map(this._syncFieldsRecursive, this);
+					},
+
+					syncFieldsNames: function() {
+						this.get('fields').map(this._syncFieldsRecursive, this);
 					}
 				}
 			}
