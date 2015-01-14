@@ -14,9 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.render;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.storage.Field;
+import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
 import java.util.Locale;
 
@@ -28,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class DDMFormFieldRenderingContext {
 
-	public DDMFormValues getDDMFormValues() {
-		return _ddmFormValues;
+	public Fields getFields() {
+		return _fields;
 	}
 
 	public HttpServletRequest getHttpServletRequest() {
@@ -64,16 +63,16 @@ public class DDMFormFieldRenderingContext {
 		return _showEmptyFieldLabel;
 	}
 
-	public void setDDMFormFieldValue(DDMFormFieldValue ddmFormFieldValue) {
-		DDMFormValues ddmFormValues = new DDMFormValues(new DDMForm());
+	public void setField(Field field) {
+		Fields fields = new Fields();
 
-		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+		fields.put(field);
 
-		_ddmFormValues = ddmFormValues;
+		_fields = fields;
 	}
 
-	public void setDDMFormValues(DDMFormValues ddmFormValues) {
-		_ddmFormValues = ddmFormValues;
+	public void setFields(Fields fields) {
+		_fields = fields;
 	}
 
 	public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
@@ -110,7 +109,7 @@ public class DDMFormFieldRenderingContext {
 		_showEmptyFieldLabel = showEmptyFieldLabel;
 	}
 
-	private DDMFormValues _ddmFormValues;
+	private Fields _fields;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;

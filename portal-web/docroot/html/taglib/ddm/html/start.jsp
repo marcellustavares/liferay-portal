@@ -24,9 +24,25 @@
 
 		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(xsd);
 
+		Fields fields = null;
+		
+		if (ddmFormValues != null) {
+			long ddmStructureId = classPK;
+	
+			if (classNameId == PortalUtil.getClassNameId(DDMTemplate.class)) {
+				DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(classPK);
+	
+				ddmStructureId = ddmTemplate.getClassPK();
+			}
+	
+			DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(ddmStructureId);
+			
+			fields = DDMFormValuesToFieldsConverterUtil.convert(ddmStructure, ddmFormValues);
+		}
+		
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
 
-		ddmFormFieldRenderingContext.setDDMFormValues(ddmFormValues);
+		ddmFormFieldRenderingContext.setFields(fields);
 		ddmFormFieldRenderingContext.setHttpServletRequest(request);
 		ddmFormFieldRenderingContext.setHttpServletResponse(response);
 		ddmFormFieldRenderingContext.setLocale(requestedLocale);
@@ -53,19 +69,7 @@
 					p_l_id: <%= themeDisplay.getPlid() %>,
 					portletNamespace: '<portlet:namespace />',
 					repeatable: <%= repeatable %>
-
-					<%
-					long ddmStructureId = classPK;
-
-					if (classNameId == PortalUtil.getClassNameId(DDMTemplate.class)) {
-						DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(classPK);
-
-						ddmStructureId = ddmTemplate.getClassPK();
-					}
-
-					DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(ddmStructureId);
-					%>
-
+					
 					<c:if test="<%= ddmFormValues != null %>">
 						, values: <%= DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues) %>
 					</c:if>
