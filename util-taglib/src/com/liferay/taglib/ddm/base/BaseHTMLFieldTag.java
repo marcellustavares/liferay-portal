@@ -38,13 +38,11 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		return _classPK;
 	}
 
-	public com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue
-	getDDMFormFieldValue() {
-
+	public com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue getDdmFormFieldValue() {
 		return _ddmFormFieldValue;
 	}
 
-	public java.lang.String getDDMFormValuesNamespace() {
+	public java.lang.String getDdmFormValuesNamespace() {
 		return _ddmFormValuesNamespace;
 	}
 
@@ -76,18 +74,13 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		setScopedAttribute("classPK", classPK);
 	}
 
-	public void setDDMFormFieldValue(
-			com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue
-			ddmFormFieldValue) {
-		
+	public void setDdmFormFieldValue(com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue) {
 		_ddmFormFieldValue = ddmFormFieldValue;
 
 		setScopedAttribute("ddmFormFieldValue", ddmFormFieldValue);
 	}
 
-	public void setDDMFormValuesNamespace(
-			java.lang.String ddmFormValuesNamespace) {
-
+	public void setDdmFormValuesNamespace(java.lang.String ddmFormValuesNamespace) {
 		_ddmFormValuesNamespace = ddmFormValuesNamespace;
 
 		setScopedAttribute("ddmFormValuesNamespace", ddmFormValuesNamespace);
@@ -145,15 +138,12 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 	protected void setAttributes(HttpServletRequest request) {
 		setNamespacedAttribute(request, "classNameId", _classNameId);
 		setNamespacedAttribute(request, "classPK", _classPK);
-		setNamespacedAttribute(request, "ddmFormFieldValue",
-			_ddmFormFieldValue);
-		setNamespacedAttribute(request, "ddmFormValuesNamespace",
-			_ddmFormValuesNamespace);
+		setNamespacedAttribute(request, "ddmFormFieldValue", _ddmFormFieldValue);
+		setNamespacedAttribute(request, "ddmFormValuesNamespace", _ddmFormValuesNamespace);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 		setNamespacedAttribute(request, "repeatable", _repeatable);
 		setNamespacedAttribute(request, "requestedLocale", _requestedLocale);
-		setNamespacedAttribute(request, "showEmptyFieldLabel",
-			_showEmptyFieldLabel);
+		setNamespacedAttribute(request, "showEmptyFieldLabel", _showEmptyFieldLabel);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:html-field:";
