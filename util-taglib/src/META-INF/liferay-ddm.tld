@@ -27,13 +27,13 @@
 			<type>long</type>
 		</attribute>
 		<attribute>
-			<name>fields</name>
+			<name>ddmFormValues</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>com.liferay.portlet.dynamicdatamapping.storage.Fields</type>
+			<type>com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues</type>
 		</attribute>
 		<attribute>
-			<name>fieldsNamespace</name>
+			<name>ddmFormValuesNamespace</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.String</type>
@@ -81,13 +81,13 @@
 			<type>long</type>
 		</attribute>
 		<attribute>
-			<name>field</name>
+			<name>ddmFormFieldValue</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>com.liferay.portlet.dynamicdatamapping.storage.Field</type>
+			<type>com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue</type>
 		</attribute>
 		<attribute>
-			<name>fieldsNamespace</name>
+			<name>ddmFormValuesNamespace</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.String</type>
