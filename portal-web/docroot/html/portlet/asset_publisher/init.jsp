@@ -29,6 +29,7 @@ page import="com.liferay.portlet.asset.util.comparator.AssetRendererFactoryTypeN
 page import="com.liferay.portlet.assetpublisher.context.AssetPublisherDisplayContext" %><%@
 page import="com.liferay.portlet.assetpublisher.util.AssetPublisherHelperUtil" %><%@
 page import="com.liferay.portlet.assetpublisher.util.AssetPublisherUtil" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.model.LocalizedValue" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMImpl" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil" %><%@
 page import="com.liferay.portlet.messageboards.model.MBDiscussion" %><%@

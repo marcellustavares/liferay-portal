@@ -119,6 +119,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 						classPK="<%= ddmStructureId %>"
 						ddmFormFieldValue="<%= ddmFormFieldValue %>"
 						ddmFormValuesNamespace="<%= fieldsNamespace %>"
+						requestedLocale="<%= themeDisplay.getLocale() %>"
 					/>
 				</aui:form>
 			</liferay-ui:search-container-column-text>
