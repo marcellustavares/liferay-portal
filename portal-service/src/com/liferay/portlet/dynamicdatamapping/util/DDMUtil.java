@@ -21,7 +21,6 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
@@ -70,15 +69,6 @@ public class DDMUtil {
 			ddmStructureId, ddmTemplateId, fieldNamespace, serviceContext);
 	}
 
-	public static DDMFormValues getDDMFormValues(
-			long ddmStructureId, long ddmTemplateId, String fieldNamespace,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return getDDM().getDDMFormValues(
-			ddmStructureId, ddmTemplateId, fieldNamespace, serviceContext);
-	}
-	
 	public static Fields getFields(
 			long ddmStructureId, ServiceContext serviceContext)
 		throws PortalException {
@@ -95,15 +85,6 @@ public class DDMUtil {
 			ddmStructureId, fieldNamespace, serviceContext);
 	}
 
-	public static DDMFormValues getDDMFormValues(
-			long ddmStructureId, String fieldNamespace,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return getDDM().getDDMFormValues(
-			ddmStructureId, fieldNamespace, serviceContext);
-	}
-	
 	public static String[] getFieldsDisplayValues(Field fieldsDisplayField)
 		throws Exception {
 
