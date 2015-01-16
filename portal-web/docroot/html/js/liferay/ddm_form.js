@@ -272,6 +272,8 @@ AUI.add(
 						instance.syncLabelUI();
 						instance.syncValueUI();
 
+						AArray.invoke(instance.get('fields'), 'renderUI');
+
 						instance.fire(
 							'render',
 							{
@@ -334,6 +336,8 @@ AUI.add(
 						else if (currentTarget.hasClass('lfr-ddm-repeatable-delete-button')) {
 							instance.remove();
 						}
+
+						event.stopPropagation();
 					},
 
 					_valueLocalizationMap: function() {
@@ -1457,8 +1461,6 @@ AUI.add(
 
 							liferayForm.formValidator.set('rules', validatorRules);
 						}
-
-						AArray.invoke(field.getRepeatedSiblings(), 'syncRepeatablelUI');
 					},
 
 					_onLiferaySubmitForm: function(event) {
