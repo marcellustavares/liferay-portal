@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.context.PortalContextLoaderListener;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -123,7 +124,7 @@ public class DeployUtil {
 	}
 
 	public static void redeployJetty(String context) throws Exception {
-		String contextsDirName = System.getProperty("jetty.home") + "/contexts";
+		String contextsDirName = getJettyHome() + "/contexts";
 
 		if (_isPortalContext(context)) {
 			throw new UnsupportedOperationException(
@@ -216,8 +217,7 @@ public class DeployUtil {
 
 		if (appServerType.equals(ServerDetector.JETTY_ID)) {
 			FileUtil.delete(
-				System.getProperty("jetty.home") + "/contexts/" +
-					deployDir.getName() + ".xml");
+				getJettyHome() + "/contexts/" + deployDir.getName() + ".xml");
 		}
 
 		if (appServerType.equals(ServerDetector.JBOSS_ID)) {
@@ -250,6 +250,16 @@ public class DeployUtil {
 		}
 
 		return false;
+	}
+
+	private static String getJettyHome() {
+		String jettyHome = System.getProperty("jetty.home");
+
+		if (jettyHome == null) {
+			jettyHome = PortalUtil.getGlobalLibDir() + "../../..";
+		}
+
+		return jettyHome;
 	}
 
 	private DeployUtil() {

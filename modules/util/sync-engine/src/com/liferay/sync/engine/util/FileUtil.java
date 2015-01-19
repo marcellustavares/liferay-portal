@@ -389,22 +389,25 @@ public class FileUtil {
 	}
 
 	protected static boolean isOfficeTempFile(String fileName, Path filePath) {
-		if ((!Files.isDirectory(filePath) && fileName.startsWith("~$")) ||
-			(!Files.isDirectory(filePath) && fileName.startsWith("~") &&
-			 fileName.endsWith(".tmp"))) {
+		if (Files.isDirectory(filePath)) {
+			return false;
+		}
+
+		if (fileName.startsWith("~$") ||
+			(fileName.startsWith("~") && fileName.endsWith(".tmp"))) {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private static final Charset _CHARSET = Charset.forName("UTF-8");
 
-	private static Logger _logger = LoggerFactory.getLogger(FileUtil.class);
+	private static final Logger _logger = LoggerFactory.getLogger(
+		FileUtil.class);
 
-	private static Set<String> _syncFileIgnoreNames = new HashSet<>(
+	private static final Set<String> _syncFileIgnoreNames = new HashSet<>(
 		Arrays.asList(PropsValues.SYNC_FILE_IGNORE_NAMES));
 
 }
