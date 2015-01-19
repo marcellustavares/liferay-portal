@@ -15,19 +15,53 @@
 package com.liferay.portal.upgrade.v7_0_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.DocumentException;
+import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.upgrade.v7_0_0.util.DDMContentTable;
 import com.liferay.portal.upgrade.v7_0_0.util.DDMStructureTable;
+import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.model.Value;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
+import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
+
+import java.io.Serializable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Brian Wing Shun Chan
@@ -233,9 +267,616 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 		addStructureVersions();
 		addTemplateVersions();
+		upgradeXMLStorageAdapter();
+	}
+
+	protected DDMForm getDDMForm(long structureId) throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select parentStructureId, definition from DDMStructure " +
+					"where structureId = ?" );
+
+			ps.setLong(1, structureId);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				long parentStructureId = rs.getLong("parentStructureId");
+				String definition = rs.getString("definition");
+
+				DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
+					definition);
+
+				if (parentStructureId > 0) {
+					DDMForm parentDDMForm = getDDMForm(parentStructureId);
+
+					List<DDMFormField> ddmFormFields =
+						ddmForm.getDDMFormFields();
+
+					ddmFormFields.addAll(parentDDMForm.getDDMFormFields());
+				}
+
+				return ddmForm;
+			}
+
+			throw new UpgradeException(
+				"Unable to find dynamic data mapping structure with ID " +
+					structureId);
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected String toJSON(DDMForm ddmForm, String xml)
+		throws PortalException {
+
+		DDMFormValuesXSDDeserializer ddmFormValuesXSDDeserializer =
+			new DDMFormValuesXSDDeserializer();
+
+		DDMFormValues ddmFormValues = ddmFormValuesXSDDeserializer.deserialize(
+			ddmForm, xml);
+
+		return DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues);
+	}
+
+	protected void updateContent(DDMForm ddmForm, long contentId)
+		throws Exception {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select data_ from DDMContent where contentId = ?");
+
+			ps.setLong(1, contentId);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				String xml = rs.getString("data_");
+
+				updateContent(contentId, toJSON(ddmForm, xml));
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void updateContent(long contentId, String data_)
+		throws Exception {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"update DDMContent set data_= ? where contentId = ?");
+
+			ps.setString(1, data_);
+			ps.setLong(2, contentId);
+
+			ps.executeUpdate();
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected void updateStructureStorageType(long structureId)
+		throws Exception {
+
+		runSQL(
+			"update DDMStructure set storageType='json' where structureId = " +
+				structureId);
+	}
+
+	protected void updateStructureVersionStorageType(long structureId)
+		throws Exception {
+
+		runSQL(
+			"update DDMStructureVersion set storageType='json' where " +
+				"structureId = " + structureId);
+	}
+
+	protected void upgradeXMLStorageAdapter() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("select DDMStorageLink.classPK, DDMStorageLink.");
+			sb.append("structureId from DDMStorageLink inner join ");
+			sb.append("DDMStructure on (DDMStorageLink.structureId = ");
+			sb.append("DDMStructure.structureId) where DDMStorageLink.");
+			sb.append("classNameId = ? and DDMStructure.storageType = ?");
+
+			ps = con.prepareStatement(sb.toString());
+
+			ps.setLong(1, PortalUtil.getClassNameId(DDMContent.class));
+			ps.setString(2, "xml");
+
+			rs = ps.executeQuery();
+
+			Map<Long, DDMForm> ddmFormMap = new HashMap<>();
+
+			while (rs.next()) {
+				long structureId = rs.getLong("structureId");
+				long classPK = rs.getLong("classPK");
+
+				DDMForm ddmForm = ddmFormMap.get(structureId);
+
+				if (ddmForm == null) {
+					ddmForm = getDDMForm(structureId);
+
+					ddmFormMap.put(structureId, ddmForm);
+				}
+
+				updateContent(ddmForm, classPK);
+
+				updateStructureStorageType(structureId);
+
+				updateStructureVersionStorageType(structureId);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		UpgradeDynamicDataMapping.class);
+
+	private class DDMFormValuesXSDDeserializer {
+
+		public DDMFormValues deserialize(DDMForm ddmForm, String xml)
+			throws PortalException {
+
+			try {
+				DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+				Document document = SAXReaderUtil.read(xml);
+
+				Element rootElement = document.getRootElement();
+
+				String[] fieldsDisplayValues = getFieldsDisplayValues(
+					rootElement);
+
+				DDMFieldsCounter ddmFieldsCounter = new DDMFieldsCounter();
+
+				for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
+					String fieldName = ddmFormField.getName();
+
+					int repetitions = 0;
+
+					if (fieldsDisplayValues != null) {
+						repetitions = countDDMFieldRepetitions(
+							fieldsDisplayValues, fieldName, null, -1);
+					}
+					else if (getDynamicElementByName(rootElement, fieldName) !=
+								null) {
+
+						repetitions = 1;
+					}
+
+					for (int i = 0; i < repetitions; i++) {
+						DDMFormFieldValue ddmFormFieldValue =
+							createDDMFormFieldValue(fieldName);
+
+						setDDMFormFieldValueProperties(
+							ddmFormFieldValue, ddmFormField, rootElement,
+							ddmFieldsCounter);
+
+						ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+					}
+				}
+
+				List<Element> dynamicElements = rootElement.elements(
+					"dynamic-element");
+
+				ddmFormValues.setAvailableLocales(
+					getAvailableLocales(dynamicElements));
+
+				ddmFormValues.setDefaultLocale(
+					getDefaultLocale(dynamicElements));
+
+				return ddmFormValues;
+			}
+			catch (DocumentException de) {
+				throw new UpgradeException(de);
+			}
+		}
+
+		protected int countDDMFieldRepetitions(
+				String[] fieldsDisplayValues, String fieldName,
+				String parentFieldName, int parentOffset)
+			throws PortalException {
+
+			int offset = -1;
+
+			int repetitions = 0;
+
+			for (int i = 0; i < fieldsDisplayValues.length; i++) {
+				if (offset > parentOffset) {
+					break;
+				}
+
+				String fieldDisplayName = fieldsDisplayValues[i];
+
+				if ((parentFieldName != null) &&
+					fieldDisplayName.startsWith(parentFieldName)) {
+
+					offset++;
+				}
+
+				if (fieldDisplayName.startsWith(fieldName) &&
+					(offset == parentOffset)) {
+
+					repetitions++;
+				}
+			}
+
+			return repetitions;
+		}
+
+		protected DDMFormFieldValue createDDMFormFieldValue(String name) {
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+
+			ddmFormFieldValue.setName(name);
+
+			return ddmFormFieldValue;
+		}
+
+		protected Set<Locale> getAvailableLocales(Element dynamicElement) {
+			List<Element> dynamicContentElements = dynamicElement.elements(
+				"dynamic-content");
+
+			Set<Locale> availableLocales = new LinkedHashSet<>();
+
+			for (Element dynamicContentElement : dynamicContentElements) {
+				String languageId = dynamicContentElement.attributeValue(
+					"language-id");
+
+				availableLocales.add(LocaleUtil.fromLanguageId(languageId));
+			}
+
+			return availableLocales;
+		}
+
+		protected Set<Locale> getAvailableLocales(
+			List<Element> dynamicElements) {
+
+			Set<Locale> availableLocales = new LinkedHashSet<>();
+
+			for (Element dynamicElement : dynamicElements) {
+				availableLocales.addAll(getAvailableLocales(dynamicElement));
+			}
+
+			return availableLocales;
+		}
+
+		protected String getDDMFieldInstanceId(
+			Element rootElement, String fieldName, int index) {
+
+			String[] ddmFieldsDisplayValues = getFieldsDisplayValues(
+				rootElement);
+
+			if (ddmFieldsDisplayValues == null) {
+				return StringUtil.randomString();
+			}
+
+			String prefix = fieldName.concat(DDMImpl.INSTANCE_SEPARATOR);
+
+			for (String ddmFieldsDisplayValue : ddmFieldsDisplayValues) {
+				if (ddmFieldsDisplayValue.startsWith(prefix)) {
+					index--;
+
+					if (index < 0) {
+						return StringUtil.extractLast(
+							ddmFieldsDisplayValue, DDMImpl.INSTANCE_SEPARATOR);
+					}
+				}
+			}
+
+			return null;
+		}
+
+		protected String getDDMFieldValueString(
+			Element dynamicElement, Locale locale, int index) {
+
+			Element dynamicContentElement = getDynamicContentElement(
+				dynamicElement, locale, index);
+
+			Serializable fieldValue = dynamicContentElement.getText();
+
+			if (fieldValue instanceof Date) {
+				Date valueDate = (Date)fieldValue;
+
+				fieldValue = valueDate.getTime();
+			}
+
+			return String.valueOf(fieldValue);
+		}
+
+		protected DDMFormFieldValue getDDMFormFieldValue(
+			Element dynamicElement) {
+
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+
+			ddmFormFieldValue.setName(dynamicElement.attributeValue("name"));
+
+			List<Element> dynamicContentElements = dynamicElement.elements(
+				"dynamic-content");
+
+			ddmFormFieldValue.setValue(getValue(dynamicContentElements));
+
+			ddmFormFieldValue.setNestedDDMFormFields(
+				getDDMFormFieldValues(
+					dynamicElement.elements("dynamic-element")));
+
+			return ddmFormFieldValue;
+		}
+
+		protected List<DDMFormFieldValue> getDDMFormFieldValues(
+			List<Element> dynamicElements) {
+
+			if (dynamicElements == null) {
+				return null;
+			}
+
+			List<DDMFormFieldValue> ddmFormFieldValues = new ArrayList<>();
+
+			for (Element dynamicElement : dynamicElements) {
+				ddmFormFieldValues.add(getDDMFormFieldValue(dynamicElement));
+			}
+
+			return ddmFormFieldValues;
+		}
+
+		protected Locale getDefaultLocale(Element dynamicElement) {
+			String defaultLanguageId = dynamicElement.attributeValue(
+				"default-language-id");
+
+			return LocaleUtil.fromLanguageId(defaultLanguageId);
+		}
+
+		protected Locale getDefaultLocale(List<Element> dynamicElements) {
+			for (Element dynamicElement : dynamicElements) {
+				String defaultLanguageId = dynamicElement.attributeValue(
+					"default-language-id");
+
+				if (defaultLanguageId != null) {
+					return LocaleUtil.fromLanguageId(defaultLanguageId);
+				}
+			}
+
+			return null;
+		}
+
+		protected Element getDynamicContentElement(
+			Element dynamicElement, Locale locale, int index) {
+
+			String languageId = LocaleUtil.toLanguageId(locale);
+
+			XPath dynamicContentXPath = SAXReaderUtil.createXPath(
+				"//dynamic-content(@language-id=" + languageId + ")");
+
+			List<Element> elements =
+				(List<Element>)dynamicContentXPath.evaluate(dynamicElement);
+
+			return elements.get(index);
+		}
+
+		protected Element getDynamicElementByName(
+			Element rootElement, String fieldName) {
+
+			XPath dynamicElementXPath = SAXReaderUtil.createXPath(
+				"//dynamic-element[(@name=\"" +fieldName + "\")]");
+
+			if (dynamicElementXPath.booleanValueOf(rootElement)) {
+				return (Element)dynamicElementXPath.evaluate(rootElement);
+			}
+
+			return null;
+		}
+
+		protected String[] getFieldsDisplayValues(Element rootElement) {
+			Element fieldsDisplayElement = getDynamicElementByName(
+				rootElement, "_fieldsDisplay");
+
+			String[] fieldsDisplayValues = null;
+
+			if (fieldsDisplayElement != null) {
+				Element fieldsDisplayDynamicContent =
+					fieldsDisplayElement.element("dynamic-content");
+
+				String fieldsDisplayText =
+					fieldsDisplayDynamicContent.getText();
+
+				fieldsDisplayValues = fieldsDisplayText.split(",");
+			}
+
+			return fieldsDisplayValues;
+		}
+
+		protected Value getValue(List<Element> dynamicContentElements) {
+			Value value = new LocalizedValue();
+
+			for (Element dynamicContentElement : dynamicContentElements) {
+				String fieldValue = dynamicContentElement.getText();
+
+				String languageId = dynamicContentElement.attributeValue(
+					"language-id");
+
+				Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+				value.addString(locale, fieldValue);
+			}
+
+			return value;
+		}
+
+		protected void setDDMFormFieldValueInstanceId(
+			DDMFormFieldValue ddmFormFieldValue, Element rootElement,
+			DDMFieldsCounter ddmFieldsCounter) {
+
+			String name = ddmFormFieldValue.getName();
+
+			String instanceId = getDDMFieldInstanceId(
+				rootElement, name, ddmFieldsCounter.get(name));
+
+			ddmFormFieldValue.setInstanceId(instanceId);
+		}
+
+		protected void setDDMFormFieldValueLocalizedValue(
+			DDMFormFieldValue ddmFormFieldValue, Element dynamicElement,
+			int index) {
+
+			Value value = new LocalizedValue(getDefaultLocale(dynamicElement));
+
+			Map<String, Integer> dynamicContentValuesMap = new HashMap<>();
+
+			for (Element dynamicContentElement : dynamicElement.elements(
+				"dynamic-content")) {
+
+				String languageId = dynamicContentElement.attributeValue(
+					"language-id");
+
+				int localizedContentIndex = 0;
+
+				if (dynamicContentValuesMap.containsKey(languageId)) {
+					localizedContentIndex = dynamicContentValuesMap.get(
+						languageId);
+				}
+
+				if (localizedContentIndex == index) {
+					Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+					String content = dynamicContentElement.getText();
+
+					value.addString(locale, content);
+				}
+
+				dynamicContentValuesMap.put(
+					languageId, localizedContentIndex+1);
+			}
+
+			ddmFormFieldValue.setValue(value);
+		}
+
+		protected void setDDMFormFieldValueProperties(
+				DDMFormFieldValue ddmFormFieldValue, DDMFormField ddmFormField,
+				Element rootElement, DDMFieldsCounter ddmFieldsCounter)
+			throws PortalException {
+
+			setDDMFormFieldValueInstanceId(
+				ddmFormFieldValue, rootElement, ddmFieldsCounter);
+
+			setNestedDDMFormFieldValues(
+				ddmFormFieldValue, ddmFormField, rootElement, ddmFieldsCounter);
+
+			setDDMFormFieldValueValues(
+				ddmFormFieldValue, ddmFormField, rootElement, ddmFieldsCounter);
+		}
+
+		protected void setDDMFormFieldValueUnlocalizedValue(
+			DDMFormFieldValue ddmFormFieldValue, Element dynamicElement,
+			int index) {
+
+			String valueString = getDDMFieldValueString(
+				dynamicElement, getDefaultLocale(dynamicElement), index);
+
+			Value value = new UnlocalizedValue(valueString);
+
+			ddmFormFieldValue.setValue(value);
+		}
+
+		protected void setDDMFormFieldValueValues(
+				DDMFormFieldValue ddmFormFieldValue, DDMFormField ddmFormField,
+				Element rootElement, DDMFieldsCounter ddmFieldsCounter)
+			throws PortalException {
+
+			String fieldName = ddmFormFieldValue.getName();
+
+			Element dynamicElement = getDynamicElementByName(
+				rootElement, fieldName);
+
+			if (Validator.isNotNull(ddmFormField.getDataType())) {
+				if (ddmFormField.isLocalizable()) {
+					setDDMFormFieldValueLocalizedValue(
+						ddmFormFieldValue, dynamicElement,
+						ddmFieldsCounter.get(fieldName));
+				}
+				else {
+					setDDMFormFieldValueUnlocalizedValue(
+						ddmFormFieldValue, dynamicElement,
+						ddmFieldsCounter.get(fieldName));
+				}
+			}
+
+			ddmFieldsCounter.incrementKey(fieldName);
+		}
+
+		protected void setNestedDDMFormFieldValues(
+				DDMFormFieldValue ddmFormFieldValue, DDMFormField ddmFormField,
+				Element rootElement, DDMFieldsCounter ddmFieldsCounter)
+			throws PortalException {
+
+			String fieldName = ddmFormFieldValue.getName();
+
+			int parentOffset = ddmFieldsCounter.get(fieldName);
+
+			Map<String, DDMFormField> nestedDDMFormFieldsMap =
+				ddmFormField.getNestedDDMFormFieldsMap();
+
+			String[] ddmFieldsDisplayValues = getFieldsDisplayValues(
+				rootElement);
+
+			for (Map.Entry<String, DDMFormField> nestedDDMFormFieldEntry :
+					nestedDDMFormFieldsMap.entrySet()) {
+
+				String nestedDDMFormFieldName =
+					nestedDDMFormFieldEntry.getKey();
+
+				DDMFormField nestedDDMFormField =
+					nestedDDMFormFieldEntry.getValue();
+
+				int repetitions = countDDMFieldRepetitions(
+					ddmFieldsDisplayValues, nestedDDMFormFieldName, fieldName,
+					parentOffset);
+
+				for (int i = 0; i < repetitions; i++) {
+					DDMFormFieldValue nestedDDMFormFieldValue =
+						createDDMFormFieldValue(nestedDDMFormFieldName);
+
+					setDDMFormFieldValueProperties(
+						nestedDDMFormFieldValue, nestedDDMFormField,
+						rootElement, ddmFieldsCounter);
+
+					ddmFormFieldValue.addNestedDDMFormFieldValue(
+						nestedDDMFormFieldValue);
+				}
+			}
+		}
+
+	}
 
 }
