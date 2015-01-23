@@ -12,29 +12,32 @@
  * details.
  */
 
-package com.liferay.journal.content.web.portlet.ddm;
+package com.liferay.rss.web.portlet.ddm;
 
-import com.liferay.journal.content.web.constants.JournalContentPortletKeys;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
-import com.liferay.portlet.journal.ddm.JournalDDMDisplay;
+import com.liferay.portlet.portletdisplaytemplate.ddm.PortletDisplayTemplateDDMDisplay;
+import com.liferay.rss.web.util.RSSFeed;
 
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Eduardo Garcia
+ * @author Preston Crary
  */
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=com_liferay_journal_content_web_portlet_JournalContentPortlet"
+		"javax.portlet.name=com_liferay_rss_web_portlet_RSSPortlet"
 	},
 	service = DDMDisplay.class
 )
-public class JournalContentDDMDisplay extends JournalDDMDisplay {
+public class RSSPortletDisplayTemplateDDMDisplay
+	extends PortletDisplayTemplateDDMDisplay {
+
+	public static final String[] CLASS_NAMES = {RSSFeed.class.getName()};
 
 	@Override
-	public String getPortletId() {
-		return JournalContentPortletKeys.JOURNAL_CONTENT;
+	public String[] getClassNames() {
+		return CLASS_NAMES;
 	}
 
 }
