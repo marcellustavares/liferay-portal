@@ -17,6 +17,8 @@
 <%@ include file="/html/portlet/dynamic_data_mapping/init.jsp" %>
 
 <%
+String backURL = ParamUtil.getString(request, "backURL");
+
 String tabs1 = ParamUtil.getString(request, "tabs1", "templates");
 
 long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId());
@@ -36,6 +38,7 @@ boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("struts_action", "/dynamic_data_mapping/view_template");
+portletURL.setParameter("backURL", backURL);
 portletURL.setParameter("tabs1", tabs1);
 portletURL.setParameter("classNameId", String.valueOf(classNameId));
 portletURL.setParameter("classPK", String.valueOf(classPK));
@@ -52,7 +55,7 @@ TemplateSearch templateSearch = new TemplateSearch(renderRequest, PortletURLUtil
 
 TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.getSearchTerms();
 
-String title = ddmDisplay.getViewTemplatesTitle(structure, controlPanel, templateSearchTerms.isSearch(), locale);
+String title = ddmDisplay.getViewTemplatesTitle(structure, classNameId, controlPanel, templateSearchTerms.isSearch(), locale);
 %>
 
 <liferay-ui:error exception="<%= RequiredTemplateException.class %>">
@@ -68,7 +71,7 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, controlPanel, templat
 
 <aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" />
-	<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
+	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	<aui:input name="deleteTemplateIds" type="hidden" />
 
 	<%

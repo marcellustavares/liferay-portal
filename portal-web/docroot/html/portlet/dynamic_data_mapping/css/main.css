@@ -1,7 +1,7 @@
 @import "bourbon";
 @import "mixins";
 
-.portlet-document-library, .portlet-dynamic-data-mapping {
+.portlet-application-display-template, .portlet-document-library, .portlet-dynamic-data-mapping {
 	.field-labels-inline {
 		clear: both;
 		display: block;

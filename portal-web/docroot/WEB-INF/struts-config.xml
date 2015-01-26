@@ -211,6 +211,17 @@
 
 		<action path="/announcements/view" forward="portlet.announcements.view" />
 
+		<!-- Application Display Template -->
+
+		<action path="/application_display_template/edit_template" type="com.liferay.portlet.dynamicdatamapping.action.EditTemplateAction">
+			<forward name="portlet.dynamic_data_mapping.edit_template" path="portlet.dynamic_data_mapping.edit_template" />
+			<forward name="portlet.dynamic_data_mapping.error" path="portlet.dynamic_data_mapping.error" />
+		</action>
+
+		<action path="/application_display_template/view" forward="portlet.application_display_template.view" />
+
+		<action path="/application_display_template/view_template" forward="portlet.dynamic_data_mapping.view_template" />
+
 		<!-- Asset -->
 
 		<action path="/asset/get_categories" type="com.liferay.portlet.asset.action.GetCategoriesAction" />

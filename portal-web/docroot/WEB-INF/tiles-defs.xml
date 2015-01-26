@@ -144,6 +144,14 @@
 		<put name="portlet_content" value="/portlet/announcements/view.jsp" />
 	</definition>
 
+	<!-- Application Display Template -->
+
+	<definition name="portlet.application_display_template" extends="portlet" />
+
+	<definition name="portlet.application_display_template.view" extends="portlet.application_display_template">
+		<put name="portlet_content" value="/portlet/application_display_template/view.jsp" />
+	</definition>
+
 	<!-- Asset Browser -->
 
 	<definition name="portlet.asset_browser" extends="portlet" />

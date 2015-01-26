@@ -119,7 +119,7 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 			LiferayPortletResponse liferayPortletResponse, long classPK)
 		throws Exception {
 
-		return StringPool.BLANK;
+		return ParamUtil.getString(liferayPortletRequest, "backURL");
 	}
 
 	@Override
