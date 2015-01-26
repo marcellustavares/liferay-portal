@@ -263,20 +263,6 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 		return _viewTemplateExcludedColumnNames;
 	}
 
-	@Override
-	public String getViewTemplatesTitle(
-		DDMStructure structure, boolean controlPanel, boolean search,
-		Locale locale) {
-
-		if (structure != null) {
-			return LanguageUtil.format(
-				locale, "templates-for-structure-x", structure.getName(locale),
-				false);
-		}
-
-		return getDefaultViewTemplateTitle(locale);
-	}
-
 	/**
 	 * @deprecated As of 7.0.0
 	 */
@@ -285,12 +271,26 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 	public String getViewTemplatesTitle(
 		DDMStructure structure, boolean controlPanel, Locale locale) {
 
-		return getViewTemplatesTitle(structure, controlPanel, false, locale);
+		return getViewTemplatesTitle(structure, 0, controlPanel, false, locale);
 	}
 
 	@Override
 	public String getViewTemplatesTitle(DDMStructure structure, Locale locale) {
-		return getViewTemplatesTitle(structure, false, false, locale);
+		return getViewTemplatesTitle(structure, 0, false, false, locale);
+	}
+
+	@Override
+	public String getViewTemplatesTitle(
+		DDMStructure structure, long classNameId, boolean controlPanel,
+		boolean search, Locale locale) {
+
+		if (structure != null) {
+			return LanguageUtil.format(
+				locale, "templates-for-structure-x", structure.getName(locale),
+				false);
+		}
+
+		return getDefaultViewTemplateTitle(locale);
 	}
 
 	@Override

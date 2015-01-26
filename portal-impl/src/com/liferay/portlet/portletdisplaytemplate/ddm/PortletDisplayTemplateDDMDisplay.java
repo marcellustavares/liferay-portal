@@ -129,19 +129,26 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 
 	@Override
 	public String getViewTemplatesTitle(
-		DDMStructure structure, boolean controlPanel, boolean search,
-		Locale locale) {
+		DDMStructure structure, long classNameId, boolean controlPanel,
+		boolean search, Locale locale) {
 
 		if (search) {
 			return LanguageUtil.get(locale, "templates");
 		}
 
 		if (controlPanel) {
+			if (classNameId > 0) {
+				TemplateHandler templateHandler =
+					TemplateHandlerRegistryUtil.getTemplateHandler(classNameId);
+
+				return templateHandler.getName(locale);
+			}
+
 			return StringPool.BLANK;
 		}
 
 		return super.getViewTemplatesTitle(
-			structure, controlPanel, search, locale);
+			structure, classNameId, controlPanel, search, locale);
 	}
 
 	@Override
