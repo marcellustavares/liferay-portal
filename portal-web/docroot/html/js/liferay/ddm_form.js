@@ -571,7 +571,7 @@ AUI.add(
 						AArray.invoke(instance.get('fields'), 'serialize');
 
 						if (instance.get('dataType')) {
-							instance.updateLanguageValue(instance.get('displayLocale'));
+							instance.updateLocalizationMap(instance.get('displayLocale'));
 
 							instance.syncValueUI();
 
