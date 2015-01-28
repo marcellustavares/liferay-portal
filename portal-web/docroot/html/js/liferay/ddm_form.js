@@ -161,22 +161,31 @@ AUI.add(
 			_getTemplate: function(callback) {
 				var instance = this;
 
+				var data = {
+					controlPanelCategory: 'portlet',
+					definition: AJSON.stringify(instance.get('definition')),
+					doAsGroupId: instance.get('doAsGroupId'),
+					fieldIndex: instance.get('repeatedIndex') + 1,
+					fieldName: instance.get('name'),
+					mode: instance.get('mode'),
+					namespace: instance.get('namespace'),
+					p_l_id: instance.get('p_l_id'),
+					p_p_id: '166',
+					p_p_isolated: true,
+					portletNamespace: instance.get('portletNamespace'),
+					readOnly: instance.get('readOnly')
+				};
+
+				var parent = instance.get('parent');
+
+				if (A.instanceOf(parent, Liferay.DDM.Field)) {
+					data.parentFieldNamespacedName = parent.getNamespacedName();
+				}
+
 				A.io.request(
 					themeDisplay.getPathMain() + '/dynamic_data_mapping/render_structure_field',
 					{
-						data: {
-							controlPanelCategory: 'portlet',
-							definition: AJSON.stringify(instance.get('definition')),
-							doAsGroupId: instance.get('doAsGroupId'),
-							fieldName: instance.get('name'),
-							mode: instance.get('mode'),
-							namespace: instance.get('namespace'),
-							p_l_id: instance.get('p_l_id'),
-							p_p_id: '166',
-							p_p_isolated: true,
-							portletNamespace: instance.get('portletNamespace'),
-							readOnly: instance.get('readOnly')
-						},
+						data: data,
 						on: {
 							success: function(event, id, xhr) {
 								if (callback) {
@@ -705,6 +714,8 @@ AUI.add(
 				}
 			}
 		);
+
+		Liferay.DDM.Field = Field;
 
 		FieldTypes.field = Field;
 
