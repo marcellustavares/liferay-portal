@@ -39,13 +39,10 @@
 
 		<%= DDMFormRendererUtil.render(ddmForm, ddmFormFieldRenderingContext) %>
 
-		<aui:input name="<%= ddmFormValuesInputName %>" type="hidden" />
-
 		<aui:script use="liferay-ddm-form">
 			new Liferay.DDM.Form(
 				{
 					container: '#<%= randomNamespace %>',
-					ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
 					definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 					doAsGroupId: <%= scopeGroupId %>,
 					fieldsNamespace: '<%= fieldsNamespace %>',

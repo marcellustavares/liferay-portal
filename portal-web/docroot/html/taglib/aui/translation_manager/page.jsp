@@ -119,9 +119,17 @@
 	<%
 	JSONArray availableLocalesJSONArray = JSONFactoryUtil.createJSONArray();
 
+	String[] availableLocalesArray = new String[availableLocales.length + 1];
+
 	for (int i = 0; i < availableLocales.length; i++) {
-		availableLocalesJSONArray.put(LocaleUtil.toLanguageId(availableLocales[i]));
+		String languageId = LocaleUtil.toLanguageId(availableLocales[i]);
+
+		availableLocalesArray[i] = languageId;
+
+		availableLocalesJSONArray.put(languageId);
 	}
+
+	availableLocalesArray[availableLocalesArray.length - 1] = defaultLanguageId;
 
 	JSONObject localesMapJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -131,6 +139,9 @@
 	%>
 
 	<aui:script use="liferay-translation-manager">
+		availableLanguageIdsInput = A.one('#<portlet:namespace />availableLanguageIds');
+		var defaultLanguageIdInput = A.one('#<portlet:namespace />defaultLanguageId');
+
 		var translationManager;
 
 		Liferay.component(
@@ -139,6 +150,14 @@
 				if (!translationManager) {
 					translationManager = new Liferay.TranslationManager(
 						{
+							after: {
+								availableLocalesChange: function(event) {
+									availableLanguageIdsInput.val(event.newVal.join());
+								},
+								defaultLocaleChange: function(event) {
+									defaultLanguageIdInput.val(event.newVal);
+								}
+							},
 							availableLocales: <%= availableLocalesJSONArray.toString() %>,
 							boundingBox: '#<%= namespace + id %>',
 							defaultLocale: '<%= HtmlUtil.escapeJS(defaultLanguageId) %>',
@@ -156,4 +175,7 @@
 
 		Liferay.component('<%= namespace + id %>');
 	</aui:script>
+
+	<aui:input name="availableLanguageIds" type="hidden" value="<%= StringUtil.merge(availableLocalesArray) %>" />
+	<aui:input name="defaultLanguageId" type="hidden" value="<%= defaultLanguageId %>" />
 </c:if>

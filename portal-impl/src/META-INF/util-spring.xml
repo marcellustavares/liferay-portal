@@ -940,6 +940,11 @@
 			<bean class="com.liferay.portlet.dynamicdatalists.util.DDLImpl" />
 		</property>
 	</bean>
+	<bean id="com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesFactoryUtil" class="com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesFactoryUtil">
+		<property name="DDMFormValuesFactory">
+			<bean class="com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesFactoryImpl" />
+		</property>
+	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil">
 		<property name="DDMFormJSONDeserializer">
 			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerImpl" />
