@@ -245,9 +245,6 @@ AUI.add(
 						validator: Lang.isString
 					},
 
-					node: {
-					},
-
 					parent: {
 					},
 
@@ -358,13 +355,13 @@ AUI.add(
 					_getLocalizable: function() {
 						var instance = this;
 
-						return instance.getFieldDefinition().localizable === true;
+						return instance.getDefinition().localizable === true;
 					},
 
 					_getRepeatable: function() {
 						var instance = this;
 
-						return instance.getFieldDefinition().repeatable === true;
+						return instance.getDefinition().repeatable === true;
 					},
 
 					_handleToolbarClick: function(event) {
@@ -401,7 +398,15 @@ AUI.add(
 						return localizationMap;
 					},
 
-					getFieldDefinition: function() {
+					_valueRepeatedIndex: function() {
+						var instance = this;
+
+						var parent = instance.get('parent');
+
+						return parent.getFieldNodes().filter('[data-fieldName=' + instance.get('name') + ']').indexOf(instance.get('container'));
+					},
+
+					getDefinition: function() {
 						var instance = this;
 
 						var definition = instance.get('definition');
@@ -455,14 +460,6 @@ AUI.add(
 						return namespacedName.join('');
 					},
 
-					_valueRepeatedIndex: function() {
-						var instance = this;
-
-						var parent = instance.get('parent');
-
-						return parent.getFieldNodes().filter('[data-fieldName=' + instance.get('name') + ']').indexOf(instance.get('container'));
-					},
-
 					getRepeatedSiblings: function() {
 						var instance = this;
 
@@ -477,10 +474,7 @@ AUI.add(
 					getSiblings: function() {
 						var instance = this;
 
-						var parent = instance.get('parent');
-						var name = instance.get('name');
-
-						return parent.get('fields');
+						return instance.get('parent').get('fields');
 					},
 
 					getValue: function() {
@@ -496,9 +490,7 @@ AUI.add(
 
 						var siblings = instance.getSiblings();
 
-						var index = AArray.indexOf(siblings, instance);
-
-						siblings.splice(index, 1);
+						siblings.splice(AArray.indexOf(siblings, instance), 1);
 
 						instance.fire(
 							'remove',
@@ -619,7 +611,7 @@ AUI.add(
 					syncLabelUI: function() {
 						var instance = this;
 
-						var fieldDefinition = instance.getFieldDefinition();
+						var fieldDefinition = instance.getDefinition();
 
 						var labelsMap = fieldDefinition.label;
 
@@ -661,11 +653,11 @@ AUI.add(
 
 							var value;
 
-							if (Lang.isString(localizationMap)) {
-								value = localizationMap;
-							}
-							else if (!A.Object.isEmpty(localizationMap)) {
+							if (instance.get('localizable')) {
 								value = localizationMap[instance.get('displayLocale')];
+							}
+							else {
+								value = localizationMap;
 							}
 
 							if (Lang.isUndefined(value)) {
@@ -1340,7 +1332,7 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						var fieldDefinition = instance.getFieldDefinition();
+						var fieldDefinition = instance.getDefinition();
 
 						container.all('label').each(
 							function(item, index) {
@@ -1406,7 +1398,7 @@ AUI.add(
 					setLabel: function() {
 						var instance = this;
 
-						var fieldDefinition = instance.getFieldDefinition();
+						var fieldDefinition = instance.getDefinition();
 
 						instance.getInputNode().all('option').each(
 							function(item, index) {
