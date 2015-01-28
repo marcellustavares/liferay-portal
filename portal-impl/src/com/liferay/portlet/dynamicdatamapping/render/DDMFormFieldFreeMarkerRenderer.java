@@ -338,16 +338,12 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			offset = getFieldOffset(
 				fieldsDisplayValues, name, ddmFieldsCounter.get(name));
 
-			String fieldNamespace = StringUtil.randomId();
-
-			if (fieldDisplayable) {
-				fieldNamespace = getFieldNamespace(
-					fieldDisplayValue, ddmFieldsCounter, offset);
-			}
+			String fieldNamespace = getFieldNamespace(
+				fieldDisplayable, fieldDisplayValue, offset);
 
 			String fieldName = getFieldNamespacedName(
-					parentFieldNamespacedName, fieldNamespace, ddmFormField,
-					startIndex++);
+				parentFieldNamespacedName, fieldNamespace, ddmFormField,
+				startIndex++);
 
 			fieldStructure.put("fieldName", fieldName);
 			fieldStructure.put("fieldNamespace", fieldNamespace);
@@ -401,15 +397,18 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 	}
 
 	protected String getFieldNamespace(
-		String fieldDisplayValue, DDMFieldsCounter ddmFieldsCounter,
-		int offset) {
+		boolean fieldDisplayable, String fieldDisplayValue, int offset) {
 
-		String[] fieldsDisplayValues = StringUtil.split(fieldDisplayValue);
+		if (fieldDisplayable) {
+			String[] fieldsDisplayValues = StringUtil.split(fieldDisplayValue);
 
-		String fieldsDisplayValue = fieldsDisplayValues[offset];
+			String fieldsDisplayValue = fieldsDisplayValues[offset];
 
-		return StringUtil.extractLast(
-			fieldsDisplayValue, DDMImpl.INSTANCE_SEPARATOR);
+			return StringUtil.extractLast(
+				fieldsDisplayValue, DDMImpl.INSTANCE_SEPARATOR);
+		}
+
+		return StringUtil.randomId();
 	}
 
 	protected String getFieldNamespacedName(
