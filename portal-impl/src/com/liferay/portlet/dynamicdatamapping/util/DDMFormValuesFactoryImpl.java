@@ -134,7 +134,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			ddmFormFieldValue.setValue(new LocalizedValue(defaultLocale));
 		}
 		else {
-			ddmFormFieldValue.setValue(new UnlocalizedValue(null));
+			ddmFormFieldValue.setValue(new UnlocalizedValue(StringPool.BLANK));
 		}
 
 		setDDMFormFieldValueValues(
@@ -147,8 +147,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Map<String, DDMFormField> ddmFormFieldsMap,
 		HttpServletRequest httpServletRequest) {
 
-		Map<String, DDMFormFieldValue> ddmFormFieldValuesMap =
-			new HashMap<String, DDMFormFieldValue>();
+		Map<String, DDMFormFieldValue> ddmFormFieldValuesMap = new HashMap<>();
 
 		Map<String, String[]> parameterMap =
 			httpServletRequest.getParameterMap();
@@ -194,7 +193,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 	}
 
 	protected Set<Locale> getAvailableLocales(String[] availableLanguageIds) {
-		Set<Locale> availableLocales = new HashSet<Locale>();
+		Set<Locale> availableLocales = new HashSet<>();
 
 		for (String availableLanguageId : availableLanguageIds) {
 			Locale availableLocale = LocaleUtil.fromLanguageId(
@@ -217,7 +216,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Map<String, DDMFormFieldValue> ddmFormFieldValuesMap,
 		DDMFormField ddmFormField) {
 
-		Set<String> fileteredKeys = new HashSet<String>();
+		Set<String> fileteredKeys = new HashSet<>();
 
 		for (Map.Entry<String, DDMFormFieldValue> entry :
 				ddmFormFieldValuesMap.entrySet()) {
@@ -238,7 +237,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Map<String, DDMFormFieldValue> ddmFormFieldValuesMap, String parentPath,
 		DDMFormField ddmFormField) {
 
-		Set<String> fileteredKeys = new HashSet<String>();
+		Set<String> fileteredKeys = new HashSet<>();
 
 		parentPath += "__" + ddmFormField.getName();
 
@@ -306,8 +305,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Map<String, DDMFormFieldValue> ddmFormFieldValuesMap,
 		List<DDMFormField> ddmFormFields) {
 
-		List<DDMFormFieldValue> ddmFormFieldValues =
-			new ArrayList<DDMFormFieldValue>();
+		List<DDMFormFieldValue> ddmFormFieldValues = new ArrayList<>();
 
 		int i = 0;
 
@@ -359,7 +357,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 				qualifiedFieldParameterName.concat("_").concat(
 					availableLanguageId));
 
-			if (Validator.isNull(parameterValue)) {
+			if (parameterValue == null) {
 				continue;
 			}
 

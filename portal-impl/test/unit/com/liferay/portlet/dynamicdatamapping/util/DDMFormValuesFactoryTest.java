@@ -156,6 +156,7 @@ public class DDMFormValuesFactoryTest extends BaseDDMTestCase {
 		httpServletRequest.addParameter(
 			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_jkau_0_en_US",
 			"1.1");
+
 		httpServletRequest.addParameter(
 			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_amat_1_en_US",
 			"1.2");
