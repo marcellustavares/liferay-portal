@@ -43,14 +43,17 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesFactoryUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesToFieldsConverterUtil;
 import com.liferay.portlet.journal.NoSuchArticleException;
 import com.liferay.portlet.journal.NoSuchFolderException;
 import com.liferay.portlet.journal.model.JournalArticle;
@@ -293,8 +296,13 @@ public class ActionUtil {
 			DDMStructure ddmStructure, ServiceContext serviceContext)
 		throws Exception {
 
-		Fields fields = DDMUtil.getFields(
-			ddmStructure.getStructureId(), serviceContext);
+		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		DDMFormValues ddmFormValues = DDMFormValuesFactoryUtil.create(
+			ddmForm, serviceContext);
+
+		Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
+			ddmStructure, ddmFormValues);
 
 		String content = JournalConverterUtil.getContent(ddmStructure, fields);
 
