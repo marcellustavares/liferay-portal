@@ -11,6 +11,10 @@ AUI.add(
 
 		var SELECTOR_REPEAT_BUTTONS = '.lfr-ddm-repeatable-add-button, .lfr-ddm-repeatable-delete-button';
 
+		var TPL_LANGUAGE_CONTAINER = '<span class="lfr-ddm-language-container"></span>';
+
+		var TPL_LANGUAGE_INPUT = '<input name="{name}" type="hidden" value="{value}" />';
+
 		var TPL_REPEATABLE_ADD = '<a class="icon-plus-sign lfr-ddm-repeatable-add-button" href="javascript:;"></a>';
 
 		var TPL_REPEATABLE_DELETE = '<a class="hide icon-minus-sign lfr-ddm-repeatable-delete-button" href="javascript:;"></a>';
@@ -216,6 +220,12 @@ AUI.add(
 					instanceId: {
 					},
 
+					languageContainer: {
+						valueFn: function() {
+							return A.Node.create(TPL_LANGUAGE_CONTAINER);
+						}
+					},
+
 					localizable: {
 						getter: '_getLocalizable',
 						readOnly: true
@@ -268,6 +278,10 @@ AUI.add(
 					renderUI: function() {
 						var instance = this;
 
+						if (instance.get('localizable')) {
+							instance.get('container').append(instance.get('languageContainer'));
+						}
+
 						if (instance.get('repeatable')) {
 							instance.renderRepeatableUI();
 							instance.syncRepeatablelUI();
@@ -316,6 +330,18 @@ AUI.add(
 						instance.syncInputName(inputNode);
 						instance.syncLabelUI();
 						instance.syncValueUI();
+					},
+
+					_createLanguageInput: function(value, locale) {
+						var instance = this;
+
+						return A.Lang.sub(
+							TPL_LANGUAGE_INPUT,
+							{
+								name: instance.getInputName(locale),
+								value: value
+							}
+						);
 					},
 
 					_getLocalizable: function() {
@@ -528,6 +554,26 @@ AUI.add(
 						);
 					},
 
+					serialize: function() {
+						var instance = this;
+
+						AArray.invoke(instance.get('fields'), 'serialize');
+
+						if (instance.get('dataType')) {
+							instance.updateLanguageValue(instance.get('displayLocale'));
+
+							instance.syncValueUI();
+
+							var localizationMap = instance.get('localizationMap');
+
+							instance.updateTranslationsDefaultValue();
+
+							var languageInputs = A.map(localizationMap, instance._createLanguageInput, instance);
+
+							instance.get('languageContainer').html(languageInputs.join(''));
+						}
+					},
+
 					setLabel: function(label) {
 						var instance = this;
 
@@ -617,33 +663,6 @@ AUI.add(
 
 							instance.setValue(value);
 						}
-					},
-
-					toJSON: function() {
-						var instance = this;
-
-						var fieldJSON = {
-							instanceId: instance.get('instanceId'),
-							name: instance.get('name')
-						};
-
-						var dataType = instance.get('dataType');
-
-						if (dataType) {
-							instance.updateLocalizationMap(instance.get('displayLocale'));
-
-							instance.updateTranslationsDefaultValue();
-
-							fieldJSON.value = instance.get('localizationMap');
-						}
-
-						var fields = instance.get('fields');
-
-						if (fields.length) {
-							fieldJSON.nestedFieldValues = AArray.invoke(fields, 'toJSON');
-						}
-
-						return fieldJSON;
 					},
 
 					updateLocalizationMap: function(locale) {
@@ -1413,10 +1432,6 @@ AUI.add(
 		var Form = A.Component.create(
 			{
 				ATTRS: {
-					ddmFormValuesInput: {
-						setter: A.one
-					},
-
 					displayLocale: {
 						valueFn: '_valueDisplayLocale'
 					},
@@ -1551,14 +1566,14 @@ AUI.add(
 						var instance = this;
 
 						if (event.form.attr('name') === instance.formNode.attr('name')) {
-							instance.updateDDMFormInputValue();
+							instance.serialize();
 						}
 					},
 
 					_onSubmitForm: function(event) {
 						var instance = this;
 
-						instance.updateDDMFormInputValue();
+						instance.serialize();
 					},
 
 					_valueDisplayLocale: function() {
@@ -1634,30 +1649,16 @@ AUI.add(
 						}
 					},
 
-					toJSON: function() {
+					serialize: function() {
 						var instance = this;
 
-						var translationManager = instance.get('translationManager');
-
-						return {
-							availableLanguageIds: translationManager.get('availableLocales'),
-							defaultLanguageId: translationManager.get('defaultLocale'),
-							fieldValues: AArray.invoke(instance.get('fields'), 'toJSON')
-						};
+						AArray.invoke(instance.get('fields'), 'serialize');
 					},
 
 					unregisterRepeatable: function(field) {
 						var instance = this;
 
 						field.get('container').dd.destroy();
-					},
-
-					updateDDMFormInputValue: function() {
-						var instance = this;
-
-						var ddmFormValuesInput = instance.get('ddmFormValuesInput');
-
-						ddmFormValuesInput.val(AJSON.stringify(instance.toJSON()));
 					}
 				}
 			}
