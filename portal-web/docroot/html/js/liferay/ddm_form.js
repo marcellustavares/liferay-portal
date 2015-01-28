@@ -127,6 +127,8 @@ AUI.add(
 
 				var definition = instance.get('definition');
 
+				var translationManager = instance.get('translationManager');
+
 				var fieldDefinition = instance.getFieldInfo(definition, 'name', fieldName);
 
 				var FieldClass = getFieldClass(fieldDefinition.type);
@@ -142,18 +144,13 @@ AUI.add(
 							instanceId: fieldInstanceId,
 							name: fieldName,
 							parent: instance,
+							translationManager: translationManager,
 							values: instance.get('values')
 						}
 					)
 				);
 
 				field.addTarget(instance);
-
-				var translationManager = instance.get('translationManager');
-
-				if (translationManager) {
-					translationManager.addTarget(field);
-				}
 
 				return field;
 			},
@@ -261,6 +258,9 @@ AUI.add(
 
 					repeatedIndex: {
 						valueFn: '_valueRepeatedIndex'
+					},
+
+					translationManager: {
 					}
 				},
 
@@ -275,10 +275,12 @@ AUI.add(
 						var instance = this;
 
 						if (instance.get('localizable')) {
-							instance.after(
+							var translationManager = instance.get('translationManager');
+
+							translationManager.after(
 								{
-									'translationmanager:deleteAvailableLocale': instance._afterDeleteAvailableLocale,
-									'translationmanager:editingLocaleChange': instance._afterEditingLocaleChange
+									'deleteAvailableLocale': A.bind(instance._afterDeleteAvailableLocale, instance),
+									'editingLocaleChange': A.bind(instance._afterEditingLocaleChange, instance)
 								}
 							);
 						}
