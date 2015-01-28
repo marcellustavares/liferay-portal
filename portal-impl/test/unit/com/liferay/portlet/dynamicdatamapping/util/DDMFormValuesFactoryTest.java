@@ -154,24 +154,24 @@ public class DDMFormValuesFactoryTest extends BaseDDMTestCase {
 		// Ext
 
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_jkau_0_en_US",
-			"1.1");
+			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_jkau_0" +
+			"_en_US", "1.1");
 
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_amat_1_en_US",
-			"1.2");
+			"Name_INSTANCE_wqer_0__Phone_INSTANCE_gatu_0__Ext_INSTANCE_amat_1" +
+			"_en_US", "1.2");
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_hamp_0_en_US",
-			"2.1");
+			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_hamp_0" +
+			"_en_US", "2.1");
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_xzal_1_en_US",
-			"2.2");
+			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_xzal_1" +
+			"_en_US", "2.2");
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_kaly_2_en_US",
-			"2.3");
+			"Name_INSTANCE_wqer_0__Phone_INSTANCE_hato_1__Ext_INSTANCE_kaly_2" +
+			"_en_US", "2.3");
 		httpServletRequest.addParameter(
-			"Name_INSTANCE_fahu_1__Phone_INSTANCE_jakl_0__Ext_INSTANCE_bagt_0_en_US",
-			"3.1");
+			"Name_INSTANCE_fahu_1__Phone_INSTANCE_jakl_0__Ext_INSTANCE_bagt_0" +
+			"_en_US", "3.1");
 
 		DDMFormValues actualDDMFormValues = DDMFormValuesFactoryUtil.create(
 			ddmForm, httpServletRequest);
