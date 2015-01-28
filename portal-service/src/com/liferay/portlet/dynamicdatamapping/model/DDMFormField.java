@@ -252,8 +252,7 @@ public class DDMFormField implements Serializable {
 	private boolean _multiple;
 	private String _name;
 	private String _namespace;
-	private List<DDMFormField> _nestedDDMFormFields =
-		new ArrayList<DDMFormField>();
+	private List<DDMFormField> _nestedDDMFormFields = new ArrayList<>();
 	private DDMFormField _parent;
 	private LocalizedValue _predefinedValue = new LocalizedValue();
 	private boolean _readOnly;
