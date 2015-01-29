@@ -118,7 +118,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 						classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 						classPK="<%= ddmStructureId %>"
 						ddmFormFieldValue="<%= ddmFormFieldValue %>"
-						ddmFormValuesNamespace="<%= fieldsNamespace %>"
+						fieldsNamespace="<%= fieldsNamespace %>"
 						requestedLocale="<%= themeDisplay.getLocale() %>"
 					/>
 				</aui:form>

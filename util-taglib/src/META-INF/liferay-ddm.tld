@@ -33,7 +33,7 @@
 			<type>com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues</type>
 		</attribute>
 		<attribute>
-			<name>ddmFormValuesNamespace</name>
+			<name>fieldsNamespace</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.String</type>
@@ -87,7 +87,7 @@
 			<type>com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue</type>
 		</attribute>
 		<attribute>
-			<name>ddmFormValuesNamespace</name>
+			<name>fieldsNamespace</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.String</type>

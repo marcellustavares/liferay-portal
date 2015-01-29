@@ -45,7 +45,7 @@
 		ddmFormFieldRenderingContext.setHttpServletResponse(response);
 		ddmFormFieldRenderingContext.setLocale(requestedLocale);
 		ddmFormFieldRenderingContext.setMode(mode);
-		ddmFormFieldRenderingContext.setNamespace(ddmFormValuesNamespace);
+		ddmFormFieldRenderingContext.setNamespace(fieldsNamespace);
 		ddmFormFieldRenderingContext.setPortletNamespace(portletResponse.getNamespace());
 		ddmFormFieldRenderingContext.setReadOnly(readOnly);
 		ddmFormFieldRenderingContext.setShowEmptyFieldLabel(showEmptyFieldLabel);
@@ -57,7 +57,7 @@
 
 		<aui:script use="liferay-ddm-form">
 			Liferay.component(
-				'<portlet:namespace /><%= ddmFormValuesNamespace %>ddmForm',
+				'<portlet:namespace /><%= fieldsNamespace %>ddmForm',
 				function() {
 					return new Liferay.DDM.Form(
 						{
@@ -65,7 +65,7 @@
 							ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
 							definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 							doAsGroupId: <%= scopeGroupId %>,
-							ddmFormValuesNamespace: '<%= ddmFormValuesNamespace %>',
+							fieldsNamespace: '<%= fieldsNamespace %>',
 							mode: '<%= mode %>',
 							p_l_id: <%= themeDisplay.getPlid() %>,
 							portletNamespace: '<portlet:namespace />',
