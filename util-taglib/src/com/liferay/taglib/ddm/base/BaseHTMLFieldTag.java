@@ -42,8 +42,8 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		return _ddmFormFieldValue;
 	}
 
-	public java.lang.String getDdmFormValuesNamespace() {
-		return _ddmFormValuesNamespace;
+	public java.lang.String getFieldsNamespace() {
+		return _fieldsNamespace;
 	}
 
 	public boolean getReadOnly() {
@@ -80,10 +80,10 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		setScopedAttribute("ddmFormFieldValue", ddmFormFieldValue);
 	}
 
-	public void setDdmFormValuesNamespace(java.lang.String ddmFormValuesNamespace) {
-		_ddmFormValuesNamespace = ddmFormValuesNamespace;
+	public void setFieldsNamespace(java.lang.String fieldsNamespace) {
+		_fieldsNamespace = fieldsNamespace;
 
-		setScopedAttribute("ddmFormValuesNamespace", ddmFormValuesNamespace);
+		setScopedAttribute("fieldsNamespace", fieldsNamespace);
 	}
 
 	public void setReadOnly(boolean readOnly) {
@@ -117,7 +117,7 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		_classNameId = 0;
 		_classPK = 0;
 		_ddmFormFieldValue = null;
-		_ddmFormValuesNamespace = null;
+		_fieldsNamespace = null;
 		_readOnly = false;
 		_repeatable = true;
 		_requestedLocale = null;
@@ -139,7 +139,7 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		setNamespacedAttribute(request, "classNameId", _classNameId);
 		setNamespacedAttribute(request, "classPK", _classPK);
 		setNamespacedAttribute(request, "ddmFormFieldValue", _ddmFormFieldValue);
-		setNamespacedAttribute(request, "ddmFormValuesNamespace", _ddmFormValuesNamespace);
+		setNamespacedAttribute(request, "fieldsNamespace", _fieldsNamespace);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 		setNamespacedAttribute(request, "repeatable", _repeatable);
 		setNamespacedAttribute(request, "requestedLocale", _requestedLocale);
@@ -157,7 +157,7 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 	private long _classNameId = 0;
 	private long _classPK = 0;
 	private com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue _ddmFormFieldValue = null;
-	private java.lang.String _ddmFormValuesNamespace = null;
+	private java.lang.String _fieldsNamespace = null;
 	private boolean _readOnly = false;
 	private boolean _repeatable = true;
 	private java.util.Locale _requestedLocale = null;
