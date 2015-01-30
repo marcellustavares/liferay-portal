@@ -42,7 +42,9 @@ import com.liferay.portlet.dynamicdatamapping.util.DDMFieldsCounter;
 import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
 
 import java.io.Writer;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
