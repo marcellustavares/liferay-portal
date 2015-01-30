@@ -83,7 +83,7 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 					<aui:input disabled="<%= true %>" name="buttonId" type="hidden" value='<%= renderResponse.getNamespace() + "applyButton" + name %>' />
 
 					<%
- 					com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue = new com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue();
+					com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue = new com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue();
 
 					ddmFormFieldValue.setName(name);
 

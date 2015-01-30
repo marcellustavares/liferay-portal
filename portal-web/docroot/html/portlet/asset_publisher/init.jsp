@@ -17,7 +17,6 @@
 <%@ include file="/html/portlet/init.jsp" %>
 
 <%@ page import="com.liferay.portal.NoSuchModelException" %><%@
-page import="com.liferay.portal.kernel.util.DateFormatFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil" %><%@
 page import="com.liferay.portlet.asset.DuplicateQueryRuleException" %><%@
 page import="com.liferay.portlet.asset.model.ClassType" %><%@
