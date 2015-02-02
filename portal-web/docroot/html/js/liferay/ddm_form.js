@@ -688,9 +688,7 @@ AUI.add(
 					updateTranslationsDefaultValue: function() {
 						var instance = this;
 
-						var parent = instance.get('parent');
-
-						var translationManager = parent.get('translationManager');
+						var translationManager = instance.get('translationManager');
 
 						var localizationMap = instance.get('localizationMap');
 
