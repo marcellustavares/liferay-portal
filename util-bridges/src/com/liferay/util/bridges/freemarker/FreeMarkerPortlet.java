@@ -17,27 +17,31 @@ package com.liferay.util.bridges.freemarker;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletContext;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
+import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceLoaderUtil;
 import com.liferay.portal.kernel.template.TemplateTaglibSupportProvider;
-import com.liferay.portal.kernel.util.ServiceLoader;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
+import com.liferay.portal.model.Portlet;
+import com.liferay.portal.model.PortletApp;
+import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import java.util.List;
 
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+
+import javax.servlet.ServletContext;
 
 /**
  * @author Raymond Augé
@@ -53,22 +57,15 @@ public class FreeMarkerPortlet extends MVCPortlet {
 		TemplateManagerUtil.destroy(clazz.getClassLoader());
 	}
 
-	protected TemplateTaglibSupportProvider getTaglibSupportProvider()
-		throws Exception {
+	protected ServletContext getServletContext() {
+		LiferayPortletContext liferayPortletContext =
+			(LiferayPortletContext)getPortletContext();
 
-		if (_templateTaglibSupportProvider != null) {
-			return _templateTaglibSupportProvider;
-		}
+		Portlet portlet = liferayPortletContext.getPortlet();
 
-		List<TemplateTaglibSupportProvider> templateTaglibSupportProviders =
-			ServiceLoader.load(TemplateTaglibSupportProvider.class);
+		PortletApp portletApp = portlet.getPortletApp();
 
-		if (!templateTaglibSupportProviders.isEmpty()) {
-			_templateTaglibSupportProvider = templateTaglibSupportProviders.get(
-				0);
-		}
-
-		return _templateTaglibSupportProvider;
+		return portletApp.getServletContext();
 	}
 
 	@Override
@@ -99,6 +96,10 @@ public class FreeMarkerPortlet extends MVCPortlet {
 		}
 		else {
 			try {
+				TemplateManager templateManager =
+					TemplateManagerUtil.getTemplateManager(
+						TemplateConstants.LANG_TYPE_FTL);
+
 				TemplateResource templateResource =
 					TemplateResourceLoaderUtil.getTemplateResource(
 						TemplateConstants.LANG_TYPE_FTL, resourcePath);
@@ -106,14 +107,14 @@ public class FreeMarkerPortlet extends MVCPortlet {
 				Template template = TemplateManagerUtil.getTemplate(
 					TemplateConstants.LANG_TYPE_FTL, templateResource, false);
 
-				TemplateTaglibSupportProvider templateTaglibSupportProvider =
-					getTaglibSupportProvider();
-
-				if (templateTaglibSupportProvider != null) {
-					templateTaglibSupportProvider.addTaglibSupport(
-						template, servletContextName, portletRequest,
-						portletResponse);
-				}
+				templateManager.addTaglibApplication(
+					template, "Application", getServletContext());
+				templateManager.addTaglibFactory(
+					template, "PortletJspTagLibs", getServletContext());
+				templateManager.addTaglibRequest(
+					template, "Request",
+					PortalUtil.getHttpServletRequest(portletRequest),
+					PortalUtil.getHttpServletResponse(portletResponse));
 
 				template.put("portletContext", getPortletContext());
 				template.put(
