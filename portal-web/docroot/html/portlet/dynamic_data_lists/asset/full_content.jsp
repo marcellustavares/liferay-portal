@@ -25,13 +25,13 @@ DDLRecordSet recordSet = record.getRecordSet();
 
 DDMStructure ddmStructure = recordSet.getDDMStructure();
 
-Fields fields = StorageEngineUtil.getFields(recordVersion.getDDMStorageId());
+DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(recordVersion.getDDMStorageId());
 %>
 
 <liferay-ddm:html
 	classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 	classPK="<%= ddmStructure.getPrimaryKey() %>"
-	fields="<%= fields %>"
+	ddmFormValues="<%= ddmFormValues %>"
 	readOnly="<%= true %>"
 	requestedLocale="<%= locale %>"
 />

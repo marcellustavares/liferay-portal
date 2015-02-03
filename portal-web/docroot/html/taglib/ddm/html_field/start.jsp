@@ -24,9 +24,19 @@
 
 		Map<String, DDMFormField> ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 
-		DDMFormField ddmFormField = ddmFormFieldsMap.get(field.getName());
+		DDMFormField ddmFormField = ddmFormFieldsMap.get(ddmFormFieldValue.getName());
 
 		DDMFormFieldRenderer ddmFormFieldRenderer = DDMFormFieldRendererRegistryUtil.getDDMFormFieldRenderer(ddmFormField.getType());
+
+		com.liferay.portlet.dynamicdatamapping.storage.Field field = new com.liferay.portlet.dynamicdatamapping.storage.Field();
+
+		field.setDefaultLocale(requestedLocale);
+		field.setDDMStructureId(classPK);
+		field.setName(ddmFormFieldValue.getName());
+
+		if (ddmFormFieldValue.getValue() != null) {
+			field.setValue(requestedLocale, ddmFormFieldValue.getValue().getString(requestedLocale));
+		}
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
 

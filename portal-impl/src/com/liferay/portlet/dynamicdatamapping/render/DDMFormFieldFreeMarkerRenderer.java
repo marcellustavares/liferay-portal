@@ -286,7 +286,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		int offset = 0;
 
 		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
-			request, response, fields, portletNamespace, namespace);
+			request, portletNamespace, namespace);
 
 		String name = ddmFormField.getName();
 
@@ -431,8 +431,7 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 	}
 
 	protected DDMFieldsCounter getFieldsCounter(
-		HttpServletRequest request, HttpServletResponse response, Fields fields,
-		String portletNamespace, String namespace) {
+		HttpServletRequest request, String portletNamespace, String namespace) {
 
 		String fieldsCounterKey = portletNamespace + namespace + "fieldsCount";
 
