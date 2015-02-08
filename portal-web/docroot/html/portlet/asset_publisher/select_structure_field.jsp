@@ -83,28 +83,31 @@ portletURL.setParameter("classTypeId", String.valueOf(classTypeId));
 					<aui:input disabled="<%= true %>" name="buttonId" type="hidden" value='<%= renderResponse.getNamespace() + "applyButton" + name %>' />
 
 					<%
-					com.liferay.portlet.dynamicdatamapping.storage.Field ddmField = new com.liferay.portlet.dynamicdatamapping.storage.Field();
+					com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue ddmFormFieldValue = new com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue();
 
-					ddmField.setDefaultLocale(themeDisplay.getLocale());
-					ddmField.setDDMStructureId(ddmStructureId);
-					ddmField.setName(name);
+					ddmFormFieldValue.setName(name);
 
-					Serializable ddmStructureFieldValue = assetPublisherDisplayContext.getDDMStructureFieldValue();
+					String ddmStructureFieldValue = assetPublisherDisplayContext.getDDMStructureFieldValue();
 
 					if (name.equals(assetPublisherDisplayContext.getDDMStructureFieldName())) {
 						if (fieldType.equals(DDMImpl.TYPE_DDM_DATE)) {
-							ddmStructureFieldValue = GetterUtil.getDate(ddmStructureFieldValue, DateFormatFactoryUtil.getSimpleDateFormat("yyyyMMddHHmmss"));
+							ddmStructureFieldValue = String.valueOf(DateUtil.parseDate(ddmStructureFieldValue, LocaleUtil.getDefault()).getTime());
 						}
 
-						ddmField.setValue(themeDisplay.getLocale(), ddmStructureFieldValue);
+						LocalizedValue value = new LocalizedValue();
+
+						value.addString(themeDisplay.getLocale(), ddmStructureFieldValue);
+
+						ddmFormFieldValue.setValue(value);
 					}
 					%>
 
 					<liferay-ddm:html-field
 						classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 						classPK="<%= ddmStructureId %>"
-						field="<%= ddmField %>"
+						ddmFormFieldValue="<%= ddmFormFieldValue %>"
 						fieldsNamespace="<%= fieldsNamespace %>"
+						requestedLocale="<%= themeDisplay.getLocale() %>"
 					/>
 				</aui:form>
 			</liferay-ui:search-container-column-text>
