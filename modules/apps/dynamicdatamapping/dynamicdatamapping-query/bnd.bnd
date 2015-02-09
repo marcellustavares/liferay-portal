@@ -1,0 +1,4 @@
+Bundle-Name: Dynamic Data Mapping Query Utility
+Bundle-SymbolicName: com.liferay.dynamicdatamapping.query
+Bundle-Version: 1.0.0
+Include-Resource: classes
