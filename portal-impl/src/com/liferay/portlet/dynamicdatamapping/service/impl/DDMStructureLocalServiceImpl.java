@@ -58,9 +58,13 @@ import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
+import com.liferay.portlet.journal.util.DDMStructureIndexerBackgroundTaskExecutor;
+
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -92,6 +96,7 @@ import java.util.concurrent.Callable;
  * @author Bruno Basto
  * @author Marcellus Tavares
  * @author Juan Fernández
+ * @author Vilmos Papp
  */
 public class DDMStructureLocalServiceImpl
 	extends DDMStructureLocalServiceBaseImpl {
@@ -1524,15 +1529,7 @@ public class DDMStructureLocalServiceImpl
 
 		// Indexer
 
-		Indexer indexer = IndexerRegistryUtil.getIndexer(
-			structure.getClassName());
-
-		if (indexer != null) {
-			List<Long> ddmStructureIds = getChildrenStructureIds(
-				structure.getGroupId(), structure.getStructureId());
-
-			indexer.reindexDDMStructures(ddmStructureIds);
-		}
+		reindexStructureInBackground(structure);
 
 		return structure;
 	}
@@ -1622,6 +1619,34 @@ public class DDMStructureLocalServiceImpl
 		return ddmTemplateLocalService.getTemplates(
 			structure.getGroupId(), classNameId, structure.getStructureId(),
 			type);
+	}
+
+	protected void reindexStructureInBackground(DDMStructure structure)
+		throws PortalException {
+
+		Indexer indexer = IndexerRegistryUtil.getIndexer(
+			structure.getClassName());
+
+		if (indexer == null) {
+			return;
+		}
+
+		Map<String, Serializable> taskContextMap =
+			new HashMap<String, Serializable>();
+
+		List<Long> ddmStructureIds = getChildrenStructureIds(
+			structure.getGroupId(), structure.getStructureId());
+
+		taskContextMap.put("className", structure.getClassName());
+		taskContextMap.put("ddmStructureIds", new ArrayList(ddmStructureIds));
+
+		long userId = userLocalService.getDefaultUserId(
+			structure.getCompanyId());
+
+		backgroundTaskLocalService.addBackgroundTask(
+			userId, structure.getGroupId(), StringPool.BLANK, null,
+			DDMStructureIndexerBackgroundTaskExecutor.class, taskContextMap,
+			new ServiceContext());
 	}
 
 	protected void syncStructureTemplatesFields(final DDMStructure structure) {
