@@ -99,6 +99,14 @@
 	<#assign label = "">
 </#if>
 
+<#-- Read only -->
+
+<#assign readOnly = false>
+
+<#if fieldStructure.readOnly?? && (fieldStructure.readOnly == "true")>
+	<#assign readOnly = true>
+</#if>
+
 <#-- Required -->
 
 <#assign required = false>

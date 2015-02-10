@@ -40,11 +40,14 @@
 	<@aui.input name=namespacedFieldName type="hidden" value=fieldRawValue />
 
 	<@aui["button-row"]>
-		<@aui.button cssClass="upload-button" id="${namespacedFieldName}UploadButton" value="upload" />
 
-		<@aui.button cssClass="select-button" id="${namespacedFieldName}SelectButton" value="choose-from-document-library" />
+		<#if !readOnly>
+			<@aui.button cssClass="upload-button" id="${namespacedFieldName}UploadButton" value="upload" />
 
-		<@aui.button cssClass="clear-button ${(imageData?has_content)?string('', 'hide')}" id="${namespacedFieldName}ClearButton" value="clear" />
+			<@aui.button cssClass="select-button" id="${namespacedFieldName}SelectButton" value="choose-from-document-library" />
+
+			<@aui.button cssClass="clear-button ${(imageData?has_content)?string('', 'hide')}" id="${namespacedFieldName}ClearButton" value="clear" />
+		</#if>
 
 		<@aui.button cssClass="preview-button ${(imageData?has_content)?string('', 'hide')}" id="${namespacedFieldName}PreviewButton" value="preview" />
 	</@>
