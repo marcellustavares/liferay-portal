@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+
+<project>
+	<property name="import.shared" value="dynamic-data-lists-api,dynamic-data-lists-service" />
+
+	<import file="../../../../tools/sdk/build-common-osgi-plugin.xml" />
+</project>
