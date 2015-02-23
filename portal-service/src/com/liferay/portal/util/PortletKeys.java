@@ -66,8 +66,6 @@ public class PortletKeys {
 
 	public static final String DYNAMIC_DATA_LIST_DISPLAY = "169";
 
-	public static final String DYNAMIC_DATA_LISTS = "167";
-
 	public static final String DYNAMIC_DATA_MAPPING = "166";
 
 	public static final String EXPANDO = "139";
