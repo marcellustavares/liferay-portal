@@ -14,11 +14,19 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.dynamic.data.mapping.type.settings.HelpDDMFormFieldTypeSetting;
+import com.liferay.dynamic.data.mapping.type.settings.NameDDMFormFieldTypeSetting;
+import com.liferay.dynamic.data.mapping.type.settings.RequiredDDMFormFieldTypeSetting;
+import com.liferay.dynamic.data.mapping.type.settings.TypeDDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
@@ -29,6 +37,23 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = DDMFormFieldType.class)
 public class TextDDMFormFieldType implements DDMFormFieldType {
+
+	@Override
+	public List<DDMFormFieldTypeSetting> getAdvancedSettings() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<DDMFormFieldTypeSetting> getBasicSettings() {
+		List<DDMFormFieldTypeSetting> basicSettings = new ArrayList<>();
+
+		basicSettings.add(new NameDDMFormFieldTypeSetting());
+		basicSettings.add(new HelpDDMFormFieldTypeSetting());
+		basicSettings.add(new TypeDDMFormFieldTypeSetting());
+		basicSettings.add(new RequiredDDMFormFieldTypeSetting());
+
+		return basicSettings;
+	}
 
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
