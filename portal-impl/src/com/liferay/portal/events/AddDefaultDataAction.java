@@ -44,11 +44,6 @@ public class AddDefaultDataAction extends SimpleAction {
 
 		addDefaultLayoutSetPrototypesAction.run(ids);
 
-		SimpleAction addDefaultDDMStructuresAction =
-			new AddDefaultDDMStructuresAction();
-
-		addDefaultDDMStructuresAction.run(ids);
-
 		SimpleAction addDefaultDDMTemplatesAction =
 			new AddDefaultDDMTemplatesAction();
 

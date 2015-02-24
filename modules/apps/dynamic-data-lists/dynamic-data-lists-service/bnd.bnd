@@ -1,0 +1,45 @@
+Bundle-Name: Liferay Dynamic Data Lists Service
+Bundle-SymbolicName: com.liferay.dynamic.data.lists.service
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.dynamic.data.lists.asset,\
+	com.liferay.dynamic.data.lists.lar,\
+	com.liferay.dynamic.data.lists.model.impl,\
+	com.liferay.dynamic.data.lists.search,\
+	com.liferay.dynamic.data.lists.service.permission,\
+	com.liferay.dynamic.data.lists.util,\
+	com.liferay.dynamic.data.lists.util.comparator
+Import-Package:\
+	!com.liferay.portal.tools.sql,\
+	!javax.activation.*,\
+	!javax.crypto.*,\
+	!javax.imageio.*,\
+	!javax.mail.*,\
+	!javax.naming.*,\
+	!javax.sql,\
+	!junit.framework.*,\
+	!net.sf.akismet.*,\
+	!net.sf.ehcache.*,\
+	!net.sourceforge.stripes.*,\
+	!org.apache.commons.dbcp.*,\
+	!org.apache.commons.fileupload.*,\
+	!org.apache.commons.jrcs.*,\
+	!org.apache.commons.pool.impl.*,\
+	!org.apache.lucene.*,\
+	!org.apache.xerces.framework,\
+	!org.apache.xmlrpc.*,\
+	!org.freshcookies.test.*,\
+	!org.incava.util.diff.*,\
+	!org.intabulas.sandler.*,\
+	!org.jgroups.*,\
+	*
+Include-Resource:\
+	classes,\
+	custom-sql/default.xml=classes/META-INF/custom-sql/default.xml,\
+	META-INF/=../../../../portal-impl/src/META-INF/log4j.dtd,\
+	@../../../../lib/portal/bnd.jar!/aQute/bnd/annotation/metatype/*
+Liferay-Service: true
+Require-Capability:\
+	liferay.extender;\
+	filter:="(&(liferay.extender=spring.extender)(version>=1.0)(!(version>=2.0)))"
+Spring-Context: META-INF/*-spring.xml;timeout:=${spring.extender.time.to.wait}
