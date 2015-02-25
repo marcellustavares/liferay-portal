@@ -16,10 +16,10 @@ package com.liferay.dynamic.data.lists.service.http;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.lists.service.DDLRecordVersionServiceUtil;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-
-import com.liferay.dynamic.data.lists.service.DDLRecordVersionServiceUtil;
 
 import java.rmi.RemoteException;
 
@@ -68,8 +68,7 @@ public class DDLRecordVersionServiceSoap {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordVersionSoap getRecordVersion(
 		long recordVersionId) throws RemoteException {
 		try {
-			com.liferay.dynamic.data.lists.model.DDLRecordVersion returnValue =
-				DDLRecordVersionServiceUtil.getRecordVersion(recordVersionId);
+			com.liferay.dynamic.data.lists.model.DDLRecordVersion returnValue = DDLRecordVersionServiceUtil.getRecordVersion(recordVersionId);
 
 			return com.liferay.dynamic.data.lists.model.DDLRecordVersionSoap.toSoapModel(returnValue);
 		}
@@ -83,8 +82,8 @@ public class DDLRecordVersionServiceSoap {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordVersionSoap getRecordVersion(
 		long recordId, java.lang.String version) throws RemoteException {
 		try {
-			com.liferay.dynamic.data.lists.model.DDLRecordVersion returnValue =
-				DDLRecordVersionServiceUtil.getRecordVersion(recordId, version);
+			com.liferay.dynamic.data.lists.model.DDLRecordVersion returnValue = DDLRecordVersionServiceUtil.getRecordVersion(recordId,
+					version);
 
 			return com.liferay.dynamic.data.lists.model.DDLRecordVersionSoap.toSoapModel(returnValue);
 		}

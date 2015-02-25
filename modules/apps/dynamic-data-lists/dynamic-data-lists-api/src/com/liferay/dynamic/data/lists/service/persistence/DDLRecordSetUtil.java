@@ -16,13 +16,16 @@ package com.liferay.dynamic.data.lists.service.persistence;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
 
-import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
+import org.osgi.util.tracker.ServiceTracker;
 
 import java.util.List;
 
@@ -167,7 +170,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByUuid_First(
 		java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -195,7 +198,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByUuid_Last(
 		java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -224,7 +227,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet[] findByUuid_PrevAndNext(
 		long recordSetId, java.lang.String uuid,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(recordSetId, uuid, orderByComparator);
 	}
@@ -258,7 +261,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByUUID_G(uuid, groupId);
 	}
 
@@ -296,7 +299,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet removeByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().removeByUUID_G(uuid, groupId);
 	}
 
@@ -374,7 +377,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByUuid_C_First(
 		java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -406,7 +409,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -439,7 +442,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet[] findByUuid_C_PrevAndNext(
 		long recordSetId, java.lang.String uuid, long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(recordSetId, uuid, companyId,
 			orderByComparator);
@@ -525,7 +528,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByGroupId_First(
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -553,7 +556,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByGroupId_Last(
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -582,7 +585,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet[] findByGroupId_PrevAndNext(
 		long recordSetId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(recordSetId, groupId,
 			orderByComparator);
@@ -648,7 +651,7 @@ public class DDLRecordSetUtil {
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet[] filterFindByGroupId_PrevAndNext(
 		long recordSetId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordSet> orderByComparator)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence()
 				   .filterFindByGroupId_PrevAndNext(recordSetId, groupId,
 			orderByComparator);
@@ -813,7 +816,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByG_R(
 		long groupId, java.lang.String recordSetKey)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByG_R(groupId, recordSetKey);
 	}
 
@@ -852,7 +855,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet removeByG_R(
 		long groupId, java.lang.String recordSetKey)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().removeByG_R(groupId, recordSetKey);
 	}
 
@@ -907,7 +910,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet remove(
 		long recordSetId)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().remove(recordSetId);
 	}
 
@@ -925,7 +928,7 @@ public class DDLRecordSetUtil {
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet findByPrimaryKey(
 		long recordSetId)
-		throws com.liferay.dynamic.data.lists.NoSuchRecordSetException {
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException {
 		return getPersistence().findByPrimaryKey(recordSetId);
 	}
 
@@ -1005,14 +1008,7 @@ public class DDLRecordSetUtil {
 	}
 
 	public static DDLRecordSetPersistence getPersistence() {
-		if (_persistence == null) {
-			_persistence = (DDLRecordSetPersistence)PortalBeanLocatorUtil.locate(DDLRecordSetPersistence.class.getName());
-
-			ReferenceRegistry.registerReference(DDLRecordSetUtil.class,
-				"_persistence");
-		}
-
-		return _persistence;
+		return _serviceTracker.getService();
 	}
 
 	/**
@@ -1022,5 +1018,14 @@ public class DDLRecordSetUtil {
 	public void setPersistence(DDLRecordSetPersistence persistence) {
 	}
 
-	private static DDLRecordSetPersistence _persistence;
+	private static ServiceTracker<DDLRecordSetPersistence, DDLRecordSetPersistence> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDLRecordSetUtil.class);
+
+		_serviceTracker = new ServiceTracker<DDLRecordSetPersistence, DDLRecordSetPersistence>(bundle.getBundleContext(),
+				DDLRecordSetPersistence.class, null);
+
+		_serviceTracker.open();
+	}
 }

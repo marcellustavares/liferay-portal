@@ -16,12 +16,12 @@ package com.liferay.dynamic.data.lists.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
+
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-
-import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 
 import java.io.Externalizable;
 import java.io.IOException;

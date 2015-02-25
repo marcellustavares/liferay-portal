@@ -16,8 +16,10 @@ package com.liferay.dynamic.data.lists.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
-import com.liferay.portal.kernel.util.ReferenceRegistry;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Provides the remote service utility for DDLRecord. This utility wraps
@@ -157,14 +159,7 @@ public class DDLRecordServiceUtil {
 	}
 
 	public static DDLRecordService getService() {
-		if (_service == null) {
-			_service = (DDLRecordService)PortalBeanLocatorUtil.locate(DDLRecordService.class.getName());
-
-			ReferenceRegistry.registerReference(DDLRecordServiceUtil.class,
-				"_service");
-		}
-
-		return _service;
+		return _serviceTracker.getService();
 	}
 
 	/**
@@ -174,5 +169,14 @@ public class DDLRecordServiceUtil {
 	public void setService(DDLRecordService service) {
 	}
 
-	private static DDLRecordService _service;
+	private static ServiceTracker<DDLRecordService, DDLRecordService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDLRecordServiceUtil.class);
+
+		_serviceTracker = new ServiceTracker<DDLRecordService, DDLRecordService>(bundle.getBundleContext(),
+				DDLRecordService.class, null);
+
+		_serviceTracker.open();
+	}
 }

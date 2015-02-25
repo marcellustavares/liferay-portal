@@ -16,6 +16,12 @@ package com.liferay.dynamic.data.lists.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.lists.exception.NoSuchRecordVersionException;
+import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
+import com.liferay.dynamic.data.lists.model.impl.DDLRecordVersionImpl;
+import com.liferay.dynamic.data.lists.model.impl.DDLRecordVersionModelImpl;
+import com.liferay.dynamic.data.lists.service.persistence.DDLRecordVersionPersistence;
+
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
@@ -32,12 +38,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
-
-import com.liferay.dynamic.data.lists.NoSuchRecordVersionException;
-import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
-import com.liferay.dynamic.data.lists.model.impl.DDLRecordVersionImpl;
-import com.liferay.dynamic.data.lists.model.impl.DDLRecordVersionModelImpl;
-import com.liferay.dynamic.data.lists.service.persistence.DDLRecordVersionPersistence;
 
 import java.io.Serializable;
 
