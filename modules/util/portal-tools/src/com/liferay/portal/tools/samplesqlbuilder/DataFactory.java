@@ -17,6 +17,16 @@ package com.liferay.portal.tools.samplesqlbuilder;
 import com.liferay.counter.model.Counter;
 import com.liferay.counter.model.CounterModel;
 import com.liferay.counter.model.impl.CounterModelImpl;
+import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
+import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecordModel;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetModel;
+import com.liferay.dynamic.data.lists.model.DDLRecordVersionModel;
+import com.liferay.dynamic.data.lists.model.impl.DDLRecordModelImpl;
+import com.liferay.dynamic.data.lists.model.impl.DDLRecordSetModelImpl;
+import com.liferay.dynamic.data.lists.model.impl.DDLRecordVersionModelImpl;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -120,15 +130,6 @@ import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileVersionModelImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFolderModelImpl;
 import com.liferay.portlet.documentlibrary.social.DLActivityKeys;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordConstants;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordModel;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordSetConstants;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordSetModel;
-import com.liferay.portlet.dynamicdatalists.model.DDLRecordVersionModel;
-import com.liferay.portlet.dynamicdatalists.model.impl.DDLRecordModelImpl;
-import com.liferay.portlet.dynamicdatalists.model.impl.DDLRecordSetModelImpl;
-import com.liferay.portlet.dynamicdatalists.model.impl.DDLRecordVersionModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
 import com.liferay.portlet.dynamicdatamapping.model.DDMContentModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
@@ -1255,7 +1256,7 @@ public class DataFactory {
 				PortletConstants.DEFAULT_PREFERENCES));
 		portletPreferencesModels.add(
 			newPortletPreferencesModel(
-				plid, PortletKeys.DYNAMIC_DATA_LISTS,
+				plid, DDLPortletKeys.DYNAMIC_DATA_LISTS,
 				PortletConstants.DEFAULT_PREFERENCES));
 		portletPreferencesModels.add(
 			newPortletPreferencesModel(
