@@ -25,9 +25,9 @@ public interface DDMFormFieldType {
 	public List<DDMFormFieldTypeSetting> getAdvancedSettings();
 
 	public List<DDMFormFieldTypeSetting> getBasicSettings();
-
+	
 	public DDMFormFieldRenderer getDDMFormFieldRenderer();
-
+	
 	public DDMFormFieldValueAccessor<?> getDDMFormFieldValueAccessor(
 		Locale locale);
 
