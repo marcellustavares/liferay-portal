@@ -20,13 +20,8 @@ import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 /**
  * @author Marcellus Tavares
  */
-public abstract class DDMFormFieldValueRendererAccessor
-	implements Accessor<DDMFormFieldValue, String> {
-
-	@Override
-	public Class<String> getAttributeClass() {
-		return String.class;
-	}
+public abstract class DDMFormFieldValueRendererAccessor<A>
+	implements Accessor<DDMFormFieldValue, A> {
 
 	@Override
 	public Class<DDMFormFieldValue> getTypeClass() {
