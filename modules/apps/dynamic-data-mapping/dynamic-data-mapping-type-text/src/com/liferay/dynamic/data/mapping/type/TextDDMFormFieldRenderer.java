@@ -14,14 +14,19 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateResource;
-import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
 
-import java.net.URL;
-
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -44,18 +49,42 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 		TemplateResource templateResource = getTemplateResource(templatePath);
 
-		this.templateNamespace = "ddm.text";
 		this.templateResource = templateResource;
+
+		setTemplatesNamespaces();
 	}
 
-	protected TemplateResource getTemplateResource(String templatePath) {
-		Class<?> clazz = getClass();
+	protected void populateRequiredContext(
+		Template template, DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
-		ClassLoader classLoader = clazz.getClassLoader();
+		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
-		URL templateURL = classLoader.getResource(templatePath);
+		LocalizedValue label = ddmFormField.getLabel();
 
-		return new URLTemplateResource(templateURL.getPath(), templateURL);
+		String fieldName = ddmFormField.getName();
+
+		String instanceId = StringUtil.randomString();
+
+		String fieldNameSuffix = getFieldNameSuffix(instanceId);
+
+		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
+
+		String fieldQualifiedName = getFieldQualifiedName(
+			fieldName, instanceId);
+
+		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
+		template.put("fieldLabel", label.getString(locale));
+		template.put("fieldName", fieldName);
+		template.put("fieldNameSuffix", fieldNameSuffix);
+		template.put("fieldValue", predefinedValue.getString(locale));
+		template.put("fieldQualifiedName", fieldQualifiedName);
+	}
+
+	protected void setTemplatesNamespaces() {
+		this.templatesNamespaces = new HashMap<>();
+
+		this.templatesNamespaces.put("text", "ddm.text");
 	}
 
 }
