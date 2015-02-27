@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.registry;
 
-import java.util.Map;
+import com.liferay.portal.kernel.json.JSONObject;
 
 /**
  * @author Marcellus Tavares
@@ -23,6 +23,6 @@ public interface DDMFormFieldTypeSettingEditor {
 
 	public String getEditorType();
 
-	public Map<String, String> getOptions();
+	public JSONObject getOptions();
 
 }

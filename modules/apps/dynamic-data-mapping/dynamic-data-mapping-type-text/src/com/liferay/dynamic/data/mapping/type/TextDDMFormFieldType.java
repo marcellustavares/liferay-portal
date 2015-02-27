@@ -89,4 +89,19 @@ public class TextDDMFormFieldType implements DDMFormFieldType {
 
 	private DDMFormFieldRenderer _ddmFormFieldRenderer;
 
+	@Override
+	public String getFieldJavaScriptClass() {
+		return "Liferay.Forms.FieldBase.getFieldClass()";
+	}
+
+	@Override
+	public String getIcon() {
+		return "my-icon";
+	}
+
+	@Override
+	public String getLabel() {
+		return "Text";
+	}
+
 }

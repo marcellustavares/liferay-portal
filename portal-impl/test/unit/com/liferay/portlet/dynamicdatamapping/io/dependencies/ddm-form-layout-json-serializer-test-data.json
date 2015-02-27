@@ -10,7 +10,9 @@
 					fieldName: "text2",
 					size: 6
 				}
-			]
+			],
+			
+			type: "LayoutRow"
 		},
 		{
 			columns: [
@@ -26,7 +28,9 @@
 					fieldName: "text5",
 					size: 4
 				}
-			]
+			],
+			
+			type: "LayoutRow"
 		},
 		{
 			columns: [
@@ -34,7 +38,9 @@
 					fieldName: "text6",
 					size: 12
 				}
-			]
+			],
+			
+			type: "LayoutRow"
 		}
 	]
 }

@@ -1,0 +1,68 @@
+{
+	"rows": [
+		{
+			"columns": [
+				{
+					"fieldName": "text1",
+					"size": 6
+				},
+				{
+					"fieldName": "text2",
+					"size": 6
+				}
+			],
+
+			"type": "LayoutRow"
+		},
+		{
+			"columns": [
+				{
+					"fieldName": "text3",
+					"size": 3
+				},
+				{
+					"fieldName": "text4",
+					"size": 3
+				},
+				{
+					"fieldName": "text5",
+					"size": 3
+				},
+				{
+					"fieldName": "text6",
+					"size": 3
+				}
+			],
+
+			"type": "LayoutRow"
+		},
+		{
+			"columns": [
+				{
+					"fieldName": "text7",
+					"size": 12
+				}
+			],
+
+			"type": "LayoutRow"
+		},
+		{
+			"columns": [
+				{
+					"fieldName": "text8",
+					"size": 4
+				},
+				{
+					"fieldName": "text9",
+					"size": 4
+				},
+				{
+					"fieldName": "text10",
+					"size": 4
+				}
+			],
+
+			"type": "LayoutRow"
+		}
+	]
+}

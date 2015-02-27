@@ -1,0 +1,18 @@
+.portlet-forms .form-buttons .btn {
+	margin-left: 5px;
+}
+
+.portlet-forms .form-buttons .btn.forms-previous {
+	margin-left: 0;
+}
+
+.portlet-forms .form-navigator {
+	display: none;
+}
+
+.portlet-forms .form-builder-content .menu-content {
+	background: transparent;
+	border-width: 0;
+	box-shadow: none;
+	min-width: 0;
+}

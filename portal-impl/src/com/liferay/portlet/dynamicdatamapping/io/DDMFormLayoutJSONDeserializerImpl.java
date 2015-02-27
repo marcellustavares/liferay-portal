@@ -85,6 +85,7 @@ public class DDMFormLayoutJSONDeserializerImpl
 			getDDMFormLayoutColumns(jsonObject.getJSONArray("columns"));
 
 		ddmFormLayoutRow.setDDMFormLayoutColumns(ddmFormLayoutColumns);
+		ddmFormLayoutRow.setType(jsonObject.getString("type"));
 
 		return ddmFormLayoutRow;
 	}

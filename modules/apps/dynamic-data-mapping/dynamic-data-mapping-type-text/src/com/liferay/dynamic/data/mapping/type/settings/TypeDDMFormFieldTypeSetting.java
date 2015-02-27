@@ -16,11 +16,9 @@ package com.liferay.dynamic.data.mapping.type.settings;
 
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEditor;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author Marcellus Tavares
@@ -37,8 +35,8 @@ public class TypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 			}
 
 			@Override
-			public Map<String, String> getOptions() {
-				Map<String, String> options = new LinkedHashMap<>();
+			public JSONObject getOptions() {
+				JSONObject options = JSONFactoryUtil.createJSONObject();
 
 				options.put("label", "my-field-is");
 				options.put("radioLabels", createRadioLabels());
@@ -46,13 +44,13 @@ public class TypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 				return options;
 			}
 
-			protected String createRadioLabels() {
+			protected JSONArray createRadioLabels() {
 				JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 				jsonArray.put("Singleline");
 				jsonArray.put("Multiline");
 
-				return jsonArray.toString();
+				return jsonArray;
 			}
 
 		};

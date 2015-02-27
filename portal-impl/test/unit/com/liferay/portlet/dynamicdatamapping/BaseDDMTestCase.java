@@ -198,11 +198,12 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 	}
 
 	protected DDMFormLayoutRow createDDMFormLayoutRow(
-		List<DDMFormLayoutColumn> ddmFormLayoutColumns) {
+		String type, List<DDMFormLayoutColumn> ddmFormLayoutColumns) {
 
 		DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
 
 		ddmFormLayoutRow.setDDMFormLayoutColumns(ddmFormLayoutColumns);
+		ddmFormLayoutRow.setType(type);
 
 		return ddmFormLayoutRow;
 	}
@@ -500,7 +501,7 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 	}
 
 	protected void setUpLanguageUtil() {
-		whenLanguageGet(LocaleUtil.BRAZIL, "no", "Não");
+		whenLanguageGet(LocaleUtil.BRAZIL, "no", "N��o");
 		whenLanguageGet(LocaleUtil.BRAZIL, "yes", "Sim");
 		whenLanguageGet(LocaleUtil.SPAIN, "latitude", "Latitud");
 		whenLanguageGet(LocaleUtil.SPAIN, "longitude", "Longitud");

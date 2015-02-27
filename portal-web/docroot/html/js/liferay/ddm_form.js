@@ -29,6 +29,45 @@ AUI.add(
 			return node && (node._node || node.nodeType);
 		};
 
+		 var DDMFormUtil = {
+			extractInstanceId: function(fieldNode) {
+				var instance = this;
+
+				var fieldInstanceId = fieldNode.getData('fieldNamespace');
+
+				return fieldInstanceId.replace(INSTANCE_ID_PREFIX, '');
+			},
+
+			getFieldInfo: function(tree, key, value) {
+				var queue = new A.Queue(tree);
+
+				var addToQueue = function(item) {
+					if (AArray.indexOf(queue._q, item) === -1) {
+						queue.add(item);
+					}
+				};
+
+				var fieldInfo = {};
+
+				while (queue.size() > 0) {
+					var next = queue.next();
+
+					if (next[key] === value) {
+						fieldInfo = next;
+					}
+					else {
+						var children = next.fields || next.nestedFields || next.fieldValues || next.nestedFieldValues;
+
+						if (children) {
+							AArray.each(children, addToQueue);
+						}
+					}
+				}
+
+				return fieldInfo;
+			}
+		};
+
 		var DDMPortletSupport = function() {};
 
 		DDMPortletSupport.ATTRS = {
@@ -71,43 +110,6 @@ AUI.add(
 		};
 
 		FieldsSupport.prototype = {
-			extractInstanceId: function(fieldNode) {
-				var instance = this;
-
-				var fieldInstanceId = fieldNode.getData('fieldNamespace');
-
-				return fieldInstanceId.replace(INSTANCE_ID_PREFIX, '');
-			},
-
-			getFieldInfo: function(tree, key, value) {
-				var queue = new A.Queue(tree);
-
-				var addToQueue = function(item) {
-					if (AArray.indexOf(queue._q, item) === -1) {
-						queue.add(item);
-					}
-				};
-
-				var fieldInfo = {};
-
-				while (queue.size() > 0) {
-					var next = queue.next();
-
-					if (next[key] === value) {
-						fieldInfo = next;
-					}
-					else {
-						var children = next.fields || next.nestedFields || next.fieldValues || next.nestedFieldValues;
-
-						if (children) {
-							AArray.each(children, addToQueue);
-						}
-					}
-				}
-
-				return fieldInfo;
-			},
-
 			getFieldNodes: function() {
 				var instance = this;
 
@@ -117,13 +119,13 @@ AUI.add(
 			_getField: function(fieldNode) {
 				var instance = this;
 
-				var fieldInstanceId = instance.extractInstanceId(fieldNode);
+				var fieldInstanceId = DDMFormUtil.extractInstanceId(fieldNode);
 
 				var fieldName = fieldNode.getData('fieldName');
 
 				var definition = instance.get('definition');
 
-				var fieldDefinition = instance.getFieldInfo(definition, 'name', fieldName);
+				var fieldDefinition = DDMFormUtil.getFieldInfo(definition, 'name', fieldName);
 
 				var FieldClass = getFieldClass(fieldDefinition.type);
 
@@ -346,7 +348,7 @@ AUI.add(
 						var values = instance.get('values');
 						var instanceId = instance.get('instanceId');
 
-						var fieldValue = instance.getFieldInfo(values, 'instanceId', instanceId);
+						var fieldValue = DDMFormUtil.getFieldInfo(values, 'instanceId', instanceId);
 
 						var localizationMap = {};
 
@@ -364,7 +366,7 @@ AUI.add(
 
 						var name = instance.get('name');
 
-						return instance.getFieldInfo(definition, 'name', name);
+						return DDMFormUtil.getFieldInfo(definition, 'name', name);
 					},
 
 					getInputName: function() {
@@ -1449,7 +1451,7 @@ AUI.add(
 							function(item, index) {
 								oldIndex = index;
 
-								return item.get('instanceId') === instance.extractInstanceId(node);
+								return item.get('instanceId') === DDMFormUtil.extractInstanceId(node);
 							}
 						);
 
@@ -1595,7 +1597,9 @@ AUI.add(
 			}
 		);
 
-		Liferay.DDM.Form = Form;
+		Liferay.namespace('DDM').Form = Form;
+
+		Liferay.namespace('DDM.Form').Util = DDMFormUtil;
 	},
 	'',
 	{

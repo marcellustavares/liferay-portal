@@ -48,12 +48,21 @@ public class DDMFormLayoutRow {
 		return _ddmFormLayoutColumns;
 	}
 
+	public String getType() {
+		return _type;
+	}
+
 	public void setDDMFormLayoutColumns(
 		List<DDMFormLayoutColumn> ddmFormLayoutColumns) {
 
 		_ddmFormLayoutColumns = ddmFormLayoutColumns;
 	}
 
+	public void setType(String type) {
+		_type = type;
+	}
+
 	private List<DDMFormLayoutColumn> _ddmFormLayoutColumns = new ArrayList<>();
+	private String _type;
 
 }

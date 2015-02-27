@@ -1,0 +1,226 @@
+{
+    "defaultLanguageId": "en_US",
+    "availableLanguageIds": ["en_US"],
+    "fields": [
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text1",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text2",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text3",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text4",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text5",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text6",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text7",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text8",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text9",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        },
+        {
+            "localizable": false,
+            "label": {
+                "en_US": "Text"
+            },
+            "type": "text",
+            "fieldNamespace": "",
+            "tip": {
+                "en_US": ""
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "indexType": "keyword",
+            "dataType": "string",
+            "readOnly": false,
+            "showLabel": true,
+            "name": "text10",
+            "repeatable": false,
+            "required": false,
+            "multiple": false
+        }
+    ]
+}

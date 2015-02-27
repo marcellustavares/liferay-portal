@@ -14,11 +14,10 @@
 
 package com.liferay.dynamic.data.mapping.type.settings;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEditor;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Marcellus Tavares
@@ -34,11 +33,13 @@ public class HelpDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 				return "Text";
 			}
 
-			@Override
-			public Map<String, String> getOptions() {
-				return Collections.emptyMap();
-			}
+			public JSONObject getOptions() {
+				JSONObject options = JSONFactoryUtil.createJSONObject();
 
+				options.put("label", "help-text");
+
+				return options;
+			}
 		};
 	}
 

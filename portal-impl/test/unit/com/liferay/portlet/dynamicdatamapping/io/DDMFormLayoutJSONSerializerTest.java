@@ -49,14 +49,16 @@ public class DDMFormLayoutJSONSerializerTest extends BaseDDMTestCase {
 	protected DDMFormLayout createDDMFormLayout() {
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
+		String type = "LayoutRow";
+
 		ddmFormLayout.addDDMFormLayoutRow(
 			createDDMFormLayoutRow(
-				createDDMFormLayoutColumns("text1", "text2")));
+				type, createDDMFormLayoutColumns("text1", "text2")));
 		ddmFormLayout.addDDMFormLayoutRow(
 			createDDMFormLayoutRow(
-				createDDMFormLayoutColumns("text3", "text4", "text5")));
+				type, createDDMFormLayoutColumns("text3", "text4", "text5")));
 		ddmFormLayout.addDDMFormLayoutRow(
-			createDDMFormLayoutRow(createDDMFormLayoutColumns("text6")));
+			createDDMFormLayoutRow(type, createDDMFormLayoutColumns("text6")));
 
 		return ddmFormLayout;
 	}
