@@ -1,0 +1,82 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form checkbox field.
+ *
+ * @param fieldLabel
+ * @param fieldName
+ * @param fieldNameSuffix
+ * @param fieldQualifiedName
+ * @param fieldValue
+ */
+{template .checkbox}
+	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}">
+		<input class="field form-control" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}" type="checkbox" {if $fieldValue == 'true'}checked{/if}>
+
+		<label class="control-fieldLabel" for="{$fieldQualifiedName}">
+			{$fieldLabel}
+		</label>
+	</div>
+{/template}
+
+/**
+ * Prints the DDM form radio field.
+ *
+ * @param fieldChoicesIds
+ * @param fieldChoicesLabels
+ * @param fieldChoicesValues
+ * @param fieldLabel
+ * @param fieldName
+ * @param fieldNameSuffix
+ * @param fieldQualifiedName
+ * @param fieldValue
+ * @param numberOfFieldChoices
+ */
+{template .radio}
+	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}">
+		<span class="control-fieldLabel">
+			{$fieldLabel}
+		</span>
+
+		{for $currentIndex in range($numberOfFieldChoices)}
+			<div class="radio">
+				<input class="field form-control" id="{$fieldChoicesIds[$currentIndex]}" name="{$fieldQualifiedName}" type="radio"
+					value="{$fieldChoicesValues[$currentIndex]}" {if $fieldValue == '["' + $fieldChoicesValues[$currentIndex] + '"]'}checked{/if}>
+	
+				<label class="control-fieldLabel" for="{$fieldChoicesIds[$currentIndex]}">
+					{$fieldChoicesLabels[$currentIndex]}
+				</label>
+			</div>
+		{/for}
+	</div>
+{/template}
+
+/**
+ * Prints the DDM form select field.
+ *
+ * @param fieldChoicesLabels
+ * @param fieldChoicesValues
+ * @param fieldLabel
+ * @param fieldName
+ * @param fieldNameSuffix
+ * @param fieldQualifiedName
+ * @param fieldValue
+ * @param numberOfFieldChoices
+ */
+{template .select}
+	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}" data-repeatable="false">
+		<div class="form-group input-select-wrapper">
+			<label class="control-fieldLabel" for="{$fieldQualifiedName}">
+				{$fieldLabel}
+			</label>
+	
+			<select class="form-control" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}">
+				{for $currentIndex in range($numberOfFieldChoices)}
+					<option value="{$fieldChoicesValues[$currentIndex]}" {if $fieldValue == '["' + $fieldChoicesValues[$currentIndex] + '"]'}selected{/if}>
+						{$fieldChoicesLabels[$currentIndex]}
+					</option>
+				{/for}
+			</select>
+		</div>
+	</div>
+{/template}
