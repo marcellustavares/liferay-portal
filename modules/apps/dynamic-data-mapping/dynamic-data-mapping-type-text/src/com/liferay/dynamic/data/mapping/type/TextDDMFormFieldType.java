@@ -40,6 +40,10 @@ public class TextDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
 	public List<DDMFormFieldTypeSetting> getAdvancedSettings() {
+		List<DDMFormFieldTypeSetting> basicSettings = new ArrayList<>();
+
+		basicSettings.add(new NameDDMFormFieldTypeSetting());
+		
 		return Collections.emptyList();
 	}
 
@@ -47,7 +51,6 @@ public class TextDDMFormFieldType implements DDMFormFieldType {
 	public List<DDMFormFieldTypeSetting> getBasicSettings() {
 		List<DDMFormFieldTypeSetting> basicSettings = new ArrayList<>();
 
-		basicSettings.add(new NameDDMFormFieldTypeSetting());
 		basicSettings.add(new HelpDDMFormFieldTypeSetting());
 		basicSettings.add(new TypeDDMFormFieldTypeSetting());
 		basicSettings.add(new RequiredDDMFormFieldTypeSetting());

@@ -36,9 +36,9 @@ import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
  */
 @Component(
 	property = {
-		"osgi.http.whiteboard.resource.pattern=/js/*",
+		"osgi.http.whiteboard.resource.pattern=/ddm/js/*",
 		"osgi.http.whiteboard.resource.prefix=/META-INF/resources",
-		"osgi.http.whiteboard.servlet.pattern=/js/*"
+		"osgi.http.whiteboard.servlet.pattern=/ddm/js/*"
 	},
 	immediate = true, service = Servlet.class
 )

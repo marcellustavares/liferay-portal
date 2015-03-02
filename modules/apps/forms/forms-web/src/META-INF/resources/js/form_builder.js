@@ -26,6 +26,16 @@ AUI.add(
 				NAME: 'liferay-forms-form-builder',
 
 				prototype: {
+					_afterFieldSettingsModalSave: function(event) {
+						var instance = this;
+
+						var field = event.field;
+
+						FormBuilder.superclass._afterFieldSettingsModalSave.apply(instance, arguments);
+
+						field.renderTemplate();
+					},
+
 					_setFieldTypes: function(val) {
 						var instance = this;
 
@@ -67,7 +77,14 @@ AUI.add(
 					getFieldClass: function(advancedSettings, basicSettings) {
 						var instance = this;
 
-						var attributes = {};
+						var attributes = {
+							fieldValue: {
+
+							},
+
+							fieldQualifiedName: {
+							}
+						};
 
 						AArray.each(
 							advancedSettings.concat(basicSettings),

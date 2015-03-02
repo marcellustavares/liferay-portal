@@ -3,7 +3,7 @@
 		{
 			groups: {
 				fields: {
-					base: '/o/com.liferay.dynamic.data.mapping.type.text/js/',
+					base: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/js/',
 					modules: {
 						'liferay-text-field': {
 							path: 'text.soy.js',
@@ -12,7 +12,7 @@
 							]
 						}
 					},
-					root: '/o/com.liferay.dynamic.data.mapping.type.text/js/'
+					root: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/js/'
 				},
 				forms: {
 					base: '/o/comliferayformsweb/js/',

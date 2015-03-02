@@ -10,16 +10,6 @@ AUI.add(
 				NAME: 'liferay-forms-definition-serializer',
 
 				prototype: {
-					getFieldSettings: function(field) {
-						var instance = this;
-
-						var advancedSettings = field._advancedSettings;
-
-						var basicSettings = field._settings;
-
-						return advancedSettings.concat(basicSettings);
-					},
-
 					serialize: function() {
 						var instance = this;
 
@@ -61,7 +51,7 @@ AUI.add(
 						var config = {};
 
 						AArray.each(
-							instance.getFieldSettings(field),
+							field.getSettings(),
 							function(item, index) {
 								config[item.attrName] = item.editor.get('originalValue');
 							}

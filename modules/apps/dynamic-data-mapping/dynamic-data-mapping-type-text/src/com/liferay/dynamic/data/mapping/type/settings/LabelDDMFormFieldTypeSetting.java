@@ -22,7 +22,7 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEd
 /**
  * @author Marcellus Tavares
  */
-public class NameDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
+public class LabelDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public DDMFormFieldTypeSettingEditor getDDMFormFieldTypeSettingEditor() {
@@ -37,8 +37,7 @@ public class NameDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 			public JSONObject getOptions() {
 				JSONObject options = JSONFactoryUtil.createJSONObject();
 
-				options.put("required", Boolean.TRUE);
-				options.put("label", "name");
+				options.put("label", "label");
 
 				return options;
 			}
@@ -48,7 +47,7 @@ public class NameDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public String getName() {
-		return "fieldName";
+		return "fieldLabel";
 	}
 
 }

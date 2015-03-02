@@ -117,16 +117,3 @@ PortletURL portletURL = formsRequestHelper.getViewPortletURL(renderResponse, gro
 		<liferay-ui:search-iterator />
 	</liferay-ui:search-container>
 </aui:form>
-
-<aui:script use="liferay-text-field">
-var makrup = ddm.text({
-	dir: 'something',
-	fieldLabel: 'something',
-	fieldName: 'something',
-	fieldNameSuffix: 'something',
-	fieldValue: 'something',
-	fieldQualifiedName: 'something'
-});
-
-console.log(makrup);
-</aui:script>
