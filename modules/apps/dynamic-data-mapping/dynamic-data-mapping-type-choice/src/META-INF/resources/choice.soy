@@ -53,6 +53,7 @@
 /**
  * Prints the DDM form select field.
  *
+ * @param dir
  * @param fieldChoicesLabels
  * @param fieldChoicesStatus
  * @param fieldChoicesValues
@@ -68,9 +69,9 @@
 				{$fieldLabel}
 			</label>
 	
-			<select class="form-control" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}">
+			<select class="form-control" dir="{$dir}" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}">
 				{for $currentIndex in range(length($fieldChoicesValues))}
-					<option value="{$fieldChoicesValues[$currentIndex]}" {$fieldChoicesStatus[$currentIndex]}>
+					<option dir="{$dir}" value="{$fieldChoicesValues[$currentIndex]}" {$fieldChoicesStatus[$currentIndex]}>
 						{$fieldChoicesLabels[$currentIndex]}
 					</option>
 				{/for}
