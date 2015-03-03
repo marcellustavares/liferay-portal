@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
@@ -184,6 +185,8 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		Template template, DDMFormField ddmFormField, Locale locale) {
 
 		populateRadioAndSelectCommonContext(template, ddmFormField, locale);
+
+		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
 	}
 
 	protected String removeJSONArrayFormat(String fieldValue) {
