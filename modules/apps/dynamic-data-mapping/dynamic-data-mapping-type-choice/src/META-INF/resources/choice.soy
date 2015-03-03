@@ -10,10 +10,9 @@
  * @param fieldStatus
  */
 {template .checkbox}
-	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}">
-		<input class="field form-control" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}" type="checkbox" {$fieldStatus}>
-
-		<label class="control-fieldLabel" for="{$fieldQualifiedName}">
+	<div class="form-group field-wrapper" data-repeatable="false" data-fieldnamespace="{$fieldNameSuffix}" data-fieldname="{$fieldName}">
+		<input id="{$fieldQualifiedName}" class="field" type="checkbox" name="{$fieldQualifiedName}" {$fieldStatus}>
+		<label for="{$fieldQualifiedName}">
 			{$fieldLabel}
 		</label>
 	</div>
@@ -32,17 +31,16 @@
  * @param fieldQualifiedName
  */
 {template .radio}
-	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}">
-		<span class="control-fieldLabel">
+	<div class="form-group field-wrapper" data-repeatable="false" data-fieldnamespace="{$fieldNameSuffix}" data-fieldname="{$fieldName}">
+		<span class="control-label">
 			{$fieldLabel}
 		</span>
 
 		{for $currentIndex in range(length($fieldChoicesValues))}
 			<div class="radio">
-				<input class="field form-control" id="{$fieldChoicesIds[$currentIndex]}" name="{$fieldQualifiedName}" type="radio"
-					value="{$fieldChoicesValues[$currentIndex]}" {$fieldChoicesStatus[$currentIndex]}>
-	
-				<label class="control-fieldLabel" for="{$fieldChoicesIds[$currentIndex]}">
+				<label for="{$fieldChoicesIds[$currentIndex]}">
+					<input id="{$fieldChoicesIds[$currentIndex]}" class="field" type="radio" value="{$fieldChoicesValues[$currentIndex]}"
+						name="{$fieldQualifiedName}" {$fieldChoicesStatus[$currentIndex]}>
 					{$fieldChoicesLabels[$currentIndex]}
 				</label>
 			</div>
@@ -63,13 +61,13 @@
  * @param fieldQualifiedName
  */
 {template .select}
-	<div class="form-group field-wrapper" data-fieldname="{$fieldName}" data-fieldnamespace="{$fieldNameSuffix}" data-repeatable="false">
+	<div class="form-group field-wrapper" data-repeatable="false" data-fieldnamespace="{$fieldNameSuffix}" data-fieldname="{$fieldName}">
 		<div class="form-group input-select-wrapper">
-			<label class="control-fieldLabel" for="{$fieldQualifiedName}">
+			<label class="control-label" for="{$fieldQualifiedName}">
 				{$fieldLabel}
 			</label>
 	
-			<select class="form-control" dir="{$dir}" id="{$fieldQualifiedName}" name="{$fieldQualifiedName}">
+			<select id="{$fieldQualifiedName}" class="form-control" dir="{$dir}" name="{$fieldQualifiedName}">
 				{for $currentIndex in range(length($fieldChoicesValues))}
 					<option dir="{$dir}" value="{$fieldChoicesValues[$currentIndex]}" {$fieldChoicesStatus[$currentIndex]}>
 						{$fieldChoicesLabels[$currentIndex]}
