@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -57,41 +59,78 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		setTemplatesNamespaces();
 	}
 
+	protected String getCheckboxFieldStatus(String predefinedValueString) {
+		String fieldStatus = StringPool.BLANK;
+
+		if (predefinedValueString.equals("true")) {
+			fieldStatus = "checked";
+		}
+
+		return fieldStatus;
+	}
+
+	protected String getRadioAndSelectFieldStatus(
+		String predefinedValueString, String optionValue,
+		String ddmFormFieldType) {
+
+		String fieldStatus = StringPool.BLANK;
+
+		String predefinedValueStringWithoutFormat = removeJSONArrayFormat(
+			predefinedValueString);
+
+		if (predefinedValueStringWithoutFormat.equals(optionValue)) {
+			if (ddmFormFieldType.equals("radio")) {
+				fieldStatus = "checked";
+			}
+			else if (ddmFormFieldType.equals("select")) {
+				fieldStatus = "selected";
+			}
+		}
+
+		return fieldStatus;
+	}
+
 	protected void populateRadioAndSelectCommonContext(
-		Template template, DDMFormField ddmFormField, Locale locale,
-		String fieldQualifiedName) {
+		Template template, DDMFormField ddmFormField, Locale locale) {
 
 		List<String> fieldChoicesLabels = new ArrayList<>();
+		List<String> fieldChoicesStatus = new ArrayList<>();
 		List<String> fieldChoicesValues = new ArrayList<>();
-		int numberOfFieldChoices = 0;
 
 		DDMFormFieldOptions ddmFormFieldOptions =
 			ddmFormField.getDDMFormFieldOptions();
+
+		String predefinedValueString =
+			ddmFormField.getPredefinedValue().getString(locale);
+
+		String ddmFormFieldType = ddmFormField.getType();
 
 		for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
 			LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
 				optionValue);
 
 			fieldChoicesLabels.add(optionLabel.getString(locale));
+			fieldChoicesStatus.add(
+				getRadioAndSelectFieldStatus(
+					predefinedValueString, optionValue, ddmFormFieldType));
 			fieldChoicesValues.add(optionValue);
-
-			numberOfFieldChoices++;
 		}
 
 		template.put("fieldChoicesLabels", fieldChoicesLabels);
+		template.put("fieldChoicesStatus", fieldChoicesStatus);
 		template.put("fieldChoicesValues", fieldChoicesValues);
-		template.put("numberOfFieldChoices", numberOfFieldChoices);
 	}
 
 	protected void populateRadioContext(
 		Template template, DDMFormField ddmFormField, Locale locale,
 		String fieldQualifiedName) {
 
-		populateRadioAndSelectCommonContext(
-			template, ddmFormField, locale, fieldQualifiedName);
+		populateRadioAndSelectCommonContext(template, ddmFormField, locale);
 
 		List<String> fieldChoicesIds = new ArrayList<>();
-		int numberOfFieldChoices = (int) template.get("numberOfFieldChoices");
+
+		int numberOfFieldChoices =
+			ddmFormField.getDDMFormFieldOptions().getOptionsValues().size();
 
 		for (int i = 0; i < numberOfFieldChoices; i++) {
 			fieldChoicesIds.add(fieldQualifiedName + StringPool.UNDERLINE + i);
@@ -104,6 +143,8 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
+		LocalizedValue label = ddmFormField.getLabel();
+
 		String fieldName = ddmFormField.getName();
 
 		String instanceId = StringUtil.randomString();
@@ -113,23 +154,25 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		String fieldQualifiedName = getFieldQualifiedName(
 			fieldName, instanceId);
 
-		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
-
-		LocalizedValue label = ddmFormField.getLabel();
-
 		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
+		template.put("fieldLabel", label.getString(locale));
 		template.put("fieldName", fieldName);
 		template.put("fieldNameSuffix", fieldNameSuffix);
 		template.put("fieldQualifiedName", fieldQualifiedName);
-		template.put("fieldValue", predefinedValue.getString(locale));
-		template.put("fieldLabel", label.getString(locale));
 
 		String ddmFormFieldType = ddmFormField.getType();
 
-		if (ddmFormFieldType.equals("select")) {
-			populateSelectContext(template, ddmFormField, locale,
-				fieldQualifiedName);
+		if (ddmFormFieldType.equals("checkbox")) {
+			String predefinedValueString =
+				ddmFormField.getPredefinedValue().getString(locale);
+
+			String fieldStatus = getCheckboxFieldStatus(predefinedValueString);
+
+			template.put("fieldStatus", fieldStatus);
+		}
+		else if (ddmFormFieldType.equals("select")) {
+			populateSelectContext(template, ddmFormField, locale);
 		}
 		else if (ddmFormFieldType.equals("radio")) {
 			populateRadioContext(template, ddmFormField, locale,
@@ -138,11 +181,18 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	}
 
 	protected void populateSelectContext(
-		Template template, DDMFormField ddmFormField, Locale locale,
-		String fieldQualifiedName) {
+		Template template, DDMFormField ddmFormField, Locale locale) {
 
-		populateRadioAndSelectCommonContext(
-			template, ddmFormField, locale, fieldQualifiedName);
+		populateRadioAndSelectCommonContext(template, ddmFormField, locale);
+	}
+
+	protected String removeJSONArrayFormat(String fieldValue) {
+		try {
+			return fieldValue.substring(2, fieldValue.length() - 2);
+		} catch (Exception e) {
+			_log.error(e, e);
+			return StringPool.BLANK;
+		}
 	}
 
 	protected void setTemplatesNamespaces() {
@@ -152,5 +202,8 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		this.templatesNamespaces.put("radio", "ddm.radio");
 		this.templatesNamespaces.put("select", "ddm.select");
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ChoiceDDMFormFieldRenderer.class);
 
 }
