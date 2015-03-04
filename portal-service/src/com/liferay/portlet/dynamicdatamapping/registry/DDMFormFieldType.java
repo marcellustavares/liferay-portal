@@ -22,12 +22,12 @@ import java.util.Locale;
  */
 public interface DDMFormFieldType {
 
-	public List<DDMFormFieldTypeSetting> getAdvancedSettings();
+	public List<DDMFormFieldTypeSetting> getRequiredSettings();
 
-	public List<DDMFormFieldTypeSetting> getBasicSettings();
-	
+	public List<DDMFormFieldTypeSetting> getOptionalSettings();
+
 	public DDMFormFieldRenderer getDDMFormFieldRenderer();
-	
+
 	public DDMFormFieldValueAccessor<?> getDDMFormFieldValueAccessor(
 		Locale locale);
 

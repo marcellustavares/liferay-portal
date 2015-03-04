@@ -14,17 +14,16 @@
 
 package com.liferay.dynamic.data.mapping.type.settings;
 
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEditor;
 
 /**
  * @author Marcellus Tavares
  */
-public class RequiredDDMFormFieldTypeSetting
-	implements DDMFormFieldTypeSetting {
+public class DisplayStyleDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public DDMFormFieldTypeSettingEditor getDDMFormFieldTypeSettingEditor() {
@@ -32,16 +31,26 @@ public class RequiredDDMFormFieldTypeSetting
 
 			@Override
 			public String getEditorType() {
-				return "Boolean";
+				return "RadioGroup";
 			}
 
 			@Override
 			public JSONObject getOptions() {
 				JSONObject options = JSONFactoryUtil.createJSONObject();
 
-				options.put("label", "required");
-				
+				options.put("label", "display-style");
+				options.put("radioLabels", createRadioLabels());
+
 				return options;
+			}
+
+			protected JSONArray createRadioLabels() {
+				JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+				jsonArray.put("Singleline");
+				jsonArray.put("Multiline");
+
+				return jsonArray;
 			}
 
 		};
@@ -49,7 +58,22 @@ public class RequiredDDMFormFieldTypeSetting
 
 	@Override
 	public String getName() {
-		return "required";
+		return "displayStyle";
+	}
+
+	@Override
+	public boolean isLocalizable() {
+		return false;
+	}
+
+	@Override
+	public boolean isAdvanced() {
+		return false;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return true;
 	}
 
 }

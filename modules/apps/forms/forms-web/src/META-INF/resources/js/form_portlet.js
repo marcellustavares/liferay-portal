@@ -78,8 +78,6 @@ AUI.add(
 					_onSubmitEditForm: function(event) {
 						var instance = this;
 
-						event.preventDefault();
-
 						var formBuilder = Liferay.component(instance.ns('FormBuilder'));
 
 						var layout = formBuilder.get('layout');

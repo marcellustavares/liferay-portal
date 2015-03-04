@@ -20,12 +20,12 @@ var defaultConfig = {
 	// list of files to exclude
 	exclude: [],
 
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'docroot/html/js/liferay/*.js': ['coverage'],
-      'docroot/html/portlet/*/js/*.js': ['coverage']
-    },
+	// preprocess matching files before serving them to the browser
+	// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+	preprocessors: {
+	  'docroot/html/js/liferay/*.js': ['coverage'],
+	  'docroot/html/portlet/*/js/*.js': ['coverage']
+	},
 	// test results reporter to use
 	// possible values: 'dots', 'progress'
 	// available reporters: https://npmjs.org/browse/keyword/karma-reporter
@@ -63,73 +63,73 @@ var portalProperties = basePath + '../portal-impl/src/portal.properties';
 var properties = require('./properties.js');
 
 properties.read(portalProperties, function(data) {
-    var props = data[0];
+	var props = data[0];
 
-    var bareboneFiles = props['javascript.barebone.files'].split(',');
+	var bareboneFiles = props['javascript.barebone.files'].split(',');
 
-    bareboneFiles.forEach(
-        function(file) {
-            defaultConfig.files.push(
-                {
-                    pattern: jsPath + file,
-                    included: true,
-                    served: true
-                }
-            );
+	bareboneFiles.forEach(
+		function(file) {
+			defaultConfig.files.push(
+				{
+					pattern: jsPath + file,
+					included: true,
+					served: true
+				}
+			);
 
-            if (file === 'liferay/modules.js') {
-                defaultConfig.files.push('test/js/mock_modules.js');
-            }
-        }
-    );
+			if (file === 'liferay/modules.js') {
+				defaultConfig.files.push('test/js/mock_modules.js');
+			}
+		}
+	);
 
-    defaultConfig.files = defaultConfig.files.concat(
-        [
-            'test/js/mock_available_languages.js',
-            'test/js/mock_language.js',
+	defaultConfig.files = defaultConfig.files.concat(
+		[
+			'test/js/mock_available_languages.js',
+			'test/js/mock_language.js',
 
-            {
-                pattern: jsPath + 'aui/**/*.css',
-                included: false,
-                served: true
-            },
+			{
+				pattern: jsPath + 'aui/**/*.css',
+				included: false,
+				served: true
+			},
 
-            {
-                pattern: jsPath + 'aui/**/*.js',
-                included: false,
-                served: true
-            },
+			{
+				pattern: jsPath + 'aui/**/*.js',
+				included: false,
+				served: true
+			},
 
-            {
-                pattern: jsPath + 'liferay/*.js',
-                included: false,
-                served: true,
-                watched: true
-            },
+			{
+				pattern: jsPath + 'liferay/*.js',
+				included: false,
+				served: true,
+				watched: true
+			},
 
-            {
-                pattern: 'docroot/html/portlet/**/js/*.js',
-                included: true,
-                served: true,
-                watched: true
-            },
+			{
+				pattern: 'docroot/html/portlet/**/js/*.js',
+				included: true,
+				served: true,
+				watched: true
+			},
 
-            {
-                pattern: 'test/js/*/assets/*',
-                included: false,
-                served: true
-            },
+			{
+				pattern: 'test/js/*/assets/*',
+				included: false,
+				served: true
+			},
 
-            {
-                pattern: 'test/js/*/*-test.js',
-                included: true,
-                served: true,
-                watched: true
-            }
-        ]
-    );
+			{
+				pattern: 'test/js/*/*-test.js',
+				included: true,
+				served: true,
+				watched: true
+			}
+		]
+	);
 
-    module.exports = function(config) {
-        config.set(defaultConfig);
-    };
+	module.exports = function(config) {
+		config.set(defaultConfig);
+	};
 });

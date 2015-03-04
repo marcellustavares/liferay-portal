@@ -15,7 +15,6 @@
 package com.liferay.portlet.dynamicdatamapping.model;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +36,8 @@ public class DDMFormField implements Serializable {
 		_name = ddmFormField._name;
 		_namespace = ddmFormField._namespace;
 		_predefinedValue = new LocalizedValue(ddmFormField._predefinedValue);
+		_properties = new LinkedHashMap<String, Object>(
+			ddmFormField._properties);
 		_readOnly = ddmFormField._readOnly;
 		_repeatable = ddmFormField._repeatable;
 		_required = ddmFormField._required;
@@ -228,6 +229,14 @@ public class DDMFormField implements Serializable {
 		_type = type;
 	}
 
+	public void setProperty(String name, Object value) {
+		_properties.put(name, value);
+	}
+
+	public Object getProperty(String name) {
+		return _properties.get(name);
+	}
+
 	private String _dataType;
 	private DDMForm _ddmForm;
 	private DDMFormFieldOptions _ddmFormFieldOptions =
@@ -240,6 +249,8 @@ public class DDMFormField implements Serializable {
 	private String _namespace;
 	private List<DDMFormField> _nestedDDMFormFields = new ArrayList<>();
 	private LocalizedValue _predefinedValue = new LocalizedValue();
+	private Map<String, Object> _properties =
+		new LinkedHashMap<String, Object>();
 	private boolean _readOnly;
 	private boolean _repeatable;
 	private boolean _required;

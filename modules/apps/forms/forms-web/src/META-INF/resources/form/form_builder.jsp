@@ -17,14 +17,21 @@
 <%@ include file="../init.jsp" %>
 
 <%
-DDMStructure ddmStructure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDLRecordSet ddlRecordSet = formsRequestHelper.getDDLRecordSet();
 
-String script = ParamUtil.getString(request, "script");
+DDMStructure ddmStructure = null;
 
-DDMFormLayout ddmFormLayout = formsRequestHelper.getDDMFormLayout(ddmStructure, script);
+if (ddlRecordSet != null) {
+	ddmStructure = ddlRecordSet.getDDMStructure();
+}
+
+DDMFormLayout ddmFormLayout = formsRequestHelper.getDDMFormLayout(ddmStructure);
 %>
 
 <div id="<portlet:namespace />formBuilder"></div>
+
+<aui:input name="definition" type="hidden" />
+<aui:input name="layout" type="hidden" />
 
 <aui:script use="liferay-forms-form-builder">
 Liferay.component(

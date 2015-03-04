@@ -19,7 +19,9 @@
 <%
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-DDMStructure structure = (DDMStructure)row.getObject();
+DDLRecordSet ddlRecordSet = (DDLRecordSet)row.getObject();
+		 
+DDMStructure structure = ddlRecordSet.getDDMStructure();
 %>
 
 <liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
@@ -93,11 +95,8 @@ DDMStructure structure = (DDMStructure)row.getObject();
 
 	<c:if test="<%= formsRequestHelper.canDeleteStructure(structure) %>">
 		<portlet:actionURL var="deleteURL">
-			<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_structure" />
-			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
-			<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
-			<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-			<portlet:param name="classPK" value="<%= String.valueOf(structure.getStructureId()) %>" />
+			<portlet:param name="<%= ActionRequest.ACTION_NAME %>" value="deleteForm" />
+			<portlet:param name="recordSetId" value="<%= String.valueOf(ddlRecordSet.getRecordSetId()) %>" />
 		</portlet:actionURL>
 
 		<liferay-ui:icon-delete url="<%= deleteURL %>" />

@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,13 +46,9 @@ public class DDMFormFieldTypesHelper {
 			DDMFormFieldType ddmFormFieldType =
 				DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(
 					ddmFormFieldTypeName);
+			
+			addSettings(ddmFormFieldType, ddmFormFieldTypeJSONObject);
 
-			ddmFormFieldTypeJSONObject.put(
-				"advancedSettings",
-				getSettings(ddmFormFieldType.getAdvancedSettings()));
-			ddmFormFieldTypeJSONObject.put(
-				"basicSettings",
-				getSettings(ddmFormFieldType.getBasicSettings()));
 			ddmFormFieldTypeJSONObject.put("icon", ddmFormFieldType.getIcon());
 			ddmFormFieldTypeJSONObject.put(
 				"label", ddmFormFieldType.getLabel());
@@ -63,12 +60,24 @@ public class DDMFormFieldTypesHelper {
 		return jsonArray;
 	}
 
-	private static JSONArray getSettings(
-		List<DDMFormFieldTypeSetting> settings) {
+	private static void addSettings(
+		DDMFormFieldType ddmFormFieldType,
+		JSONObject ddmFormFieldTypeJSONObject) {
 
-		JSONArray settingsJSONArray = JSONFactoryUtil.createJSONArray();
+		JSONArray advancedSettingsJSONArray = JSONFactoryUtil.createJSONArray();
+		JSONArray basicSettingsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		List<DDMFormFieldTypeSetting> settings =
+			new ArrayList<DDMFormFieldTypeSetting>(
+				ddmFormFieldType.getRequiredSettings());
+
+		settings.addAll(ddmFormFieldType.getOptionalSettings());
 
 		for (DDMFormFieldTypeSetting setting : settings) {
+			if (!setting.isVisible()) {
+				continue;
+			}
+
 			JSONObject settingJSONObject = JSONFactoryUtil.createJSONObject();
 
 			settingJSONObject.put("attrName", setting.getName());
@@ -84,10 +93,20 @@ public class DDMFormFieldTypesHelper {
 
 			settingJSONObject.put("editorType", editor.getEditorType());
 
-			settingsJSONArray.put(settingJSONObject);
+			settingJSONObject.put("localizable", setting.isLocalizable());
+			settingJSONObject.put("visible", setting.isVisible());
+
+			if (setting.isAdvanced()) {
+				advancedSettingsJSONArray.put(settingJSONObject);
+			}
+			else {
+				basicSettingsJSONArray.put(settingJSONObject);
+			}
 		}
 
-		return settingsJSONArray;
+		ddmFormFieldTypeJSONObject.put(
+			"advancedSettings", advancedSettingsJSONArray);
+		ddmFormFieldTypeJSONObject.put("basicSettings", basicSettingsJSONArray);
 	}
 
 }

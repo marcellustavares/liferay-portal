@@ -23,4 +23,10 @@ public interface DDMFormFieldTypeSetting {
 
 	public String getName();
 
+	public boolean isAdvanced();
+
+	public boolean isLocalizable();
+
+	public boolean isVisible();
+
 }

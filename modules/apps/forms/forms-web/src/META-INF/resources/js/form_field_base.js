@@ -83,7 +83,9 @@ AUI.add(
 					getTemplate: function() {
 						var instance = this;
 
-						var config = {};
+						var config = {
+							value: ''
+						};
 
 						AArray.each(
 							instance.getSettings(),
@@ -91,8 +93,6 @@ AUI.add(
 								config[item.attrName] = instance.get(item.attrName);
 							}
 						);
-
-						console.log(config, ddm.text(config));
 
 						return ddm.text(config);
 					},

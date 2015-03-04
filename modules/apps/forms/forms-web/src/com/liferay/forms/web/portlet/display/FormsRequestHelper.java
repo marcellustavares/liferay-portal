@@ -14,18 +14,9 @@
 
 package com.liferay.forms.web.portlet.display;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.portlet.PortletURL;
-import javax.portlet.RenderResponse;
-import javax.servlet.http.HttpServletRequest;
-
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -33,20 +24,26 @@ import com.liferay.portal.model.Company;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
+import com.liferay.portlet.dynamicdatalists.NoSuchRecordSetException;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSetConstants;
 import com.liferay.portlet.dynamicdatalists.search.RecordSetSearchTerms;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordSetServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
 import com.liferay.portlet.dynamicdatamapping.service.permission.DDMPermission;
 import com.liferay.portlet.dynamicdatamapping.service.permission.DDMStructurePermission;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
+
+import java.util.List;
+
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
 public class FormsRequestHelper extends BaseRequestHelper {
 
 	public FormsRequestHelper(HttpServletRequest request) {
@@ -77,9 +74,45 @@ public class FormsRequestHelper extends BaseRequestHelper {
 			ActionKeys.VIEW) && isShowManageTemplates();
 	}
 
+	public DDLRecordSet getDDLRecordSet() throws PortalException {
+		long recordSetId = ParamUtil.getLong(getRequest(), "recordSetId");
+
+		DDLRecordSet ddlRecordSet = null;
+
+		try {
+			ddlRecordSet = DDLRecordSetServiceUtil.getRecordSet(recordSetId);
+		}
+		catch (NoSuchRecordSetException nsrse) {}
+
+		return ddlRecordSet;
+	}
+
 	public DDMDisplay getDDMDisplay() {
 		return DDMDisplayRegistryUtil
 			.getDDMDisplay(PortletKeys.DYNAMIC_DATA_LISTS);
+	}
+
+	public DDMFormLayout getDDMFormLayout(DDMStructure ddmStructure)
+		throws PortalException {
+
+		DDMFormLayout ddmFormLayout = null;
+
+		String layout = ParamUtil.getString(getRequest(), "layout");
+
+		if (Validator.isNotNull(layout)) {
+			ddmFormLayout = DDMFormLayoutJSONDeserializerUtil.deserialize(
+				layout);
+		}
+		else {
+			if (ddmStructure != null) {
+				ddmFormLayout = ddmStructure.getDDMFormLayout();
+			}
+			else {
+				ddmFormLayout = new DDMFormLayout();
+			} 
+		}
+
+		return ddmFormLayout;
 	}
 
 	public PortletURL getDDMStructureRowURL(RenderResponse renderResponse,
@@ -95,6 +128,10 @@ public class FormsRequestHelper extends BaseRequestHelper {
 			String.valueOf(ddmStructure.getStructureId()));
 
 		return rowURL;
+	}
+
+	public String[] getFormCategoryNames() {
+		return _FORM_CATEGORY_NAMES;
 	}
 
 	public long getScopeClassNameId() {
@@ -151,6 +188,10 @@ public class FormsRequestHelper extends BaseRequestHelper {
 		return ParamUtil.getBoolean(getRequest(), "showAncestorScopes");
 	}
 
+	public boolean isShowManageTemplates() {
+		return ParamUtil.getBoolean(getRequest(), "showManageTemplates", true);
+	}
+
 	public void populateSearchContainer(
 			SearchContainer<DDLRecordSet> searchContainer)
 		throws PortalException {
@@ -200,35 +241,7 @@ public class FormsRequestHelper extends BaseRequestHelper {
 		searchContainer.setResults(results);
 	}
 
-	public boolean isShowManageTemplates() {
-		return ParamUtil.getBoolean(getRequest(), "showManageTemplates", true);
-	}
-	
-	public String[] getFormCategoryNames() {
-		return _FORM_CATEGORY_NAMES;
-	}
-	
-	public DDMFormLayout getDDMFormLayout(
-			DDMStructure ddmStructure, String script)
-		throws PortalException {
-
-		DDMFormLayout ddmFormLayout = null;
-
-		if (Validator.isNotNull(script)) {
-			if (ddmStructure != null) {
-				ddmFormLayout = ddmStructure.getDDMFormLayout();
-			}
-			else {
-				ddmFormLayout = new DDMFormLayout();
-			}
-		}
-		else {
-			ddmFormLayout = new DDMFormLayout();
-		}
-		
-		return ddmFormLayout;
-	}
-	
-	private static final String[] _FORM_CATEGORY_NAMES = { "basic_info", "form_builder" };
+	private static final String[] _FORM_CATEGORY_NAMES =
+		{ "basic_info", "form_builder" };
 
 }

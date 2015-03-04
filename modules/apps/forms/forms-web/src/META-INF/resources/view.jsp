@@ -14,7 +14,7 @@
  */
 --%>
 
-<%@page import="com.liferay.portlet.dynamicdatalists.search.RecordSetSearch"%>
+<%@ page import="com.liferay.portlet.dynamicdatalists.search.RecordSetSearch" %>
 <%@ page import="com.liferay.portlet.dynamicdatalists.service.permission.DDLRecordSetPermission" %>
 
 <%@ include file="init.jsp" %>

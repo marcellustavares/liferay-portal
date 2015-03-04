@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.type;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 
 import java.net.URL;
+
 import java.util.Dictionary;
 
 import javax.servlet.Servlet;
@@ -43,23 +44,23 @@ import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 	immediate = true, service = Servlet.class
 )
 public class TextDDMFormFieldJavaScriptPublisher extends HttpServlet {
-	
+
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		Dictionary<String, Object> properties = new HashMapDictionary<>();
 
 		Bundle bundle = bundleContext.getBundle();
-		
+
 		ServletContextHelper servletContextHelper =
 			new ServletContextHelper(bundle) {
-	
+
 				@Override
 				public URL getResource(String name) {
 					return super.getResource(name);
 				}
-	
+
 			};
-		
+
 		properties.put(
 			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME,
 			bundle.getSymbolicName());
@@ -67,17 +68,17 @@ public class TextDDMFormFieldJavaScriptPublisher extends HttpServlet {
 			HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH,
 			"/" + bundle.getSymbolicName());
 
-		_servletContextHelperServiceRegistration = 
+		_servletContextHelperServiceRegistration =
 			bundleContext.registerService(
 				ServletContextHelper.class, servletContextHelper, properties);
 	}
-	
+
 	@Deactivate
 	protected void deactivate() {
 		_servletContextHelperServiceRegistration.unregister();
 	}
-	
+
 	private ServiceRegistration<ServletContextHelper>
 		_servletContextHelperServiceRegistration;
-	
+
 }

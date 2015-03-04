@@ -43,6 +43,7 @@ long groupId = ParamUtil.getLong(request, "groupId", scopeGroupId);
 	</aui:nav>
 
 	<aui:nav-bar-search searchContainer="<%= searchContainer %>">
+
 		<%
 		request.setAttribute(WebKeys.SEARCH_CONTAINER, searchContainer);
 		%>

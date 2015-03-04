@@ -14,6 +14,14 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -24,13 +32,9 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 
 /**
  * @author Marcellus Tavares
@@ -88,41 +92,59 @@ public class DDMFormJSONDeserializerImpl implements DDMFormJSONDeserializer {
 
 		return availableLocales;
 	}
+	
+	protected LocalizedValue getDDMFormFieldSettingLocalizedValue(
+		DDMFormField ddmFormField, JSONObject jsonObject) {
+
+		LocalizedValue localizedValue = new LocalizedValue();
+
+		setDDMFormFieldLocalizedValue(jsonObject, localizedValue);
+		
+		return localizedValue;
+	}
 
 	protected DDMFormField getDDMFormField(JSONObject jsonObject) {
 		String name = jsonObject.getString("name");
 		String type = jsonObject.getString("type");
 
+		DDMFormFieldType ddmFormFieldType =
+			DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(type);
+
 		DDMFormField ddmFormField = new DDMFormField(name, type);
 
-		ddmFormField.setDataType(jsonObject.getString("dataType"));
-		ddmFormField.setIndexType(jsonObject.getString("indexType"));
-		ddmFormField.setLocalizable(jsonObject.getBoolean("localizable", true));
-		ddmFormField.setMultiple(jsonObject.getBoolean("multiple"));
-		ddmFormField.setNamespace(jsonObject.getString("fieldNamespace"));
-		ddmFormField.setReadOnly(jsonObject.getBoolean("readOnly"));
-		ddmFormField.setRepeatable(jsonObject.getBoolean("repeatable"));
-		ddmFormField.setRequired(jsonObject.getBoolean("required"));
-		ddmFormField.setShowLabel(jsonObject.getBoolean("showLabel", true));
+		for (DDMFormFieldTypeSetting setting :
+			ddmFormFieldType.getRequiredSettings()) {
 
-		setDDMFormFieldLocalizedValue(
-			jsonObject.getJSONObject("label"), ddmFormField.getLabel());
-		setDDMFormFieldLocalizedValue(
-			jsonObject.getJSONObject("predefinedValue"),
-			ddmFormField.getPredefinedValue());
-		setDDMFormFieldLocalizedValue(
-			jsonObject.getJSONObject("style"), ddmFormField.getStyle());
-		setDDMFormFieldLocalizedValue(
-			jsonObject.getJSONObject("tip"), ddmFormField.getTip());
+			if (setting.getName().equals("ddmFormFieldOptions")) {
+				JSONArray optionsJSONArray = jsonObject.getJSONArray("options");
 
-		if (type.equals("radio") || type.equals("select")) {
-			setDDMFormFieldOptions(
-				jsonObject.getJSONArray("options"), ddmFormField);
+				if (optionsJSONArray != null) {
+					DDMFormFieldOptions ddmFormFieldOptions =
+						getDDMFormFieldOptions(optionsJSONArray);
+					
+					ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
+				}
+			}
+			else {
+				Object value = getDDMFormFieldSettingValue(
+					ddmFormField, setting, jsonObject);
+
+				BeanPropertiesUtil.setProperty(
+					ddmFormField, setting.getName(), value);
+			}
 		}
-		else {
-			setNestedDDMFormField(
-				jsonObject.getJSONArray("nestedFields"), ddmFormField);
+
+		for (DDMFormFieldTypeSetting setting :
+			ddmFormFieldType.getOptionalSettings()) {
+
+			Object value = getDDMFormFieldSettingValue(
+				ddmFormField, setting, jsonObject);
+
+			ddmFormField.setProperty(setting.getName(), value);
 		}
+		
+		setNestedDDMFormField(
+			jsonObject.getJSONArray("nestedFields"), ddmFormField);
 
 		return ddmFormField;
 	}
@@ -155,6 +177,39 @@ public class DDMFormJSONDeserializerImpl implements DDMFormJSONDeserializer {
 		}
 
 		return ddmFormFields;
+	}
+
+	protected Object getDDMFormFieldSettingValue(
+		DDMFormField ddmFormField,
+		DDMFormFieldTypeSetting ddmFormFieldTypeSetting,
+		JSONObject settingsJSONObject) {
+
+		String settingName = ddmFormFieldTypeSetting.getName();
+
+		Class<?> settingType = BeanPropertiesUtil.getObjectType(
+			ddmFormField, settingName);
+
+		Object settingValue = null;
+
+		if (ddmFormFieldTypeSetting.isLocalizable()) {
+			settingValue = getDDMFormFieldSettingLocalizedValue(
+				ddmFormField, settingsJSONObject.getJSONObject(settingName));
+		}
+		else if (settingType == null) {
+			settingValue = settingsJSONObject.getString(settingName);
+		}
+		else {
+			if (settingType.equals(boolean.class) ||
+				settingType.equals(Boolean.class)) {
+
+				settingValue = settingsJSONObject.getBoolean(settingName);
+			}
+			else if (settingType.equals(String.class)) {
+				settingValue = settingsJSONObject.getString(settingName);
+			}
+		}
+
+		return settingValue;
 	}
 
 	protected void setDDMFormAvailableLocales(

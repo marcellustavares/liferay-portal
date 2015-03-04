@@ -16,7 +16,11 @@ AUI.add(
 						var layout = instance.get('layout');
 
 						return A.JSON.stringify(
-							instance.serializeRows(layout.get('rows'))
+							{
+								availableLanguageIds: ['en_US'],
+								defaultLanguageId: 'en_US',
+								fields: instance.serializeRows(layout.get('rows'))
+							}
 						);
 					},
 
@@ -57,7 +61,12 @@ AUI.add(
 							}
 						);
 
-						return config;
+						return A.merge(
+							config,
+							{
+								type: 'text'
+							}
+						);
 					},
 
 					serializeRow: function(row) {

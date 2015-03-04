@@ -14,6 +14,7 @@
 
 package com.liferay.forms.web.portlet;
 
+import com.liferay.forms.web.portlet.constants.FormsPortletKeys;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
@@ -52,6 +53,7 @@ import org.osgi.service.component.annotations.Component;
 		"javax.portlet.init-param.config-template=/configuration.jsp",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.name=" + FormsPortletKeys.FORMS,
 		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/default-portlet-preferences.xml",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"

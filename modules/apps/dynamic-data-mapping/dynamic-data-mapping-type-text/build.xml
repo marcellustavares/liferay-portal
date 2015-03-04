@@ -6,7 +6,7 @@
 
 	<property name="auto.deploy.dir" value="${liferay.home}/osgi/modules" />
 	<property name="soy.template.name" value="text.soy" />
-	
+
 	<target name="build-javascript-renderer">
 		<delete>
 			<fileset

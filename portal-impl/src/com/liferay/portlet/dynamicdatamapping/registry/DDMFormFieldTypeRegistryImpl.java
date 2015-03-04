@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.registry;
 
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderer;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceReference;
@@ -22,7 +21,6 @@ import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.type.settings;
+package com.liferay.portlet.dynamicdatamapping.registry;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -22,7 +22,7 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEd
 /**
  * @author Marcellus Tavares
  */
-public class HelpDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
+public class PredefinedValueDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public DDMFormFieldTypeSettingEditor getDDMFormFieldTypeSettingEditor() {
@@ -33,19 +33,36 @@ public class HelpDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 				return "Text";
 			}
 
+			@Override
 			public JSONObject getOptions() {
 				JSONObject options = JSONFactoryUtil.createJSONObject();
 
-				options.put("label", "help-text");
+				options.put("label", "predefined-value");
 
 				return options;
 			}
+
 		};
 	}
 
 	@Override
 	public String getName() {
-		return "help";
+		return "predefinedValue";
+	}
+
+	@Override
+	public boolean isLocalizable() {
+		return true;
+	}
+
+	@Override
+	public boolean isAdvanced() {
+		return true;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return true;
 	}
 
 }

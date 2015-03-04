@@ -12,18 +12,14 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.type.settings;
+package com.liferay.portlet.dynamicdatamapping.registry;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEditor;
 
 /**
  * @author Marcellus Tavares
  */
-public class TypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
+public class DataTypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public DDMFormFieldTypeSettingEditor getDDMFormFieldTypeSettingEditor() {
@@ -31,26 +27,12 @@ public class TypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 			@Override
 			public String getEditorType() {
-				return "RadioGroup";
+				return null;
 			}
 
 			@Override
 			public JSONObject getOptions() {
-				JSONObject options = JSONFactoryUtil.createJSONObject();
-
-				options.put("label", "my-field-is");
-				options.put("radioLabels", createRadioLabels());
-
-				return options;
-			}
-
-			protected JSONArray createRadioLabels() {
-				JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-				jsonArray.put("Singleline");
-				jsonArray.put("Multiline");
-
-				return jsonArray;
+				return null;
 			}
 
 		};
@@ -58,7 +40,22 @@ public class TypeDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
 
 	@Override
 	public String getName() {
-		return "type";
+		return "dataType";
+	}
+
+	@Override
+	public boolean isLocalizable() {
+		return false;
+	}
+
+	@Override
+	public boolean isAdvanced() {
+		return true;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return false;
 	}
 
 }

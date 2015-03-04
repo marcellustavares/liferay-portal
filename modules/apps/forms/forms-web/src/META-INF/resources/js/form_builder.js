@@ -65,6 +65,13 @@ AUI.add(
 					_setLayout: function(val) {
 						var instance = this;
 
+						val.rows = AArray.map(
+							val.rows,
+							function(item, index) {
+								return new A.LayoutRow(item);
+							}
+						);
+
 						if (!A.instanceOf(val, A.Layout)) {
 							val = new A.Layout(val);
 						}

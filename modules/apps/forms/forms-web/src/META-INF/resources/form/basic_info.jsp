@@ -16,14 +16,20 @@
 
 <%@ include file="../init.jsp" %>
 
+<%
+DDLRecordSet ddlRecordSet = formsRequestHelper.getDDLRecordSet();
+
+String name = BeanParamUtil.getString(ddlRecordSet, request, "name");
+
+String description = BeanParamUtil.getString(ddlRecordSet, request, "description");
+%>
+
 <aui:fieldset>
+	<liferay-ui:input-localized name="name" xml="<%= name %>" />
 
-	<aui:input label="name" name="name" type="text" />
-
-	<aui:input label="description" name="description" type="textarea" />
+	<liferay-ui:input-localized name="description" type="textarea" xml="<%= description %>" />
 
 	<aui:input label="show-progressbar" name="showProgressbar" type="checkbox" />
 
 	<aui:input label="add-confirmation-page" name="addConfirmationPage" type="checkbox" />
-
 </aui:fieldset>

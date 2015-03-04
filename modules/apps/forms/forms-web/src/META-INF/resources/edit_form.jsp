@@ -20,28 +20,24 @@
 String redirect = ParamUtil.getString(request, "redirect");
 boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
-String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace");
+DDLRecordSet ddlRecordSet = formsRequestHelper.getDDLRecordSet();
 
-DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDMStructure structure = null;
 
-DDLRecordSet ddlRecordSet = (DDLRecordSet)request.getAttribute(WebKeys.DYNAMIC_DATA_LISTS_RECORD_SET);
+if (ddlRecordSet != null) {
+	structure = ddlRecordSet.getDDMStructure();
+}
 
 long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId);
-
-String script = BeanParamUtil.getString(structure, request, "script");
 %>
 
 <portlet:actionURL var="editFormURL">
-	<portlet:param name="mvcPath" value="/edit_form.jsp" />
+	<portlet:param name="<%= ActionRequest.ACTION_NAME %>" value="editForm" />
 </portlet:actionURL>
 
 <aui:form action="<%= editFormURL %>" method="post" name="editForm">
-	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= (structure != null) ? Constants.UPDATE : Constants.ADD %>" />
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
-	<aui:input name="definition" type="hidden" />
-	<aui:input name="layout" type="hidden" />
-	<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
 
 	<%
 	boolean localizeTitle = true;
@@ -68,9 +64,9 @@ String script = BeanParamUtil.getString(structure, request, "script");
 
 	<liferay-util:buffer var="htmlBottom">
 		<aui:button-row cssClass="form-buttons">
-			<aui:button cssClass="hide forms-previous pull-left" icon="icon-circle-arrow-left" value="previous" />
+			<aui:button cssClass="forms-previous hide pull-left" icon="icon-circle-arrow-left" value="previous" />
 
-			<aui:button cssClass="hide forms-submit pull-right" disabled="<%= true %>" primary="<%= true %>" type="submit" />
+			<aui:button cssClass="forms-submit hide pull-right" disabled="<%= true %>" primary="<%= true %>" type="submit" />
 
 			<aui:button cssClass="forms-next pull-right" disabled="<%= true %>" icon="icon-circle-arrow-right" iconAlign="right" primary="<%= true %>" value="next" />
 
@@ -79,7 +75,7 @@ String script = BeanParamUtil.getString(structure, request, "script");
 	</liferay-util:buffer>
 
 	<liferay-ui:form-navigator
-		categoryNames="<%= new String[] {""} %>"
+		categoryNames='<%= new String[] {""} %>'
 		categorySections="<%= mainSections %>"
 		displayStyle="steps"
 		htmlBottom="<%= htmlBottom %>"

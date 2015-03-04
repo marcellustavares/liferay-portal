@@ -18,6 +18,12 @@ AUI.add(
 				NAME: 'liferay-forms-layout-serializer',
 
 				prototype: {
+					deserialize: function(layout) {
+						var instance = this;
+
+
+					},
+
 					getRowType: function(row) {
 						var instance = this;
 
@@ -76,7 +82,7 @@ AUI.add(
 						};
 
 						if (rowJSON.type !== 'PageBreakRow') {
-							rowJSON.cols = instance.serializeColumns(row.get('cols'));
+							rowJSON.columns = instance.serializeColumns(row.get('cols'));
 						}
 
 						return rowJSON;
