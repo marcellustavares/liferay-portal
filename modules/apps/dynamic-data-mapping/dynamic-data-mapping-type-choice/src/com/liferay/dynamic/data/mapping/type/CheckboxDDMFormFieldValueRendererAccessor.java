@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
@@ -22,7 +23,7 @@ import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
  * @author Renato Rego
  */
 public class CheckboxDDMFormFieldValueRendererAccessor
-	extends DDMFormFieldValueRendererAccessor<Boolean> {
+	extends DDMFormFieldValueRendererAccessor {
 
 	public CheckboxDDMFormFieldValueRendererAccessor(
 		DDMFormFieldValueAccessor<Boolean> ddmFormFieldValueAccessor) {
@@ -31,15 +32,18 @@ public class CheckboxDDMFormFieldValueRendererAccessor
 	}
 
 	@Override
-	public Boolean get(DDMFormFieldValue ddmFormFieldValue) {
-		Boolean value = _ddmFormFieldValueAccessor.get(ddmFormFieldValue);
+	public String get(DDMFormFieldValue ddmFormFieldValue) {
+		Boolean valueBoolean = _ddmFormFieldValueAccessor.get(
+			ddmFormFieldValue);
 
-		return value;
-	}
-
-	@Override
-	public Class<Boolean> getAttributeClass() {
-		return Boolean.class;
+		if (valueBoolean == Boolean.TRUE) {
+			return LanguageUtil.get(
+				_ddmFormFieldValueAccessor.getLocale(), "yes");
+		}
+		else {
+			return LanguageUtil.get(
+				_ddmFormFieldValueAccessor.getLocale(), "no");
+		}
 	}
 
 	private final DDMFormFieldValueAccessor<Boolean> _ddmFormFieldValueAccessor;
