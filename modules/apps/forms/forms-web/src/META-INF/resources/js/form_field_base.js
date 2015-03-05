@@ -140,7 +140,7 @@ AUI.add(
 					settings,
 					function(item, index) {
 						attributes[item.attrName] = {
-							value: item.value
+							value: item.value || ''
 						};
 					}
 				);
