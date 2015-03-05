@@ -18,12 +18,6 @@ AUI.add(
 				NAME: 'liferay-forms-layout-serializer',
 
 				prototype: {
-					deserialize: function(layout) {
-						var instance = this;
-
-
-					},
-
 					getRowType: function(row) {
 						var instance = this;
 
@@ -78,10 +72,11 @@ AUI.add(
 						var instance = this;
 
 						var rowJSON = {
+							columns: [],
 							type: instance.getRowType(row)
 						};
 
-						if (rowJSON.type !== 'PageBreakRow') {
+						if (rowJSON.type !== 'FormBuilderPageBreakRow') {
 							rowJSON.columns = instance.serializeColumns(row.get('cols'));
 						}
 
@@ -101,6 +96,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['form-builder-page-break-row', 'aui-layout', 'json']
+		requires: ['aui-form-builder-page-break-row', 'aui-layout', 'json']
 	}
 );

@@ -57,7 +57,15 @@ AUI.add(
 						AArray.each(
 							field.getSettings(),
 							function(item, index) {
-								config[item.attrName] = item.editor.get('originalValue');
+								var value = item.editor.get('editedValue');
+
+								if (item.localizable) {
+									value = {
+										en_US: value
+									}
+								}
+
+								config[item.attrName] = value;
 							}
 						);
 

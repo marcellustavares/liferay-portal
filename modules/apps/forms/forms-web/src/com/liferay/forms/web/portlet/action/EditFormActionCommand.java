@@ -40,8 +40,9 @@ public class EditFormActionCommand extends TransactionActionCommand {
 	protected void updateDDLRecordSet(
 			PortletRequest portletRequest, long ddmStructureId)
 		throws Exception {
-		
+
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
+		long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
 		String recordSetKey = ParamUtil.getString(
 			portletRequest, "recordSetKey");
 		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
@@ -53,16 +54,24 @@ public class EditFormActionCommand extends TransactionActionCommand {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecordSet.class.getName(), portletRequest);
 
-		DDLRecordSetServiceUtil.addRecordSet(
-			groupId, ddmStructureId, recordSetKey, nameMap, descriptionMap,
-			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, scope,
-			serviceContext);
+		if (recordSetId > 0) {
+			DDLRecordSetServiceUtil.updateRecordSet(
+				recordSetId, ddmStructureId, nameMap, descriptionMap,
+				DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, serviceContext);
+		}
+		else {
+			DDLRecordSetServiceUtil.addRecordSet(
+				groupId, ddmStructureId, recordSetKey, nameMap, descriptionMap,
+				DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, scope,
+				serviceContext);
+		}
 	}
-	
+
 	protected DDMStructure updateDDMStructure(PortletRequest portletRequest)
 		throws Exception {
-		
+
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
+		long structureId = ParamUtil.getLong(portletRequest, "structureId");
 		String structureKey = ParamUtil.getString(
 			portletRequest, "structureKey");
 		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
@@ -77,11 +86,23 @@ public class EditFormActionCommand extends TransactionActionCommand {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMStructure.class.getName(), portletRequest);
 
-		return DDMStructureServiceUtil.addStructure(
-			groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-			PortalUtil.getClassNameId(DDLRecordSet.class), structureKey,
-			nameMap, descriptionMap, ddmForm, ddmFormLayout, storageType,
-			DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+		DDMStructure ddmStructure = null;
+
+		if (structureId > 0) {
+			ddmStructure = DDMStructureServiceUtil.updateStructure(
+				structureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+				nameMap, descriptionMap, ddmForm, ddmFormLayout,
+				serviceContext);
+		}
+		else {
+			ddmStructure = DDMStructureServiceUtil.addStructure(
+				groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+				PortalUtil.getClassNameId(DDLRecordSet.class), structureKey,
+				nameMap, descriptionMap, ddmForm, ddmFormLayout, storageType,
+				DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+		}
+
+		return ddmStructure;
 	}
 
 	protected DDMForm getDDMForm(PortletRequest portletRequest)

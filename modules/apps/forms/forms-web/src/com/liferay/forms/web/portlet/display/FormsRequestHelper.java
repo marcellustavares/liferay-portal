@@ -14,6 +14,12 @@
 
 package com.liferay.forms.web.portlet.display;
 
+import java.util.List;
+
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
+
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,7 +35,9 @@ import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSetConstants;
 import com.liferay.portlet.dynamicdatalists.search.RecordSetSearchTerms;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordSetServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
@@ -38,12 +46,6 @@ import com.liferay.portlet.dynamicdatamapping.service.permission.DDMStructurePer
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
-
-import java.util.List;
-
-import javax.portlet.PortletURL;
-import javax.portlet.RenderResponse;
-import javax.servlet.http.HttpServletRequest;
 public class FormsRequestHelper extends BaseRequestHelper {
 
 	public FormsRequestHelper(HttpServletRequest request) {
@@ -90,6 +92,28 @@ public class FormsRequestHelper extends BaseRequestHelper {
 	public DDMDisplay getDDMDisplay() {
 		return DDMDisplayRegistryUtil
 			.getDDMDisplay(PortletKeys.DYNAMIC_DATA_LISTS);
+	}
+
+	public DDMForm getDDMForm(DDMStructure ddmStructure)
+		throws PortalException {
+
+		DDMForm ddmForm = null;
+
+		String definition = ParamUtil.getString(getRequest(), "definition");
+
+		if (Validator.isNotNull(definition)) {
+			ddmForm = DDMFormJSONDeserializerUtil.deserialize(definition);
+		}
+		else {
+			if (ddmStructure != null) {
+				ddmForm = ddmStructure.getDDMForm();
+			}
+			else {
+				ddmForm = new DDMForm();
+			} 
+		}
+
+		return ddmForm;
 	}
 
 	public DDMFormLayout getDDMFormLayout(DDMStructure ddmStructure)

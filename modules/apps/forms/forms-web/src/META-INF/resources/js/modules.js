@@ -46,13 +46,19 @@
 								'liferay-forms-layout-serializer'
 							]
 						},
+						'liferay-forms-layout-deserializer': {
+							path: 'form_layout_deserializer.js',
+							requires: [
+								'aui-form-builder-page-break-row',
+								'aui-layout'
+							]
+						},
 						'liferay-forms-layout-serializer': {
 							path: 'form_layout_serializer.js',
 							requires: [
 								'aui-form-builder-page-break-row',
-								'aui-form-builder-field-text',
 								'aui-layout',
-								'liferay-ddm-form'
+								'json'
 							]
 						},
 						'liferay-forms-portlet': {

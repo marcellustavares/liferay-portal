@@ -4,9 +4,17 @@ AUI.add(
 		var AArray = A.Array;
 		var Lang = A.Lang;
 
+		var FieldsUtil = Liferay.Forms.FieldsUtil;
+
 		var FormBuilder = A.Component.create(
 			{
 				ATTRS: {
+					definition: {
+						validator: function(val) {
+							return Lang.isObject(val);
+						}
+					},
+
 					fieldTypes: {
 						setter: '_setFieldTypes'
 					},
@@ -42,16 +50,14 @@ AUI.add(
 						return AArray.map(
 							val,
 							function(item, index) {
-								var fieldClass = instance.getFieldClass(
-									item.advancedSettings,
-									item.basicSettings
-								);
+								var settings = item.advancedSettings.concat(item.basicSettings);
+
+								var fieldClass = FieldsUtil.getFieldClass(settings);
 
 								return new A.FormBuilderFieldType(
 									{
 										defaultConfig: {
-											advancedSettings: item.advancedSettings,
-											basicSettings: item.basicSettings
+											settings: settings,
 										},
 										fieldClass: fieldClass,
 										icon: item.icon,
@@ -65,58 +71,17 @@ AUI.add(
 					_setLayout: function(val) {
 						var instance = this;
 
-						val.rows = AArray.map(
-							val.rows,
-							function(item, index) {
-								return new A.LayoutRow(item);
+						val = new Liferay.Forms.LayoutDeserializer(
+							{
+								definition: instance.get('definition'),
+								fieldTypes: instance.get('fieldTypes'),
+								layout: val
 							}
-						);
-
-						if (!A.instanceOf(val, A.Layout)) {
-							val = new A.Layout(val);
-						}
+						).deserialize(val);
 
 						FormBuilder.superclass._setLayout.call(instance, val);
 
 						return val;
-					},
-
-					getFieldClass: function(advancedSettings, basicSettings) {
-						var instance = this;
-
-						var attributes = {
-							fieldValue: {
-
-							},
-
-							fieldQualifiedName: {
-							}
-						};
-
-						AArray.each(
-							advancedSettings.concat(basicSettings),
-							function(item, index) {
-								var value = '';
-
-								if (item.editorType === 'RadioGroup') {
-									value = undefined;
-								}
-
-								attributes[item.attrName] = {
-									value: value
-								};
-							}
-						);
-
-						return A.Component.create(
-							{
-								ATTRS: attributes,
-
-								EXTENDS: Liferay.Forms.FieldBase,
-
-								NAME: 'liferay-form-field'
-							}
-						);
 					}
 				}
 			}
@@ -126,6 +91,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-form-builder', 'liferay-forms-field-base', 'liferay-forms-layout']
+		requires: ['aui-form-builder', 'liferay-forms-field-base', 'liferay-forms-layout-deserializer']
 	}
 );

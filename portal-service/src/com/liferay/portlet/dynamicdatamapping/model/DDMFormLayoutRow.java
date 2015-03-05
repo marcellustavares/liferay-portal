@@ -32,6 +32,8 @@ public class DDMFormLayoutRow {
 			addDDMFormLayoutColumn(
 				new DDMFormLayoutColumn(ddmFormLayoutColumn));
 		}
+
+		setType(ddmFormLayoutRow.getType());
 	}
 
 	public void addDDMFormLayoutColumn(

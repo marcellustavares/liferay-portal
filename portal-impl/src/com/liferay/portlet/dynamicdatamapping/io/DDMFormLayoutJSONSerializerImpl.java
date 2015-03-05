@@ -76,6 +76,8 @@ public class DDMFormLayoutJSONSerializerImpl
 
 		addColumns(jsonObject, ddmFormLayoutRow.getDDMFormLayoutColumns());
 
+		jsonObject.put("type", ddmFormLayoutRow.getType());
+
 		return jsonObject;
 	}
 

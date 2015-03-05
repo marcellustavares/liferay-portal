@@ -6,12 +6,8 @@ AUI.add(
 		var FormsFieldBase = A.Component.create(
 			{
 				ATTRS: {
-					advancedSettings: {
-						value: {}
-					},
-
-					basicSettings: {
-						value: {}
+					settings: {
+						value: []
 					}
 				},
 
@@ -25,6 +21,11 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
+						instance._fillAdvancedSettings();
+						instance._fillSettings();
+
+						instance.renderUI();
+
 						(new A.EventHandle(instance._fieldEventHandles)).detach();
 					},
 
@@ -37,17 +38,13 @@ AUI.add(
 					_fillAdvancedSettings: function() {
 						var instance = this;
 
-						var advancedSettings = instance.get('advancedSettings');
-
-						instance._advancedSettings = instance._normalizeSetitngs(advancedSettings);
+						instance._advancedSettings = instance.getAdvancedSettings();
 					},
 
 					_fillSettings: function() {
 						var instance = this;
 
-						var basicSettings = instance.get('basicSettings');
-
-						instance._settings = instance._normalizeSetitngs(basicSettings);
+						instance._settings = instance.getBasicSettings();
 					},
 
 					_getEditor: function(editorType, editorOptions) {
@@ -56,28 +53,26 @@ AUI.add(
 						return new A[editorType + 'DataEditor'](editorOptions);
 					},
 
-					_normalizeSetitngs: function(settings) {
+					getAdvancedSettings: function() {
 						var instance = this;
 
-						return AArray.map(
-							settings,
+						return AArray.some(
+							instance.get('settings'),
 							function(item, index) {
-								return {
-									attrName: item.attrName,
-									editor: instance._getEditor(item.editorType, item.editorOptions || {})
-								};
+								return item.advanced === true;
 							}
 						);
 					},
 
-					getSettings: function() {
+					getBasicSettings: function() {
 						var instance = this;
 
-						var advancedSettings = instance._advancedSettings || [];
-
-						var basicSettings = instance._settings || [];
-
-						return advancedSettings.concat(basicSettings);
+						return AArray.some(
+							instance.get('settings'),
+							function(item, index) {
+								return item.advanced === false;
+							}
+						);
 					},
 
 					getTemplate: function() {
@@ -88,8 +83,10 @@ AUI.add(
 						};
 
 						AArray.each(
-							instance.getSettings(),
+							instance.get('settings'),
 							function(item, index) {
+								console.log(item.attrName, instance.get(item.attrName));
+
 								config[item.attrName] = instance.get(item.attrName);
 							}
 						);
@@ -111,6 +108,45 @@ AUI.add(
 		);
 
 		Liferay.namespace('Forms').FieldBase = FormsFieldBase;
+
+		var FieldsUtil = {
+			getFieldClass: function(settings) {
+				var instance = this;
+
+				var attributes = {
+					settings: {
+						value: settings
+					}
+				};
+
+				AArray.each(
+					settings,
+					function(item, index) {
+						// var value = '';
+
+						// if (item.editorType === 'RadioGroup') {
+						// 	value = undefined;
+						// }
+
+						attributes[item.attrName] = {
+							value: item.value
+						};
+					}
+				);
+
+				return A.Component.create(
+					{
+						ATTRS: attributes,
+
+						EXTENDS: FormsFieldBase,
+
+						NAME: 'liferay-form-field'
+					}
+				);
+			}
+		};
+
+		Liferay.namespace('Forms').FieldsUtil = FieldsUtil;
 	},
 	'',
 	{

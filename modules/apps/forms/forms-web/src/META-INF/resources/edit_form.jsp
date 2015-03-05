@@ -29,6 +29,10 @@ if (ddlRecordSet != null) {
 }
 
 long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId);
+
+long recordSetId = BeanParamUtil.getLong(ddlRecordSet, request, "recordSetId");
+
+long structureId = BeanParamUtil.getLong(structure, request, "structureId");
 %>
 
 <portlet:actionURL var="editFormURL">
@@ -38,6 +42,8 @@ long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId
 <aui:form action="<%= editFormURL %>" method="post" name="editForm">
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
+	<aui:input name="recordSetId" type="hidden" value="<%= recordSetId %>" />
+	<aui:input name="structureId" type="hidden" value="<%= structureId %>" />
 
 	<%
 	boolean localizeTitle = true;
@@ -68,7 +74,7 @@ long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId
 
 			<aui:button cssClass="forms-submit hide pull-right" disabled="<%= true %>" primary="<%= true %>" type="submit" />
 
-			<aui:button cssClass="forms-next pull-right" disabled="<%= true %>" icon="icon-circle-arrow-right" iconAlign="right" primary="<%= true %>" value="next" />
+			<aui:button cssClass="forms-next pull-right" disabled="<%= false %>" icon="icon-circle-arrow-right" iconAlign="right" primary="<%= true %>" value="next" />
 
 			<aui:button cssClass="forms-cancel pull-right" href="<%= redirect %>" value="cancel" />
 		</aui:button-row>

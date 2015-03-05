@@ -88,15 +88,11 @@ AUI.add(
 
 						definitionInput.val(instance.definitionSerializer.serialize());
 
-						console.log(definitionInput.val());
-
 						var layoutInput = instance.one('#layout');
 
 						instance.layoutSerializer.set('layout', layout);
 
 						layoutInput.val(instance.layoutSerializer.serialize());
-
-						console.log(layoutInput.val());
 					}
 				}
 			}

@@ -14,6 +14,8 @@
  */
 --%>
 
+<%@page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm"%>
+<%@page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil"%>
 <%@ include file="../init.jsp" %>
 
 <%
@@ -24,6 +26,8 @@ DDMStructure ddmStructure = null;
 if (ddlRecordSet != null) {
 	ddmStructure = ddlRecordSet.getDDMStructure();
 }
+
+DDMForm ddmForm = formsRequestHelper.getDDMForm(ddmStructure);
 
 DDMFormLayout ddmFormLayout = formsRequestHelper.getDDMFormLayout(ddmStructure);
 %>
@@ -39,6 +43,7 @@ Liferay.component(
 	function() {
 		return new Liferay.Forms.FormBuilder(
 			{
+				definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 				fieldTypes: <%= DDMFormFieldTypesHelper.getFieldTypesJSONArray() %>,
 				layout: <%= DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout) %>
 			}
