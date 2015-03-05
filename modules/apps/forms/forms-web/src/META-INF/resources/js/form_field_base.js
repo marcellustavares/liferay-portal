@@ -139,8 +139,14 @@ AUI.add(
 				AArray.each(
 					settings,
 					function(item, index) {
+						var value = item.value || '';
+
+						if (item.editorType === 'RadioGroup') {
+							value = undefined;
+						}
+
 						attributes[item.attrName] = {
-							value: item.value || ''
+							value: value
 						};
 					}
 				);
