@@ -14,21 +14,28 @@
 
 package com.liferay.forms.web.portlet;
 
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.forms.web.portlet.constants.FormsPortletKeys;
+import com.liferay.forms.web.portlet.display.FormsRendererHelper;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.PortletApp;
+import com.liferay.portal.theme.ThemeDisplay;
 
 import java.io.IOException;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Bruno Basto
@@ -85,5 +92,33 @@ public class FormsPortlet extends MVCPortlet {
 		ServletContextPool.put(
 			portletApp.getServletContextName(), portletApp.getServletContext());
 	}
+	
+	@Override
+	protected void include(
+			String path, RenderRequest renderRequest,
+			RenderResponse renderResponse)
+		throws IOException, PortletException {
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+		
+		if (path.equals("/view_form.jsp")) {
+			long recordSetId = ParamUtil.getLong(renderRequest, "recordSetId");
+			
+			String formHTML = _formsRendererHelper.render(recordSetId, themeDisplay.getLocale());
+			
+			renderRequest.setAttribute("formHTML", formHTML);
+		}
+		
+		include(
+			path, renderRequest, renderResponse, PortletRequest.RENDER_PHASE);
+	}
+	
+	@Reference(service = FormsRendererHelper.class, unbind = "-")
+	protected void setFormsRendererHelper(FormsRendererHelper formsRendererHelper) {
+		_formsRendererHelper = formsRendererHelper;
+	}
+	
+	private FormsRendererHelper _formsRendererHelper;
 
 }

@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler"%>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -120,6 +121,10 @@ boolean showToolbar = ParamUtil.getBoolean(request, "showToolbar", true);
 FormsRequestHelper formsRequestHelper = new FormsRequestHelper(request);
 
 DDMDisplay ddmDisplay = formsRequestHelper.getDDMDisplay();
+
+long scopeClassNameId = PortalUtil.getClassNameId(ddmDisplay.getStructureType());
+
+DDMPermissionHandler ddmPermissionHandler = ddmDisplay.getDDMPermissionHandler();
 
 WindowState windowState = liferayPortletRequest.getWindowState();
 %>

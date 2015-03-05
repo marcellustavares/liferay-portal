@@ -60,7 +60,7 @@ PortletURL portletURL = formsRequestHelper.getViewPortletURL(renderResponse, gro
 			modelVar="recordSet"
 		>
 			<liferay-portlet:renderURL varImpl="rowURL">
-				<portlet:param name="mvcPath" value="/edit_form.jsp" />
+				<portlet:param name="mvcPath" value="/view_form.jsp" />
 				<portlet:param name="redirect" value="<%= searchContainer.getIteratorURL().toString() %>" />
 				<portlet:param name="recordSetId" value="<%= String.valueOf(recordSet.getRecordSetId()) %>" />
 			</liferay-portlet:renderURL>

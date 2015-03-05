@@ -41,10 +41,12 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
+import com.liferay.portlet.dynamicdatamapping.service.permission.DDMPermission;
 import com.liferay.portlet.dynamicdatamapping.service.permission.DDMStructurePermission;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
 public class FormsRequestHelper extends BaseRequestHelper {
 
 	public FormsRequestHelper(HttpServletRequest request) {
@@ -52,7 +54,12 @@ public class FormsRequestHelper extends BaseRequestHelper {
 	}
 
 	public boolean canCopyStructure() {
-		return true;
+		DDMPermissionHandler ddmPermissionHandler = 
+			getDDMDisplay().getDDMPermissionHandler();
+
+		return DDMPermission.contains(getPermissionChecker(),
+				getScopeGroupId(), ddmPermissionHandler.getResourceName(0),
+				ddmPermissionHandler.getAddStructureActionId());
 	}
 
 	public boolean canDeleteStructure(DDMStructure structure) {

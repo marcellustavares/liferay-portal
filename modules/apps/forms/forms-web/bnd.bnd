@@ -5,6 +5,7 @@ Import-Package: \
 	com.liferay.portlet.dynamicdatalists.service.permission,\
 	com.liferay.portlet.dynamicdatamapping.io,\
 	com.liferay.portlet.dynamicdatamapping.service,\
+	com.liferay.dynamic.data.mapping.form.renderer,\
 	*
 Include-Resource:\
 	classes,\

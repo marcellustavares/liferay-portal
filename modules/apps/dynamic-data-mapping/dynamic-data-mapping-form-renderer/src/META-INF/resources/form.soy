@@ -1,0 +1,39 @@
+{namespace ddm}
+
+/**
+ * Prints the layout
+ * @param rows
+ */
+{template .layout}
+<form>
+{foreach $row in $rows}
+{call ddm.row data="all"}
+{param columns: $row.columns /}
+{/call}
+{/foreach}
+</form>
+{/template}
+
+/**
+ * Prints a row
+ * @param columns
+ */
+{template .row}
+<div class="row">
+{foreach $column in $columns}
+{call ddm.column data="all"}
+{param column: $column /}
+{/call}
+{/foreach}
+</div>
+{/template}
+
+/**
+ * Print a column
+ * @param column
+ */
+{template .column}
+	<div class="col-md-{$column.size}">
+		{$column.html|noAutoescape}
+	</div>
+{/template}
