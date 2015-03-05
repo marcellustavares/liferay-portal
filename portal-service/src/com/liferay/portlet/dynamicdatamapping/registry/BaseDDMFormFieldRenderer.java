@@ -21,13 +21,14 @@ import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
 
 import java.io.Writer;
-
 import java.util.Locale;
 
 /**
@@ -90,12 +91,16 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 		LocalizedValue label = ddmFormField.getLabel();
 
-		template.put("label", label.getString(locale));
-		template.put("placeholder", "");
+		String labelString = StringPool.BLANK;
+		
+		if (Validator.isNotNull(label.getString(locale))) {
+			labelString = label.getString(locale);
+		}
+		
+		template.put("label", labelString);
+		template.put("placeholder", StringPool.BLANK);
 
-		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
-
-		template.put("value", predefinedValue.getString(locale));
+		template.put("value", StringPool.BLANK);
 	}
 
 	protected String render(Template template) throws PortalException {

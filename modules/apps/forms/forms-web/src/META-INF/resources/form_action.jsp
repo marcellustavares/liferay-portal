@@ -29,8 +29,7 @@ DDMStructure structure = ddlRecordSet.getDDMStructure();
 		<portlet:renderURL var="editURL">
 			<portlet:param name="mvcPath" value="/edit_form.jsp" />
 			<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
-			<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-			<portlet:param name="classPK" value="<%= String.valueOf(structure.getStructureId()) %>" />
+			<portlet:param name="recordSetId" value="<%= String.valueOf(ddlRecordSet.getRecordSetId()) %>" />
 		</portlet:renderURL>
 
 		<liferay-ui:icon

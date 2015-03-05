@@ -4,7 +4,7 @@
 		module="com.liferay.dynamic.data.mapping.form.renderer"
 		revision="1.0.0"
 		status="release"
-		publication="20150305150429"
+		publication="20150305183027"
 	>
 		<license name="LGPL 2.1" url="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt" />
 		<description homepage="">

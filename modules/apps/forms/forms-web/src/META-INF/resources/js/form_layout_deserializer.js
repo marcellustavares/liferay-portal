@@ -87,6 +87,15 @@ AUI.add(
 							}
 						);
 
+						settings.push(
+							{
+								attrName: 'placeholder',
+								value: ''
+							}
+						);
+
+						console.log(settings);
+
 						var fieldClass = FieldsUtil.getFieldClass(settings);
 
 						return new fieldClass(settings);

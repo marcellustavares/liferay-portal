@@ -55,9 +55,9 @@ AUI.add(
 						var config = {};
 
 						AArray.each(
-							field.getSettings(),
+							field.getAdvancedSettings().concat(field.getBasicSettings()),
 							function(item, index) {
-								var value = item.editor.get('editedValue');
+								var value = field.get(item.attrName);
 
 								if (item.localizable) {
 									value = {

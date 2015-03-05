@@ -86,6 +86,10 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		List<Map<String, Object>> rowsList = new ArrayList<>();
 		
 		for (DDMFormLayoutRow ddmFormLayoutRow : ddmFormLayoutRows) {
+			if (!ddmFormLayoutRow.getType().equals("LayoutRow")) {
+				continue;
+			}
+
 			rowsList.add(getRow(ddmForm, ddmFormLayoutRow, ddmFormRenderingContext));
 		}
 		
