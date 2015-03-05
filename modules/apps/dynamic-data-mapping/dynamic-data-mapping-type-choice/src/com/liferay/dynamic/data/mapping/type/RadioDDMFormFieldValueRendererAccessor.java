@@ -29,10 +29,10 @@ import java.util.Map;
 /**
  * @author Renato Rego
  */
-public class RadioAndSelectDDMFormFieldValueRendererAccessor
+public class RadioDDMFormFieldValueRendererAccessor
 	extends DDMFormFieldValueRendererAccessor {
 
-	public RadioAndSelectDDMFormFieldValueRendererAccessor(
+	public RadioDDMFormFieldValueRendererAccessor(
 		DDMFormFieldValueAccessor<String> ddmFormFieldValueAccessor) {
 
 		_ddmFormFieldValueAccessor = ddmFormFieldValueAccessor;
@@ -66,7 +66,7 @@ public class RadioAndSelectDDMFormFieldValueRendererAccessor
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		RadioAndSelectDDMFormFieldValueRendererAccessor.class);
+		RadioDDMFormFieldValueRendererAccessor.class);
 
 	private final DDMFormFieldValueAccessor<String> _ddmFormFieldValueAccessor;
 
