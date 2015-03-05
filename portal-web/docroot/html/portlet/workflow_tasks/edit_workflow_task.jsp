@@ -258,7 +258,7 @@ PortletURL viewDiffsPortletURL = workflowHandler.getURLViewDiffs(classPK, lifera
 						ratingsEnabled="<%= false %>"
 						redirect="<%= currentURL %>"
 						userId="<%= user.getUserId() %>"
-						/>
+					/>
 				</liferay-ui:panel>
 			</c:if>
 
