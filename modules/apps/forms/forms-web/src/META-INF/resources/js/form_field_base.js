@@ -53,25 +53,44 @@ AUI.add(
 						return new A[editorType + 'DataEditor'](editorOptions);
 					},
 
+					_normalizeSettings: function(settings) {
+						var instance = this;
+
+						AArray.each(
+							settings,
+							function(item, index) {
+								item.editor = instance._getEditor(item.editorType, item.editorOptions);
+							}
+						);
+
+						console.log(settings);
+
+						return settings;
+					},
+
 					getAdvancedSettings: function() {
 						var instance = this;
 
-						return AArray.some(
-							instance.get('settings'),
-							function(item, index) {
-								return item.advanced === true;
-							}
+						return instance._normalizeSettings(
+							AArray.filter(
+								instance.get('settings'),
+								function(item, index) {
+									return item.advanced === true;
+								}
+							)
 						);
 					},
 
 					getBasicSettings: function() {
 						var instance = this;
 
-						return AArray.some(
-							instance.get('settings'),
-							function(item, index) {
-								return item.advanced === false;
-							}
+						return instance._normalizeSettings(
+							AArray.filter(
+								instance.get('settings'),
+								function(item, index) {
+									return item.advanced === false;
+								}
+							)
 						);
 					},
 
@@ -85,8 +104,6 @@ AUI.add(
 						AArray.each(
 							instance.get('settings'),
 							function(item, index) {
-								console.log(item.attrName, instance.get(item.attrName));
-
 								config[item.attrName] = instance.get(item.attrName);
 							}
 						);

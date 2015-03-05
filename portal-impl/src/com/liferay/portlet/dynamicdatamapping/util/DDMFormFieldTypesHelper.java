@@ -80,6 +80,7 @@ public class DDMFormFieldTypesHelper {
 
 			JSONObject settingJSONObject = JSONFactoryUtil.createJSONObject();
 
+			settingJSONObject.put("advanced", setting.isAdvanced());
 			settingJSONObject.put("attrName", setting.getName());
 
 			DDMFormFieldTypeSettingEditor editor =
