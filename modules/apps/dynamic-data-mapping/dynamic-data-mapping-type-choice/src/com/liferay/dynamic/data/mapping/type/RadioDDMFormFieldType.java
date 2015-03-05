@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Renato Rego
  */
 @Component(immediate = true, service = DDMFormFieldType.class)
-public class RadioAndSelectDDMFormFieldType implements DDMFormFieldType {
+public class RadioDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
@@ -39,20 +39,20 @@ public class RadioAndSelectDDMFormFieldType implements DDMFormFieldType {
 	public DDMFormFieldValueAccessor<String> getDDMFormFieldValueAccessor(
 		Locale locale) {
 
-		return new RadioAndSelectDDMFormFieldValueAccessor(locale);
+		return new RadioDDMFormFieldValueAccessor(locale);
 	}
 
 	@Override
 	public DDMFormFieldValueRendererAccessor
 		getDDMFormFieldValueRendererAccessor(Locale locale) {
 
-		return new RadioAndSelectDDMFormFieldValueRendererAccessor(
+		return new RadioDDMFormFieldValueRendererAccessor(
 			getDDMFormFieldValueAccessor(locale));
 	}
 
 	@Override
 	public String getName() {
-		return "radio-and-select-choice";
+		return "radio-choice";
 	}
 
 	@Reference(service = ChoiceDDMFormFieldRenderer.class, unbind = "-")

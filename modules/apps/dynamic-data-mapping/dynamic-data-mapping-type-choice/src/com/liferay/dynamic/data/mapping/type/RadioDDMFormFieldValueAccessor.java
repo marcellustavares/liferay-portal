@@ -23,10 +23,10 @@ import java.util.Locale;
 /**
  * @author Renato Rego
  */
-public class RadioAndSelectDDMFormFieldValueAccessor
+public class RadioDDMFormFieldValueAccessor
 	extends DDMFormFieldValueAccessor<String> {
 
-	public RadioAndSelectDDMFormFieldValueAccessor(Locale locale) {
+	public RadioDDMFormFieldValueAccessor(Locale locale) {
 		super(locale);
 	}
 
