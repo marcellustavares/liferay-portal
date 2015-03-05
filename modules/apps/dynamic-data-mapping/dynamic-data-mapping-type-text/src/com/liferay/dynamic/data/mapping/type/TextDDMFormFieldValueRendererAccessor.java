@@ -23,7 +23,7 @@ import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
  * @author Marcellus Tavares
  */
 public class TextDDMFormFieldValueRendererAccessor
-	extends DDMFormFieldValueRendererAccessor<String> {
+	extends DDMFormFieldValueRendererAccessor {
 
 	public TextDDMFormFieldValueRendererAccessor(
 		DDMFormFieldValueAccessor<String> ddmFormFieldValueAccessor) {
@@ -36,11 +36,6 @@ public class TextDDMFormFieldValueRendererAccessor
 		String valueString = _ddmFormFieldValueAccessor.get(ddmFormFieldValue);
 
 		return HtmlUtil.escape(valueString);
-	}
-
-	@Override
-	public Class<String> getAttributeClass() {
-		return String.class;
 	}
 
 	private final DDMFormFieldValueAccessor<String> _ddmFormFieldValueAccessor;
