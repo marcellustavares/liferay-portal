@@ -133,7 +133,7 @@ if (assetEntry != null) {
 						ratingsEnabled="<%= false %>"
 						redirect="<%= currentURL %>"
 						userId="<%= user.getUserId() %>"
-						/>
+					/>
 				</liferay-ui:panel>
 			</c:if>
 
