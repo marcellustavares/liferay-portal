@@ -638,8 +638,8 @@ public class MBUtil {
 		if (ArrayUtil.isNotEmpty(references)) {
 			String reference = references[0];
 
-			int x = reference.lastIndexOf(StringPool.LESS_THAN +
-				MESSAGE_POP_PORTLET_PREFIX);
+			int x = reference.lastIndexOf(
+				StringPool.LESS_THAN + MESSAGE_POP_PORTLET_PREFIX);
 
 			if (x > -1) {
 				int y = reference.indexOf(StringPool.GREATER_THAN, x);
