@@ -27,6 +27,8 @@ AUI.add(
 					}
 				},
 
+				AUGMENTS: [],
+
 				CSS_PREFIX: 'form-builder',
 
 				EXTENDS: A.FormBuilder,
@@ -54,7 +56,7 @@ AUI.add(
 
 								var fieldClass = FieldsUtil.getFieldClass(settings);
 
-								return new A.FormBuilderFieldType(
+								var fieldType = new A.FormBuilderFieldType(
 									{
 										defaultConfig: {
 											settings: settings,
@@ -63,7 +65,11 @@ AUI.add(
 										icon: item.icon,
 										label: item.label,
 									}
-								)
+								);
+
+								fieldType.set('name', item.name);
+
+								return fieldType;
 							}
 						);
 					},

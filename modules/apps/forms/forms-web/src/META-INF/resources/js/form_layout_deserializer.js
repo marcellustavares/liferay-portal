@@ -48,10 +48,16 @@ AUI.add(
 					deserializeColumn: function(column) {
 						var instance = this;
 
+						var value = '';
+
+						if (column.fieldName) {
+							value = instance.deserializeField(column.fieldName);
+						}
+
 						return new A.LayoutCol(
 							{
 								size: column.size,
-								value: instance.deserializeField(column.fieldName)
+								value: value
 							}
 						);
 					},
@@ -69,36 +75,32 @@ AUI.add(
 
 						var fieldDefinition = instance.searchFieldDefinition(definition, 'name', fieldName);
 
-						var settings = [];
+						var fieldType = instance.getFieldType(fieldDefinition.type);
 
-						A.each(
-							fieldDefinition,
+						var fieldTypeSettings = fieldType.get('defaultConfig').settings;
+
+						var fieldTypeSettingsValues = {};
+
+						AArray.each(
+							fieldTypeSettings,
 							function(item, index, collection) {
-								if (item.hasOwnProperty('en_US')) {
-									item = item['en_US'];
-								}
+								var value = fieldDefinition[item.attrName];
 
-								settings.push(
-									{
-										attrName: index,
-										value: item
+								if (value) {
+									if (value.hasOwnProperty('en_US')) {
+										value = value['en_US'];
 									}
-								);
+
+									fieldTypeSettingsValues[item.attrName] = value;
+								}
 							}
 						);
 
-						settings.push(
-							{
-								attrName: 'placeholder',
-								value: ''
-							}
-						);
+						fieldTypeSettingsValues['placeholder'] = '';
 
-						console.log(settings);
+						var fieldClass = FieldsUtil.getFieldClass(fieldTypeSettings);
 
-						var fieldClass = FieldsUtil.getFieldClass(settings);
-
-						return new fieldClass(settings);
+						return new fieldClass(fieldTypeSettingsValues);
 					},
 
 					deserializeRow: function(row) {
@@ -132,6 +134,17 @@ AUI.add(
 						var instance = this;
 
 						return AArray.map(rows, A.bind(instance.deserializeRow, instance));
+					},
+
+					getFieldType: function(type) {
+						var instance = this;
+
+						return AArray.find(
+							instance.get('fieldTypes'),
+							function(item, index) {
+								return item.get('name') === type;
+							}
+						);
 					},
 
 					searchFieldDefinition: function(parent, key, value) {

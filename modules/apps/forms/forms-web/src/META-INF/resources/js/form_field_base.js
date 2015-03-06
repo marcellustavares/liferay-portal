@@ -63,8 +63,6 @@ AUI.add(
 							}
 						);
 
-						console.log(settings);
-
 						return settings;
 					},
 
