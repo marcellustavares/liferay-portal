@@ -55,6 +55,7 @@
  * @param fieldChoicesLabels
  * @param fieldChoicesStatus
  * @param fieldChoicesValues
+ * @param fieldIsMultiple
  * @param fieldLabel
  * @param fieldName
  * @param fieldNameSuffix
@@ -67,7 +68,7 @@
 				{$fieldLabel}
 			</label>
 	
-			<select id="{$fieldQualifiedName}" class="form-control" dir="{$dir}" name="{$fieldQualifiedName}">
+			<select id="{$fieldQualifiedName}" class="form-control" dir="{$dir}" name="{$fieldQualifiedName}" {$fieldIsMultiple}>
 				{for $currentIndex in range(length($fieldChoicesValues))}
 					<option dir="{$dir}" value="{$fieldChoicesValues[$currentIndex]}" {$fieldChoicesStatus[$currentIndex]}>
 						{$fieldChoicesLabels[$currentIndex]}
