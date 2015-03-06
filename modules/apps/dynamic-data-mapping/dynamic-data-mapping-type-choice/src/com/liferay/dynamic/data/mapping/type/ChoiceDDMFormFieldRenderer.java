@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -70,25 +72,39 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		return fieldStatus;
 	}
 
-	protected String getRadioAndSelectFieldStatus(
-		String predefinedValueString, String optionValue,
-		String ddmFormFieldType) {
+	protected String getRadioFieldStatus(
+		String predefinedValueString, String optionValue) {
 
 		String fieldStatus = StringPool.BLANK;
 
-		String predefinedValueStringWithoutFormat = removeJSONArrayFormat(
-			predefinedValueString);
-
-		if (predefinedValueStringWithoutFormat.equals(optionValue)) {
-			if (ddmFormFieldType.equals("radio")) {
-				fieldStatus = "checked";
-			}
-			else if (ddmFormFieldType.equals("select")) {
-				fieldStatus = "selected";
-			}
+		if (predefinedValueString.equals(optionValue)) {
+			fieldStatus = "checked";
 		}
 
 		return fieldStatus;
+	}
+
+	protected String getSelectFieldStatus(
+		String predefinedValueString, String optionValue) {
+
+		try {
+			String fieldStatus = StringPool.BLANK;
+
+			JSONArray predefinedValues = JSONFactoryUtil.createJSONArray(
+				predefinedValueString);
+
+			for (int i = 0; i < predefinedValues.length(); i++) {
+				if (predefinedValues.getString(i).equals(optionValue)) {
+					fieldStatus = "selected";
+					break;
+				}
+			}
+
+			return fieldStatus;
+		} catch (Exception e) {
+			_log.error(e, e);
+			return StringPool.BLANK;
+		}
 	}
 
 	protected void populateRadioAndSelectCommonContext(
@@ -111,9 +127,16 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 				optionValue);
 
 			fieldChoicesLabels.add(optionLabel.getString(locale));
-			fieldChoicesStatus.add(
-				getRadioAndSelectFieldStatus(
-					predefinedValueString, optionValue, ddmFormFieldType));
+
+			if (ddmFormFieldType.equals("radio")) {
+				fieldChoicesStatus.add(
+					getRadioFieldStatus(predefinedValueString, optionValue));
+			}
+			else if (ddmFormFieldType.equals("select")) {
+				fieldChoicesStatus.add(
+					getSelectFieldStatus(predefinedValueString, optionValue));
+			}
+
 			fieldChoicesValues.add(optionValue);
 		}
 
@@ -187,15 +210,8 @@ public class ChoiceDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		populateRadioAndSelectCommonContext(template, ddmFormField, locale);
 
 		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
-	}
-
-	protected String removeJSONArrayFormat(String fieldValue) {
-		try {
-			return fieldValue.substring(2, fieldValue.length() - 2);
-		} catch (Exception e) {
-			_log.error(e, e);
-			return StringPool.BLANK;
-		}
+		template.put("fieldIsMultiple",
+			ddmFormField.isMultiple() ? "multiple" : StringPool.BLANK);
 	}
 
 	protected void setTemplatesNamespaces() {
