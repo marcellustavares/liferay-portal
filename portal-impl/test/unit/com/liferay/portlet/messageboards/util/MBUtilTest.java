@@ -27,7 +27,7 @@ import org.junit.Test;
 public class MBUtilTest {
 
 	@Test
-	public void testGetCategoryId() throws Exception {
+	public void testGetCategoryId() {
 		ReflectionTestUtil.setFieldValue(
 			PropsValues.class, "POP_SERVER_SUBDOMAIN", StringPool.BLANK);
 
@@ -46,7 +46,7 @@ public class MBUtilTest {
 	}
 
 	@Test
-	public void testGetMessageId() throws Exception {
+	public void testGetMessageId() {
 		ReflectionTestUtil.setFieldValue(
 			PropsValues.class, "POP_SERVER_SUBDOMAIN", StringPool.BLANK);
 
