@@ -156,9 +156,9 @@ public class DefaultFriendlyURLMapper extends BaseFriendlyURLMapper {
 			return;
 		}
 
-		String portletId = getPortletId(routeParameters);
-
 		String namespace = null;
+
+		String portletId = getPortletId(routeParameters);
 
 		if (Validator.isNotNull(portletId)) {
 			namespace = PortalUtil.getPortletNamespace(portletId);
@@ -167,10 +167,10 @@ public class DefaultFriendlyURLMapper extends BaseFriendlyURLMapper {
 		}
 		else if (isAllPublicRenderParameters(routeParameters)) {
 
-			// portlet namespace is not needed if all the parameters are public
+			// Portlet namespace is not needed if all the parameters are public
 			// render parameters
 
-			addParameter(namespace, parameterMap, "p_p_id", getPortletId());
+			addParameter(null, parameterMap, "p_p_id", getPortletId());
 		}
 		else {
 			return;
