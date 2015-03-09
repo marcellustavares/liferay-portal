@@ -404,16 +404,16 @@ public class JSONWebServiceActionsManagerImpl
 
 		jsonWebServiceActionConfigs.add(jsonWebServiceActionConfig);
 
-		String path = jsonWebServiceActionConfig.getPath();
-
 		jsonWebServiceActionConfigs =
-			_pathIndexedJSONWebServiceActionConfigs.get(path);
+			_pathIndexedJSONWebServiceActionConfigs.get(
+				jsonWebServiceActionConfig.getPath());
 
 		if (jsonWebServiceActionConfigs == null) {
 			jsonWebServiceActionConfigs = new CopyOnWriteArrayList<>();
 
 			_pathIndexedJSONWebServiceActionConfigs.put(
-				path, jsonWebServiceActionConfigs);
+				jsonWebServiceActionConfig.getPath(),
+				jsonWebServiceActionConfigs);
 		}
 
 		jsonWebServiceActionConfigs.add(jsonWebServiceActionConfig);
@@ -531,7 +531,7 @@ public class JSONWebServiceActionsManagerImpl
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				"Found " + jsonWebServiceActionConfigs.size() +
-					" JSON web service actions with path " + path + " in for " +
+					" JSON web service actions with path " + path + " for " +
 						contextName);
 		}
 
@@ -607,11 +607,10 @@ public class JSONWebServiceActionsManagerImpl
 	private boolean _removeJSONWebServiceActionConfig(
 		JSONWebServiceActionConfig jsonWebServiceActionConfig) {
 
-		boolean removed = _signatureIndexedJSONWebServiceActionConfigs.remove(
-			jsonWebServiceActionConfig.getSignature(),
-			jsonWebServiceActionConfig);
+		if (!_signatureIndexedJSONWebServiceActionConfigs.remove(
+				jsonWebServiceActionConfig.getSignature(),
+				jsonWebServiceActionConfig)) {
 
-		if (!removed) {
 			return false;
 		}
 
@@ -626,15 +625,15 @@ public class JSONWebServiceActionsManagerImpl
 			_contextNameIndexedJSONWebServiceActionConfigs.remove(contextName);
 		}
 
-		String path = jsonWebServiceActionConfig.getPath();
-
 		jsonWebServiceActionConfigs =
-			_pathIndexedJSONWebServiceActionConfigs.get(path);
+			_pathIndexedJSONWebServiceActionConfigs.get(
+				jsonWebServiceActionConfig.getPath());
 
 		jsonWebServiceActionConfigs.remove(jsonWebServiceActionConfig);
 
 		if (jsonWebServiceActionConfigs.isEmpty()) {
-			_pathIndexedJSONWebServiceActionConfigs.remove(path);
+			_pathIndexedJSONWebServiceActionConfigs.remove(
+				jsonWebServiceActionConfig.getPath());
 		}
 
 		return true;
