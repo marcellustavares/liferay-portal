@@ -58,6 +58,7 @@ public class DDMFormField implements Serializable {
 	}
 
 	public void addNestedDDMFormField(DDMFormField nestedDDMFormField) {
+		nestedDDMFormField.setParent(this);
 		nestedDDMFormField.setDDMForm(_ddmForm);
 
 		_nestedDDMFormFields.add(nestedDDMFormField);
@@ -110,6 +111,10 @@ public class DDMFormField implements Serializable {
 		return nestedDDMFormFieldsMap;
 	}
 
+	public DDMFormField getParent() {
+		return _parent;
+	}
+
 	public LocalizedValue getPredefinedValue() {
 		return _predefinedValue;
 	}
@@ -156,6 +161,7 @@ public class DDMFormField implements Serializable {
 
 	public void setDDMForm(DDMForm ddmForm) {
 		for (DDMFormField nestedDDMFormField : _nestedDDMFormFields) {
+			nestedDDMFormField.setParent(this);
 			nestedDDMFormField.setDDMForm(ddmForm);
 		}
 
@@ -194,6 +200,14 @@ public class DDMFormField implements Serializable {
 
 	public void setNestedDDMFormFields(List<DDMFormField> nestedDDMFormFields) {
 		_nestedDDMFormFields = nestedDDMFormFields;
+
+		for (DDMFormField nestedDDMFormField : _nestedDDMFormFields) {
+			nestedDDMFormField.setParent(this);
+		}
+	}
+
+	public void setParent(DDMFormField parent) {
+		_parent = parent;
 	}
 
 	public void setPredefinedValue(LocalizedValue predefinedValue) {
@@ -239,6 +253,7 @@ public class DDMFormField implements Serializable {
 	private String _name;
 	private String _namespace;
 	private List<DDMFormField> _nestedDDMFormFields = new ArrayList<>();
+	private DDMFormField _parent;
 	private LocalizedValue _predefinedValue = new LocalizedValue();
 	private boolean _readOnly;
 	private boolean _repeatable;

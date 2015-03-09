@@ -17,7 +17,11 @@ package com.liferay.portlet.dynamicdatamapping.render;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
+import java.io.Serializable;
+
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,18 @@ import javax.servlet.http.HttpServletResponse;
  * @author Pablo Carvalho
  */
 public class DDMFormFieldRenderingContext {
+
+	public DDMFormFieldRenderingContext() {
+		_attributes = new LinkedHashMap<>();
+	}
+
+	public Serializable getAttribute(String name) {
+		return _attributes.get(name);
+	}
+
+	public Map<String, Serializable> getAttributes() {
+		return _attributes;
+	}
 
 	public Fields getFields() {
 		return _fields;
@@ -61,6 +77,18 @@ public class DDMFormFieldRenderingContext {
 
 	public boolean isShowEmptyFieldLabel() {
 		return _showEmptyFieldLabel;
+	}
+
+	public Serializable removeAttribute(String name) {
+		return _attributes.remove(name);
+	}
+
+	public void setAttribute(String name, Serializable value) {
+		_attributes.put(name, value);
+	}
+
+	public void setAttributes(Map<String, Serializable> attributes) {
+		_attributes = attributes;
 	}
 
 	public void setField(Field field) {
@@ -109,6 +137,7 @@ public class DDMFormFieldRenderingContext {
 		_showEmptyFieldLabel = showEmptyFieldLabel;
 	}
 
+	private Map<String, Serializable> _attributes;
 	private Fields _fields;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;

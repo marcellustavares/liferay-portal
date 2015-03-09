@@ -81,8 +81,11 @@ public class RenderStructureFieldAction extends Action {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		int fieldIndex = ParamUtil.getInteger(request, "fieldIndex");
 		String mode = ParamUtil.getString(request, "mode");
 		String namespace = ParamUtil.getString(request, "namespace");
+		String parentFieldNamespacedName = ParamUtil.getString(
+			request, "parentFieldNamespacedName");
 		String portletNamespace = ParamUtil.getString(
 			request, "portletNamespace");
 		boolean readOnly = ParamUtil.getBoolean(request, "readOnly");
@@ -91,6 +94,10 @@ public class RenderStructureFieldAction extends Action {
 			new DDMFormFieldRenderingContext();
 
 		request.setAttribute("aui:form:portletNamespace", portletNamespace);
+
+		ddmFormFieldRenderingContext.setAttribute("fieldIndex", fieldIndex);
+		ddmFormFieldRenderingContext.setAttribute(
+			"parentFieldNamespacedName", parentFieldNamespacedName);
 
 		ddmFormFieldRenderingContext.setHttpServletRequest(request);
 		ddmFormFieldRenderingContext.setHttpServletResponse(response);
