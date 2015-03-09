@@ -166,6 +166,10 @@ public class DefaultFriendlyURLMapper extends BaseFriendlyURLMapper {
 			addParameter(namespace, parameterMap, "p_p_id", portletId);
 		}
 		else if (isAllPublicRenderParameters(routeParameters)) {
+
+			// portlet namespace is not needed if all the parameters are public
+			// render parameters
+
 			addParameter(namespace, parameterMap, "p_p_id", getPortletId());
 		}
 		else {
