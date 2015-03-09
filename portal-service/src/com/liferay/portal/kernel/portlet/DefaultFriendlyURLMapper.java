@@ -325,15 +325,12 @@ public class DefaultFriendlyURLMapper extends BaseFriendlyURLMapper {
 	protected boolean isAllPublicRenderParameters(
 		Map<String, String> routeParameters) {
 
-		Map<String, String> publicRenderParameters =
-			FriendlyURLMapperThreadLocal.getPRPIdentifiers();
 		Set<String> routeParameterKeys = routeParameters.keySet();
 
-		if (routeParameterKeys.containsAll(publicRenderParameters.keySet())) {
-			return true;
-		}
+		Map<String, String> publicRenderParameters =
+			FriendlyURLMapperThreadLocal.getPRPIdentifiers();
 
-		return false;
+		return routeParameterKeys.containsAll(publicRenderParameters.keySet());
 	}
 
 	/**
