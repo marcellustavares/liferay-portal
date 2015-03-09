@@ -2,17 +2,53 @@
 	AUI().applyConfig(
 		{
 			groups: {
-				fields: {
-					base: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/js/',
-					modules: {
-						'liferay-text-field': {
-							path: 'text.soy.js',
-							requires: [
-								'liferay-soy-utils'
-							]
-						}
-					},
-					root: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/js/'
+				checkbox: {
+						base: '/o/com.liferay.dynamic.data.mapping.type.checkbox/ddm/checkbox/js/',
+						modules: {
+							'liferay-checkbox-field': {
+								path: 'checkbox.soy.js',
+								requires: [
+									'liferay-soy-utils'
+								]
+							}
+						},
+						root: '/o/com.liferay.dynamic.data.mapping.type.checkbox/ddm/checkbox/js/'
+				},
+				radio: {
+						base: '/o/com.liferay.dynamic.data.mapping.type.radio/ddm/radio/js/',
+						modules: {
+							'liferay-radio-field': {
+								path: 'radio.soy.js',
+								requires: [
+									'liferay-soy-utils'
+								]
+							}
+						},
+						root: '/o/com.liferay.dynamic.data.mapping.type.radio/ddm/radio/js/'
+				},
+				select: {
+						base: '/o/com.liferay.dynamic.data.mapping.type.select/ddm/select/js/',
+						modules: {
+							'liferay-select-field': {
+								path: 'select.soy.js',
+								requires: [
+									'liferay-soy-utils'
+								]
+							}
+						},
+						root: '/o/com.liferay.dynamic.data.mapping.type.select/ddm/select/js/'
+				},
+				text: {
+						base: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/text/js/',
+						modules: {
+							'liferay-text-field': {
+								path: 'text.soy.js',
+								requires: [
+									'liferay-soy-utils'
+								]
+							}
+						},
+						root: '/o/com.liferay.dynamic.data.mapping.type.text/ddm/text/js/'
 				},
 				forms: {
 					base: '/o/comliferayformsweb/js/',

@@ -165,6 +165,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-form-builder-field-base', 'aui-form-field', 'aui-boolean-data-editor', 'aui-options-data-editor', 'aui-tabs-data-editor', 'aui-radio-group-data-editor', 'aui-text-data-editor', 'liferay-text-field']
+		requires: ['aui-form-builder-field-base', 'aui-form-field', 'aui-boolean-data-editor', 'aui-options-data-editor', 'aui-tabs-data-editor', 'aui-radio-group-data-editor', 'aui-text-data-editor', 'liferay-checkbox-field', 'liferay-radio-field', 'liferay-select-field', 'liferay-text-field']
 	}
 );

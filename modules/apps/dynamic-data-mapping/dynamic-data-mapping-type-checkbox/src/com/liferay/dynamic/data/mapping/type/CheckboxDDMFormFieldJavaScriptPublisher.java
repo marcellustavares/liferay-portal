@@ -37,13 +37,13 @@ import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
  */
 @Component(
 	property = {
-		"osgi.http.whiteboard.resource.pattern=/ddm/text/js/*",
+		"osgi.http.whiteboard.resource.pattern=/ddm/checkbox/js/*",
 		"osgi.http.whiteboard.resource.prefix=/META-INF/resources",
-		"osgi.http.whiteboard.servlet.pattern=/ddm/text/js/*"
+		"osgi.http.whiteboard.servlet.pattern=/ddm/checkbox/js/*"
 	},
 	immediate = true, service = Servlet.class
 )
-public class TextDDMFormFieldJavaScriptPublisher extends HttpServlet {
+public class CheckboxDDMFormFieldJavaScriptPublisher extends HttpServlet {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {

@@ -23,7 +23,8 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettingEd
 /**
  * @author Marcellus Tavares
  */
-public class DisplayStyleDDMFormFieldTypeSetting implements DDMFormFieldTypeSetting {
+public class DisplayStyleDDMFormFieldTypeSetting
+	implements DDMFormFieldTypeSetting {
 
 	@Override
 	public DDMFormFieldTypeSettingEditor getDDMFormFieldTypeSettingEditor() {
@@ -62,12 +63,12 @@ public class DisplayStyleDDMFormFieldTypeSetting implements DDMFormFieldTypeSett
 	}
 
 	@Override
-	public boolean isLocalizable() {
+	public boolean isAdvanced() {
 		return false;
 	}
 
 	@Override
-	public boolean isAdvanced() {
+	public boolean isLocalizable() {
 		return false;
 	}
 

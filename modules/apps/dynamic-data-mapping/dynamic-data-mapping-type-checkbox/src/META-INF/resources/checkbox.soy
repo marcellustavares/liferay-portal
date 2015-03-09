@@ -1,0 +1,19 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form checkbox field.
+ *
+ * @param fieldLabel
+ * @param fieldName
+ * @param fieldNameSuffix
+ * @param fieldQualifiedName
+ * @param fieldStatus
+ */
+{template .checkbox}
+	<div class="form-group field-wrapper" data-repeatable="false" data-fieldnamespace="{$fieldNameSuffix}" data-fieldname="{$fieldName}">
+		<input id="{$fieldQualifiedName}" class="field" type="checkbox" name="{$fieldQualifiedName}" {$fieldStatus}>
+		<label for="{$fieldQualifiedName}">
+			{$fieldLabel}
+		</label>
+	</div>
+{/template}

@@ -5,6 +5,7 @@ import java.util.List;
 
 public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
 
+	@Override
 	public List<DDMFormFieldTypeSetting> getRequiredSettings() {
 		List<DDMFormFieldTypeSetting> requiredSettings = new ArrayList<>();
 
@@ -21,5 +22,15 @@ public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
 
 		return requiredSettings;
 	}
+	
+	@Override
+	public String getFieldJavaScriptClass() {
+		return "Liferay.Forms.FieldBase.getFieldClass()";
+	}
 
+	@Override
+	public String getIcon() {
+		return "my-icon";
+	}
+	
 }

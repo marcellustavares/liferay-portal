@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.type;
 
-import com.liferay.dynamic.data.mapping.type.settings.DisplayStyleDDMFormFieldTypeSetting;
-import com.liferay.dynamic.data.mapping.type.settings.PlaceHolderDDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
@@ -23,7 +21,7 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,10 +29,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Marcellus Tavares
+ * @author Renato Rego
  */
 @Component(immediate = true, service = DDMFormFieldType.class)
-public class TextDDMFormFieldType extends BaseDDMFormFieldType {
+public class RadioDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
@@ -45,38 +43,33 @@ public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 	public DDMFormFieldValueAccessor<String> getDDMFormFieldValueAccessor(
 		Locale locale) {
 
-		return new TextDDMFormFieldValueAccessor(locale);
+		return new RadioDDMFormFieldValueAccessor(locale);
 	}
 
 	@Override
 	public DDMFormFieldValueRendererAccessor
 		getDDMFormFieldValueRendererAccessor(Locale locale) {
 
-		return new TextDDMFormFieldValueRendererAccessor(
+		return new RadioDDMFormFieldValueRendererAccessor(
 			getDDMFormFieldValueAccessor(locale));
 	}
 
 	@Override
 	public String getLabel() {
-		return "Text";
+		return "Radio";
 	}
 
 	@Override
 	public String getName() {
-		return "text";
+		return "radio";
 	}
 
 	@Override
 	public List<DDMFormFieldTypeSetting> getOptionalSettings() {
-		List<DDMFormFieldTypeSetting> basicSettings = new ArrayList<>();
-
-		basicSettings.add(new DisplayStyleDDMFormFieldTypeSetting());
-		basicSettings.add(new PlaceHolderDDMFormFieldTypeSetting());
-
-		return basicSettings;
+		return Collections.emptyList();
 	}
 
-	@Reference(service = TextDDMFormFieldRenderer.class, unbind = "-")
+	@Reference(service = RadioDDMFormFieldRenderer.class, unbind = "-")
 	protected void setDDMFormFieldRenderer(
 		DDMFormFieldRenderer ddmFormFieldRenderer) {
 
