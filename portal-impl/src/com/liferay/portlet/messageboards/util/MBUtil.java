@@ -1146,12 +1146,12 @@ public class MBUtil {
 	private static String[] _getMessageIdStringParts(String messageIdString) {
 		int pos = messageIdString.indexOf(CharPool.AT);
 
-		String target = messageIdString.substring(
-			MBUtil.MESSAGE_POP_PORTLET_PREFIX.length() +
-				getMessageIdStringOffset(),
-			pos);
-
-		return StringUtil.split(target, CharPool.PERIOD);
+		return StringUtil.split(
+			messageIdString.substring(
+				MBUtil.MESSAGE_POP_PORTLET_PREFIX.length() +
+					getMessageIdStringOffset(),
+				pos),
+			CharPool.PERIOD);
 	}
 
 	private static String _getParentMessageIdFromSubject(Message message)
