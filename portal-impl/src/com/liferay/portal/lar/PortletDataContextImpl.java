@@ -834,8 +834,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		Property dateProperty = PropertyFactoryUtil.forName(datePropertyName);
 
-		conjunction.add(dateProperty.ge(_startDate));
 		conjunction.add(dateProperty.le(_endDate));
+		conjunction.add(dateProperty.ge(_startDate));
 
 		return conjunction;
 	}
