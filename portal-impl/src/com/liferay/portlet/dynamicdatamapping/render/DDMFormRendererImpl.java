@@ -40,7 +40,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			DDMFormFieldRenderer ddmFormFieldRenderer =
 				DDMFormFieldRendererRegistryUtil.getDDMFormFieldRenderer(
 					ddmFormField.getType());
-
+			
 			sb.append(
 				ddmFormFieldRenderer.render(
 					ddmFormField, ddmFormFieldRenderingContext));

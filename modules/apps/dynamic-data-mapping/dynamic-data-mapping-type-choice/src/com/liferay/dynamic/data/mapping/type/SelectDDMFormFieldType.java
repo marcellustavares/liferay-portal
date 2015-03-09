@@ -53,7 +53,7 @@ public class SelectDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
 	public String getName() {
-		return "select-choice";
+		return "select";
 	}
 
 	@Reference(service = ChoiceDDMFormFieldRenderer.class, unbind = "-")

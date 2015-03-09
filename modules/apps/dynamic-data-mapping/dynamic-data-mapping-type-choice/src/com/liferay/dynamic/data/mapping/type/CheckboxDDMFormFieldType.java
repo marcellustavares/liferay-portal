@@ -52,7 +52,7 @@ public class CheckboxDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
 	public String getName() {
-		return "checkbox-choice";
+		return "checkbox";
 	}
 
 	@Reference(service = ChoiceDDMFormFieldRenderer.class, unbind = "-")

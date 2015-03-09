@@ -43,8 +43,10 @@ public class SelectDDMFormFieldValueAccessor
 				value.getString(locale));
 
 			return jsonArray;
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			_log.error(e, e);
+
 			return JSONFactoryUtil.createJSONArray();
 		}
 	}

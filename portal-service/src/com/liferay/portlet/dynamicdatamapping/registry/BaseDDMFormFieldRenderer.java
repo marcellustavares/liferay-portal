@@ -46,8 +46,8 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		Template template = TemplateManagerUtil.getTemplate(
 			TemplateConstants.LANG_TYPE_SOY, templateResource, false);
 
-		template.put(TemplateConstants.NAMESPACE,
-			getTemplateNamespace(ddmFormField));
+		template.put(
+			TemplateConstants.NAMESPACE, getTemplateNamespace(ddmFormField));
 
 		populateRequiredContext(
 			template, ddmFormField, ddmFormFieldRenderingContext);

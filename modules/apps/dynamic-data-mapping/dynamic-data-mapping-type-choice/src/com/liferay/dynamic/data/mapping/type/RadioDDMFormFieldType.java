@@ -52,7 +52,7 @@ public class RadioDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
 	public String getName() {
-		return "radio-choice";
+		return "radio";
 	}
 
 	@Reference(service = ChoiceDDMFormFieldRenderer.class, unbind = "-")
