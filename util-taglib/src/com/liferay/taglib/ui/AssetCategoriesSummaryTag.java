@@ -70,20 +70,20 @@ public class AssetCategoriesSummaryTag<R> extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		AssetCategoriesAvailableTag<R> assetCategoriesAvailableTagTag =
+		List<AssetCategory> assetCategories = new ArrayList<>();
+
+		AssetCategoriesAvailableTag<R> assetCategoriesAvailableTag =
 			(AssetCategoriesAvailableTag<R>)findAncestorWithClass(
 				this, AssetCategoriesAvailableTag.class);
 
-		List<AssetCategory> assetCategories = new ArrayList<>();
-
-		if (assetCategoriesAvailableTagTag != null) {
-			assetCategories =
-				assetCategoriesAvailableTagTag.getAssetCategories();
+		if (assetCategoriesAvailableTag != null) {
+			assetCategories = assetCategoriesAvailableTag.getAssetCategories();
 		}
 
 		request.setAttribute(
 			"liferay-ui:asset-categories-summary:assetCategories",
 			assetCategories);
+
 		request.setAttribute(
 			"liferay-ui:asset-categories-summary:className", _className);
 		request.setAttribute(

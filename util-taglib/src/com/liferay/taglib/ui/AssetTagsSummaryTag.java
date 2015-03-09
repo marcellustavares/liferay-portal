@@ -78,14 +78,14 @@ public class AssetTagsSummaryTag<R> extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		AssetTagsAvailableTag<R> assetTagsAvailableTagTag =
+		List<AssetTag> assetTags = new ArrayList<>();
+
+		AssetTagsAvailableTag<R> assetTagsAvailableTag =
 			(AssetTagsAvailableTag<R>)findAncestorWithClass(
 				this, AssetTagsAvailableTag.class);
 
-		List<AssetTag> assetTags = new ArrayList<>();
-
-		if (assetTagsAvailableTagTag != null) {
-			assetTags = assetTagsAvailableTagTag.getAssetTags();
+		if (assetTagsAvailableTag != null) {
+			assetTags = assetTagsAvailableTag.getAssetTags();
 		}
 
 		request.setAttribute(
