@@ -14,12 +14,6 @@
 
 package com.liferay.forms.web.portlet.display;
 
-import java.util.List;
-
-import javax.portlet.PortletURL;
-import javax.portlet.RenderResponse;
-import javax.servlet.http.HttpServletRequest;
-
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -47,6 +41,13 @@ import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
+
+import java.util.List;
+
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+
+import javax.servlet.http.HttpServletRequest;
 public class FormsRequestHelper extends BaseRequestHelper {
 
 	public FormsRequestHelper(HttpServletRequest request) {
@@ -54,7 +55,7 @@ public class FormsRequestHelper extends BaseRequestHelper {
 	}
 
 	public boolean canCopyStructure() {
-		DDMPermissionHandler ddmPermissionHandler = 
+		DDMPermissionHandler ddmPermissionHandler =
 			getDDMDisplay().getDDMPermissionHandler();
 
 		return DDMPermission.contains(getPermissionChecker(),
@@ -112,7 +113,7 @@ public class FormsRequestHelper extends BaseRequestHelper {
 			}
 			else {
 				ddmForm = new DDMForm();
-			} 
+			}
 		}
 
 		return ddmForm;
@@ -135,7 +136,7 @@ public class FormsRequestHelper extends BaseRequestHelper {
 			}
 			else {
 				ddmFormLayout = new DDMFormLayout();
-			} 
+			}
 		}
 
 		return ddmFormLayout;

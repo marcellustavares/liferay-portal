@@ -14,9 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping.render;
 
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +87,10 @@ public class DDMFormFieldRenderingContext {
 
 		_httpServletResponse = httpServletResponse;
 	}
+	
+	public DDMFormFieldValue getDDMFormFieldValue() {
+		return _ddmFormFieldValue;
+	}
 
 	public void setLocale(Locale locale) {
 		_locale = locale;
@@ -110,6 +117,8 @@ public class DDMFormFieldRenderingContext {
 	}
 
 	private Fields _fields;
+	private DDMFormFieldValue _ddmFormFieldValue = new DDMFormFieldValue();
+	private int _ddmFormFieldValueIndex;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
@@ -118,5 +127,46 @@ public class DDMFormFieldRenderingContext {
 	private String _portletNamespace;
 	private boolean _readOnly;
 	private boolean _showEmptyFieldLabel;
+	private String _nestedRenderedDDMFormFields;
+	private DDMFormField _ddmFormField;
+	private DDMFormFieldRenderingContext _parentDDMFormFieldRenderingContext;
+	
+	public void setDDMFormField(DDMFormField ddmFormField) {
+		_ddmFormField = ddmFormField;
+	}
+	
+	public String getNestedRenderedDDMFormFields() {
+		return _nestedRenderedDDMFormFields;
+	}
+	
+	public void setNestedRenderedDDMFormFields(String nestedRenderedDDMFormFields) {
+		_nestedRenderedDDMFormFields = nestedRenderedDDMFormFields;
+	}
+	
+	public void setDDMFormFieldValue(DDMFormFieldValue ddmFormFieldValue) {
+		_ddmFormFieldValue = ddmFormFieldValue;
+	}
+
+	public int getDDMFormFieldValueIndex() {
+		return _ddmFormFieldValueIndex;
+	}
+	
+	public void setDDMFormFieldValueIndex(int ddmFormFieldValueIndex) {
+		_ddmFormFieldValueIndex = ddmFormFieldValueIndex;
+	}
+
+	public DDMFormField getDDMFormField() {
+		return _ddmFormField;
+	}
+
+	public DDMFormFieldRenderingContext getParentDDMFormFieldRenderingContext() {
+		return _parentDDMFormFieldRenderingContext;
+	}
+	
+	public void setParentDDMFormFieldRenderingContext(
+		DDMFormFieldRenderingContext parentDDMFormFieldRenderingContext) {
+		_parentDDMFormFieldRenderingContext = parentDDMFormFieldRenderingContext;
+		
+	}
 
 }

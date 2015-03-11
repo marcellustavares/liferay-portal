@@ -17,9 +17,12 @@ package com.liferay.dynamic.data.mapping.form.renderer.impl;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Stack;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +38,9 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
@@ -46,6 +51,8 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 /**
  * @author Marcellus Tavares
@@ -67,7 +74,15 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			
 			template.put(TemplateConstants.NAMESPACE, "ddm.layout");
 			
-			Map<String, Object> rows = getRows(ddmForm, ddmFormLayout.getDDMFormLayoutRows(), ddmFormRenderingContext);
+			Stack<DDMFormFieldRenderingContext> 
+				ddmFormFieldRenderingContextStack = 
+					getDDMFormFieldRenderingContextStack(ddmForm, ddmFormRenderingContext.getDDMFormValues(), ddmFormRenderingContext.getPortletNamespace());
+			
+			Map<String, List<String>> ddmFormFieldMap = getRenderedDDMFormFieldsMap(ddmFormFieldRenderingContextStack, ddmFormRenderingContext.getLocale());
+			
+			Map<String, Object> rows = getRows(
+				ddmForm, ddmFormLayout.getDDMFormLayoutRows(),
+				ddmFormFieldMap);
 			
 			template.put("rows", rows.get("rows"));
 			
@@ -80,7 +95,164 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return StringPool.BLANK;
 	}
 	
-	protected  Map<String, Object> getRows(DDMForm ddmForm, List<DDMFormLayoutRow> ddmFormLayoutRows, DDMFormRenderingContext ddmFormRenderingContext) throws PortalException {
+	protected Map<String, List<String>> getRenderedDDMFormFieldsMap(
+		Stack<DDMFormFieldRenderingContext> ddmFormFieldRenderingContextStack,
+		Locale locale) throws PortalException {
+
+		Map<String, List<String>> renderedDDMFormFieldsMap = new HashMap<>();
+		
+		while (!ddmFormFieldRenderingContextStack.isEmpty()) {
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext = 
+				ddmFormFieldRenderingContextStack.pop();
+			
+			ddmFormFieldRenderingContext.setLocale(locale);
+			
+			DDMFormField ddmFormField = ddmFormFieldRenderingContext.getDDMFormField();
+			
+			populateRenderedNestedDDMFormFields(
+				ddmFormField, ddmFormFieldRenderingContext, 
+				renderedDDMFormFieldsMap);
+			
+			String renderedDDMFormField = renderDDMFormField(ddmFormFieldRenderingContext);
+			
+			List<String> renderedDDMFormFieldsList = renderedDDMFormFieldsMap.get(ddmFormField.getName());
+			
+			if (renderedDDMFormFieldsList == null) {
+				renderedDDMFormFieldsList = new ArrayList<>();
+				
+				renderedDDMFormFieldsMap.put(ddmFormField.getName(), renderedDDMFormFieldsList);
+			} 
+			
+			renderedDDMFormFieldsList.add(renderedDDMFormField);
+		}
+		
+		return renderedDDMFormFieldsMap;
+	}
+	
+	private void populateRenderedNestedDDMFormFields(
+		DDMFormField ddmFormField, 
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext,
+		Map<String, List<String>> renderedDDMFormFieldsMap) {
+
+		for (DDMFormField nestedDDMFormField : ddmFormField.getNestedDDMFormFields()) {
+			StringBundler sb = new StringBundler();
+			
+			for (String nestedRenderedDDMFormField : 
+					renderedDDMFormFieldsMap.get(nestedDDMFormField.getName())) {
+				
+				sb.append(nestedRenderedDDMFormField);
+			}
+			
+			if (!nestedDDMFormField.isRepeatable()) {
+				renderedDDMFormFieldsMap.remove(nestedDDMFormField.getName());
+			}
+			
+			ddmFormFieldRenderingContext.setNestedRenderedDDMFormFields(
+				sb.toString());
+		}
+	}
+
+	protected Stack<DDMFormFieldRenderingContext> 
+		getDDMFormFieldRenderingContextStack(
+			DDMForm ddmForm, DDMFormValues ddmFormValues, String portletNamespace) {
+		
+		Stack<DDMFormFieldRenderingContext> ddmFormFieldRenderingContextStack = 
+			new Stack<>();
+			
+		populateDDMFormFieldRenderingContextStack(
+			ddmForm.getDDMFormFields(), 
+			ddmFormValues.getDDMFormFieldValuesMap(), portletNamespace, null,
+			ddmFormFieldRenderingContextStack);
+		
+		return ddmFormFieldRenderingContextStack;
+	} 
+	
+	protected void populateDDMFormFieldRenderingContextStack(
+		List<DDMFormField> ddmFormFields,
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap, String portletNamespace, DDMFormFieldRenderingContext parentDDMFormFieldRenderingContext,
+		Stack<DDMFormFieldRenderingContext> ddmFormFieldRenderingContextStack) {
+	
+		if (ddmFormFields.isEmpty()) {
+			return;
+		}
+		
+		for (DDMFormField ddmFormField : ddmFormFields) {
+			List<DDMFormFieldValue> ddmFormFieldValues = 
+				ddmFormFieldValuesMap.get(ddmFormField.getName());
+			
+			if (ListUtil.isNotEmpty(ddmFormFieldValues)) {
+				int index = 0;
+
+				for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+					DDMFormFieldRenderingContext ddmFormFieldRenderingContext = 
+						new DDMFormFieldRenderingContext();
+					
+					ddmFormFieldRenderingContext.setDDMFormField(ddmFormField);
+					ddmFormFieldRenderingContext.setDDMFormFieldValue(
+						ddmFormFieldValue);
+					ddmFormFieldRenderingContext.setDDMFormFieldValueIndex(
+						index++);
+					ddmFormFieldRenderingContext.setPortletNamespace(portletNamespace);
+					
+					if (parentDDMFormFieldRenderingContext != null) {
+						ddmFormFieldRenderingContext.setParentDDMFormFieldRenderingContext(parentDDMFormFieldRenderingContext);
+					}
+					
+					ddmFormFieldRenderingContextStack.push(
+						ddmFormFieldRenderingContext);
+					
+					populateDDMFormFieldRenderingContextStack(
+						ddmFormField.getNestedDDMFormFields(),
+						ddmFormFieldValue.getNestedDDMFormFieldValuesMap(), portletNamespace, ddmFormFieldRenderingContext,
+						ddmFormFieldRenderingContextStack);
+				}
+			}
+			else {
+				DDMFormFieldRenderingContext ddmFormFieldRenderingContext = 
+					new DDMFormFieldRenderingContext();
+				
+				ddmFormFieldRenderingContext.setDDMFormField(ddmFormField);
+				ddmFormFieldRenderingContext.setPortletNamespace(portletNamespace);
+				
+				if (parentDDMFormFieldRenderingContext != null) {
+					ddmFormFieldRenderingContext.setParentDDMFormFieldRenderingContext(parentDDMFormFieldRenderingContext);
+				}
+				ddmFormFieldRenderingContextStack.push(
+					ddmFormFieldRenderingContext);
+				
+				Map<String, List<DDMFormFieldValue>> 
+					nestedDDMFormFieldValuesMap = Collections.emptyMap();
+				
+				populateDDMFormFieldRenderingContextStack(
+					ddmFormField.getNestedDDMFormFields(), 
+					nestedDDMFormFieldValuesMap, portletNamespace, ddmFormFieldRenderingContext,
+					ddmFormFieldRenderingContextStack);
+			}
+			
+		}
+	}
+	
+//	protected void populateRenderedDDMFormFieldsMap(
+//		List<DDMFormField> ddmFormFields,
+//		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+//		Map<String, String> renderedDDMFormFieldsMap) {
+//		
+//		for (DDMFormField ddmFormField : ddmFormFields) {
+//			List<DDMFormFieldValue> ddmFormFieldValues = 
+//				ddmFormFieldValuesMap.get(ddmFormField.getName());
+//			
+//			if (ListUtil.isEmpty(ddmFormFieldValues)) {
+//				ddmFormFieldValuesMap.put(ddmFormField.getName(), value)
+//			}
+//			
+//		}
+//	}
+	
+	protected  Map<String, Object> getRows(
+			DDMForm ddmForm, List<DDMFormLayoutRow> ddmFormLayoutRows,
+			Map<String, List<String>> ddmFormFieldMap)
+		throws PortalException {
+		
 		Map<String, Object> rows = new HashMap<>();
 		 
 		List<Map<String, Object>> rowsList = new ArrayList<>();
@@ -90,7 +262,8 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 				continue;
 			}
 
-			rowsList.add(getRow(ddmForm, ddmFormLayoutRow, ddmFormRenderingContext));
+			rowsList.add(
+				getRow(ddmForm, ddmFormLayoutRow, ddmFormFieldMap));
 		}
 		
 		rows.put("rows", rowsList);
@@ -98,7 +271,11 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return rows;
 	}
 
-	protected Map<String, Object> getRow(DDMForm ddmForm, DDMFormLayoutRow ddFormLayoutRow, DDMFormRenderingContext ddmFormRenderingContext) throws PortalException {
+	protected Map<String, Object> getRow(
+			DDMForm ddmForm, DDMFormLayoutRow ddFormLayoutRow,
+			Map<String, List<String>> ddmFormFieldMap) 
+		throws PortalException {
+		
 		Map<String, Object> columns = new HashMap<>();
 		
 		List<Map<String, Object>> columnsList = new ArrayList<>();
@@ -106,7 +283,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		for (DDMFormLayoutColumn ddmFormLayoutColumn : 
 				ddFormLayoutRow.getDDMFormLayoutColumns()) {
 			
-			columnsList.add(getColumn(ddmForm, ddmFormLayoutColumn, ddmFormRenderingContext));
+			columnsList.add(
+				getColumn(
+					ddmForm, ddmFormLayoutColumn, ddmFormFieldMap));
 			
 		}
 		
@@ -115,29 +294,40 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return columns;
 	}
 	
-	protected Map<String, Object> getColumn(DDMForm ddmForm, DDMFormLayoutColumn ddmFormLayoutColumn, DDMFormRenderingContext ddmFormRenderingContext) throws PortalException {
+	protected Map<String, Object> getColumn(
+			DDMForm ddmForm, DDMFormLayoutColumn ddmFormLayoutColumn, 
+			Map<String, List<String>> ddmFormFieldMap)
+		throws PortalException {
+		
 		Map<String, Object> column = new HashMap<>();
 		
 		column.put("size", ddmFormLayoutColumn.getSize());
-		column.put("html", renderDDMFormField(ddmForm, ddmFormLayoutColumn.getDDMFormFieldName(), ddmFormRenderingContext));
+		
+		StringBundler sb = new StringBundler();
+		
+		for (String html : ddmFormFieldMap.get(ddmFormLayoutColumn.getDDMFormFieldName())) {
+			sb.append(html);
+		}
+		column.put("html", sb.toString());
 		
 		return column;
 	}
 	
-	protected String renderDDMFormField(DDMForm ddmForm, String fieldName, DDMFormRenderingContext ddmFormRenderingContext) throws PortalException {
-		Map<String, DDMFormField> ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
+	protected String renderDDMFormField(
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext) 
+		throws PortalException {
 		
-		DDMFormField ddmFormField = ddmFormFieldsMap.get(fieldName);
+		DDMFormField ddmFormField = ddmFormFieldRenderingContext.getDDMFormField();
 		
-		DDMFormFieldType ddmFormFieldType = DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(ddmFormField.getType());
+		DDMFormFieldType ddmFormFieldType = 
+			DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(
+				ddmFormField.getType());
 		
-		DDMFormFieldRenderer ddmFormFieldRenderer = ddmFormFieldType.getDDMFormFieldRenderer();
+		DDMFormFieldRenderer ddmFormFieldRenderer = 
+			ddmFormFieldType.getDDMFormFieldRenderer();
 		
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
-		
-		ddmFormFieldRenderingContext.setLocale(ddmFormRenderingContext.getLocale());
-		
-		return ddmFormFieldRenderer.render(ddmFormField, ddmFormFieldRenderingContext);
+		return ddmFormFieldRenderer.render(
+			ddmFormField, ddmFormFieldRenderingContext);
 	}
 	
 	protected String render(Template template) throws PortalException {

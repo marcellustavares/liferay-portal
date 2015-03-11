@@ -14,7 +14,8 @@
  */
 --%>
 
-<%@page import="com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler"%>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler" %>
+
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -26,7 +27,7 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <%@ page import="com.liferay.portal.kernel.editor.EditorUtil" %><%@
-page import="com.liferay.forms.web.portlet.display.FormsRequestHelper"%><%@
+page import="com.liferay.forms.web.portlet.display.FormsRequestHelper" %><%@
 page import="com.liferay.portal.kernel.dao.search.ResultRow" %><%@
 page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
@@ -76,40 +77,40 @@ page import="com.liferay.portlet.dynamicdatamapping.TemplateScriptException" %><
 page import="com.liferay.portlet.dynamicdatamapping.TemplateSmallImageNameException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMDisplay" %><%@
-page import="com.liferay.portal.kernel.dao.search.SearchContainer"%><%@
+page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMTemplateHelperUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMXSDUtil" %><%@
 page import="java.util.StringTokenizer" %><%@
-page import="javax.portlet.WindowState"%><%@
+page import="javax.portlet.WindowState" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout" %><%@
 page import="javax.portlet.PortletURL" %>
 
-<%@page import="com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil"%>
-<%@page import="javax.portlet.PortletRequest"%>
-<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
-<%@page import="com.liferay.portal.util.PropsValues"%>
-<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
-<%@page import="com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.util.StringUtil"%>
-<%@page import="com.liferay.portal.LocaleException"%>
-<%@page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException"%>
-<%@page import="com.liferay.portal.kernel.json.JSONArray"%>
-<%@page import="com.liferay.portal.kernel.bean.BeanParamUtil"%>
-<%@page import="com.liferay.portal.util.WebKeys"%>
-<%@page import="com.liferay.portal.kernel.util.LocalizationUtil"%>
-<%@page import="com.liferay.portal.kernel.util.LocaleUtil"%>
-<%@page import="com.liferay.portal.kernel.json.JSONObject"%>
-<%@page import="com.liferay.portal.kernel.json.JSONArray"%>
-<%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
-<%@page import="java.util.Locale"%>
-<%@ page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil" %>
-<%@ page import="com.liferay.portlet.dynamicdatamapping.util.DDMFormFieldTypesHelper" %>
-<%@page import="javax.portlet.ActionRequest"%>
+<%@ page import="com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil" %><%@
+page import="javax.portlet.PortletRequest" %><%@
+page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
+page import="com.liferay.portal.util.PropsValues" %><%@
+page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringUtil" %><%@
+page import="com.liferay.portal.LocaleException" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException" %><%@
+page import="com.liferay.portal.kernel.json.JSONArray" %><%@
+page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
+page import="com.liferay.portal.util.WebKeys" %><%@
+page import="com.liferay.portal.kernel.util.LocalizationUtil" %><%@
+page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
+page import="com.liferay.portal.kernel.json.JSONObject" %><%@
+page import="com.liferay.portal.kernel.json.JSONArray" %><%@
+page import="com.liferay.portal.kernel.json.JSONFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="java.util.Locale" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.util.DDMFormFieldTypesHelper" %><%@
+page import="javax.portlet.ActionRequest" %>
 
-<%@page import="com.liferay.portal.kernel.dao.search.DisplayTerms"%>
+<%@ page import="com.liferay.portal.kernel.dao.search.DisplayTerms" %>
 
 <liferay-theme:defineObjects />
 <portlet:defineObjects />

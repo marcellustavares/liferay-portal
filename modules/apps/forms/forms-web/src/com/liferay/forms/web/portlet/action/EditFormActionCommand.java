@@ -1,13 +1,5 @@
 package com.liferay.forms.web.portlet.action;
 
-import java.util.Locale;
-import java.util.Map;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.forms.web.portlet.constants.FormsPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
@@ -27,6 +19,14 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
+
+import java.util.Locale;
+import java.util.Map;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+
+import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
@@ -36,6 +36,38 @@ import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
 	service = ActionCommand.class
 )
 public class EditFormActionCommand extends TransactionActionCommand {
+
+	@Override
+	protected void doTransactionCommand(
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws Exception {
+
+		DDMStructure ddmStructure = updateDDMStructure(portletRequest);
+
+		updateDDLRecordSet(portletRequest, ddmStructure.getStructureId());
+	}
+
+	protected DDMForm getDDMForm(PortletRequest portletRequest)
+		throws PortalException {
+
+		try {
+			String definition = ParamUtil.getString(
+				portletRequest, "definition");
+
+			return DDMFormJSONDeserializerUtil.deserialize(definition);
+		}
+		catch (PortalException pe) {
+			throw new StructureDefinitionException(pe);
+		}
+	}
+
+	protected DDMFormLayout getDDMFormLayout(PortletRequest portletRequest)
+		throws PortalException {
+
+		String layout = ParamUtil.getString(portletRequest, "layout");
+
+		return DDMFormLayoutJSONDeserializerUtil.deserialize(layout);
+	}
 
 	protected void updateDDLRecordSet(
 			PortletRequest portletRequest, long ddmStructureId)
@@ -103,38 +135,6 @@ public class EditFormActionCommand extends TransactionActionCommand {
 		}
 
 		return ddmStructure;
-	}
-
-	protected DDMForm getDDMForm(PortletRequest portletRequest)
-		throws PortalException {
-
-		try {
-			String definition = ParamUtil.getString(
-				portletRequest, "definition");
-
-			return DDMFormJSONDeserializerUtil.deserialize(definition);
-		}
-		catch (PortalException pe) {
-			throw new StructureDefinitionException(pe);
-		}
-	}
-
-	protected DDMFormLayout getDDMFormLayout(PortletRequest portletRequest)
-		throws PortalException {
-
-		String layout = ParamUtil.getString(portletRequest, "layout");
-
-		return DDMFormLayoutJSONDeserializerUtil.deserialize(layout);
-	}
-
-	@Override
-	protected void doTransactionCommand(
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws Exception {
-
-		DDMStructure ddmStructure = updateDDMStructure(portletRequest);
-
-		updateDDLRecordSet(portletRequest, ddmStructure.getStructureId());
 	}
 
 }

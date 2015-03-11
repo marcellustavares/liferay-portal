@@ -14,8 +14,9 @@
  */
 --%>
 
-<%@page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm"%>
-<%@page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil"%>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil" %>
+<%@ page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm" %>
+
 <%@ include file="../init.jsp" %>
 
 <%

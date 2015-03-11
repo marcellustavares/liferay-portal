@@ -18,7 +18,10 @@
 
 <%
 String redirect = ParamUtil.getString(request, "redirect");
-		 
+
+long groupId = ParamUtil.getLong(request, "groupId", scopeGroupId);
+long recordSetId = ParamUtil.getLong(request, "recordSetId");
+
 String formHTML = (String)request.getAttribute("formHTML");
 %>
 
@@ -27,5 +30,17 @@ String formHTML = (String)request.getAttribute("formHTML");
 	title="back"
 />
 
-<%= formHTML %>
+<portlet:actionURL var="saveFormURL">
+	<portlet:param name="<%= ActionRequest.ACTION_NAME %>" value="saveForm" />
+</portlet:actionURL>
 
+<aui:form action="<%= saveFormURL %>" method="post" name="fm">
+	<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
+	<aui:input name="recordSetId" type="hidden" value="<%= recordSetId %>" />
+	<aui:input name="availableLanguageIds" type="hidden" value="en_US" />
+	<aui:input name="defaultLanguageId" type="hidden" value="en_US" />
+
+	<%= formHTML %>
+
+	<aui:button type="submit" value="submit" />
+</aui:form>

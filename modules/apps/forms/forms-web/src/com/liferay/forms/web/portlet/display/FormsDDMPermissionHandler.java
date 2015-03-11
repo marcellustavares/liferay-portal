@@ -5,7 +5,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.service.permission.DDLPermission;
 import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
-
 public class FormsDDMPermissionHandler implements DDMPermissionHandler {
 
 	public static final long[] RESOURCE_CLASS_NAME_IDS = new long[] {

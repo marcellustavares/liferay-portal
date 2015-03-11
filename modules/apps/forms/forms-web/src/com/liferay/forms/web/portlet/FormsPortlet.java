@@ -14,7 +14,7 @@
 
 package com.liferay.forms.web.portlet;
 
-import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.forms.web.portlet.constants.FormsPortletKeys;
 import com.liferay.forms.web.portlet.display.FormsRendererHelper;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
@@ -92,33 +92,35 @@ public class FormsPortlet extends MVCPortlet {
 		ServletContextPool.put(
 			portletApp.getServletContextName(), portletApp.getServletContext());
 	}
-	
+
 	@Override
 	protected void include(
 			String path, RenderRequest renderRequest,
 			RenderResponse renderResponse)
 		throws IOException, PortletException {
-		
+
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-		
+			WebKeys.THEME_DISPLAY);
+
 		if (path.equals("/view_form.jsp")) {
 			long recordSetId = ParamUtil.getLong(renderRequest, "recordSetId");
-			
-			String formHTML = _formsRendererHelper.render(recordSetId, themeDisplay.getLocale());
-			
+
+			String formHTML = _formsRendererHelper.render(
+				recordSetId, renderResponse.getNamespace(), themeDisplay.getLocale());
+
 			renderRequest.setAttribute("formHTML", formHTML);
 		}
-		
+
 		include(
 			path, renderRequest, renderResponse, PortletRequest.RENDER_PHASE);
 	}
-	
+
 	@Reference(service = FormsRendererHelper.class, unbind = "-")
-	protected void setFormsRendererHelper(FormsRendererHelper formsRendererHelper) {
+	protected void setFormsRendererHelper(
+		FormsRendererHelper formsRendererHelper) {
+
 		_formsRendererHelper = formsRendererHelper;
 	}
-	
 	private FormsRendererHelper _formsRendererHelper;
 
 }

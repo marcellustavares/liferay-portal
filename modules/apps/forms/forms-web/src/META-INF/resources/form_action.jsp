@@ -20,7 +20,7 @@
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
 DDLRecordSet ddlRecordSet = (DDLRecordSet)row.getObject();
-		 
+
 DDMStructure structure = ddlRecordSet.getDDMStructure();
 %>
 

@@ -26,11 +26,11 @@ String description = BeanParamUtil.getString(ddlRecordSet, request, "description
 
 <aui:fieldset>
 	<aui:field-wrapper label="name">
-		<liferay-ui:input-localized cssClass="field lfr-input-text-container form-control lfr-input-text" name="name" xml="<%= name %>" />
+		<liferay-ui:input-localized cssClass="field form-control lfr-input-text lfr-input-text-container" name="name" xml="<%= name %>" />
 	</aui:field-wrapper>
 
 	<aui:field-wrapper label="description">
-		<liferay-ui:input-localized cssClass="field lfr-input-text-container form-control lfr-input-textarea" name="description" type="textarea" xml="<%= description %>" />
+		<liferay-ui:input-localized cssClass="field form-control lfr-input-text-container lfr-input-textarea" name="description" type="textarea" xml="<%= description %>" />
 	</aui:field-wrapper>
 
 	<aui:input label="show-progressbar" name="showProgressbar" type="checkbox" />
