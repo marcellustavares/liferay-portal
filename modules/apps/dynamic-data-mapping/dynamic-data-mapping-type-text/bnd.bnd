@@ -1,4 +1,4 @@
-Bundle-Name: Liferay Dynamic Data Mapping Type Text
+Bundle-Name: Liferay Dynamic Data Mapping Text Form Field Type
 Bundle-SymbolicName: com.liferay.dynamic.data.mapping.type.text
 Bundle-Version: 1.0.0
 Include-Resource:\

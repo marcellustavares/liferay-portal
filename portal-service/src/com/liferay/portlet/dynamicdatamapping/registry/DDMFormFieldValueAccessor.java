@@ -29,6 +29,10 @@ public abstract class DDMFormFieldValueAccessor<A>
 		this.locale = locale;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+
 	@Override
 	public Class<DDMFormFieldValue> getTypeClass() {
 		return DDMFormFieldValue.class;
