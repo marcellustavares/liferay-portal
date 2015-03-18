@@ -21,7 +21,6 @@ import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 
 import java.net.URL;
-
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -40,12 +39,7 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		String templatePath = MapUtil.getString(properties, "templatePath");
-
-		TemplateResource templateResource = getTemplateResource(templatePath);
-
-		this.templateNamespace = "ddm.text";
-		this.templateResource = templateResource;
+		_properties = properties;
 	}
 
 	protected TemplateResource getTemplateResource(String templatePath) {
@@ -57,5 +51,19 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 		return new URLTemplateResource(templateURL.getPath(), templateURL);
 	}
+
+	@Override
+	public String getTemplateNamespace() {
+		return "ddm.text";
+	}
+
+	@Override
+	public TemplateResource getTemplateResource() {
+		String templatePath = MapUtil.getString(_properties, "templatePath");
+		
+		return getTemplateResource(templatePath);
+	}
+
+	private Map<String, Object> _properties; 
 
 }
