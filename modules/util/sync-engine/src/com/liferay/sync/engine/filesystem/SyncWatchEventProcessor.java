@@ -151,6 +151,10 @@ public class SyncWatchEventProcessor implements Runnable {
 		if (syncFile == null) {
 			syncFile = SyncFileService.fetchSyncFile(
 				FileKeyUtil.getFileKey(targetFilePath));
+
+			if (!verifySite(syncFile, parentSyncFile)) {
+				syncFile = null;
+			}
 		}
 
 		if (syncFile == null) {
@@ -278,6 +282,10 @@ public class SyncWatchEventProcessor implements Runnable {
 		if (syncFile == null) {
 			syncFile = SyncFileService.fetchSyncFile(
 				FileKeyUtil.getFileKey(targetFilePath));
+
+			if (!verifySite(syncFile, parentSyncFile)) {
+				syncFile = null;
+			}
 		}
 
 		if (syncFile == null) {
@@ -292,7 +300,7 @@ public class SyncWatchEventProcessor implements Runnable {
 
 		if (targetFilePath.equals(sourceFilePath)) {
 			FileKeyUtil.writeFileKey(
-				targetFilePath, String.valueOf(syncFile.getSyncFileId()));
+				targetFilePath, String.valueOf(syncFile.getSyncFileId()), true);
 		}
 		else if (Files.exists(sourceFilePath)) {
 			SyncFileService.addFolderSyncFile(
@@ -683,6 +691,19 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncFileService.renameFolderSyncFile(
 				targetFilePath, _syncAccountId, syncFile);
 		}
+	}
+
+	protected boolean verifySite(SyncFile syncFile, SyncFile parentSyncFile) {
+		if ((syncFile != null) &&
+			((syncFile.getRepositoryId() !=
+				parentSyncFile.getRepositoryId()) ||
+			 (syncFile.getSyncAccountId() !=
+				 parentSyncFile.getSyncAccountId()))) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	private static final Logger _logger = LoggerFactory.getLogger(

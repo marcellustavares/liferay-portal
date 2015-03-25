@@ -18,8 +18,11 @@ import aQute.bnd.header.Attrs;
 import aQute.bnd.header.OSGiHeader;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Clazz;
 import aQute.bnd.osgi.Constants;
+import aQute.bnd.osgi.Descriptors;
 import aQute.bnd.osgi.Descriptors.PackageRef;
+import aQute.bnd.osgi.Domain;
 import aQute.bnd.osgi.Instruction;
 import aQute.bnd.osgi.Instructions;
 import aQute.bnd.osgi.Jar;
@@ -30,12 +33,15 @@ import aQute.bnd.service.AnalyzerPlugin;
 import aQute.lib.io.IO;
 import aQute.lib.strings.Strings;
 
+import java.io.InputStream;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +52,8 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 
 	@Override
 	public boolean analyzeJar(Analyzer analyzer) throws Exception {
+		addManifestPackageImports(analyzer);
+
 		Parameters parameters = OSGiHeader.parseHeader(
 			analyzer.getProperty("-jsp"));
 
@@ -74,7 +82,7 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 					String jsp = IO.collect(
 						resource.openInputStream(), "UTF-8");
 
-					addPackageImports(analyzer, jsp);
+					addApiUses(analyzer, jsp);
 					addTaglibRequirements(analyzer, jsp);
 
 					matches = true;
@@ -83,26 +91,134 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 		}
 
 		if (matches) {
-			Packages packages = analyzer.getReferred();
-
-			for (String packageName : _REQUIRED_PACKAGE_NAMES) {
-				PackageRef packageRef = analyzer.getPackageRef(packageName);
-
-				Matcher matcher = _packagePattern.matcher(packageRef.getFQN());
-
-				if (matcher.matches() && !packages.containsKey(packageRef)) {
-					packages.put(packageRef, new Attrs());
-				}
-			}
+			addRequiredPackageImports(analyzer, _REQUIRED_PACKAGE_NAMES);
 		}
 
 		return false;
 	}
 
-	protected void addPackageImports(Analyzer analyzer, String content) {
+	protected void addApiUses(Analyzer analyzer, String content) {
+		int contentX = -1;
+		int contentY = content.length();
+
+		while (true) {
+			contentX = content.lastIndexOf("<%@", contentY);
+
+			if (contentX == -1) {
+				break;
+			}
+
+			contentY = contentX;
+
+			int importX = content.indexOf("import=\"", contentY);
+			int importY = -1;
+
+			if (importX != -1) {
+				importX = importX + "import=\"".length();
+				importY = content.indexOf("\"", importX);
+			}
+
+			if ((importX != -1) && (importY != -1)) {
+				String contentFragment = content.substring(importX, importY);
+
+				int index = contentFragment.lastIndexOf('.');
+
+				if (index != -1) {
+					Packages packages = analyzer.getReferred();
+
+					String packageName = contentFragment.substring(0, index);
+
+					PackageRef packageRef = analyzer.getPackageRef(packageName);
+
+					packages.put(packageRef, new Attrs());
+
+					addApiUses(analyzer, contentFragment, packageRef);
+				}
+			}
+
+			contentY -= 3;
+		}
+	}
+
+	protected void addApiUses(
+		Analyzer analyzer, String content, PackageRef packageRef) {
+
+		for (Jar jar : analyzer.getClasspath()) {
+			addJarApiUses(analyzer, content, packageRef, jar);
+		}
+	}
+
+	protected void addJarApiUses(
+		Analyzer analyzer, String content, PackageRef packageRef, Jar jar) {
+
+		Map<String, Map<String, Resource>> directories = jar.getDirectories();
+
+		Map<String, Resource> resourceMap = directories.get(
+			packageRef.getPath());
+
+		if ((resourceMap == null) || resourceMap.isEmpty()) {
+			return;
+		}
+
+		if (content.endsWith("*")) {
+			for (Entry<String, Resource> entry : resourceMap.entrySet()) {
+				String key = entry.getKey();
+
+				if (!key.endsWith(".class")) {
+					continue;
+				}
+
+				addResourceApiUses(analyzer, key, entry.getValue());
+			}
+		}
+		else {
+			String fqnToPath = Descriptors.fqnToPath(content);
+
+			if (resourceMap.containsKey(fqnToPath)) {
+				Resource resource = resourceMap.get(fqnToPath);
+
+				addResourceApiUses(analyzer, content, resource);
+			}
+		}
+	}
+
+	protected void addManifestPackageImports(Analyzer analyzer) {
+		Packages packages = analyzer.getClasspathExports();
+
+		for (Jar jar : analyzer.getClasspath()) {
+			try {
+				Manifest manifest = jar.getManifest();
+
+				if (manifest == null) {
+					continue;
+				}
+
+				Domain domain = Domain.domain(manifest);
+
+				Parameters parameters = domain.getExportPackage();
+
+				for (Entry<String, Attrs> entry : parameters.entrySet()) {
+					PackageRef packageRef = analyzer.getPackageRef(
+						entry.getKey());
+
+					Attrs attrs = packages.get(packageRef);
+
+					if (attrs.isEmpty()) {
+						packages.put(packageRef, entry.getValue());
+					}
+				}
+			}
+			catch (Exception e) {
+			}
+		}
+	}
+
+	protected void addRequiredPackageImports(
+		Analyzer analyzer, String[] packageNames) {
+
 		Packages packages = analyzer.getReferred();
 
-		for (String packageName : analyzePackageImports(content)) {
+		for (String packageName : packageNames) {
 			PackageRef packageRef = analyzer.getPackageRef(packageName);
 
 			Matcher matcher = _packagePattern.matcher(packageRef.getFQN());
@@ -110,6 +226,36 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 			if (matcher.matches() && !packages.containsKey(packageRef)) {
 				packages.put(packageRef, new Attrs());
 			}
+		}
+	}
+
+	protected void addResourceApiUses(
+		Analyzer analyzer, String fqnToPath, Resource resource) {
+
+		Clazz clazz = null;
+
+		try {
+			InputStream inputStream = resource.openInputStream();
+
+			clazz = new Clazz(analyzer, fqnToPath, resource);
+
+			try {
+				clazz.parseClassFile();
+			}
+			finally {
+				inputStream.close();
+			}
+		}
+		catch (Throwable e) {
+			return;
+		}
+
+		Set<PackageRef> packageRefs = clazz.getAPIUses();
+
+		for (PackageRef packageRef : packageRefs) {
+			Packages packages = analyzer.getReferred();
+
+			packages.put(packageRef, new Attrs());
 		}
 	}
 
@@ -132,7 +278,7 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 	protected void addTaglibRequirements(Analyzer analyzer, String content) {
 		Set<String> taglibRequirements = new TreeSet<String>();
 
-		for (String uri : analyzeTagLibURIs(content)) {
+		for (String uri : getTaglibURIs(content)) {
 			if (Arrays.binarySearch(_JSTL_CORE_URIS, uri) < 0) {
 				addTaglibRequirement(taglibRequirements, uri);
 			}
@@ -166,46 +312,7 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 			Constants.REQUIRE_CAPABILITY, Strings.join(taglibRequirements));
 	}
 
-	protected Set<String> analyzePackageImports(String content) {
-		int contentX = -1;
-		int contentY = content.length();
-
-		Set<String> packageNames = new HashSet<String>();
-
-		while (true) {
-			contentX = content.lastIndexOf("<%@", contentY);
-
-			if (contentX == -1) {
-				break;
-			}
-
-			contentY = contentX;
-
-			int importX = content.indexOf("import=\"", contentY);
-			int importY = -1;
-
-			if (importX != -1) {
-				importX = importX + "import=\"".length();
-				importY = content.indexOf("\"", importX);
-			}
-
-			if ((importX != -1) && (importY != -1)) {
-				String s = content.substring(importX, importY);
-
-				int index = s.lastIndexOf('.');
-
-				if (index != -1) {
-					packageNames.add(s.substring(0, index));
-				}
-			}
-
-			contentY -= 3;
-		}
-
-		return packageNames;
-	}
-
-	protected Set<String> analyzeTagLibURIs(String content) {
+	protected Set<String> getTaglibURIs(String content) {
 		int contentX = -1;
 		int contentY = content.length();
 
