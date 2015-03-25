@@ -28,30 +28,32 @@ public class DDMFormValuesJSONDeserializerUtil {
 			DDMForm ddmForm, String serializedDDMFormValues)
 		throws PortalException {
 
-		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer =
+		DDMFormValuesDeserializer ddmFormValuesDeserializer =
 			getDDMFormValuesJSONDeserializer();
 
-		return ddmFormValuesJSONDeserializer.deserialize(
+		return ddmFormValuesDeserializer.deserialize(
 			ddmForm, serializedDDMFormValues);
 	}
 
-	public static DDMFormValuesJSONDeserializer
+	public static DDMFormValuesDeserializer
 		getDDMFormValuesJSONDeserializer() {
 
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormValuesJSONDeserializerUtil.class);
 
-		return _ddmFormValuesJSONDeserializer;
+		return
+			_ddmFormValuesDeserializerRegistry.getDDMFormValuesDeserializer();
 	}
 
-	public void setDDMFormValuesJSONDeserializer(
-		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+	public void setDDMFormValuesDeserializerRegistry(
+		DDMFormValuesDeserializerRegistry ddmFormValuesDeserializerRegistry) {
 
 		PortalRuntimePermission.checkSetBeanProperty(getClass());
 
-		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+		_ddmFormValuesDeserializerRegistry = ddmFormValuesDeserializerRegistry;
 	}
 
-	private static DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private static DDMFormValuesDeserializerRegistry
+		_ddmFormValuesDeserializerRegistry;
 
 }

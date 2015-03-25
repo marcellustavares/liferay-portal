@@ -30,8 +30,8 @@ import com.liferay.portal.security.xml.SecureXMLFactoryProviderImpl;
 import com.liferay.portal.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.util.LocalizationImpl;
 import com.liferay.portal.xml.SAXReaderImpl;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerImpl;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesSerializerRegistryImpl;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
@@ -500,8 +500,8 @@ public class UpgradeDynamicMappingTest extends PowerMockito {
 		DDMFormValuesJSONSerializerUtil ddmFormValuesJSONSerializerUtil =
 			new DDMFormValuesJSONSerializerUtil();
 
-		ddmFormValuesJSONSerializerUtil.setDDMFormValuesJSONSerializer(
-			new DDMFormValuesJSONSerializerImpl());
+		ddmFormValuesJSONSerializerUtil.setDDMFormValuesSerializerRegistry(
+			new DDMFormValuesSerializerRegistryImpl());
 	}
 
 	protected void setUpJSONFactoryUtil() {

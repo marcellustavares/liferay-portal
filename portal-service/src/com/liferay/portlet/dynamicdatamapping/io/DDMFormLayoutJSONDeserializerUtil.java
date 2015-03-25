@@ -30,23 +30,26 @@ public class DDMFormLayoutJSONDeserializerUtil {
 			serializedDDMFormLayout);
 	}
 
-	public static DDMFormLayoutJSONDeserializer
+	public static DDMFormLayoutDeserializer
 		getDDMFormLayoutJSONDeserializer() {
 
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormLayoutJSONDeserializerUtil.class);
 
-		return _ddmFormLayoutJSONDeserializer;
+		return _ddmFormLayoutDeserializerRegistry.getDDMFormDeserializer();
 	}
 
-	public void setDDMFormLayoutJSONDeserializer(
-		DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer) {
+	public void setDDMFormLayoutDeserializerRegistry(
+		DDMFormLayoutDeserializerRegistry ddmFormLayoutDeserializerRegistry)
+			{
 
 		PortalRuntimePermission.checkSetBeanProperty(getClass());
 
-		_ddmFormLayoutJSONDeserializer = ddmFormLayoutJSONDeserializer;
+		_ddmFormLayoutDeserializerRegistry =
+			ddmFormLayoutDeserializerRegistry;
 	}
 
-	private static DDMFormLayoutJSONDeserializer _ddmFormLayoutJSONDeserializer;
+	private static DDMFormLayoutDeserializerRegistry
+		_ddmFormLayoutDeserializerRegistry;
 
 }

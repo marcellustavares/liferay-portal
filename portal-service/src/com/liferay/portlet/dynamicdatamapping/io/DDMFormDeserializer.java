@@ -14,33 +14,14 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 
 /**
  * @author Marcellus Tavares
  */
-public class DDMFormJSONSerializerUtil {
+public interface DDMFormDeserializer {
 
-	public static DDMFormSerializer getDDMFormJSONSerializer() {
-		PortalRuntimePermission.checkGetBeanProperty(
-			DDMFormJSONSerializerUtil.class);
-
-		return _ddmFormSerializerRegistry.getDDMFormSerializer();
-	}
-
-	public static String serialize(DDMForm ddmForm) {
-		return getDDMFormJSONSerializer().serialize(ddmForm);
-	}
-
-	public void setDDMFormSerializerRegistry(
-		DDMFormSerializerRegistry ddmFormSerializerRegistry) {
-
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_ddmFormSerializerRegistry = ddmFormSerializerRegistry;
-	}
-
-	private static DDMFormSerializerRegistry _ddmFormSerializerRegistry;
+	public DDMForm deserialize(String serializedDDMForm) throws PortalException;
 
 }

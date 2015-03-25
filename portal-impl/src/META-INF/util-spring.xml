@@ -927,33 +927,33 @@
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil">
-		<property name="DDMFormJSONDeserializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerImpl" />
+		<property name="DDMFormDeserializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormDeserializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil">
-		<property name="DDMFormJSONSerializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerImpl" />
+		<property name="DDMFormSerializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormSerializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONDeserializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONDeserializerUtil">
-		<property name="DDMFormLayoutJSONDeserializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONDeserializerImpl" />
+		<property name="DDMFormLayoutDeserializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutDeserializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil">
-		<property name="DDMFormLayoutJSONSerializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerImpl" />
+		<property name="DDMFormLayoutSerializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutSerializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONDeserializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONDeserializerUtil">
-		<property name="DDMFormValuesJSONDeserializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONDeserializerImpl" />
+		<property name="DDMFormValuesDeserializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesDeserializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil">
-		<property name="DDMFormValuesJSONSerializer">
-			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerImpl" />
+		<property name="DDMFormValuesSerializerRegistry">
+			<bean class="com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesSerializerRegistryImpl" />
 		</property>
 	</bean>
 	<bean id="com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil" class="com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil">

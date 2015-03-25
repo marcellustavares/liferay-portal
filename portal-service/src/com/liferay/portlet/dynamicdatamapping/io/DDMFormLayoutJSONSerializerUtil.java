@@ -22,25 +22,26 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
  */
 public class DDMFormLayoutJSONSerializerUtil {
 
-	public static DDMFormLayoutJSONSerializer getDDMFormLayoutJSONSerializer() {
+	public static DDMFormLayoutSerializer getDDMFormLayoutJSONSerializer() {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormLayoutJSONSerializerUtil.class);
 
-		return _ddmFormLayoutJSONSerializer;
+		return _ddmFormLayoutSerializerRegistry.getDDMFormLayoutSerializer();
 	}
 
 	public static String serialize(DDMFormLayout ddmFormLayout) {
 		return getDDMFormLayoutJSONSerializer().serialize(ddmFormLayout);
 	}
 
-	public void setDDMFormLayoutJSONSerializer(
-		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer) {
+	public void setDDMFormLayoutSerializerRegistry(
+		DDMFormLayoutSerializerRegistry ddmFormLayoutSerializerRegistry) {
 
 		PortalRuntimePermission.checkSetBeanProperty(getClass());
 
-		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
+		_ddmFormLayoutSerializerRegistry = ddmFormLayoutSerializerRegistry;
 	}
 
-	private static DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
+	private static DDMFormLayoutSerializerRegistry
+		_ddmFormLayoutSerializerRegistry;
 
 }

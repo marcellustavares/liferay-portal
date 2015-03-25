@@ -29,21 +29,21 @@ public class DDMFormJSONDeserializerUtil {
 		return getDDMFormJSONDeserializer().deserialize(serializedDDMForm);
 	}
 
-	public static DDMFormJSONDeserializer getDDMFormJSONDeserializer() {
+	public static DDMFormDeserializer getDDMFormJSONDeserializer() {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormJSONDeserializerUtil.class);
 
-		return _ddmFormJSONDeserializer;
+		return _ddmFormDeserializerRegistry.getDDMFormDeserializer();
 	}
 
-	public void setDDMFormJSONDeserializer(
-		DDMFormJSONDeserializer ddmFormJSONDeserializer) {
+	public void setDDMFormDeserializerRegistry(
+		DDMFormDeserializerRegistry ddmFormDeserializerRegistry) {
 
 		PortalRuntimePermission.checkSetBeanProperty(getClass());
 
-		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+		_ddmFormDeserializerRegistry = ddmFormDeserializerRegistry;
 	}
 
-	private static DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private static DDMFormDeserializerRegistry _ddmFormDeserializerRegistry;
 
 }
