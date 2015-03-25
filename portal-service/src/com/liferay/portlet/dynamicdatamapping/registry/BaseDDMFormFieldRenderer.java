@@ -83,18 +83,20 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		String instanceId = StringUtil.randomString();
 
 		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
-		template.put("fieldName", ddmFormField.getName());
 		template.put(
 			"fieldQualifiedName", getFieldQualifiedName(fieldName, instanceId));
-		template.put("fieldNameSuffix", getFieldNameSuffix(instanceId));
-
-		LocalizedValue label = ddmFormField.getLabel();
-
-		template.put("fieldLabel", label.getString(locale));
-
+		
 		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
-
+		
 		template.put("fieldValue", predefinedValue.getString(locale));
+
+		if (ddmFormField.getType().equals("text")) {
+			LocalizedValue label = ddmFormField.getLabel();
+
+			template.put("fieldLabel", label.getString(locale));
+			template.put("fieldName", fieldName);
+			template.put("fieldNameSuffix", getFieldNameSuffix(instanceId));
+		}
 	}
 
 	protected String render(Template template) throws PortalException {
