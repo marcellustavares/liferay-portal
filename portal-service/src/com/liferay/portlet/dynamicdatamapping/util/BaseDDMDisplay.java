@@ -152,7 +152,8 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 	}
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 7.0.0, replaced by {@link #getTemplateClassPKs(long[],
+	 *             long, long)}
 	 */
 	@Deprecated
 	@Override

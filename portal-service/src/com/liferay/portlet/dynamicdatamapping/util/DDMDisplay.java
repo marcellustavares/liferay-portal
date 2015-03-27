@@ -63,7 +63,8 @@ public interface DDMDisplay {
 	public long[] getTemplateClassNameIds(long classNameId);
 
 	/**
-	 * @deprecated As of 7.0.0
+	 * @deprecated As of 7.0.0, replaced by {@link #getTemplateClassPKs(long[],
+	 *             long, long)}
 	 */
 	@Deprecated
 	public long[] getTemplateClassPKs(
