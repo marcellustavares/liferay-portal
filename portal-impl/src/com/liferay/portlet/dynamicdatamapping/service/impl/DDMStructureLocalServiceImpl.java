@@ -1576,13 +1576,13 @@ public class DDMStructureLocalServiceImpl
 	}
 
 	protected List<DDMStructure> getChildrenStructures(
-		long groupId, long parentStructureId) {
+		long groupId, long structureId) {
 
 		List<DDMStructure> structures = new ArrayList<>();
 
-		getChildrenStructures(structures, groupId, parentStructureId);
+		getChildrenStructures(structures, groupId, structureId);
 
-		structures.add(0, fetchDDMStructure(parentStructureId));
+		structures.add(0, getStructure(structureId));
 
 		return structures;
 	}
