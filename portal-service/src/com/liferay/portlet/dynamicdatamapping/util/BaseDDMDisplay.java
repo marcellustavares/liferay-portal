@@ -167,7 +167,7 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 			long[] groupIds, long classNameId, long classPK)
 		throws Exception {
 
-		return getTemplateClassPKs(groupIds, 0L, classNameId, classPK);
+		return getTemplateClassPKs(groupIds, 0, classNameId, classPK);
 	}
 
 	@Override
