@@ -229,4 +229,22 @@ public class JournalArticleAssetRendererFactory
 		return themeDisplay.getPathThemeImages() + "/common/history.png";
 	}
 
+	@Override
+	protected void setAddPortletURLClassTypeId(
+			PortletURL addPortletURL, long classTypeId)
+		throws PortalException {
+
+		super.setAddPortletURLClassTypeId(addPortletURL, classTypeId);
+
+		if (classTypeId <= 0) {
+			return;
+		}
+
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			classTypeId);
+
+		addPortletURL.setParameter(
+			"ddmStructureKey", ddmStructure.getStructureKey());
+	}
+
 }
