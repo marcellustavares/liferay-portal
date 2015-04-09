@@ -15,20 +15,18 @@
 package com.liferay.portlet.dynamicdatamapping.template;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.template.ClassLoaderTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateVariableCodeHandler;
 import com.liferay.portal.kernel.template.TemplateVariableDefinition;
-import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Writer;
-
-import java.net.URL;
 
 /**
  * @author Marcellus Tavares
@@ -103,9 +101,7 @@ public class DDMTemplateVariableCodeHandler
 
 		ClassLoader classLoader = clazz.getClassLoader();
 
-		URL url = classLoader.getResource(resource);
-
-		return new URLTemplateResource(resource, url);
+		return new ClassLoaderTemplateResource(classLoader, resource);
 	}
 
 	protected String handleRepeatableField(
