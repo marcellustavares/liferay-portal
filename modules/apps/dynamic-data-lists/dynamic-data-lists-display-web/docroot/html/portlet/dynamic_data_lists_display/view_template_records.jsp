@@ -14,7 +14,7 @@
  */
 --%>
 
-<%@ include file="/html/portlet/dynamic_data_list_display/init.jsp" %>
+<%@ include file="/html/portlet/dynamic_data_lists_display/init.jsp" %>
 
 <%
 DDLRecordSet recordSet = (DDLRecordSet)request.getAttribute(WebKeys.DYNAMIC_DATA_LISTS_RECORD_SET);

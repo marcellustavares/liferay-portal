@@ -14,7 +14,7 @@
  */
 --%>
 
-<%@ include file="/html/portlet/dynamic_data_list_display/init.jsp" %>
+<%@ include file="/html/portlet/dynamic_data_lists_display/init.jsp" %>
 
 <%
 int cur = ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM);
@@ -123,11 +123,12 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 			%>
 
 			<liferay-ui:search-form
-				page="/html/portlet/dynamic_data_lists/record_set_search.jsp"
+				page="/html/portlet/dynamic_data_lists_display/record_set_search.jsp"
+				servletContext="<%= application %>"
 			/>
 
 			<liferay-ui:search-container-results>
-				<%@ include file="/html/portlet/dynamic_data_lists/record_set_search_results.jspf" %>
+				<%@ include file="/html/portlet/dynamic_data_lists_display/record_set_search_results.jspf" %>
 			</liferay-ui:search-container-results>
 
 			<liferay-ui:search-container-row
@@ -151,12 +152,38 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 				String rowURL = sb.toString();
 				%>
 
-				<%@ include file="/html/portlet/dynamic_data_lists/search_columns.jspf" %>
+				<liferay-ui:search-container-column-text
+					href="<%= rowURL %>"
+					name="id"
+					orderable="<%= false %>"
+					property="recordSetId"
+				/>
+
+				<liferay-ui:search-container-column-text
+					href="<%= rowURL %>"
+					name="name"
+					orderable="<%= false %>"
+					value="<%= recordSet.getName(locale) %>"
+				/>
+
+				<liferay-ui:search-container-column-text
+					href="<%= rowURL %>"
+					name="description"
+					orderable="<%= false %>"
+					value="<%= StringUtil.shorten(recordSet.getDescription(locale), 100) %>"
+				/>
+
+				<liferay-ui:search-container-column-date
+					href="<%= rowURL %>"
+					name="modified-date"
+					orderable="<%= false %>"
+					value="<%= recordSet.getModifiedDate() %>"
+				/>
 
 				<liferay-ui:search-container-column-jsp
 					align="right"
 					cssClass="entry-action"
-					path="/html/portlet/dynamic_data_lists/record_set_action.jsp"
+					path="/html/portlet/dynamic_data_lists_display/record_set_action.jsp"
 				/>
 			</liferay-ui:search-container-row>
 
