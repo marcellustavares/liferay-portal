@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+	<action-mappings>
+
+		<!-- Dynamic Data List Display -->
+
+		<action path="/dynamic_data_lists_display/edit_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
+			<forward name="portlet.dynamic_data_lists.edit_record" path="/portlet/dynamic_data_lists_display/edit_record.jsp" />
+			<forward name="portlet.dynamic_data_lists.error" path="/portlet/dynamic_data_lists_display/error.jsp" />
+		</action>
+
+		<action path="/dynamic_data_lists_display/export" type="com.liferay.portlet.dynamicdatalists.action.ExportRecordSetAction" />
+
+		<action path="/dynamic_data_lists_display/view" forward="/portlet/dynamic_data_lists_display/view.jsp" />
+
+		<action path="/dynamic_data_lists_display/view_record" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
+			<forward name="portlet.dynamic_data_lists.edit_record" path="/portlet/dynamic_data_lists_display/view_record.jsp" />
+			<forward name="portlet.dynamic_data_lists.error" path="/portlet/dynamic_data_lists_display/error.jsp" />
+		</action>
+
+		<action path="/dynamic_data_lists_display/view_record_history" type="com.liferay.portlet.dynamicdatalists.action.EditRecordAction">
+			<forward name="portlet.dynamic_data_lists.edit_record" path="/portlet/dynamic_data_lists_display/view_record_history.jsp" />
+			<forward name="portlet.dynamic_data_lists.error" path="/portlet/dynamic_data_lists_display/error.jsp" />
+		</action>
+
+		<action path="/dynamic_data_lists_display/view_record_set" type="com.liferay.portlet.dynamicdatalists.action.EditRecordSetAction">
+			<forward name="portlet.dynamic_data_lists.edit_record_set" path="/portlet/dynamic_data_lists_display/view.jsp" />
+			<forward name="portlet.dynamic_data_lists.error" path="/portlet/dynamic_data_lists_display/error.jsp" />
+		</action>
+	</action-mappings>
+</struts-config>
