@@ -14,7 +14,7 @@
  */
 --%>
 
-<%@ include file="/html/portlet/dynamic_data_list_display/init.jsp" %>
+<%@ include file="/html/portlet/dynamic_data_lists_display/init.jsp" %>
 
 <%
 DDLRecordSet recordSet = null;
@@ -38,12 +38,19 @@ try {
 					renderRequest.setAttribute(WebKeys.DYNAMIC_DATA_LISTS_RECORD_SET, recordSet);
 					%>
 
-					<liferay-util:include page="/html/portlet/dynamic_data_lists/view_record_set.jsp">
-						<liferay-util:param name="displayDDMTemplateId" value="<%= String.valueOf(displayDDMTemplateId) %>" />
-						<liferay-util:param name="formDDMTemplateId" value="<%= String.valueOf(formDDMTemplateId) %>" />
-						<liferay-util:param name="editable" value="<%= String.valueOf(editable) %>" />
-						<liferay-util:param name="spreadsheet" value="<%= String.valueOf(spreadsheet) %>" />
-					</liferay-util:include>
+					<c:choose>
+						<c:when test="<%= displayDDMTemplateId > 0 %>">
+							<liferay-util:include page="/html/portlet/dynamic_data_lists_display/view_template_records.jsp"  servletContext="<%= application %>" />
+						</c:when>
+						<c:otherwise>
+							<liferay-util:include page="/html/portlet/dynamic_data_lists/view_record_set.jsp">
+								<liferay-util:param name="displayDDMTemplateId" value="<%= String.valueOf(displayDDMTemplateId) %>" />
+								<liferay-util:param name="formDDMTemplateId" value="<%= String.valueOf(formDDMTemplateId) %>" />
+								<liferay-util:param name="editable" value="<%= String.valueOf(editable) %>" />
+								<liferay-util:param name="spreadsheet" value="<%= String.valueOf(spreadsheet) %>" />
+							</liferay-util:include>
+						</c:otherwise>
+					</c:choose>
 				</c:when>
 				<c:otherwise>
 
