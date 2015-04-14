@@ -33,7 +33,7 @@ public class DDMFormLayoutTransformer {
 
 	public DDMFormLayoutTransformer(
 		DDMFormLayout ddmFormLayout,
-		Map<String, String> renderedDDMFormFieldsMap, Locale locale) {
+		Map<String, List<String>> renderedDDMFormFieldsMap, Locale locale) {
 
 		_ddmFormLayout = ddmFormLayout;
 		_renderedDDMFormFieldsMap = renderedDDMFormFieldsMap;
@@ -50,7 +50,7 @@ public class DDMFormLayoutTransformer {
 		Map<String, Object> column = new HashMap<>();
 
 		column.put(
-			"renderedDDMFormField",
+			"renderedDDMFormFields",
 			_renderedDDMFormFieldsMap.get(
 				ddmFormLayoutColumn.getDDMFormFieldName()));
 
@@ -116,6 +116,6 @@ public class DDMFormLayoutTransformer {
 
 	private final DDMFormLayout _ddmFormLayout;
 	private final Locale _locale;
-	private final Map<String, String> _renderedDDMFormFieldsMap;
+	private final Map<String, List<String>> _renderedDDMFormFieldsMap;
 
 }
