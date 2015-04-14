@@ -2,28 +2,55 @@
 
 /**
  * Prints all pages.
- *
+ * @param fieldTypes
+ * @param form
  * @param pages
+ * @param portletNamespace
+ * @param values
  */
 {template .pages}
-	<div class="lfr-form-pages">
-		<ul class="nav nav-tabs">
-			{foreach $page in $pages}
-				<li>
-					<a href="javascript:;">{$page.title}</a>
-				</li>
-			{/foreach}
-		</ul>
-		<div class="tab-content">
-			{foreach $page in $pages}
-				<div class="tab-pane">
-					{call ddm.rows data="all"}
-						{param rows: $page.rows /}
-					{/call}
-				</div>
-			{/foreach}
+	{let $id: randomInt(9999) /}
+
+	<div class="lfr-form-pages" id="{$id}">
+		<div class="lfr-form-pages-content">
+			<ul class="nav nav-tabs">
+				{foreach $page in $pages}
+					<li>
+						<a href="javascript:;">{$page.title}</a>
+					</li>
+				{/foreach}
+			</ul>
+			<div class="tab-content">
+				{foreach $page in $pages}
+					<div class="tab-pane {if isFirst($page)}active{/if}">
+						{call ddm.rows data="all"}
+							{param rows: $page.rows /}
+						{/call}
+					</div>
+				{/foreach}
+			</div>
 		</div>
 	</div>
+
+	<script src="/o/ddm-renderer/js/modules.js"></script>
+
+	<script type="text/javascript">
+	AUI().use(
+		'liferay-ddm-form-renderer',
+		function(A) {lb}
+			Liferay.DDM.Renderer.FieldTypes.register({$fieldTypes|noAutoescape});
+
+			new Liferay.DDM.Renderer.Form(
+				{lb}
+					container: '#{$id}',
+					definition: {$form|noAutoescape},
+					portletNamespace: '{$portletNamespace}',
+					values: {$values|noAutoescape}
+				{rb}
+			);
+		{rb}
+	);
+	</script>
 {/template}
 
 /**
@@ -33,9 +60,11 @@
  */
 {template .rows}
 	{foreach $row in $rows}
-		{call ddm.columns data="all"}
-			{param columns: $row.columns /}
-		{/call}
+		<div class="row">
+			{call ddm.columns data="all"}
+				{param columns: $row.columns /}
+			{/call}
+		</div>
 	{/foreach}
 {/template}
 
@@ -58,7 +87,13 @@
  * @param column
  */
 {template .column}
-	<div class="col-md-{$column.size}">
-		{$column.renderedDDMFormField|noAutoescape}
+	<div class="field-column col-md-{$column.size}">
+		{foreach $renderedDDMFormField in $column.renderedDDMFormFields}
+			{if isNonnull($renderedDDMFormField)}
+				<div class="field-container">
+					{$renderedDDMFormField|noAutoescape}
+				</div>
+			{/if}
+		{/foreach}
 	</div>
 {/template}
