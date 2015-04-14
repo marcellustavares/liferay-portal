@@ -87,7 +87,7 @@ AUI.add(
 
 						instance._eventHandlers = [
 							instance.get('container').delegate('click', instance._handleToolbarClick, SELECTOR_REPEAT_BUTTONS, instance),
-							instance.get('form').after('*:remove', A.bind(instance._afterRemoveRepeatableField, instance))
+							instance.get('form').after(['liferay-form-field:remove', 'liferay-form-field:repeat'], A.bind(instance._syncRepeatableField, instance))
 						];
 					},
 
@@ -117,20 +117,6 @@ AUI.add(
 						instance.syncUI();
 					},
 
-					_afterRemoveRepeatableField: function() {
-						var instance = this;
-
-						if (instance.get('repeatable')) {
-							var fieldNode = instance.getInputNode();
-
-							instance.set('repeatedIndex', instance._valueRepeatedIndex());
-
-							fieldNode.attr('name', instance.getQualifiedName());
-
-							console.log('updated', instance.getQualifiedName());
-						}
-					},
-
 					_getFieldType: function() {
 						var instance = this;
 
@@ -153,6 +139,20 @@ AUI.add(
 						var instance = this;
 
 						return instance.get('definition').repeatable === true;
+					},
+
+					_syncRepeatableField: function(event) {
+						var instance = this;
+
+						if (instance.get('repeatable')) {
+							var fieldNode = instance.getInputNode();
+
+							instance.set('repeatedIndex', instance._valueRepeatedIndex());
+
+							fieldNode.attr('name', instance.getQualifiedName());
+
+							instance.syncRepeatablelUI();
+						}
 					},
 
 					_valueRepeatedIndex: function() {
@@ -361,6 +361,13 @@ AUI.add(
 
 						instance.get('container').insert(field.get('container'), 'after');
 
+						instance.fire(
+							'repeat',
+							{
+								field: instance
+							}
+						);
+
 						return field;
 					},
 
@@ -371,7 +378,7 @@ AUI.add(
 
 						var siblings = instance.getRepeatedSiblings();
 
-						container.one('.lfr-ddm-repeatable-delete-button').toggle(instance.getIndex() > 0);
+						container.one('.lfr-ddm-repeatable-delete-button').toggle(instance.get('repeatedIndex') > 0);
 					}
 				}
 			}
