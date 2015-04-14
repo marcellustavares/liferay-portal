@@ -11,11 +11,8 @@ AUI.add(
 			_getFieldType: function(config) {
 				var instance = this;
 
-				var settings = config.advancedSettings.concat(config.basicSettings);
-
 				var defaultConfig = {
-					fieldType: config.name,
-					settings: settings
+					fieldType: config.name
 				};
 
 				var fieldClass = Util.getFieldClass(defaultConfig);
