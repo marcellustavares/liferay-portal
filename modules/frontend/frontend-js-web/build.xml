@@ -52,6 +52,9 @@
 				<property name="alloy.build.dir" value="${tstamp.value}/build" />
 				<property name="alloy.temp.dir" value="${tstamp.value}/temp" />
 
+				<mkdir dir="${alloy.build.dir}" />
+				<mkdir dir="${alloy.temp.dir}" />
+
 				<concat destfile="${alloy.temp.dir}/aui_deprecated.css">
 					<filelist
 						dir="${alloy.build.dir}/aui-skin-deprecated/css"
