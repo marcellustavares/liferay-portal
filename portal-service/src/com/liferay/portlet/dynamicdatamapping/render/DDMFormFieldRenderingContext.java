@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.render;
 
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
@@ -29,6 +31,18 @@ public class DDMFormFieldRenderingContext {
 
 	public String getChildElementsHTML() {
 		return _childElementsHTML;
+	}
+
+	public DDMFormField getDDMFormField() {
+		return _ddmFormField;
+	}
+
+	public DDMFormFieldValue getDDMFormFieldValue() {
+		return _ddmFormFieldValue;
+	}
+
+	public int getDDMFormFieldValueIndex() {
+		return _ddmFormFieldValueIndex;
 	}
 
 	public Fields getFields() {
@@ -63,6 +77,16 @@ public class DDMFormFieldRenderingContext {
 		return _namespace;
 	}
 
+	public String getNestedRenderedDDMFormFields() {
+		return _nestedRenderedDDMFormFields;
+	}
+
+	public DDMFormFieldRenderingContext getParentDDMFormFieldRenderingContext(
+		) {
+
+		return _parentDDMFormFieldRenderingContext;
+	}
+
 	public String getPortletNamespace() {
 		return _portletNamespace;
 	}
@@ -81,6 +105,18 @@ public class DDMFormFieldRenderingContext {
 
 	public void setChildElementsHTML(String childElementsHTML) {
 		_childElementsHTML = childElementsHTML;
+	}
+
+	public void setDDMFormField(DDMFormField ddmFormField) {
+		_ddmFormField = ddmFormField;
+	}
+
+	public void setDDMFormFieldValue(DDMFormFieldValue ddmFormFieldValue) {
+		_ddmFormFieldValue = ddmFormFieldValue;
+	}
+
+	public void setDDMFormFieldValueIndex(int ddmFormFieldValueIndex) {
+		_ddmFormFieldValueIndex = ddmFormFieldValueIndex;
 	}
 
 	public void setField(Field field) {
@@ -125,6 +161,19 @@ public class DDMFormFieldRenderingContext {
 		_namespace = namespace;
 	}
 
+	public void setNestedRenderedDDMFormFields(
+		String nestedRenderedDDMFormFields) {
+
+		_nestedRenderedDDMFormFields = nestedRenderedDDMFormFields;
+	}
+
+	public void setParentDDMFormFieldRenderingContext(
+		DDMFormFieldRenderingContext parentDDMFormFieldRenderingContext) {
+
+		_parentDDMFormFieldRenderingContext =
+			parentDDMFormFieldRenderingContext;
+	}
+
 	public void setPortletNamespace(String portletNamespace) {
 		_portletNamespace = portletNamespace;
 	}
@@ -142,6 +191,9 @@ public class DDMFormFieldRenderingContext {
 	}
 
 	private String _childElementsHTML;
+	private DDMFormField _ddmFormField;
+	private DDMFormFieldValue _ddmFormFieldValue = new DDMFormFieldValue();
+	private int _ddmFormFieldValueIndex;
 	private Fields _fields;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
@@ -150,6 +202,8 @@ public class DDMFormFieldRenderingContext {
 	private String _mode;
 	private String _name;
 	private String _namespace;
+	private String _nestedRenderedDDMFormFields;
+	private DDMFormFieldRenderingContext _parentDDMFormFieldRenderingContext;
 	private String _portletNamespace;
 	private boolean _readOnly;
 	private boolean _showEmptyFieldLabel;

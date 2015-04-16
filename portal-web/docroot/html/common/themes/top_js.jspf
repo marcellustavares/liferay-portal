@@ -269,22 +269,13 @@
 				return '<%= PortalUtil.getStaticResourceURL(request, "available_languages.jsp", javaScriptLastModified) %>';
 			},
 			getCombine: function() {
-				return <%= themeDisplay.isThemeJsFastLoad() %>;
+				return false;
 			},
 			getComboPath: function() {
 				return '<%= PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + themeDisplay.getPathContext() + "/combo/", "minifierType=", javaScriptLastModified) %>&';
 			},
 			getFilter: function() {
 				var filter = 'raw';
-
-				<c:choose>
-					<c:when test="<%= themeDisplay.isThemeJsFastLoad() %>">
-						filter = 'min';
-					</c:when>
-					<c:when test="<%= PropsValues.JAVASCRIPT_LOG_ENABLED %>">
-						filter = 'debug';
-					</c:when>
-				</c:choose>
 
 				return filter;
 			},

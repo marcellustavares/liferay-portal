@@ -91,7 +91,7 @@ import java.util.concurrent.Callable;
  * @author Brian Wing Shun Chan
  * @author Bruno Basto
  * @author Marcellus Tavares
- * @author Juan Fernández
+ * @author Juan Fern��ndez
  */
 public class DDMStructureLocalServiceImpl
 	extends DDMStructureLocalServiceBaseImpl {
@@ -1594,8 +1594,9 @@ public class DDMStructureLocalServiceImpl
 	}
 
 	protected DDMForm getParentDDMForm(long parentStructureId) {
-		DDMStructure parentStructure =
-			ddmStructurePersistence.fetchByPrimaryKey(parentStructureId);
+		DDMStructure parentStructure = null;
+
+		//ddmStructurePersistence.fetchByPrimaryKey(parentStructureId)
 
 		if (parentStructure == null) {
 			return null;

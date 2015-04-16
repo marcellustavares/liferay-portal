@@ -31,6 +31,8 @@ public class DDMFormLayoutPage {
 
 			addDDMFormLayoutRow(new DDMFormLayoutRow(ddmFormLayoutRow));
 		}
+
+		setTitle(ddmFormLayoutPage.getTitle());
 	}
 
 	public void addDDMFormLayoutRow(DDMFormLayoutRow ddmFormLayoutRow) {

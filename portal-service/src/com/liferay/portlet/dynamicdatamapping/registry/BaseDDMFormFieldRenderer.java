@@ -22,13 +22,16 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.DDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
 
 import java.io.Writer;
-
 import java.net.URL;
-
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -69,6 +72,25 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		Locale locale = ddmFormFieldRenderingContext.getLocale();
+
+		DDMFormFieldType ddmFormFieldType =
+			DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(
+				ddmFormField.getType());
+
+		List<DDMFormFieldTypeSetting> optionalSettings =
+			ddmFormFieldType.getOptionalSettings();
+
+		for (DDMFormFieldTypeSetting setting : optionalSettings) {
+			Object value = ddmFormField.getProperty(setting.getName());
+
+			if (setting.isLocalizable()) {
+				value = ((LocalizedValue)value).getString(locale);
+			}
+
+			template.put(setting.getName(), value);
+		}
 	}
 
 	protected void populateRequiredContext(
@@ -81,7 +103,16 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 			"childElementsHTML",
 			ddmFormFieldRenderingContext.getChildElementsHTML());
 		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
-		template.put("label", ddmFormFieldRenderingContext.getLabel());
+
+		LocalizedValue label = ddmFormField.getLabel();
+
+		String labelString = StringPool.BLANK;
+
+		if (Validator.isNotNull(label.getString(locale))) {
+			labelString = label.getString(locale);
+		}
+
+		template.put("label", labelString);
 		template.put("name", ddmFormFieldRenderingContext.getName());
 		template.put("value", ddmFormFieldRenderingContext.getValue());
 	}

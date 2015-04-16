@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -22,6 +23,9 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.DDMFormFieldTypeSetting;
 
 import java.util.List;
 import java.util.Locale;
@@ -104,20 +108,43 @@ public class DDMFormJSONSerializerImpl implements DDMFormJSONSerializer {
 		jsonObject.put("options", toJSONArray(ddmFormFieldOptions));
 	}
 
-	protected void addSimpleProperties(
-		JSONObject jsonObject, DDMFormField ddmFormField) {
+	protected void addSettings(
+		JSONObject jsonObject, DDMFormField ddmFormField,
+		List<DDMFormFieldTypeSetting> settings) {
 
-		jsonObject.put("dataType", ddmFormField.getDataType());
-		jsonObject.put("fieldNamespace", ddmFormField.getNamespace());
-		jsonObject.put("indexType", ddmFormField.getIndexType());
-		jsonObject.put("localizable", ddmFormField.isLocalizable());
-		jsonObject.put("multiple", ddmFormField.isMultiple());
-		jsonObject.put("name", ddmFormField.getName());
-		jsonObject.put("readOnly", ddmFormField.isReadOnly());
-		jsonObject.put("repeatable", ddmFormField.isRepeatable());
-		jsonObject.put("required", ddmFormField.isRequired());
-		jsonObject.put("showLabel", ddmFormField.isShowLabel());
-		jsonObject.put("type", ddmFormField.getType());
+		for (DDMFormFieldTypeSetting setting : settings) {
+			String settingName = setting.getName();
+
+			if (setting.getName().equals("ddmFormFieldOptions")) {
+				addOptions(jsonObject, ddmFormField.getDDMFormFieldOptions());
+			}
+			else {
+				Object value = BeanPropertiesUtil.getObjectSilent(
+					ddmFormField, settingName);
+
+				if (value == null) {
+					value = ddmFormField.getProperty(settingName);
+				}
+
+				if (setting.isLocalizable()) {
+					addLocalizedProperty(
+						jsonObject, settingName, (LocalizedValue)value);
+				}
+				else {
+					Class<?> settingType = value.getClass();
+
+					if (settingType.equals(boolean.class) ||
+						settingType.equals(Boolean.class)) {
+
+						jsonObject.put(setting.getName(), (boolean)value);
+					}
+					else {
+						jsonObject.put(
+							setting.getName(), String.valueOf(value));
+					}
+				}
+			}
+		}
 	}
 
 	protected JSONArray toJSONArray(DDMFormFieldOptions ddmFormFieldOptions) {
@@ -150,14 +177,15 @@ public class DDMFormJSONSerializerImpl implements DDMFormJSONSerializer {
 	protected JSONObject toJSONObject(DDMFormField ddmFormField) {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		addLocalizedProperty(jsonObject, "label", ddmFormField.getLabel());
-		addLocalizedProperty(
-			jsonObject, "predefinedValue", ddmFormField.getPredefinedValue());
-		addLocalizedProperty(jsonObject, "style", ddmFormField.getStyle());
-		addLocalizedProperty(jsonObject, "tip", ddmFormField.getTip());
+		DDMFormFieldType ddmFormFieldType =
+			DDMFormFieldTypeRegistryUtil.getDDMFormFieldType(
+				ddmFormField.getType());
+
+		addSettings(
+			jsonObject, ddmFormField, ddmFormFieldType.getRequiredSettings());
+		addSettings(
+			jsonObject, ddmFormField, ddmFormFieldType.getOptionalSettings());
 		addNestedFields(jsonObject, ddmFormField.getNestedDDMFormFields());
-		addOptions(jsonObject, ddmFormField.getDDMFormFieldOptions());
-		addSimpleProperties(jsonObject, ddmFormField);
 
 		return jsonObject;
 	}

@@ -1,0 +1,38 @@
+.portlet-forms {
+	.form-builder-content .menu-content {
+		background: transparent;
+		border-width: 0;
+		box-shadow: none;
+		min-width: 0;
+	}
+
+	.form-buttons {
+		.btn {
+			margin-left: 5px;
+
+			&.forms-previous {
+				margin-left: 0;
+			}
+		}
+	}
+
+	.field-container {
+		position: relative;
+	}
+
+	.form-navigator {
+		display: none;
+	}
+
+	.lfr-ddm-repeatable-add-button {
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
+
+	.lfr-ddm-repeatable-delete-button {
+		position: absolute;
+		right: 15px;
+		top: 0;
+	}
+}

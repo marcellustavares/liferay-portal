@@ -7,15 +7,14 @@
  * @param dir
  * @param label
  * @param name
+ * @param placeholder
  * @param value
  */
 {template .text}
-	<div class="form-group field-wrapper">
-		<label class="control-fieldLabel" for="{$name}">
-			{$label}
-		</label>
+	<div class="form-group field-wrapper" data-fieldname="{$name}">
+		<label class="control-fieldLabel" for="{$name}">{$label}</label>
 
-		 <input class="field form-control" dir="{$dir}" id="{$name}" name="{$name}" type="text" value="{$value}">
+		 <input class="field form-control" dir="{$dir}" id="{$name}" name="{$name}" type="text" placeholder="{$placeholder}" value="{$value}">
 
 		{$childElementsHTML}
 	</div>

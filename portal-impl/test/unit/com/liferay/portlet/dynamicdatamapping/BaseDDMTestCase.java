@@ -14,7 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping;
 
+import com.liferay.portal.bean.BeanPropertiesImpl;
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -46,6 +48,23 @@ import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.model.Value;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateImpl;
+import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistry;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.DDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.DataTypeDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.IndexTypeDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.LabelDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.LocalizableDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.NameDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.OptionsDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.PredefinedValueDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.ReadOnlyDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.RepeatableDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.RequiredDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.ShowLabelDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.TipDDMFormFieldTypeSetting;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.TypeDDMFormFieldTypeSetting;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
@@ -59,7 +78,6 @@ import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -69,12 +87,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.runner.RunWith;
-
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -427,6 +443,48 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		return StringUtil.read(inputStream);
 	}
 
+	protected void setUpBeanPropertiesUtil() {
+		BeanPropertiesUtil beanPropertiesUtil = new BeanPropertiesUtil();
+
+		beanPropertiesUtil.setBeanProperties(new BeanPropertiesImpl());
+	}
+
+	protected void setUpDDMFormFieldTypeRegistryUtil() {
+		List<DDMFormFieldTypeSetting> requiredSettings = new ArrayList<>();
+
+		requiredSettings.add(new DataTypeDDMFormFieldTypeSetting());
+		requiredSettings.add(new IndexTypeDDMFormFieldTypeSetting());
+		requiredSettings.add(new PredefinedValueDDMFormFieldTypeSetting());
+		requiredSettings.add(new RepeatableDDMFormFieldTypeSetting());
+		requiredSettings.add(new NameDDMFormFieldTypeSetting());
+		requiredSettings.add(new LabelDDMFormFieldTypeSetting());
+		requiredSettings.add(new TipDDMFormFieldTypeSetting());
+		requiredSettings.add(new RequiredDDMFormFieldTypeSetting());
+		requiredSettings.add(new ShowLabelDDMFormFieldTypeSetting());
+		requiredSettings.add(new OptionsDDMFormFieldTypeSetting());
+		requiredSettings.add(new TypeDDMFormFieldTypeSetting());
+		requiredSettings.add(new LocalizableDDMFormFieldTypeSetting());
+		requiredSettings.add(new ReadOnlyDDMFormFieldTypeSetting());
+
+		when(
+			_ddmFormFieldType.getRequiredSettings()
+		).thenReturn(
+			requiredSettings
+		);
+
+		when(
+			_ddmFormFieldTypeRegistry.getDDMFormFieldType(Matchers.anyString())
+		).thenReturn(
+			_ddmFormFieldType
+		);
+
+		DDMFormFieldTypeRegistryUtil ddmFormFieldTypeRegistryUtil =
+			new DDMFormFieldTypeRegistryUtil();
+
+		ddmFormFieldTypeRegistryUtil.setDDMFormFieldTypeRegistry(
+			_ddmFormFieldTypeRegistry);
+	}
+
 	protected void setUpDDMFormJSONDeserializerUtil() {
 		DDMFormJSONDeserializerUtil ddmFormJSONDeserializerUtil =
 			new DDMFormJSONDeserializerUtil();
@@ -693,5 +751,11 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		private static final long serialVersionUID = 1L;
 
 	}
+
+	@Mock
+	private BaseDDMFormFieldType _ddmFormFieldType;
+
+	@Mock
+	private DDMFormFieldTypeRegistry _ddmFormFieldTypeRegistry;
 
 }

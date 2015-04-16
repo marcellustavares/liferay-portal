@@ -24,14 +24,15 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Marcellus Tavares
  */
 @Component(
 	immediate = true, property = {"templatePath=/META-INF/resources/text.soy"},
-	service = {TextDDMFormFieldRenderer.class, DDMFormFieldRenderer.class}
+	service = {
+		DDMFormFieldRenderer.class, TextDDMFormFieldRenderer.class
+	}
 )
 public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
@@ -47,21 +48,16 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 	@Override
 	public TemplateResource getTemplateResource() {
-		return _templateResource;
+		String templatePath = MapUtil.getString(_properties, "templatePath");
+
+		return getTemplateResource(templatePath);
 	}
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		String templatePath = MapUtil.getString(properties, "templatePath");
-
-		_templateResource = getTemplateResource(templatePath);
+		_properties = properties;
 	}
 
-	@Deactivate
-	protected void deactivate() {
-		_templateResource = null;
-	}
-
-	private TemplateResource _templateResource;
+	private Map<String, Object> _properties;
 
 }

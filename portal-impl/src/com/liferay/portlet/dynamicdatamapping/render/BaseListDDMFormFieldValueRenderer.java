@@ -14,11 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.render;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
@@ -42,13 +40,13 @@ public abstract class BaseListDDMFormFieldValueRenderer
 			public String get(DDMFormFieldValue ddmFormFieldValue) {
 				Value value = ddmFormFieldValue.getValue();
 
-				JSONArray jsonArray = createJSONArray(value.getString(locale));
+				String[] valueArray = StringUtil.split(value.getString(locale));
 
-				StringBundler sb = new StringBundler(jsonArray.length() * 2);
+				StringBundler sb = new StringBundler(valueArray.length * 2);
 
-				for (int i = 0; i < jsonArray.length(); i++) {
+				for (int i = 0; i < valueArray.length; i++) {
 					LocalizedValue label = getDDMFormFieldOptionLabel(
-						ddmFormFieldValue, jsonArray.getString(i));
+						ddmFormFieldValue, valueArray[i]);
 
 					if (label == null) {
 						continue;
@@ -56,21 +54,12 @@ public abstract class BaseListDDMFormFieldValueRenderer
 
 					sb.append(label.getString(locale));
 
-					if ((i + 1) < jsonArray.length()) {
+					if ((i + 1) < valueArray.length) {
 						sb.append(StringPool.COMMA_AND_SPACE);
 					}
 				}
 
 				return sb.toString();
-			}
-
-			protected JSONArray createJSONArray(String json) {
-				try {
-					return JSONFactoryUtil.createJSONArray(json);
-				}
-				catch (JSONException jsone) {
-					throw new ValueAccessorException(jsone);
-				}
 			}
 
 			protected LocalizedValue getDDMFormFieldOptionLabel(
