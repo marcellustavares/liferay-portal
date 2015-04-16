@@ -33,6 +33,7 @@ import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContex
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +53,7 @@ public class DDMFormRendererHelper {
 		_ddmFormValues = ddmFormRenderingContext.getDDMFormValues();
 	}
 
-	public Map<String, String> getRenderedDDMFormFieldsMap()
+	public Map<String, List<String>> getRenderedDDMFormFieldsMap()
 		throws PortalException {
 
 		if (_ddmFormValues != null) {
@@ -121,24 +122,29 @@ public class DDMFormRendererHelper {
 		return sb.toString();
 	}
 
-	protected Map<String, String> getRenderedDDMFormFields()
+	protected Map<String, List<String>> getRenderedDDMFormFields()
 		throws PortalException {
 
-		Map<String, String> renderedDDMFormFieldsMap = new HashMap<>();
+		Map<String, List<String>> renderedDDMFormFieldsMap = new HashMap<>();
 
 		for (DDMFormField ddmFormField : _ddmForm.getDDMFormFields()) {
-			renderedDDMFormFieldsMap.put(
-				ddmFormField.getName(),
+			List<String> renderedDDMFormFieldInstancesList = new ArrayList<>();
+
+			renderedDDMFormFieldInstancesList.add(
 				renderDDMFormField(ddmFormField, StringPool.BLANK));
+
+			renderedDDMFormFieldsMap.put(
+				ddmFormField.getName(), renderedDDMFormFieldInstancesList);
 		}
 
 		return renderedDDMFormFieldsMap;
 	}
 
-	protected Map<String, String> getRenderedDDMFormFieldValues()
+	protected Map<String, List<String>> getRenderedDDMFormFieldValues()
 		throws PortalException {
 
-		Map<String, String> renderedDDMFormFieldValuesMap = new HashMap<>();
+		Map<String, List<String>> renderedDDMFormFieldValuesMap =
+			new HashMap<>();
 
 		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
 			_ddmFormValues.getDDMFormFieldValuesMap();
@@ -253,23 +259,23 @@ public class DDMFormRendererHelper {
 			ddmFormFieldValue, ddmFormFieldRenderingContext);
 	}
 
-	protected String renderDDMFormFieldValues(
+	protected List<String> renderDDMFormFieldValues(
 			List<DDMFormFieldValue> ddmFormFieldValues,
 			String parentDDMFormFieldParameterName)
 		throws PortalException {
 
-		StringBundler sb = new StringBundler(ddmFormFieldValues.size());
+		List<String> renderedDDMFormFieldInstancesList = new ArrayList<>();
 
 		int index = 0;
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
-			sb.append(
+			renderedDDMFormFieldInstancesList.add(
 				renderDDMFormFieldValue(
 					ddmFormFieldValue, index++,
 					parentDDMFormFieldParameterName));
 		}
 
-		return sb.toString();
+		return renderedDDMFormFieldInstancesList;
 	}
 
 	protected void setDDMFormFieldRenderingContextChildElementsHTML(

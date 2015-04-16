@@ -16,18 +16,23 @@ package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
 import aQute.bnd.annotation.component.Deactivate;
 
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.io.Writer;
 
@@ -39,6 +44,7 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -60,7 +66,12 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 		template.put(TemplateConstants.NAMESPACE, "ddm.pages");
 
-		Map<String, String> renderedDDMFormFieldsMap =
+		template.put(
+			"fieldTypes",
+			_ddmFormFieldTypesJSONSerializer.serialize().toString());
+		template.put("form", DDMFormJSONSerializerUtil.serialize(ddmForm));
+
+		Map<String, List<String>> renderedDDMFormFieldsMap =
 			getRenderedDDMFormFieldsMap(ddmForm, ddmFormRenderingContext);
 
 		List<Object> pages = getPages(
@@ -68,6 +79,20 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			ddmFormRenderingContext.getLocale());
 
 		template.put("pages", pages);
+		template.put(
+			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
+
+		DDMFormValues ddmFormValues =
+			ddmFormRenderingContext.getDDMFormValues();
+
+		String serializedDDMFormValues = JSONFactoryUtil.getNullJSON();
+
+		if (ddmFormValues != null) {
+			serializedDDMFormValues = DDMFormValuesJSONSerializerUtil.serialize(
+				ddmFormValues);
+		}
+
+		template.put("values", serializedDDMFormValues);
 
 		return render(template);
 	}
@@ -84,9 +109,15 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		_templateResource = null;
 	}
 
+	protected Map<String, Object> getForm(DDMForm ddmForm) {
+		DDMFormTransformer ddmFormTransformer = new DDMFormTransformer(ddmForm);
+
+		return ddmFormTransformer.getForm();
+	}
+
 	protected List<Object> getPages(
 		DDMFormLayout ddmFormLayout,
-		Map<String, String> renderedDDMFormFieldsMap, Locale locale) {
+		Map<String, List<String>> renderedDDMFormFieldsMap, Locale locale) {
 
 		DDMFormLayoutTransformer ddmFormLayoutTransformer =
 			new DDMFormLayoutTransformer(
@@ -95,7 +126,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return ddmFormLayoutTransformer.getPages();
 	}
 
-	protected Map<String, String> getRenderedDDMFormFieldsMap(
+	protected Map<String, List<String>> getRenderedDDMFormFieldsMap(
 			DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext)
 		throws PortalException {
 
@@ -123,6 +154,14 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return writer.toString();
 	}
 
+	@Reference(service = DDMFormFieldTypesJSONSerializer.class, unbind = "-")
+	protected void setDDMFormFieldTypesHelper(
+		DDMFormFieldTypesJSONSerializer ddmFormFieldTypesJSONSerializer) {
+
+		_ddmFormFieldTypesJSONSerializer = ddmFormFieldTypesJSONSerializer;
+	}
+
+	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
 	private TemplateResource _templateResource;
 
 }
