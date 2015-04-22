@@ -114,7 +114,8 @@ public class PortletKeys {
 
 	public static final String MY_SITES_DIRECTORY = "188";
 
-	public static final String MY_WORKFLOW_INSTANCES = "158";
+	public static final String MY_WORKFLOW_INSTANCES = 
+			"com_liferay_workflowinstance_web_portlet_MyWorkflowInstancePortlet";
 
 	public static final String MY_WORKFLOW_TASKS = "153";
 
@@ -197,7 +198,8 @@ public class PortletKeys {
 
 	public static final String WORKFLOW_DEFINITIONS = "151";
 
-	public static final String WORKFLOW_INSTANCES = "157";
+	public static final String WORKFLOW_INSTANCES = 
+			"com_liferay_workflowinstance_web_portlet_WorkflowInstancePortlet";
 
 	public static final String WORKFLOW_TASKS = "150";
 

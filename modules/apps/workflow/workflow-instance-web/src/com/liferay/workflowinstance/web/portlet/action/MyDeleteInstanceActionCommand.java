@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,17 +11,23 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/html/portlet/workflow_instances/init.jsp" %>
+package com.liferay.workflowinstance.web.portlet.action;
 
-<c:choose>
-	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
-		<%@ include file="/html/portlet/workflow_instances/view_workflow_instances.jspf" %>
-	</c:when>
-	<c:otherwise>
-		<div class="alert alert-info">
-			<liferay-ui:message key="no-workflow-engine-is-deployed" />
-		</div>
-	</c:otherwise>
-</c:choose>
+import org.osgi.service.component.annotations.Component;
+
+import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
+import com.liferay.portal.util.PortletKeys;
+
+/**
+ * @author Leonardo Barros
+ */
+@Component(immediate = true,
+	property = {
+		"action.command.name=deleteInstance",
+		"javax.portlet.name=" + PortletKeys.MY_WORKFLOW_INSTANCES
+	},
+	service = ActionCommand.class)
+public class MyDeleteInstanceActionCommand extends DeleteInstanceActionCommand {
+
+}

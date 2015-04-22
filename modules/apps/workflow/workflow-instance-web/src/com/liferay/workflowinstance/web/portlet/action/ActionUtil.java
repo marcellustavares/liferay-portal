@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.workflowinstances.action;
+package com.liferay.workflowinstance.web.portlet.action;
 
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.workflow.WorkflowInstance;
