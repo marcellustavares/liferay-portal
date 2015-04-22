@@ -14,15 +14,8 @@
  */
 --%>
 
-<%@ include file="/html/portlet/workflow_definition_links/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
-<c:choose>
-	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
-		<%@ include file="/html/portlet/workflow_definition_links/view_resources.jspf" %>
-	</c:when>
-	<c:otherwise>
-		<div class="alert alert-info">
-			<liferay-ui:message key="no-workflow-engine-is-deployed" />
-		</div>
-	</c:otherwise>
-</c:choose>
+<liferay-ui:error-header />
+
+<liferay-ui:error exception="<%= PrincipalException.class %>" message="you-do-not-have-the-required-permissions" />

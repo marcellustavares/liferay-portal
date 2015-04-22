@@ -14,9 +14,15 @@
  */
 --%>
 
-<%@ include file="/html/portlet/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
-<%@ page import="com.liferay.portal.kernel.workflow.WorkflowHandler" %><%@
-page import="com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil" %>
-
-<%@ include file="/html/portlet/workflow_definition_links/init-ext.jsp" %>
+<c:choose>
+	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
+		<%@ include file="/view_resources.jspf" %>
+	</c:when>
+	<c:otherwise>
+		<div class="alert alert-info">
+			<liferay-ui:message key="no-workflow-engine-is-deployed" />
+		</div>
+	</c:otherwise>
+</c:choose>
