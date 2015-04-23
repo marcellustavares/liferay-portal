@@ -454,6 +454,8 @@ if (Validator.isNotNull(historyKey)) {
 					Liferay.after('form:registered', updateSectionOnError);
 
 					Liferay.on('destroyPortlet', detachUpdateSection);
+
+					Liferay.fire('formNavigator:<portlet:namespace />init');
 				}
 			</aui:script>
 		</c:otherwise>

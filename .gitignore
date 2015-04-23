@@ -12,6 +12,9 @@
 _sass_cache_*.css
 cobertura.ser
 
+coverage
+node_modules
+
 **/.sonar
 **/pmd-reports
 

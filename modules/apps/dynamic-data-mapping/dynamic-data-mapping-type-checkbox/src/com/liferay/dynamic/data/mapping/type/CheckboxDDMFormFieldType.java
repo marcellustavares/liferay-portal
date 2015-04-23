@@ -18,7 +18,9 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
+import com.liferay.portlet.dynamicdatamapping.registry.settings.DDMFormFieldTypeSetting;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
@@ -63,5 +65,35 @@ public class CheckboxDDMFormFieldType implements DDMFormFieldType {
 	}
 
 	private DDMFormFieldRenderer _ddmFormFieldRenderer;
+
+	@Override
+	public String getFieldJavaScriptClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<DDMFormFieldTypeSetting> getOptionalSettings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<DDMFormFieldTypeSetting> getRequiredSettings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

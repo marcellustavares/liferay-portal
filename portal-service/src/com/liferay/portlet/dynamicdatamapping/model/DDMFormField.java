@@ -40,6 +40,7 @@ public class DDMFormField implements Serializable {
 		_name = ddmFormField._name;
 		_namespace = ddmFormField._namespace;
 		_predefinedValue = new LocalizedValue(ddmFormField._predefinedValue);
+		_properties = new LinkedHashMap<>(ddmFormField._properties);
 		_readOnly = ddmFormField._readOnly;
 		_repeatable = ddmFormField._repeatable;
 		_required = ddmFormField._required;
@@ -115,6 +116,10 @@ public class DDMFormField implements Serializable {
 
 	public LocalizedValue getPredefinedValue() {
 		return _predefinedValue;
+	}
+
+	public Object getProperty(String name) {
+		return _properties.get(name);
 	}
 
 	public LocalizedValue getStyle() {
@@ -211,6 +216,10 @@ public class DDMFormField implements Serializable {
 		_predefinedValue = predefinedValue;
 	}
 
+	public void setProperty(String name, Object value) {
+		_properties.put(name, value);
+	}
+
 	public void setReadOnly(boolean readOnly) {
 		_readOnly = readOnly;
 	}
@@ -251,6 +260,7 @@ public class DDMFormField implements Serializable {
 	private String _namespace;
 	private List<DDMFormField> _nestedDDMFormFields = new ArrayList<>();
 	private LocalizedValue _predefinedValue = new LocalizedValue();
+	private Map<String, Object> _properties = new LinkedHashMap<>();
 	private boolean _readOnly;
 	private boolean _repeatable;
 	private boolean _required;
