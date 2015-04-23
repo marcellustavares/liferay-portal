@@ -248,22 +248,29 @@ if (feed != null) {
 						<optgroup label="<liferay-ui:message key="structure-fields" />">
 
 							<%
-							Document doc = SAXReaderUtil.read(ddmStructure.getDefinition());
+							DDMForm ddmForm = ddmStructure.getDDMForm();
 
-							XPath xpathSelector = SAXReaderUtil.createXPath("//dynamic-element");
+							for (DDMFormField ddmFormField : ddmForm.getDDMFormFieldsMap(true).values()) {
+								String ddmFormFieldType = ddmFormField.getType();
 
-							List<Node> nodes = xpathSelector.selectNodes(doc);
+								if (ddmFormFieldType.equals("select") || ddmFormFieldType.equals("radio")) {
+									DDMFormFieldOptions ddmFormFieldOptions = ddmFormField.getDDMFormFieldOptions();
 
-							for (Node node : nodes) {
-								Element el = (Element)node;
+									for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
+										LocalizedValue optionLabels = ddmFormFieldOptions.getOptionLabels(optionValue);
 
-								String elName = el.attributeValue("name");
-								String elType = StringUtil.replace(el.attributeValue("type"), StringPool.UNDERLINE, StringPool.DASH);
-
-								if (!elType.equals("boolean") && !elType.equals("list") && !elType.equals("multi-list")) {
+										optionValue = ddmFormField.getName() + StringPool.UNDERLINE + optionValue;
 							%>
 
-									<aui:option label='<%= TextFormatter.format(elName, TextFormatter.J) + "(" + LanguageUtil.get(request, elType) + ")" %>' selected="<%= contentField.equals(elName) %>" value="<%= elName %>" />
+										<aui:option label='<%= TextFormatter.format(optionLabels.getString(locale), TextFormatter.J) + "(" + LanguageUtil.get(request, ddmFormFieldType) + ")" %>' selected="<%= contentField.equals(optionValue) %>" value="<%= optionValue %>" />
+
+							<%
+									}
+								}
+								else if (!ddmFormFieldType.equals("checkbox")) {
+							%>
+
+									<aui:option label='<%= TextFormatter.format(ddmFormField.getName(), TextFormatter.J) + "(" + LanguageUtil.get(request, ddmFormFieldType) + ")" %>' selected="<%= contentField.equals(ddmFormField.getName()) %>" value="<%= ddmFormField.getName() %>" />
 
 							<%
 								}
