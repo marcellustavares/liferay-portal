@@ -2,9 +2,9 @@
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
 	<info organisation="com.liferay"
 		module="com.liferay.portal.tools.service.builder"
-		revision="1.0.0-SNAPSHOT"
-		status="integration"
-		publication="20150426141243"
+		revision="1.0.0"
+		status="release"
+		publication="20150428212132"
 	>
 		<license name="LGPL 2.1" url="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt" />
 		<description homepage="">
@@ -36,5 +36,6 @@
 		<dependency org="com.liferay" name="org.freemarker" rev="2.3.17.LIFERAY-PATCHED-1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
 		<dependency org="com.thoughtworks.qdox" name="qdox" rev="1.12.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
 		<dependency org="org.apache.ant" name="ant" rev="1.9.3" force="true" conf="provided->compile(*),provided(*),runtime(*),master(*)"/>
+		<dependency org="org.apache.maven" name="maven-plugin-api" rev="3.0.4" force="true" conf="provided->compile(*),provided(*),runtime(*),master(*)"/>
 	</dependencies>
 </ivy-module>

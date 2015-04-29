@@ -41,7 +41,8 @@ public class ServiceBuilderTask extends Task {
 				serviceBuilder.getModifiedFileNames();
 
 			project.addIdReference(
-				ServiceBuilder.OUTPUT_KEY_MODIFIED_FILES, modifiedFileNames);
+				ServiceBuilderArgs.OUTPUT_KEY_MODIFIED_FILES,
+				modifiedFileNames);
 		}
 		catch (Exception e) {
 			throw new BuildException(e);
