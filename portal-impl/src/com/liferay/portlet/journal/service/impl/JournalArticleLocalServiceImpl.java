@@ -6726,7 +6726,10 @@ public class JournalArticleLocalServiceImpl
 			ddmTemplateKey = defaultDDMTemplateKey;
 		}
 
-		tokens.put("structure_id", article.getDDMStructureKey());
+		DDMStructure structure = article.getDDMStructure();
+
+		tokens.put("structure_id", String.valueOf(structure.getStructureId()));
+
 		tokens.put("template_id", ddmTemplateKey);
 
 		Document document = article.getDocument();
@@ -7625,7 +7628,7 @@ public class JournalArticleLocalServiceImpl
 			ddmStructureKey, true);
 
 		List<DDMStructure> folderDDMStructures =
-			ddmStructureLocalService.getJournalFolderStructures(
+			journalFolderLocalService.getDDMStructures(
 				PortalUtil.getCurrentAndAncestorSiteGroupIds(groupId), folderId,
 				restrictionType);
 
