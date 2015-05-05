@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,23 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/html/portlet/workflow_definitions/init.jsp" %>
+package com.liferay.workflow.instance.web.portlet.action;
 
-<c:choose>
-	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
+import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
+import com.liferay.portal.util.PortletKeys;
 
-		<%
-		PortletURL portletURL = renderResponse.createRenderURL();
-		%>
+import org.osgi.service.component.annotations.Component;
 
-		<%@ include file="/html/portlet/workflow_definitions/view_definitions.jspf" %>
-
-	</c:when>
-	<c:otherwise>
-		<div class="alert alert-info">
-			<liferay-ui:message key="no-workflow-engine-is-deployed" />
-		</div>
-	</c:otherwise>
-</c:choose>
+/**
+ * @author Leonardo Barros
+ */
+@Component(
+	immediate = true,
+	property = {
+		"action.command.name=signalInstance",
+		"javax.portlet.name=" + PortletKeys.MY_WORKFLOW_INSTANCES
+	},
+	service = ActionCommand.class
+)
+public class MySignalInstanceActionCommand extends SignalInstanceActionCommand {
+}

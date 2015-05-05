@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/html/portlet/workflow_definitions/init.jsp" %>
+package com.liferay.workflow.instance.web.portlet.constants;
 
-<c:choose>
-	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
+/**
+ * @author Leonardo Barros
+ */
+public class WorkflowInstancePortletKeys {
 
-		<%
-		PortletURL portletURL = renderResponse.createRenderURL();
-		%>
+	public static final String WORKFLOW_INSTANCE =
+		"com_liferay_workflow_instance_web_portlet_WorkflowInstancePortlet";
 
-		<%@ include file="/html/portlet/workflow_definitions/view_definitions.jspf" %>
-
-	</c:when>
-	<c:otherwise>
-		<div class="alert alert-info">
-			<liferay-ui:message key="no-workflow-engine-is-deployed" />
-		</div>
-	</c:otherwise>
-</c:choose>
+}

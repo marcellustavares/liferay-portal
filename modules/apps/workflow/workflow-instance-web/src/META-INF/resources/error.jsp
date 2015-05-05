@@ -14,21 +14,9 @@
  */
 --%>
 
-<%@ include file="/html/portlet/workflow_definitions/init.jsp" %>
+<%@ include file="/init.jsp" %>
 
-<c:choose>
-	<c:when test="<%= WorkflowEngineManagerUtil.isDeployed() %>">
+<liferay-ui:error-header />
 
-		<%
-		PortletURL portletURL = renderResponse.createRenderURL();
-		%>
-
-		<%@ include file="/html/portlet/workflow_definitions/view_definitions.jspf" %>
-
-	</c:when>
-	<c:otherwise>
-		<div class="alert alert-info">
-			<liferay-ui:message key="no-workflow-engine-is-deployed" />
-		</div>
-	</c:otherwise>
-</c:choose>
+<liferay-ui:error exception="<%= PrincipalException.class %>" message="you-do-not-have-the-required-permissions" />
+<liferay-ui:error exception="<%= WorkflowException.class %>" message="an-unexpected-error-occurred" />
