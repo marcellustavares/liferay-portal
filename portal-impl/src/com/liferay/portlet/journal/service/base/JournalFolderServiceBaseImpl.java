@@ -37,6 +37,7 @@ import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
 import com.liferay.portlet.asset.service.persistence.AssetLinkPersistence;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureFinder;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructurePersistence;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureRestrictionPersistence;
 import com.liferay.portlet.expando.service.persistence.ExpandoValuePersistence;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.service.JournalFolderService;
@@ -692,6 +693,44 @@ public abstract class JournalFolderServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the d d m structure restriction local service.
+	 *
+	 * @return the d d m structure restriction local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService getDDMStructureRestrictionLocalService() {
+		return ddmStructureRestrictionLocalService;
+	}
+
+	/**
+	 * Sets the d d m structure restriction local service.
+	 *
+	 * @param ddmStructureRestrictionLocalService the d d m structure restriction local service
+	 */
+	public void setDDMStructureRestrictionLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService ddmStructureRestrictionLocalService) {
+		this.ddmStructureRestrictionLocalService = ddmStructureRestrictionLocalService;
+	}
+
+	/**
+	 * Returns the d d m structure restriction persistence.
+	 *
+	 * @return the d d m structure restriction persistence
+	 */
+	public DDMStructureRestrictionPersistence getDDMStructureRestrictionPersistence() {
+		return ddmStructureRestrictionPersistence;
+	}
+
+	/**
+	 * Sets the d d m structure restriction persistence.
+	 *
+	 * @param ddmStructureRestrictionPersistence the d d m structure restriction persistence
+	 */
+	public void setDDMStructureRestrictionPersistence(
+		DDMStructureRestrictionPersistence ddmStructureRestrictionPersistence) {
+		this.ddmStructureRestrictionPersistence = ddmStructureRestrictionPersistence;
+	}
+
+	/**
 	 * Returns the expando value local service.
 	 *
 	 * @return the expando value local service
@@ -1119,6 +1158,10 @@ public abstract class JournalFolderServiceBaseImpl extends BaseServiceImpl
 	protected DDMStructurePersistence ddmStructurePersistence;
 	@BeanReference(type = DDMStructureFinder.class)
 	protected DDMStructureFinder ddmStructureFinder;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService ddmStructureRestrictionLocalService;
+	@BeanReference(type = DDMStructureRestrictionPersistence.class)
+	protected DDMStructureRestrictionPersistence ddmStructureRestrictionPersistence;
 	@BeanReference(type = com.liferay.portlet.expando.service.ExpandoValueLocalService.class)
 	protected com.liferay.portlet.expando.service.ExpandoValueLocalService expandoValueLocalService;
 	@BeanReference(type = com.liferay.portlet.expando.service.ExpandoValueService.class)

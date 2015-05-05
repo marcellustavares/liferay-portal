@@ -498,6 +498,13 @@ create table DDMStructureLink (
 	structureId LONG
 );
 
+create table DDMStructureRestriction (
+	structureRestrictionId LONG not null primary key,
+	classNameId LONG,
+	classPK LONG,
+	structureId LONG
+);
+
 create table DDMStructureVersion (
 	structureVersionId LONG not null primary key,
 	groupId LONG,
