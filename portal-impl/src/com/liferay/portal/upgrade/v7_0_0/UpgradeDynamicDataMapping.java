@@ -57,7 +57,9 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.model.Value;
@@ -337,8 +339,35 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		return DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout);
 	}
 
-	protected String toJSON(DDMForm ddmForm) {
+    protected String toJSON(DDMForm ddmForm) {
 		return DDMFormJSONSerializerUtil.serialize(ddmForm);
+	}
+
+	protected long getLatestDDMStructureVersionId(long structureId)
+		throws SQLException {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select structureVersionId from DDMStructureVersion where " +
+				"structureId = ?");
+
+			ps.setLong(1, structureId);
+
+			rs = ps.executeQuery();
+
+			rs.first();
+
+			return rs.getLong("structureVersionId");
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
 	}
 
 	protected String toJSON(DDMFormValues ddmFormValues) {
@@ -671,6 +700,38 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 	}
 
+	protected void upgradeTemplateClassPk(
+			long templateId, long classNameId, long classPk)
+		throws SQLException {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"update DDMTemplate set classNameId = ?, classPk = ? where " +
+					"templateId = ?");
+
+			ps.setLong(1, classNameId);
+			ps.setLong(2, classPk);
+			ps.setLong(3, templateId);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error(
+				"Unable to upgrade dynamic data mapping template with " +
+					"template ID " + templateId);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
+	}
+
 	protected void upgradeTemplatesAndAddTemplateVersions() throws Exception {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -690,7 +751,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				String userName = rs.getString("userName");
 				Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
 				long classNameId = rs.getLong("classNameId");
-				long classPK = rs.getLong("classPK");
+				long classPk = rs.getLong("classPk");
 				long templateId = rs.getLong("templateId");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
@@ -708,10 +769,20 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					upgradeTemplateScript(templateId, script);
 				}
 
+				if (classNameId == PortalUtil.getClassNameId(
+						DDMStructure.class)) {
+
+					classNameId = checkClassNameId(DDMStructureVersion.class);
+
+					classPk = getLatestDDMStructureVersionId(classPk);
+
+					upgradeTemplateClassPk(templateId, classNameId, classPk);
+				}
+
 				addTemplateVersion(
 					increment(), groupId, companyId, userId, userName,
 					modifiedDate, classNameId, classPK, templateId, name,
-					description, language, script,
+					modifiedDate, templateId, name, description, language,
 					WorkflowConstants.STATUS_APPROVED, userId, userName,
 					modifiedDate);
 			}
