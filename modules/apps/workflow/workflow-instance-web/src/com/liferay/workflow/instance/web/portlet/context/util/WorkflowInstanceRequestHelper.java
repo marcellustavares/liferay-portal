@@ -12,23 +12,20 @@
  * details.
  */
 
-package com.liferay.workflow.instance.web.portlet.action;
+package com.liferay.workflow.instance.web.portlet.context.util;
 
-import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
-import com.liferay.portal.util.PortletKeys;
+import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
+import com.liferay.portal.util.PortalUtil;
 
-import org.osgi.service.component.annotations.Component;
+import javax.portlet.RenderRequest;
 
 /**
- * @author Leonardo Barros
+ * @author Marcellus Tavares
  */
-@Component(
-	immediate = true,
-	property = {
-		"action.command.name=signalInstance",
-		"javax.portlet.name=" + PortletKeys.MY_WORKFLOW_INSTANCES
-	},
-	service = ActionCommand.class
-)
-public class MySignalInstanceActionCommand extends SignalInstanceActionCommand {
+public class WorkflowInstanceRequestHelper extends BaseRequestHelper {
+
+	public WorkflowInstanceRequestHelper(RenderRequest renderRequest) {
+		super(PortalUtil.getHttpServletRequest(renderRequest));
+	}
+
 }

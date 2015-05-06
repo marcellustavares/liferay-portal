@@ -37,7 +37,6 @@ page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowException" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowInstance" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowLog" %><%@
-page import="com.liferay.portal.kernel.workflow.WorkflowTask" %><%@
 page import="com.liferay.portal.security.auth.PrincipalException" %><%@
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.WebKeys" %><%@
@@ -49,8 +48,6 @@ page import="com.liferay.portlet.asset.model.AssetRendererFactory" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.workflow.instance.web.portlet.context.WorkflowInstanceEditDisplayContext" %><%@
 page import="com.liferay.workflow.instance.web.portlet.context.WorkflowInstanceViewDisplayContext" %>
-
-<%@ page import="java.util.List" %>
 
 <%@ page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>

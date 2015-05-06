@@ -23,6 +23,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortletKeys;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,6 +65,16 @@ public abstract class BaseRequestHelper {
 
 		return _layout;
 	}
+	
+	public long getUserId() {
+		if (_userId == null) {
+			ThemeDisplay themeDisplay = getThemeDisplay();
+
+			_userId = themeDisplay.getUserId();
+		}
+
+		return _userId;
+	}
 
 	public Locale getLocale() {
 		if (_locale == null) {
@@ -73,6 +84,16 @@ public abstract class BaseRequestHelper {
 		}
 
 		return _locale;
+	}
+	
+	public TimeZone getTimeZone() {
+		if (_timeZone == null) {
+			ThemeDisplay themeDisplay = getThemeDisplay();
+
+			_timeZone = themeDisplay.getTimeZone();
+		}
+
+		return _timeZone;
 	}
 
 	public PermissionChecker getPermissionChecker() {
@@ -202,6 +223,8 @@ public abstract class BaseRequestHelper {
 	private Long _companyId;
 	private Layout _layout;
 	private Locale _locale;
+	private Long _userId;
+	private TimeZone _timeZone;
 	private PermissionChecker _permissionChecker;
 	private PortletDisplay _portletDisplay;
 	private String _portletId;

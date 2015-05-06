@@ -73,6 +73,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String CONTROL_PANEL_CATEGORIES_MAP = "CONTROL_PANEL_CATEGORIES_MAP";
 
+	public static final String DISPLAY_CONTEXT = "DISPLAY_CONTEXT";
+	
 	public static final String DEVICE = "DEVICE";
 
 	public static final String DIFF_RESULTS = "DIFF_RESULTS";
