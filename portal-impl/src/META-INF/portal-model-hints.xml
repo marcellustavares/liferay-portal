@@ -1792,6 +1792,12 @@
 		<field name="classPK" type="long" />
 		<field name="structureId" type="long" />
 	</model>
+	<model name="com.liferay.portlet.dynamicdatamapping.model.DDMStructureRestriction">
+		<field name="structureRestrictionId" type="long" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="structureId" type="long" />
+	</model>
 	<model name="com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion">
 		<field name="structureVersionId" type="long" />
 		<field name="groupId" type="long" />

@@ -63,6 +63,7 @@ import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
 import com.liferay.portlet.asset.service.persistence.AssetLinkPersistence;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureFinder;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructurePersistence;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureRestrictionPersistence;
 import com.liferay.portlet.expando.service.persistence.ExpandoValuePersistence;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.service.JournalFolderLocalService;
@@ -461,138 +462,6 @@ public abstract class JournalFolderLocalServiceBaseImpl
 	@Override
 	public JournalFolder updateJournalFolder(JournalFolder journalFolder) {
 		return journalFolderPersistence.update(journalFolder);
-	}
-
-	/**
-	 */
-	@Override
-	public void addDDMStructureJournalFolder(long structureId, long folderId) {
-		ddmStructurePersistence.addJournalFolder(structureId, folderId);
-	}
-
-	/**
-	 */
-	@Override
-	public void addDDMStructureJournalFolder(long structureId,
-		JournalFolder journalFolder) {
-		ddmStructurePersistence.addJournalFolder(structureId, journalFolder);
-	}
-
-	/**
-	 */
-	@Override
-	public void addDDMStructureJournalFolders(long structureId, long[] folderIds) {
-		ddmStructurePersistence.addJournalFolders(structureId, folderIds);
-	}
-
-	/**
-	 */
-	@Override
-	public void addDDMStructureJournalFolders(long structureId,
-		List<JournalFolder> JournalFolders) {
-		ddmStructurePersistence.addJournalFolders(structureId, JournalFolders);
-	}
-
-	/**
-	 */
-	@Override
-	public void clearDDMStructureJournalFolders(long structureId) {
-		ddmStructurePersistence.clearJournalFolders(structureId);
-	}
-
-	/**
-	 */
-	@Override
-	public void deleteDDMStructureJournalFolder(long structureId, long folderId) {
-		ddmStructurePersistence.removeJournalFolder(structureId, folderId);
-	}
-
-	/**
-	 */
-	@Override
-	public void deleteDDMStructureJournalFolder(long structureId,
-		JournalFolder journalFolder) {
-		ddmStructurePersistence.removeJournalFolder(structureId, journalFolder);
-	}
-
-	/**
-	 */
-	@Override
-	public void deleteDDMStructureJournalFolders(long structureId,
-		long[] folderIds) {
-		ddmStructurePersistence.removeJournalFolders(structureId, folderIds);
-	}
-
-	/**
-	 */
-	@Override
-	public void deleteDDMStructureJournalFolders(long structureId,
-		List<JournalFolder> JournalFolders) {
-		ddmStructurePersistence.removeJournalFolders(structureId, JournalFolders);
-	}
-
-	/**
-	 * Returns the structureIds of the d d m structures associated with the journal folder.
-	 *
-	 * @param folderId the folderId of the journal folder
-	 * @return long[] the structureIds of d d m structures associated with the journal folder
-	 */
-	@Override
-	public long[] getDDMStructurePrimaryKeys(long folderId) {
-		return journalFolderPersistence.getDDMStructurePrimaryKeys(folderId);
-	}
-
-	/**
-	 */
-	@Override
-	public List<JournalFolder> getDDMStructureJournalFolders(long structureId) {
-		return ddmStructurePersistence.getJournalFolders(structureId);
-	}
-
-	/**
-	 */
-	@Override
-	public List<JournalFolder> getDDMStructureJournalFolders(long structureId,
-		int start, int end) {
-		return ddmStructurePersistence.getJournalFolders(structureId, start, end);
-	}
-
-	/**
-	 */
-	@Override
-	public List<JournalFolder> getDDMStructureJournalFolders(long structureId,
-		int start, int end, OrderByComparator<JournalFolder> orderByComparator) {
-		return ddmStructurePersistence.getJournalFolders(structureId, start,
-			end, orderByComparator);
-	}
-
-	/**
-	 */
-	@Override
-	public int getDDMStructureJournalFoldersCount(long structureId) {
-		return ddmStructurePersistence.getJournalFoldersSize(structureId);
-	}
-
-	/**
-	 */
-	@Override
-	public boolean hasDDMStructureJournalFolder(long structureId, long folderId) {
-		return ddmStructurePersistence.containsJournalFolder(structureId,
-			folderId);
-	}
-
-	/**
-	 */
-	@Override
-	public boolean hasDDMStructureJournalFolders(long structureId) {
-		return ddmStructurePersistence.containsJournalFolders(structureId);
-	}
-
-	/**
-	 */
-	@Override
-	public void setDDMStructureJournalFolders(long structureId, long[] folderIds) {
-		ddmStructurePersistence.setJournalFolders(structureId, folderIds);
 	}
 
 	/**
@@ -1216,6 +1085,44 @@ public abstract class JournalFolderLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the d d m structure restriction local service.
+	 *
+	 * @return the d d m structure restriction local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService getDDMStructureRestrictionLocalService() {
+		return ddmStructureRestrictionLocalService;
+	}
+
+	/**
+	 * Sets the d d m structure restriction local service.
+	 *
+	 * @param ddmStructureRestrictionLocalService the d d m structure restriction local service
+	 */
+	public void setDDMStructureRestrictionLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService ddmStructureRestrictionLocalService) {
+		this.ddmStructureRestrictionLocalService = ddmStructureRestrictionLocalService;
+	}
+
+	/**
+	 * Returns the d d m structure restriction persistence.
+	 *
+	 * @return the d d m structure restriction persistence
+	 */
+	public DDMStructureRestrictionPersistence getDDMStructureRestrictionPersistence() {
+		return ddmStructureRestrictionPersistence;
+	}
+
+	/**
+	 * Sets the d d m structure restriction persistence.
+	 *
+	 * @param ddmStructureRestrictionPersistence the d d m structure restriction persistence
+	 */
+	public void setDDMStructureRestrictionPersistence(
+		DDMStructureRestrictionPersistence ddmStructureRestrictionPersistence) {
+		this.ddmStructureRestrictionPersistence = ddmStructureRestrictionPersistence;
+	}
+
+	/**
 	 * Returns the expando value local service.
 	 *
 	 * @return the expando value local service
@@ -1647,6 +1554,10 @@ public abstract class JournalFolderLocalServiceBaseImpl
 	protected DDMStructurePersistence ddmStructurePersistence;
 	@BeanReference(type = DDMStructureFinder.class)
 	protected DDMStructureFinder ddmStructureFinder;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureRestrictionLocalService ddmStructureRestrictionLocalService;
+	@BeanReference(type = DDMStructureRestrictionPersistence.class)
+	protected DDMStructureRestrictionPersistence ddmStructureRestrictionPersistence;
 	@BeanReference(type = com.liferay.portlet.expando.service.ExpandoValueLocalService.class)
 	protected com.liferay.portlet.expando.service.ExpandoValueLocalService expandoValueLocalService;
 	@BeanReference(type = com.liferay.portlet.expando.service.ExpandoValueService.class)
