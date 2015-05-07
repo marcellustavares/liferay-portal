@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,11 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
+package com.liferay.workflow.definition.web.portlet.constants;
 
-<%@ include file="/html/portlet/workflow_definitions/init.jsp" %>
+/**
+ * @author Leonardo Barros
+ */
+public class WorkflowDefinitionConstants {
 
-<liferay-ui:error-header />
+	public static final String FILE = "file";
 
-<liferay-ui:error exception="<%= PrincipalException.class %>" message="you-do-not-have-the-required-permissions" />
-<liferay-ui:error exception="<%= WorkflowException.class %>" message="an-error-occurred-in-the-workflow-engine" />
+	public static final String NAME = "name";
+
+	public static final String TITLE = "title";
+
+	public static final String TITLE2 = "Title";
+
+	public static final String VERSION = "version";
+
+}
