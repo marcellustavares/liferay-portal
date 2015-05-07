@@ -27,8 +27,10 @@ import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
+import com.liferay.portal.model.User;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.struts.PortletAction;
@@ -148,6 +150,8 @@ public class EditWorkflowInstanceAction extends PortletAction {
 		long classPK = GetterUtil.getLong(
 			workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
 
+		validateUser(companyId, userId, workflowContext);
+
 		WorkflowHandler<?> workflowHandler =
 			WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
 
@@ -200,6 +204,23 @@ public class EditWorkflowInstanceAction extends PortletAction {
 		WorkflowInstanceManagerUtil.signalWorkflowInstance(
 			themeDisplay.getCompanyId(), themeDisplay.getUserId(),
 			workflowInstanceId, transitionName, null);
+	}
+
+	protected void validateUser(
+			long companyId, long userId,
+			Map<String, Serializable> workflowContext)
+		throws Exception {
+
+		User user = UserLocalServiceUtil.fetchUser(userId);
+
+		if (user == null) {
+			long defaultUserId = UserLocalServiceUtil.getDefaultUserId(
+				companyId);
+
+			workflowContext.put(
+				WorkflowConstants.CONTEXT_USER_ID,
+				String.valueOf(defaultUserId));
+		}
 	}
 
 	private static final boolean _CHECK_METHOD_ON_PROCESS_ACTION = false;
