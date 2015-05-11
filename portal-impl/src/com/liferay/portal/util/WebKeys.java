@@ -78,6 +78,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String DIFF_RESULTS = "DIFF_RESULTS";
 
 	public static final String DIFF_VERSION = "DIFF_VERSION";
+	
+	public static final String DISPLAY_CONTEXT = "DISPLAY_CONTEXT";
 
 	public static final String DOCUMENT_LIBRARY_FILE_ENTRIES = "DOCUMENT_LIBRARY_FILE_ENTRIES";
 
@@ -436,7 +438,15 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String WORKFLOW_INSTANCE = "WORKFLOW_INSTANCE";
 
+	public static final String WORKFLOW_MY_COMPLETED_TASKS = "MY_COMPLETED_TASKS";
+	
+	public static final String WORKFLOW_PENDING_TASKS_ASSIGNED_TO_ME = "WORKFLOW_PENDING_TASKS_ASSIGNED_TO_ME";
+	
+	public static final String WORKFLOW_PENDING_TASKS_ASSIGNED_TO_MY_ROLES = "WORKFLOW_PENDING_TASKS_ASSIGNED_TO_MY_ROLES";
+	
 	public static final String WORKFLOW_TASK = "WORKFLOW_TASK";
+	
+	public static final String WORKFLOW_TASK_DISPLAY_CONTEXT = "WORKFLOW_TASK_DISPLAY_CONTEXT";
 
 	public static final String WSRP_NEW_SESSION = "WSRP_NEW_SESSION";
 

@@ -116,7 +116,8 @@ public class PortletKeys {
 
 	public static final String MY_WORKFLOW_INSTANCES = "158";
 
-	public static final String MY_WORKFLOW_TASKS = "153";
+	public static final String MY_WORKFLOW_TASKS = 		
+		"com_liferay_workflow_task_web_portlet_MyWorkflowTaskPortlet";
 
 	public static final String NESTED_PORTLETS =
 		"com_liferay_nested_portlets_web_portlet_NestedPortletsPortlet";
@@ -191,7 +192,5 @@ public class PortletKeys {
 	public static final String WORKFLOW_DEFINITIONS = "151";
 
 	public static final String WORKFLOW_INSTANCES = "157";
-
-	public static final String WORKFLOW_TASKS = "150";
 
 }
