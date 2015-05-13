@@ -14,6 +14,13 @@
 
 package com.liferay.portal.kernel.display.context.util;
 
+import java.util.Locale;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
+import javax.servlet.http.HttpServletRequest;
+
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.JavaConstants;
@@ -27,14 +34,6 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.PortletURLUtil;
-
-import java.util.Locale;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Iván Zaera
@@ -64,7 +63,7 @@ public abstract class BaseRequestHelper {
 
 		return _companyId;
 	}
-
+	
 	public String getCurrentURL() {
 		if (_currentURL == null) {
 			PortletURL portletURL = PortletURLUtil.getCurrent(
@@ -85,7 +84,7 @@ public abstract class BaseRequestHelper {
 
 		return _layout;
 	}
-
+	
 	public LiferayPortletRequest getLiferayPortletRequest() {
 		if (_liferayPortletRequest == null) {
 			PortletRequest portletRequest =
@@ -244,15 +243,23 @@ public abstract class BaseRequestHelper {
 
 		return _themeDisplay;
 	}
-
+	
 	public User getUser() {
 		if (_user == null) {
 			ThemeDisplay themeDisplay = getThemeDisplay();
-
 			_user = themeDisplay.getUser();
 		}
-
 		return _user;
+	}
+
+	public long getUserId() {
+		if (_userId == null) {
+			ThemeDisplay themeDisplay = getThemeDisplay();
+
+			_userId = themeDisplay.getUserId();
+		}
+
+		return _userId;
 	}
 
 	private Company _company;
@@ -275,5 +282,6 @@ public abstract class BaseRequestHelper {
 	private Long _siteGroupId;
 	private ThemeDisplay _themeDisplay;
 	private User _user;
+	private Long _userId;
 
 }
