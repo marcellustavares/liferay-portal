@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.registry.bundle.ddmformfieldtyperegistryimpl;
 
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
@@ -62,6 +63,11 @@ public class TestDDMFormFieldType implements DDMFormFieldType {
 	@Override
 	public String getName() {
 		return TestDDMFormFieldType.class.getName();
+	}
+
+	@Override
+	public DDMForm getSettingsDDMForm() {
+		return null;
 	}
 
 }
