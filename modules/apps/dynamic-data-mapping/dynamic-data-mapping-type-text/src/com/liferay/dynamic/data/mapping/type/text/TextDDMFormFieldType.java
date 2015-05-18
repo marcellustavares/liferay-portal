@@ -14,6 +14,11 @@
 
 package com.liferay.dynamic.data.mapping.type.text;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
@@ -22,15 +27,22 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueParamete
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldValueParameterSerializer;
 
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
  */
-@Component(immediate = true, service = DDMFormFieldType.class)
+@Component(
+	immediate = true,
+	property = {"settingsDDMFormPath=/META-INF/resources/settings.json"},
+	service = DDMFormFieldType.class
+)
 public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
@@ -63,6 +75,20 @@ public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 	@Override
 	public String getName() {
 		return "text";
+	}
+
+	@Activate
+	protected void activate(Map<String, Object> properties) throws IOException, PortalException {
+		String serializedSettingsDDMFormPath = MapUtil.getString(
+			properties, "settingsDDMFormPath");
+
+		String serializedSettingsDDMForm = FileUtil.read(
+			serializedSettingsDDMFormPath);
+
+		DDMForm settingsDDMForm = DDMFormJSONDeserializerUtil.deserialize(
+			serializedSettingsDDMForm);
+
+		setSerializedSettingsDDMForm(settingsDDMForm);
 	}
 
 	@Reference(service = TextDDMFormFieldRenderer.class, unbind = "-")
