@@ -53,6 +53,7 @@ import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.PortletBagFactory;
 import com.liferay.portlet.PortletInstanceFactory;
 import com.liferay.registry.util.StringPlus;
+import com.liferay.util.log4j.Log4JUtil;
 
 import java.io.IOException;
 
@@ -261,6 +262,8 @@ public class PortletTracker
 		Class<?> portletClazz = portlet.getClass();
 
 		portletModel.setPortletClass(portletClazz.getName());
+
+		initLogger(portletClazz);
 
 		collectJxPortletFeatures(serviceReference, portletModel);
 		collectLiferayFeatures(serviceReference, portletModel);
@@ -1094,6 +1097,10 @@ public class PortletTracker
 		}
 
 		return serviceRegistrations;
+	}
+
+	protected void initLogger(Class<?> portletClazz) {
+		Log4JUtil.configureLog4J(portletClazz.getClassLoader());
 	}
 
 	protected void readResourceActions(
