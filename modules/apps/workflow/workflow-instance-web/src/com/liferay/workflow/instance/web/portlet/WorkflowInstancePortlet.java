@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.workflow.WorkflowInstance;
 import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.WebKeys;
-import com.liferay.util.log4j.Log4JUtil;
 import com.liferay.workflow.instance.web.constants.WorkflowInstancePortletKeys;
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -109,13 +107,6 @@ public class WorkflowInstancePortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
-	@Activate
-	protected void activate() {
-		Class<? extends MVCPortlet> clazz = getClass();
-
-		initLogger(clazz.getClassLoader());
-	}
-
 	@Override
 	protected void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
@@ -129,11 +120,6 @@ public class WorkflowInstancePortlet extends MVCPortlet {
 		else {
 			super.doDispatch(renderRequest, renderResponse);
 		}
-	}
-
-	protected void initLogger(ClassLoader classLoader) {
-		Log4JUtil.configureLog4J(
-			classLoader.getResource("META-INF/portal-log4j.xml"));
 	}
 
 	@Override
