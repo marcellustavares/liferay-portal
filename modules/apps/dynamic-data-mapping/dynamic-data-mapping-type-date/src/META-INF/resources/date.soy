@@ -1,0 +1,52 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form date field.
+ *
+ * @param childElementsHTML
+ * @param dir
+ * @param label
+ * @param name
+ * @param value
+ */
+{template .date}
+	<script type="text/javascript">
+		AUI().use(
+			'node',
+			'aui-datepicker',
+			function(A) {lb}
+				var datePicker = new A.DatePicker(
+					{lb}
+						trigger: '#displayDate',
+						popover: {lb}
+							zIndex: 1
+						{rb},
+						on: {lb}
+							selectionChange: function(event) {lb}
+								var selectedDate = event.newSelection[0];
+
+								var formattedSelectedDateValue = selectedDate.getDate();
+
+								formattedSelectedDateValue = formattedSelectedDateValue + "," + selectedDate.getMonth();
+								formattedSelectedDateValue = formattedSelectedDateValue + "," + selectedDate.getFullYear();
+
+								A.one('#selectedDate').set("value", formattedSelectedDateValue);
+							{rb}
+						{rb}
+					{rb}
+				);
+			{rb}
+		);
+	</script>
+
+	<div class="form-group field-wrapper" data-fieldname="{$name}">
+		<label class="control-fieldLabel" for="displayDate">
+			{$label}
+		</label>
+
+		<input class="field form-control" dir="{$dir}" id="displayDate" name="displayDate" type="text" value="{$value}">
+		<input id="selectedDate" name="{$name}" type="hidden" value="">
+
+		{$childElementsHTML|noAutoescape}
+	</div>
+{/template}
