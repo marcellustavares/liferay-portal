@@ -61,8 +61,8 @@ public class DateDDMFormFieldValueRendererAccessorTest {
 			dateDDMFormFieldValueRendererAccessor =
 				createDateDDMFormFieldValueRendererAccessor(LocaleUtil.US);
 
-		String actualFormat =
-			dateDDMFormFieldValueRendererAccessor.get(ddmFormFieldValue);
+		String actualFormat = dateDDMFormFieldValueRendererAccessor.get(
+			ddmFormFieldValue);
 
 		Assert.assertEquals(expectedFormat, actualFormat);
 
@@ -73,8 +73,8 @@ public class DateDDMFormFieldValueRendererAccessorTest {
 		dateDDMFormFieldValueRendererAccessor =
 			createDateDDMFormFieldValueRendererAccessor(LocaleUtil.BRAZIL);
 
-		actualFormat =
-			dateDDMFormFieldValueRendererAccessor.get(ddmFormFieldValue);
+		actualFormat = dateDDMFormFieldValueRendererAccessor.get(
+			ddmFormFieldValue);
 
 		Assert.assertEquals(expectedFormat, actualFormat);
 	}
