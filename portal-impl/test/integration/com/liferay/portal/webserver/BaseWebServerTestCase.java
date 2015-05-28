@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.User;
 import com.liferay.portal.util.WebKeys;
-import com.liferay.portlet.documentlibrary.service.BaseDLAppTestCase;
+import com.liferay.portlet.documentlibrary.util.test.BaseDLAppTestCase;
 
 import java.util.HashMap;
 import java.util.Map;

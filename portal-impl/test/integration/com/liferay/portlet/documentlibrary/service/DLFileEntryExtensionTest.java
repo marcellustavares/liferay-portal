@@ -27,6 +27,7 @@ import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.FileNameException;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
+import com.liferay.portlet.documentlibrary.util.test.BaseDLAppTestCase;
 
 import org.junit.Assert;
 import org.junit.ClassRule;

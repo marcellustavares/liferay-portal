@@ -67,16 +67,15 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.model.DLSyncConstants;
+import com.liferay.portlet.documentlibrary.util.test.BaseDLAppTestCase;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hibernate.util.JDBCExceptionReporter;
-
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Ignore;

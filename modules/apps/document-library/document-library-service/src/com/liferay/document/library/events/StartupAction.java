@@ -12,9 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.events;
+package com.liferay.document.library.events;
 
 import com.liferay.portal.kernel.events.ActionException;
+import com.liferay.portal.kernel.events.LifecycleAction;
+import com.liferay.portal.kernel.events.SimpleAction;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessorUtil;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
@@ -23,10 +25,16 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.security.auth.CompanyThreadLocal;
+import com.liferay.portal.service.CompanyLocalService;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
@@ -34,34 +42,41 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 import com.liferay.portlet.documentlibrary.util.RawMetadataProcessor;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializer;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDM;
+import com.liferay.portlet.dynamicdatamapping.util.DDMXML;
+import com.liferay.util.ContentUtil;
 
 import java.io.StringReader;
-
 import java.lang.reflect.Field;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Sergio González
  * @author Miguel Pastor
  * @author Roberto Díaz
+ * @author Marcellus Tavares
  */
-public class AddDefaultDocumentLibraryStructuresAction
-	extends BaseDefaultDDMStructureAction {
+@Component(immediate = true, service={StartupAction.class, LifecycleAction.class})
+public class StartupAction extends SimpleAction {
 
 	@Override
 	public void run(String[] ids) throws ActionException {
@@ -70,6 +85,79 @@ public class AddDefaultDocumentLibraryStructuresAction
 		}
 		catch (Exception e) {
 			throw new ActionException(e);
+		}
+	}
+
+	protected void addDDMStructures(
+			long userId, long groupId, long classNameId, String fileName,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
+
+		List<Element> structureElements = getDDMStructures(fileName, locale);
+
+		for (Element structureElement : structureElements) {
+			boolean dynamicStructure = GetterUtil.getBoolean(
+				structureElement.elementText("dynamic-structure"));
+
+			if (dynamicStructure) {
+				continue;
+			}
+
+			String name = structureElement.elementText("name");
+
+			String description = structureElement.elementText("description");
+
+			String ddmStructureKey = name;
+
+			DDMStructure ddmStructure =
+				_ddmStructureLocalService.fetchStructure(
+					groupId, classNameId, ddmStructureKey);
+
+			if (ddmStructure != null) {
+				continue;
+			}
+
+			Element structureElementRootElement = structureElement.element(
+				"root");
+
+			String definition = structureElementRootElement.asXML();
+
+			Map<Locale, String> nameMap = new HashMap<>();
+			Map<Locale, String> descriptionMap = new HashMap<>();
+
+			for (Locale curLocale : LanguageUtil.getAvailableLocales(groupId)) {
+				nameMap.put(curLocale, LanguageUtil.get(curLocale, name));
+				descriptionMap.put(
+					curLocale, LanguageUtil.get(curLocale, description));
+			}
+
+			Attribute defaultLocaleAttribute =
+				structureElementRootElement.attribute("default-locale");
+
+			Locale ddmStructureDefaultLocale = LocaleUtil.fromLanguageId(
+				defaultLocaleAttribute.getValue());
+
+			definition = _ddmXML.updateXMLDefaultLocale(
+				definition, ddmStructureDefaultLocale, locale);
+
+			if (name.equals(DLFileEntryTypeConstants.NAME_IG_IMAGE) &&
+				!UpgradeProcessUtil.isCreateIGImageDocumentType()) {
+
+				continue;
+			}
+
+			DDMForm ddmForm = _ddmFormXSDDeserializer.deserialize(definition);
+
+			DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
+
+			_ddmStructureLocalService.addStructure(
+				userId, groupId,
+				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
+				ddmStructureKey, nameMap, descriptionMap, ddmForm,
+				ddmFormLayout, StorageType.JSON.toString(),
+				DDMStructureConstants.TYPE_DEFAULT, serviceContext);
 		}
 	}
 
@@ -85,7 +173,7 @@ public class AddDefaultDocumentLibraryStructuresAction
 			String ddmStructureKey = ddmStructureName;
 
 			DDMStructure ddmStructure =
-				DDMStructureLocalServiceUtil.fetchStructure(
+				_ddmStructureLocalService.fetchStructure(
 					groupId,
 					PortalUtil.getClassNameId(DLFileEntryMetadata.class),
 					ddmStructureKey);
@@ -102,19 +190,19 @@ public class AddDefaultDocumentLibraryStructuresAction
 		String definition = getDynamicDDMStructureDefinition(
 			"document-library-structures.xml", languageKey, locale);
 
-		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
+		DDMForm ddmForm = _ddmFormXSDDeserializer.deserialize(definition);
 
 		serviceContext.setAttribute("ddmForm", ddmForm);
 
 		try {
-			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
+			_fileEntryTypeLocalService.getFileEntryType(
 				groupId, dlFileEntryTypeKey);
 		}
 		catch (NoSuchFileEntryTypeException nsfete) {
 			Map<Locale, String> localizationMap = getLocalizationMap(
 				languageKey);
 
-			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
+			_fileEntryTypeLocalService.addFileEntryType(
 				userId, groupId, dlFileEntryTypeKey, localizationMap,
 				localizationMap,
 				ArrayUtil.toArray(
@@ -195,18 +283,18 @@ public class AddDefaultDocumentLibraryStructuresAction
 				structureElementRootElement.asXML();
 
 			DDMStructure ddmStructure =
-				DDMStructureLocalServiceUtil.fetchStructure(
+				_ddmStructureLocalService.fetchStructure(
 					groupId,
 					PortalUtil.getClassNameId(RawMetadataProcessor.class),
 					name);
 
-			DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
+			DDMForm ddmForm = _ddmFormXSDDeserializer.deserialize(
 				structureElementRootXML);
 
 			if (ddmStructure != null) {
 				ddmStructure.setDDMForm(ddmForm);
 
-				DDMStructureLocalServiceUtil.updateDDMStructure(ddmStructure);
+				_ddmStructureLocalService.updateDDMStructure(ddmStructure);
 			}
 			else {
 				Map<Locale, String> nameMap = new HashMap<>();
@@ -217,10 +305,10 @@ public class AddDefaultDocumentLibraryStructuresAction
 
 				descriptionMap.put(locale, description);
 
-				DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(
+				DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(
 					ddmForm);
 
-				DDMStructureLocalServiceUtil.addStructure(
+				_ddmStructureLocalService.addStructure(
 					userId, groupId,
 					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
 					PortalUtil.getClassNameId(RawMetadataProcessor.class), name,
@@ -322,6 +410,56 @@ public class AddDefaultDocumentLibraryStructuresAction
 			defaultUserId, group.getGroupId(), serviceContext);
 	}
 
+	protected String getContent(String fileName) {
+		Class<?> clazz = getClass();
+
+		return ContentUtil.get(
+			clazz.getClassLoader(), "/META-INF/resources/" + fileName);
+	}
+
+	protected List<Element> getDDMStructures(String fileName, Locale locale)
+		throws DocumentException {
+
+		String xml = getContent(fileName);
+
+		xml = StringUtil.replace(xml, "[$LOCALE_DEFAULT$]", locale.toString());
+
+		Document document = SAXReaderUtil.read(xml);
+
+		Element rootElement = document.getRootElement();
+
+		return rootElement.elements("structure");
+	}
+
+	protected String getDynamicDDMStructureDefinition(
+			String fileName, String dynamicDDMStructureName, Locale locale)
+		throws DocumentException {
+
+		List<Element> structureElements = getDDMStructures(fileName, locale);
+
+		for (Element structureElement : structureElements) {
+			boolean dynamicStructure = GetterUtil.getBoolean(
+				structureElement.elementText("dynamic-structure"));
+
+			if (!dynamicStructure) {
+				continue;
+			}
+
+			String name = structureElement.elementText("name");
+
+			if (!name.equals(dynamicDDMStructureName)) {
+				continue;
+			}
+
+			Element structureElementRootElement = structureElement.element(
+				"root");
+
+			return structureElementRootElement.asXML();
+		}
+
+		return null;
+	}
+
 	protected Map<Locale, String> getLocalizationMap(String content) {
 		Map<Locale, String> localizationMap = new HashMap<>();
 
@@ -341,5 +479,72 @@ public class AddDefaultDocumentLibraryStructuresAction
 
 		return localizationMap;
 	}
+
+	@Activate
+	protected void run() throws ActionException {
+		Long companyId = CompanyThreadLocal.getCompanyId();
+
+		try {
+			List<Company> companys = _companyLocalService.getCompanies();
+
+			for (Company company : companys) {
+				CompanyThreadLocal.setCompanyId(company.getCompanyId());
+
+				run(new String[] {String.valueOf(company.getCompanyId())});
+			}
+		}
+		finally {
+			CompanyThreadLocal.setCompanyId(companyId);
+		}
+	}
+
+	@Reference(unbind = "-")
+	protected void setCompanyLocalService(
+		CompanyLocalService companyLocalService) {
+
+		_companyLocalService = companyLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormXSDDeserializer(
+		DDMFormXSDDeserializer ddmFormXSDDeserializer) {
+
+		_ddmFormXSDDeserializer = ddmFormXSDDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMStructureLocalService(
+		DDMStructureLocalService ddmStructureLocalService) {
+
+		_ddmStructureLocalService = ddmStructureLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMXML(DDMXML ddmXML) {
+		_ddmXML = ddmXML;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDLFileEntryTypeLocalService(
+		DLFileEntryTypeLocalService fileEntryTypeLocalService) {
+
+		_fileEntryTypeLocalService = fileEntryTypeLocalService;
+	}
+
+	@Reference(target = "(original.bean=true)", unbind = "-")
+	protected void setServletContext(ServletContext servletContext) {
+	}
+
+	private CompanyLocalService _companyLocalService;
+	private DDM _ddm;
+	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
+	private DDMStructureLocalService _ddmStructureLocalService;
+	private DDMXML _ddmXML;
+	private DLFileEntryTypeLocalService _fileEntryTypeLocalService;
 
 }

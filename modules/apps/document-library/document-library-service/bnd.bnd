@@ -1,0 +1,9 @@
+Bundle-Name: Liferay Document Library Service
+Bundle-SymbolicName: com.liferay.document.library.service
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.document.library.events
+Include-Resource:\
+	classes,\
+	META-INF/resources=src/META-INF/resources,\
+	@../../../../util-java/util-java.jar!/com/liferay/util/ContentUtil.class
+Liferay-Service: true

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.documentlibrary.service;
+package com.liferay.portlet.documentlibrary.util.test;
 
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -29,7 +29,8 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.permission.DLPermission;
+import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
+//import com.liferay.portlet.documentlibrary.service.permission.DLPermission;
 
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +63,7 @@ public abstract class BaseDLAppTestCase {
 			"Test Folder", RandomTestUtil.randomString(), serviceContext);
 
 		RoleTestUtil.addResourcePermission(
-			RoleConstants.GUEST, DLPermission.RESOURCE_NAME,
+			RoleConstants.GUEST, "com.liferay.portlet.documentlibrary",
 			ResourceConstants.SCOPE_GROUP, String.valueOf(group.getGroupId()),
 			ActionKeys.VIEW);
 	}
@@ -72,7 +73,7 @@ public abstract class BaseDLAppTestCase {
 		PrincipalThreadLocal.setName(_name);
 
 		RoleTestUtil.removeResourcePermission(
-			RoleConstants.GUEST, DLPermission.RESOURCE_NAME,
+			RoleConstants.GUEST, "com.liferay.portlet.documentlibrary",
 			ResourceConstants.SCOPE_GROUP, String.valueOf(group.getGroupId()),
 			ActionKeys.VIEW);
 	}

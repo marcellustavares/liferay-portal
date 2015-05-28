@@ -29,6 +29,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portlet.documentlibrary.InvalidFileVersionException;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
+import com.liferay.portlet.documentlibrary.util.test.BaseDLAppTestCase;
 
 import java.util.List;
 

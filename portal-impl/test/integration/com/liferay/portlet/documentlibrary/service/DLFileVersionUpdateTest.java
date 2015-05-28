@@ -27,6 +27,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
+import com.liferay.portlet.documentlibrary.util.test.BaseDLAppTestCase;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
