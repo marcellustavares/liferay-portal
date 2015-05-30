@@ -18,26 +18,6 @@ AUI.add(
 				return text;
 			},
 
-			getFieldClass: function(definition) {
-				var instance = this;
-
-				var attributes = {
-					definition: {
-						value: definition
-					}
-				};
-
-				return A.Component.create(
-					{
-						ATTRS: attributes,
-
-						EXTENDS: Liferay.DDM.Renderer.Field,
-
-						NAME: 'liferay-form-field'
-					}
-				);
-			},
-
 			getFieldNameFromQualifiedName: function(qualifiedName) {
 				var instance = this;
 
@@ -88,6 +68,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['array-extras']
+		requires: ['array-extras', 'liferay-ddm-form-renderer-field']
 	}
 );

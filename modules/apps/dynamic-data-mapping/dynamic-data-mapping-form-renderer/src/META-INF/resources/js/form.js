@@ -73,9 +73,7 @@ AUI.add(
 
 						var fieldDefinition = Util.searchFieldData(instance.get('definition'), 'name', name);
 
-						var FieldClass = Util.getFieldClass(fieldDefinition);
-
-						var field = new FieldClass(
+						var field = new Liferay.DDM.Renderer.Field(
 							{
 								container: node,
 								definition: fieldDefinition,
