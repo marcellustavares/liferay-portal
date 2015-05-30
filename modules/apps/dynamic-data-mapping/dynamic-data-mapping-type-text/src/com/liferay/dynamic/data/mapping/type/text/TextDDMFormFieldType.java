@@ -15,7 +15,6 @@
 package com.liferay.dynamic.data.mapping.type.text;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
@@ -26,8 +25,10 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueParameterSerializer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldValueParameterSerializer;
+import com.liferay.util.ContentUtil;
 
 import java.io.IOException;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -78,12 +79,14 @@ public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 	}
 
 	@Activate
-	protected void activate(Map<String, Object> properties) throws IOException, PortalException {
+	protected void activate(Map<String, Object> properties)
+		throws IOException, PortalException {
+
 		String serializedSettingsDDMFormPath = MapUtil.getString(
 			properties, "settingsDDMFormPath");
 
-		String serializedSettingsDDMForm = FileUtil.read(
-			serializedSettingsDDMFormPath);
+		String serializedSettingsDDMForm = ContentUtil.get(
+			getClass().getClassLoader(), serializedSettingsDDMFormPath);
 
 		DDMForm settingsDDMForm = DDMFormJSONDeserializerUtil.deserialize(
 			serializedSettingsDDMForm);
