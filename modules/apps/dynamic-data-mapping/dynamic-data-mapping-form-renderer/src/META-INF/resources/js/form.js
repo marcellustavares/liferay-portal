@@ -84,6 +84,14 @@ AUI.add(
 						);
 					},
 
+					toJSON: function() {
+						var instance = this;
+
+						return {
+							fields: AArray.invoke(instance.get('fields'), 'toJSON')
+						};
+					},
+
 					_afterDefinitionChange: function(event) {
 						var instance = this;
 
