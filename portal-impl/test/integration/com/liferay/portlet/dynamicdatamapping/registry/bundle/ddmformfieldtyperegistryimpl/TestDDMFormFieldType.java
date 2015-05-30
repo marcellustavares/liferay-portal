@@ -61,6 +61,11 @@ public class TestDDMFormFieldType implements DDMFormFieldType {
 	}
 
 	@Override
+	public String getIcon() {
+		return null;
+	}
+
+	@Override
 	public String getName() {
 		return TestDDMFormFieldType.class.getName();
 	}

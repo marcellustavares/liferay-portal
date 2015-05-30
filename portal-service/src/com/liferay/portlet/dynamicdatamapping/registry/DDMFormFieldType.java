@@ -35,6 +35,8 @@ public interface DDMFormFieldType {
 	public DDMFormFieldValueRendererAccessor
 		getDDMFormFieldValueRendererAccessor(Locale locale);
 
+	public String getIcon();
+
 	public String getName();
 
 	public DDMForm getSettingsDDMForm() throws PortalException;
