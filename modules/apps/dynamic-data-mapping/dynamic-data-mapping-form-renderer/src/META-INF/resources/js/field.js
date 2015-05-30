@@ -307,6 +307,34 @@ AUI.add(
 						container.one('.lfr-ddm-form-field-repeatable-delete-button').toggle(instance.get('repeatedIndex') > 0);
 					},
 
+					toJSON: function() {
+						var instance = this;
+
+						var fieldJSON = {
+							instanceId: instance.get('instanceId'),
+							name: instance.get('name')
+						};
+
+						if (instance.get('localizable')) {
+							var valueMap = {};
+
+							valueMap[instance.get('locale')] = instance.getValue();
+
+							fieldJSON.value = valueMap;
+						}
+						else {
+							fieldJSON.value = instance.getValue();
+						}
+
+						var fields = instance.get('fields');
+
+						if (fields.length) {
+							fieldJSON.nestedFieldValues = AArray.invoke(fields, 'toJSON');
+						}
+
+						return fieldJSON;
+					},
+
 					_getLabel: function() {
 						var instance = this;
 
