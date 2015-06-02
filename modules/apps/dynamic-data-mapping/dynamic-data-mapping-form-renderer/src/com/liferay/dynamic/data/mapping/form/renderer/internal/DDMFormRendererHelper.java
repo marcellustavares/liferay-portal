@@ -21,6 +21,8 @@ import com.liferay.portal.expression.Expression;
 import com.liferay.portal.expression.ExpressionEvaluationException;
 import com.liferay.portal.expression.ExpressionFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -36,8 +38,6 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryU
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,20 +69,8 @@ public class DDMFormRendererHelper {
 		}
 	}
 
-	protected boolean checkDDMFormFieldVisibility(DDMFormField ddmFormField) {
-		ExpressionFactory expressionFactory = getService(
-			ExpressionFactory.class);
-
-		Expression<Boolean> visibilityExpression =
-			expressionFactory.createBooleanExpression(
-				ddmFormField.getVisibilityExpression());
-
-		try {
-			return visibilityExpression.evaluate();
-		}
-		catch (ExpressionEvaluationException e) {
-			return true;
-		}
+	public void setExpressionFactory(ExpressionFactory expressionFactory) {
+		_expressionFactory = expressionFactory;
 	}
 
 	protected DDMFormFieldRenderingContext
@@ -105,6 +93,21 @@ public class DDMFormRendererHelper {
 		ddmFormFieldRenderingContext.setValue(StringPool.BLANK);
 
 		return ddmFormFieldRenderingContext;
+	}
+
+	protected boolean evaluateBooleanExpression(String booleanExpression) {
+		try {
+			Expression<Boolean> expression =
+				_expressionFactory.createBooleanExpression(booleanExpression);
+
+			return expression.evaluate();
+		}
+		catch (ExpressionEvaluationException eee) {
+			_log.error(
+				"Unable to evaluate expression " + booleanExpression, eee);
+
+			return false;
+		}
 	}
 
 	protected String getAffixedDDMFormFieldParameterName(
@@ -176,10 +179,13 @@ public class DDMFormRendererHelper {
 		return renderedDDMFormFieldValuesMap;
 	}
 
-	protected <T> T getService(Class<T> clazz) {
-		Registry registry = RegistryUtil.getRegistry();
+	protected boolean isDDMFormFieldVisible(DDMFormField ddmFormField) {
+		if (Validator.isNull(ddmFormField.getVisibilityExpression())) {
+			return true;
+		}
 
-		return registry.getService(clazz);
+		return evaluateBooleanExpression(
+			ddmFormField.getVisibilityExpression());
 	}
 
 	protected String renderDDMFormField(
@@ -204,9 +210,9 @@ public class DDMFormRendererHelper {
 			String ddmFormFieldHTML = ddmFormFieldRenderer.render(
 				ddmFormField, ddmFormFieldRenderingContext);
 
-			boolean fieldIsVisible = checkDDMFormFieldVisibility(ddmFormField);
+			boolean visible = isDDMFormFieldVisible(ddmFormField);
 
-			return wrapDDMFormFieldHTML(ddmFormFieldHTML, fieldIsVisible);
+			return wrapDDMFormFieldHTML(ddmFormFieldHTML, visible);
 		}
 		catch (PortalException pe) {
 			throw new DDMFormRenderingException(pe);
@@ -359,13 +365,13 @@ public class DDMFormRendererHelper {
 	}
 
 	protected String wrapDDMFormFieldHTML(
-		String ddmFormFieldHTML, boolean fieldIsVisible) {
+		String ddmFormFieldHTML, boolean visible) {
 
 		StringBundler sb = new StringBundler(5);
 
 		sb.append("<div class=\"lfr-ddm-form-field-container");
 
-		if (!fieldIsVisible) {
+		if (!visible) {
 			sb.append(" hidden");
 		}
 
@@ -376,9 +382,13 @@ public class DDMFormRendererHelper {
 		return sb.toString();
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMFormRendererHelper.class);
+
 	private final DDMForm _ddmForm;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private final DDMFormRenderingContext _ddmFormRenderingContext;
 	private final DDMFormValues _ddmFormValues;
+	private ExpressionFactory _expressionFactory;
 
 }
