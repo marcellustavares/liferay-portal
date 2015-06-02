@@ -12,19 +12,10 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.io;
+package com.liferay.dynamic.data.lists.forms.web.constants;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
+public class FormsPortletKeys {
 
-import java.util.List;
-
-/**
- * @author Bruno Basto
- */
-public interface DDMFormFieldTypesJSONSerializer {
-
-	public String serialize(List<DDMFormFieldType> ddmFormFieldTypes)
-		throws PortalException;
+	public static final String FORMS = "forms";
 
 }

@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,20 +12,4 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
-package com.liferay.portlet.dynamicdatamapping.io;
-
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
-
-import java.util.List;
-
-/**
- * @author Bruno Basto
- */
-public interface DDMFormFieldTypesJSONSerializer {
-
-	public String serialize(List<DDMFormFieldType> ddmFormFieldTypes)
-		throws PortalException;
-
-}
+--%>

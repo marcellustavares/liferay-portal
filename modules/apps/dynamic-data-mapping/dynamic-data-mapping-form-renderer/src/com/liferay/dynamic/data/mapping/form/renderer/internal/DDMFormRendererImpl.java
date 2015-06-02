@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.renderer.internal;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.template.Template;
@@ -67,6 +68,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		catch (TemplateException te) {
 			throw new DDMFormRenderingException(te);
 		}
+		catch (PortalException pe) {
+			throw new DDMFormRenderingException(pe);
+		}
 	}
 
 	@Override
@@ -80,6 +84,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		catch (TemplateException te) {
 			throw new DDMFormRenderingException(te);
 		}
+		catch (PortalException pe) {
+			throw new DDMFormRenderingException(pe);
+		}
 	}
 
 	@Activate
@@ -92,7 +99,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 	protected String doRender(
 			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 			DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException, TemplateException {
+		throws PortalException {
 
 		Template template = TemplateManagerUtil.getTemplate(
 			TemplateConstants.LANG_TYPE_SOY, _templateResource, false);
@@ -111,7 +118,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 	protected String doRender(
 			DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException, TemplateException {
+		throws PortalException {
 
 		Template template = TemplateManagerUtil.getTemplate(
 			TemplateConstants.LANG_TYPE_SOY, _templateResource, false);
@@ -179,7 +186,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 	protected void populateCommonContext(
 			Template template, DDMForm ddmForm,
 			DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException {
+		throws PortalException {
 
 		template.put("containerId", StringUtil.randomId());
 		template.put(
