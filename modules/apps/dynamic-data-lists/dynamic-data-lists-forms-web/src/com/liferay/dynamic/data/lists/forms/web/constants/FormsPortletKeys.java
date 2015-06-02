@@ -16,7 +16,7 @@ package com.liferay.dynamic.data.lists.forms.web.constants;
 
 public class FormsPortletKeys {
 
-	public static final String FORMS = "dynamicdatalistsweb";
+	public static final String FORMS = "forms";
 
 	public static final String RECORD_SET = "recordSet";
 
