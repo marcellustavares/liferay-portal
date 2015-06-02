@@ -14,13 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -55,6 +48,14 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMTemplateLocalServiceBaseImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the local service for accessing, adding, copying, deleting, and
@@ -249,13 +250,10 @@ public class DDMTemplateLocalServiceImpl
 			smallImageBytes);
 
 		// Template version
-		
-		int status = GetterUtil.getInteger(
-				serviceContext.getAttribute("status"),
-				WorkflowConstants.STATUS_DRAFT);
 
 		addTemplateVersion(
-			template, DDMTemplateConstants.VERSION_DEFAULT, status, user);
+			user, template, DDMTemplateConstants.VERSION_DEFAULT,
+			serviceContext);
 
 		return template;
 	}
@@ -1281,7 +1279,7 @@ public class DDMTemplateLocalServiceImpl
 
 		String version = getNextVersion(
 			latestTemplateVersion.getVersion(), false);
-		
+
 		User user = userPersistence.findByPrimaryKey(
 			serviceContext.getUserId());
 
@@ -1307,12 +1305,8 @@ public class DDMTemplateLocalServiceImpl
 			smallImageBytes);
 
 		// Template version
-		
-		int status = GetterUtil.getInteger(
-				serviceContext.getAttribute("status"),
-				WorkflowConstants.STATUS_DRAFT);
 
-		addTemplateVersion(template, version, status, user);
+		addTemplateVersion(user, template, version, serviceContext);
 
 		return template;
 	}
@@ -1359,7 +1353,9 @@ public class DDMTemplateLocalServiceImpl
 	}
 
 	protected DDMTemplateVersion addTemplateVersion(
-		DDMTemplate template, String version, int status, User user) {
+			User user, DDMTemplate template, String version,
+			ServiceContext serviceContext)
+		throws PortalException {
 
 		long templateVersionId = counterLocalService.increment();
 
@@ -1379,7 +1375,11 @@ public class DDMTemplateLocalServiceImpl
 		templateVersion.setDescription(template.getDescription());
 		templateVersion.setLanguage(template.getLanguage());
 		templateVersion.setScript(template.getScript());
-		
+
+		int status = GetterUtil.getInteger(
+			serviceContext.getAttribute("status"),
+			WorkflowConstants.STATUS_DRAFT);
+
 		templateVersion.setStatus(status);
 		templateVersion.setStatusByUserId(user.getUserId());
 		templateVersion.setStatusByUserName(user.getFullName());
