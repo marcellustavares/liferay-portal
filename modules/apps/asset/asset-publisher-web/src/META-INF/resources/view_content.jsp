@@ -61,7 +61,10 @@ else {
 		request.setAttribute("view.jsp-title", title);
 		request.setAttribute("view.jsp-print", new Boolean(print));
 
-		PortalUtil.addPortletBreadcrumbEntry(request, title, currentURL);
+		if(!assetRenderer.getClass().getSimpleName().equals("DLFileEntryAssetRenderer")){
+			PortalUtil.addPortletBreadcrumbEntry(request, title, currentURL);
+		}
+		
 		%>
 
 		<div>
