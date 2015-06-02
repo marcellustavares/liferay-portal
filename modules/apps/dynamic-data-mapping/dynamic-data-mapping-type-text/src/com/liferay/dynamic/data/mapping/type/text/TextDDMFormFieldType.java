@@ -14,23 +14,37 @@
 
 package com.liferay.dynamic.data.mapping.type.text;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.registry.BaseDDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueParameterSerializer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldValueRendererAccessor;
 import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldValueParameterSerializer;
+import com.liferay.util.ContentUtil;
+
+import java.io.IOException;
 
 import java.util.Locale;
+import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
  */
-@Component(immediate = true, service = DDMFormFieldType.class)
-public class TextDDMFormFieldType implements DDMFormFieldType {
+@Component(
+	immediate = true,
+	property = {"settingsDDMFormPath=/META-INF/resources/settings.json"},
+	service = DDMFormFieldType.class
+)
+public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
@@ -60,8 +74,29 @@ public class TextDDMFormFieldType implements DDMFormFieldType {
 	}
 
 	@Override
+	public String getIcon() {
+		return "icon-ok-circle";
+	}
+
+	@Override
 	public String getName() {
 		return "text";
+	}
+
+	@Activate
+	protected void activate(Map<String, Object> properties)
+		throws IOException, PortalException {
+
+		String serializedSettingsDDMFormPath = MapUtil.getString(
+			properties, "settingsDDMFormPath");
+
+		String serializedSettingsDDMForm = ContentUtil.get(
+			getClass().getClassLoader(), serializedSettingsDDMFormPath);
+
+		DDMForm settingsDDMForm = DDMFormJSONDeserializerUtil.deserialize(
+			serializedSettingsDDMForm);
+
+		setSerializedSettingsDDMForm(settingsDDMForm);
 	}
 
 	@Reference(service = TextDDMFormFieldRenderer.class, unbind = "-")
