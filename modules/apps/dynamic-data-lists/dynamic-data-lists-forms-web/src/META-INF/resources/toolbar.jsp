@@ -24,21 +24,21 @@ String toolbarItem = ParamUtil.getString(request, "toolbarItem");
 long groupId = ParamUtil.getLong(request, "groupId", scopeGroupId);
 %>
 
-<aui:nav-bar>
+<aui:nav-bar id="toolbar">
 	<aui:nav cssClass="navbar-nav" searchContainer="<%= searchContainer %>">
 		<c:if test="<%= ddmDisplay.isShowAddStructureButton() && DDMPermission.contains(permissionChecker, groupId, ddmPermissionHandler.getResourceName(scopeClassNameId), ddmPermissionHandler.getAddStructureActionId()) %>">
-			<portlet:renderURL var="viewStructuresURL">
-				<portlet:param name="struts_action" value="/dynamic_data_mapping/view" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-			</portlet:renderURL>
 
-			<portlet:renderURL var="addStructureURL">
-				<portlet:param name="mvcPath" value="/edit_form.jsp" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-				<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
-			</portlet:renderURL>
+			<aui:nav-item dropdown="<%= true %>" id="addButtonContainer" label="add">
+				<portlet:renderURL var="addEmptyFormURL">
+					<portlet:param name="mvcPath" value="/edit_form.jsp" />
+					<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+					<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
+				</portlet:renderURL>
 
-			<aui:nav-item href="<%= addStructureURL %>" iconCssClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>' />
+				<aui:nav-item cssClass="add-form" href="<%= addEmptyFormURL %>" iconCssClass="icon-plus" label="new-blank-form" />
+
+				<aui:nav-item cssClass="duplicate-form" iconCssClass="icon-copy" label="duplicate-existing" />
+			</aui:nav-item>
 		</c:if>
 	</aui:nav>
 

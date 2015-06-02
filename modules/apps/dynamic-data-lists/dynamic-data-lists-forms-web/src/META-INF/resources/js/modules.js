@@ -78,6 +78,12 @@
 								'liferay-ddl-form-builder-layout-serializer',
 								'liferay-portlet-base'
 							]
+						},
+						'liferay-ddl-search-container': {
+							path: 'form_search_container.js',
+							requires: [
+								'liferay-portlet-base'
+							]
 						}
 					},
 					root: '/o/ddl-web/js/'

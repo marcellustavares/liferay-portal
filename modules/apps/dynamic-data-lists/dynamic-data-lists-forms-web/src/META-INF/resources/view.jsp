@@ -24,12 +24,13 @@ long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId
 PortletURL portletURL = formsRequestHelper.getViewPortletURL(renderResponse, groupId, tabs1);
 %>
 
-<aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
+<aui:form action="<%= portletURL.toString() %>" method="post" name="searchContainerForm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" />
 	<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
 	<aui:input name="deleteStructureIds" type="hidden" />
 
 	<liferay-ui:search-container
+		id="searchContainer"
 		rowChecker="<%= new RowChecker(renderResponse) %>"
 		searchContainer="<%= new RecordSetSearch(renderRequest, portletURL) %>"
 	>
@@ -114,3 +115,13 @@ PortletURL portletURL = formsRequestHelper.getViewPortletURL(renderResponse, gro
 		<liferay-ui:search-iterator />
 	</liferay-ui:search-container>
 </aui:form>
+
+<aui:script use="liferay-ddl-search-container">
+	new Liferay.DDL.SearchContainer(
+		{
+			namespace: '<portlet:namespace />',
+			searchContainer: 'searchContainer',
+			toolbar: 'toolbar'
+		}
+	);
+</aui:script>

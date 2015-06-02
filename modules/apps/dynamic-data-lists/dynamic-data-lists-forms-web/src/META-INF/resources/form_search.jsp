@@ -26,7 +26,7 @@ DisplayTerms displayTerms = searchContainer.getDisplayTerms();
 	autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>"
 	buttonLabel="search"
 	displayTerms="<%= displayTerms %>"
-	id="toggle_id_dynamic_data_lists_record_search"
+	id="toggle_id_forms_search"
 >
 	<aui:fieldset>
 		<aui:input name="<%= DisplayTerms.KEYWORDS %>" size="30" value="<%= displayTerms.getKeywords() %>" />

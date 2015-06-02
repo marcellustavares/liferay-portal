@@ -73,16 +73,6 @@ public class FormsRequestHelper extends BaseRequestHelper {
 		super(request);
 	}
 
-	public boolean canCopyStructure() {
-		DDMPermissionHandler ddmPermissionHandler =
-			getDDMDisplay().getDDMPermissionHandler();
-
-		return DDMPermission.contains(
-			getPermissionChecker(), getScopeGroupId(),
-			ddmPermissionHandler.getResourceName(0),
-			ddmPermissionHandler.getAddStructureActionId());
-	}
-
 	public boolean canDeleteRecord(DDLRecord ddlRecord) throws PortalException {
 		return DDLRecordPermission.contains(
 			getPermissionChecker(), ddlRecord, ActionKeys.DELETE);
@@ -92,6 +82,16 @@ public class FormsRequestHelper extends BaseRequestHelper {
 		return DDMStructurePermission.contains(
 			getPermissionChecker(), structure, PortletKeys.DYNAMIC_DATA_LISTS,
 			ActionKeys.DELETE);
+	}
+
+	public boolean canDuplicateStructure() {
+		DDMPermissionHandler ddmPermissionHandler =
+			getDDMDisplay().getDDMPermissionHandler();
+
+		return DDMPermission.contains(
+			getPermissionChecker(), getScopeGroupId(),
+			ddmPermissionHandler.getResourceName(0),
+			ddmPermissionHandler.getAddStructureActionId());
 	}
 
 	public boolean canEditRecord(DDLRecord ddlRecord) throws PortalException {

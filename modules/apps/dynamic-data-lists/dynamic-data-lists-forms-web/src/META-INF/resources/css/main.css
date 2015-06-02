@@ -5,6 +5,20 @@
 		display: none;
 	}
 
+	.duplicate-form-button {
+		display: none;
+	}
+
+	.searchcontainer.duplicating-form {
+		.duplicate-form-button {
+			display: inline-block;
+		}
+
+		.lfr-icon-menu {
+			display: none;
+		}
+	}
+
 	.form-builder-header-title {
 		display: none;
 	}

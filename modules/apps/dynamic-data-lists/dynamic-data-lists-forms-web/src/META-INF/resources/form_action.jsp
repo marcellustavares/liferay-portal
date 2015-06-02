@@ -28,7 +28,6 @@ DDMStructure structure = ddlRecordSet.getDDMStructure();
 	<c:if test="<%= formsRequestHelper.canEditStructure(structure) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="mvcPath" value="/edit_form.jsp" />
-			<portlet:param name="historyKey" value="form_builder" />
 			<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
 			<portlet:param name="recordSetId" value="<%= String.valueOf(ddlRecordSet.getRecordSetId()) %>" />
 		</portlet:renderURL>
@@ -52,32 +51,6 @@ DDMStructure structure = ddlRecordSet.getDDMStructure();
 		/>
 	</c:if>
 
-	<c:if test="<%= formsRequestHelper.canCopyStructure() %>">
-		<portlet:renderURL var="copyURL">
-			<portlet:param name="closeRedirect" value="<%= HttpUtil.encodeURL(PortalUtil.getCurrentURL(request)) %>" />
-			<portlet:param name="struts_action" value="/dynamic_data_mapping/copy_structure" />
-			<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-			<portlet:param name="classPK" value="<%= String.valueOf(structure.getStructureId()) %>" />
-		</portlet:renderURL>
-
-		<%
-		StringBundler sb = new StringBundler(6);
-
-		sb.append("javascript:");
-		sb.append(renderResponse.getNamespace());
-		sb.append("copyStructure");
-		sb.append("('");
-		sb.append(copyURL);
-		sb.append("');");
-		%>
-
-		<liferay-ui:icon
-			iconCssClass="icon-copy"
-			message="copy"
-			url="<%= sb.toString() %>"
-		/>
-	</c:if>
-
 	<c:if test="<%= formsRequestHelper.canDeleteStructure(structure) %>">
 		<portlet:actionURL var="deleteURL">
 			<portlet:param name="<%= ActionRequest.ACTION_NAME %>" value="deleteForm" />
@@ -87,3 +60,16 @@ DDMStructure structure = ddlRecordSet.getDDMStructure();
 		<liferay-ui:icon-delete url="<%= deleteURL %>" />
 	</c:if>
 </liferay-ui:icon-menu>
+
+<c:if test="<%= formsRequestHelper.canDuplicateStructure() %>">
+	<portlet:renderURL var="duplicateURL">
+		<portlet:param name="mvcPath" value="/edit_form.jsp" />
+		<portlet:param name="redirect" value="<%= PortalUtil.getCurrentURL(request) %>" />
+		<portlet:param name="definition" value="<%= DDMFormJSONSerializerUtil.serialize(structure.getDDMForm()) %>" />
+		<portlet:param name="description" value="<%= ddlRecordSet.getDescription() %>" />
+		<portlet:param name="layout" value="<%= DDMFormLayoutJSONSerializerUtil.serialize(structure.getDDMFormLayout()) %>" />
+		<portlet:param name="name" value="<%= ddlRecordSet.getName() %>" />
+	</portlet:renderURL>
+
+	<aui:button cssClass="duplicate-form-button" href="<%= duplicateURL %>" icon="icon-copy" primary="<%= true %>" type="button" />
+</c:if>

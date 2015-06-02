@@ -53,9 +53,9 @@ DDMFormLayout ddmFormLayout = formsRequestHelper.getDDMFormLayout(structure);
 	<aui:input name="structureId" type="hidden" value="<%= structureId %>" />
 
 	<aui:fieldset cssClass="ddl-form-builder-basic-info">
-		<aui:input name="name" placeholder='<%= LanguageUtil.get(request, "type-the-form-name-here") %>' required="<%= true %>" value="<%= LocalizationUtil.getLocalization(name, themeDisplay.getLanguageId()) %>"  wrapperCssClass="ddl-form-builder-name field form-control lfr-input-text lfr-input-text-container" />
+		<aui:input ignoreRequestValue="<%= true %>" name="name" placeholder='<%= LanguageUtil.get(request, "type-the-form-name-here") %>' required="<%= true %>" value="<%= LocalizationUtil.getLocalization(name, themeDisplay.getLanguageId()) %>"  wrapperCssClass="ddl-form-builder-name field form-control lfr-input-text lfr-input-text-container" />
 
-		<aui:input name="description" placeholder='<%= LanguageUtil.get(request, "add-a-short-description") %>' value="<%= LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId()) %>" wrapperCssClass="ddl-form-builder-description field form-control lfr-input-text lfr-input-text-container" />
+		<aui:input ignoreRequestValue="<%= true %>" name="description" placeholder='<%= LanguageUtil.get(request, "add-a-short-description") %>' value="<%= LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId()) %>" wrapperCssClass="ddl-form-builder-description field form-control lfr-input-text lfr-input-text-container" />
 
 		<c:if test="<%= false %>">
 			<aui:input label="show-progressbar" name="showProgressbar" type="checkbox" />
