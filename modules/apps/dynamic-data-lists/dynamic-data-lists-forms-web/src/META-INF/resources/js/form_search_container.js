@@ -54,7 +54,7 @@ AUI.add(
 						var instance = this;
 
 						instance.set('duplicating', !instance.get('duplicating'));
-					},
+					}, 
 
 					_afterDuplicatingChange: function(event) {
 						var instance = this;
