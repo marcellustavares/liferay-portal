@@ -14,22 +14,26 @@
 
 package com.liferay.portlet.dynamicdatamapping.util.test;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.model.User;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Eudaldo Alonso
@@ -108,7 +112,12 @@ public class DDMTemplateTestUtil {
 		nameMap.put(defaultLocale, "Test Template");
 
 		ServiceContext serviceContext = new ServiceContext();
+		
+		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
+		User user = UserTestUtil.getAdminUser(group.getCompanyId());
+		
+		serviceContext.setUserId(user.getUserId());
 		serviceContext.setAddGroupPermissions(true);
 		serviceContext.setAddGuestPermissions(true);
 
