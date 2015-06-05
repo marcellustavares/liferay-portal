@@ -61,16 +61,17 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate addTemplate(
-		long groupId, long classNameId, long classPK, long resourceClassNameId,
+		long userId, long groupId, long classNameId, long classPK,
+		long resourceClassNameId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
 		java.lang.String language, java.lang.String script,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.addTemplate(groupId, classNameId, classPK,
-			resourceClassNameId, nameMap, descriptionMap, type, mode, language,
-			script, serviceContext);
+		return _ddmTemplateService.addTemplate(userId, groupId, classNameId,
+			classPK, resourceClassNameId, nameMap, descriptionMap, type, mode,
+			language, script, serviceContext);
 	}
 
 	/**
@@ -110,8 +111,8 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate addTemplate(
-		long groupId, long classNameId, long classPK, long resourceClassNameId,
-		java.lang.String templateKey,
+		long userId, long groupId, long classNameId, long classPK,
+		long resourceClassNameId, java.lang.String templateKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -120,9 +121,9 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 		java.io.File smallImageFile,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.addTemplate(groupId, classNameId, classPK,
-			resourceClassNameId, templateKey, nameMap, descriptionMap, type,
-			mode, language, script, cacheable, smallImage, smallImageURL,
+		return _ddmTemplateService.addTemplate(userId, groupId, classNameId,
+			classPK, resourceClassNameId, templateKey, nameMap, descriptionMap,
+			type, mode, language, script, cacheable, smallImage, smallImageURL,
 			smallImageFile, serviceContext);
 	}
 
@@ -145,21 +146,22 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate copyTemplate(
-		long templateId,
+		long userId, long templateId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.copyTemplate(templateId, nameMap,
+		return _ddmTemplateService.copyTemplate(userId, templateId, nameMap,
 			descriptionMap, serviceContext);
 	}
 
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate copyTemplate(
-		long templateId,
+		long userId, long templateId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.copyTemplate(templateId, serviceContext);
+		return _ddmTemplateService.copyTemplate(userId, templateId,
+			serviceContext);
 	}
 
 	/**
@@ -185,12 +187,12 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> copyTemplates(
-		long classNameId, long oldClassPK, long resourceClassNameId,
-		long newClassPK, java.lang.String type,
+		long userId, long classNameId, long oldClassPK,
+		long resourceClassNameId, long newClassPK, java.lang.String type,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.copyTemplates(classNameId, oldClassPK,
-			resourceClassNameId, newClassPK, type, serviceContext);
+		return _ddmTemplateService.copyTemplates(userId, classNameId,
+			oldClassPK, resourceClassNameId, newClassPK, type, serviceContext);
 	}
 
 	/**
@@ -807,15 +809,15 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
 		java.lang.String language, java.lang.String script, boolean cacheable,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.updateTemplate(templateId, classPK, nameMap,
-			descriptionMap, type, mode, language, script, cacheable,
+		return _ddmTemplateService.updateTemplate(userId, templateId, classPK,
+			nameMap, descriptionMap, type, mode, language, script, cacheable,
 			serviceContext);
 	}
 
@@ -849,7 +851,7 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 	*/
 	@Override
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -858,8 +860,8 @@ public class DDMTemplateServiceWrapper implements DDMTemplateService,
 		java.io.File smallImageFile,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddmTemplateService.updateTemplate(templateId, classPK, nameMap,
-			descriptionMap, type, mode, language, script, cacheable,
+		return _ddmTemplateService.updateTemplate(userId, templateId, classPK,
+			nameMap, descriptionMap, type, mode, language, script, cacheable,
 			smallImage, smallImageURL, smallImageFile, serviceContext);
 	}
 

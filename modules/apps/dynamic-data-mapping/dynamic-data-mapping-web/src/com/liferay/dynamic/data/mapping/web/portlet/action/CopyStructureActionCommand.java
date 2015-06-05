@@ -66,7 +66,8 @@ public class CopyStructureActionCommand extends DDMBaseActionCommand {
 			DDMStructure.class.getName(), portletRequest);
 
 		DDMStructure structure = _ddmStructureService.copyStructure(
-			classPK, nameMap, descriptionMap, serviceContext);
+			serviceContext.getUserId(), classPK, nameMap, descriptionMap,
+			serviceContext);
 
 		copyTemplates(portletRequest, classPK, structure.getStructureId());
 
@@ -89,7 +90,8 @@ public class CopyStructureActionCommand extends DDMBaseActionCommand {
 
 		if (copyDisplayTemplates) {
 			DDMTemplateServiceUtil.copyTemplates(
-				classNameId, oldClassPK, resourceClassNameId, newClassPK,
+				serviceContext.getUserId(), classNameId, oldClassPK,
+				resourceClassNameId, newClassPK,
 				DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY, serviceContext);
 		}
 
@@ -98,7 +100,8 @@ public class CopyStructureActionCommand extends DDMBaseActionCommand {
 
 		if (copyFormTemplates) {
 			DDMTemplateServiceUtil.copyTemplates(
-				classNameId, oldClassPK, resourceClassNameId, newClassPK,
+				serviceContext.getUserId(), classNameId, oldClassPK,
+				resourceClassNameId, newClassPK,
 				DDMTemplateConstants.TEMPLATE_TYPE_FORM, serviceContext);
 		}
 	}

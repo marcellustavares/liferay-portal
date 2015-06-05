@@ -133,8 +133,9 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure addStructure(
-		HttpPrincipal httpPrincipal, long groupId, long parentStructureId,
-		long classNameId, java.lang.String structureKey,
+		HttpPrincipal httpPrincipal, long userId, long groupId,
+		long parentStructureId, long classNameId,
+		java.lang.String structureKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm,
@@ -146,10 +147,10 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"addStructure", _addStructureParameterTypes2);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					parentStructureId, classNameId, structureKey, nameMap,
-					descriptionMap, ddmForm, ddmFormLayout, storageType, type,
-					serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					groupId, parentStructureId, classNameId, structureKey,
+					nameMap, descriptionMap, ddmForm, ddmFormLayout,
+					storageType, type, serviceContext);
 
 			Object returnObj = null;
 
@@ -174,8 +175,9 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure addStructure(
-		HttpPrincipal httpPrincipal, long groupId, long parentStructureId,
-		long classNameId, java.lang.String structureKey,
+		HttpPrincipal httpPrincipal, long userId, long groupId,
+		long parentStructureId, long classNameId,
+		java.lang.String structureKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String xsd, java.lang.String storageType, int type,
@@ -185,9 +187,10 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"addStructure", _addStructureParameterTypes3);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					parentStructureId, classNameId, structureKey, nameMap,
-					descriptionMap, xsd, storageType, type, serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					groupId, parentStructureId, classNameId, structureKey,
+					nameMap, descriptionMap, xsd, storageType, type,
+					serviceContext);
 
 			Object returnObj = null;
 
@@ -294,7 +297,7 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure copyStructure(
-		HttpPrincipal httpPrincipal, long structureId,
+		HttpPrincipal httpPrincipal, long userId, long structureId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
@@ -303,7 +306,7 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"copyStructure", _copyStructureParameterTypes6);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
 					structureId, nameMap, descriptionMap, serviceContext);
 
 			Object returnObj = null;
@@ -329,14 +332,14 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure copyStructure(
-		HttpPrincipal httpPrincipal, long structureId,
+		HttpPrincipal httpPrincipal, long userId, long structureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"copyStructure", _copyStructureParameterTypes7);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
 					structureId, serviceContext);
 
 			Object returnObj = null;
@@ -781,8 +784,9 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure updateStructure(
-		HttpPrincipal httpPrincipal, long groupId, long parentStructureId,
-		long classNameId, java.lang.String structureKey,
+		HttpPrincipal httpPrincipal, long userId, long groupId,
+		long parentStructureId, long classNameId,
+		java.lang.String structureKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm,
@@ -793,9 +797,10 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"updateStructure", _updateStructureParameterTypes22);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					parentStructureId, classNameId, structureKey, nameMap,
-					descriptionMap, ddmForm, ddmFormLayout, serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					groupId, parentStructureId, classNameId, structureKey,
+					nameMap, descriptionMap, ddmForm, ddmFormLayout,
+					serviceContext);
 
 			Object returnObj = null;
 
@@ -820,8 +825,9 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure updateStructure(
-		HttpPrincipal httpPrincipal, long groupId, long parentStructureId,
-		long classNameId, java.lang.String structureKey,
+		HttpPrincipal httpPrincipal, long userId, long groupId,
+		long parentStructureId, long classNameId,
+		java.lang.String structureKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String definition,
@@ -831,9 +837,9 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"updateStructure", _updateStructureParameterTypes23);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					parentStructureId, classNameId, structureKey, nameMap,
-					descriptionMap, definition, serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
+					groupId, parentStructureId, classNameId, structureKey,
+					nameMap, descriptionMap, definition, serviceContext);
 
 			Object returnObj = null;
 
@@ -858,7 +864,8 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure updateStructure(
-		HttpPrincipal httpPrincipal, long structureId, long parentStructureId,
+		HttpPrincipal httpPrincipal, long userId, long structureId,
+		long parentStructureId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm,
@@ -869,7 +876,7 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"updateStructure", _updateStructureParameterTypes24);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
 					structureId, parentStructureId, nameMap, descriptionMap,
 					ddmForm, ddmFormLayout, serviceContext);
 
@@ -896,7 +903,8 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructure updateStructure(
-		HttpPrincipal httpPrincipal, long structureId, long parentStructureId,
+		HttpPrincipal httpPrincipal, long userId, long structureId,
+		long parentStructureId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String definition,
@@ -906,7 +914,7 @@ public class DDMStructureServiceHttp {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"updateStructure", _updateStructureParameterTypes25);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, userId,
 					structureId, parentStructureId, nameMap, descriptionMap,
 					definition, serviceContext);
 
@@ -946,17 +954,17 @@ public class DDMStructureServiceHttp {
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addStructureParameterTypes2 = new Class[] {
-			long.class, long.class, long.class, java.lang.String.class,
-			java.util.Map.class, java.util.Map.class,
+			long.class, long.class, long.class, long.class,
+			java.lang.String.class, java.util.Map.class, java.util.Map.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMForm.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout.class,
 			java.lang.String.class, int.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addStructureParameterTypes3 = new Class[] {
-			long.class, long.class, long.class, java.lang.String.class,
-			java.util.Map.class, java.util.Map.class, java.lang.String.class,
-			java.lang.String.class, int.class,
+			long.class, long.class, long.class, long.class,
+			java.lang.String.class, java.util.Map.class, java.util.Map.class,
+			java.lang.String.class, java.lang.String.class, int.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addStructureParameterTypes4 = new Class[] {
@@ -974,11 +982,12 @@ public class DDMStructureServiceHttp {
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _copyStructureParameterTypes6 = new Class[] {
-			long.class, java.util.Map.class, java.util.Map.class,
+			long.class, long.class, java.util.Map.class, java.util.Map.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _copyStructureParameterTypes7 = new Class[] {
-			long.class, com.liferay.portal.service.ServiceContext.class
+			long.class, long.class,
+			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteStructureParameterTypes8 = new Class[] {
 			long.class
@@ -1030,26 +1039,28 @@ public class DDMStructureServiceHttp {
 			boolean.class
 		};
 	private static final Class<?>[] _updateStructureParameterTypes22 = new Class[] {
-			long.class, long.class, long.class, java.lang.String.class,
-			java.util.Map.class, java.util.Map.class,
+			long.class, long.class, long.class, long.class,
+			java.lang.String.class, java.util.Map.class, java.util.Map.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMForm.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateStructureParameterTypes23 = new Class[] {
-			long.class, long.class, long.class, java.lang.String.class,
-			java.util.Map.class, java.util.Map.class, java.lang.String.class,
+			long.class, long.class, long.class, long.class,
+			java.lang.String.class, java.util.Map.class, java.util.Map.class,
+			java.lang.String.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateStructureParameterTypes24 = new Class[] {
-			long.class, long.class, java.util.Map.class, java.util.Map.class,
+			long.class, long.class, long.class, java.util.Map.class,
+			java.util.Map.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMForm.class,
 			com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateStructureParameterTypes25 = new Class[] {
-			long.class, long.class, java.util.Map.class, java.util.Map.class,
-			java.lang.String.class,
+			long.class, long.class, long.class, java.util.Map.class,
+			java.util.Map.class, java.lang.String.class,
 			com.liferay.portal.service.ServiceContext.class
 		};
 }

@@ -152,7 +152,7 @@ public class DDMStructureServiceSoap {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap addStructure(
-		long groupId, long parentStructureId, long classNameId,
+		long userId, long groupId, long parentStructureId, long classNameId,
 		java.lang.String structureKey, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -169,7 +169,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.addStructure(groupId,
+				DDMStructureServiceUtil.addStructure(userId, groupId,
 					parentStructureId, classNameId, structureKey, nameMap,
 					descriptionMap, ddmForm, ddmFormLayout, storageType, type,
 					serviceContext);
@@ -216,7 +216,7 @@ public class DDMStructureServiceSoap {
 	*/
 	@Deprecated
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap addStructure(
-		long groupId, long parentStructureId, long classNameId,
+		long userId, long groupId, long parentStructureId, long classNameId,
 		java.lang.String structureKey, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -231,7 +231,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.addStructure(groupId,
+				DDMStructureServiceUtil.addStructure(userId, groupId,
 					parentStructureId, classNameId, structureKey, nameMap,
 					descriptionMap, xsd, storageType, type, serviceContext);
 
@@ -360,7 +360,7 @@ public class DDMStructureServiceSoap {
 	structure or if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap copyStructure(
-		long structureId, java.lang.String[] nameMapLanguageIds,
+		long userId, long structureId, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
 		java.lang.String[] descriptionMapValues,
@@ -373,8 +373,8 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.copyStructure(structureId, nameMap,
-					descriptionMap, serviceContext);
+				DDMStructureServiceUtil.copyStructure(userId, structureId,
+					nameMap, descriptionMap, serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap.toSoapModel(returnValue);
 		}
@@ -386,12 +386,12 @@ public class DDMStructureServiceSoap {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap copyStructure(
-		long structureId,
+		long userId, long structureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.copyStructure(structureId,
+				DDMStructureServiceUtil.copyStructure(userId, structureId,
 					serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap.toSoapModel(returnValue);
@@ -820,7 +820,7 @@ public class DDMStructureServiceSoap {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap updateStructure(
-		long groupId, long parentStructureId, long classNameId,
+		long userId, long groupId, long parentStructureId, long classNameId,
 		java.lang.String structureKey, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -836,7 +836,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.updateStructure(groupId,
+				DDMStructureServiceUtil.updateStructure(userId, groupId,
 					parentStructureId, classNameId, structureKey, nameMap,
 					descriptionMap, ddmForm, ddmFormLayout, serviceContext);
 
@@ -874,7 +874,7 @@ public class DDMStructureServiceSoap {
 	*/
 	@Deprecated
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap updateStructure(
-		long groupId, long parentStructureId, long classNameId,
+		long userId, long groupId, long parentStructureId, long classNameId,
 		java.lang.String structureKey, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -888,7 +888,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.updateStructure(groupId,
+				DDMStructureServiceUtil.updateStructure(userId, groupId,
 					parentStructureId, classNameId, structureKey, nameMap,
 					descriptionMap, definition, serviceContext);
 
@@ -902,7 +902,7 @@ public class DDMStructureServiceSoap {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap updateStructure(
-		long structureId, long parentStructureId,
+		long userId, long structureId, long parentStructureId,
 		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -918,7 +918,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.updateStructure(structureId,
+				DDMStructureServiceUtil.updateStructure(userId, structureId,
 					parentStructureId, nameMap, descriptionMap, ddmForm,
 					ddmFormLayout, serviceContext);
 
@@ -951,7 +951,7 @@ public class DDMStructureServiceSoap {
 	*/
 	@Deprecated
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureSoap updateStructure(
-		long structureId, long parentStructureId,
+		long userId, long structureId, long parentStructureId,
 		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -965,7 +965,7 @@ public class DDMStructureServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMStructure returnValue =
-				DDMStructureServiceUtil.updateStructure(structureId,
+				DDMStructureServiceUtil.updateStructure(userId, structureId,
 					parentStructureId, nameMap, descriptionMap, definition,
 					serviceContext);
 

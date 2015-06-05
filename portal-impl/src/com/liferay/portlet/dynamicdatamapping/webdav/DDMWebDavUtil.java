@@ -244,7 +244,8 @@ public class DDMWebDavUtil {
 					ddmForm);
 
 				DDMStructureServiceUtil.updateStructure(
-					structure.getGroupId(), structure.getParentStructureId(),
+					structure.getUserId(), structure.getGroupId(),
+					structure.getParentStructureId(),
 					structure.getClassNameId(), structure.getStructureKey(),
 					structure.getNameMap(), structure.getDescriptionMap(),
 					ddmForm, ddmFormLayout, new ServiceContext());
@@ -260,12 +261,12 @@ public class DDMWebDavUtil {
 				String script = StringUtil.read(request.getInputStream());
 
 				DDMTemplateServiceUtil.updateTemplate(
-					template.getTemplateId(), template.getClassPK(),
-					template.getNameMap(), template.getDescriptionMap(),
-					template.getType(), template.getMode(),
-					template.getLanguage(), script, template.isCacheable(),
-					template.isSmallImage(), template.getSmallImageURL(), null,
-					new ServiceContext());
+					template.getUserId(), template.getTemplateId(),
+					template.getClassPK(), template.getNameMap(),
+					template.getDescriptionMap(), template.getType(),
+					template.getMode(), template.getLanguage(), script,
+					template.isCacheable(), template.isSmallImage(),
+					template.getSmallImageURL(), null, new ServiceContext());
 
 				return HttpServletResponse.SC_CREATED;
 			}

@@ -74,7 +74,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public DDMTemplate addTemplate(
-			long groupId, long classNameId, long classPK,
+			long userId, long groupId, long classNameId, long classPK,
 			long resourceClassNameId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, String type, String mode,
 			String language, String script, ServiceContext serviceContext)
@@ -89,9 +89,9 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 			ddmPermissionHandler.getAddTemplateActionId());
 
 		return ddmTemplateLocalService.addTemplate(
-			getUserId(), groupId, classNameId, classPK, resourceClassNameId,
-			null, nameMap, descriptionMap, type, mode, language, script, false,
-			false, null, null, serviceContext);
+			userId, groupId, classNameId, classPK, resourceClassNameId, null,
+			nameMap, descriptionMap, type, mode, language, script, false, false,
+			null, null, serviceContext);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public DDMTemplate addTemplate(
-			long groupId, long classNameId, long classPK,
+			long userId, long groupId, long classNameId, long classPK,
 			long resourceClassNameId, String templateKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			String type, String mode, String language, String script,
@@ -148,7 +148,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 			ddmPermissionHandler.getAddTemplateActionId());
 
 		return ddmTemplateLocalService.addTemplate(
-			getUserId(), groupId, classNameId, classPK, resourceClassNameId,
+			userId, groupId, classNameId, classPK, resourceClassNameId,
 			templateKey, nameMap, descriptionMap, type, mode, language, script,
 			cacheable, smallImage, smallImageURL, smallImageFile,
 			serviceContext);
@@ -173,7 +173,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public DDMTemplate copyTemplate(
-			long templateId, Map<Locale, String> nameMap,
+			long userId, long templateId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException {
 
@@ -189,12 +189,12 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 			ddmPermissionHandler.getAddTemplateActionId());
 
 		return ddmTemplateLocalService.copyTemplate(
-			getUserId(), templateId, nameMap, descriptionMap, serviceContext);
+			userId, templateId, nameMap, descriptionMap, serviceContext);
 	}
 
 	@Override
 	public DDMTemplate copyTemplate(
-			long templateId, ServiceContext serviceContext)
+			long userId, long templateId, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMTemplate template = ddmTemplatePersistence.findByPrimaryKey(
@@ -209,7 +209,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 			ddmPermissionHandler.getAddTemplateActionId());
 
 		return ddmTemplateLocalService.copyTemplate(
-			getUserId(), templateId, serviceContext);
+			userId, templateId, serviceContext);
 	}
 
 	/**
@@ -235,8 +235,9 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public List<DDMTemplate> copyTemplates(
-			long classNameId, long oldClassPK, long resourceClassNameId,
-			long newClassPK, String type, ServiceContext serviceContext)
+			long userId, long classNameId, long oldClassPK,
+			long resourceClassNameId, long newClassPK, String type,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMPermissionHandler ddmPermissionHandler =
@@ -248,8 +249,7 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 			ddmPermissionHandler.getAddTemplateActionId());
 
 		return ddmTemplateLocalService.copyTemplates(
-			getUserId(), classNameId, oldClassPK, newClassPK, type,
-			serviceContext);
+			userId, classNameId, oldClassPK, newClassPK, type, serviceContext);
 	}
 
 	/**
@@ -899,20 +899,20 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public DDMTemplate updateTemplate(
-			long templateId, long classPK, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String type, String mode,
-			String language, String script, boolean cacheable,
-			boolean smallImage, String smallImageURL, File smallImageFile,
-			ServiceContext serviceContext)
+			long userId, long templateId, long classPK,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			String type, String mode, String language, String script,
+			boolean cacheable, boolean smallImage, String smallImageURL,
+			File smallImageFile, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMTemplatePermission.check(
 			getPermissionChecker(), templateId, ActionKeys.UPDATE);
 
 		return ddmTemplateLocalService.updateTemplate(
-			templateId, classPK, nameMap, descriptionMap, type, mode, language,
-			script, cacheable, smallImage, smallImageURL, smallImageFile,
-			serviceContext);
+			userId, templateId, classPK, nameMap, descriptionMap, type, mode,
+			language, script, cacheable, smallImage, smallImageURL,
+			smallImageFile, serviceContext);
 	}
 
 	/**
@@ -940,18 +940,18 @@ public class DDMTemplateServiceImpl extends DDMTemplateServiceBaseImpl {
 	 */
 	@Override
 	public DDMTemplate updateTemplate(
-			long templateId, long classPK, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String type, String mode,
-			String language, String script, boolean cacheable,
-			ServiceContext serviceContext)
+			long userId, long templateId, long classPK,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			String type, String mode, String language, String script,
+			boolean cacheable, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMTemplatePermission.check(
 			getPermissionChecker(), templateId, ActionKeys.UPDATE);
 
 		return ddmTemplateLocalService.updateTemplate(
-			templateId, classPK, nameMap, descriptionMap, type, mode, language,
-			script, cacheable, serviceContext);
+			userId, templateId, classPK, nameMap, descriptionMap, type, mode,
+			language, script, cacheable, serviceContext);
 	}
 
 }

@@ -97,8 +97,8 @@ public class DDMTemplateServiceSoap {
 	template or if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap addTemplate(
-		long groupId, long classNameId, long classPK, long resourceClassNameId,
-		java.lang.String[] nameMapLanguageIds,
+		long userId, long groupId, long classNameId, long classPK,
+		long resourceClassNameId, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
 		java.lang.String[] descriptionMapValues, java.lang.String type,
@@ -113,9 +113,9 @@ public class DDMTemplateServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMTemplate returnValue =
-				DDMTemplateServiceUtil.addTemplate(groupId, classNameId,
-					classPK, resourceClassNameId, nameMap, descriptionMap,
-					type, mode, language, script, serviceContext);
+				DDMTemplateServiceUtil.addTemplate(userId, groupId,
+					classNameId, classPK, resourceClassNameId, nameMap,
+					descriptionMap, type, mode, language, script, serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap.toSoapModel(returnValue);
 		}
@@ -144,7 +144,7 @@ public class DDMTemplateServiceSoap {
 	template or if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap copyTemplate(
-		long templateId, java.lang.String[] nameMapLanguageIds,
+		long userId, long templateId, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
 		java.lang.String[] descriptionMapValues,
@@ -157,8 +157,8 @@ public class DDMTemplateServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMTemplate returnValue =
-				DDMTemplateServiceUtil.copyTemplate(templateId, nameMap,
-					descriptionMap, serviceContext);
+				DDMTemplateServiceUtil.copyTemplate(userId, templateId,
+					nameMap, descriptionMap, serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap.toSoapModel(returnValue);
 		}
@@ -170,12 +170,13 @@ public class DDMTemplateServiceSoap {
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap copyTemplate(
-		long templateId,
+		long userId, long templateId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.portlet.dynamicdatamapping.model.DDMTemplate returnValue =
-				DDMTemplateServiceUtil.copyTemplate(templateId, serviceContext);
+				DDMTemplateServiceUtil.copyTemplate(userId, templateId,
+					serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap.toSoapModel(returnValue);
 		}
@@ -208,14 +209,15 @@ public class DDMTemplateServiceSoap {
 	template or if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap[] copyTemplates(
-		long classNameId, long oldClassPK, long resourceClassNameId,
-		long newClassPK, java.lang.String type,
+		long userId, long classNameId, long oldClassPK,
+		long resourceClassNameId, long newClassPK, java.lang.String type,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> returnValue =
-				DDMTemplateServiceUtil.copyTemplates(classNameId, oldClassPK,
-					resourceClassNameId, newClassPK, type, serviceContext);
+				DDMTemplateServiceUtil.copyTemplates(userId, classNameId,
+					oldClassPK, resourceClassNameId, newClassPK, type,
+					serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap.toSoapModels(returnValue);
 		}
@@ -1013,7 +1015,8 @@ public class DDMTemplateServiceSoap {
 	template or if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap updateTemplate(
-		long templateId, long classPK, java.lang.String[] nameMapLanguageIds,
+		long userId, long templateId, long classPK,
+		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
 		java.lang.String[] descriptionMapValues, java.lang.String type,
@@ -1028,9 +1031,9 @@ public class DDMTemplateServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.portlet.dynamicdatamapping.model.DDMTemplate returnValue =
-				DDMTemplateServiceUtil.updateTemplate(templateId, classPK,
-					nameMap, descriptionMap, type, mode, language, script,
-					cacheable, serviceContext);
+				DDMTemplateServiceUtil.updateTemplate(userId, templateId,
+					classPK, nameMap, descriptionMap, type, mode, language,
+					script, cacheable, serviceContext);
 
 			return com.liferay.portlet.dynamicdatamapping.model.DDMTemplateSoap.toSoapModel(returnValue);
 		}

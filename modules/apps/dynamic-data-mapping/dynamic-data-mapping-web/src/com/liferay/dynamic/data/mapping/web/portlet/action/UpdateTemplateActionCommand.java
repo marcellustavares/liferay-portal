@@ -95,9 +95,9 @@ public class UpdateTemplateActionCommand extends AddTemplateActionCommand {
 			DDMTemplate.class.getName(), uploadPortletRequest);
 
 		return DDMTemplateServiceUtil.updateTemplate(
-			templateId, classPK, nameMap, descriptionMap, type, mode, language,
-			script, cacheable, smallImage, smallImageURL, smallImageFile,
-			serviceContext);
+			serviceContext.getUserId(), templateId, classPK, nameMap,
+			descriptionMap, type, mode, language, script, cacheable, smallImage,
+			smallImageURL, smallImageFile, serviceContext);
 	}
 
 }

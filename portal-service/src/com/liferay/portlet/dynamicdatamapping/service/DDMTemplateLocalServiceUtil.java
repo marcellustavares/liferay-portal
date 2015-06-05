@@ -1226,7 +1226,7 @@ public class DDMTemplateLocalServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -1234,7 +1234,7 @@ public class DDMTemplateLocalServiceUtil {
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateTemplate(templateId, classPK, nameMap,
+				   .updateTemplate(userId, templateId, classPK, nameMap,
 			descriptionMap, type, mode, language, script, cacheable,
 			serviceContext);
 	}
@@ -1267,7 +1267,7 @@ public class DDMTemplateLocalServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -1277,7 +1277,7 @@ public class DDMTemplateLocalServiceUtil {
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateTemplate(templateId, classPK, nameMap,
+				   .updateTemplate(userId, templateId, classPK, nameMap,
 			descriptionMap, type, mode, language, script, cacheable,
 			smallImage, smallImageURL, smallImageFile, serviceContext);
 	}

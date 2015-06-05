@@ -1087,7 +1087,7 @@ public interface DDMTemplateLocalService extends BaseLocalService,
 	* @throws PortalException if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -1123,7 +1123,7 @@ public interface DDMTemplateLocalService extends BaseLocalService,
 	* @throws PortalException if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,

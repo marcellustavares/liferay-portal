@@ -20,12 +20,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
@@ -206,6 +208,8 @@ public class DDMTemplateLocalServiceImpl
 		template.setCompanyId(user.getCompanyId());
 		template.setUserId(user.getUserId());
 		template.setUserName(user.getFullName());
+		template.setVersionUserId(user.getUserId());
+		template.setVersionUserName(user.getFullName());
 		template.setClassNameId(classNameId);
 		template.setClassPK(classPK);
 		template.setResourceClassNameId(resourceClassNameId);
@@ -247,7 +251,9 @@ public class DDMTemplateLocalServiceImpl
 
 		// Template version
 
-		addTemplateVersion(template, DDMTemplateConstants.VERSION_DEFAULT);
+		addTemplateVersion(
+			user, template, DDMTemplateConstants.VERSION_DEFAULT,
+			serviceContext);
 
 		return template;
 	}
@@ -1234,9 +1240,9 @@ public class DDMTemplateLocalServiceImpl
 	 */
 	@Override
 	public DDMTemplate updateTemplate(
-			long templateId, long classPK, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String type, String mode,
-			String language, String script, boolean cacheable,
+			long userId, long templateId, long classPK, Map<Locale,
+			String> nameMap, Map<Locale, String> descriptionMap, String type,
+			String mode, String language, String script, boolean cacheable,
 			boolean smallImage, String smallImageURL, File smallImageFile,
 			ServiceContext serviceContext)
 		throws PortalException {
@@ -1274,7 +1280,11 @@ public class DDMTemplateLocalServiceImpl
 		String version = getNextVersion(
 			latestTemplateVersion.getVersion(), false);
 
+		User user = userPersistence.findByPrimaryKey(userId);
+
 		template.setVersion(version);
+		template.setVersionUserId(user.getUserId());
+		template.setVersionUserName(user.getFullName());
 		template.setNameMap(nameMap);
 		template.setDescriptionMap(descriptionMap);
 		template.setType(type);
@@ -1295,7 +1305,7 @@ public class DDMTemplateLocalServiceImpl
 
 		// Template version
 
-		addTemplateVersion(template, version);
+		addTemplateVersion(user, template, version, serviceContext);
 
 		return template;
 	}
@@ -1324,10 +1334,10 @@ public class DDMTemplateLocalServiceImpl
 	 */
 	@Override
 	public DDMTemplate updateTemplate(
-			long templateId, long classPK, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String type, String mode,
-			String language, String script, boolean cacheable,
-			ServiceContext serviceContext)
+			long userId, long templateId, long classPK,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			String type, String mode, String language, String script,
+			boolean cacheable, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMTemplate template = ddmTemplateLocalService.getDDMTemplate(
@@ -1336,13 +1346,15 @@ public class DDMTemplateLocalServiceImpl
 		File smallImageFile = getSmallImageFile(template);
 
 		return updateTemplate(
-			templateId, classPK, nameMap, descriptionMap, type, mode, language,
-			script, cacheable, template.isSmallImage(),
+			userId, templateId, classPK, nameMap, descriptionMap, type, mode,
+			language, script, cacheable, template.isSmallImage(),
 			template.getSmallImageURL(), smallImageFile, serviceContext);
 	}
 
 	protected DDMTemplateVersion addTemplateVersion(
-		DDMTemplate template, String version) {
+			User user, DDMTemplate template, String version,
+			ServiceContext serviceContext)
+		throws PortalException {
 
 		long templateVersionId = counterLocalService.increment();
 
@@ -1362,6 +1374,15 @@ public class DDMTemplateLocalServiceImpl
 		templateVersion.setDescription(template.getDescription());
 		templateVersion.setLanguage(template.getLanguage());
 		templateVersion.setScript(template.getScript());
+
+		int status = GetterUtil.getInteger(
+			serviceContext.getAttribute("status"),
+			WorkflowConstants.STATUS_DRAFT);
+
+		templateVersion.setStatus(status);
+		templateVersion.setStatusByUserId(user.getUserId());
+		templateVersion.setStatusByUserName(user.getFullName());
+		templateVersion.setStatusDate(template.getModifiedDate());
 
 		ddmTemplateVersionPersistence.update(templateVersion);
 

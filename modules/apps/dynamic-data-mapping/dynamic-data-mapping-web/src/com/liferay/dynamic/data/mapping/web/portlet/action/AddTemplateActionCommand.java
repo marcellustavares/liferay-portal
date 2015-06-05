@@ -94,9 +94,10 @@ public class AddTemplateActionCommand extends DDMBaseActionCommand {
 			DDMTemplate.class.getName(), uploadPortletRequest);
 
 		return _ddmTemplateService.addTemplate(
-			groupId, classNameId, classPK, resourceClassNameId, templateKey,
-			nameMap, descriptionMap, type, mode, language, script, cacheable,
-			smallImage, smallImageURL, smallImageFile, serviceContext);
+			serviceContext.getUserId(), groupId, classNameId, classPK,
+			resourceClassNameId, templateKey, nameMap, descriptionMap, type,
+			mode, language, script, cacheable, smallImage, smallImageURL,
+			smallImageFile, serviceContext);
 	}
 
 	@Override

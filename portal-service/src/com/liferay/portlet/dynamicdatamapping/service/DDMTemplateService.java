@@ -76,7 +76,8 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate addTemplate(
-		long groupId, long classNameId, long classPK, long resourceClassNameId,
+		long userId, long groupId, long classNameId, long classPK,
+		long resourceClassNameId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -120,8 +121,8 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate addTemplate(
-		long groupId, long classNameId, long classPK, long resourceClassNameId,
-		java.lang.String templateKey,
+		long userId, long groupId, long classNameId, long classPK,
+		long resourceClassNameId, java.lang.String templateKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -149,14 +150,14 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate copyTemplate(
-		long templateId,
+		long userId, long templateId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate copyTemplate(
-		long templateId,
+		long userId, long templateId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
@@ -182,8 +183,8 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> copyTemplates(
-		long classNameId, long oldClassPK, long resourceClassNameId,
-		long newClassPK, java.lang.String type,
+		long userId, long classNameId, long oldClassPK,
+		long resourceClassNameId, long newClassPK, java.lang.String type,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
@@ -726,7 +727,7 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,
@@ -763,7 +764,7 @@ public interface DDMTemplateService extends BaseService {
 	template or if a portal exception occurred
 	*/
 	public com.liferay.portlet.dynamicdatamapping.model.DDMTemplate updateTemplate(
-		long templateId, long classPK,
+		long userId, long templateId, long classPK,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String mode,

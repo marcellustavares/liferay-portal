@@ -63,7 +63,8 @@ public class CopyTemplateActionCommand extends DDMBaseActionCommand {
 			DDMTemplate.class.getName(), portletRequest);
 
 		return _ddmTemplateService.copyTemplate(
-			templateId, nameMap, descriptionMap, serviceContext);
+			serviceContext.getUserId(), templateId, nameMap, descriptionMap,
+			serviceContext);
 	}
 
 	@Override

@@ -91,8 +91,8 @@ public class UpdateStructureActionCommand extends DDMBaseActionCommand {
 			DDMStructure.class.getName(), portletRequest);
 
 		return _ddmStructureService.updateStructure(
-			classPK, parentStructureId, nameMap, descriptionMap, ddmForm,
-			ddmFormLayout, serviceContext);
+			serviceContext.getUserId(), classPK, parentStructureId, nameMap,
+			descriptionMap, ddmForm, ddmFormLayout, serviceContext);
 	}
 
 	private DDM _ddm;
