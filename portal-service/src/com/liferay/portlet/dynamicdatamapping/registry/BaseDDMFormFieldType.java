@@ -12,23 +12,26 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.portlet.action;
-
-import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
-import com.liferay.portal.kernel.portlet.ConfigurationAction;
-import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
-
-import org.osgi.service.component.annotations.Component;
+package com.liferay.portlet.dynamicdatamapping.registry;
 
 /**
  * @author Marcellus Tavares
  */
-@Component(
-	immediate = true,
-	property = {
-		"javax.portlet.name=" + DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM
-	},
-	service = ConfigurationAction.class
-)
-public class DDLFormConfigurationAction extends DefaultConfigurationAction {
+public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
+
+	@Override
+	public Class<? extends DDMFormFieldTypeSettings> getSettings() {
+		return DefaultDDMFormFieldTypeSettings.class;
+	}
+
+	@Override
+	public String getJavaScriptClass() {
+		return "Liferay.DDM.Renderer.Field";
+	}
+
+	@Override
+	public String getJavaScriptModule() {
+		return "liferay-ddm-form-renderer-field";
+	}
+
 }

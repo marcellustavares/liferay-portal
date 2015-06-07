@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,4 +11,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
+
+package com.liferay.portlet.dynamicdatamapping.registry;
+
+import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMFormField;
+
+/**
+ * @author Marcellus Tavares
+ */
+@DDMForm
+public interface DDMFormFieldTypeSettings {
+
+	@DDMFormField
+	public String dataType();
+
+	@DDMFormField
+	public String name();
+
+	@DDMFormField
+	public String type();
+
+}

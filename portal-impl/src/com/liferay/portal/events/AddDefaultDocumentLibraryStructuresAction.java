@@ -70,6 +70,7 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 			doRun(GetterUtil.getLong(ids[0]));
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new ActionException(e);
 		}
 	}

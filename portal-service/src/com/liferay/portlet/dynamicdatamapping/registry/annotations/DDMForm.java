@@ -12,14 +12,22 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.constants;
+package com.liferay.portlet.dynamicdatamapping.registry.annotations;
+
+import com.liferay.portal.kernel.util.StringPool;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Marcellus Tavares
  */
-public class DDLFormPortletKeys {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface DDMForm {
 
-	public static final String DYNAMIC_DATA_LISTS_FORM =
-		"com_liferay_dynamic_data_lists_form_web_portlet_DDLFormPortlet";
+	public String localization() default StringPool.BLANK;
 
 }

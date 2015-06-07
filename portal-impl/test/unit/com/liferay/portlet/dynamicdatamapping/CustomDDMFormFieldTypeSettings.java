@@ -12,32 +12,24 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.registry;
+package com.liferay.portlet.dynamicdatamapping;
 
-import java.util.Locale;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
+import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldTypeSettings;
+import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMFormField;
 
 /**
  * @author Marcellus Tavares
  */
-public interface DDMFormFieldType {
+@DDMForm
+public interface CustomDDMFormFieldTypeSettings
+	extends DefaultDDMFormFieldTypeSettings {
 
-	public DDMFormFieldRenderer getDDMFormFieldRenderer();
+	@DDMFormField
+	public boolean multiple();
 
-	public DDMFormFieldValueAccessor<?> getDDMFormFieldValueAccessor(
-		Locale locale);
-
-	public DDMFormFieldValueParameterSerializer
-		getDDMFormFieldValueParameterSerializer();
-
-	public DDMFormFieldValueRendererAccessor
-		getDDMFormFieldValueRendererAccessor(Locale locale);
-
-	public String getName();
-
-	public Class<? extends DDMFormFieldTypeSettings> getSettings();
-
-	String getJavaScriptClass();
-
-	String getJavaScriptModule();
+	@DDMFormField(dataType = "ddm-options", type = "select")
+	public DDMFormFieldOptions options();
 
 }

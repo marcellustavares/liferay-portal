@@ -293,7 +293,13 @@ AUI.add(
 					_getLabel: function() {
 						var instance = this;
 
-						return instance.get('definition').label[instance.get('locale')];
+						return definition.name;
+					},
+
+					_getLocalizable: function() {
+						var instance = this;
+
+						return !!instance.get('definition').localizable;
 					},
 
 					_getName: function() {
