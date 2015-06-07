@@ -23,8 +23,9 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException" %><%@
-page import="com.liferay.dynamic.data.lists.form.web.context.DDLFormDisplayContext" %><%@
+<%@ page import="com.liferay.dynamic.data.lists.form.display.web.context.DDLFormDisplayContext" %><%@
+page import="com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException" %><%@
+page import="com.liferay.dynamic.data.lists.form.display.web.context.DDLFormDisplayContext" %><%@
 page import="com.liferay.dynamic.data.lists.model.DDLRecordSet" %><%@
 page import="com.liferay.dynamic.data.lists.model.DDLRecordSetConstants" %><%@
 page import="com.liferay.dynamic.data.lists.service.DDLRecordSetServiceUtil" %><%@
@@ -58,4 +59,4 @@ String currentURL = currentURLObj.toString();
 DDLFormDisplayContext ddlFormDisplayContext = new DDLFormDisplayContext(request, portletPreferences);
 %>
 
-<%@ include file="/init-ext.jsp" %>
+<%@ include file="/display/init-ext.jsp" %>

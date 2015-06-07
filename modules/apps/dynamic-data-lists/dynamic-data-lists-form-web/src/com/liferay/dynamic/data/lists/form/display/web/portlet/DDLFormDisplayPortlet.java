@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.portlet;
+package com.liferay.dynamic.data.lists.form.display.web.portlet;
 
 import com.liferay.dynamic.data.lists.exception.NoSuchRecordSetException;
-import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.display.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
@@ -65,10 +65,10 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Dynamic Data Lists Form",
 		"javax.portlet.expiration-cache=0",
-		"javax.portlet.init-param.config-template=/configuration.jsp",
+		"javax.portlet.init-param.config-template=/display/configuration.jsp",
 		"javax.portlet.init-param.copy-request-parameters=true",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.init-param.view-template=/display/view.jsp",
 		"javax.portlet.name=" + DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=guest,power-user,user",
@@ -76,7 +76,7 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = Portlet.class
 )
-public class DDLFormPortlet extends MVCPortlet {
+public class DDLFormDisplayPortlet extends MVCPortlet {
 
 	@Override
 	public void render(
@@ -141,7 +141,9 @@ public class DDLFormPortlet extends MVCPortlet {
 			SessionErrors.contains(
 				renderRequest, PrincipalException.class.getName())) {
 
-			include(templatePath + "error.jsp", renderRequest, renderResponse);
+			include(
+				templatePath + "/display/error.jsp",
+				renderRequest, renderResponse);
 		}
 		else {
 			super.doDispatch(renderRequest, renderResponse);
@@ -210,7 +212,7 @@ public class DDLFormPortlet extends MVCPortlet {
 			WebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML, ddmFormHTML);
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(DDLFormPortlet.class);
+	private static final Log _log = LogFactoryUtil.getLog(DDLFormDisplayPortlet.class);
 
 	private DDLRecordSetService _ddlRecordSetService;
 	private DDMFormRenderer _ddmFormRenderer;

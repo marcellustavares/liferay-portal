@@ -12,14 +12,9 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.portlet.action;
+package com.liferay.dynamic.data.lists.form.admin.web.action;
 
-import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
-import com.liferay.dynamic.data.lists.model.DDLRecord;
-import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
-import com.liferay.dynamic.data.lists.model.DDLRecordSet;
-import com.liferay.dynamic.data.lists.service.DDLRecordService;
-import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
+import com.liferay.dynamic.data.lists.form.admin.web.constants.FormsPortletKeys;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
@@ -27,6 +22,11 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.dynamic.data.lists.model.DDLRecord;
+import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.service.DDLRecordServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
@@ -36,19 +36,15 @@ import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-/**
- * @author Marcellus Tavares
- */
 @Component(
 	immediate = true,
 	property = {
-		"action.command.name=addRecord",
-		"javax.portlet.name=" + DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM
+		"action.command.name=saveForm",
+		"javax.portlet.name=" + FormsPortletKeys.FORMS
 	},
 	service = ActionCommand.class
 )
-public class AddRecordActionCommand extends BaseActionCommand {
+public class SaveFormActionCommand extends BaseActionCommand {
 
 	@Override
 	protected void doProcessCommand(
@@ -56,6 +52,7 @@ public class AddRecordActionCommand extends BaseActionCommand {
 		throws Exception {
 
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
+		long recordId = ParamUtil.getLong(portletRequest, "recordId");
 		long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
 
 		DDMForm ddmForm = getDDMForm(recordSetId);
@@ -66,29 +63,25 @@ public class AddRecordActionCommand extends BaseActionCommand {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecord.class.getName(), portletRequest);
 
-		_ddlRecordService.addRecord(
-			groupId, recordSetId, DDLRecordConstants.DISPLAY_INDEX_DEFAULT,
-			ddmFormValues, serviceContext);
+		if (recordId > 0) {
+			DDLRecordServiceUtil.updateRecord(
+				recordId, false, DDLRecordConstants.DISPLAY_INDEX_DEFAULT,
+				ddmFormValues, serviceContext);
+		}
+		else {
+			DDLRecordServiceUtil.addRecord(
+				groupId, recordSetId, DDLRecordConstants.DISPLAY_INDEX_DEFAULT,
+				ddmFormValues, serviceContext);
+		}
 	}
 
 	protected DDMForm getDDMForm(long recordSetId) throws PortalException {
-		DDLRecordSet recordSet = _ddlRecordSetService.getRecordSet(recordSetId);
+		DDLRecordSet recordSet = DDLRecordSetServiceUtil.getRecordSet(
+			recordSetId);
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
 		return ddmStructure.getDDMForm();
-	}
-
-	@Reference
-	protected void setDDLRecordService(DDLRecordService ddlRecordService) {
-		_ddlRecordService = ddlRecordService;
-	}
-
-	@Reference
-	protected void setDDLRecordSetService(
-		DDLRecordSetService ddlRecordSetService) {
-
-		_ddlRecordSetService = ddlRecordSetService;
 	}
 
 	@Reference
@@ -98,8 +91,6 @@ public class AddRecordActionCommand extends BaseActionCommand {
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 	}
 
-	private DDLRecordService _ddlRecordService;
-	private DDLRecordSetService _ddlRecordSetService;
 	private DDMFormValuesFactory _ddmFormValuesFactory;
 
 }
