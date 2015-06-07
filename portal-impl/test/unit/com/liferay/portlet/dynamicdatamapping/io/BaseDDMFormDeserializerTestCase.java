@@ -63,6 +63,8 @@ public abstract class BaseDDMFormDeserializerTestCase extends BaseDDMTestCase {
 		DDMFormFieldOptions ddmFormFieldOptions =
 			selectDDMFormField.getDDMFormFieldOptions();
 
+		Assert.assertNotNull(ddmFormFieldOptions);
+
 		for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
 			LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
 				optionValue);

@@ -14,9 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFactory;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 
@@ -29,7 +32,9 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	implements DDMFormFieldTypesJSONSerializer {
 
 	@Override
-	public String serialize(List<DDMFormFieldType> ddmFormFieldTypes) {
+	public String serialize(List<DDMFormFieldType> ddmFormFieldTypes)
+		throws PortalException {
+
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		for (DDMFormFieldType ddmFormFieldType : ddmFormFieldTypes) {
@@ -39,10 +44,23 @@ public class DDMFormFieldTypesJSONSerializerImpl
 		return jsonArray.toString();
 	}
 
-	protected JSONObject toJSONObject(DDMFormFieldType ddmFormFieldType) {
+	protected JSONObject toJSONObject(DDMFormFieldType ddmFormFieldType)
+		throws PortalException {
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		jsonObject.put("name", ddmFormFieldType.getName());
+
+		DDMForm settingsDDMForm = DDMFormFactory.create(
+			ddmFormFieldType.getSettings());
+
+		if (settingsDDMForm != null) {
+			String settingsString = DDMFormJSONSerializerUtil.serialize(
+				settingsDDMForm);
+
+			jsonObject.put(
+				"settings", JSONFactoryUtil.createJSONObject(settingsString));
+		}
 
 		DDMFormFieldRenderer ddmFormFieldRenderer =
 			ddmFormFieldType.getDDMFormFieldRenderer();
