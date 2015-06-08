@@ -176,24 +176,30 @@ AUI.add(
 					getTemplate: function() {
 						var instance = this;
 
+						return Liferay.DDM.Renderer.FieldTypes.getFieldTypeTemplate(
+							instance.get('fieldType'),
+							instance.getTemplateContext()
+						);
+					},
+
+					getTemplateContext: function() {
+						var instance = this;
+
 						var value = instance.get('value');
 
 						if (instance.get('localizable')) {
 							value = value[instance.get('locale')];
 						}
 
-						return Liferay.DDM.Renderer.FieldTypes.getFieldTypeTemplate(
-							instance.get('fieldType'),
-							A.merge(
-								instance.get('definition'),
-								{
-									childElementsHTML: '',
-									label: instance.get('label'),
-									name: instance.getQualifiedName(),
-									placeholder: '',
-									value: value || ''
-								}
-							)
+						return A.merge(
+							instance.get('definition'),
+							{
+								childElementsHTML: '',
+								label: instance.get('label'),
+								name: instance.getQualifiedName(),
+								placeholder: '',
+								value: value || ''
+							}
 						);
 					},
 
@@ -340,7 +346,10 @@ AUI.add(
 
 						var definition = instance.get('definition');
 
-						return definition.label[instance.get('locale')] || definition.label;
+
+						// return definition.label[instance.get('locale')] || definition.label;
+
+						return definition.name;
 					},
 
 					_getLocalizable: function() {

@@ -5,7 +5,13 @@
 				'field-checkbox': {
 					base: '/o/ddm-type-checkbox/',
 					modules: {
-						'liferay-checkbox-field': {
+						'liferay-ddm-form-field-checkbox': {
+							path: 'checkbox_field.js',
+							requires: [
+								'liferay-ddm-form-renderer-field'
+							]
+						},
+						'liferay-ddm-form-field-checkbox-template': {
 							path: 'checkbox.soy.js',
 							requires: [
 								'soyutils'

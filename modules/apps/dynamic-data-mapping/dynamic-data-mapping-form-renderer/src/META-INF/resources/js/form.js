@@ -2,6 +2,7 @@ AUI.add(
 	'liferay-ddm-form-renderer',
 	function(A) {
 		var AArray = A.Array;
+		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
 		var Util = Liferay.DDM.Renderer.Util;
 
 		var Form = A.Component.create(
@@ -112,7 +113,13 @@ AUI.add(
 							function(item) {
 								var fieldValue = Util.searchFieldData(instance.get('values'), 'name', item.name);
 
-								return new Liferay.DDM.Renderer.Field(
+								var fieldType = FieldTypes.get(item.type);
+
+								var fieldClassName = fieldType.get('className');
+
+								var fieldClass = Util.getFieldClass(fieldClassName);
+
+								return new fieldClass(
 									{
 										definition: item,
 										fieldType: item.type,

@@ -18,6 +18,12 @@ AUI.add(
 				return text;
 			},
 
+			getFieldClass: function(fieldClassName) {
+				var instance = this;
+
+				return A.Object.getValue(window, fieldClassName.split('.'));
+			},
+
 			getFieldNameFromQualifiedName: function(qualifiedName) {
 				var instance = this;
 
