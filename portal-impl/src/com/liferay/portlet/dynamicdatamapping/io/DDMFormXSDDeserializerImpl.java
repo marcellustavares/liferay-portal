@@ -115,6 +115,8 @@ public class DDMFormXSDDeserializerImpl implements DDMFormXSDDeserializer {
 
 		DDMFormField ddmFormField = new DDMFormField(name, type);
 
+		ddmFormField.setVisibilityExpression("true");
+
 		setDDMFormFieldDataType(dynamicElementElement, ddmFormField);
 		setDDMFormFieldIndexType(dynamicElementElement, ddmFormField);
 		setDDMFormFieldLocalizable(dynamicElementElement, ddmFormField);
