@@ -414,6 +414,14 @@ public class DDMStructureServiceUtil {
 		return getService().getStructures(groupIds, classNameId, start, end);
 	}
 
+	public static void revertStructure(long structureId,
+		long structureVersionId,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.revertStructure(structureId, structureVersionId, serviceContext);
+	}
+
 	/**
 	* Returns an ordered range of all the structures matching the groups and
 	* class name IDs, and matching the keywords in the structure names and

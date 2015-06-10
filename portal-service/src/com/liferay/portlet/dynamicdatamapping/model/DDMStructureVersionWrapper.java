@@ -225,6 +225,11 @@ public class DDMStructureVersionWrapper implements DDMStructureVersion,
 	}
 
 	@Override
+	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDDMForm() {
+		return _ddmStructureVersion.getDDMForm();
+	}
+
+	@Override
 	public java.lang.String getDefaultLanguageId() {
 		return _ddmStructureVersion.getDefaultLanguageId();
 	}
@@ -695,6 +700,12 @@ public class DDMStructureVersionWrapper implements DDMStructureVersion,
 	@Override
 	public void setCreateDate(Date createDate) {
 		_ddmStructureVersion.setCreateDate(createDate);
+	}
+
+	@Override
+	public void setDDMForm(
+		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm) {
+		_ddmStructureVersion.setDDMForm(ddmForm);
 	}
 
 	/**

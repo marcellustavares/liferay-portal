@@ -15,22 +15,16 @@
 package com.liferay.dynamic.data.mapping.web.portlet.action;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.ActionCommand;
-import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.BaseActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureService;
-import com.liferay.portlet.dynamicdatamapping.util.DDM;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionService;
 
-import java.util.Locale;
-import java.util.Map;
-
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
@@ -43,26 +37,33 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"action.command.name=updateStructure",
+		"action.command.name=revertStructure",
 		"javax.portlet.name=" + PortletKeys.DYNAMIC_DATA_MAPPING
 	},
 	service = ActionCommand.class
 )
-public class UpdateStructureActionCommand extends DDMBaseActionCommand {
+public class RevertStructureActionCommand extends BaseActionCommand {
 
 	@Override
 	protected void doProcessCommand(
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
-		DDMStructure structure = updateStructure(portletRequest);
+		long structureId = ParamUtil.getLong(portletRequest, "structureId");
 
-		setRedirectAttribute(portletRequest, structure);
-	}
+		long structureVersionId = ParamUtil.getLong(
+			portletRequest, "structureVersionId");
 
-	@Reference
-	protected void setDDM(DDM ddm) {
-		_ddm = ddm;
+		DDMStructureVersion structureVersion =
+			_ddmStructureVersionService.getStructureVersion(structureVersionId);
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			DDMStructure.class.getName(), portletRequest);
+
+		serviceContext.setAttribute("status", structureVersion.getStatus());
+
+		_ddmStructureService.revertStructure(
+			structureId, structureVersionId, serviceContext);
 	}
 
 	@Reference
@@ -72,34 +73,14 @@ public class UpdateStructureActionCommand extends DDMBaseActionCommand {
 		_ddmStructureService = ddmStructureService;
 	}
 
-	protected DDMStructure updateStructure(PortletRequest portletRequest)
-		throws Exception {
+	@Reference
+	protected void setDDMStructureVersionService(
+		DDMStructureVersionService ddmStructureVersionService) {
 
-		long classPK = ParamUtil.getLong(portletRequest, "classPK");
-
-		long parentStructureId = ParamUtil.getLong(
-			portletRequest, "parentStructureId",
-			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID);
-		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
-			portletRequest, "name");
-		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(portletRequest, "description");
-		DDMForm ddmForm = _ddm.getDDMForm((ActionRequest)portletRequest);
-		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
-
-		int status = ParamUtil.getInteger(portletRequest, "status");
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			DDMStructure.class.getName(), portletRequest);
-
-		serviceContext.setAttribute("status", status);
-
-		return _ddmStructureService.updateStructure(
-			classPK, parentStructureId, nameMap, descriptionMap, ddmForm,
-			ddmFormLayout, serviceContext);
+		_ddmStructureVersionService = ddmStructureVersionService;
 	}
 
-	private DDM _ddm;
 	private DDMStructureService _ddmStructureService;
+	private DDMStructureVersionService _ddmStructureVersionService;
 
 }

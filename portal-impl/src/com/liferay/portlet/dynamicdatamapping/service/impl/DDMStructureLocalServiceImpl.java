@@ -44,6 +44,7 @@ import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
 import com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException;
 import com.liferay.portlet.dynamicdatamapping.StructureDuplicateStructureKeyException;
 import com.liferay.portlet.dynamicdatamapping.StructureNameException;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
@@ -1083,6 +1084,69 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	public int getStructuresCount(long[] groupIds, long classNameId) {
 		return ddmStructurePersistence.countByG_C(groupIds, classNameId);
+	}
+
+	@Override
+	public void revertStructure(
+			long userId, long structureId, long structureVersionId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		DDMStructureVersion structureVersion =
+			ddmStructureVersionPersistence.fetchByPrimaryKey(
+				structureVersionId);
+
+		DDMStructure structure = ddmStructurePersistence.fetchByPrimaryKey(
+			structureId);
+
+		String version = getNextVersion(structureVersion.getVersion(), true);
+
+		User user = userLocalService.fetchUser(userId);
+
+		structure.setVersion(version);
+		structure.setVersionUserId(userId);
+		structure.setVersionUserName(user.getFullName());
+		structure.setNameMap(structureVersion.getNameMap());
+		structure.setDescriptionMap(structureVersion.getDescriptionMap());
+		structure.setStorageType(structureVersion.getStorageType());
+		structure.setType(structureVersion.getType());
+		structure.setDefinition(structureVersion.getDefinition());
+
+		ddmStructurePersistence.update(structure);
+
+		// Structure templates
+
+		syncStructureTemplatesFields(structure);
+
+		structureVersion = addStructureVersion(
+			user, structure, version, serviceContext);
+
+		// Structure Layout
+
+		DDMForm ddmForm = DDMFormJSONDeserializerUtil.deserialize(
+			structureVersion.getDefinition());
+
+		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+
+		ddmStructureLayoutLocalService.addStructureLayout(
+			structureVersion.getUserId(), structureVersion.getGroupId(),
+			structureVersion.getStructureVersionId(), ddmFormLayout,
+			serviceContext);
+
+		// Indexer
+
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			structure.getClassName());
+
+		if (indexer instanceof DDMStructureIndexer) {
+			DDMStructureIndexer ddmStructureIndexer =
+				(DDMStructureIndexer)indexer;
+
+			List<Long> ddmStructureIds = getChildrenStructureIds(
+				structure.getGroupId(), structure.getStructureId());
+
+			ddmStructureIndexer.reindexDDMStructures(ddmStructureIds);
+		}
 	}
 
 	/**

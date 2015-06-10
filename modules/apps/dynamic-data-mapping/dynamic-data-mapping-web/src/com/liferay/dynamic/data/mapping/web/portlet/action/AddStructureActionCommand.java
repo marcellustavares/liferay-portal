@@ -68,8 +68,12 @@ public class AddStructureActionCommand extends DDMBaseActionCommand {
 		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 		String storageType = ParamUtil.getString(portletRequest, "storageType");
 
+		int status = ParamUtil.getInteger(portletRequest, "status");
+
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMStructure.class.getName(), portletRequest);
+
+		serviceContext.setAttribute("status", status);
 
 		return _ddmStructureService.addStructure(
 			groupId, parentStructureId, scopeClassNameId, structureKey, nameMap,

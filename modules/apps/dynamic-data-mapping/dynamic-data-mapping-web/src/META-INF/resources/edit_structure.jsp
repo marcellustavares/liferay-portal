@@ -25,6 +25,12 @@ String portletResourceNamespace = ParamUtil.getString(request, "portletResourceN
 
 DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
 
+DDMStructureVersion structureVersion = null;
+
+if (Validator.isNotNull(structure)) {
+	structureVersion = structure.getStructureVersion();
+}
+
 long groupId = BeanParamUtil.getLong(structure, request, "groupId", scopeGroupId);
 
 long parentStructureId = BeanParamUtil.getLong(structure, request, "parentStructureId", DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID);
@@ -75,6 +81,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 	<aui:input name="scopeClassNameId" type="hidden" value="<%= scopeClassNameId %>" />
 	<aui:input name="definition" type="hidden" />
 	<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
+	<aui:input name="status" type="hidden" value="<%= String.valueOf(WorkflowConstants.STATUS_APPROVED) %>" />
 
 	<liferay-ui:error exception="<%= LocaleException.class %>">
 
@@ -112,6 +119,41 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 	/>
 
 	<aui:model-context bean="<%= structure %>" model="<%= DDMStructure.class %>" />
+
+	<c:if test="<%= structureVersion != null %>">
+		<aui:workflow-status model="<%= DDMStructure.class %>" status="<%= structureVersion.getStatus() %>" version="<%= structureVersion.getVersion() %>" />
+
+		<div class="structure-history-toolbar" id="<portlet:namespace />structureHistoryToolbar"></div>
+
+		<aui:script use="aui-toolbar,aui-dialog-iframe-deprecated,liferay-util-window">
+			var toolbarChildren = [
+				<portlet:renderURL var="viewHistoryURL">
+					<portlet:param name="mvcPath" value="/view_structure_history.jsp" />
+					<portlet:param name="redirect" value="<%= currentURL %>" />
+					<portlet:param name="structureId" value="<%= String.valueOf(structure.getStructureId()) %>" />
+				</portlet:renderURL>
+
+				{
+					icon: 'icon-time',
+					label: '<%= UnicodeLanguageUtil.get(request, "view-history") %>',
+					on: {
+						click: function(event) {
+							event.domEvent.preventDefault();
+
+							window.location.href = '<%= viewHistoryURL %>';
+						}
+					}
+				}
+			];
+
+			new A.Toolbar(
+				{
+					boundingBox: '#<portlet:namespace />structureHistoryToolbar',
+					children: toolbarChildren
+				}
+			).render();
+		</aui:script>
+	</c:if>
 
 	<aui:fieldset>
 		<aui:field-wrapper>
@@ -195,6 +237,8 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 <aui:button-row>
 	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure();" %>' primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
 
+	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructureAsDraft();" %>' value='<%= LanguageUtil.get(request, "save-draft") %>' />
+
 	<aui:button href="<%= redirect %>" type="cancel" />
 </aui:button-row>
 
@@ -240,5 +284,13 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 		form.fm('definition').val(<portlet:namespace />formBuilder.getContentValue());
 
 		submitForm(form);
+	}
+
+	function <portlet:namespace />saveStructureAsDraft() {
+		var form = AUI.$('#<portlet:namespace />fm');
+
+		form.fm('status').val(<%= String.valueOf(WorkflowConstants.STATUS_DRAFT) %>);
+
+		<portlet:namespace />saveStructure();
 	}
 </aui:script>

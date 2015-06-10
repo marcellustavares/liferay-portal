@@ -62,8 +62,12 @@ public class CopyStructureActionCommand extends DDMBaseActionCommand {
 		Map<Locale, String> descriptionMap =
 			LocalizationUtil.getLocalizationMap(portletRequest, "description");
 
+		int status = ParamUtil.getInteger(portletRequest, "status");
+
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMStructure.class.getName(), portletRequest);
+
+		serviceContext.setAttribute("status", status);
 
 		DDMStructure structure = _ddmStructureService.copyStructure(
 			classPK, nameMap, descriptionMap, serviceContext);
