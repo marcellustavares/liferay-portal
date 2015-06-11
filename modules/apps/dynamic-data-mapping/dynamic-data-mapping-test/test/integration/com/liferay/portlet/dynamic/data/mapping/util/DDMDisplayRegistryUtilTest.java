@@ -14,20 +14,19 @@
 
 package com.liferay.portlet.dynamic.data.mapping.util;
 
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
-import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.util.bundle.ddmdisplayregistryutil.TestDDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
-
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.SyntheticBundleRule;
+import com.liferay.portlet.dynamic.data.mapping.util.bundle.ddmdisplayregistryutil.TestDDMDisplay;
+import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
+import com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil;
 
 /**
  * @author Peter Fellwock
@@ -38,7 +37,7 @@ public class DDMDisplayRegistryUtilTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.ddmdisplayregistryutil"));
 
 	@Test

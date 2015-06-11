@@ -14,22 +14,21 @@
 
 package com.liferay.portlet.dynamic.data.mapping.storage;
 
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
-import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.storage.bundle.storageadapterregistryimpl.TestStorageAdapterImpl;
-import com.liferay.portlet.dynamicdatamapping.storage.JSONStorageAdapter;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapter;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistry;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryUtil;
-
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.SyntheticBundleRule;
+import com.liferay.portlet.dynamic.data.mapping.storage.bundle.storageadapterregistryimpl.TestStorageAdapterImpl;
+import com.liferay.portlet.dynamicdatamapping.storage.JSONStorageAdapter;
+import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapter;
+import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistry;
+import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryUtil;
 
 /**
  * @author Peter Fellwock
@@ -40,7 +39,7 @@ public class StorageAdapterRegistryImplTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.storageadapterregistryimpl"));
 
 	@Test

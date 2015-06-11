@@ -14,21 +14,20 @@
 
 package com.liferay.portlet.dynamic.data.mapping.registry;
 
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
-import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.registry.bundle.ddmformfieldtyperegistryimpl.TestDDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistry;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
-
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.SyntheticBundleRule;
+import com.liferay.portlet.dynamic.data.mapping.registry.bundle.ddmformfieldtyperegistryimpl.TestDDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistry;
+import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
 
 /**
  * @author Peter Fellwock
@@ -39,7 +38,7 @@ public class DDMFormFieldTypeRegistryImplTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.ddmformfieldtyperegistryimpl"));
 
 	@Test

@@ -14,19 +14,18 @@
 
 package com.liferay.portlet.dynamic.data.mapping.render;
 
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.portlet.dynamic.data.mapping.render.bundle.ddmformfieldrendererregistryimpl.TestDDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderer;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistry;
 import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryUtil;
-
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
 
 /**
  * @author Philip Jones
@@ -37,7 +36,7 @@ public class DDMFormFieldRendererRegistryImplTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), MainServletTestRule.INSTANCE,
+			new LiferayIntegrationTestRule(),
 			new SyntheticBundleRule("bundle.ddmformfieldrendererregistryimpl"));
 
 	@Test
