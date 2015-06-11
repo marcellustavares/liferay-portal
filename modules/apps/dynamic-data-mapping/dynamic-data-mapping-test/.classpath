@@ -4,6 +4,15 @@
 	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="src" />
 	<classpathentry kind="src" path="/portal-master" />
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" />
+	<classpathentry excluding="**/.svn/**|.svn/" kind="src" path="test/integration" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/junit.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/mockito.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/powermock-api-mockito.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/powermock-api-support.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/powermock-core.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/powermock-module-junit4.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/powermock-module-junit4-common.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/development/spring-test.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/development/activation.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/development/annotations.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/development/jsp-api.jar" />
@@ -11,6 +20,8 @@
 	<classpathentry kind="lib" path="/portal-master/lib/development/servlet-api.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/global/portlet.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/bnd.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/portal/commons-io.jar" />
+	<classpathentry kind="lib" path="/portal-master/lib/portal/commons-lang.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/commons-logging.jar" />
 	<classpathentry kind="lib" path="/portal-master/lib/portal/log4j.jar" />
 	<classpathentry kind="lib" path="/portal-master/portal-service/portal-service.jar" />
@@ -42,5 +53,7 @@
 	<classpathentry kind="lib" path="/portal-master/.ivy/cache/org.jboss.osgi.metadata/jbosgi-metadata/jars/jbosgi-metadata-4.0.0.CR1.jar" />
 	<classpathentry kind="lib" path="/portal-master/.ivy/cache/org.osgi/org.osgi.enterprise/jars/org.osgi.enterprise-5.0.0.jar" />
 	<classpathentry kind="lib" path="/portal-master/.ivy/cache/com.liferay/com.liferay.arquillian.extension.junit.bridge/jars/com.liferay.arquillian.extension.junit.bridge-1.0.0-SNAPSHOT.jar" />
+	<classpathentry kind="lib" path="/portal-master/.ivy/cache/org.json/json/jars/json-20090211.jar" />
+	<classpathentry kind="lib" path="/portal-master/.ivy/cache/org.skyscreamer/jsonassert/jars/jsonassert-1.2.3.jar" />
 	<classpathentry kind="output" path="bin" />
 </classpath>
