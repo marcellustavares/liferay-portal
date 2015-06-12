@@ -83,7 +83,9 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 
 <portlet:actionURL name="updateTemplate" var="updateTemplateURL" />
 
-<aui:form action="<%= (template == null) ? addTemplateURL : updateTemplateURL %>" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveTemplate();" %>'>
+<portlet:actionURL name="refreshTemplate" var="refreshTemplateURL" />
+
+<aui:form action="<%= (template == null) ? addTemplateURL : updateTemplateURL %>" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%="event.preventDefault();" %>'>
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
