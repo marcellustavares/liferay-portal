@@ -394,7 +394,7 @@ if (Validator.isNotNull(scriptContent)) {
 			selectLanguageNode.on(
 				'change',
 				function(event) {
-					Liferay.fire('<portlet:namespace />refreshEditor');
+					editorContentElement.val(STR_EMPTY);
 				}
 			);
 
@@ -448,23 +448,6 @@ if (Validator.isNotNull(scriptContent)) {
 		'#<portlet:namespace />richEditor'
 	);
 
-	Liferay.on(
-		'<portlet:namespace />refreshEditor',
-		function(event) {
-			var form = A.one('#<portlet:namespace />fm');
-
-			if (richEditor.getEditor().getSession().getUndoManager().hasUndo()) {
-				Liferay.fire('<portlet:namespace />saveTemplate');
-			}
-			<c:if test="<%= template == null %>">
-				else {
-					editorContentElement.val(STR_EMPTY);
-				}
-			</c:if>
-
-			submitForm(form, null, null, false);
-		}
-	);
 </aui:script>
 
 <%!
