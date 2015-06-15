@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.util.bundle.ddmdisplayregistryutil;
+package com.liferay.portlet.dynamic.data.mapping.util.test.bundle.ddmdisplayregistryutil;
 
 import java.util.Locale;
 import java.util.Set;

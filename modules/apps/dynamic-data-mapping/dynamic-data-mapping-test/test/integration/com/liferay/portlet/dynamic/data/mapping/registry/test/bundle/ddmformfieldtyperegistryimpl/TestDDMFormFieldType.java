@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.registry.bundle.ddmformfieldtyperegistryimpl;
+package com.liferay.portlet.dynamic.data.mapping.registry.test.bundle.ddmformfieldtyperegistryimpl;
 
 import java.util.Locale;
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.render;
+package com.liferay.portlet.dynamic.data.mapping.render.test;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -22,36 +22,33 @@ import org.junit.Test;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.render.bundle.ddmformfieldrendererregistryimpl.TestDDMFormFieldRenderer;
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderer;
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistry;
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRendererRegistryUtil;
+import com.liferay.portlet.dynamic.data.mapping.render.test.bundle.ddmformfieldvaluerendererregistryimpl.TestDDMFormFieldValueRenderer;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRenderer;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRendererRegistryUtil;
 
 /**
  * @author Philip Jones
  */
-public class DDMFormFieldRendererRegistryImplTest {
+public class DDMFormFieldValueRendererRegistryImplTest {
 
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
-			new SyntheticBundleRule("bundle.ddmformfieldrendererregistryimpl"));
+			new SyntheticBundleRule(
+				"bundle.ddmformfieldvaluerendererregistryimpl"));
 
 	@Test
 	public void testGetDDMFormFieldRenderer() {
-		DDMFormFieldRendererRegistry ddmFormFieldRendererRegistry =
-			DDMFormFieldRendererRegistryUtil.getDDMFormFieldRendererRegistry();
+		DDMFormFieldValueRenderer ddmFormFieldValueRenderer =
+			DDMFormFieldValueRendererRegistryUtil.getDDMFormFieldValueRenderer(
+				TestDDMFormFieldValueRenderer.DDM_FORM_FIELD_TYPE);
 
-		DDMFormFieldRenderer ddmFormFieldRenderer =
-			ddmFormFieldRendererRegistry.getDDMFormFieldRenderer(
-				TestDDMFormFieldRenderer.SUPPORTED_DDM_FIELD_TYPE);
-
-		Class<?> clazz = ddmFormFieldRenderer.getClass();
+		Class<?> clazz = ddmFormFieldValueRenderer.getClass();
 
 		Assert.assertEquals(
-			TestDDMFormFieldRenderer.class.getName(), clazz.getName());
+			TestDDMFormFieldValueRenderer.class.getName(), clazz.getName());
 	}
 
 }

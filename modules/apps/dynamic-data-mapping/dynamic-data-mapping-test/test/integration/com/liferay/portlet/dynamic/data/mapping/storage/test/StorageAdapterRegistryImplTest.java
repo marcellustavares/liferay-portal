@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.storage;
+package com.liferay.portlet.dynamic.data.mapping.storage.test;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ import org.junit.Test;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.storage.bundle.storageadapterregistryimpl.TestStorageAdapterImpl;
+import com.liferay.portlet.dynamic.data.mapping.storage.test.bundle.storageadapterregistryimpl.TestStorageAdapterImpl;
 import com.liferay.portlet.dynamicdatamapping.storage.JSONStorageAdapter;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapter;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistry;

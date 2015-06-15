@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.storage.bundle.storageadapterregistryimpl;
+package com.liferay.portlet.dynamic.data.mapping.storage.test.bundle.storageadapterregistryimpl;
 
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;

@@ -12,14 +12,13 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.render.bundle.ddmformfieldrendererregistryimpl;
+package com.liferay.portlet.dynamic.data.mapping.render.test.bundle.ddmformfieldvaluerendererregistryimpl;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderer;
-import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portlet.dynamicdatamapping.render.DDMFormFieldValueRenderer;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -29,26 +28,28 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"layout.type=testDDMFormFieldRenderer",
+		"layout.type=testDDMFormFieldValueRenderer",
 		"service.ranking:Integer=" + Integer.MAX_VALUE
 	}
 )
-public class TestDDMFormFieldRenderer implements DDMFormFieldRenderer {
+public class TestDDMFormFieldValueRenderer
+	implements DDMFormFieldValueRenderer {
 
-	public static final String SUPPORTED_DDM_FIELD_TYPE = "text";
+	public static final String DDM_FORM_FIELD_TYPE = "checkbox";
 
 	@Override
-	public String[] getSupportedDDMFormFieldTypes() {
-		List<String> supportedDDMFormFieldTypes = Arrays.asList(
-			SUPPORTED_DDM_FIELD_TYPE);
+	public String getSupportedDDMFormFieldType() {
+		return DDM_FORM_FIELD_TYPE;
+	}
 
-		return (String[])supportedDDMFormFieldTypes.toArray();
+	@Override
+	public String render(DDMFormFieldValue ddmFormFieldValues, Locale locale) {
+		return null;
 	}
 
 	@Override
 	public String render(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+		List<DDMFormFieldValue> ddmFormFieldValue, Locale locale) {
 
 		return null;
 	}

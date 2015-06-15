@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.lar;
+package com.liferay.portlet.dynamic.data.mapping.lar.test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.runner.RunWith;
 
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -37,6 +39,7 @@ import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
 /**
  * @author Daniel Kocsis
  */
+@RunWith(Arquillian.class)
 public class DDMStructureStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
 

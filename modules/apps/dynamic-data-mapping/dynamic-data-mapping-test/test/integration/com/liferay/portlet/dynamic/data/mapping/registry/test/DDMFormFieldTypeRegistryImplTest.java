@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamic.data.mapping.registry;
+package com.liferay.portlet.dynamic.data.mapping.registry.test;
 
 import java.util.Set;
 
@@ -20,11 +20,13 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
-import com.liferay.portlet.dynamic.data.mapping.registry.bundle.ddmformfieldtyperegistryimpl.TestDDMFormFieldType;
+import com.liferay.portlet.dynamic.data.mapping.registry.test.bundle.ddmformfieldtyperegistryimpl.TestDDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldType;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistry;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryUtil;
@@ -32,6 +34,7 @@ import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeRegistryU
 /**
  * @author Peter Fellwock
  */
+@RunWith(Arquillian.class)
 public class DDMFormFieldTypeRegistryImplTest {
 
 	@ClassRule
