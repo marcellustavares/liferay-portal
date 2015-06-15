@@ -51,5 +51,10 @@ public class BaseDDMServiceTestCase extends
 
 		return map;
 	}
+	
+	@Override
+	protected String getBasePath() {
+		return "com/liferay/portlet/dynamic/data/mapping/dependencies/";
+	}
 
 }
