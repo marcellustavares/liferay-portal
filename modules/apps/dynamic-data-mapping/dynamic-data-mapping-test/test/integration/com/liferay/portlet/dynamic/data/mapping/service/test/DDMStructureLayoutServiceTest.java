@@ -14,15 +14,6 @@
 
 package com.liferay.portlet.dynamic.data.mapping.service.test;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -33,6 +24,15 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayoutPage;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayoutRow;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
+
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author Marcellus Tavares
@@ -74,10 +74,10 @@ public class DDMStructureLayoutServiceTest extends BaseDDMServiceTestCase {
 
 		Assert.assertEquals(
 			"Text1",
-			getDDMFormLayoutColumnFieldName(ddmFormLayoutColumns.get(0)));
+			getDDMFormLayoutColumnFieldName(ddmFormLayoutColumns.get(0), 0));
 		Assert.assertEquals(
 			"Text2",
-			getDDMFormLayoutColumnFieldName(ddmFormLayoutColumns.get(1)));
+			getDDMFormLayoutColumnFieldName(ddmFormLayoutColumns.get(1), 0));
 	}
 
 	protected List<DDMFormLayoutColumn> createDDMFormLayoutColumns(
@@ -94,16 +94,13 @@ public class DDMStructureLayoutServiceTest extends BaseDDMServiceTestCase {
 			ddmFormLayoutColumns);
 	}
 
-	protected String getDDMFormFieldName(
-		DDMFormLayoutColumn ddmFormLayoutColumn) {
-
-		return ddmFormLayoutColumn.getDDMFormFieldName();
-	}
-
 	protected String getDDMFormLayoutColumnFieldName(
-		DDMFormLayoutColumn ddmFormLayoutColumn) {
+		DDMFormLayoutColumn ddmFormLayoutColumn, int index) {
 
-		return ddmFormLayoutColumn.getDDMFormFieldName();
+		List<String> ddmFormFieldNames =
+			ddmFormLayoutColumn.getDDMFormFieldNames();
+
+		return ddmFormFieldNames.get(index);
 	}
 
 	protected void setUpDDMForm() {
