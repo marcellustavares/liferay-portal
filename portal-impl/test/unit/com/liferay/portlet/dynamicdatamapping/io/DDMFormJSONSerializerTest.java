@@ -31,6 +31,7 @@ public class DDMFormJSONSerializerTest extends BaseDDMFormSerializerTestCase {
 		setUpDDMFormFieldTypeRegistryUtil();
 		setUpDDMFormToJSONSerializerUtil();
 		setUpJSONFactoryUtil();
+		setUpLanguageUtil();
 	}
 
 	@Test

@@ -58,6 +58,7 @@ public class DDMFormTemplateSynchonizerTest extends BaseDDMTestCase {
 		setUpDDMStructureLocalServiceUtil();
 		setUpDDMTemplateLocalServiceUtil();
 		setUpJSONFactoryUtil();
+		setUpLanguageUtil();
 		setUpLocaleUtil();
 		setUpHtmlUtil();
 		setUpPropsUtil();
