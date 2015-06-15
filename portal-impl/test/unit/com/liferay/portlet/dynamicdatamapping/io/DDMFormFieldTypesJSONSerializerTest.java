@@ -46,6 +46,7 @@ public class DDMFormFieldTypesJSONSerializerTest extends BaseDDMTestCase {
 		setUpDDMFormFieldTypesJSONSerializerUtil();
 		setUpDDMFormJSONSerializerUtil();
 		setUpJSONFactoryUtil();
+		setUpLanguageUtil();
 	}
 
 	@Test

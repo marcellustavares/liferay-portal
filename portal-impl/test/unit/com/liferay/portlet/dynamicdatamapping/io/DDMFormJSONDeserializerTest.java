@@ -35,6 +35,7 @@ public class DDMFormJSONDeserializerTest
 	public void setUp() {
 		setUpDDMFormFieldTypeRegistryUtil();
 		setUpDDMFormJSONDeserializerUtil();
+		setUpLanguageUtil();
 		setUpLocaleUtil();
 		setUpJSONFactoryUtil();
 	}
