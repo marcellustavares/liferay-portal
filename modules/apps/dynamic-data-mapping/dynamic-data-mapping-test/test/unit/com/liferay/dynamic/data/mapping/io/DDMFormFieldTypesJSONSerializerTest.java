@@ -46,7 +46,7 @@ public class DDMFormFieldTypesJSONSerializerTest extends Mockito {
 	}
 
 	@Test
-	public void testSerializationWithEmptyParameterList() {
+	public void testSerializationWithEmptyParameterList() throws Exception {
 		List<DDMFormFieldType> ddmFormFieldTypes = Collections.emptyList();
 
 		String actualJSON = DDMFormFieldTypesJSONSerializerUtil.serialize(
@@ -76,7 +76,7 @@ public class DDMFormFieldTypesJSONSerializerTest extends Mockito {
 
 		String expectedJSON =
 			"[{\"name\": \"Text\", \"templateNamespace\": " +
-				"\"_templateNamespace_\"}]";
+				"\"_templateNamespace_\", \"settings\": {}}]";
 
 		String actualJSON = DDMFormFieldTypesJSONSerializerUtil.serialize(
 			ddmFormFieldTypes);
