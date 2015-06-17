@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFactory;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldRenderer;
@@ -49,15 +50,20 @@ public class DDMFormFieldTypesJSONSerializerImpl
 			Class<? extends DDMFormFieldTypeSettings> ddmFormFieldTypeSettings)
 		throws PortalException {
 
-		DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
-			ddmFormFieldTypeSettings);
+		if (Validator.isNotNull(ddmFormFieldTypeSettings)) {
+			DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
+				ddmFormFieldTypeSettings);
 
-		String serializedDDMFormFieldTypeSettings =
-			DDMFormJSONSerializerUtil.serialize(
-				ddmFormFieldTypeSettingsDDMForm);
+			String serializedDDMFormFieldTypeSettings =
+				DDMFormJSONSerializerUtil.serialize(
+					ddmFormFieldTypeSettingsDDMForm);
 
-		return JSONFactoryUtil.createJSONObject(
-			serializedDDMFormFieldTypeSettings);
+			return JSONFactoryUtil.createJSONObject(
+				serializedDDMFormFieldTypeSettings);
+		}
+		else {
+			return JSONFactoryUtil.createJSONObject();
+		}
 	}
 
 	protected JSONObject toJSONObject(DDMFormFieldType ddmFormFieldType)
