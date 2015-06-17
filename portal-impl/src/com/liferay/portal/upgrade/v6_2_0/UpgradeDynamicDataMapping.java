@@ -29,7 +29,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.upgrade.v6_2_0.util.DDMTemplateTable;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
+import com.liferay.util.xml.XMLUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -239,7 +239,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			updateXSDDynamicElement(dynamicElementElement, structureKey);
 		}
 
-		return DDMXMLUtil.formatXML(document);
+		return XMLUtil.formatXML(document);
 	}
 
 	protected void updateXSDDynamicElement(
