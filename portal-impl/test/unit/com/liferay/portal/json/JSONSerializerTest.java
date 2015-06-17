@@ -15,6 +15,7 @@
 package com.liferay.portal.json;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.impl.DDMStructureImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.search.Hits;
@@ -22,7 +23,6 @@ import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.util.LocalizationImpl;
-import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureImpl;
 
 import org.junit.Assert;
 import org.junit.Before;
