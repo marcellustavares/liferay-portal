@@ -18,7 +18,6 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureServiceUtil;
-import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -38,6 +37,7 @@ import com.liferay.portal.util.WebKeys;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -47,10 +47,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Juan Fernández
  * @author Jorge Ferrer
  */
+@Component(immediate = true, service = DDMTemplateHelper.class)
 public class DDMTemplateHelperImpl implements DDMTemplateHelper {
 
 	@Override

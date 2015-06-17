@@ -20,8 +20,13 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Juan Fernández
+ * @author Leonardo Barros
  */
 public class DDMTemplateHelperUtil {
 
@@ -40,19 +45,23 @@ public class DDMTemplateHelperUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMTemplateHelperUtil.class);
 
-		return _ddmTemplateHelper;
+		return _serviceTracker.getService();
 	}
 
 	public static boolean isAutocompleteEnabled(String language) {
 		return getDDMTemplateHelper().isAutocompleteEnabled(language);
 	}
 
-	public void setDDMTemplateHelper(DDMTemplateHelper ddmTemplateHelper) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final
+		ServiceTracker<DDMTemplateHelper, DDMTemplateHelper> _serviceTracker;
 
-		_ddmTemplateHelper = ddmTemplateHelper;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMTemplateHelperUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMTemplateHelper.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMTemplateHelper _ddmTemplateHelper;
 
 }

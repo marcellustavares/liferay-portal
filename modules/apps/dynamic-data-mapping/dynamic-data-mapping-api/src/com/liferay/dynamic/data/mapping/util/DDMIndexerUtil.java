@@ -21,8 +21,13 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 
 import java.util.Locale;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Alexander Chow
+ * @author Leonardo Barros
  */
 public class DDMIndexerUtil {
 
@@ -53,15 +58,18 @@ public class DDMIndexerUtil {
 	public static DDMIndexer getDDMIndexer() {
 		PortalRuntimePermission.checkGetBeanProperty(DDMIndexerUtil.class);
 
-		return _ddmIndexer;
+		return _serviceTracker.getService();
 	}
 
-	public void setDDMIndexer(DDMIndexer ddmIndexer) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final ServiceTracker<DDMIndexer, DDMIndexer> _serviceTracker;
 
-		_ddmIndexer = ddmIndexer;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMIndexerUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMIndexer.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMIndexer _ddmIndexer;
 
 }

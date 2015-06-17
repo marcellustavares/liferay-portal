@@ -20,8 +20,13 @@ import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class FieldsToDDMFormValuesConverterUtil {
 
@@ -39,18 +44,22 @@ public class FieldsToDDMFormValuesConverterUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			FieldsToDDMFormValuesConverterUtil.class);
 
-		return _fieldsToDDMFormValuesConverter;
+		return _serviceTracker.getService();
 	}
 
-	public void setFieldsToDDMFormValuesConverter(
-		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+	private static final
+		ServiceTracker<FieldsToDDMFormValuesConverter,
+			FieldsToDDMFormValuesConverter> _serviceTracker;
 
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			FieldsToDDMFormValuesConverterUtil.class);
 
-		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), FieldsToDDMFormValuesConverter.class,
+			null);
+
+		_serviceTracker.open();
 	}
-
-	private static FieldsToDDMFormValuesConverter
-		_fieldsToDDMFormValuesConverter;
 
 }

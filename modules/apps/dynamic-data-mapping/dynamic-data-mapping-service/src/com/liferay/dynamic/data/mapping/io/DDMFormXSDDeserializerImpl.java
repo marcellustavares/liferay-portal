@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
-import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -37,9 +36,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Pablo Carvalho
  */
+@Component(immediate = true, service = DDMFormXSDDeserializer.class)
 public class DDMFormXSDDeserializerImpl implements DDMFormXSDDeserializer {
 
 	@Override

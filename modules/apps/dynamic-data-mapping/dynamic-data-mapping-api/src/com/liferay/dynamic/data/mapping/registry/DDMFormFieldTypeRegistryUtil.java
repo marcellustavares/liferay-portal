@@ -19,8 +19,13 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 import java.util.List;
 import java.util.Set;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormFieldTypeRegistryUtil {
 
@@ -36,21 +41,25 @@ public class DDMFormFieldTypeRegistryUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormFieldTypeRegistryUtil.class);
 
-		return _ddmFormFieldTypeRegistry;
+		return _serviceTracker.getService();
 	}
 
 	public static List<DDMFormFieldType> getDDMFormFieldTypes() {
 		return getDDMFormFieldTypeRegistry().getDDMFormFieldTypes();
 	}
 
-	public void setDDMFormFieldTypeRegistry(
-		DDMFormFieldTypeRegistry ddmFormFieldTypeRegistry) {
+	private static final 
+		ServiceTracker<DDMFormFieldTypeRegistry, DDMFormFieldTypeRegistry> 
+			_serviceTracker;
 
-		PortalRuntimePermission.checkGetBeanProperty(getClass());
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormFieldTypeRegistryUtil.class);
 
-		_ddmFormFieldTypeRegistry = ddmFormFieldTypeRegistry;
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormFieldTypeRegistry.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMFormFieldTypeRegistry _ddmFormFieldTypeRegistry;
 
 }

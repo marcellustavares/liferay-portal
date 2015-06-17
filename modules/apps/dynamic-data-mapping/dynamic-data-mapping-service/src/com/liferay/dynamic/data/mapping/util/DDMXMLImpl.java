@@ -21,7 +21,6 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -45,6 +44,7 @@ import com.liferay.util.xml.XMLFormatter;
 
 import java.io.IOException;
 import java.io.Serializable;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,10 +52,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Bruno Basto
  * @author Brian Wing Shun Chan
  */
+@Component(immediate = true, service = DDMXML.class)
 @DoPrivileged
 public class DDMXMLImpl implements DDMXML {
 

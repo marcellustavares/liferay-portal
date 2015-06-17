@@ -29,9 +29,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Marcellus Tavares
  */
+@Component(immediate = true, service = DDMFormFieldTypeRegistry.class)
 public class DDMFormFieldTypeRegistryImpl implements DDMFormFieldTypeRegistry {
 
 	public DDMFormFieldTypeRegistryImpl() {

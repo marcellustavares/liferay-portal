@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
-import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
@@ -28,9 +26,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Bruno Basto
  */
+@Component(immediate = true, service = DDMFormFieldTypesJSONSerializer.class)
 public class DDMFormFieldTypesJSONSerializerImpl
 	implements DDMFormFieldTypesJSONSerializer {
 

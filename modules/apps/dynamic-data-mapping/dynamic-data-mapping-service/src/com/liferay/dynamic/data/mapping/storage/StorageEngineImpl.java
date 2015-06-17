@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.storage;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -23,13 +25,12 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.service.ServiceContext;
 
 /**
  * @author Eduardo Lundgren
  */
-@OSGiBeanProperties(service = StorageEngine.class)
+@Component(immediate = true, service = StorageEngine.class)
 public class StorageEngineImpl implements StorageEngine {
 
 	@Override

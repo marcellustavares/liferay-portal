@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
-import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
@@ -31,9 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Marcellus Tavares
  */
+@Component(immediate = true, service = DDMFormLayoutJSONDeserializer.class)
 public class DDMFormLayoutJSONDeserializerImpl
 	implements DDMFormLayoutJSONDeserializer {
 

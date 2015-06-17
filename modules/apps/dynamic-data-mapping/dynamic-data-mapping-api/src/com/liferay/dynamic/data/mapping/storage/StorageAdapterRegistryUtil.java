@@ -18,8 +18,13 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 
 import java.util.Set;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class StorageAdapterRegistryUtil {
 
@@ -35,21 +40,25 @@ public class StorageAdapterRegistryUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			StorageAdapterRegistryUtil.class);
 
-		return _storageAdapterRegistry;
+		return _serviceTracker.getService();
 	}
 
 	public static Set<String> getStorageTypes() {
 		return getStorageAdapterRegistry().getStorageTypes();
 	}
 
-	public void setStorageAdapterRegistry(
-		StorageAdapterRegistry storageAdapterRegistry) {
+	private static final 
+		ServiceTracker<StorageAdapterRegistry, StorageAdapterRegistry> 
+			_serviceTracker;
 
-		PortalRuntimePermission.checkGetBeanProperty(getClass());
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			StorageAdapterRegistryUtil.class);
 
-		_storageAdapterRegistry = storageAdapterRegistry;
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), StorageAdapterRegistry.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static StorageAdapterRegistry _storageAdapterRegistry;
 
 }

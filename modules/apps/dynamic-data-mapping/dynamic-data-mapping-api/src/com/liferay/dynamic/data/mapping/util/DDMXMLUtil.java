@@ -24,9 +24,14 @@ import com.liferay.portal.kernel.xml.XPath;
 import java.util.List;
 import java.util.Locale;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Bruno Basto
  * @author Brian Wing Shun Chan
+ * @author Leonardo Barros
  */
 public class DDMXMLUtil {
 
@@ -41,7 +46,7 @@ public class DDMXMLUtil {
 	public static DDMXML getDDMXML() {
 		PortalRuntimePermission.checkGetBeanProperty(DDMXMLUtil.class);
 
-		return _ddmXML;
+		return _serviceTracker.getService();
 	}
 
 	public static Fields getFields(DDMStructure structure, String xml)
@@ -78,12 +83,15 @@ public class DDMXMLUtil {
 		return getDDMXML().validateXML(xml);
 	}
 
-	public void setDDMXML(DDMXML ddmXML) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final ServiceTracker<DDMXML, DDMXML> _serviceTracker;
 
-		_ddmXML = ddmXML;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMXMLUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMXML.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMXML _ddmXML;
 
 }

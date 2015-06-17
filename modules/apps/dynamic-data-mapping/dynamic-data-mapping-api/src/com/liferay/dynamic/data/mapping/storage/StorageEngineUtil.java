@@ -14,12 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.storage;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.service.ServiceContext;
 
 /**
  * @author Eduardo Lundgren
+ * @author Leonardo Barros
  */
 public class StorageEngineUtil {
 
@@ -51,7 +56,7 @@ public class StorageEngineUtil {
 	public static StorageEngine getStorageEngine() {
 		PortalRuntimePermission.checkGetBeanProperty(StorageEngineUtil.class);
 
-		return _storageEngine;
+		return _serviceTracker.getService();
 	}
 
 	public static void update(
@@ -62,12 +67,16 @@ public class StorageEngineUtil {
 		getStorageEngine().update(classPK, ddmFormValues, serviceContext);
 	}
 
-	public void setStorageEngine(StorageEngine storageEngine) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final 
+		ServiceTracker<StorageEngine, StorageEngine> _serviceTracker;
 
-		_storageEngine = storageEngine;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(StorageEngineUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), StorageEngine.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static StorageEngine _storageEngine;
 
 }

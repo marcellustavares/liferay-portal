@@ -14,12 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormLayoutJSONDeserializerUtil {
 
@@ -36,17 +41,22 @@ public class DDMFormLayoutJSONDeserializerUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormLayoutJSONDeserializerUtil.class);
 
-		return _ddmFormLayoutJSONDeserializer;
+		return _serviceTracker.getService();
 	}
 
-	public void setDDMFormLayoutJSONDeserializer(
-		DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer) {
+	private static final 
+		ServiceTracker<DDMFormLayoutJSONDeserializer, 
+			DDMFormLayoutJSONDeserializer> _serviceTracker;
 
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_ddmFormLayoutJSONDeserializer = ddmFormLayoutJSONDeserializer;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormLayoutJSONDeserializerUtil.class);
+	
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormLayoutJSONDeserializer.class, 
+			null);
+	
+		_serviceTracker.open();
 	}
-
-	private static DDMFormLayoutJSONDeserializer _ddmFormLayoutJSONDeserializer;
 
 }

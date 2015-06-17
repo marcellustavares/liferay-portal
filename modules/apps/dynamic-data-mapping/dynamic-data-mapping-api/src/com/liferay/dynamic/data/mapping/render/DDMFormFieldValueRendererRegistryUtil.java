@@ -14,10 +14,15 @@
 
 package com.liferay.dynamic.data.mapping.render;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormFieldValueRendererRegistryUtil {
 
@@ -37,18 +42,22 @@ public class DDMFormFieldValueRendererRegistryUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormFieldValueRendererRegistryUtil.class);
 
-		return _ddmFormFieldValueRendererRegistry;
+		return _serviceTracker.getService();
 	}
 
-	public void setDDMFormFieldValueRendererRegistry(
-		DDMFormFieldValueRendererRegistry ddmFormFieldValueRendererRegistry) {
+	private static final 
+		ServiceTracker<DDMFormFieldValueRendererRegistry, 
+			DDMFormFieldValueRendererRegistry> _serviceTracker;
 
-		PortalRuntimePermission.checkGetBeanProperty(getClass());
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormFieldValueRendererRegistryUtil.class);
 
-		_ddmFormFieldValueRendererRegistry = ddmFormFieldValueRendererRegistry;
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormFieldValueRendererRegistry.class, 
+			null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMFormFieldValueRendererRegistry
-		_ddmFormFieldValueRendererRegistry;
 
 }

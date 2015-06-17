@@ -32,6 +32,10 @@ import java.io.Serializable;
 
 import javax.portlet.PortletRequest;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Eduardo Lundgren
  * @author Marcellus Tavares
@@ -42,7 +46,7 @@ public class DDMUtil {
 	public static DDM getDDM() {
 		PortalRuntimePermission.checkGetBeanProperty(DDMUtil.class);
 
-		return _ddm;
+		return _serviceTracker.getService();
 	}
 
 	public static DDMDisplay getDDMDisplay(long classNameId)
@@ -155,12 +159,15 @@ public class DDMUtil {
 		return getDDM().mergeFields(newFields, existingFields);
 	}
 
-	public void setDDM(DDM ddm) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final ServiceTracker<DDM, DDM> _serviceTracker;
 
-		_ddm = ddm;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDM.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDM _ddm;
 
 }

@@ -25,9 +25,12 @@ import com.liferay.portal.kernel.util.StringBundler;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Marcellus Tavares
  */
+@Component(immediate = true, service = DDMFormRenderer.class)
 public class DDMFormRendererImpl implements DDMFormRenderer {
 
 	@Override

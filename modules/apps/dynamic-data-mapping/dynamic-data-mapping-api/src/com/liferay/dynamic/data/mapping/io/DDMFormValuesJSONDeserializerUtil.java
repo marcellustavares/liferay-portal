@@ -14,6 +14,10 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -21,6 +25,7 @@ import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermissio
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormValuesJSONDeserializerUtil {
 
@@ -41,17 +46,22 @@ public class DDMFormValuesJSONDeserializerUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormValuesJSONDeserializerUtil.class);
 
-		return _ddmFormValuesJSONDeserializer;
+		return _serviceTracker.getService();
 	}
 
-	public void setDDMFormValuesJSONDeserializer(
-		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+	private static final 
+		ServiceTracker<DDMFormValuesJSONDeserializer, 
+			DDMFormValuesJSONDeserializer> _serviceTracker;
 
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormValuesJSONDeserializerUtil.class);
+	
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormValuesJSONDeserializer.class, 
+			null);
+	
+		_serviceTracker.open();
 	}
-
-	private static DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 
 }

@@ -14,10 +14,15 @@
 
 package com.liferay.dynamic.data.mapping.storage.query;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class ConditionFactoryUtil {
 
@@ -37,7 +42,7 @@ public class ConditionFactoryUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			ConditionFactoryUtil.class);
 
-		return _conditionFactory;
+		return _serviceTracker.getService();
 	}
 
 	public static Condition gt(String name, Object value) {
@@ -72,12 +77,16 @@ public class ConditionFactoryUtil {
 		return getConditionFactory().notIn(name, value);
 	}
 
-	public void setConditionFactory(ConditionFactory conditionFactory) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final 
+		ServiceTracker<ConditionFactory, ConditionFactory> _serviceTracker;
 
-		_conditionFactory = conditionFactory;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(ConditionFactoryUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), ConditionFactory.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static ConditionFactory _conditionFactory;
 
 }

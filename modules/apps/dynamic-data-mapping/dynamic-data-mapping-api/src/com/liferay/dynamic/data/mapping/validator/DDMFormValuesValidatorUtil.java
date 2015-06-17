@@ -14,12 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.validator;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormValuesValidatorUtil {
 
@@ -27,7 +32,7 @@ public class DDMFormValuesValidatorUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormValuesValidatorUtil.class);
 
-		return _ddmFormValuesValidator;
+		return _serviceTracker.getService();
 	}
 
 	public static void validate(DDMFormValues ddmFormValues)
@@ -39,14 +44,18 @@ public class DDMFormValuesValidatorUtil {
 		ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
-	public void setDDMFormValuesValidator(
-		DDMFormValuesValidator ddmFormValuesValidator) {
+	private static final 
+		ServiceTracker<DDMFormValuesValidator, 
+			DDMFormValuesValidator> _serviceTracker;
 
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormValuesValidatorUtil.class);
 
-		_ddmFormValuesValidator = ddmFormValuesValidator;
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormValuesValidator.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMFormValuesValidator _ddmFormValuesValidator;
 
 }

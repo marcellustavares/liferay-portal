@@ -14,19 +14,24 @@
 
 package com.liferay.dynamic.data.mapping.render;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormRendererUtil {
 
 	public static DDMFormRenderer getDDMFormRenderer() {
 		PortalRuntimePermission.checkGetBeanProperty(DDMFormRendererUtil.class);
 
-		return _ddmFormRenderer;
+		return _serviceTracker.getService();
 	}
 
 	public static String render(
@@ -38,12 +43,16 @@ public class DDMFormRendererUtil {
 			ddmForm, ddmFormFieldRenderingContext);
 	}
 
-	public void setDDMFormRenderer(DDMFormRenderer ddmFormRenderer) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final 
+		ServiceTracker<DDMFormRenderer, DDMFormRenderer> _serviceTracker;
 
-		_ddmFormRenderer = ddmFormRenderer;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMFormRendererUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormRenderer.class, null);
+
+		_serviceTracker.open();
 	}
-
-	private static DDMFormRenderer _ddmFormRenderer;
 
 }

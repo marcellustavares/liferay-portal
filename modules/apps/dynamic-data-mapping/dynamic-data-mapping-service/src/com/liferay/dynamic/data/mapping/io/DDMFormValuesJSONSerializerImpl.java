@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -27,9 +26,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Marcellus Tavares
  */
+@Component(immediate = true, service = DDMFormValuesJSONSerializer.class)
 public class DDMFormValuesJSONSerializerImpl
 	implements DDMFormValuesJSONSerializer {
 

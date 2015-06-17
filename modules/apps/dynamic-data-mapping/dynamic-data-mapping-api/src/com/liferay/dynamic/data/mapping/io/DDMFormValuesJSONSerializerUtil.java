@@ -14,11 +14,16 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class DDMFormValuesJSONSerializerUtil {
 
@@ -26,7 +31,7 @@ public class DDMFormValuesJSONSerializerUtil {
 		PortalRuntimePermission.checkGetBeanProperty(
 			DDMFormValuesJSONSerializerUtil.class);
 
-		return _ddmFormValuesJSONSerializer;
+		return _serviceTracker.getService();
 	}
 
 	public static String serialize(DDMFormValues ddmFormValues) {
@@ -36,14 +41,18 @@ public class DDMFormValuesJSONSerializerUtil {
 		return ddmFormValuesJSONSerializer.serialize(ddmFormValues);
 	}
 
-	public void setDDMFormValuesJSONSerializer(
-		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
+	private static final 
+		ServiceTracker<DDMFormValuesJSONSerializer, DDMFormValuesJSONSerializer> 
+		_serviceTracker;
 
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			DDMFormValuesJSONSerializerUtil.class);
+	
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMFormValuesJSONSerializer.class, null);
+	
+		_serviceTracker.open();
 	}
-
-	private static DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
 
 }

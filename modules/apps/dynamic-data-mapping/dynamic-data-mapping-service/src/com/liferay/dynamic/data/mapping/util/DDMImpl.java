@@ -34,11 +34,6 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDM;
-import com.liferay.dynamic.data.mapping.util.DDMDisplay;
-import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.dynamic.data.mapping.util.DDMPermissionHandler;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureIdComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.TemplateIdComparator;
@@ -79,8 +74,10 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.io.File;
 import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -91,7 +88,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Eduardo Lundgren
@@ -99,6 +99,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Eduardo Garcia
  * @author Marcellus Tavares
  */
+@Component(immediate = true, service = DDM.class)
 @DoPrivileged
 public class DDMImpl implements DDM {
 
