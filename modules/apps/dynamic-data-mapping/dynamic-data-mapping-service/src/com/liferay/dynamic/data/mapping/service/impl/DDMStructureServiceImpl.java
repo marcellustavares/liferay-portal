@@ -24,8 +24,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.service.permission.DDMPermission;
-import com.liferay.portlet.dynamicdatamapping.service.permission.DDMStructurePermission;
+import com.liferay.dynamic.data.mapping.service.permission.DDMPermission;
+import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
 
 import java.util.List;
 import java.util.Locale;
