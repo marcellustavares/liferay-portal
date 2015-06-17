@@ -942,7 +942,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param pk the primary key of the document library file entry type
 	* @return the d d m structures associated with the document library file entry type
 	*/
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk);
 
 	/**
@@ -957,7 +957,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of d d m structures associated with the document library file entry type
 	*/
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end);
 
 	/**
@@ -973,9 +973,9 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of d d m structures associated with the document library file entry type
 	*/
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator);
 
 	/**
 	* Returns the number of d d m structures associated with the document library file entry type.
@@ -1017,7 +1017,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param ddmStructure the d d m structure
 	*/
 	public void addDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure);
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure);
 
 	/**
 	* Adds an association between the document library file entry type and the d d m structures. Also notifies the appropriate model listeners and clears the mapping table finder cache.
@@ -1034,7 +1034,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param ddmStructures the d d m structures
 	*/
 	public void addDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures);
+		java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures);
 
 	/**
 	* Clears all associations between the document library file entry type and its d d m structures. Also notifies the appropriate model listeners and clears the mapping table finder cache.
@@ -1058,7 +1058,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param ddmStructure the d d m structure
 	*/
 	public void removeDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure);
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure);
 
 	/**
 	* Removes the association between the document library file entry type and the d d m structures. Also notifies the appropriate model listeners and clears the mapping table finder cache.
@@ -1075,7 +1075,7 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param ddmStructures the d d m structures
 	*/
 	public void removeDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures);
+		java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures);
 
 	/**
 	* Sets the d d m structures associated with the document library file entry type, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
@@ -1092,5 +1092,5 @@ public interface DLFileEntryTypePersistence extends BasePersistence<DLFileEntryT
 	* @param ddmStructures the d d m structures to be associated with the document library file entry type
 	*/
 	public void setDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures);
+		java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures);
 }

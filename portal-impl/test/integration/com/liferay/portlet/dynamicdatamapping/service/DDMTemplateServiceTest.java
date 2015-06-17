@@ -14,6 +14,13 @@
 
 package com.liferay.portlet.dynamicdatamapping.service;
 
+import com.liferay.dynamic.data.mapping.exception.TemplateDuplicateTemplateKeyException;
+import com.liferay.dynamic.data.mapping.exception.TemplateNameException;
+import com.liferay.dynamic.data.mapping.exception.TemplateScriptException;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.util.comparator.TemplateIdComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -28,13 +35,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.MainServletTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.dynamicdatamapping.TemplateDuplicateTemplateKeyException;
-import com.liferay.portlet.dynamicdatamapping.TemplateNameException;
-import com.liferay.portlet.dynamicdatamapping.TemplateScriptException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.test.BaseDDMServiceTestCase;
-import com.liferay.portlet.dynamicdatamapping.util.comparator.TemplateIdComparator;
 
 import java.util.List;
 

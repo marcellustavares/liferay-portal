@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.documentlibrary.display.context;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -30,7 +31,6 @@ import com.liferay.portlet.documentlibrary.display.context.logic.FileVersionDisp
 import com.liferay.portlet.documentlibrary.display.context.util.DLRequestHelper;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
 import java.util.UUID;
 

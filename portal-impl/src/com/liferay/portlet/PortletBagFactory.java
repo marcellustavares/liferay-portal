@@ -14,6 +14,7 @@
 
 package com.liferay.portlet;
 
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.portal.kernel.atom.AtomCollectionAdapter;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
@@ -59,7 +60,6 @@ import com.liferay.portal.util.JavaFieldsParser;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.expando.model.CustomAttributesDisplay;
 import com.liferay.portlet.exportimport.lar.PortletDataHandler;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
@@ -75,7 +75,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PreferencesValidator;
-
 import javax.servlet.ServletContext;
 
 /**

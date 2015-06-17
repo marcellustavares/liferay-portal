@@ -14,6 +14,7 @@
 
 package com.liferay.portal.repository.liferayrepository;
 
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.repository.Repository;
@@ -58,11 +59,9 @@ import com.liferay.portlet.documentlibrary.util.DLSearcher;
 import com.liferay.portlet.documentlibrary.util.RepositoryModelUtil;
 import com.liferay.portlet.documentlibrary.util.comparator.DLFileEntryOrderByComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.DLFolderOrderByComparator;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.util.List;
 import java.util.Map;
 

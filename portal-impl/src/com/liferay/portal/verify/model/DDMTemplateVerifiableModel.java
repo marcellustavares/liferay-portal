@@ -14,7 +14,7 @@
 
 package com.liferay.portal.verify.model;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 
 /**
  * @author Brian Wing Shun Chan
