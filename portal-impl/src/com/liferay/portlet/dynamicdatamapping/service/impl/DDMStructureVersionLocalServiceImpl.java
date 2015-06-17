@@ -16,13 +16,13 @@ package com.liferay.portlet.dynamicdatamapping.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureVersionException;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
+import com.liferay.dynamic.data.mapping.util.comparator.StructureVersionVersionComparator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portlet.dynamicdatamapping.NoSuchStructureVersionException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMStructureVersionLocalServiceBaseImpl;
-import com.liferay.portlet.dynamicdatamapping.util.comparator.StructureVersionVersionComparator;
 
 import java.util.Collections;
 import java.util.List;

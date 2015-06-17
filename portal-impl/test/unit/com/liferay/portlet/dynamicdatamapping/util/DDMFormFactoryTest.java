@@ -14,11 +14,11 @@
 
 package com.liferay.portlet.dynamicdatamapping.util;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFactory;
-import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettings;
-import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldTypeSettings;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeSettings;
+import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 
 import java.util.Map;
 

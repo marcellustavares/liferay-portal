@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplateLink;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateLink;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMTemplateLinkLocalServiceBaseImpl;
 
 import java.util.List;

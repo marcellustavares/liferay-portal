@@ -14,10 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage;
 
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
-import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
 
 import java.util.List;
 import java.util.Map;

@@ -14,13 +14,13 @@
 
 package com.liferay.portal.kernel.template;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.test.ConsoleTestUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.template.CacheTemplateResource;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,10 +32,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-
 import java.net.URL;
 
 import org.junit.Assert;

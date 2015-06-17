@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.search;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 
 import java.util.ArrayList;
 import java.util.List;

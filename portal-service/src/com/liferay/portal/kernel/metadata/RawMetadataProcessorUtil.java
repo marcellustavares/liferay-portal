@@ -14,15 +14,13 @@
 
 package com.liferay.portal.kernel.metadata;
 
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.io.File;
 import java.io.InputStream;
-
 import java.lang.reflect.Field;
-
 import java.util.Map;
 
 /**

@@ -15,6 +15,10 @@
 package com.liferay.portal.verify;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -59,13 +63,8 @@ import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.comparator.DLFileVersionVersionComparator;
 import com.liferay.portlet.documentlibrary.webdav.DLWebDAVStorageImpl;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapter;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapterRegistryUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 
 import java.io.InputStream;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;

@@ -14,6 +14,7 @@
 
 package com.liferay.portlet;
 
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.portal.kernel.atom.AtomCollectionAdapter;
 import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
@@ -37,7 +38,6 @@ import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.security.permission.PermissionPropagator;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.expando.model.CustomAttributesDisplay;
 import com.liferay.portlet.exportimport.lar.PortletDataHandler;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandler;
@@ -45,14 +45,12 @@ import com.liferay.portlet.social.model.SocialActivityInterpreter;
 import com.liferay.portlet.social.model.SocialRequestInterpreter;
 
 import java.io.Closeable;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.portlet.Portlet;
 import javax.portlet.PreferencesValidator;
-
 import javax.servlet.ServletContext;
 
 /**

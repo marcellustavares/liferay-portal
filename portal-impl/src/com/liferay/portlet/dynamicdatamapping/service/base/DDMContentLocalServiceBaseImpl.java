@@ -16,6 +16,9 @@ package com.liferay.portlet.dynamicdatamapping.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMContent;
+import com.liferay.dynamic.data.mapping.service.DDMContentLocalService;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMContentPersistence;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -39,10 +42,6 @@ import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
-
-import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
-import com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalService;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMContentPersistence;
 import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
 import com.liferay.portlet.exportimport.lar.ManifestSummary;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
@@ -50,7 +49,6 @@ import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.Serializable;
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -64,7 +62,7 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.dynamicdatamapping.service.impl.DDMContentLocalServiceImpl
- * @see com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalServiceUtil
+ * @see com.liferay.dynamic.data.mapping.service.DDMContentLocalServiceUtil
  * @generated
  */
 @ProviderType
@@ -244,7 +242,7 @@ public abstract class DDMContentLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMContentLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMContent.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 
@@ -255,7 +253,7 @@ public abstract class DDMContentLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMContentLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMContent.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 

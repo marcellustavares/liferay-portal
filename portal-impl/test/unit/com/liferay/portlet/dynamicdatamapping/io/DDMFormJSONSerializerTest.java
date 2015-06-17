@@ -14,11 +14,11 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.skyscreamer.jsonassert.JSONAssert;
 
 /**

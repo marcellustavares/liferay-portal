@@ -14,10 +14,10 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureLinkException;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMStructureLinkLocalServiceBaseImpl;
 
 import java.util.ArrayList;

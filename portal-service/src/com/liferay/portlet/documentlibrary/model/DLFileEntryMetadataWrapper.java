@@ -123,7 +123,7 @@ public class DLFileEntryMetadataWrapper implements DLFileEntryMetadata,
 	}
 
 	@Override
-	public com.liferay.portlet.dynamicdatamapping.model.DDMStructure getDDMStructure()
+	public com.liferay.dynamic.data.mapping.model.DDMStructure getDDMStructure()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntryMetadata.getDDMStructure();
 	}

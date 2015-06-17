@@ -1192,7 +1192,7 @@ public class DLFileEntryTypeUtil {
 	* @param pk the primary key of the document library file entry type
 	* @return the d d m structures associated with the document library file entry type
 	*/
-	public static List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public static List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk) {
 		return getPersistence().getDDMStructures(pk);
 	}
@@ -1209,7 +1209,7 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of d d m structures associated with the document library file entry type
 	*/
-	public static List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public static List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end) {
 		return getPersistence().getDDMStructures(pk, start, end);
 	}
@@ -1227,9 +1227,9 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of d d m structures associated with the document library file entry type
 	*/
-	public static List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public static List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end,
-		OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
+		OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
 		return getPersistence()
 				   .getDDMStructures(pk, start, end, orderByComparator);
 	}
@@ -1282,7 +1282,7 @@ public class DLFileEntryTypeUtil {
 	* @param ddmStructure the d d m structure
 	*/
 	public static void addDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure) {
 		getPersistence().addDDMStructure(pk, ddmStructure);
 	}
 
@@ -1303,7 +1303,7 @@ public class DLFileEntryTypeUtil {
 	* @param ddmStructures the d d m structures
 	*/
 	public static void addDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
 		getPersistence().addDDMStructures(pk, ddmStructures);
 	}
 
@@ -1333,7 +1333,7 @@ public class DLFileEntryTypeUtil {
 	* @param ddmStructure the d d m structure
 	*/
 	public static void removeDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure) {
 		getPersistence().removeDDMStructure(pk, ddmStructure);
 	}
 
@@ -1354,7 +1354,7 @@ public class DLFileEntryTypeUtil {
 	* @param ddmStructures the d d m structures
 	*/
 	public static void removeDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
 		getPersistence().removeDDMStructures(pk, ddmStructures);
 	}
 
@@ -1375,7 +1375,7 @@ public class DLFileEntryTypeUtil {
 	* @param ddmStructures the d d m structures to be associated with the document library file entry type
 	*/
 	public static void setDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
 		getPersistence().setDDMStructures(pk, ddmStructures);
 	}
 

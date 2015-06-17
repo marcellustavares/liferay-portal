@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.liferay.dynamic.data.mapping.storage.query.Condition;
+import com.liferay.dynamic.data.mapping.storage.query.Junction;
+import com.liferay.dynamic.data.mapping.storage.query.LogicalOperator;
+
 /**
  * @author Marcellus Tavares
  */

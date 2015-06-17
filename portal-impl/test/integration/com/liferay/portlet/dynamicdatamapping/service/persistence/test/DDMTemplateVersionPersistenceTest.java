@@ -14,6 +14,11 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.persistence.test;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateVersion;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateVersionPersistence;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateVersionUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -34,12 +39,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PersistenceTestRule;
 
-import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateVersionException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateVersionPersistence;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateVersionUtil;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +46,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

@@ -16,6 +16,8 @@ package com.liferay.portlet.dynamicdatamapping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLayoutModel;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -28,17 +30,12 @@ import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
-
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayoutModel;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.Serializable;
-
 import java.sql.Types;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -399,12 +396,12 @@ public class DDMStructureLayoutModelImpl extends BaseModelImpl<DDMStructureLayou
 		_definition = definition;
 	}
 
-	public com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout getDDMFormLayout() {
+	public com.liferay.dynamic.data.mapping.model.DDMFormLayout getDDMFormLayout() {
 		return null;
 	}
 
 	public void setDDMFormLayout(
-		com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout ddmFormLayout) {
+		com.liferay.dynamic.data.mapping.model.DDMFormLayout ddmFormLayout) {
 	}
 
 	@Override

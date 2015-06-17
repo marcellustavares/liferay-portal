@@ -16,6 +16,9 @@ package com.liferay.portlet.dynamicdatamapping.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureVersionException;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMStructureVersionPersistence;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -32,15 +35,10 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
-
-import com.liferay.portlet.dynamicdatamapping.NoSuchStructureVersionException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureVersionImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureVersionModelImpl;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureVersionPersistence;
 
 import java.io.Serializable;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +56,7 @@ import java.util.Set;
  *
  * @author Brian Wing Shun Chan
  * @see DDMStructureVersionPersistence
- * @see com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureVersionUtil
+ * @see com.liferay.dynamic.data.mapping.service.persistence.DDMStructureVersionUtil
  * @generated
  */
 @ProviderType

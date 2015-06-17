@@ -16,6 +16,7 @@ package com.liferay.portlet.documentlibrary.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.service.persistence.DDMStructurePersistence;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
@@ -42,17 +43,14 @@ import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.service.persistence.impl.TableMapper;
 import com.liferay.portal.service.persistence.impl.TableMapperFactory;
-
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeImpl;
 import com.liferay.portlet.documentlibrary.model.impl.DLFileEntryTypeModelImpl;
 import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryTypePersistence;
 import com.liferay.portlet.documentlibrary.service.persistence.DLFolderPersistence;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructurePersistence;
 
 import java.io.Serializable;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -4070,7 +4068,7 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 * @return the d d m structures associated with the document library file entry type
 	 */
 	@Override
-	public List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk) {
 		return getDDMStructures(pk, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
@@ -4088,7 +4086,7 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 * @return the range of d d m structures associated with the document library file entry type
 	 */
 	@Override
-	public List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end) {
 		return getDDMStructures(pk, start, end, null);
 	}
@@ -4107,9 +4105,9 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 * @return the ordered range of d d m structures associated with the document library file entry type
 	 */
 	@Override
-	public List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
+	public List<com.liferay.dynamic.data.mapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end,
-		OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
+		OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
 		return dlFileEntryTypeToDDMStructureTableMapper.getRightBaseModels(pk,
 			start, end, orderByComparator);
 	}
@@ -4176,7 +4174,7 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 */
 	@Override
 	public void addDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure) {
 		dlFileEntryTypeToDDMStructureTableMapper.addTableMapping(pk,
 			ddmStructure.getPrimaryKey());
 	}
@@ -4203,8 +4201,8 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 */
 	@Override
 	public void addDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
-		for (com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure : ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
+		for (com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure : ddmStructures) {
 			dlFileEntryTypeToDDMStructureTableMapper.addTableMapping(pk,
 				ddmStructure.getPrimaryKey());
 		}
@@ -4240,7 +4238,7 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 */
 	@Override
 	public void removeDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure) {
 		dlFileEntryTypeToDDMStructureTableMapper.deleteTableMapping(pk,
 			ddmStructure.getPrimaryKey());
 	}
@@ -4267,8 +4265,8 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 */
 	@Override
 	public void removeDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
-		for (com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure : ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
+		for (com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure : ddmStructures) {
 			dlFileEntryTypeToDDMStructureTableMapper.deleteTableMapping(pk,
 				ddmStructure.getPrimaryKey());
 		}
@@ -4311,12 +4309,12 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	 */
 	@Override
 	public void setDDMStructures(long pk,
-		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		List<com.liferay.dynamic.data.mapping.model.DDMStructure> ddmStructures) {
 		try {
 			long[] ddmStructurePKs = new long[ddmStructures.size()];
 
 			for (int i = 0; i < ddmStructures.size(); i++) {
-				com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure =
+				com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 					ddmStructures.get(i);
 
 				ddmStructurePKs[i] = ddmStructure.getPrimaryKey();
@@ -4360,7 +4358,7 @@ public class DLFileEntryTypePersistenceImpl extends BasePersistenceImpl<DLFileEn
 	protected TableMapper<DLFileEntryType, com.liferay.portlet.documentlibrary.model.DLFolder> dlFileEntryTypeToDLFolderTableMapper;
 	@BeanReference(type = DDMStructurePersistence.class)
 	protected DDMStructurePersistence ddmStructurePersistence;
-	protected TableMapper<DLFileEntryType, com.liferay.portlet.dynamicdatamapping.model.DDMStructure> dlFileEntryTypeToDDMStructureTableMapper;
+	protected TableMapper<DLFileEntryType, com.liferay.dynamic.data.mapping.model.DDMStructure> dlFileEntryTypeToDDMStructureTableMapper;
 	private static final String _SQL_SELECT_DLFILEENTRYTYPE = "SELECT dlFileEntryType FROM DLFileEntryType dlFileEntryType";
 	private static final String _SQL_SELECT_DLFILEENTRYTYPE_WHERE_PKS_IN = "SELECT dlFileEntryType FROM DLFileEntryType dlFileEntryType WHERE fileEntryTypeId IN (";
 	private static final String _SQL_SELECT_DLFILEENTRYTYPE_WHERE = "SELECT dlFileEntryType FROM DLFileEntryType dlFileEntryType WHERE ";

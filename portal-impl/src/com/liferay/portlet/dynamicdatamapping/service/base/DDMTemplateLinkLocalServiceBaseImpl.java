@@ -16,6 +16,9 @@ package com.liferay.portlet.dynamicdatamapping.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplateLink;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateLinkPersistence;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -37,12 +40,7 @@ import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.util.PortalUtil;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateLink;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLinkLocalService;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateLinkPersistence;
-
 import java.io.Serializable;
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -56,7 +54,7 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.dynamicdatamapping.service.impl.DDMTemplateLinkLocalServiceImpl
- * @see com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLinkLocalServiceUtil
+ * @see com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalServiceUtil
  * @generated
  */
 @ProviderType
@@ -226,7 +224,7 @@ public abstract class DDMTemplateLinkLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLinkLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMTemplateLink.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 
@@ -237,7 +235,7 @@ public abstract class DDMTemplateLinkLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLinkLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMTemplateLink.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 

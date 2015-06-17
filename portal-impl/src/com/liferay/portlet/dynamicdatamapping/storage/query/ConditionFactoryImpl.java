@@ -14,6 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage.query;
 
+import com.liferay.dynamic.data.mapping.storage.query.ComparisonOperator;
+import com.liferay.dynamic.data.mapping.storage.query.Condition;
+import com.liferay.dynamic.data.mapping.storage.query.ConditionFactory;
+import com.liferay.dynamic.data.mapping.storage.query.Junction;
+import com.liferay.dynamic.data.mapping.storage.query.LogicalOperator;
+
 /**
  * @author Marcellus Tavares
  */

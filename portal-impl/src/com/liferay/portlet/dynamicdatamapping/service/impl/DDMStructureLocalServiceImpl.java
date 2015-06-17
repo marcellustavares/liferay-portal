@@ -14,6 +14,25 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
+import com.liferay.dynamic.data.mapping.exception.InvalidStructureVersionException;
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
+import com.liferay.dynamic.data.mapping.exception.RequiredStructureException;
+import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
+import com.liferay.dynamic.data.mapping.exception.StructureDuplicateElementException;
+import com.liferay.dynamic.data.mapping.exception.StructureDuplicateStructureKeyException;
+import com.liferay.dynamic.data.mapping.exception.StructureNameException;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.util.DDMUtil;
+import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -39,27 +58,8 @@ import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.dynamicdatamapping.InvalidStructureVersionException;
-import com.liferay.portlet.dynamicdatamapping.NoSuchStructureException;
-import com.liferay.portlet.dynamicdatamapping.RequiredStructureException;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
-import com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException;
-import com.liferay.portlet.dynamicdatamapping.StructureDuplicateStructureKeyException;
-import com.liferay.portlet.dynamicdatamapping.StructureNameException;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
-import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMStructureLocalServiceBaseImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMFormTemplateSynchonizer;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -182,7 +182,7 @@ public class DDMStructureLocalServiceImpl
 	 * @param      groupId the primary key of the group
 	 * @param      parentStructureId the primary key of the parent structure
 	 *             (optionally {@link
-	 *             com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants#DEFAULT_PARENT_STRUCTURE_ID})
+	 *             com.liferay.dynamic.data.mapping.model.DDMStructureConstants#DEFAULT_PARENT_STRUCTURE_ID})
 	 * @param      classNameId the primary key of the class name for the
 	 *             structure's related model
 	 * @param      structureKey the unique string identifying the structure
@@ -193,9 +193,9 @@ public class DDMStructureLocalServiceImpl
 	 * @param      definition the structure's XML schema definition
 	 * @param      storageType the structure's storage type. It can be "xml" or
 	 *             "expando". For more information, see {@link
-	 *             com.liferay.portlet.dynamicdatamapping.storage.StorageType}.
+	 *             com.liferay.dynamic.data.mapping.storage.StorageType}.
 	 * @param      type the structure's type. For more information, see {@link
-	 *             com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
+	 *             com.liferay.dynamic.data.mapping.model.DDMStructureConstants}.
 	 * @param      serviceContext the service context to be applied. Can set the
 	 *             UUID, creation date, modification date, guest permissions,
 	 *             and group permissions for the structure.
@@ -324,9 +324,9 @@ public class DDMStructureLocalServiceImpl
 	 * @param      definition the structure's XML schema definition
 	 * @param      storageType the structure's storage type. It can be "xml" or
 	 *             "expando". For more information, see {@link
-	 *             com.liferay.portlet.dynamicdatamapping.storage.StorageType}.
+	 *             com.liferay.dynamic.data.mapping.storage.StorageType}.
 	 * @param      type the structure's type. For more information, see {@link
-	 *             com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
+	 *             com.liferay.dynamic.data.mapping.model.DDMStructureConstants}.
 	 * @param      serviceContext the service context to be applied. Can set the
 	 *             UUID, creation date, modification date, guest permissions and
 	 *             group permissions for the structure.
@@ -1177,9 +1177,9 @@ public class DDMStructureLocalServiceImpl
 	 * @param  description the description keywords
 	 * @param  storageType the structure's storage type. It can be "xml" or
 	 *         "expando". For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.storage.StorageType}.
+	 *         com.liferay.dynamic.data.mapping.storage.StorageType}.
 	 * @param  type the structure's type. For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
+	 *         com.liferay.dynamic.data.mapping.model.DDMStructureConstants}.
 	 * @param  andOperator whether every field must match its keywords, or just
 	 *         one field
 	 * @param  start the lower bound of the range of structures to return
@@ -1231,9 +1231,9 @@ public class DDMStructureLocalServiceImpl
 	 * @param  description the description keywords
 	 * @param  storageType the structure's storage type. It can be "xml" or
 	 *         "expando". For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.storage.StorageType}.
+	 *         com.liferay.dynamic.data.mapping.storage.StorageType}.
 	 * @param  type the structure's type. For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
+	 *         com.liferay.dynamic.data.mapping.model.DDMStructureConstants}.
 	 * @param  andOperator whether every field must match its keywords, or just
 	 *         one field
 	 * @return the number of matching structures

@@ -16,18 +16,16 @@ package com.liferay.portlet.dynamicdatamapping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-
 import java.util.Date;
 
 /**
@@ -236,8 +234,8 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		storageType = objectInput.readUTF();
 		type = objectInput.readInt();
 
-		_ddmForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
-		_fullHierarchyDDMForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
+		_ddmForm = (com.liferay.dynamic.data.mapping.model.DDMForm)objectInput.readObject();
+		_fullHierarchyDDMForm = (com.liferay.dynamic.data.mapping.model.DDMForm)objectInput.readObject();
 	}
 
 	@Override
@@ -343,6 +341,6 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	public String definition;
 	public String storageType;
 	public int type;
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _ddmForm;
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _fullHierarchyDDMForm;
+	public com.liferay.dynamic.data.mapping.model.DDMForm _ddmForm;
+	public com.liferay.dynamic.data.mapping.model.DDMForm _fullHierarchyDDMForm;
 }

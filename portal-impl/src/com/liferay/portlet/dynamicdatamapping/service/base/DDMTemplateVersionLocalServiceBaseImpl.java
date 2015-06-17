@@ -16,6 +16,9 @@ package com.liferay.portlet.dynamicdatamapping.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplateVersion;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalService;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateVersionPersistence;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -37,12 +40,7 @@ import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.util.PortalUtil;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalService;
-import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateVersionPersistence;
-
 import java.io.Serializable;
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -56,7 +54,7 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.liferay.portlet.dynamicdatamapping.service.impl.DDMTemplateVersionLocalServiceImpl
- * @see com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalServiceUtil
+ * @see com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalServiceUtil
  * @generated
  */
 @ProviderType
@@ -227,7 +225,7 @@ public abstract class DDMTemplateVersionLocalServiceBaseImpl
 	public ActionableDynamicQuery getActionableDynamicQuery() {
 		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMTemplateVersion.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 
@@ -238,7 +236,7 @@ public abstract class DDMTemplateVersionLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalServiceUtil.getService());
+		actionableDynamicQuery.setBaseLocalService(com.liferay.dynamic.data.mapping.service.DDMTemplateVersionLocalServiceUtil.getService());
 		actionableDynamicQuery.setClass(DDMTemplateVersion.class);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 
@@ -323,7 +321,7 @@ public abstract class DDMTemplateVersionLocalServiceBaseImpl
 	 *
 	 * @return the d d m template version remote service
 	 */
-	public com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionService getDDMTemplateVersionService() {
+	public com.liferay.dynamic.data.mapping.service.DDMTemplateVersionService getDDMTemplateVersionService() {
 		return ddmTemplateVersionService;
 	}
 
@@ -333,7 +331,7 @@ public abstract class DDMTemplateVersionLocalServiceBaseImpl
 	 * @param ddmTemplateVersionService the d d m template version remote service
 	 */
 	public void setDDMTemplateVersionService(
-		com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionService ddmTemplateVersionService) {
+		com.liferay.dynamic.data.mapping.service.DDMTemplateVersionService ddmTemplateVersionService) {
 		this.ddmTemplateVersionService = ddmTemplateVersionService;
 	}
 
@@ -439,8 +437,8 @@ public abstract class DDMTemplateVersionLocalServiceBaseImpl
 
 	@BeanReference(type = DDMTemplateVersionLocalService.class)
 	protected DDMTemplateVersionLocalService ddmTemplateVersionLocalService;
-	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionService.class)
-	protected com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionService ddmTemplateVersionService;
+	@BeanReference(type = com.liferay.dynamic.data.mapping.service.DDMTemplateVersionService.class)
+	protected com.liferay.dynamic.data.mapping.service.DDMTemplateVersionService ddmTemplateVersionService;
 	@BeanReference(type = DDMTemplateVersionPersistence.class)
 	protected DDMTemplateVersionPersistence ddmTemplateVersionPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
