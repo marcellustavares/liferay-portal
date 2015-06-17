@@ -317,6 +317,7 @@ public interface DDMTemplateModel extends AttachedModel, BaseModel<DDMTemplate>,
 	 *
 	 * @return the template key of this d d m template
 	 */
+	@AutoEscape
 	public String getTemplateKey();
 
 	/**

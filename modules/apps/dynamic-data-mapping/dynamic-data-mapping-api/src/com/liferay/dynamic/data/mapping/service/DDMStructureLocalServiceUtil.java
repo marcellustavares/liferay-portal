@@ -16,8 +16,10 @@ package com.liferay.dynamic.data.mapping.service;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
-import com.liferay.portal.kernel.util.ReferenceRegistry;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Provides the local service utility for DDMStructure. This utility wraps
@@ -38,7 +40,7 @@ public class DDMStructureLocalServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.dynamicdatamapping.service.impl.DDMStructureLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
+	 * Never modify this class directly. Add custom service methods to {@link com.liferay.dynamic.data.mapping.service.impl.DDMStructureLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 
 	/**
@@ -819,7 +821,7 @@ public class DDMStructureLocalServiceUtil {
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext) {
+		com.liferay.portal.kernel.lar.PortletDataContext portletDataContext) {
 		return getService().getExportActionableDynamicQuery(portletDataContext);
 	}
 
@@ -1235,6 +1237,7 @@ public class DDMStructureLocalServiceUtil {
 	*
 	* @param companyId the primary key of the structure's company
 	* @param groupIds the primary keys of the groups
+	* @param classNameId
 	* @param name the name keywords
 	* @param description the description keywords
 	* @param storageType the structure's storage type. It can be "xml" or
@@ -1413,14 +1416,7 @@ public class DDMStructureLocalServiceUtil {
 	}
 
 	public static DDMStructureLocalService getService() {
-		if (_service == null) {
-			_service = (DDMStructureLocalService)PortalBeanLocatorUtil.locate(DDMStructureLocalService.class.getName());
-
-			ReferenceRegistry.registerReference(DDMStructureLocalServiceUtil.class,
-				"_service");
-		}
-
-		return _service;
+		return _serviceTracker.getService();
 	}
 
 	/**
@@ -1430,5 +1426,14 @@ public class DDMStructureLocalServiceUtil {
 	public void setService(DDMStructureLocalService service) {
 	}
 
-	private static DDMStructureLocalService _service;
+	private static ServiceTracker<DDMStructureLocalService, DDMStructureLocalService> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMStructureLocalServiceUtil.class);
+
+		_serviceTracker = new ServiceTracker<DDMStructureLocalService, DDMStructureLocalService>(bundle.getBundleContext(),
+				DDMStructureLocalService.class, null);
+
+		_serviceTracker.open();
+	}
 }
