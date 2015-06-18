@@ -35,8 +35,12 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.upgrade.v7_0_0.util.JournalArticleTable;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONSerializerUtil;
+import com.liferay.portlet.dynamicdatamapping.io.DDMFormLayoutJSONSerializerUtil;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.util.ContentUtil;
 import com.liferay.util.xml.XMLUtil;
@@ -94,7 +98,8 @@ public class UpgradeJournal extends UpgradeBaseJournal {
 
 		long ddmStructureId = addDDMStructure(
 			ddmStructureUUID, increment(), groupId, companyId, name,
-			localizedName, localizedDescription, toJSON(ddmForm), "json");
+			localizedName, localizedDescription,
+			DDMFormJSONSerializerUtil.serialize(ddmForm), "json");
 
 		String ddmTemplateUUID = PortalUUIDUtil.generate();
 
@@ -114,7 +119,8 @@ public class UpgradeJournal extends UpgradeBaseJournal {
 		if (stagingGroupId > 0) {
 			ddmStructureId = addDDMStructure(
 				ddmStructureUUID, increment(), stagingGroupId, companyId, name,
-				localizedName, localizedDescription, toJSON(ddmForm), "json");
+				localizedName, localizedDescription,
+				DDMFormJSONSerializerUtil.serialize(ddmForm), "json");
 
 			addDDMTemplate(
 				ddmTemplateUUID, increment(), stagingGroupId, companyId,
@@ -388,6 +394,175 @@ public class UpgradeJournal extends UpgradeBaseJournal {
 		}
 	}
 
+	protected void addStructureLayout(
+			String uuid_, long structureLayoutId, long groupId, long companyId,
+			long userId, String userName, Timestamp createDate,
+			Timestamp modifiedDate, long structureVersionId, String definition)
+		throws Exception {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("insert into DDMStructureLayout (uuid_, ");
+			sb.append("structureLayoutId, groupId, companyId, userId, ");
+			sb.append("userName, createDate, modifiedDate, ");
+			sb.append("structureVersionId, definition) values (?, ?, ?, ?, ");
+			sb.append("?, ?, ?, ?, ?, ?)");
+
+			String sql = sb.toString();
+
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, uuid_);
+			ps.setLong(2, structureLayoutId);
+			ps.setLong(3, groupId);
+			ps.setLong(4, companyId);
+			ps.setLong(5, userId);
+			ps.setString(6, userName);
+			ps.setTimestamp(7, createDate);
+			ps.setTimestamp(8, modifiedDate);
+			ps.setLong(9, structureVersionId);
+			ps.setString(10, definition);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error(
+				"Unable to upgrade dynamic data mapping structure layout " +
+					"with structure version ID " + structureVersionId);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
+	}
+
+	protected void addStructureVersion(
+			long structureVersionId, long groupId, long companyId, long userId,
+			String userName, Timestamp createDate, long structureId,
+			long parentStructureId, String name, String description,
+			String definition, String storageType, int type, int status,
+			long statusByUserId, String statusByUserName, Timestamp statusDate)
+		throws Exception {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			StringBundler sb = new StringBundler(6);
+
+			sb.append("insert into DDMStructureVersion (structureVersionId, ");
+			sb.append("groupId, companyId, userId, userName, createDate, ");
+			sb.append("structureId, version, parentStructureId, name, ");
+			sb.append("description, definition, storageType, type_, status, ");
+			sb.append("statusByUserId, statusByUserName, statusDate) values ");
+			sb.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+			String sql = sb.toString();
+
+			ps = con.prepareStatement(sql);
+
+			ps.setLong(1, structureVersionId);
+			ps.setLong(2, groupId);
+			ps.setLong(3, companyId);
+			ps.setLong(4, userId);
+			ps.setString(5, userName);
+			ps.setTimestamp(6, createDate);
+			ps.setLong(7, structureId);
+			ps.setString(8, "1.0");
+			ps.setLong(9, parentStructureId);
+			ps.setString(10, name);
+			ps.setString(11, description);
+			ps.setString(12, definition);
+			ps.setString(13, storageType);
+			ps.setInt(14, type);
+			ps.setInt(15, status);
+			ps.setLong(16, statusByUserId);
+			ps.setString(17, statusByUserName);
+			ps.setTimestamp(18, statusDate);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error(
+				"Unable to upgrade dynamic data mapping structure version " +
+					"with structure ID " + structureId);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
+	}
+
+	protected void addTemplateVersion(
+			long templateVersionId, long groupId, long companyId, long userId,
+			String userName, Timestamp createDate, long classNameId,
+			long classPK, long templateId, String name, String description,
+			String language, String script, int status, long statusByUserId,
+			String statusByUserName, Timestamp statusDate)
+		throws Exception {
+
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("insert into DDMTemplateVersion (templateVersionId, ");
+			sb.append("groupId, companyId, userId, userName, createDate, ");
+			sb.append("classNameId, classPK, templateId, version, name, ");
+			sb.append("description, language, script, status, ");
+			sb.append("statusByUserId, statusByUserName, statusDate) values (");
+			sb.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+			String sql = sb.toString();
+
+			ps = con.prepareStatement(sql);
+
+			ps.setLong(1, templateVersionId);
+			ps.setLong(2, groupId);
+			ps.setLong(3, companyId);
+			ps.setLong(4, userId);
+			ps.setString(5, userName);
+			ps.setTimestamp(6, createDate);
+			ps.setLong(7, classNameId);
+			ps.setLong(8, classPK);
+			ps.setLong(9, templateId);
+			ps.setString(10, "1.0");
+			ps.setString(11, name);
+			ps.setString(12, description);
+			ps.setString(13, language);
+			ps.setString(14, script);
+			ps.setInt(15, status);
+			ps.setLong(16, statusByUserId);
+			ps.setString(17, statusByUserName);
+			ps.setTimestamp(18, statusDate);
+
+			ps.executeUpdate();
+		}
+		catch (Exception e) {
+			_log.error(
+				"Unable to upgrade dynamic data mapping template version " +
+					"with template ID " + templateId);
+
+			throw e;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
+	}
+
 	protected String convertStaticContentToDynamic(String content)
 		throws Exception {
 
@@ -500,7 +675,9 @@ public class UpgradeJournal extends UpgradeBaseJournal {
 
 		DDMForm ddmForm = DDMFormJSONDeserializerUtil.deserialize(definition);
 
-		return getDefaultDDMFormLayoutDefinition(ddmForm);
+		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+
+		return DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout);
 	}
 
 	protected long getStagingGroupId(long groupId) throws Exception {
