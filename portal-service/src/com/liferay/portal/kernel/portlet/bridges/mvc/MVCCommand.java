@@ -14,28 +14,8 @@
 
 package com.liferay.portal.kernel.portlet.bridges.mvc;
 
-import javax.portlet.PortletException;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
 /**
- * @author Michael C. Han
+ * @author Brian Wing Shun Chan
  */
-public interface MVCActionCommand extends MVCCommand {
-
-	public static final MVCActionCommand EMPTY = new MVCActionCommand() {
-
-		@Override
-		public boolean processAction(
-			PortletRequest portletRequest, PortletResponse portletResponse) {
-
-			return false;
-		}
-
-	};
-
-	public boolean processAction(
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws PortletException;
-
+public interface MVCCommand {
 }

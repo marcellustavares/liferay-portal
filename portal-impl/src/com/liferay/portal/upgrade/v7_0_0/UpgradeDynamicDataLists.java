@@ -28,8 +28,6 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -232,7 +230,8 @@ public class UpgradeDynamicDataLists extends UpgradeProcess {
 	}
 
 	protected void setUpClassNameIds() {
-		_ddmContentClassNameId = PortalUtil.getClassNameId(DDMContent.class);
+		_ddmContentClassNameId = PortalUtil.getClassNameId(
+			"com.liferay.portlet.dynamicdatamapping.model.DDMContent");
 
 		_expandoStorageAdapterClassNameId = PortalUtil.getClassNameId(
 			"com.liferay.portlet.dynamicdatamapping.storage." +
@@ -335,7 +334,8 @@ public class UpgradeDynamicDataLists extends UpgradeProcess {
 				addDDMContent(
 					PortalUUIDUtil.generate(), ddmContentId, groupId, companyId,
 					userId, userName, createDate, createDate,
-					DDMStorageLink.class.getName(), null, xml);
+				"com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink",
+					null, xml);
 
 				updateRecordVersionDDMStorageId(recordVersionId, ddmContentId);
 
