@@ -17,6 +17,10 @@ package com.liferay.asset.publisher.web.portlet;
 import com.liferay.asset.publisher.web.upgrade.AssetPublisherWebUpgrade;
 import com.liferay.asset.publisher.web.util.AssetPublisherUtil;
 import com.liferay.asset.publisher.web.util.AssetRSSUtil;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.Field;
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -31,10 +35,6 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.storage.Field;
-import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -115,7 +115,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 				String fieldsNamespace = ParamUtil.getString(
 					resourceRequest, "fieldsNamespace");
 
-				fields = DDMUtil.getFields(
+				fields = _ddm.getFields(
 					structureId, fieldsNamespace, serviceContext);
 			}
 
@@ -143,7 +143,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 
 			String type = ddmStructure.getFieldType(fieldName);
 
-			Serializable displayValue = DDMUtil.getDisplayFieldValue(
+			Serializable displayValue = _ddm.getDisplayFieldValue(
 				themeDisplay, fieldValue, type);
 
 			jsonObject.put("displayValue", String.valueOf(displayValue));
@@ -287,5 +287,12 @@ public class AssetPublisherPortlet extends MVCPortlet {
 	protected void setAssetPublisherWebUpgrade(
 		AssetPublisherWebUpgrade assetPublisherWebUpgrade) {
 	}
+
+	@Reference
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	private DDM _ddm;
 
 }

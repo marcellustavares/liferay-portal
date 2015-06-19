@@ -14,14 +14,15 @@
 
 package com.liferay.dynamic.data.lists.lar;
 
+import com.liferay.dynamic.data.lists.indexer.StorageEngine;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.storage.StorageEngineUtil;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Daniel Kocsis
@@ -108,10 +110,10 @@ public class DDLRecordStagedModelDataHandler
 
 		DDLRecordSet recordSet = record.getRecordSet();
 
-		DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
+		DDMFormValues ddmFormValues = _storageEngine.getDDMFormValues(
 			recordVersion.getDDMStorageId());
 
-		Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
+		Fields fields = _ddmFormValuesToFieldsConverter.convert(
 			recordSet.getDDMStructure(), ddmFormValues);
 
 		String fieldsPath = ExportImportPathUtil.getModelPath(
@@ -177,6 +179,18 @@ public class DDLRecordStagedModelDataHandler
 		portletDataContext.importClassedModel(record, importedRecord);
 	}
 
+	@Reference
+	protected void setDDMFormValuesToFieldsConverter(
+		DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter) {
+
+		_ddmFormValuesToFieldsConverter = ddmFormValuesToFieldsConverter;
+	}
+
+	@Reference
+	protected void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
+	}
+
 	@Override
 	protected void validateExport(
 			PortletDataContext portletDataContext, DDLRecord record)
@@ -202,5 +216,8 @@ public class DDLRecordStagedModelDataHandler
 			throw pde;
 		}
 	}
+
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
+	private StorageEngine _storageEngine;
 
 }

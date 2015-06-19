@@ -22,20 +22,22 @@ import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.impl.DDM;
+import com.liferay.dynamic.data.lists.service.impl.StorageEngine;
 import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.util.DDLConstants;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.storage.StorageEngineUtil;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.dynamic.data.mapping.util.DDMImpl;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -76,9 +78,11 @@ import java.util.Map;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -116,10 +120,10 @@ public class DDLImpl implements DDL {
 			recordVersion = record.getLatestRecordVersion();
 		}
 
-		DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
+		DDMFormValues ddmFormValues = _storageEngine.getDDMFormValues(
 			recordVersion.getDDMStorageId());
 
-		Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
+		Fields fields = _ddmFormValuesToFieldsConverter.convert(
 			ddmStructure, ddmFormValues);
 
 		for (Field field : fields) {
@@ -345,7 +349,7 @@ public class DDLImpl implements DDL {
 
 		contextObjects.put("viewMode", viewMode);
 
-		DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
+		DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
 			ddmTemplateId);
 
 		contextObjects.put(
@@ -406,7 +410,7 @@ public class DDLImpl implements DDL {
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
-		Fields fields = DDMUtil.getFields(
+		Fields fields = _ddm.getFields(
 			ddmStructure.getStructureId(), serviceContext);
 
 		if (record != null) {
@@ -481,7 +485,36 @@ public class DDLImpl implements DDL {
 		}
 	}
 
+	@Reference
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference
+	protected void setDDMFormValuesToFieldsConverter(
+		DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter) {
+
+		_ddmFormValuesToFieldsConverter = ddmFormValuesToFieldsConverter;
+	}
+
+	@Reference
+	protected void setDDMTemplateLocalService(
+		DDMTemplateLocalService ddmTemplateLocalService) {
+
+		_ddmTemplateLocalService = ddmTemplateLocalService;
+	}
+
+	@Reference
+	protected void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(DDLImpl.class);
+
+	private DDM _ddm;
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private StorageEngine _storageEngine;
 
 	private static class TransformerHolder {
 

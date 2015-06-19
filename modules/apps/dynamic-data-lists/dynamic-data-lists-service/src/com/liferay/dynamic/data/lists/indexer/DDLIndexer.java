@@ -23,8 +23,8 @@ import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.dynamic.data.mapping.storage.StorageEngineUtil;
-import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -53,6 +53,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -138,10 +139,10 @@ public class DDLIndexer extends BaseIndexer {
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
-		DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
+		DDMFormValues ddmFormValues = _storageEngine.getDDMFormValues(
 			recordVersion.getDDMStorageId());
 
-		DDMIndexerUtil.addAttributes(document, ddmStructure, ddmFormValues);
+		_ddmIndexer.addAttributes(document, ddmStructure, ddmFormValues);
 
 		return document;
 	}
@@ -210,7 +211,7 @@ public class DDLIndexer extends BaseIndexer {
 			DDLRecordVersion recordVersion, Locale locale)
 		throws Exception {
 
-		DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(
+		DDMFormValues ddmFormValues = _storageEngine.getDDMFormValues(
 			recordVersion.getDDMStorageId());
 
 		if (ddmFormValues == null) {
@@ -219,7 +220,7 @@ public class DDLIndexer extends BaseIndexer {
 
 		DDLRecordSet recordSet = recordVersion.getRecordSet();
 
-		return DDMIndexerUtil.extractAttributes(
+		return _ddmIndexer.extractAttributes(
 			recordSet.getDDMStructure(), ddmFormValues, locale);
 	}
 
@@ -303,6 +304,19 @@ public class DDLIndexer extends BaseIndexer {
 			getSearchEngineId(), companyId, documents, isCommitImmediately());
 	}
 
+	@Reference
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	@Reference
+	protected void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(DDLIndexer.class);
+
+	private DDMIndexer _ddmIndexer;
+	private StorageEngine _storageEngine;
 
 }

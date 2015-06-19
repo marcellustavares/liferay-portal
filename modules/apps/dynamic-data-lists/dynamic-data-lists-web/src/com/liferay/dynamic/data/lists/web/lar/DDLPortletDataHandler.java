@@ -23,6 +23,11 @@ import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLPermission;
 import com.liferay.dynamic.data.lists.web.constants.DDLPortletKeys;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.impl.DDMStructureImpl;
+import com.liferay.dynamic.data.mapping.model.impl.DDMTemplateImpl;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -34,11 +39,6 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.dynamic.data.mapping.model.impl.DDMStructureImpl;
-import com.liferay.dynamic.data.mapping.model.impl.DDMTemplateImpl;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.exportimport.lar.BasePortletDataHandler;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
 import com.liferay.portlet.exportimport.lar.PortletDataHandler;
@@ -55,6 +55,7 @@ import java.util.List;
 import javax.portlet.PortletPreferences;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Michael C. Han
@@ -106,7 +107,7 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 		DDLRecordSetLocalServiceUtil.deleteRecordSets(
 			portletDataContext.getScopeGroupId());
 
-		DDMStructureLocalServiceUtil.deleteStructures(
+		_ddmStructureLocalService.deleteStructures(
 			portletDataContext.getScopeGroupId(),
 			PortalUtil.getClassNameId(DDLRecordSet.class));
 
@@ -252,7 +253,7 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 		final List<DDMTemplate> ddmTemplates) {
 
 		ExportActionableDynamicQuery exportActionableDynamicQuery =
-			DDMStructureLocalServiceUtil.getExportActionableDynamicQuery(
+			_ddmStructureLocalService.getExportActionableDynamicQuery(
 				portletDataContext);
 
 		final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
@@ -356,5 +357,14 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 
 		return actionableDynamicQuery;
 	}
+
+	@Reference
+	protected void setDDMStructureLocalService(
+		DDMStructureLocalService ddmStructureLocalService) {
+
+		_ddmStructureLocalService = ddmStructureLocalService;
+	}
+
+	private DDMStructureLocalService _ddmStructureLocalService;
 
 }
