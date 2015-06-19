@@ -45,12 +45,14 @@ import com.liferay.portlet.social.model.SocialActivityInterpreter;
 import com.liferay.portlet.social.model.SocialRequestInterpreter;
 
 import java.io.Closeable;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.portlet.Portlet;
 import javax.portlet.PreferencesValidator;
+
 import javax.servlet.ServletContext;
 
 /**

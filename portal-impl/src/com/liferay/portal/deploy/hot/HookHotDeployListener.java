@@ -138,9 +138,12 @@ import com.liferay.registry.ServiceRegistration;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

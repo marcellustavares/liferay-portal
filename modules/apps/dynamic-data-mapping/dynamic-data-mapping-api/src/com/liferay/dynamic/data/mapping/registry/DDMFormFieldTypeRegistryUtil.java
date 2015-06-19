@@ -48,8 +48,8 @@ public class DDMFormFieldTypeRegistryUtil {
 		return getDDMFormFieldTypeRegistry().getDDMFormFieldTypes();
 	}
 
-	private static final 
-		ServiceTracker<DDMFormFieldTypeRegistry, DDMFormFieldTypeRegistry> 
+	private static final
+		ServiceTracker<DDMFormFieldTypeRegistry, DDMFormFieldTypeRegistry>
 			_serviceTracker;
 
 	static {

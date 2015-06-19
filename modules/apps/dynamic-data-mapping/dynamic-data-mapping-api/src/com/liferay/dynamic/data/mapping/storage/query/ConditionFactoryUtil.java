@@ -14,11 +14,11 @@
 
 package com.liferay.dynamic.data.mapping.storage.query;
 
+import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
-
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
@@ -77,7 +77,7 @@ public class ConditionFactoryUtil {
 		return getConditionFactory().notIn(name, value);
 	}
 
-	private static final 
+	private static final
 		ServiceTracker<ConditionFactory, ConditionFactory> _serviceTracker;
 
 	static {

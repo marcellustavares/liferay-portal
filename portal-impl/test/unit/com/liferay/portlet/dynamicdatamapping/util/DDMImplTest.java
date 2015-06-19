@@ -29,11 +29,13 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
 
 import java.io.Serializable;
+
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 /**

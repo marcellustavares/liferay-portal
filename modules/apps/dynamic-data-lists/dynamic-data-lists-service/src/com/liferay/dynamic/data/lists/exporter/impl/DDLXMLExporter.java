@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 
 import java.io.Serializable;
+
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;

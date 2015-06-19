@@ -14,9 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.storage.query;
 
-import com.liferay.dynamic.data.mapping.storage.query.ComparisonOperator;
-import com.liferay.dynamic.data.mapping.storage.query.FieldCondition;
-
 /**
  * @author Marcellus Tavares
  */

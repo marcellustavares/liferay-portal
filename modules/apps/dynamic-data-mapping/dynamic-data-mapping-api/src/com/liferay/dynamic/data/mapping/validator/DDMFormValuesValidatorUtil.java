@@ -14,13 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.validator;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author Marcellus Tavares
@@ -44,8 +44,8 @@ public class DDMFormValuesValidatorUtil {
 		ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
-	private static final 
-		ServiceTracker<DDMFormValuesValidator, 
+	private static final
+		ServiceTracker<DDMFormValuesValidator,
 			DDMFormValuesValidator> _serviceTracker;
 
 	static {

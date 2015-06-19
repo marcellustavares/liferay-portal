@@ -14,18 +14,14 @@
 
 package com.liferay.dynamic.data.mapping.storage;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
-import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
-import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.service.ServiceContext;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Eduardo Lundgren

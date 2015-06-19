@@ -26,7 +26,9 @@ import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
 
 import java.io.Writer;
+
 import java.net.URL;
+
 import java.util.Locale;
 
 /**

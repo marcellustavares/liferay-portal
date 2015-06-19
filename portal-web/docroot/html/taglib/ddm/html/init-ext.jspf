@@ -14,7 +14,6 @@
  */
 --%>
 
-<%@ page import="com.liferay.portal.util.PortalUtil" %>
 <%@ page import="com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil" %>
 <%@ page import="com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil" %>
 <%@ page import="com.liferay.dynamic.data.mapping.model.DDMForm" %>
@@ -26,6 +25,7 @@
 <%@ page import="com.liferay.dynamic.data.mapping.storage.DDMFormValues" %>
 <%@ page import="com.liferay.dynamic.data.mapping.util.DDMUtil" %>
 <%@ page import="com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil" %>
+<%@ page import="com.liferay.portal.util.PortalUtil" %>
 
 <%
 String randomNamespace = PortalUtil.generateRandomKey(request, "taglib_ddm_init-ext");

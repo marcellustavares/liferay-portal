@@ -150,6 +150,7 @@ import com.liferay.portlet.trash.util.TrashUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -7676,9 +7677,7 @@ public class JournalArticleLocalServiceImpl
 			DDMStructure ddmStructure, long classNameId, Fields fields)
 		throws PortalException {
 
-		for (com.liferay.dynamic.data.mapping.storage.Field field :
-				fields) {
-
+		for (com.liferay.dynamic.data.mapping.storage.Field field : fields) {
 			if (!ddmStructure.hasField(field.getName())) {
 				throw new StorageFieldNameException();
 			}

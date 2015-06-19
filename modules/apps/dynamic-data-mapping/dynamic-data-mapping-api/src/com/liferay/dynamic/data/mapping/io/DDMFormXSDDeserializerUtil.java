@@ -14,13 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author Pablo Carvalho
@@ -41,8 +41,8 @@ public class DDMFormXSDDeserializerUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static final 
-		ServiceTracker<DDMFormXSDDeserializer, DDMFormXSDDeserializer> 
+	private static final
+		ServiceTracker<DDMFormXSDDeserializer, DDMFormXSDDeserializer>
 			_serviceTracker;
 
 	static {

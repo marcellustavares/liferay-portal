@@ -14,12 +14,12 @@
 
 package com.liferay.dynamic.data.mapping.io;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
-
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Marcellus Tavares
@@ -38,18 +38,17 @@ public class DDMFormJSONSerializerUtil {
 		return getDDMFormJSONSerializer().serialize(ddmForm);
 	}
 
-	private static final 
-		ServiceTracker<DDMFormJSONSerializer, DDMFormJSONSerializer> 
+	private static final
+		ServiceTracker<DDMFormJSONSerializer, DDMFormJSONSerializer>
 			_serviceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(
 			DDMFormJSONSerializerUtil.class);
-	
+
 		_serviceTracker = new ServiceTracker<>(
-			bundle.getBundleContext(), DDMFormJSONSerializer.class, 
-			null);
-	
+			bundle.getBundleContext(), DDMFormJSONSerializer.class, null);
+
 		_serviceTracker.open();
 	}
 

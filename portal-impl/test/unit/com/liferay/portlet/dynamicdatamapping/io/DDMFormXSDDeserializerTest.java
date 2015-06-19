@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import org.junit.Before;
+
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 /**

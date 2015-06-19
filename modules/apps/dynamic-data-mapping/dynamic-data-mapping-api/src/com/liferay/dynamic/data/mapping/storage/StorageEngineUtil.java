@@ -14,13 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.storage;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.service.ServiceContext;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author Eduardo Lundgren
@@ -67,7 +67,7 @@ public class StorageEngineUtil {
 		getStorageEngine().update(classPK, ddmFormValues, serviceContext);
 	}
 
-	private static final 
+	private static final
 		ServiceTracker<StorageEngine, StorageEngine> _serviceTracker;
 
 	static {

@@ -47,8 +47,8 @@ public class StorageAdapterRegistryUtil {
 		return getStorageAdapterRegistry().getStorageTypes();
 	}
 
-	private static final 
-		ServiceTracker<StorageAdapterRegistry, StorageAdapterRegistry> 
+	private static final
+		ServiceTracker<StorageAdapterRegistry, StorageAdapterRegistry>
 			_serviceTracker;
 
 	static {

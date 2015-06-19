@@ -14,6 +14,11 @@
 
 package com.liferay.journal.web.portlet;
 
+import com.liferay.dynamic.data.mapping.NoSuchStructureException;
+import com.liferay.dynamic.data.mapping.NoSuchTemplateException;
+import com.liferay.dynamic.data.mapping.StorageFieldRequiredException;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.journal.web.asset.JournalArticleAssetRenderer;
 import com.liferay.journal.web.constants.JournalPortletKeys;
@@ -63,11 +68,6 @@ import com.liferay.portlet.asset.AssetCategoryException;
 import com.liferay.portlet.asset.AssetTagException;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.FileSizeException;
-import com.liferay.dynamic.data.mapping.NoSuchStructureException;
-import com.liferay.dynamic.data.mapping.NoSuchTemplateException;
-import com.liferay.dynamic.data.mapping.StorageFieldRequiredException;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.portlet.journal.ArticleContentException;
 import com.liferay.portlet.journal.ArticleContentSizeException;
 import com.liferay.portlet.journal.ArticleDisplayDateException;

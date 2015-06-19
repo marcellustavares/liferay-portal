@@ -46,18 +46,18 @@ public class DDMFormFieldTypesJSONSerializerUtil {
 			ddmFormFieldTypes);
 	}
 
-	private static final 
-		ServiceTracker<DDMFormFieldTypesJSONSerializer, 
+	private static final
+		ServiceTracker<DDMFormFieldTypesJSONSerializer,
 			DDMFormFieldTypesJSONSerializer> _serviceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(
 			DDMFormFieldTypesJSONSerializerUtil.class);
-	
+
 		_serviceTracker = new ServiceTracker<>(
-			bundle.getBundleContext(), DDMFormFieldTypesJSONSerializer.class, 
+			bundle.getBundleContext(), DDMFormFieldTypesJSONSerializer.class,
 			null);
-	
+
 		_serviceTracker.open();
 	}
 

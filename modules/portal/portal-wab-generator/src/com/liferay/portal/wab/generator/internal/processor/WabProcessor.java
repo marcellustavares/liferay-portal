@@ -16,6 +16,7 @@ package com.liferay.portal.wab.generator.internal.processor;
 
 import aQute.bnd.osgi.Analyzer;
 
+import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
 import com.liferay.portal.events.GlobalStartupAction;
 import com.liferay.portal.kernel.deploy.auto.AutoDeployException;
 import com.liferay.portal.kernel.deploy.auto.AutoDeployListener;
@@ -54,7 +55,6 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.wab.generator.internal.introspection.ClassLoaderSource;
 import com.liferay.portal.wab.generator.internal.introspection.Source;
 import com.liferay.portal.wab.generator.internal.util.AntUtil;
-import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -45,6 +45,7 @@ import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormValuesTestUtil;
 
 import java.io.ByteArrayInputStream;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;

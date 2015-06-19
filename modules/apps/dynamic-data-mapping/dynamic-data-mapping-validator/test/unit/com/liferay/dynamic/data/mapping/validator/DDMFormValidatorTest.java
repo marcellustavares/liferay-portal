@@ -16,10 +16,6 @@ package com.liferay.dynamic.data.mapping.validator;
 
 import static org.mockito.Mockito.when;
 
-import com.liferay.dynamic.data.mapping.validator.internal.DDMFormValidatorImpl;
-import com.liferay.portal.bean.BeanPropertiesImpl;
-import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -27,6 +23,10 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeRegistry;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeRegistryUtil;
+import com.liferay.dynamic.data.mapping.validator.internal.DDMFormValidatorImpl;
+import com.liferay.portal.bean.BeanPropertiesImpl;
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
 
 import java.util.Arrays;

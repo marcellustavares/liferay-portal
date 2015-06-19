@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
