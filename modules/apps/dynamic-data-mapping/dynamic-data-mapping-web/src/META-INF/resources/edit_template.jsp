@@ -380,8 +380,8 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 					title: '<%= UnicodeLanguageUtil.get(request, "structures") %>'
 				},
 				function(event) {
-					if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-new-structure-changes-the-available-input-fields-and-available-templates") %>') && (document.<portlet:namespace />fm.<portlet:namespace />classPK.value != event.ddmstructureid)) {
-						document.<portlet:namespace />fm.<portlet:namespace />classPK.value = event.ddmstructureid;
+					if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-new-structure-changes-the-available-input-fields-and-available-templates") %>') && (document.<portlet:namespace />fm.<portlet:namespace />classPK.value != event.ddmstructureversionid)) {
+						document.<portlet:namespace />fm.<portlet:namespace />classPK.value = event.ddmstructureversionid;
 
 						Liferay.fire('<portlet:namespace />refreshEditor');
 					}
