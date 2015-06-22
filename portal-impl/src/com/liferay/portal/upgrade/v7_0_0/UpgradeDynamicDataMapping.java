@@ -751,7 +751,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				String userName = rs.getString("userName");
 				Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
 				long classNameId = rs.getLong("classNameId");
-				long classPk = rs.getLong("classPk");
+				long classPK = rs.getLong("classPK");
 				long templateId = rs.getLong("templateId");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
@@ -774,15 +774,15 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 					classNameId = checkClassNameId(DDMStructureVersion.class);
 
-					classPk = getLatestDDMStructureVersionId(classPk);
+					classPK = getLatestDDMStructureVersionId(classPK);
 
-					upgradeTemplateClassPk(templateId, classNameId, classPk);
+					upgradeTemplateClassPk(templateId, classNameId, classPK);
 				}
 
 				addTemplateVersion(
 					increment(), groupId, companyId, userId, userName,
-					modifiedDate, classNameId, classPK, templateId, name,
-					modifiedDate, templateId, name, description, language,
+					modifiedDate, classNameId, classPK, templateId, name, 
+					description, language, script, 
 					WorkflowConstants.STATUS_APPROVED, userId, userName,
 					modifiedDate);
 			}
