@@ -48,14 +48,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.LayoutServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.templateparser.Transformer;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -81,6 +79,7 @@ import java.util.Set;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
@@ -495,23 +494,27 @@ public class DDLImpl implements DDL {
 		}
 
 		private static final Transformer _transformer = new Transformer(
-				DynamicDataListServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE, true){
-			
+				DynamicDataListServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
+				true) {
+
 			@Override
-			protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
-				
-				Set<String> langTypes = TemplateManagerUtil.getTemplateManagerNames();
+			protected void loadErrorTemplateIds(
+				String errorTemplatePropertyKey) {
+
+				Set<String> langTypes =
+					TemplateManagerUtil.getTemplateManagerNames();
 
 					for (String langType : langTypes) {
-						String errorTemplateId = DynamicDataListServiceConfigurationUtil.get(
-							errorTemplatePropertyKey, new Filter(langType));
+						String errorTemplateId =
+							DynamicDataListServiceConfigurationUtil.get(
+								errorTemplatePropertyKey, new Filter(langType));
 
 						if (Validator.isNotNull(errorTemplateId)) {
 							_errorTemplateIds.put(langType, errorTemplateId);
 						}
 					}
 			};
-			
+
 		};
 
 	}

@@ -15,10 +15,11 @@
 package com.liferay.dynamic.data.lists.configuration;
 
 /**
- * @author Eduardo Garcia
+ * @author Rafael Praxedes
  */
 public class DynamicDataListServiceConfigurationValues {
 
-	public static final String DYNAMIC_DATA_LISTS_ERROR_TEMPLATE = "dynamic.data.lists.error.template";
+	public static final String DYNAMIC_DATA_LISTS_ERROR_TEMPLATE =
+		"dynamic.data.lists.error.template";
 
 }

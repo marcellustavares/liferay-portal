@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.configuration.Filter;
 
 /**
- * @author Eduardo Garcia
+ * @author Rafael Praxedes
  */
 public class DynamicDataListServiceConfigurationUtil {
 
@@ -37,6 +37,7 @@ public class DynamicDataListServiceConfigurationUtil {
 
 	private static final Configuration _configuration =
 		ConfigurationFactoryUtil.getConfiguration(
-			DynamicDataListServiceConfigurationUtil.class.getClassLoader(), "portlet");
+			DynamicDataListServiceConfigurationUtil.class.getClassLoader(),
+			"portlet");
 
 }
