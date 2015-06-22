@@ -61,17 +61,8 @@ import java.util.Set;
 public class Transformer {
 
 	public Transformer(String errorTemplatePropertyKey, boolean restricted) {
-		Set<String> langTypes = TemplateManagerUtil.getSupportedLanguageTypes(
-			errorTemplatePropertyKey);
-
-		for (String langType : langTypes) {
-			String errorTemplateId = PropsUtil.get(
-				errorTemplatePropertyKey, new Filter(langType));
-
-			if (Validator.isNotNull(errorTemplateId)) {
-				_errorTemplateIds.put(langType, errorTemplateId);
-			}
-		}
+		
+		loadErrorTemplateIds(errorTemplatePropertyKey);
 
 		_restricted = restricted;
 	}
@@ -84,6 +75,12 @@ public class Transformer {
 
 		ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
 
+		loadTransformerListeners(transformerListenerPropertyKey, classLoader);
+	}
+
+	protected void loadTransformerListeners(
+			String transformerListenerPropertyKey, ClassLoader classLoader) {
+		
 		Set<String> transformerListenerClassNames = SetUtil.fromArray(
 			PropsUtil.getArray(transformerListenerPropertyKey));
 
@@ -105,6 +102,20 @@ public class Transformer {
 			}
 			catch (Exception e) {
 				_log.error(e, e);
+			}
+		}
+	}
+	
+	protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
+		Set<String> langTypes = TemplateManagerUtil.getSupportedLanguageTypes(
+			errorTemplatePropertyKey);
+
+		for (String langType : langTypes) {
+			String errorTemplateId = PropsUtil.get(
+				errorTemplatePropertyKey, new Filter(langType));
+
+			if (Validator.isNotNull(errorTemplateId)) {
+				_errorTemplateIds.put(langType, errorTemplateId);
 			}
 		}
 	}
@@ -295,9 +306,9 @@ public class Transformer {
 
 	private static final Log _log = LogFactoryUtil.getLog(Transformer.class);
 
-	private final Map<String, String> _errorTemplateIds = new HashMap<>();
+	protected final Map<String, String> _errorTemplateIds = new HashMap<>();
 	private final boolean _restricted;
-	private final Set<TransformerListener> _transformerListeners =
+	protected final Set<TransformerListener> _transformerListeners =
 		new HashSet<>();
 
 }
