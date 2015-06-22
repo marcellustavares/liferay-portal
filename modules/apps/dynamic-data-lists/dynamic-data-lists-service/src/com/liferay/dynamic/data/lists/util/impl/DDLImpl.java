@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.lists.util.impl;
 
+import com.liferay.dynamic.data.lists.configuration.DynamicDataListServiceConfigurationUtil;
+import com.liferay.dynamic.data.lists.configuration.DynamicDataListServiceConfigurationValues;
 import com.liferay.dynamic.data.lists.exception.NoSuchRecordException;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
@@ -24,6 +26,7 @@ import com.liferay.dynamic.data.lists.service.DDLRecordServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.util.DDLConstants;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -52,6 +55,7 @@ import com.liferay.portal.service.LayoutServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.templateparser.Transformer;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -72,11 +76,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
@@ -491,7 +495,24 @@ public class DDLImpl implements DDL {
 		}
 
 		private static final Transformer _transformer = new Transformer(
-			PropsKeys.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE, true);
+				DynamicDataListServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE, true){
+			
+			@Override
+			protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
+				
+				Set<String> langTypes = TemplateManagerUtil.getTemplateManagerNames();
+
+					for (String langType : langTypes) {
+						String errorTemplateId = DynamicDataListServiceConfigurationUtil.get(
+							errorTemplatePropertyKey, new Filter(langType));
+
+						if (Validator.isNotNull(errorTemplateId)) {
+							_errorTemplateIds.put(langType, errorTemplateId);
+						}
+					}
+			};
+			
+		};
 
 	}
 
