@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.lists.configuration;
 /**
  * @author Rafael Praxedes
  */
-public class DynamicDataListServiceConfigurationValues {
+public class DDLServiceConfigurationValues {
 
 	public static final String DYNAMIC_DATA_LISTS_ERROR_TEMPLATE =
 		"dynamic.data.lists.error.template";

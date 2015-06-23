@@ -14,8 +14,8 @@
 
 package com.liferay.dynamic.data.lists.util.impl;
 
-import com.liferay.dynamic.data.lists.configuration.DynamicDataListServiceConfigurationUtil;
-import com.liferay.dynamic.data.lists.configuration.DynamicDataListServiceConfigurationValues;
+import com.liferay.dynamic.data.lists.configuration.DDLServiceConfigurationUtil;
+import com.liferay.dynamic.data.lists.configuration.DDLServiceConfigurationValues;
 import com.liferay.dynamic.data.lists.exception.NoSuchRecordException;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
@@ -494,7 +494,7 @@ public class DDLImpl implements DDL {
 		}
 
 		private static final Transformer _transformer = new Transformer(
-				DynamicDataListServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
+				DDLServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
 				true) {
 
 			@Override
@@ -506,7 +506,7 @@ public class DDLImpl implements DDL {
 
 					for (String langType : langTypes) {
 						String errorTemplateId =
-							DynamicDataListServiceConfigurationUtil.get(
+							DDLServiceConfigurationUtil.get(
 								errorTemplatePropertyKey, new Filter(langType));
 
 						if (Validator.isNotNull(errorTemplateId)) {
