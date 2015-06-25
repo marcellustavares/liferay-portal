@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.configuration;
+package com.liferay.dynamic.data.lists.web.configuration;
 
 /**
  * @author Rafael Praxedes
  */
-public class DDLServiceConfigurationValues {
+public class DDLWebConfigurationValues {
 
 	public static final String DYNAMIC_DATA_LISTS_ERROR_TEMPLATE =
 		"dynamic.data.lists.error.template";

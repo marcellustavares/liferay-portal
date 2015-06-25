@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.configuration;
+package com.liferay.dynamic.data.lists.web.configuration;
 
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.configuration.Filter;
 /**
  * @author Rafael Praxedes
  */
-public class DDLServiceConfigurationUtil {
+public class DDLWebConfigurationUtil {
 
 	public static String get(String key) {
 		return _configuration.get(key);
@@ -37,6 +37,6 @@ public class DDLServiceConfigurationUtil {
 
 	private static final Configuration _configuration =
 		ConfigurationFactoryUtil.getConfiguration(
-			DDLServiceConfigurationUtil.class.getClassLoader(), "portlet");
+			DDLWebConfigurationUtil.class.getClassLoader(), "portlet");
 
 }
