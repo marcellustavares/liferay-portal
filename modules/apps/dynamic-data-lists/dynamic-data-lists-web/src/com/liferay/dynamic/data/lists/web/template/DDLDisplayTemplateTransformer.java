@@ -36,49 +36,53 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 
 /**
  * @author Marcellus Tavares
  */
 public class DDLDisplayTemplateTransformer {
 
-	public String transform(
-			long ddmTemplateId, DDLRecordSet recordSet,
-			ThemeDisplay themeDisplay, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
+	public DDLDisplayTemplateTransformer(
+		long ddmTemplateId, DDLRecordSet recordSet, ThemeDisplay themeDisplay,
+		RenderRequest renderRequest) {
 
+		_ddmTemplateId = ddmTemplateId;
+		_recordSet = recordSet;
+		_themeDisplay = themeDisplay;
+		_renderRequest = renderRequest;
+	}
+
+	public String transform() throws Exception {
 		Transformer transformer = TransformerHolder.getTransformer();
 
 		Map<String, Object> contextObjects = new HashMap<>();
 
 		contextObjects.put(
 			DDLConstants.RESERVED_DDM_STRUCTURE_ID,
-			recordSet.getDDMStructureId());
+			_recordSet.getDDMStructureId());
 		contextObjects.put(
-			DDLConstants.RESERVED_DDM_TEMPLATE_ID, ddmTemplateId);
+			DDLConstants.RESERVED_DDM_TEMPLATE_ID, _ddmTemplateId);
 		contextObjects.put(
 			DDLConstants.RESERVED_RECORD_SET_DESCRIPTION,
-			recordSet.getDescription(themeDisplay.getLocale()));
+			_recordSet.getDescription(_themeDisplay.getLocale()));
 		contextObjects.put(
-			DDLConstants.RESERVED_RECORD_SET_ID, recordSet.getRecordSetId());
+			DDLConstants.RESERVED_RECORD_SET_ID, _recordSet.getRecordSetId());
 		contextObjects.put(
 			DDLConstants.RESERVED_RECORD_SET_NAME,
-			recordSet.getName(themeDisplay.getLocale()));
-		contextObjects.put(TemplateConstants.TEMPLATE_ID, ddmTemplateId);
+			_recordSet.getName(_themeDisplay.getLocale()));
+		contextObjects.put(TemplateConstants.TEMPLATE_ID, _ddmTemplateId);
 
 		String viewMode = Constants.VIEW;
 
-		if (renderRequest != null) {
+		if (_renderRequest != null) {
 			viewMode = ParamUtil.getString(
-				renderRequest, "viewMode", Constants.VIEW);
+				_renderRequest, "viewMode", Constants.VIEW);
 		}
 
 		contextObjects.put("viewMode", viewMode);
 
 		DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
-			ddmTemplateId);
+			_ddmTemplateId);
 
 		contextObjects.put(
 			TemplateConstants.CLASS_NAME_ID, ddmTemplate.getClassNameId());
@@ -94,9 +98,14 @@ public class DDLDisplayTemplateTransformer {
 			contextObjects, templateHandler.getCustomContextObjects());
 
 		return transformer.transform(
-			themeDisplay, contextObjects, ddmTemplate.getScript(),
+			_themeDisplay, contextObjects, ddmTemplate.getScript(),
 			ddmTemplate.getLanguage(), new UnsyncStringWriter());
 	}
+
+	private final long _ddmTemplateId;
+	private final DDLRecordSet _recordSet;
+	private final RenderRequest _renderRequest;
+	private final ThemeDisplay _themeDisplay;
 
 	private static class TransformerHolder {
 
