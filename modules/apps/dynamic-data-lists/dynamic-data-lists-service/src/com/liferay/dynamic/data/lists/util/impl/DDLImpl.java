@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.lists.util.impl;
 
+import com.liferay.dynamic.data.lists.configuration.DDLServiceConfigurationUtil;
+import com.liferay.dynamic.data.lists.configuration.DDLServiceConfigurationValues;
 import com.liferay.dynamic.data.lists.exception.NoSuchRecordException;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
@@ -24,6 +26,7 @@ import com.liferay.dynamic.data.lists.service.DDLRecordServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.util.DDLConstants;
+import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -45,7 +48,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.LayoutServiceUtil;
@@ -72,6 +74,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -491,7 +494,28 @@ public class DDLImpl implements DDL {
 		}
 
 		private static final Transformer _transformer = new Transformer(
-			PropsKeys.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE, true);
+				DDLServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
+				true) {
+
+			@Override
+			protected void loadErrorTemplateIds(
+				String errorTemplatePropertyKey) {
+
+				Set<String> langTypes =
+					TemplateManagerUtil.getTemplateManagerNames();
+
+					for (String langType : langTypes) {
+						String errorTemplateId =
+							DDLServiceConfigurationUtil.get(
+								errorTemplatePropertyKey, new Filter(langType));
+
+						if (Validator.isNotNull(errorTemplateId)) {
+							_errorTemplateIds.put(langType, errorTemplateId);
+						}
+					}
+			};
+
+		};
 
 	}
 
