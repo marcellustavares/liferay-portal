@@ -62,6 +62,7 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.autopropagated-parameters=refererPortletName",
 		"com.liferay.portlet.autopropagated-parameters=refererWebDAVToken",
+		"com.liferay.portlet.autopropagated-parameters=scopeStructureType",
 		"com.liferay.portlet.autopropagated-parameters=scopeTitle",
 		"com.liferay.portlet.autopropagated-parameters=showAncestorScopes",
 		"com.liferay.portlet.autopropagated-parameters=showBackURL",

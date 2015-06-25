@@ -171,8 +171,7 @@ public class FolderStagedModelDataHandlerTest
 
 		return DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 			TestPropsValues.getUserId(), groupId, RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), new long[] {ddmStructureId},
-			serviceContext);
+			RandomTestUtil.randomString(), ddmStructureId, serviceContext);
 	}
 
 	@Override

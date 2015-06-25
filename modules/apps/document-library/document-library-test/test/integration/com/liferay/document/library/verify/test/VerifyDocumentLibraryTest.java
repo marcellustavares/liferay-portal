@@ -15,6 +15,7 @@
 package com.liferay.document.library.verify.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.locale.test.LocaleTestUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -38,6 +39,7 @@ import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.verify.VerifyDocumentLibrary;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.test.BaseVerifyProcessTestCase;
@@ -56,10 +58,13 @@ import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
+import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormValuesTestUtil;
 
@@ -340,6 +345,8 @@ public class VerifyDocumentLibraryTest extends BaseVerifyProcessTestCase {
 	}
 
 	protected DLFileEntry addDLFileEntry() throws Exception {
+		String ddmStructureKey = RandomTestUtil.randomString();
+
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
 				_group, TestPropsValues.getUserId());
@@ -352,21 +359,27 @@ public class VerifyDocumentLibraryTest extends BaseVerifyProcessTestCase {
 		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
 			new String(bytes));
 
-		serviceContext.setAttribute("ddmForm", ddmForm);
+		DDMStructureLocalServiceUtil.addStructure(
+			TestPropsValues.getUserId(), _group.getGroupId(),
+			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			PortalUtil.getClassNameId(DLFileEntryMetadata.class),
+			ddmStructureKey,
+			LocaleTestUtil.getDefaultLocaleMap(StringPool.BLANK),
+			LocaleTestUtil.getDefaultLocaleMap(StringPool.BLANK), ddmForm,
+			DDMUtil.getDefaultDDMFormLayout(ddmForm),
+			StorageType.JSON.toString(), DDMStructureConstants.TYPE_DEFAULT,
+			serviceContext);
 
 		User user = TestPropsValues.getUser();
 
 		serviceContext.setLanguageId(LocaleUtil.toLanguageId(user.getLocale()));
 
 		DLFileEntryType dlFileEntryType =
-			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
-				TestPropsValues.getUserId(), _group.getGroupId(),
-				RandomTestUtil.randomString(), StringPool.BLANK, new long[0],
-				serviceContext);
+			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
+				_group.getGroupId(), ddmStructureKey);
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
-
-		DDMStructure ddmStructure = ddmStructures.get(0);
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			dlFileEntryType.getDDMStructureId());
 
 		Map<String, DDMFormValues> ddmFormValuesMap = getDDMFormValuesMap(
 			ddmStructure.getStructureKey(), user.getLocale());

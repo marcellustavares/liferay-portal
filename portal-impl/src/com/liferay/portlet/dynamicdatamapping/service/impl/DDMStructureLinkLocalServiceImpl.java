@@ -50,6 +50,18 @@ public class DDMStructureLinkLocalServiceImpl
 	}
 
 	@Override
+	public void deleteClassNameStructureLinks(
+		long classNameId, long structureId) {
+
+		List<DDMStructureLink> structureLinks =
+			ddmStructureLinkPersistence.findByC_S(classNameId, structureId);
+
+		for (DDMStructureLink ddmStructureLink : structureLinks) {
+			deleteStructureLink(ddmStructureLink);
+		}
+	}
+
+	@Override
 	public void deleteStructureLink(DDMStructureLink structureLink) {
 		ddmStructureLinkPersistence.remove(structureLink);
 	}
@@ -94,6 +106,13 @@ public class DDMStructureLinkLocalServiceImpl
 		for (DDMStructureLink structureLink : structureLinks) {
 			deleteStructureLink(structureLink);
 		}
+	}
+
+	@Override
+	public List<DDMStructureLink> getClassNameStructureLinks(
+		long classNameId, long structureId) {
+
+		return ddmStructureLinkPersistence.findByC_S(classNameId, structureId);
 	}
 
 	@Override

@@ -14,6 +14,7 @@
 
 package com.liferay.document.library.events;
 
+import com.liferay.document.library.listeners.DDMStructureModelListener;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.events.SimpleAction;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -35,10 +36,8 @@ import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalService;
 import com.liferay.portlet.documentlibrary.util.RawMetadataProcessor;
 import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializer;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
@@ -104,28 +103,27 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 		}
 	}
 
-	protected void addDLFileEntryType(
-			long userId, long groupId, String languageKey,
-			String dlFileEntryTypeKey, List<String> ddmStructureNames,
-			ServiceContext serviceContext)
+	protected void addDLFileEntryTypeDDMStructure(
+			long userId, long groupId, String ddmStructureName,
+			String ddmStructureKey, List<String> ddmStructureFragmentNames)
 		throws Exception {
 
-		List<Long> ddmStructureIds = new ArrayList<>();
+		List<Long> ddmStructureFragmentIds = new ArrayList<>();
 
-		for (String ddmStructureName : ddmStructureNames) {
-			String ddmStructureKey = ddmStructureName;
+		for (String ddmStructureFragmentName : ddmStructureFragmentNames) {
+			String ddmStructureFragmentKey = ddmStructureFragmentName;
 
-			DDMStructure ddmStructure =
+			DDMStructure ddmStructureFragment =
 				_ddmStructureLocalService.fetchStructure(
 					groupId,
 					PortalUtil.getClassNameId(DLFileEntryMetadata.class),
-					ddmStructureKey);
+					ddmStructureFragmentKey);
 
-			if (ddmStructure == null) {
+			if (ddmStructureFragment == null) {
 				continue;
 			}
 
-			ddmStructureIds.add(ddmStructure.getStructureId());
+			ddmStructureFragmentIds.add(ddmStructureFragment.getStructureId());
 		}
 
 		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
@@ -136,72 +134,77 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 					getClassLoader(),
 				"com/liferay/document/library/events/dependencies" +
 					"/document-library-structures.xml",
-				languageKey, locale);
+				ddmStructureName, locale);
+
+		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
+			groupId, PortalUtil.getClassNameId(DLFileEntryMetadata.class),
+			ddmStructureKey);
+
+		if (ddmStructure != null) {
+			return;
+		}
+
+		Map<Locale, String> localizationMap = getLocalizationMap(
+			ddmStructureName);
 
 		DDMForm ddmForm = _ddmFormXSDDeserializer.deserialize(definition);
 
-		serviceContext.setAttribute("ddmForm", ddmForm);
+		ServiceContext serviceContext = createServiceContext();
 
-		try {
-			_dlFileEntryTypeLocalService.getFileEntryType(
-				groupId, dlFileEntryTypeKey);
-		}
-		catch (NoSuchFileEntryTypeException nsfete) {
-			Map<Locale, String> localizationMap = getLocalizationMap(
-				languageKey);
+		serviceContext.setAttribute(
+			"structureFragmentIds",
+			ArrayUtil.toLongArray(ddmStructureFragmentIds));
 
-			_dlFileEntryTypeLocalService.addFileEntryType(
-				userId, groupId, dlFileEntryTypeKey, localizationMap,
-				localizationMap,
-				ArrayUtil.toArray(
-					ddmStructureIds.toArray(new Long[ddmStructureIds.size()])),
-				serviceContext);
-		}
+		_ddmStructureLocalService.addStructure(
+			userId, groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			PortalUtil.getClassNameId(DLFileEntryMetadata.class),
+			ddmStructureKey, localizationMap, localizationMap, ddmForm,
+			_ddm.getDefaultDDMFormLayout(ddmForm), StorageType.JSON.toString(),
+			DDMStructureConstants.TYPE_DEFAULT, serviceContext);
 	}
 
-	protected void addDLFileEntryTypes(
-			long userId, long groupId, ServiceContext serviceContext)
+	protected void addDLFileEntryTypesDDMStructures(long userId, long groupId)
 		throws Exception {
 
-		List<String> ddmStructureNames = new ArrayList<>();
+		List<String> ddmStructureFragmentNames = new ArrayList<>();
 
-		addDLFileEntryType(
+		addDLFileEntryTypeDDMStructure(
 			userId, groupId, DLFileEntryTypeConstants.NAME_CONTRACT,
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_KEY_CONTRACT,
-			ddmStructureNames, serviceContext);
+			ddmStructureFragmentNames);
 
-		ddmStructureNames.clear();
+		ddmStructureFragmentNames.clear();
 
-		ddmStructureNames.add("Marketing Campaign Theme Metadata");
+		ddmStructureFragmentNames.add("Marketing Campaign Theme Metadata");
 
-		addDLFileEntryType(
+		addDLFileEntryTypeDDMStructure(
 			userId, groupId, DLFileEntryTypeConstants.NAME_MARKETING_BANNER,
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_KEY_MARKETING_BANNER,
-			ddmStructureNames, serviceContext);
+			ddmStructureFragmentNames);
 
-		ddmStructureNames.clear();
+		ddmStructureFragmentNames.clear();
 
-		ddmStructureNames.add("Learning Module Metadata");
+		ddmStructureFragmentNames.add("Learning Module Metadata");
 
-		addDLFileEntryType(
+		addDLFileEntryTypeDDMStructure(
 			userId, groupId, DLFileEntryTypeConstants.NAME_ONLINE_TRAINING,
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_KEY_ONLINE_TRAINING,
-			ddmStructureNames, serviceContext);
+			ddmStructureFragmentNames);
 
-		ddmStructureNames.clear();
+		ddmStructureFragmentNames.clear();
 
-		ddmStructureNames.add("Meeting Metadata");
+		ddmStructureFragmentNames.add("Meeting Metadata");
 
-		addDLFileEntryType(
+		addDLFileEntryTypeDDMStructure(
 			userId, groupId, DLFileEntryTypeConstants.NAME_SALES_PRESENTATION,
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_KEY_SALES_PRESENTATION,
-			ddmStructureNames, serviceContext);
+			ddmStructureFragmentNames);
 
 		if (UpgradeProcessUtil.isCreateIGImageDocumentType()) {
-			addDLFileEntryType(
+			addDLFileEntryTypeDDMStructure(
 				userId, groupId, DLFileEntryTypeConstants.NAME_IG_IMAGE,
 				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_KEY_IG_IMAGE,
-				ddmStructureNames, serviceContext);
+				ddmStructureFragmentNames);
 		}
 	}
 
@@ -335,6 +338,15 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 		return sb.toString();
 	}
 
+	protected ServiceContext createServiceContext() {
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGuestPermissions(true);
+		serviceContext.setAddGroupPermissions(true);
+
+		return serviceContext;
+	}
+
 	protected void doRun(long companyId) throws Exception {
 		ServiceContext serviceContext = new ServiceContext();
 
@@ -347,6 +359,8 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 
 		long defaultUserId = _userLocalService.getDefaultUserId(companyId);
 
+		serviceContext.setAttribute(
+			"type", DDMStructureConstants.TYPE_FRAGMENT);
 		serviceContext.setUserId(defaultUserId);
 
 		DefaultDDMStructureUtil.addDDMStructures(
@@ -356,7 +370,10 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 			"com/liferay/document/library/events/dependencies" +
 				"/document-library-structures.xml",
 			serviceContext);
-		addDLFileEntryTypes(defaultUserId, group.getGroupId(), serviceContext);
+
+		serviceContext.removeAttribute("type");
+
+		addDLFileEntryTypesDDMStructures(defaultUserId, group.getGroupId());
 		addDLRawMetadataStructures(
 			defaultUserId, group.getGroupId(), serviceContext);
 	}
@@ -408,10 +425,8 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 	}
 
 	@Reference
-	protected void setDLFileEntryTypeLocalService(
-		DLFileEntryTypeLocalService dlFileEntryTypeLocalService) {
-
-		_dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
+	protected void setDDMStructureModelListener(
+		DDMStructureModelListener ddmStructureModelListener) {
 	}
 
 	@Reference
@@ -432,7 +447,6 @@ public class AddDefaultDocumentLibraryStructuresAction extends SimpleAction {
 	private DDM _ddm;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructureLocalService _ddmStructureLocalService;
-	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
 	private GroupLocalService _groupLocalService;
 	private UserLocalService _userLocalService;
 

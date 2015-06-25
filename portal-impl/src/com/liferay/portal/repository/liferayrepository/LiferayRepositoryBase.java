@@ -39,6 +39,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionService;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFolderService;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
@@ -150,7 +151,8 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		DLFileEntryType fileEntryType =
 			DLFileEntryTypeLocalServiceUtil.getFileEntryType(fileEntryTypeId);
 
-		List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
+		List<DDMStructure> ddmStructures =
+			DLUtil.getDLFileEntryTypeDDMStructures(fileEntryType);
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			String namespace = String.valueOf(ddmStructure.getStructureId());

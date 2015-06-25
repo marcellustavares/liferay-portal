@@ -17,10 +17,14 @@ package com.liferay.portlet.documentlibrary.display.context;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
+import java.util.List;
+
 /**
  * @author Iván Zaera
  */
 public interface DLEditFileEntryDisplayContext extends DLDisplayContext {
+
+	public List<DDMStructure> getDDMStructures() throws PortalException;
 
 	public DLFilePicker getDLFilePicker(String onFilePickCallback)
 		throws PortalException;

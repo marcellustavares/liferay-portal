@@ -201,6 +201,10 @@
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />
 		</finder>
+		<finder name="C_S" return-type="Collection">
+			<finder-column name="classNameId" />
+			<finder-column name="structureId" />
+		</finder>
 		<finder name="C_C_S" return-type="DDMStructureLink" unique="true">
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />

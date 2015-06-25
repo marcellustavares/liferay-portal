@@ -1512,6 +1512,7 @@
 		<field name="description" type="String" localized="true">
 			<hint-collection name="TEXTAREA" />
 		</field>
+		<field name="DDMStructureId" type="long" />
 	</model>
 	<model name="com.liferay.portlet.documentlibrary.model.DLFileRank">
 		<field name="fileRankId" type="long" />

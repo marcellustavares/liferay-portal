@@ -74,7 +74,7 @@ public class DLFileEntryTypeServiceSoap {
 		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
-		java.lang.String[] descriptionMapValues, long[] ddmStructureIds,
+		java.lang.String[] descriptionMapValues, long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -85,7 +85,7 @@ public class DLFileEntryTypeServiceSoap {
 
 			com.liferay.portlet.documentlibrary.model.DLFileEntryType returnValue =
 				DLFileEntryTypeServiceUtil.addFileEntryType(groupId,
-					fileEntryTypeKey, nameMap, descriptionMap, ddmStructureIds,
+					fileEntryTypeKey, nameMap, descriptionMap, ddmStructureId,
 					serviceContext);
 
 			return com.liferay.portlet.documentlibrary.model.DLFileEntryTypeSoap.toSoapModel(returnValue);
@@ -99,13 +99,13 @@ public class DLFileEntryTypeServiceSoap {
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryTypeSoap addFileEntryType(
 		long groupId, java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.portlet.documentlibrary.model.DLFileEntryType returnValue =
 				DLFileEntryTypeServiceUtil.addFileEntryType(groupId, name,
-					description, ddmStructureIds, serviceContext);
+					description, ddmStructureId, serviceContext);
 
 			return com.liferay.portlet.documentlibrary.model.DLFileEntryTypeSoap.toSoapModel(returnValue);
 		}
@@ -245,7 +245,7 @@ public class DLFileEntryTypeServiceSoap {
 		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
-		java.lang.String[] descriptionMapValues, long[] ddmStructureIds,
+		java.lang.String[] descriptionMapValues,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -255,7 +255,7 @@ public class DLFileEntryTypeServiceSoap {
 					descriptionMapValues);
 
 			DLFileEntryTypeServiceUtil.updateFileEntryType(fileEntryTypeId,
-				nameMap, descriptionMap, ddmStructureIds, serviceContext);
+				nameMap, descriptionMap, serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -266,12 +266,11 @@ public class DLFileEntryTypeServiceSoap {
 
 	public static void updateFileEntryType(long fileEntryTypeId,
 		java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			DLFileEntryTypeServiceUtil.updateFileEntryType(fileEntryTypeId,
-				name, description, ddmStructureIds, serviceContext);
+				name, description, serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

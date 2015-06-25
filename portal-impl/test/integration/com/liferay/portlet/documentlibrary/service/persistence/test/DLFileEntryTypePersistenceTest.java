@@ -137,6 +137,8 @@ public class DLFileEntryTypePersistenceTest {
 
 		newDLFileEntryType.setDescription(RandomTestUtil.randomString());
 
+		newDLFileEntryType.setDDMStructureId(RandomTestUtil.nextLong());
+
 		_dlFileEntryTypes.add(_persistence.update(newDLFileEntryType));
 
 		DLFileEntryType existingDLFileEntryType = _persistence.findByPrimaryKey(newDLFileEntryType.getPrimaryKey());
@@ -165,6 +167,8 @@ public class DLFileEntryTypePersistenceTest {
 			newDLFileEntryType.getName());
 		Assert.assertEquals(existingDLFileEntryType.getDescription(),
 			newDLFileEntryType.getDescription());
+		Assert.assertEquals(existingDLFileEntryType.getDDMStructureId(),
+			newDLFileEntryType.getDDMStructureId());
 	}
 
 	@Test
@@ -248,7 +252,7 @@ public class DLFileEntryTypePersistenceTest {
 			true, "fileEntryTypeId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "fileEntryTypeKey", true, "name", true,
-			"description", true);
+			"description", true, "DDMStructureId", true);
 	}
 
 	@Test
@@ -495,6 +499,8 @@ public class DLFileEntryTypePersistenceTest {
 		dlFileEntryType.setName(RandomTestUtil.randomString());
 
 		dlFileEntryType.setDescription(RandomTestUtil.randomString());
+
+		dlFileEntryType.setDDMStructureId(RandomTestUtil.nextLong());
 
 		_dlFileEntryTypes.add(_persistence.update(dlFileEntryType));
 

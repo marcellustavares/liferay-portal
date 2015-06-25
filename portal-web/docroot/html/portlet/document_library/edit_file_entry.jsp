@@ -375,46 +375,44 @@ else {
 				<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 
 				<%
-				if (fileEntryTypeId > 0) {
-					try {
-						List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+				try {
+					List<DDMStructure> ddmStructures = dlEditFileEntryDisplayContext.getDDMStructures();
 
-						for (DDMStructure ddmStructure : ddmStructures) {
-								Fields fields = null;
+					for (DDMStructure ddmStructure : ddmStructures) {
+							Fields fields = null;
 
-								try {
-									DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+							try {
+								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
-									DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
+								DDMFormValues ddmFormValues = StorageEngineUtil.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
 
-									fields = DDMFormValuesToFieldsConverterUtil.convert(ddmStructure, ddmFormValues);
-								}
-								catch (Exception e) {
-								}
+								fields = DDMFormValuesToFieldsConverterUtil.convert(ddmStructure, ddmFormValues);
+							}
+							catch (Exception e) {
+							}
 				%>
 
-								<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
-									<div class="hide">
-								</c:if>
+							<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
+								<div class="hide">
+							</c:if>
 
-								<liferay-ddm:html
-									classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
-									classPK="<%= ddmStructure.getPrimaryKey() %>"
-									fields="<%= fields %>"
-									fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
-									requestedLocale="<%= locale %>"
-								/>
+							<liferay-ddm:html
+								classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
+								classPK="<%= ddmStructure.getPrimaryKey() %>"
+								fields="<%= fields %>"
+								fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
+								requestedLocale="<%= locale %>"
+							/>
 
-								<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
-									</div>
-								</c:if>
+							<c:if test="<%= !dlEditFileEntryDisplayContext.isDDMStructureVisible(ddmStructure) %>">
+								</div>
+							</c:if>
 
 				<%
-						}
 					}
-					catch (Exception e) {
-						_log.error(e, e);
-					}
+				}
+				catch (Exception e) {
+					_log.error(e, e);
 				}
 				%>
 

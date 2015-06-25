@@ -545,6 +545,8 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	 *         structure is related to
 	 * @param  keywords the keywords (space separated), which may occur in the
 	 *         structure's name or description (optionally <code>null</code>)
+	 * @param  type the structure's type. For more information, see {@link
+	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	 * @param  start the lower bound of the range of structures to return
 	 * @param  end the upper bound of the range of structures to return (not
 	 *         inclusive)
@@ -555,10 +557,11 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	@Override
 	public List<DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId, String keywords,
-		int start, int end, OrderByComparator<DDMStructure> orderByComparator) {
+		int type, int start, int end,
+		OrderByComparator<DDMStructure> orderByComparator) {
 
 		return ddmStructureFinder.filterFindByKeywords(
-			companyId, groupIds, classNameId, keywords, start, end,
+			companyId, groupIds, classNameId, keywords, type, start, end,
 			orderByComparator);
 	}
 
@@ -617,14 +620,17 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	 *         structure is related to
 	 * @param  keywords the keywords (space separated), which may occur in the
 	 *         structure's name or description (optionally <code>null</code>)
+	 * @param  type the structure's type. For more information, see {@link
+	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	 * @return the number of matching structures
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long[] groupIds, long classNameId, String keywords) {
+		long companyId, long[] groupIds, long classNameId, String keywords,
+		int type) {
 
 		return ddmStructureFinder.filterCountByKeywords(
-			companyId, groupIds, classNameId, keywords);
+			companyId, groupIds, classNameId, keywords, type);
 	}
 
 	/**

@@ -30,6 +30,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import java.util.Set;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -89,6 +89,10 @@ public interface DL {
 			RenderResponse renderResponse)
 		throws Exception;
 
+	public List<DDMStructure> getDLFileEntryTypeDDMStructures(
+			DLFileEntryType dlFileEntryType) 
+		throws PortalException;
+	
 	public int compareVersions(String version1, String version2);
 
 	public String getAbsolutePath(PortletRequest portletRequest, long folderId)

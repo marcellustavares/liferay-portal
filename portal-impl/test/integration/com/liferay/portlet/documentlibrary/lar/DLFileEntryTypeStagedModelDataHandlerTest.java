@@ -87,7 +87,7 @@ public class DLFileEntryTypeStagedModelDataHandlerTest
 		return DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 			TestPropsValues.getUserId(), group.getGroupId(),
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-			new long[] {ddmStructure.getStructureId()}, serviceContext);
+			ddmStructure.getStructureId(), serviceContext);
 	}
 
 	@Override

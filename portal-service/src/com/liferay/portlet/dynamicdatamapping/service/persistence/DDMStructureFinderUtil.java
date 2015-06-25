@@ -26,9 +26,10 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
 @ProviderType
 public class DDMStructureFinderUtil {
 	public static int countByKeywords(long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords) {
+		long classNameId, java.lang.String keywords, int type) {
 		return getFinder()
-				   .countByKeywords(companyId, groupIds, classNameId, keywords);
+				   .countByKeywords(companyId, groupIds, classNameId, keywords,
+			type);
 	}
 
 	public static int countByC_G_C_N_D_S_T(long companyId, long[] groupIds,
@@ -49,10 +50,10 @@ public class DDMStructureFinderUtil {
 	}
 
 	public static int filterCountByKeywords(long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords) {
+		long classNameId, java.lang.String keywords, int type) {
 		return getFinder()
 				   .filterCountByKeywords(companyId, groupIds, classNameId,
-			keywords);
+			keywords, type);
 	}
 
 	public static int filterCountByC_G_C_N_D_S_T(long companyId,
@@ -75,11 +76,11 @@ public class DDMStructureFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> filterFindByKeywords(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
 		return getFinder()
 				   .filterFindByKeywords(companyId, groupIds, classNameId,
-			keywords, start, end, orderByComparator);
+			keywords, type, start, end, orderByComparator);
 	}
 
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> filterFindByC_G_C_N_D_S_T(
@@ -108,11 +109,11 @@ public class DDMStructureFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> findByKeywords(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
 		return getFinder()
 				   .findByKeywords(companyId, groupIds, classNameId, keywords,
-			start, end, orderByComparator);
+			type, start, end, orderByComparator);
 	}
 
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> findByC_G_C_N_D_S_T(
