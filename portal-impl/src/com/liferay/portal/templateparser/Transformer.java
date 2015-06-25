@@ -61,19 +61,20 @@ import java.util.Set;
 public class Transformer {
 
 	public Transformer(String errorTemplatePropertyKey, boolean restricted) {
-		loadErrorTemplateIds(errorTemplatePropertyKey);
-
 		_restricted = restricted;
+
+		setErrorTemplateIds(errorTemplatePropertyKey);
 	}
 
-	public Transformer(String transformerListenerPropertyKey,
-			String errorTemplatePropertyKey, boolean restricted) {
+	public Transformer(
+		String transformerListenerPropertyKey, String errorTemplatePropertyKey,
+		boolean restricted) {
 
 		this(errorTemplatePropertyKey, restricted);
 
 		ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
 
-		loadTransformerListeners(transformerListenerPropertyKey, classLoader);
+		setTransformerListeners(transformerListenerPropertyKey, classLoader);
 	}
 
 	public String transform(
@@ -168,6 +169,12 @@ public class Transformer {
 		return UnknownDevice.getInstance();
 	}
 
+	protected String getErrorTemplateId(
+		String errorTemplatePropertyKey, String langType) {
+
+		return PropsUtil.get(errorTemplatePropertyKey, new Filter(langType));
+	}
+
 	protected TemplateResource getErrorTemplateResource(String langType) {
 		try {
 			Class<?> clazz = getClass();
@@ -237,13 +244,35 @@ public class Transformer {
 		return sb.toString();
 	}
 
-	protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
-		Set<String> langTypes = TemplateManagerUtil.getSupportedLanguageTypes(
-			errorTemplatePropertyKey);
+	protected void mergeTemplate(
+			Template template, UnsyncStringWriter unsyncStringWriter,
+			boolean propagateException)
+		throws Exception {
+
+		if (propagateException) {
+			template.doProcessTemplate(unsyncStringWriter);
+		}
+		else {
+			template.processTemplate(unsyncStringWriter);
+		}
+	}
+
+	protected void prepareTemplate(ThemeDisplay themeDisplay, Template template)
+		throws Exception {
+
+		if (themeDisplay == null) {
+			return;
+		}
+
+		template.prepare(themeDisplay.getRequest());
+	}
+
+	protected void setErrorTemplateIds(String errorTemplatePropertyKey) {
+		Set<String> langTypes = TemplateManagerUtil.getTemplateManagerNames();
 
 		for (String langType : langTypes) {
-			String errorTemplateId = PropsUtil.get(
-				errorTemplatePropertyKey, new Filter(langType));
+			String errorTemplateId = getErrorTemplateId(
+				errorTemplatePropertyKey, langType);
 
 			if (Validator.isNotNull(errorTemplateId)) {
 				_errorTemplateIds.put(langType, errorTemplateId);
@@ -251,7 +280,7 @@ public class Transformer {
 		}
 	}
 
-	protected void loadTransformerListeners(
+	protected void setTransformerListeners(
 		String transformerListenerPropertyKey, ClassLoader classLoader) {
 
 		Set<String> transformerListenerClassNames = SetUtil.fromArray(
@@ -277,29 +306,6 @@ public class Transformer {
 				_log.error(e, e);
 			}
 		}
-	}
-
-	protected void mergeTemplate(
-			Template template, UnsyncStringWriter unsyncStringWriter,
-			boolean propagateException)
-		throws Exception {
-
-		if (propagateException) {
-			template.doProcessTemplate(unsyncStringWriter);
-		}
-		else {
-			template.processTemplate(unsyncStringWriter);
-		}
-	}
-
-	protected void prepareTemplate(ThemeDisplay themeDisplay, Template template)
-		throws Exception {
-
-		if (themeDisplay == null) {
-			return;
-		}
-
-		template.prepare(themeDisplay.getRequest());
 	}
 
 	protected final Map<String, String> _errorTemplateIds = new HashMap<>();

@@ -494,26 +494,25 @@ public class DDLImpl implements DDL {
 		}
 
 		private static final Transformer _transformer = new Transformer(
-				DDLServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
-				true) {
+			DDLServiceConfigurationValues.DYNAMIC_DATA_LISTS_ERROR_TEMPLATE,
+			true) {
 
 			@Override
-			protected void loadErrorTemplateIds(
+			protected void setErrorTemplateIds(
 				String errorTemplatePropertyKey) {
 
 				Set<String> langTypes =
 					TemplateManagerUtil.getTemplateManagerNames();
 
-					for (String langType : langTypes) {
-						String errorTemplateId =
-							DDLServiceConfigurationUtil.get(
-								errorTemplatePropertyKey, new Filter(langType));
+				for (String langType : langTypes) {
+					String errorTemplateId = DDLServiceConfigurationUtil.get(
+						errorTemplatePropertyKey, new Filter(langType));
 
-						if (Validator.isNotNull(errorTemplateId)) {
-							_errorTemplateIds.put(langType, errorTemplateId);
-						}
+					if (Validator.isNotNull(errorTemplateId)) {
+						_errorTemplateIds.put(langType, errorTemplateId);
 					}
-			};
+				}
+			}
 
 		};
 
