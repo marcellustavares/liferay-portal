@@ -32,6 +32,8 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +57,15 @@ public class DefaultDLEditFileEntryDisplayContext
 		FileEntry fileEntry) {
 
 		this(request, (DLFileEntryType)null, fileEntry);
+	}
+
+	@Override
+	public List<DDMStructure> getDDMStructures() throws PortalException {
+		if (_dlFileEntryType == null) {
+			return Collections.emptyList();
+		}
+
+		return DLUtil.getDLFileEntryTypeDDMStructures(_dlFileEntryType);
 	}
 
 	@Override

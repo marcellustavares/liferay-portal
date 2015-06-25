@@ -77,10 +77,13 @@ import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifi
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelReadCountComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelTitleComparator;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -95,7 +98,6 @@ import java.util.TreeSet;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -480,6 +482,53 @@ public class DLImpl implements DL {
 		portletURL.setParameter("folderId", String.valueOf(folderId));
 
 		return portletURL.toString();
+	}
+	
+	public List<DDMStructure> getDLFileEntryTypeDDMStructures(
+			DLFileEntryType dlFileEntryType) 
+		throws PortalException {
+	
+		if (dlFileEntryType.getFileEntryTypeId() == 
+				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT) {
+		
+			return Collections.emptyList();
+		}
+		
+		List<DDMStructure> ddmStructures = new ArrayList<>();
+		
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			dlFileEntryType.getDDMStructureId());
+			
+		ddmStructures.add(ddmStructure);
+		
+		List<DDMStructure> ddmStructureFragments = getDDMStructureFragments(
+			ddmStructure);
+		
+		ddmStructures.addAll(ddmStructureFragments);
+		
+		return ddmStructures;
+	}
+	
+	protected List<DDMStructure> getDDMStructureFragments(
+			DDMStructure ddmStructure) 
+		throws PortalException {
+		
+		List<DDMStructure> ddmStructureFragments = new ArrayList<>();
+		
+		List<DDMStructureLink> ddmStructureLinks =
+			DDMStructureLinkLocalServiceUtil.getClassNameStructureLinks(
+				PortalUtil.getClassNameId(DDMStructure.class),
+				ddmStructure.getStructureId());
+
+		for (DDMStructureLink ddmStructureLink : ddmStructureLinks) {
+			DDMStructure ddmStructureFragment = 
+				DDMStructureLocalServiceUtil.getStructure(
+					ddmStructureLink.getClassPK());
+			
+			ddmStructureFragments.add(ddmStructureFragment);
+		}
+	
+		return ddmStructureFragments;
 	}
 
 	@Override

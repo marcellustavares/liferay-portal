@@ -43,7 +43,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	@Override
 	public DLFileEntryType addFileEntryType(
 			long groupId, String fileEntryTypeKey, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, long[] ddmStructureIds,
+			Map<Locale, String> descriptionMap, long ddmStructureId,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -52,13 +52,13 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 		return dlFileEntryTypeLocalService.addFileEntryType(
 			getUserId(), groupId, fileEntryTypeKey, nameMap, descriptionMap,
-			ddmStructureIds, serviceContext);
+			ddmStructureId, serviceContext);
 	}
 
 	@Override
 	public DLFileEntryType addFileEntryType(
 			long groupId, String name, String description,
-			long[] ddmStructureIds, ServiceContext serviceContext)
+			long ddmStructureId, ServiceContext serviceContext)
 		throws PortalException {
 
 		Map<Locale, String> nameMap = new HashMap<>();
@@ -70,7 +70,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 		descriptionMap.put(LocaleUtil.getSiteDefault(), description);
 
 		return addFileEntryType(
-			groupId, null, nameMap, descriptionMap, ddmStructureIds,
+			groupId, null, nameMap, descriptionMap, ddmStructureId,
 			serviceContext);
 	}
 
@@ -145,8 +145,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	@Override
 	public void updateFileEntryType(
 			long fileEntryTypeId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, long[] ddmStructureIds,
-			ServiceContext serviceContext)
+			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException {
 
 		DLFileEntryTypePermission.check(
@@ -154,13 +153,13 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 		dlFileEntryTypeLocalService.updateFileEntryType(
 			getUserId(), fileEntryTypeId, nameMap, descriptionMap,
-			ddmStructureIds, serviceContext);
+			serviceContext);
 	}
 
 	@Override
 	public void updateFileEntryType(
 			long fileEntryTypeId, String name, String description,
-			long[] ddmStructureIds, ServiceContext serviceContext)
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		Map<Locale, String> nameMap = new HashMap<>();
@@ -172,8 +171,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 		descriptionMap.put(LocaleUtil.getSiteDefault(), description);
 
 		updateFileEntryType(
-			fileEntryTypeId, nameMap, descriptionMap, ddmStructureIds,
-			serviceContext);
+			fileEntryTypeId, nameMap, descriptionMap, serviceContext);
 	}
 
 	protected List<DLFileEntryType> filterFileEntryTypes(

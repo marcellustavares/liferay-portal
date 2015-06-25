@@ -23,7 +23,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface DDMStructureFinder {
 	public int countByKeywords(long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords);
+		long classNameId, java.lang.String keywords, int type);
 
 	public int countByC_G_C_N_D_S_T(long companyId, long[] groupIds,
 		long classNameId, java.lang.String name, java.lang.String description,
@@ -35,7 +35,7 @@ public interface DDMStructureFinder {
 		int type, boolean andOperator);
 
 	public int filterCountByKeywords(long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords);
+		long classNameId, java.lang.String keywords, int type);
 
 	public int filterCountByC_G_C_N_D_S_T(long companyId, long[] groupIds,
 		long classNameId, java.lang.String name, java.lang.String description,
@@ -48,7 +48,7 @@ public interface DDMStructureFinder {
 
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> filterFindByKeywords(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator);
 
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> filterFindByC_G_C_N_D_S_T(
@@ -67,7 +67,7 @@ public interface DDMStructureFinder {
 
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> findByKeywords(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator);
 
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> findByC_G_C_N_D_S_T(

@@ -391,6 +391,8 @@ public interface DDMStructureService extends BaseService {
 	structure is related to
 	* @param keywords the keywords (space separated), which may occur in the
 	structure's name or description (optionally <code>null</code>)
+	* @param type the structure's type. For more information, see {@link
+	com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	* @param start the lower bound of the range of structures to return
 	* @param end the upper bound of the range of structures to return (not
 	inclusive)
@@ -401,7 +403,7 @@ public interface DDMStructureService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator);
 
 	/**
@@ -456,11 +458,13 @@ public interface DDMStructureService extends BaseService {
 	structure is related to
 	* @param keywords the keywords (space separated), which may occur in the
 	structure's name or description (optionally <code>null</code>)
+	* @param type the structure's type. For more information, see {@link
+	com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	* @return the number of matching structures
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int searchCount(long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords);
+		java.lang.String keywords, int type);
 
 	/**
 	* Returns the number of structures matching the groups, class name IDs,

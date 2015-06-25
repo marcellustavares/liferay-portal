@@ -17,15 +17,8 @@ package com.liferay.portlet.documentlibrary.action;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.Group;
 import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -44,18 +37,12 @@ import com.liferay.portlet.dynamicdatamapping.RequiredStructureException;
 import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
 import com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException;
 import com.liferay.portlet.dynamicdatamapping.StructureNameException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
-
-import java.util.Locale;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
-import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -79,10 +66,10 @@ public class EditFileEntryTypeAction extends PortletAction {
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
 		try {
-			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
+			/*if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
 				updateFileEntryType(actionRequest, actionResponse);
 			}
-			else if (cmd.equals(Constants.DELETE)) {
+			else */ if (cmd.equals(Constants.DELETE)) {
 				deleteFileEntryType(actionRequest, actionResponse);
 			}
 			else if (cmd.equals(Constants.SUBSCRIBE)) {
@@ -197,15 +184,15 @@ public class EditFileEntryTypeAction extends PortletAction {
 		DLFileEntryTypeServiceUtil.deleteFileEntryType(fileEntryTypeId);
 	}
 
-	protected long[] getLongArray(PortletRequest portletRequest, String name) {
-		String value = portletRequest.getParameter(name);
-
-		if (value == null) {
-			return null;
-		}
-
-		return StringUtil.split(GetterUtil.getString(value), 0L);
-	}
+//	protected long[] getLongArray(PortletRequest portletRequest, String name) {
+//		String value = portletRequest.getParameter(name);
+//
+//		if (value == null) {
+//			return null;
+//		}
+//
+//		return StringUtil.split(GetterUtil.getString(value), 0L);
+//	}
 
 	protected void subscribeFileEntryType(ActionRequest actionRequest)
 		throws Exception {
@@ -233,55 +220,55 @@ public class EditFileEntryTypeAction extends PortletAction {
 			themeDisplay.getScopeGroupId(), fileEntryTypeId);
 	}
 
-	protected void updateFileEntryType(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		long fileEntryTypeId = ParamUtil.getLong(
-			actionRequest, "fileEntryTypeId");
-
-		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
-			actionRequest, "name");
-		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(actionRequest, "description");
-
-		long[] ddmStructureIds = getLongArray(
-			actionRequest, "ddmStructuresSearchContainerPrimaryKeys");
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			DLFileEntryType.class.getName(), actionRequest);
-
-		DDMForm ddmForm = DDMUtil.getDDMForm(actionRequest);
-
-		serviceContext.setAttribute("ddmForm", ddmForm);
-
-		if (fileEntryTypeId <= 0) {
-
-			// Add file entry type
-
-			long groupId = themeDisplay.getScopeGroupId();
-
-			Group scopeGroup = GroupLocalServiceUtil.getGroup(groupId);
-
-			if (scopeGroup.isLayout()) {
-				groupId = scopeGroup.getParentGroupId();
-			}
-
-			DLFileEntryTypeServiceUtil.addFileEntryType(
-				groupId, null, nameMap, descriptionMap, ddmStructureIds,
-				serviceContext);
-		}
-		else {
-
-			// Update file entry type
-
-			DLFileEntryTypeServiceUtil.updateFileEntryType(
-				fileEntryTypeId, nameMap, descriptionMap, ddmStructureIds,
-				serviceContext);
-		}
-	}
+//	protected void updateFileEntryType(
+//			ActionRequest actionRequest, ActionResponse actionResponse)
+//		throws Exception {
+//
+//		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+//			WebKeys.THEME_DISPLAY);
+//
+//		long fileEntryTypeId = ParamUtil.getLong(
+//			actionRequest, "fileEntryTypeId");
+//
+//		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
+//			actionRequest, "name");
+//		Map<Locale, String> descriptionMap =
+//			LocalizationUtil.getLocalizationMap(actionRequest, "description");
+//
+//		long[] ddmStructureIds = getLongArray(
+//			actionRequest, "ddmStructuresSearchContainerPrimaryKeys");
+//
+//		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+//			DLFileEntryType.class.getName(), actionRequest);
+//
+//		DDMForm ddmForm = DDMUtil.getDDMForm(actionRequest);
+//
+//		serviceContext.setAttribute("ddmForm", ddmForm);
+//
+//		if (fileEntryTypeId <= 0) {
+//
+//			// Add file entry type
+//
+//			long groupId = themeDisplay.getScopeGroupId();
+//
+//			Group scopeGroup = GroupLocalServiceUtil.getGroup(groupId);
+//
+//			if (scopeGroup.isLayout()) {
+//				groupId = scopeGroup.getParentGroupId();
+//			}
+//
+//			DLFileEntryTypeServiceUtil.addFileEntryType(
+//				groupId, null, nameMap, descriptionMap, ddmStructureIds,
+//				serviceContext);
+//		}
+//		else {
+//
+//			// Update file entry type
+//
+//			DLFileEntryTypeServiceUtil.updateFileEntryType(
+//				fileEntryTypeId, nameMap, descriptionMap, ddmStructureIds,
+//				serviceContext);
+//		}
+//	}
 
 }

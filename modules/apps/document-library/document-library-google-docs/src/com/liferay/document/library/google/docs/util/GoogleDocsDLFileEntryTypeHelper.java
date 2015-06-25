@@ -90,7 +90,7 @@ public class GoogleDocsDLFileEntryTypeHelper {
 			_dlFileEntryMetadataClassNameId,
 			GoogleDocsConstants.DDM_STRUCTURE_KEY_GOOGLE_DOCS, nameMap,
 			descriptionMap, ddmForm, ddmFormLayout, StorageType.JSON.toString(),
-			DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+			DDMStructureConstants.TYPE_FRAGMENT, serviceContext);
 	}
 
 	public DLFileEntryType addGoogleDocsDLFileEntryType()
@@ -112,10 +112,13 @@ public class GoogleDocsDLFileEntryTypeHelper {
 			return dlFileEntryTypes.get(0);
 		}
 
-		return addGoogleDocsDLFileEntryType(ddmStructure.getStructureId());
+		addGoogleDocsDLFileEntryTypeDDMStructure(ddmStructure.getStructureId());
+
+		return _dlFileEntryTypeLocalService.getFileEntryType(
+			_company.getGroupId(), GoogleDocsConstants.DL_FILE_ENTRY_TYPE_KEY);
 	}
 
-	protected DLFileEntryType addGoogleDocsDLFileEntryType(long ddmStructureId)
+	protected void addGoogleDocsDLFileEntryTypeDDMStructure(long ddmStructureId)
 		throws PortalException {
 
 		long defaultUserId = _userLocalService.getDefaultUserId(
@@ -129,6 +132,8 @@ public class GoogleDocsDLFileEntryTypeHelper {
 
 		descriptionMap.put(LocaleUtil.getDefault(), "Google Docs");
 
+		DDMForm ddmForm = new DDMForm();
+
 		ServiceContext serviceContext = new ServiceContext();
 
 		serviceContext.setAddGuestPermissions(true);
@@ -136,10 +141,17 @@ public class GoogleDocsDLFileEntryTypeHelper {
 		serviceContext.setScopeGroupId(_company.getGroupId());
 		serviceContext.setUserId(defaultUserId);
 
-		return _dlFileEntryTypeLocalService.addFileEntryType(
+		serviceContext.setAttribute(
+			"structureFragmentIds", new long[] {ddmStructureId});
+
+		_ddmStructureLocalService.addStructure(
 			defaultUserId, _company.getGroupId(),
+			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			_dlFileEntryMetadataClassNameId,
 			GoogleDocsConstants.DL_FILE_ENTRY_TYPE_KEY, nameMap, descriptionMap,
-			new long[] {ddmStructureId}, serviceContext);
+			ddmForm, DDMUtil.getDefaultDDMFormLayout(ddmForm),
+			StorageType.JSON.toString(), DDMStructureConstants.TYPE_DEFAULT,
+			serviceContext);
 	}
 
 	private final ClassNameLocalService _classNameLocalService;

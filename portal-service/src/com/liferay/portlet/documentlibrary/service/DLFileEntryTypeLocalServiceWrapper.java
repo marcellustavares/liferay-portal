@@ -106,22 +106,22 @@ public class DLFileEntryTypeLocalServiceWrapper
 		long userId, long groupId, java.lang.String fileEntryTypeKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntryTypeLocalService.addFileEntryType(userId, groupId,
-			fileEntryTypeKey, nameMap, descriptionMap, ddmStructureIds,
+			fileEntryTypeKey, nameMap, descriptionMap, ddmStructureId,
 			serviceContext);
 	}
 
 	@Override
 	public com.liferay.portlet.documentlibrary.model.DLFileEntryType addFileEntryType(
 		long userId, long groupId, java.lang.String name,
-		java.lang.String description, long[] ddmStructureIds,
+		java.lang.String description, long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _dlFileEntryTypeLocalService.addFileEntryType(userId, groupId,
-			name, description, ddmStructureIds, serviceContext);
+			name, description, ddmStructureId, serviceContext);
 	}
 
 	@Override
@@ -702,23 +702,20 @@ public class DLFileEntryTypeLocalServiceWrapper
 	@Override
 	public void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlFileEntryTypeLocalService.updateFileEntryType(userId,
-			fileEntryTypeId, name, description, ddmStructureIds, serviceContext);
+			fileEntryTypeId, name, description, serviceContext);
 	}
 
 	@Override
 	public void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_dlFileEntryTypeLocalService.updateFileEntryType(userId,
-			fileEntryTypeId, nameMap, descriptionMap, ddmStructureIds,
-			serviceContext);
+			fileEntryTypeId, nameMap, descriptionMap, serviceContext);
 	}
 
 	@Override

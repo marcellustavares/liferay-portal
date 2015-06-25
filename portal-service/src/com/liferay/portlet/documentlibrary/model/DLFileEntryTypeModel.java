@@ -427,6 +427,20 @@ public interface DLFileEntryTypeModel extends BaseModel<DLFileEntryType>,
 	public void setDescriptionMap(Map<Locale, String> descriptionMap,
 		Locale defaultLocale);
 
+	/**
+	 * Returns the d d m structure ID of this document library file entry type.
+	 *
+	 * @return the d d m structure ID of this document library file entry type
+	 */
+	public long getDDMStructureId();
+
+	/**
+	 * Sets the d d m structure ID of this document library file entry type.
+	 *
+	 * @param DDMStructureId the d d m structure ID of this document library file entry type
+	 */
+	public void setDDMStructureId(long DDMStructureId);
+
 	@Override
 	public boolean isNew();
 

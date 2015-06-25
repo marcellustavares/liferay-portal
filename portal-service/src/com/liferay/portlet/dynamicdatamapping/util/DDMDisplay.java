@@ -16,6 +16,7 @@ package com.liferay.portlet.dynamicdatamapping.util;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -100,7 +101,15 @@ public interface DDMDisplay {
 		DDMStructure structure, boolean controlPanel, Locale locale);
 
 	public String getViewTemplatesTitle(DDMStructure structure, Locale locale);
+	
+	public boolean isShowFieldSetSelector(int structureType);
 
+	public String getFieldSetWindowTitle(Locale locale);
+	
+	public String getFieldSetPanelMessageKey();
+	
+	public String getFieldSetSelectButtonMessageKey();
+	
 	public boolean isShowAddStructureButton();
 
 	public boolean isShowStructureSelector();

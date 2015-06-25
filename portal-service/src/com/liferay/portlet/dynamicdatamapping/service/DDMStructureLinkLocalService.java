@@ -70,6 +70,8 @@ public interface DDMStructureLinkLocalService extends BaseLocalService,
 	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink createDDMStructureLink(
 		long structureLinkId);
 
+	public void deleteClassNameStructureLinks(long classNameId, long structureId);
+
 	/**
 	* Deletes the d d m structure link from the database. Also notifies the appropriate model listeners.
 	*
@@ -190,6 +192,10 @@ public interface DDMStructureLinkLocalService extends BaseLocalService,
 	* @return the Spring bean ID for this bean
 	*/
 	public java.lang.String getBeanIdentifier();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> getClassNameStructureLinks(
+		long classNameId, long structureId);
 
 	/**
 	* Returns the d d m structure link with the primary key.

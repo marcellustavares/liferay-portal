@@ -44,22 +44,22 @@ public class DLFileEntryTypeServiceUtil {
 		long groupId, java.lang.String fileEntryTypeKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addFileEntryType(groupId, fileEntryTypeKey, nameMap,
-			descriptionMap, ddmStructureIds, serviceContext);
+			descriptionMap, ddmStructureId, serviceContext);
 	}
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType addFileEntryType(
 		long groupId, java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addFileEntryType(groupId, name, description,
-			ddmStructureIds, serviceContext);
+			ddmStructureId, serviceContext);
 	}
 
 	public static void deleteFileEntryType(long fileEntryTypeId)
@@ -130,23 +130,21 @@ public class DLFileEntryTypeServiceUtil {
 
 	public static void updateFileEntryType(long fileEntryTypeId,
 		java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateFileEntryType(fileEntryTypeId, name, description,
-			ddmStructureIds, serviceContext);
+			serviceContext);
 	}
 
 	public static void updateFileEntryType(long fileEntryTypeId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateFileEntryType(fileEntryTypeId, nameMap, descriptionMap,
-			ddmStructureIds, serviceContext);
+			serviceContext);
 	}
 
 	public static DLFileEntryTypeService getService() {

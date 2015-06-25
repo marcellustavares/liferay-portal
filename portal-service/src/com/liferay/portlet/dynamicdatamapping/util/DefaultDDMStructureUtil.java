@@ -126,7 +126,8 @@ public class DefaultDDMStructureUtil {
 				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
 				ddmStructureKey, nameMap, descriptionMap, ddmForm,
 				ddmFormLayout, StorageType.JSON.toString(),
-				DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+				GetterUtil.getInteger(serviceContext.getAttribute("type")),
+				serviceContext);
 
 			Element templateElement = structureElement.element("template");
 
