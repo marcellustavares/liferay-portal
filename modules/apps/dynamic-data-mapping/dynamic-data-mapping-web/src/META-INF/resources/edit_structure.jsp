@@ -60,6 +60,14 @@ if (fieldsJSONArray != null) {
 }
 %>
 
+<liferay-util:buffer var="removeStructureIcon">
+	<liferay-ui:icon
+		iconCssClass="icon-remove"
+		label="<%= true %>"
+		message="remove"
+	/>
+</liferay-util:buffer>
+
 <portlet:actionURL name="addStructure" var="addStructureURL">
 	<portlet:param name="mvcPath" value="/edit_structure.jsp" />
 </portlet:actionURL>
@@ -84,6 +92,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 	<aui:input name="classPK" type="hidden" value="<%= String.valueOf(classPK) %>" />
 	<aui:input name="scopeClassNameId" type="hidden" value="<%= scopeClassNameId %>" />
 	<aui:input name="definition" type="hidden" />
+	<aui:input name="type" type="hidden" value="<%= scopeStructureType %>" />
 	<aui:input name="status" type="hidden" />
 	<aui:input name="saveAndContinue" type="hidden" value="<%= false %>" />
 
@@ -234,9 +243,62 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 			</liferay-ui:panel>
 		</liferay-ui:panel-container>
 	</aui:fieldset>
-</aui:form>
 
-<%@ include file="/form_builder.jspf" %>
+	<%@ include file="/form_builder.jspf" %>
+
+	<c:if test="<%= ddmDisplay.isShowFieldSetSelector(scopeStructureType) %>">
+
+		<%
+		List<DDMStructure> structureFragments = new ArrayList<DDMStructure>();
+
+		if (structure != null) {
+			List<DDMStructureLink> structureLinks = DDMStructureLinkLocalServiceUtil.getClassNameStructureLinks(PortalUtil.getClassNameId(DDMStructure.class), structure.getStructureId());
+
+			for (DDMStructureLink structureLink : structureLinks) {
+				structureFragments.add(DDMStructureLocalServiceUtil.getStructure(structureLink.getClassPK()));
+			}
+		}
+		%>
+
+		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="additionalFields" persistState="<%= true %>" title="<%= ddmDisplay.getFieldSetPanelMessageKey() %>">
+			<liferay-ui:search-container
+				headerNames="name,null"
+				total="<%= (structureFragments != null) ? structureFragments.size() : 0 %>"
+			>
+				<liferay-ui:search-container-results
+					results="<%= structureFragments %>"
+				/>
+
+				<liferay-ui:search-container-row
+					className="com.liferay.portlet.dynamicdatamapping.model.DDMStructure"
+					escapedModel="<%= true %>"
+					keyProperty="structureId"
+					modelVar="curStructureFragment"
+				>
+					<liferay-ui:search-container-column-text
+						name="name"
+						value="<%= curStructureFragment.getName(locale) %>"
+					/>
+
+					<liferay-ui:search-container-column-text>
+						<a class="modify-link" data-rowId="<%= curStructureFragment.getStructureId() %>" href="javascript:;"><%= removeStructureIcon %></a>
+					</liferay-ui:search-container-column-text>
+				</liferay-ui:search-container-row>
+
+				<liferay-ui:search-iterator paginate="<%= false %>" />
+			</liferay-ui:search-container>
+
+			<liferay-ui:icon
+				cssClass="modify-link select-structure-fragment"
+				iconCssClass="icon-search"
+				label="<%= true %>"
+				linkCssClass="btn btn-default"
+				message="<%= ddmDisplay.getFieldSetSelectButtonMessageKey() %> "
+				url='<%= "javascript:" + renderResponse.getNamespace() + "openDDMStructureSelector();" %>'
+			/>
+		</liferay-ui:panel>
+	</c:if>
+</aui:form>
 
 <aui:button-row>
 	<aui:button onClick='<%= renderResponse.getNamespace() + "saveStructure(false);" %>' primary="<%= true %>" value='<%= LanguageUtil.get(request, "save") %>' />
@@ -247,6 +309,36 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 </aui:button-row>
 
 <aui:script>
+	function <portlet:namespace />openDDMStructureSelector() {
+		Liferay.Util.openDDMPortlet(
+			{
+				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				classPK: <%= (structure != null) ? structure.getPrimaryKey() : 0 %>,
+				dialog: {
+					destroyOnHide: true
+				},
+				eventName: '<portlet:namespace />selectDDMStructure',
+				mvcPath: '/select_structure.jsp',
+				showAncestorScopes: true,
+				showManageTemplates: false,
+				showToolbar: true,
+				structureType: <%= DDMStructureConstants.TYPE_FRAGMENT %>,
+				title: '<%= ddmDisplay.getFieldSetWindowTitle(locale) %>'
+			},
+			function(event) {
+				var A = AUI();
+
+				var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />ddmStructuresSearchContainer');
+
+				var ddmStructureLink = '<a class="modify-link" data-rowId="' + event.ddmstructureid + '" href="javascript:;"><%= UnicodeFormatter.toString(removeStructureIcon) %></a>';
+
+				searchContainer.addRow([event.name, ddmStructureLink], event.ddmstructureid);
+
+				searchContainer.updateDataStore();
+			}
+		);
+	}
+
 	function <portlet:namespace />openParentStructureSelector() {
 		Liferay.Util.openDDMPortlet(
 			{
@@ -296,4 +388,20 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 
 		submitForm(form);
 	}
+</aui:script>
+
+<aui:script use="liferay-search-container">
+	var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />ddmStructuresSearchContainer');
+
+	searchContainer.get('contentBox').delegate(
+		'click',
+		function(event) {
+			var link = event.currentTarget;
+
+			var tr = link.ancestor('tr');
+
+			searchContainer.deleteRow(tr, link.getAttribute('data-rowId'));
+		},
+		'.modify-link'
+	);
 </aui:script>

@@ -20,20 +20,21 @@
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
 DLFileEntryType fileEntryType = (DLFileEntryType)row.getObject();
+
+DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(fileEntryType.getGroupId(), PortalUtil.getClassNameId(DLFileEntryMetadata.class), fileEntryType.getFileEntryTypeKey());
 %>
 
 <liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= false %>">
 	<c:if test="<%= DLFileEntryTypePermission.contains(permissionChecker, fileEntryType, ActionKeys.UPDATE) %>">
-		<portlet:renderURL var="editURL">
-			<portlet:param name="struts_action" value="/document_library/edit_file_entry_type" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="fileEntryTypeId" value="<%= String.valueOf(fileEntryType.getFileEntryTypeId()) %>" />
-		</portlet:renderURL>
+
+		<%
+		String taglibURL = "javascript:" + renderResponse.getNamespace() + "openDDMEditStructureView(" + ddmStructure.getStructureId() + ")";
+		%>
 
 		<liferay-ui:icon
 			iconCssClass="icon-edit"
 			message="edit"
-			url="<%= editURL %>"
+			url="<%= taglibURL %>"
 		/>
 	</c:if>
 

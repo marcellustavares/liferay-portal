@@ -292,6 +292,7 @@
 		<column name="fileEntryTypeKey" type="String" />
 		<column name="name" type="String" localized="true" />
 		<column name="description" type="String" localized="true" />
+		<column name="DDMStructureId" type="long" />
 
 		<!-- Relationships -->
 

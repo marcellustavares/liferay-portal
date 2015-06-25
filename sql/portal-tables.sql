@@ -588,7 +588,8 @@ create table DLFileEntryType (
 	modifiedDate DATE null,
 	fileEntryTypeKey VARCHAR(75) null,
 	name STRING null,
-	description STRING null
+	description STRING null,
+	DDMStructureId LONG
 );
 
 create table DLFileEntryTypes_DDMStructures (

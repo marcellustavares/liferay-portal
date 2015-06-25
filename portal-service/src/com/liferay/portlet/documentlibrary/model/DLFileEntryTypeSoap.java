@@ -45,6 +45,7 @@ public class DLFileEntryTypeSoap implements Serializable {
 		soapModel.setFileEntryTypeKey(model.getFileEntryTypeKey());
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
+		soapModel.setDDMStructureId(model.getDDMStructureId());
 
 		return soapModel;
 	}
@@ -187,6 +188,14 @@ public class DLFileEntryTypeSoap implements Serializable {
 		_description = description;
 	}
 
+	public long getDDMStructureId() {
+		return _DDMStructureId;
+	}
+
+	public void setDDMStructureId(long DDMStructureId) {
+		_DDMStructureId = DDMStructureId;
+	}
+
 	private String _uuid;
 	private long _fileEntryTypeId;
 	private long _groupId;
@@ -198,4 +207,5 @@ public class DLFileEntryTypeSoap implements Serializable {
 	private String _fileEntryTypeKey;
 	private String _name;
 	private String _description;
+	private long _DDMStructureId;
 }

@@ -70,7 +70,7 @@ public class DLFileEntryTypeLocalServiceImpl
 	public DLFileEntryType addFileEntryType(
 			long userId, long groupId, String fileEntryTypeKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			long[] ddmStructureIds, ServiceContext serviceContext)
+			long ddmStructureId, ServiceContext serviceContext)
 		throws PortalException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
@@ -90,15 +90,15 @@ public class DLFileEntryTypeLocalServiceImpl
 
 		long fileEntryTypeId = counterLocalService.increment();
 
-		long ddmStructureId = updateDDMStructure(
-			userId, fileEntryTypeUuid, fileEntryTypeId, groupId, nameMap,
-			descriptionMap, serviceContext);
+//		long ddmStructureId = updateDDMStructure(
+//			userId, fileEntryTypeUuid, fileEntryTypeId, groupId, nameMap,
+//			descriptionMap, serviceContext);
+//
+//		if (ddmStructureId > 0) {
+//			ddmStructureIds = ArrayUtil.append(ddmStructureIds, ddmStructureId);
+//		}
 
-		if (ddmStructureId > 0) {
-			ddmStructureIds = ArrayUtil.append(ddmStructureIds, ddmStructureId);
-		}
-
-		validate(fileEntryTypeId, groupId, fileEntryTypeKey, ddmStructureIds);
+		validate(fileEntryTypeId, groupId, fileEntryTypeKey, ddmStructureId);
 
 		DLFileEntryType dlFileEntryType = dlFileEntryTypePersistence.create(
 			fileEntryTypeId);
@@ -111,11 +111,12 @@ public class DLFileEntryTypeLocalServiceImpl
 		dlFileEntryType.setFileEntryTypeKey(fileEntryTypeKey);
 		dlFileEntryType.setNameMap(nameMap);
 		dlFileEntryType.setDescriptionMap(descriptionMap);
+		dlFileEntryType.setDDMStructureId(ddmStructureId);
 
 		dlFileEntryTypePersistence.update(dlFileEntryType);
 
-		dlFileEntryTypePersistence.addDDMStructures(
-			fileEntryTypeId, ddmStructureIds);
+//		dlFileEntryTypePersistence.addDDMStructures(
+//			fileEntryTypeId, ddmStructureIds);
 
 		if (serviceContext.isAddGroupPermissions() ||
 			serviceContext.isAddGuestPermissions()) {
@@ -136,7 +137,7 @@ public class DLFileEntryTypeLocalServiceImpl
 	@Override
 	public DLFileEntryType addFileEntryType(
 			long userId, long groupId, String name, String description,
-			long[] ddmStructureIds, ServiceContext serviceContext)
+			long ddmStructureId, ServiceContext serviceContext)
 		throws PortalException {
 
 		Map<Locale, String> nameMap = new HashMap<>();
@@ -148,7 +149,7 @@ public class DLFileEntryTypeLocalServiceImpl
 		descriptionMap.put(LocaleUtil.getSiteDefault(), description);
 
 		return addFileEntryType(
-			userId, groupId, null, nameMap, descriptionMap, ddmStructureIds,
+			userId, groupId, null, nameMap, descriptionMap, ddmStructureId,
 			serviceContext);
 	}
 
@@ -192,22 +193,8 @@ public class DLFileEntryTypeLocalServiceImpl
 			throw new RequiredFileEntryTypeException();
 		}
 
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			dlFileEntryType.getGroupId(),
-			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
-			DLUtil.getDDMStructureKey(dlFileEntryType));
-
-		if (ddmStructure == null) {
-			ddmStructure = ddmStructureLocalService.fetchStructure(
-				dlFileEntryType.getGroupId(),
-				classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
-				DLUtil.getDeprecatedDDMStructureKey(dlFileEntryType));
-		}
-
-		if (ddmStructure != null) {
-			ddmStructureLocalService.deleteStructure(
-				ddmStructure.getStructureId());
-		}
+		ddmStructureLocalService.deleteStructure(
+			dlFileEntryType.getDDMStructureId());
 
 		dlFileEntryTypePersistence.remove(dlFileEntryType);
 	}
@@ -392,39 +379,38 @@ public class DLFileEntryTypeLocalServiceImpl
 	@Override
 	public void updateFileEntryType(
 			long userId, long fileEntryTypeId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, long[] ddmStructureIds,
-			ServiceContext serviceContext)
+			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
 		throws PortalException {
 
 		DLFileEntryType dlFileEntryType =
 			dlFileEntryTypePersistence.findByPrimaryKey(fileEntryTypeId);
 
-		long ddmStructureId = updateDDMStructure(
-			userId, dlFileEntryType.getUuid(), fileEntryTypeId,
-			dlFileEntryType.getGroupId(), nameMap, descriptionMap,
-			serviceContext);
-
-		if (ddmStructureId > 0) {
-			ddmStructureIds = ArrayUtil.append(ddmStructureIds, ddmStructureId);
-		}
+//		long ddmStructureId = updateDDMStructure(
+//			userId, dlFileEntryType.getUuid(), fileEntryTypeId,
+//			dlFileEntryType.getGroupId(), nameMap, descriptionMap,
+//			serviceContext);
+//
+//		if (ddmStructureId > 0) {
+//			ddmStructureIds = ArrayUtil.append(ddmStructureIds, ddmStructureId);
+//		}
 
 		validate(
 			fileEntryTypeId, dlFileEntryType.getGroupId(),
-			dlFileEntryType.getFileEntryTypeKey(), ddmStructureIds);
+			dlFileEntryType.getFileEntryTypeKey());
 
 		dlFileEntryType.setNameMap(nameMap);
 		dlFileEntryType.setDescriptionMap(descriptionMap);
 
 		dlFileEntryTypePersistence.update(dlFileEntryType);
 
-		dlFileEntryTypePersistence.setDDMStructures(
-			fileEntryTypeId, ddmStructureIds);
+//		dlFileEntryTypePersistence.setDDMStructures(
+//			fileEntryTypeId, ddmStructureIds);
 	}
 
 	@Override
 	public void updateFileEntryType(
 			long userId, long fileEntryTypeId, String name, String description,
-			long[] ddmStructureIds, ServiceContext serviceContext)
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		Map<Locale, String> nameMap = new HashMap<>();
@@ -436,8 +422,7 @@ public class DLFileEntryTypeLocalServiceImpl
 		descriptionMap.put(LocaleUtil.getSiteDefault(), description);
 
 		updateFileEntryType(
-			userId, fileEntryTypeId, nameMap, descriptionMap, ddmStructureIds,
-			serviceContext);
+			userId, fileEntryTypeId, nameMap, descriptionMap, serviceContext);
 	}
 
 	@Override
@@ -553,21 +538,21 @@ public class DLFileEntryTypeLocalServiceImpl
 		}
 	}
 
-	protected void fixDDMStructureKey(
-		String fileEntryTypeUuid, long fileEntryTypeId, long groupId) {
-
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			groupId,
-			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
-			DLUtil.getDeprecatedDDMStructureKey(fileEntryTypeId));
-
-		if (ddmStructure != null) {
-			ddmStructure.setStructureKey(
-				DLUtil.getDDMStructureKey(fileEntryTypeUuid));
-
-			ddmStructureLocalService.updateDDMStructure(ddmStructure);
-		}
-	}
+//	protected void fixDDMStructureKey(
+//		String fileEntryTypeUuid, long fileEntryTypeId, long groupId) {
+//
+//		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
+//			groupId,
+//			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
+//			DLUtil.getDeprecatedDDMStructureKey(fileEntryTypeId));
+//
+//		if (ddmStructure != null) {
+//			ddmStructure.setStructureKey(
+//				DLUtil.getDDMStructureKey(fileEntryTypeUuid));
+//
+//			ddmStructureLocalService.updateDDMStructure(ddmStructure);
+//		}
+//	}
 
 	protected List<Long> getFileEntryTypeIds(
 		List<DLFileEntryType> dlFileEntryTypes) {
@@ -600,90 +585,91 @@ public class DLFileEntryTypeLocalServiceImpl
 		return folderId;
 	}
 
-	protected long updateDDMStructure(
-			long userId, String fileEntryTypeUuid, long fileEntryTypeId,
-			long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
-		throws PortalException {
-
-		fixDDMStructureKey(fileEntryTypeUuid, fileEntryTypeId, groupId);
-
-		String ddmStructureKey = DLUtil.getDDMStructureKey(fileEntryTypeUuid);
-
-		DDMForm ddmForm = (DDMForm)serviceContext.getAttribute("ddmForm");
-
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			groupId,
-			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
-			ddmStructureKey);
-
-		if ((ddmStructure != null) && (ddmForm == null)) {
-			ddmForm = ddmStructure.getDDMForm();
-		}
-
-		if (ddmForm == null) {
-			return 0;
-		}
-
-		try {
-			DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(
-				ddmForm);
-
-			if (ddmStructure == null) {
-				ddmStructure = ddmStructureLocalService.addStructure(
-					userId, groupId,
-					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-					classNameLocalService.getClassNameId(
-						DLFileEntryMetadata.class),
-					ddmStructureKey, nameMap, descriptionMap, ddmForm,
-					ddmFormLayout, StorageType.JSON.toString(),
-					DDMStructureConstants.TYPE_AUTO, serviceContext);
-			}
-			else {
-				ddmStructure = ddmStructureLocalService.updateStructure(
-					userId, ddmStructure.getStructureId(),
-					ddmStructure.getParentStructureId(), nameMap,
-					descriptionMap, ddmForm, ddmFormLayout, serviceContext);
-			}
-
-			return ddmStructure.getStructureId();
-		}
-		catch (StructureDefinitionException sde) {
-			if (ddmStructure != null) {
-				ddmStructureLocalService.deleteStructure(
-					ddmStructure.getStructureId());
-			}
-		}
-
-		return 0;
-	}
+//	protected long updateDDMStructure(
+//			long userId, String fileEntryTypeUuid, long fileEntryTypeId,
+//			long groupId, Map<Locale, String> nameMap,
+//			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
+//		throws PortalException {
+//
+//		fixDDMStructureKey(fileEntryTypeUuid, fileEntryTypeId, groupId);
+//
+//		String ddmStructureKey = DLUtil.getDDMStructureKey(fileEntryTypeUuid);
+//
+//		DDMForm ddmForm = (DDMForm)serviceContext.getAttribute("ddmForm");
+//
+//		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
+//			groupId,
+//			classNameLocalService.getClassNameId(DLFileEntryMetadata.class),
+//			ddmStructureKey);
+//
+//		if ((ddmStructure != null) && (ddmForm == null)) {
+//			ddmForm = ddmStructure.getDDMForm();
+//		}
+//
+//		if (ddmForm == null) {
+//			return 0;
+//		}
+//
+//		try {
+//			DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(
+//				ddmForm);
+//
+//			if (ddmStructure == null) {
+//				ddmStructure = ddmStructureLocalService.addStructure(
+//					userId, groupId,
+//					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+//					classNameLocalService.getClassNameId(
+//						DLFileEntryMetadata.class),
+//					ddmStructureKey, nameMap, descriptionMap, ddmForm,
+//					ddmFormLayout, StorageType.JSON.toString(),
+//					DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+//			}
+//			else {
+//				ddmStructure = ddmStructureLocalService.updateStructure(
+//					userId, ddmStructure.getStructureId(),
+//					ddmStructure.getParentStructureId(), nameMap,
+//					descriptionMap, ddmForm, ddmFormLayout, serviceContext);
+//			}
+//
+//			return ddmStructure.getStructureId();
+//		}
+//		catch (StructureDefinitionException sde) {
+//			if (ddmStructure != null) {
+//				ddmStructureLocalService.deleteStructure(
+//					ddmStructure.getStructureId());
+//			}
+//		}
+//
+//		return 0;
+//	}
 
 	protected void validate(
-			long fileEntryTypeId, long groupId, String fileEntryTypeKey,
-			long[] ddmStructureIds)
+			long fileEntryTypeId, long groupId, String fileEntryTypeKey, 
+			long ddmStructureId)
 		throws PortalException {
 
+		validate(fileEntryTypeId, groupId, fileEntryTypeKey);
+
+		DDMStructure ddmStructure = ddmStructurePersistence.fetchByPrimaryKey(
+			ddmStructureId);
+
+		if (ddmStructure == null) {
+			throw new NoSuchMetadataSetException(
+				"{ddmStructureId=" + ddmStructureId);
+		}
+	}
+	
+	protected void validate(
+			long fileEntryTypeId, long groupId, String fileEntryTypeKey)
+		throws PortalException {
+		
 		DLFileEntryType dlFileEntryType = dlFileEntryTypePersistence.fetchByG_F(
 			groupId, fileEntryTypeKey);
-
+		
 		if ((dlFileEntryType != null) &&
 			(dlFileEntryType.getFileEntryTypeId() != fileEntryTypeId)) {
-
+			
 			throw new DuplicateFileEntryTypeException(fileEntryTypeKey);
-		}
-
-		if (ddmStructureIds.length == 0) {
-			throw new NoSuchMetadataSetException();
-		}
-
-		for (long ddmStructureId : ddmStructureIds) {
-			DDMStructure ddmStructure =
-				ddmStructurePersistence.fetchByPrimaryKey(ddmStructureId);
-
-			if (ddmStructure == null) {
-				throw new NoSuchMetadataSetException(
-					"{ddmStructureId=" + ddmStructureId);
-			}
 		}
 	}
 

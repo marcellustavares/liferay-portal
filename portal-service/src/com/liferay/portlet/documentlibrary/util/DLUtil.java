@@ -28,6 +28,7 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -61,6 +61,13 @@ public class DLUtil {
 
 		getDL().addPortletBreadcrumbEntries(
 			fileShortcut, request, renderResponse);
+	}
+	
+	public static List<DDMStructure> getDLFileEntryTypeDDMStructures(
+			DLFileEntryType dlFileEntryType) 
+		throws PortalException {
+		
+		return getDL().getDLFileEntryTypeDDMStructures(dlFileEntryType);
 	}
 
 	public static void addPortletBreadcrumbEntries(

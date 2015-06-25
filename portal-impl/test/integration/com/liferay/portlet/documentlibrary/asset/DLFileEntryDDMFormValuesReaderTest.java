@@ -90,7 +90,7 @@ public class DLFileEntryDDMFormValuesReaderTest {
 
 		return DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), StringPool.BLANK, new long[0],
+			RandomTestUtil.randomString(), StringPool.BLANK, 0,
 			serviceContext);
 	}
 

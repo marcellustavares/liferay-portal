@@ -90,7 +90,7 @@ public class DLSubscriptionClassTypeTest
 			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 				TestPropsValues.getUserId(), group.getGroupId(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-				new long[] {ddmStructure.getStructureId()}, serviceContext);
+				ddmStructure.getStructureId(), serviceContext);
 
 		return fileEntryType.getFileEntryTypeId();
 	}

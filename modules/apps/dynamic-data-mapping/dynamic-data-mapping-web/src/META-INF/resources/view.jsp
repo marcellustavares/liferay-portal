@@ -138,6 +138,11 @@ portletURL.setParameter("tabs1", tabs1);
 				value="<%= LanguageUtil.get(request, group.getScopeLabel(themeDisplay)) %>"
 			/>
 
+			<liferay-ui:search-container-column-text
+				name="type"
+				value="<%= String.valueOf(structure.getType()) %>"
+			/>
+
 			<liferay-ui:search-container-column-date
 				href="<%= rowHREF %>"
 				name="modified-date"
