@@ -61,63 +61,19 @@ import java.util.Set;
 public class Transformer {
 
 	public Transformer(String errorTemplatePropertyKey, boolean restricted) {
-		
 		loadErrorTemplateIds(errorTemplatePropertyKey);
 
 		_restricted = restricted;
 	}
 
-	public Transformer(
-		String transformerListenerPropertyKey, String errorTemplatePropertyKey,
-		boolean restricted) {
+	public Transformer(String transformerListenerPropertyKey,
+			String errorTemplatePropertyKey, boolean restricted) {
 
 		this(errorTemplatePropertyKey, restricted);
 
 		ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
 
 		loadTransformerListeners(transformerListenerPropertyKey, classLoader);
-	}
-
-	protected void loadTransformerListeners(
-			String transformerListenerPropertyKey, ClassLoader classLoader) {
-		
-		Set<String> transformerListenerClassNames = SetUtil.fromArray(
-			PropsUtil.getArray(transformerListenerPropertyKey));
-
-		for (String transformerListenerClassName :
-				transformerListenerClassNames) {
-
-			try {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						"Instantiating transformer listener " +
-							transformerListenerClassName);
-				}
-
-				TransformerListener transformerListener =
-					(TransformerListener)InstanceFactory.newInstance(
-						classLoader, transformerListenerClassName);
-
-				_transformerListeners.add(transformerListener);
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-		}
-	}
-	
-	protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
-		Set<String> langTypes = TemplateManagerUtil.getSupportedLanguageTypes(
-			errorTemplatePropertyKey);
-
-		for (String langType : langTypes) {
-			String errorTemplateId = PropsUtil.get(
-				errorTemplatePropertyKey, new Filter(langType));
-
-			if (Validator.isNotNull(errorTemplateId)) {
-				_errorTemplateIds.put(langType, errorTemplateId);
-			}
-		}
 	}
 
 	public String transform(
@@ -281,6 +237,48 @@ public class Transformer {
 		return sb.toString();
 	}
 
+	protected void loadErrorTemplateIds(String errorTemplatePropertyKey) {
+		Set<String> langTypes = TemplateManagerUtil.getSupportedLanguageTypes(
+			errorTemplatePropertyKey);
+
+		for (String langType : langTypes) {
+			String errorTemplateId = PropsUtil.get(
+				errorTemplatePropertyKey, new Filter(langType));
+
+			if (Validator.isNotNull(errorTemplateId)) {
+				_errorTemplateIds.put(langType, errorTemplateId);
+			}
+		}
+	}
+
+	protected void loadTransformerListeners(
+		String transformerListenerPropertyKey, ClassLoader classLoader) {
+
+		Set<String> transformerListenerClassNames = SetUtil.fromArray(
+			PropsUtil.getArray(transformerListenerPropertyKey));
+
+		for (String transformerListenerClassName :
+				transformerListenerClassNames) {
+
+			try {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Instantiating transformer listener " +
+							transformerListenerClassName);
+				}
+
+				TransformerListener transformerListener =
+					(TransformerListener)InstanceFactory.newInstance(
+						classLoader, transformerListenerClassName);
+
+				_transformerListeners.add(transformerListener);
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+			}
+		}
+	}
+
 	protected void mergeTemplate(
 			Template template, UnsyncStringWriter unsyncStringWriter,
 			boolean propagateException)
@@ -304,11 +302,12 @@ public class Transformer {
 		template.prepare(themeDisplay.getRequest());
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(Transformer.class);
-
 	protected final Map<String, String> _errorTemplateIds = new HashMap<>();
-	private final boolean _restricted;
 	protected final Set<TransformerListener> _transformerListeners =
 		new HashSet<>();
+
+	private static final Log _log = LogFactoryUtil.getLog(Transformer.class);
+
+	private final boolean _restricted;
 
 }
