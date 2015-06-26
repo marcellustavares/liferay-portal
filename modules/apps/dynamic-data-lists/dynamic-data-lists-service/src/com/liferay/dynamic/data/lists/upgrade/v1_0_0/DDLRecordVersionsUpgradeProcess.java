@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.upgrade.v7_0_0;
+package com.liferay.dynamic.data.lists.upgrade.v1_0_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -45,7 +45,30 @@ import java.util.Set;
 /**
  * @author Marcellus Tavares
  */
-public class UpgradeDynamicDataLists extends UpgradeProcess {
+public class DDLRecordVersionsUpgradeProcess extends UpgradeProcess {
+
+	public String toXML(Map<String, String> expandoValuesMap) {
+		Document document = SAXReaderUtil.createDocument();
+
+		Element rootElement = document.addElement("root");
+
+		for (Map.Entry<String, String> entry : expandoValuesMap.entrySet()) {
+			Element dynamicElementElement = rootElement.addElement(
+				"dynamic-element");
+
+			String name = entry.getKey();
+			String data = entry.getValue();
+
+			dynamicElementElement.addAttribute("name", name);
+			dynamicElementElement.addAttribute(
+				"default-language-id",
+				LocalizationUtil.getDefaultLanguageId(data));
+
+			addDynamicContentElements(dynamicElementElement, name, data);
+		}
+
+		return document.asXML();
+	}
 
 	protected void addDDMContent(
 			String uuid_, long contentId, long groupId, long companyId,
@@ -239,29 +262,6 @@ public class UpgradeDynamicDataLists extends UpgradeProcess {
 				"ExpandoStorageAdapter");
 	}
 
-	protected String toXML(Map<String, String> expandoValuesMap) {
-		Document document = SAXReaderUtil.createDocument();
-
-		Element rootElement = document.addElement("root");
-
-		for (Map.Entry<String, String> entry : expandoValuesMap.entrySet()) {
-			Element dynamicElementElement = rootElement.addElement(
-				"dynamic-element");
-
-			String name = entry.getKey();
-			String data = entry.getValue();
-
-			dynamicElementElement.addAttribute("name", name);
-			dynamicElementElement.addAttribute(
-				"default-language-id",
-				LocalizationUtil.getDefaultLanguageId(data));
-
-			addDynamicContentElements(dynamicElementElement, name, data);
-		}
-
-		return document.asXML();
-	}
-
 	protected void updateDDMStorageLink(
 			long oldClassNameId, long oldClassPK, long newClassNameId,
 			long newClassPK)
@@ -362,7 +362,7 @@ public class UpgradeDynamicDataLists extends UpgradeProcess {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		UpgradeDynamicDataLists.class);
+		DDLRecordVersionsUpgradeProcess.class);
 
 	private long _ddmContentClassNameId;
 	private long _expandoStorageAdapterClassNameId;

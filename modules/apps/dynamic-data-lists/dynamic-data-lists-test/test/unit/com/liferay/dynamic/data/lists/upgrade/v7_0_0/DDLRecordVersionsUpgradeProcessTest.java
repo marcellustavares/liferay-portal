@@ -12,8 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.upgrade.v7_0_0;
+package com.liferay.dynamic.data.lists.upgrade.v7_0_0;
 
+import com.liferay.dynamic.data.lists.upgrade.v1_0_0.DDLRecordVersionsUpgradeProcess;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -58,7 +59,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @PowerMockIgnore("javax.xml.stream.*")
 @RunWith(PowerMockRunner.class)
-public class UpgradeDynamicDataListsTest extends PowerMockito {
+public class DDLRecordVersionsUpgradeProcessTest extends PowerMockito {
 
 	@Before
 	public void setUp() {
@@ -82,10 +83,10 @@ public class UpgradeDynamicDataListsTest extends PowerMockito {
 			"_fieldsDisplay",
 			createLocalizationXML(new String[] {fieldsDisplay}));
 
-		UpgradeDynamicDataLists upgradeDynamicDataLists =
-			new UpgradeDynamicDataLists();
+		DDLRecordVersionsUpgradeProcess ddlRecordVersionsUpgradeProcess =
+			new DDLRecordVersionsUpgradeProcess();
 
-		String xml = upgradeDynamicDataLists.toXML(expandoValuesMap);
+		String xml = ddlRecordVersionsUpgradeProcess.toXML(expandoValuesMap);
 
 		Document document = SAXReaderUtil.read(xml);
 
@@ -121,10 +122,10 @@ public class UpgradeDynamicDataListsTest extends PowerMockito {
 			"_fieldsDisplay",
 			createLocalizationXML(new String[] {fieldsDisplay}));
 
-		UpgradeDynamicDataLists upgradeDynamicDataLists =
-			new UpgradeDynamicDataLists();
+		DDLRecordVersionsUpgradeProcess ddlRecordVersionsUpgradeProcess =
+			new DDLRecordVersionsUpgradeProcess();
 
-		String xml = upgradeDynamicDataLists.toXML(expandoValuesMap);
+		String xml = ddlRecordVersionsUpgradeProcess.toXML(expandoValuesMap);
 
 		Document document = SAXReaderUtil.read(xml);
 
