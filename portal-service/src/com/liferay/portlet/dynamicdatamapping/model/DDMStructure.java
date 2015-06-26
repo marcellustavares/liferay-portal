@@ -92,6 +92,9 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.model.DDMFormField> getFullHierarchyDDMFormFieldsMap(
 		boolean includeNestedDDMFormFields);
 
+	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion getLatestStructureVersion()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
 	public java.util.List<java.lang.String> getRootFieldNames();
 
 	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion getStructureVersion()
