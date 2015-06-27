@@ -107,7 +107,8 @@ public class DLFileEntryImpl extends DLFileEntryBaseImpl {
 
 		DLFileEntryType dlFileEntryType = getDLFileEntryType();
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+		List<DDMStructure> ddmStructures =
+			DLUtil.getDLFileEntryTypeDDMStructures(dlFileEntryType);
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			DLFileEntryMetadata dlFileEntryMetadata =

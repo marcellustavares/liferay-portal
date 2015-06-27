@@ -36,6 +36,7 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -45,7 +46,6 @@ import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.io.ByteArrayInputStream;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +90,7 @@ public class DLFileEntryDDMFormValuesReaderTest {
 
 		return DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), StringPool.BLANK, new long[0],
+			RandomTestUtil.randomString(), StringPool.BLANK, 0,
 			serviceContext);
 	}
 
@@ -102,7 +102,8 @@ public class DLFileEntryDDMFormValuesReaderTest {
 		serviceContext.setAttribute(
 			"fileEntryTypeId", dlFileEntryType.getFileEntryTypeId());
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+		List<DDMStructure> ddmStructures = 
+			DLUtil.getDLFileEntryTypeDDMStructures(dlFileEntryType);
 
 		Map<String, DDMFormValues> ddmFormValuesMap = createDDMFormValuesMap(
 			ddmStructures.get(0));

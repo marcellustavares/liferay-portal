@@ -67,7 +67,7 @@ public class DLFileVersionImpl extends DLFileVersionBaseImpl {
 			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
 				getFileEntryTypeId());
 
-		return dlFileEntryType.getDDMStructures();
+		return DLUtil.getDLFileEntryTypeDDMStructures(dlFileEntryType);
 	}
 
 	@Override

@@ -40,27 +40,6 @@ public class DLFileEntryTypeLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.documentlibrary.service.impl.DLFileEntryTypeLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void addDDMStructureDLFileEntryType(long structureId,
-		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType) {
-		getService().addDDMStructureDLFileEntryType(structureId, dlFileEntryType);
-	}
-
-	public static void addDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId) {
-		getService().addDDMStructureDLFileEntryType(structureId, fileEntryTypeId);
-	}
-
-	public static void addDDMStructureDLFileEntryTypes(long structureId,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> DLFileEntryTypes) {
-		getService()
-			.addDDMStructureDLFileEntryTypes(structureId, DLFileEntryTypes);
-	}
-
-	public static void addDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds) {
-		getService()
-			.addDDMStructureDLFileEntryTypes(structureId, fileEntryTypeIds);
-	}
 
 	/**
 	* Adds the document library file entry type to the database. Also notifies the appropriate model listeners.
@@ -97,32 +76,28 @@ public class DLFileEntryTypeLocalServiceUtil {
 		long userId, long groupId, java.lang.String fileEntryTypeKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addFileEntryType(userId, groupId, fileEntryTypeKey,
-			nameMap, descriptionMap, ddmStructureIds, serviceContext);
+			nameMap, descriptionMap, ddmStructureId, serviceContext);
 	}
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType addFileEntryType(
 		long userId, long groupId, java.lang.String name,
-		java.lang.String description, long[] ddmStructureIds,
+		java.lang.String description, long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addFileEntryType(userId, groupId, name, description,
-			ddmStructureIds, serviceContext);
+			ddmStructureId, serviceContext);
 	}
 
 	public static void cascadeFileEntryTypes(long userId,
 		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().cascadeFileEntryTypes(userId, dlFolder);
-	}
-
-	public static void clearDDMStructureDLFileEntryTypes(long structureId) {
-		getService().clearDDMStructureDLFileEntryTypes(structureId);
 	}
 
 	public static void clearDLFolderDLFileEntryTypes(long folderId) {
@@ -138,30 +113,6 @@ public class DLFileEntryTypeLocalServiceUtil {
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType createDLFileEntryType(
 		long fileEntryTypeId) {
 		return getService().createDLFileEntryType(fileEntryTypeId);
-	}
-
-	public static void deleteDDMStructureDLFileEntryType(long structureId,
-		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType) {
-		getService()
-			.deleteDDMStructureDLFileEntryType(structureId, dlFileEntryType);
-	}
-
-	public static void deleteDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId) {
-		getService()
-			.deleteDDMStructureDLFileEntryType(structureId, fileEntryTypeId);
-	}
-
-	public static void deleteDDMStructureDLFileEntryTypes(long structureId,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> DLFileEntryTypes) {
-		getService()
-			.deleteDDMStructureDLFileEntryTypes(structureId, DLFileEntryTypes);
-	}
-
-	public static void deleteDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds) {
-		getService()
-			.deleteDDMStructureDLFileEntryTypes(structureId, fileEntryTypeIds);
 	}
 
 	/**
@@ -351,39 +302,6 @@ public class DLFileEntryTypeLocalServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
-	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId) {
-		return getService().getDDMStructureDLFileEntryTypes(structureId);
-	}
-
-	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId, int start, int end) {
-		return getService()
-				   .getDDMStructureDLFileEntryTypes(structureId, start, end);
-	}
-
-	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
-		return getService()
-				   .getDDMStructureDLFileEntryTypes(structureId, start, end,
-			orderByComparator);
-	}
-
-	public static int getDDMStructureDLFileEntryTypesCount(long structureId) {
-		return getService().getDDMStructureDLFileEntryTypesCount(structureId);
-	}
-
-	/**
-	* Returns the structureIds of the d d m structures associated with the document library file entry type.
-	*
-	* @param fileEntryTypeId the fileEntryTypeId of the document library file entry type
-	* @return long[] the structureIds of d d m structures associated with the document library file entry type
-	*/
-	public static long[] getDDMStructurePrimaryKeys(long fileEntryTypeId) {
-		return getService().getDDMStructurePrimaryKeys(fileEntryTypeId);
-	}
-
 	/**
 	* Returns the document library file entry type with the primary key.
 	*
@@ -539,16 +457,6 @@ public class DLFileEntryTypeLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
-	public static boolean hasDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId) {
-		return getService()
-				   .hasDDMStructureDLFileEntryType(structureId, fileEntryTypeId);
-	}
-
-	public static boolean hasDDMStructureDLFileEntryTypes(long structureId) {
-		return getService().hasDDMStructureDLFileEntryTypes(structureId);
-	}
-
 	public static boolean hasDLFolderDLFileEntryType(long folderId,
 		long fileEntryTypeId) {
 		return getService().hasDLFolderDLFileEntryType(folderId, fileEntryTypeId);
@@ -583,12 +491,6 @@ public class DLFileEntryTypeLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	public static void setDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds) {
-		getService()
-			.setDDMStructureDLFileEntryTypes(structureId, fileEntryTypeIds);
-	}
-
 	public static void setDLFolderDLFileEntryTypes(long folderId,
 		long[] fileEntryTypeIds) {
 		getService().setDLFolderDLFileEntryTypes(folderId, fileEntryTypeIds);
@@ -619,23 +521,21 @@ public class DLFileEntryTypeLocalServiceUtil {
 
 	public static void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateFileEntryType(userId, fileEntryTypeId, name, description,
-			ddmStructureIds, serviceContext);
+			serviceContext);
 	}
 
 	public static void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateFileEntryType(userId, fileEntryTypeId, nameMap,
-			descriptionMap, ddmStructureIds, serviceContext);
+			descriptionMap, serviceContext);
 	}
 
 	public static void updateFolderFileEntryTypes(

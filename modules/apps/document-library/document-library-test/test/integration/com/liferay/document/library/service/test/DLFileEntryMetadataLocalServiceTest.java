@@ -15,6 +15,7 @@
 package com.liferay.document.library.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.locale.test.LocaleTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -28,6 +29,7 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
@@ -40,10 +42,13 @@ import com.liferay.portlet.dynamicdatamapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
+import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormValuesTestUtil;
 
@@ -87,20 +92,26 @@ public class DLFileEntryMetadataLocalServiceTest {
 		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(
 			new String(testFileBytes));
 
-		serviceContext.setAttribute("ddmForm", ddmForm);
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.addStructure(
+			TestPropsValues.getUserId(), _group.getGroupId(),
+			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
+			PortalUtil.getClassNameId(DLFileEntryMetadata.class),
+			RandomTestUtil.randomString(),
+			LocaleTestUtil.getDefaultLocaleMap(StringPool.BLANK),
+			LocaleTestUtil.getDefaultLocaleMap(StringPool.BLANK), ddmForm,
+			DDMUtil.getDefaultDDMFormLayout(ddmForm),
+			StorageType.JSON.toString(), DDMStructureConstants.TYPE_DEFAULT,
+			serviceContext);
 
 		User user = TestPropsValues.getUser();
 
 		serviceContext.setLanguageId(LocaleUtil.toLanguageId(user.getLocale()));
 
-		_dlFileEntryType = DLFileEntryTypeLocalServiceUtil.addFileEntryType(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), StringPool.BLANK, new long[0],
-			serviceContext);
+		_dlFileEntryType = DLFileEntryTypeLocalServiceUtil.getFileEntryType(
+			_group.getGroupId(), ddmStructure.getStructureKey());
 
-		List<DDMStructure> ddmStructures = _dlFileEntryType.getDDMStructures();
-
-		_ddmStructure = ddmStructures.get(0);
+		_ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			_dlFileEntryType.getDDMStructureId());
 
 		Map<String, DDMFormValues> ddmFormValuesMap = setUpDDMFormValuesMap(
 			_ddmStructure.getStructureKey(), user.getLocale());

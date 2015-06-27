@@ -150,6 +150,14 @@ public class DDMStructureLinkPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_S() throws Exception {
+		_persistence.countByC_S(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByC_S(0L, 0L);
+	}
+
+	@Test
 	public void testCountByC_C_S() throws Exception {
 		_persistence.countByC_C_S(RandomTestUtil.nextLong(),
 			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());

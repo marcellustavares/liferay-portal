@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -49,7 +50,27 @@ import javax.portlet.PortletURL;
  */
 @ProviderType
 public abstract class BaseDDMDisplay implements DDMDisplay {
+	
+	@Override
+	public boolean isShowFieldSetSelector(int structureType)  {
+		return false;
+	}
 
+	@Override
+	public String getFieldSetWindowTitle(Locale locale) {
+		return UnicodeLanguageUtil.get(locale, "field-sets");
+	}
+	
+	@Override
+	public String getFieldSetPanelMessageKey() {
+		return "additional-fields";
+	}
+	
+	@Override
+	public String getFieldSetSelectButtonMessageKey() {
+		return "select-field-set";
+	}
+	
 	@Override
 	public String getAvailableFields() {
 		return "Liferay.FormBuilder.AVAILABLE_FIELDS.DDM_STRUCTURE";

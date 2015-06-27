@@ -250,6 +250,8 @@
 			<forward name="portlet.document_library.error" path="portlet.document_library.error" />
 		</action>
 
+		<action path="/document_library/document_type_redirect" forward="portlet.document_library.document_type_redirect" />
+
 		<action path="/document_library/edit_entry" type="com.liferay.portlet.documentlibrary.action.EditEntryAction">
 			<forward name="portlet.document_library.error" path="portlet.document_library.error" />
 		</action>

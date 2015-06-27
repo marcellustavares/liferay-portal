@@ -640,7 +640,8 @@ public class FileEntryStagedModelDataHandler
 			portletDataContext, fileEntry, dlFileEntryType,
 			PortletDataContext.REFERENCE_TYPE_STRONG);
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+		List<DDMStructure> ddmStructures =
+			DLUtil.getDLFileEntryTypeDDMStructures(dlFileEntryType);
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			FileVersion fileVersion = fileEntry.getFileVersion();
@@ -704,7 +705,7 @@ public class FileEntryStagedModelDataHandler
 			"fileEntryTypeId", existingDLFileEntryType.getFileEntryTypeId());
 
 		List<DDMStructure> ddmStructures =
-			existingDLFileEntryType.getDDMStructures();
+			DLUtil.getDLFileEntryTypeDDMStructures(existingDLFileEntryType);
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			Element structureFieldsElement =

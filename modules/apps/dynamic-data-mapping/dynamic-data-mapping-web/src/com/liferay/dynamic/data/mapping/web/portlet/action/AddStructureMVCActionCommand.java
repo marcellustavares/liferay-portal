@@ -67,14 +67,20 @@ public class AddStructureMVCActionCommand extends DDMBaseMVCActionCommand {
 		DDMForm ddmForm = _ddm.getDDMForm(actionRequest);
 		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 		String storageType = ParamUtil.getString(actionRequest, "storageType");
+		int type = ParamUtil.getInteger(actionRequest, "type");
+		long[] structureFragmentIds = getLongArray(
+			actionRequest, "ddmStructuresSearchContainerPrimaryKeys");
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMStructure.class.getName(), actionRequest);
 
+		serviceContext.setAttribute(
+			"structureFragmentIds", structureFragmentIds);
+
 		return _ddmStructureService.addStructure(
 			groupId, parentStructureId, scopeClassNameId, structureKey, nameMap,
-			descriptionMap, ddmForm, ddmFormLayout, storageType,
-			DDMStructureConstants.TYPE_DEFAULT, serviceContext);
+			descriptionMap, ddmForm, ddmFormLayout, storageType, type,
+			serviceContext);
 	}
 
 	@Override

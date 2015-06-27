@@ -196,7 +196,7 @@ public class DLPortletDataHandlerTest extends BasePortletDataHandlerTestCase {
 			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 				TestPropsValues.getUserId(), stagingGroup.getGroupId(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-				new long[] {ddmStructure.getStructureId()}, serviceContext);
+				ddmStructure.getStructureId(), serviceContext);
 
 		DLAppTestUtil.populateServiceContext(
 			serviceContext, dlFileEntryType.getFileEntryTypeId());

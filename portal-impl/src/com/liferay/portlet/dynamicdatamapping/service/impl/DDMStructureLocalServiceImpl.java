@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.GroupThreadLocal;
@@ -159,6 +160,10 @@ public class DDMStructureLocalServiceImpl
 				structure, serviceContext.getGroupPermissions(),
 				serviceContext.getGuestPermissions());
 		}
+
+		// Structure fragments
+
+		updateStructureFragments(structure.getStructureId(), serviceContext);
 
 		// Structure version
 
@@ -462,6 +467,11 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public void deleteStructure(DDMStructure structure) throws PortalException {
+		
+		// Structure fragments
+
+		deleteStructureFragments(structure.getStructureId());
+				
 		if (!GroupThreadLocal.isDeleteInProcess()) {
 			if (ddmStructureLinkPersistence.countByStructureId(
 					structure.getStructureId()) > 0) {
@@ -744,20 +754,6 @@ public class DDMStructureLocalServiceImpl
 		return ddmStructurePersistence.findByC_C(
 			companyId, classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			orderByComparator);
-	}
-
-	/**
-	 * Returns all the structures for the document library file entry type.
-	 *
-	 * @param  dlFileEntryTypeId the primary key of the document library file
-	 *         entry type
-	 * @return the structures for the document library file entry type
-	 */
-	@Override
-	public List<DDMStructure> getDLFileEntryTypeStructures(
-		long dlFileEntryTypeId) {
-
-		return dlFileEntryTypePersistence.getDDMStructures(dlFileEntryTypeId);
 	}
 
 	/**
@@ -1138,6 +1134,8 @@ public class DDMStructureLocalServiceImpl
 	 *         structure is related to
 	 * @param  keywords the keywords (space separated), which may occur in the
 	 *         structure's name or description (optionally <code>null</code>)
+	 * @param  type the structure's type. For more information, see {@link
+	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	 * @param  start the lower bound of the range of structures to return
 	 * @param  end the upper bound of the range of structures to return (not
 	 *         inclusive)
@@ -1148,10 +1146,11 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	public List<DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId, String keywords,
-		int start, int end, OrderByComparator<DDMStructure> orderByComparator) {
+		int type, int start, int end,
+		OrderByComparator<DDMStructure> orderByComparator) {
 
 		return ddmStructureFinder.findByKeywords(
-			companyId, groupIds, classNameId, keywords, start, end,
+			companyId, groupIds, classNameId, keywords, type, start, end,
 			orderByComparator);
 	}
 
@@ -1210,14 +1209,17 @@ public class DDMStructureLocalServiceImpl
 	 *         structure is related to
 	 * @param  keywords the keywords (space separated), which may occur in the
 	 *         structure's name or description (optionally <code>null</code>)
+	 * @param  type the structure's type. For more information, see {@link
+	 *         com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	 * @return the number of matching structures
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long[] groupIds, long classNameId, String keywords) {
+		long companyId, long[] groupIds, long classNameId, String keywords,
+		int type) {
 
 		return ddmStructureFinder.countByKeywords(
-			companyId, groupIds, classNameId, keywords);
+			companyId, groupIds, classNameId, keywords, type);
 	}
 
 	/**
@@ -1470,6 +1472,14 @@ public class DDMStructureLocalServiceImpl
 		return structureVersion;
 	}
 
+	protected void deleteStructureFragments(long structureId) {
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		ddmStructureLinkLocalService.deleteClassNameStructureLinks(
+			classNameId, structureId);
+	}
+
 	protected Set<Long> deleteStructures(List<DDMStructure> structures)
 		throws PortalException {
 
@@ -1532,6 +1542,10 @@ public class DDMStructureLocalServiceImpl
 		structure.setDefinition(DDMFormJSONSerializerUtil.serialize(ddmForm));
 
 		ddmStructurePersistence.update(structure);
+
+		// Structure fragments
+
+		updateStructureFragments(structure.getStructureId(), serviceContext);
 
 		// Structure templates
 
@@ -1674,6 +1688,29 @@ public class DDMStructureLocalServiceImpl
 				}
 
 			});
+	}
+
+	protected void updateStructureFragments(
+		long structureId, ServiceContext serviceContext) {
+
+		deleteStructureFragments(structureId);
+
+		long[] structureFragmentIds = (long[])serviceContext.getAttribute(
+			"structureFragmentIds");
+
+		if (structureFragmentIds == null) {
+			return;
+		}
+
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		for (long structureFragmentId :
+				ArrayUtil.unique(structureFragmentIds)) {
+
+			ddmStructureLinkLocalService.addStructureLink(
+				classNameId, structureFragmentId, structureId);
+		}
 	}
 
 	protected void validate(DDMForm parentDDMForm, DDMForm ddmForm)

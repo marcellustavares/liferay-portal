@@ -186,4 +186,24 @@ public class TestDDMDisplay implements DDMDisplay {
 		return false;
 	}
 
+	@Override
+	public boolean isShowFieldSetSelector(int structureType) {
+		return false;
+	}
+
+	@Override
+	public String getFieldSetWindowTitle(Locale locale) {
+		return null;
+	}
+
+	@Override
+	public String getFieldSetPanelMessageKey() {
+		return null;
+	}
+
+	@Override
+	public String getFieldSetSelectButtonMessageKey() {
+		return null;
+	}
+
 }

@@ -691,15 +691,16 @@ public class DDMStructureServiceHttp {
 
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> search(
 		HttpPrincipal httpPrincipal, long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords, int start, int end,
+		long classNameId, java.lang.String keywords, int type, int start,
+		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"search", _searchParameterTypes19);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					companyId, groupIds, classNameId, keywords, start, end,
-					orderByComparator);
+					companyId, groupIds, classNameId, keywords, type, start,
+					end, orderByComparator);
 
 			Object returnObj = null;
 
@@ -753,13 +754,13 @@ public class DDMStructureServiceHttp {
 	}
 
 	public static int searchCount(HttpPrincipal httpPrincipal, long companyId,
-		long[] groupIds, long classNameId, java.lang.String keywords) {
+		long[] groupIds, long classNameId, java.lang.String keywords, int type) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMStructureServiceUtil.class,
 					"searchCount", _searchCountParameterTypes21);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					companyId, groupIds, classNameId, keywords);
+					companyId, groupIds, classNameId, keywords, type);
 
 			Object returnObj = null;
 
@@ -1045,7 +1046,7 @@ public class DDMStructureServiceHttp {
 		};
 	private static final Class<?>[] _searchParameterTypes19 = new Class[] {
 			long.class, long[].class, long.class, java.lang.String.class,
-			int.class, int.class,
+			int.class, int.class, int.class,
 			com.liferay.portal.kernel.util.OrderByComparator.class
 		};
 	private static final Class<?>[] _searchParameterTypes20 = new Class[] {
@@ -1055,7 +1056,8 @@ public class DDMStructureServiceHttp {
 			com.liferay.portal.kernel.util.OrderByComparator.class
 		};
 	private static final Class<?>[] _searchCountParameterTypes21 = new Class[] {
-			long.class, long[].class, long.class, java.lang.String.class
+			long.class, long[].class, long.class, java.lang.String.class,
+			int.class
 		};
 	private static final Class<?>[] _searchCountParameterTypes22 = new Class[] {
 			long.class, long[].class, long.class, java.lang.String.class,

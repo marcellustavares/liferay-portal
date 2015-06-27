@@ -33,6 +33,7 @@ public class GoogleDocsConstants {
 
 	public static final String DDM_STRUCTURE_KEY_GOOGLE_DOCS = "GOOGLE_DOCS";
 
-	public static final String DL_FILE_ENTRY_TYPE_KEY = "GOOGLE_DOCS";
+	public static final String DL_FILE_ENTRY_TYPE_KEY =
+		DDM_STRUCTURE_KEY_GOOGLE_DOCS;
 
 }

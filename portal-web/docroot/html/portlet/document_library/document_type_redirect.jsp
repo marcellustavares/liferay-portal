@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,25 +12,19 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.portlet.dynamicdatamapping.model;
+<%@ include file="/html/portlet/document_library/init.jsp" %>
 
-/**
- * @author Bruno Basto
- * @author Alexander Chow
- */
-public class DDMStructureConstants {
+<aui:script use="liferay-util-window">
+	var opener = Liferay.Util.getOpener();
 
-	public static final long DEFAULT_PARENT_STRUCTURE_ID = 0;
+	opener.Liferay.Portlet.refresh('#p_p_id_<%= HtmlUtil.escapeJS(portletId) %>_');
 
-	public static final int TYPE_AUTO = 1;
-
-	public static final int TYPE_DEFAULT = 0;
-
-	public static final int TYPE_FRAGMENT = 2;
-
-	public static final String VERSION_DEFAULT = "1.0";
-
-	public static final String XSD_NAME_RESERVED = "reserved";
-
-}
+	Liferay.fire(
+		'closeWindow',
+		{
+			id: '<portlet:namespace />DDMEditStructureView'
+		}
+	);
+</aui:script>

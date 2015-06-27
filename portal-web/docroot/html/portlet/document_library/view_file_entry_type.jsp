@@ -71,3 +71,30 @@ portletURL.setParameter("struts_action", "/document_library/view_file_entry_type
 
 	<liferay-ui:search-iterator />
 </liferay-ui:search-container>
+
+<portlet:renderURL var="documentTypeRedirectURL">
+	<portlet:param name="struts_action" value="/document_library/document_type_redirect" />
+</portlet:renderURL>
+
+<aui:script>
+	function <portlet:namespace />openDDMEditStructureView(classPK) {
+		Liferay.Util.openDDMPortlet(
+			{
+				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				redirect: '<%= documentTypeRedirectURL %>',
+				id: '<portlet:namespace />DDMEditStructureView',
+				mvcPath: '/edit_structure.jsp',
+				classNameId: <%= PortalUtil.getClassNameId(DDMStructure.class) %>,
+				classPK: classPK,
+				dialog: {
+					destroyOnHide: true
+				},
+				groupId: <%= scopeGroupId %>,
+				refererPortletName: '<%= PortletKeys.DOCUMENT_LIBRARY %>',
+				showAncestorScopes: true,
+				showManageTemplates: false,
+				title: '<%= UnicodeLanguageUtil.get(request, "document-type") %>'
+			}
+		);
+	}
+</aui:script>
