@@ -293,7 +293,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 				iconCssClass="icon-search"
 				label="<%= true %>"
 				linkCssClass="btn btn-default"
-				message="<%= ddmDisplay.getFieldSetSelectButtonMessageKey() %> "
+				message="<%= ddmDisplay.getFieldSetSelectButtonMessageKey() %>"
 				url='<%= "javascript:" + renderResponse.getNamespace() + "openDDMStructureSelector();" %>'
 			/>
 		</liferay-ui:panel>

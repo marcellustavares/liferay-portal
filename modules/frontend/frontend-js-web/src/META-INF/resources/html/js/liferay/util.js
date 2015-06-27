@@ -1263,7 +1263,6 @@
 			}
 
 
-			console.log(config.structureType);
 			ddmURL.setParameter('scopeStructureType', config.structureType);
 			ddmURL.setParameter('scopeTitle', config.title);
 

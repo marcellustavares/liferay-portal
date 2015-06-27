@@ -54,11 +54,17 @@ boolean includeBasicFileEntryType = ParamUtil.getBoolean(request, "includeBasicF
 	</aui:nav-bar-search>
 </aui:nav-bar>
 
+<portlet:renderURL var="documentTypeRedirectURL">
+	<portlet:param name="struts_action" value="/document_library/document_type_redirect" />
+</portlet:renderURL>
+
 <aui:script>
 	function <portlet:namespace />openDDMEditStructureView() {
 		Liferay.Util.openDDMPortlet(
 			{
 				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				redirect: '<%= documentTypeRedirectURL %>',
+				id: '<portlet:namespace />DDMEditStructureView',
 				mvcPath: '/edit_structure.jsp',
 				dialog: {
 					destroyOnHide: true

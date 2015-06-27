@@ -270,6 +270,10 @@
 
 	<definition name="portlet.document_library" extends="portlet" />
 
+	<definition name="portlet.document_library.document_type_redirect" extends="portlet.document_library">
+		<put name="portlet_content" value="/portlet/document_library/document_type_redirect.jsp" />
+	</definition>
+
 	<definition name="portlet.document_library.compare_versions" extends="portlet.document_library">
 		<put name="portlet_content" value="/portlet/document_library/compare_versions.jsp" />
 	</definition>
