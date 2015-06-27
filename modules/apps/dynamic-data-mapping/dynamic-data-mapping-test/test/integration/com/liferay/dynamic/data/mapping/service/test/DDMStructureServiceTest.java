@@ -296,7 +296,8 @@ public class DDMStructureServiceTest extends BaseDDMServiceTestCase {
 
 		List<DDMStructure> structures = DDMStructureLocalServiceUtil.search(
 			structure.getCompanyId(), new long[] {structure.getGroupId()},
-			structure.getClassNameId(), "Event", QueryUtil.ALL_POS,
+			structure.getClassNameId(), "Event",
+			DDMStructureConstants.TYPE_DEFAULT, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, new StructureIdComparator(true));
 
 		Assert.assertEquals("Events", getStructureName(structures.get(0)));
@@ -393,13 +394,13 @@ public class DDMStructureServiceTest extends BaseDDMServiceTestCase {
 	public void testSearchCountByKeywords() throws Exception {
 		int initialCount = DDMStructureLocalServiceUtil.searchCount(
 			TestPropsValues.getCompanyId(), new long[] {group.getGroupId()},
-			_CLASS_NAME_ID, null);
+			_CLASS_NAME_ID, null, DDMStructureConstants.TYPE_DEFAULT);
 
 		addStructure(_CLASS_NAME_ID, "Test Structure");
 
 		int count = DDMStructureLocalServiceUtil.searchCount(
 			TestPropsValues.getCompanyId(), new long[] {group.getGroupId()},
-			_CLASS_NAME_ID, null);
+			_CLASS_NAME_ID, null, DDMStructureConstants.TYPE_DEFAULT);
 
 		Assert.assertEquals(initialCount + 1, count);
 	}

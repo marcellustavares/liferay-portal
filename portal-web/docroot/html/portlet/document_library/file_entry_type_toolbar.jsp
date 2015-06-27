@@ -32,12 +32,12 @@ boolean includeBasicFileEntryType = ParamUtil.getBoolean(request, "includeBasicF
 		</portlet:renderURL>
 
 		<c:if test="<%= DLPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_DOCUMENT_TYPE) %>">
-			<portlet:renderURL var="addFileEntryTypeURL">
-				<portlet:param name="struts_action" value="/document_library/edit_file_entry_type" />
-				<portlet:param name="redirect" value="<%= viewFileEntryTypesURL %>" />
-			</portlet:renderURL>
 
-			<aui:nav-item href="<%= addFileEntryTypeURL %>" iconCssClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>' />
+			<%
+			String taglibURL = "javascript:" + renderResponse.getNamespace() + "openDDMEditStructureView()";
+			%>
+
+			<aui:nav-item href="<%= taglibURL %>" iconCssClass="icon-plus" label="add" selected='<%= toolbarItem.equals("add") %>' />
 		</c:if>
 	</aui:nav>
 
@@ -53,3 +53,28 @@ boolean includeBasicFileEntryType = ParamUtil.getBoolean(request, "includeBasicF
 		</div>
 	</aui:nav-bar-search>
 </aui:nav-bar>
+
+<portlet:renderURL var="documentTypeRedirectURL">
+	<portlet:param name="struts_action" value="/document_library/document_type_redirect" />
+</portlet:renderURL>
+
+<aui:script>
+	function <portlet:namespace />openDDMEditStructureView() {
+		Liferay.Util.openDDMPortlet(
+			{
+				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
+				redirect: '<%= documentTypeRedirectURL %>',
+				id: '<portlet:namespace />DDMEditStructureView',
+				mvcPath: '/edit_structure.jsp',
+				dialog: {
+					destroyOnHide: true
+				},
+				groupId: <%= scopeGroupId %>,
+				refererPortletName: '<%= PortletKeys.DOCUMENT_LIBRARY %>',
+				showAncestorScopes: true,
+				showManageTemplates: false,
+				title: '<%= UnicodeLanguageUtil.get(request, "document-type") %>'
+			}
+		);
+	}
+</aui:script>

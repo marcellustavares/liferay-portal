@@ -66,6 +66,7 @@ public class DLFileEntryTypeWrapper implements DLFileEntryType,
 		attributes.put("fileEntryTypeKey", getFileEntryTypeKey());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
+		attributes.put("DDMStructureId", getDDMStructureId());
 
 		return attributes;
 	}
@@ -137,6 +138,12 @@ public class DLFileEntryTypeWrapper implements DLFileEntryType,
 		if (description != null) {
 			setDescription(description);
 		}
+
+		Long DDMStructureId = (Long)attributes.get("DDMStructureId");
+
+		if (DDMStructureId != null) {
+			setDDMStructureId(DDMStructureId);
+		}
 	}
 
 	@Override
@@ -175,9 +182,14 @@ public class DLFileEntryTypeWrapper implements DLFileEntryType,
 		return _dlFileEntryType.getCreateDate();
 	}
 
+	/**
+	* Returns the d d m structure ID of this document library file entry type.
+	*
+	* @return the d d m structure ID of this document library file entry type
+	*/
 	@Override
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures() {
-		return _dlFileEntryType.getDDMStructures();
+	public long getDDMStructureId() {
+		return _dlFileEntryType.getDDMStructureId();
 	}
 
 	@Override
@@ -515,6 +527,16 @@ public class DLFileEntryTypeWrapper implements DLFileEntryType,
 	@Override
 	public void setCreateDate(Date createDate) {
 		_dlFileEntryType.setCreateDate(createDate);
+	}
+
+	/**
+	* Sets the d d m structure ID of this document library file entry type.
+	*
+	* @param DDMStructureId the d d m structure ID of this document library file entry type
+	*/
+	@Override
+	public void setDDMStructureId(long DDMStructureId) {
+		_dlFileEntryType.setDDMStructureId(DDMStructureId);
 	}
 
 	/**

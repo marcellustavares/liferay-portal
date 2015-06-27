@@ -56,6 +56,7 @@ page import="com.liferay.portal.kernel.util.StringBundler" %><%@
 page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
+page import="com.liferay.portal.kernel.util.UnicodeFormatter" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
 page import="com.liferay.portal.model.Group" %><%@
@@ -88,6 +89,7 @@ page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUt
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants" %><%@
@@ -99,6 +101,7 @@ page import="com.liferay.portlet.dynamicdatamapping.search.TemplateDisplayTerms"
 page import="com.liferay.portlet.dynamicdatamapping.search.TemplateSearch" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.search.TemplateSearchTerms" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionServiceUtil" %><%@
@@ -148,7 +151,10 @@ String currentURL = currentURLObj.toString();
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(request);
 
 String refererPortletName = ParamUtil.getString(request, "refererPortletName", portletName);
+
 String refererWebDAVToken = ParamUtil.getString(request, "refererWebDAVToken", portletConfig.getInitParameter("refererWebDAVToken"));
+int scopeStructureType = ParamUtil.getInteger(request, "scopeStructureType", DDMStructureConstants.TYPE_DEFAULT);
+
 String scopeTitle = ParamUtil.getString(request, "scopeTitle");
 boolean showAncestorScopes = ParamUtil.getBoolean(request, "showAncestorScopes");
 boolean showManageTemplates = ParamUtil.getBoolean(request, "showManageTemplates", true);

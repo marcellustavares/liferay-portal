@@ -15,8 +15,10 @@
 package com.liferay.portlet.documentlibrary.ddm;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.language.UnicodeLanguageUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.BaseDDMDisplay;
 import com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler;
@@ -34,6 +36,21 @@ public class DLDDMDisplay extends BaseDDMDisplay {
 	}
 
 	@Override
+	public String getFieldSetPanelMessageKey() {
+		return "additional-metadata-fields";
+	}
+
+	@Override
+	public String getFieldSetSelectButtonMessageKey() {
+		return "select-metadata-set";
+	}
+
+	@Override
+	public String getFieldSetWindowTitle(Locale locale) {
+		return UnicodeLanguageUtil.get(locale, "metadata-sets");
+	}
+
+	@Override
 	public String getPortletId() {
 		return PortletKeys.DOCUMENT_LIBRARY;
 	}
@@ -45,12 +62,21 @@ public class DLDDMDisplay extends BaseDDMDisplay {
 
 	@Override
 	public String getStructureName(Locale locale) {
-		return LanguageUtil.get(locale, "metadata-set");
+		return LanguageUtil.get(locale, "document-type");
 	}
 
 	@Override
 	public String getStructureType() {
 		return DLFileEntryMetadata.class.getName();
+	}
+
+	@Override
+	public boolean isShowFieldSetSelector(int structureType) {
+		if (structureType == DDMStructureConstants.TYPE_DEFAULT) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private final DDMPermissionHandler _ddmPermissionHandler =

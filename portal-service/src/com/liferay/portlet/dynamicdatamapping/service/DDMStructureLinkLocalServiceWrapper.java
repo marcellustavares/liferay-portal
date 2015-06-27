@@ -65,6 +65,12 @@ public class DDMStructureLinkLocalServiceWrapper
 		return _ddmStructureLinkLocalService.createDDMStructureLink(structureLinkId);
 	}
 
+	@Override
+	public void deleteClassNameStructureLinks(long classNameId, long structureId) {
+		_ddmStructureLinkLocalService.deleteClassNameStructureLinks(classNameId,
+			structureId);
+	}
+
 	/**
 	* Deletes the d d m structure link from the database. Also notifies the appropriate model listeners.
 	*
@@ -236,6 +242,13 @@ public class DDMStructureLinkLocalServiceWrapper
 	@Override
 	public java.lang.String getBeanIdentifier() {
 		return _ddmStructureLinkLocalService.getBeanIdentifier();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> getClassNameStructureLinks(
+		long classNameId, long structureId) {
+		return _ddmStructureLinkLocalService.getClassNameStructureLinks(classNameId,
+			structureId);
 	}
 
 	/**

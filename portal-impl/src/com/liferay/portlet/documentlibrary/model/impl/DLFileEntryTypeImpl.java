@@ -22,8 +22,6 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,12 +31,6 @@ import java.util.Locale;
  * @author Mate Thurzo
  */
 public class DLFileEntryTypeImpl extends DLFileEntryTypeBaseImpl {
-
-	@Override
-	public List<DDMStructure> getDDMStructures() {
-		return DDMStructureLocalServiceUtil.getDLFileEntryTypeStructures(
-			getFileEntryTypeId());
-	}
 
 	@Override
 	public String getName(Locale locale) {

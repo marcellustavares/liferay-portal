@@ -25,6 +25,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalService;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
@@ -35,7 +36,6 @@ import com.liferay.portlet.dynamicdatamapping.util.FieldsToDDMFormValuesConverte
 import java.io.Serializable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,19 +50,13 @@ public class GoogleDocsMetadataHelper {
 			return null;
 		}
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
-
-		for (DDMStructure ddmStructure : ddmStructures) {
-			String structureKey = ddmStructure.getStructureKey();
-
-			if (structureKey.equals(
-					GoogleDocsConstants.DDM_STRUCTURE_KEY_GOOGLE_DOCS)) {
-
-				return ddmStructure;
-			}
+		try {
+			return DDMStructureLocalServiceUtil.getStructure(
+				dlFileEntryType.getDDMStructureId());
 		}
-
-		return null;
+		catch (PortalException pe) {
+			return null;
+		}
 	}
 
 	public GoogleDocsMetadataHelper(

@@ -175,6 +175,7 @@ boolean search = strutsAction.equals("/document_library/search");
 				refererPortletName: '<%= PortletKeys.DOCUMENT_LIBRARY %>',
 				showAncestorScopes: true,
 				showManageTemplates: false,
+				structureType: <%= DDMStructureConstants.TYPE_FRAGMENT %>,
 				title: '<%= UnicodeLanguageUtil.get(request, "metadata-sets") %>'
 			}
 		);

@@ -449,6 +449,8 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	structure is related to
 	* @param keywords the keywords (space separated), which may occur in the
 	structure's name or description (optionally <code>null</code>)
+	* @param type the structure's type. For more information, see {@link
+	com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	* @param start the lower bound of the range of structures to return
 	* @param end the upper bound of the range of structures to return (not
 	inclusive)
@@ -459,10 +461,10 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	@Override
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
+		java.lang.String keywords, int type, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
 		return _ddmStructureService.search(companyId, groupIds, classNameId,
-			keywords, start, end, orderByComparator);
+			keywords, type, start, end, orderByComparator);
 	}
 
 	/**
@@ -521,13 +523,15 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	structure is related to
 	* @param keywords the keywords (space separated), which may occur in the
 	structure's name or description (optionally <code>null</code>)
+	* @param type the structure's type. For more information, see {@link
+	com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants}.
 	* @return the number of matching structures
 	*/
 	@Override
 	public int searchCount(long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords) {
+		java.lang.String keywords, int type) {
 		return _ddmStructureService.searchCount(companyId, groupIds,
-			classNameId, keywords);
+			classNameId, keywords, type);
 	}
 
 	/**

@@ -48,17 +48,6 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link DLFileEntryTypeLocalServiceUtil} to access the document library file entry type local service. Add custom service methods to {@link com.liferay.portlet.documentlibrary.service.impl.DLFileEntryTypeLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public void addDDMStructureDLFileEntryType(long structureId,
-		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType);
-
-	public void addDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId);
-
-	public void addDDMStructureDLFileEntryTypes(long structureId,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> DLFileEntryTypes);
-
-	public void addDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds);
 
 	/**
 	* Adds the document library file entry type to the database. Also notifies the appropriate model listeners.
@@ -85,21 +74,19 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 		long userId, long groupId, java.lang.String fileEntryTypeKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
+		long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	public com.liferay.portlet.documentlibrary.model.DLFileEntryType addFileEntryType(
 		long userId, long groupId, java.lang.String name,
-		java.lang.String description, long[] ddmStructureIds,
+		java.lang.String description, long ddmStructureId,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	public void cascadeFileEntryTypes(long userId,
 		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder)
 		throws PortalException;
-
-	public void clearDDMStructureDLFileEntryTypes(long structureId);
 
 	public void clearDLFolderDLFileEntryTypes(long folderId);
 
@@ -111,18 +98,6 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 	*/
 	public com.liferay.portlet.documentlibrary.model.DLFileEntryType createDLFileEntryType(
 		long fileEntryTypeId);
-
-	public void deleteDDMStructureDLFileEntryType(long structureId,
-		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType);
-
-	public void deleteDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId);
-
-	public void deleteDDMStructureDLFileEntryTypes(long structureId,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> DLFileEntryTypes);
-
-	public void deleteDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds);
 
 	/**
 	* Deletes the document library file entry type from the database. Also notifies the appropriate model listeners.
@@ -273,31 +248,6 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId, int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> getDDMStructureDLFileEntryTypes(
-		long structureId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getDDMStructureDLFileEntryTypesCount(long structureId);
-
-	/**
-	* Returns the structureIds of the d d m structures associated with the document library file entry type.
-	*
-	* @param fileEntryTypeId the fileEntryTypeId of the document library file entry type
-	* @return long[] the structureIds of d d m structures associated with the document library file entry type
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long[] getDDMStructurePrimaryKeys(long fileEntryTypeId);
-
 	/**
 	* Returns the document library file entry type with the primary key.
 	*
@@ -427,13 +377,6 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 		java.io.Serializable primaryKeyObj) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public boolean hasDDMStructureDLFileEntryType(long structureId,
-		long fileEntryTypeId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public boolean hasDDMStructureDLFileEntryTypes(long structureId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasDLFolderDLFileEntryType(long folderId,
 		long fileEntryTypeId);
 
@@ -457,9 +400,6 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
-	public void setDDMStructureDLFileEntryTypes(long structureId,
-		long[] fileEntryTypeIds);
-
 	public void setDLFolderDLFileEntryTypes(long folderId,
 		long[] fileEntryTypeIds);
 
@@ -482,14 +422,12 @@ public interface DLFileEntryTypeLocalService extends BaseLocalService,
 
 	public void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.lang.String name, java.lang.String description,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
 	public void updateFileEntryType(long userId, long fileEntryTypeId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		long[] ddmStructureIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 

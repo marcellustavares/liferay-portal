@@ -240,8 +240,8 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 		DLFileEntryType dlFileEntryType =
 			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
 				TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
-				"Structure", StringPool.BLANK,
-				new long[] {ddmStructure.getStructureId()}, serviceContext);
+				"Structure", StringPool.BLANK, ddmStructure.getStructureId(), 
+				serviceContext);
 
 		String content = "Content: Enterprise. Open Source. For Life.";
 

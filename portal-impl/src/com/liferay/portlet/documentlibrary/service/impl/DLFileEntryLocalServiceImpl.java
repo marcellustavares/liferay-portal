@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.service.impl;
 
 import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -101,6 +102,7 @@ import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.DLValidatorUtil;
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelModifiedDateComparator;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.expando.NoSuchRowException;
@@ -692,7 +694,8 @@ public class DLFileEntryLocalServiceImpl
 			DLFileEntryType dlFileEntryType =
 				dlFileEntryTypeLocalService.getFileEntryType(fileEntryTypeId);
 
-			ddmStructures = dlFileEntryType.getDDMStructures();
+			ddmStructures = DLUtil.getDLFileEntryTypeDDMStructures(
+				dlFileEntryType);
 		}
 		else {
 			long classNameId = classNameLocalService.getClassNameId(
@@ -2352,7 +2355,8 @@ public class DLFileEntryLocalServiceImpl
 		DLFileEntryType dlFileEntryType =
 			lastDLFileVersion.getDLFileEntryType();
 
-		List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+		List<DDMStructure> ddmStructures =
+			DLUtil.getDLFileEntryTypeDDMStructures(dlFileEntryType);
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			DLFileEntryMetadata lastFileEntryMetadata = null;
@@ -2825,6 +2829,9 @@ public class DLFileEntryLocalServiceImpl
 			}
 		}
 	}
+
+	@BeanReference(type = DDMStructureLocalService.class)
+	protected DDMStructureLocalService ddmStructureLocalService;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLFileEntryLocalServiceImpl.class);
