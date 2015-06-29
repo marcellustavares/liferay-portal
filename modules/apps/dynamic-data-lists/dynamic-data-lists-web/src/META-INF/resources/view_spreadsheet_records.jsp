@@ -17,11 +17,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
-DDLRecordSet recordSet = (DDLRecordSet)request.getAttribute(WebKeys.DYNAMIC_DATA_LISTS_RECORD_SET);
+DDLRecordSet recordSet = (DDLRecordSet)request.getAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD_SET);
 
 boolean editable = ParamUtil.getBoolean(request, "editable", true);
 
-if (editable || portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS)) {
+if (editable || portletName.equals(DDLPortletKeys.DYNAMIC_DATA_LISTS)) {
 	editable = DDLRecordSetPermission.contains(permissionChecker, recordSet.getRecordSetId(), ActionKeys.ADD_RECORD) && DDLRecordSetPermission.contains(permissionChecker, recordSet.getRecordSetId(), ActionKeys.UPDATE);
 }
 
