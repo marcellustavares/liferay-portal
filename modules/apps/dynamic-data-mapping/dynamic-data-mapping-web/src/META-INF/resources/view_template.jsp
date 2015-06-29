@@ -23,12 +23,12 @@ long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId
 long classNameId = ParamUtil.getLong(request, "classNameId");
 long classPK = ParamUtil.getLong(request, "classPK");
 
-DDMStructure structure = null;
+DDMStructureVersion structureVersion = null;
 
-long structureClassNameId = PortalUtil.getClassNameId(DDMStructure.class);
+long structureClassNameId = PortalUtil.getClassNameId(DDMStructureVersion.class);
 
 if ((classPK > 0) && (structureClassNameId == classNameId)) {
-	structure = DDMStructureServiceUtil.getStructure(classPK);
+	structureVersion = DDMStructureVersionServiceUtil.getStructureVersion(classPK);
 }
 
 long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
@@ -59,6 +59,12 @@ if (layout != null) {
 TemplateSearch templateSearch = new TemplateSearch(renderRequest, PortletURLUtil.clone(portletURL, renderResponse));
 
 TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.getSearchTerms();
+
+DDMStructure structure = null;
+
+if(Validator.isNotNull(structureVersion)) {
+	structure = structureVersion.getStructure();
+}
 
 String title = ddmDisplay.getViewTemplatesTitle(structure, controlPanel, templateSearchTerms.isSearch(), locale);
 %>
@@ -169,13 +175,13 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, controlPanel, templat
 				path="/template_description.jsp"
 			/>
 
-			<c:if test='<%= !excludedColumnNames.contains("structure") && (structure == null) %>'>
+			<c:if test='<%= !excludedColumnNames.contains("structure") && (structureVersion == null) %>'>
 
 				<%
 				String structureName = StringPool.BLANK;
 
 				if (template.getClassPK() > 0) {
-					DDMStructure templateStructure = DDMStructureServiceUtil.getStructure(template.getClassPK());
+					DDMStructureVersion templateStructure = DDMStructureVersionServiceUtil.getStructureVersion(template.getClassPK());
 
 					structureName = templateStructure.getName(locale);
 				}

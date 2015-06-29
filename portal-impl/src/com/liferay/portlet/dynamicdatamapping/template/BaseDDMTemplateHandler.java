@@ -23,8 +23,9 @@ import com.liferay.portal.kernel.templateparser.TemplateNode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionLocalServiceUtil;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,36 +95,38 @@ public abstract class BaseDDMTemplateHandler extends BaseTemplateHandler {
 	}
 
 	protected TemplateVariableGroup getStructureFieldsTemplateVariableGroup(
-			long ddmStructureId, Locale locale)
+			long ddmStructureVersionId, Locale locale)
 		throws PortalException {
 
-		if (ddmStructureId <= 0) {
+		if (ddmStructureVersionId <= 0) {
 			return null;
 		}
 
 		TemplateVariableGroup templateVariableGroup = new TemplateVariableGroup(
 			"fields");
 
-		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
-			ddmStructureId);
+		DDMStructureVersion ddmStructureVersion =
+			DDMStructureVersionLocalServiceUtil.getStructureVersion(
+				ddmStructureVersionId);
+		
+		List<DDMFormField> ddmFormFields = 
+			ddmStructureVersion.getDDMForm().getDDMFormFields();
 
-		List<String> fieldNames = ddmStructure.getRootFieldNames();
-
-		for (String fieldName : fieldNames) {
-			String label = ddmStructure.getFieldLabel(fieldName, locale);
-			String tip = ddmStructure.getFieldTip(fieldName, locale);
-			String dataType = ddmStructure.getFieldDataType(fieldName);
-			boolean repeatable = ddmStructure.getFieldRepeatable(fieldName);
+		for(DDMFormField ddmFormField : ddmFormFields) {
+			String label = ddmFormField.getLabel().getString(locale);
+			String tip = ddmFormField.getTip().getString(locale);
+			String dataType = ddmFormField.getDataType();
+			boolean repeatable = ddmFormField.isRepeatable();
 
 			if (Validator.isNull(dataType)) {
 				continue;
 			}
 
 			templateVariableGroup.addFieldVariable(
-				label, getFieldVariableClass(), fieldName, tip, dataType,
-				repeatable, getTemplateVariableCodeHandler());
+				label, getFieldVariableClass(), ddmFormField.getName(), tip, 
+				dataType, repeatable, getTemplateVariableCodeHandler());
 		}
-
+		
 		return templateVariableGroup;
 	}
 

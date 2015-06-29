@@ -37,7 +37,7 @@ long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
 		%>
 
 		<c:choose>
-			<c:when test="<%= classNameId == PortalUtil.getClassNameId(DDMStructure.class) %>">
+			<c:when test="<%= classNameId == PortalUtil.getClassNameId(DDMStructureVersion.class) %>">
 				<c:if test="<%= DDMPermission.contains(permissionChecker, scopeGroupId, ddmPermissionHandler.getResourceName(scopeClassNameId), ddmPermissionHandler.getAddTemplateActionId()) && (Validator.isNull(templateTypeValue) || templateTypeValue.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) %>">
 
 					<%

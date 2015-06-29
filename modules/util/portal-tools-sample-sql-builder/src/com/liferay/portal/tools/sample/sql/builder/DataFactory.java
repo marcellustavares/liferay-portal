@@ -37,6 +37,7 @@ import com.liferay.journal.model.impl.JournalArticleResourceModelImpl;
 import com.liferay.journal.model.impl.JournalContentSearchModelImpl;
 import com.liferay.journal.social.JournalActivityKeys;
 import com.liferay.journal.web.constants.JournalPortletKeys;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -148,13 +149,17 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLinkModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureModel;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersionModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateModel;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMContentModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStorageLinkModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureLinkModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureModelImpl;
+import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureVersionModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateModelImpl;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
@@ -197,9 +202,7 @@ import com.liferay.wiki.social.WikiActivityKeys;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.text.Format;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -844,9 +847,11 @@ public class DataFactory {
 		_defaultJournalDDMStructureModel = newDDMStructureModel(
 			_globalGroupId, _defaultUserId, getJournalArticleClassNameId(),
 			"BASIC-WEB-CONTENT", _journalDDMStructureContent);
+		_ddmStructureVersionModel = newDDMStructureVersionModel(
+			_defaultJournalDDMStructureModel);
 		_defaultJournalDDMTemplateModel = newDDMTemplateModel(
 			_globalGroupId, _defaultUserId,
-			_defaultJournalDDMStructureModel.getStructureId(),
+			_ddmStructureVersionModel.getStructureVersionId(),
 			getJournalArticleClassNameId());
 	}
 
@@ -2579,9 +2584,35 @@ public class DataFactory {
 
 		return dDMStructureModel;
 	}
+	
+	protected DDMStructureVersionModel newDDMStructureVersionModel(
+		DDMStructureModel structureModel) {
+
+		DDMStructureVersionModel dDMStructureVersionModel 
+			= new DDMStructureVersionModelImpl();
+
+		dDMStructureVersionModel.setStructureVersionId(_counter.get());
+		dDMStructureVersionModel.setStructureId(
+			structureModel.getStructureId());
+		dDMStructureVersionModel.setGroupId(structureModel.getGroupId());
+		dDMStructureVersionModel.setCompanyId(_companyId);
+		dDMStructureVersionModel.setUserId(structureModel.getUserId());
+		dDMStructureVersionModel.setUserName(_SAMPLE_USER_NAME);
+		dDMStructureVersionModel.setCreateDate(nextFutureDate());
+		dDMStructureVersionModel.setVersion(
+			DDMStructureConstants.VERSION_DEFAULT);
+
+		dDMStructureVersionModel.setName(structureModel.getName());
+
+		dDMStructureVersionModel.setDefinition(structureModel.getDefinition());
+		dDMStructureVersionModel.setStorageType(StorageType.JSON.toString());
+
+		return dDMStructureVersionModel;
+	}
 
 	protected DDMTemplateModel newDDMTemplateModel(
-		long groupId, long userId, long structureId, long sourceClassNameId) {
+		long groupId, long userId, long structureVersionId, 
+		long resourceClassNameId) {
 
 		DDMTemplateModel ddmTemplateModel = new DDMTemplateModelImpl();
 
@@ -2593,9 +2624,9 @@ public class DataFactory {
 		ddmTemplateModel.setCreateDate(nextFutureDate());
 		ddmTemplateModel.setModifiedDate(nextFutureDate());
 		ddmTemplateModel.setClassNameId(
-			_classNameModelsMap.get(DDMStructure.class.getName()));
-		ddmTemplateModel.setClassPK(structureId);
-		ddmTemplateModel.setResourceClassNameId(structureId);
+			_classNameModelsMap.get(DDMStructureVersion.class.getName()));
+		ddmTemplateModel.setClassPK(structureVersionId);
+		ddmTemplateModel.setResourceClassNameId(resourceClassNameId);
 		ddmTemplateModel.setTemplateKey(String.valueOf(_counter.get()));
 		ddmTemplateModel.setVersion(DDMTemplateConstants.VERSION_DEFAULT);
 		ddmTemplateModel.setVersionUserId(userId);
@@ -3043,6 +3074,7 @@ public class DataFactory {
 	private DDMStructureModel _defaultDLDDMStructureModel;
 	private DLFileEntryTypeModel _defaultDLFileEntryTypeModel;
 	private DDMStructureModel _defaultJournalDDMStructureModel;
+	private DDMStructureVersionModel _ddmStructureVersionModel;
 	private DDMTemplateModel _defaultJournalDDMTemplateModel;
 	private final long _defaultUserId;
 	private UserModel _defaultUserModel;

@@ -31,9 +31,9 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionLocalServiceUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -54,12 +54,13 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMTemplateHelperImpl implements DDMTemplateHelper {
 
 	@Override
-	public DDMStructure fetchStructure(DDMTemplate template) {
+	public DDMStructureVersion fetchStructure(DDMTemplate template) {
 		try {
 			long classNameId = PortalUtil.getClassNameId(DDMStructure.class);
 
 			if (template.getClassNameId() == classNameId) {
-				return DDMStructureLocalServiceUtil.fetchDDMStructure(
+				return
+				DDMStructureVersionLocalServiceUtil.fetchDDMStructureVersion(
 					template.getClassPK());
 			}
 		}
@@ -177,10 +178,7 @@ public class DDMTemplateHelperImpl implements DDMTemplateHelper {
 			ddmTemplate, request, "classNameId");
 
 		if (classPK > 0) {
-			DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(
-				classPK);
-
-			classNameId = ddmStructure.getClassNameId();
+			classNameId = PortalUtil.getClassNameId(DDMStructureVersion.class);
 		}
 		else if (ddmTemplate != null) {
 			classNameId = ddmTemplate.getClassNameId();

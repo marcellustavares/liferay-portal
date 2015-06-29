@@ -38,8 +38,10 @@ import com.liferay.portlet.dynamicdatamapping.TemplateScriptException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageNameException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 
 import java.io.IOException;
@@ -184,17 +186,28 @@ public class DDMPortlet extends MVCPortlet {
 		long classPK = ParamUtil.getLong(renderRequest, "classPK");
 
 		if ((classNameId > 0) && (classPK > 0)) {
-			DDMStructure structure = null;
-
 			long structureClassNameId = PortalUtil.getClassNameId(
 				DDMStructure.class);
 
-			if ((structureClassNameId == classNameId) && (classPK > 0)) {
-				structure = DDMStructureServiceUtil.getStructure(classPK);
-			}
+			long structureVersionClassNameId = PortalUtil.getClassNameId(
+				DDMStructureVersion.class);
 
-			renderRequest.setAttribute(
-				WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structure);
+			if ((structureClassNameId == classNameId) && (classPK > 0)) {
+				DDMStructure structure = DDMStructureServiceUtil.getStructure(
+					classPK);
+
+				renderRequest.setAttribute(
+					WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structure);
+			}
+			else if ((structureVersionClassNameId == classNameId) &&
+					 (classPK > 0)) {
+
+				DDMStructureVersion structureVersion =
+					DDMStructureVersionServiceUtil.getStructureVersion(classPK);
+
+				renderRequest.setAttribute(
+					WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structureVersion);
+			}
 		}
 	}
 

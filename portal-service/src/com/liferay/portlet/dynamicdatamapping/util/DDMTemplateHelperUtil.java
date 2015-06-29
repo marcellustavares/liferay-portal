@@ -15,7 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.util;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DDMTemplateHelperUtil {
 
-	public static DDMStructure fetchStructure(DDMTemplate ddmTemplate) {
+	public static DDMStructureVersion fetchStructure(DDMTemplate ddmTemplate) {
 		return getDDMTemplateHelper().fetchStructure(ddmTemplate);
 	}
 

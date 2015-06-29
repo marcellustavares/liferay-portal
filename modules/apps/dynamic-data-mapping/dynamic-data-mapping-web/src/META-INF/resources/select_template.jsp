@@ -24,12 +24,18 @@ long classPK = ParamUtil.getLong(request, "classPK");
 long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
 String eventName = ParamUtil.getString(request, "eventName", "selectStructure");
 
+DDMStructureVersion structureVersion = null;
+
+long structureVersionClassNameId = PortalUtil.getClassNameId(DDMStructureVersion.class);
+
+if ((classPK > 0) && (structureVersionClassNameId == classNameId)) {
+	structureVersion = DDMStructureVersionLocalServiceUtil.getStructureVersion(classPK);
+}
+
 DDMStructure structure = null;
 
-long structureClassNameId = PortalUtil.getClassNameId(DDMStructure.class);
-
-if ((classPK > 0) && (structureClassNameId == classNameId)) {
-	structure = DDMStructureLocalServiceUtil.getStructure(classPK);
+if(Validator.isNotNull(structureVersion)) {
+	structure = structureVersion.getStructure();
 }
 
 String title = ddmDisplay.getViewTemplatesTitle(structure, locale);

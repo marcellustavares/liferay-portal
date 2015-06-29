@@ -155,7 +155,7 @@ portletURL.setParameter("folderId", String.valueOf(folderId));
 		Liferay.Util.openDDMPortlet(
 			{
 				basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
-				classNameId: '<%= PortalUtil.getClassNameId(DDMStructure.class) %>',
+				classNameId: '<%= PortalUtil.getClassNameId(DDMStructureVersion.class) %>',
 				dialog: {
 					destroyOnHide: true
 				},

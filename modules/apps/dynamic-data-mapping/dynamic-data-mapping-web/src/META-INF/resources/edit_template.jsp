@@ -38,10 +38,11 @@ long resourceClassNameId = BeanParamUtil.getLong(template, request, "resourceCla
 boolean cacheable = BeanParamUtil.getBoolean(template, request, "cacheable", true);
 boolean smallImage = BeanParamUtil.getBoolean(template, request, "smallImage");
 
-DDMStructure structure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
+DDMStructureVersion structureVersion = (DDMStructureVersion)request.getAttribute(WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE);
 
-if ((structure == null) && (template != null)) {
-	structure = DDMTemplateHelperUtil.fetchStructure(template);
+if ((structureVersion == null) && (template != null)) {
+
+	structureVersion = DDMTemplateHelperUtil.fetchStructure(template);
 }
 
 String type = BeanParamUtil.getString(template, request, "type", DDMTemplateConstants.TEMPLATE_TYPE_FORM);
@@ -52,8 +53,8 @@ String script = BeanParamUtil.getString(template, request, "script");
 if (Validator.isNull(script) && type.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
 	TemplateHandler templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(classNameId);
 
-	if ((templateHandler == null) && (structure != null)) {
-		templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(structure.getClassNameId());
+	if ((templateHandler == null) && (structureVersion != null)) {
+		templateHandler = TemplateHandlerRegistryUtil.getTemplateHandler(PortalUtil.getClassNameId(DDMStructureVersion.class));
 	}
 
 	if (templateHandler != null) {
@@ -126,8 +127,8 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 	<%
 	String title = StringPool.BLANK;
 
-	if ((structure != null) || (template != null)) {
-		title = ddmDisplay.getEditTemplateTitle(structure, template, locale);
+	if ((structureVersion != null) || (template != null)) {
+		title = ddmDisplay.getEditTemplateTitle(structureVersion.getStructure(), template, locale);
 	}
 	else {
 		title = ddmDisplay.getEditTemplateTitle(classNameId, locale);
@@ -188,7 +189,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 			<liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="templateDetailsSectionPanel" persistState="<%= true %>" title="details">
 				<c:if test="<%= ddmDisplay.isShowStructureSelector() %>">
 					<div class="form-group">
-						<aui:input helpMessage="structure-help" name="structure" type="resource" value="<%= (structure != null) ? structure.getName(locale) : StringPool.BLANK %>" />
+						<aui:input helpMessage="structure-help" name="structure" type="resource" value="<%= (structureVersion != null) ? structureVersion.getName(locale) : StringPool.BLANK %>" />
 
 						<c:if test="<%= ((template == null) || (template.getClassPK() == 0)) %>">
 							<liferay-ui:icon
@@ -371,7 +372,7 @@ boolean showCacheableInput = ParamUtil.getBoolean(request, "showCacheableInput")
 			Liferay.Util.openDDMPortlet(
 				{
 					basePortletURL: '<%= PortletURLFactoryUtil.create(request, PortletKeys.DYNAMIC_DATA_MAPPING, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
-					classNameId: '<%= PortalUtil.getClassNameId(DDMStructure.class) %>',
+					classNameId: '<%= PortalUtil.getClassNameId(DDMStructureVersion.class) %>',
 					classPK: 0,
 					eventName: '<portlet:namespace />selectStructure',
 					groupId: <%= groupId %>,
