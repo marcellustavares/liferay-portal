@@ -100,37 +100,16 @@ public class DDMPortlet extends MVCPortlet {
 			super.processAction(actionRequest, actionResponse);
 		}
 		catch (Exception e) {
-			if (e instanceof NoSuchStructureException ||
-				e instanceof PrincipalException ||
-				e instanceof NoSuchTemplateException) {
+			if (e instanceof RequiredStructureException ||
+				e instanceof RequiredTemplateException) {
 
 				SessionErrors.add(actionRequest, e.getClass());
 
-				include("/error.jsp", actionRequest, actionResponse);
-			}
-			else if (e instanceof LocaleException ||
-					 e instanceof RequiredStructureException ||
-					 e instanceof StructureDefinitionException ||
-					 e instanceof StructureDuplicateElementException ||
-					 e instanceof StructureNameException ||
-					 e instanceof TemplateNameException ||
-					 e instanceof RequiredTemplateException ||
-					 e instanceof TemplateNameException ||
-					 e instanceof TemplateScriptException ||
-					 e instanceof TemplateSmallImageNameException ||
-					 e instanceof TemplateSmallImageSizeException) {
+				String redirect = PortalUtil.escapeRedirect(
+					ParamUtil.getString(actionRequest, "redirect"));
 
-				SessionErrors.add(actionRequest, e.getClass(), e);
-
-				if (e instanceof RequiredStructureException ||
-					e instanceof RequiredTemplateException) {
-
-					String redirect = PortalUtil.escapeRedirect(
-						ParamUtil.getString(actionRequest, "redirect"));
-
-					if (Validator.isNotNull(redirect)) {
-						actionResponse.sendRedirect(redirect);
-					}
+				if (Validator.isNotNull(redirect)) {
+					actionResponse.sendRedirect(redirect);
 				}
 			}
 			else {
@@ -175,6 +154,45 @@ public class DDMPortlet extends MVCPortlet {
 		}
 
 		super.render(request, response);
+	}
+
+	@Override
+	protected void doDispatch(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		if (SessionErrors.contains(
+				renderRequest, NoSuchStructureException.class.getName()) ||
+			SessionErrors.contains(
+				renderRequest, PrincipalException.class.getName()) ||
+			SessionErrors.contains(
+				renderRequest, PrincipalException.class.getName())) {
+
+			include("/error.jsp", renderRequest, renderResponse);
+		}
+		else {
+			super.doDispatch(renderRequest, renderResponse);
+		}
+	}
+
+	@Override
+	protected boolean isSessionErrorException(Throwable cause) {
+		if (cause instanceof NoSuchStructureException ||
+			cause instanceof PrincipalException ||
+			cause instanceof NoSuchTemplateException ||
+			cause instanceof LocaleException ||
+			cause instanceof StructureDefinitionException ||
+			cause instanceof StructureDuplicateElementException ||
+			cause instanceof StructureNameException ||
+			cause instanceof TemplateNameException ||
+			cause instanceof TemplateScriptException ||
+			cause instanceof TemplateSmallImageNameException ||
+			cause instanceof TemplateSmallImageSizeException) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	protected void setDDMStructureRequestAttribute(RenderRequest renderRequest)
