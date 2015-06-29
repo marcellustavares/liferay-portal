@@ -62,7 +62,7 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 
 DDMStructure structure = null;
 
-if(Validator.isNotNull(structureVersion)) {
+if (Validator.isNotNull(structureVersion)) {
 	structure = structureVersion.getStructure();
 }
 

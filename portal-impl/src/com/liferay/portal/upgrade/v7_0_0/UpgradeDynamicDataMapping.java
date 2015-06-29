@@ -339,10 +339,6 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		return DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout);
 	}
 
-    protected String toJSON(DDMForm ddmForm) {
-		return DDMFormJSONSerializerUtil.serialize(ddmForm);
-	}
-
 	protected long getLatestDDMStructureVersionId(long structureId)
 		throws SQLException {
 
@@ -368,6 +364,10 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
 		}
+	}
+
+	protected String toJSON(DDMForm ddmForm) {
+		return DDMFormJSONSerializerUtil.serialize(ddmForm);
 	}
 
 	protected String toJSON(DDMFormValues ddmFormValues) {
@@ -781,8 +781,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				addTemplateVersion(
 					increment(), groupId, companyId, userId, userName,
-					modifiedDate, classNameId, classPK, templateId, name, 
-					description, language, script, 
+					modifiedDate, classNameId, classPK, templateId, name,
+					description, language, script,
 					WorkflowConstants.STATUS_APPROVED, userId, userName,
 					modifiedDate);
 			}

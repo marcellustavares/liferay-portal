@@ -34,7 +34,7 @@ if ((classPK > 0) && (structureVersionClassNameId == classNameId)) {
 
 DDMStructure structure = null;
 
-if(Validator.isNotNull(structureVersion)) {
+if (Validator.isNotNull(structureVersion)) {
 	structure = structureVersion.getStructure();
 }
 

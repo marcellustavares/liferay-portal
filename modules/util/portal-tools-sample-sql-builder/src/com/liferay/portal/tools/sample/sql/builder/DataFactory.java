@@ -37,7 +37,6 @@ import com.liferay.journal.model.impl.JournalArticleResourceModelImpl;
 import com.liferay.journal.model.impl.JournalContentSearchModelImpl;
 import com.liferay.journal.social.JournalActivityKeys;
 import com.liferay.journal.web.constants.JournalPortletKeys;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -159,7 +158,6 @@ import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureLinkModelIm
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureVersionModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateModelImpl;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
@@ -202,7 +200,9 @@ import com.liferay.wiki.social.WikiActivityKeys;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.text.Format;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -2584,12 +2584,12 @@ public class DataFactory {
 
 		return dDMStructureModel;
 	}
-	
+
 	protected DDMStructureVersionModel newDDMStructureVersionModel(
 		DDMStructureModel structureModel) {
 
-		DDMStructureVersionModel dDMStructureVersionModel 
-			= new DDMStructureVersionModelImpl();
+		DDMStructureVersionModel dDMStructureVersionModel =
+			new DDMStructureVersionModelImpl();
 
 		dDMStructureVersionModel.setStructureVersionId(_counter.get());
 		dDMStructureVersionModel.setStructureId(
@@ -2611,7 +2611,7 @@ public class DataFactory {
 	}
 
 	protected DDMTemplateModel newDDMTemplateModel(
-		long groupId, long userId, long structureVersionId, 
+		long groupId, long userId, long structureVersionId,
 		long resourceClassNameId) {
 
 		DDMTemplateModel ddmTemplateModel = new DDMTemplateModelImpl();
@@ -3068,13 +3068,13 @@ public class DataFactory {
 	private final long _companyId;
 	private CompanyModel _companyModel;
 	private final SimpleCounter _counter;
+	private DDMStructureVersionModel _ddmStructureVersionModel;
 	private final PortletPreferencesImpl
 		_defaultAssetPublisherPortletPreference;
 	private AssetVocabularyModel _defaultAssetVocabularyModel;
 	private DDMStructureModel _defaultDLDDMStructureModel;
 	private DLFileEntryTypeModel _defaultDLFileEntryTypeModel;
 	private DDMStructureModel _defaultJournalDDMStructureModel;
-	private DDMStructureVersionModel _ddmStructureVersionModel;
 	private DDMTemplateModel _defaultJournalDDMTemplateModel;
 	private final long _defaultUserId;
 	private UserModel _defaultUserModel;
