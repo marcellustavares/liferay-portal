@@ -53,6 +53,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
@@ -159,6 +160,10 @@ public class DDMStructureLocalServiceImpl
 				structure, serviceContext.getGroupPermissions(),
 				serviceContext.getGuestPermissions());
 		}
+
+		// Structure fragments
+
+		addStructureFragments(structure.getStructureId(), serviceContext);
 
 		// Structure version
 
@@ -462,6 +467,15 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public void deleteStructure(DDMStructure structure) throws PortalException {
+
+		// Structure fragments
+
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		ddmStructureLinkLocalService.deleteClassNameStructureLinks(
+			classNameId, structure.getStructureId());
+
 		if (!GroupThreadLocal.isDeleteInProcess()) {
 			if (ddmStructureLinkPersistence.countByStructureId(
 					structure.getStructureId()) > 0) {
@@ -478,9 +492,6 @@ public class DDMStructureLocalServiceImpl
 					MustNotDeleteStructureThatHasChild(
 						structure.getStructureId());
 			}
-
-			long classNameId = classNameLocalService.getClassNameId(
-				DDMStructure.class);
 
 			if (ddmTemplatePersistence.countByG_C_C(
 					structure.getGroupId(), classNameId,
@@ -744,20 +755,6 @@ public class DDMStructureLocalServiceImpl
 		return ddmStructurePersistence.findByC_C(
 			companyId, classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			orderByComparator);
-	}
-
-	/**
-	 * Returns all the structures for the document library file entry type.
-	 *
-	 * @param  dlFileEntryTypeId the primary key of the document library file
-	 *         entry type
-	 * @return the structures for the document library file entry type
-	 */
-	@Override
-	public List<DDMStructure> getDLFileEntryTypeStructures(
-		long dlFileEntryTypeId) {
-
-		return dlFileEntryTypePersistence.getDDMStructures(dlFileEntryTypeId);
 	}
 
 	/**
@@ -1432,6 +1429,28 @@ public class DDMStructureLocalServiceImpl
 			serviceContext, structure);
 	}
 
+	protected void addStructureFragments(
+			long structureId, ServiceContext serviceContext)
+		throws PortalException {
+
+		Set<Long> structureFragmentIds = getStructureFragmentIds(
+			serviceContext);
+
+		addStructureFragments(structureId, structureFragmentIds);
+	}
+
+	protected void addStructureFragments(
+		long structureId, Set<Long> structureFragmentIds) {
+
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		for (long structureFragmentId : structureFragmentIds) {
+			ddmStructureLinkLocalService.addStructureLink(
+				classNameId, structureFragmentId, structureId);
+		}
+	}
+
 	protected DDMStructureVersion addStructureVersion(
 		User user, DDMStructure structure, String version,
 		ServiceContext serviceContext) {
@@ -1468,6 +1487,19 @@ public class DDMStructureLocalServiceImpl
 		ddmStructureVersionPersistence.update(structureVersion);
 
 		return structureVersion;
+	}
+
+	protected void deleteStructureFragments(
+			long structureId, Set<Long> deletableExistingStructureFragmentIds)
+		throws PortalException {
+
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		for (long structureFragmentId : deletableExistingStructureFragmentIds) {
+			ddmStructureLinkLocalService.deleteStructureLink(
+				classNameId, structureFragmentId, structureId);
+		}
 	}
 
 	protected Set<Long> deleteStructures(List<DDMStructure> structures)
@@ -1532,6 +1564,10 @@ public class DDMStructureLocalServiceImpl
 		structure.setDefinition(DDMFormJSONSerializerUtil.serialize(ddmForm));
 
 		ddmStructurePersistence.update(structure);
+
+		// Structure fragments
+
+		updateStructureFragments(structure.getStructureId(), serviceContext);
 
 		// Structure templates
 
@@ -1608,6 +1644,47 @@ public class DDMStructureLocalServiceImpl
 		return ddmFormFieldsNames;
 	}
 
+	protected Set<Long> getDeletableStructureFragmentIds(
+		Set<Long> structureFragmentIds,
+		Set<Long> existingStructureFragmentIds) {
+
+		Set<Long> deletableStructureFragmentIds = new HashSet<>(
+			existingStructureFragmentIds);
+
+		deletableStructureFragmentIds.removeAll(structureFragmentIds);
+
+		return deletableStructureFragmentIds;
+	}
+
+	protected Set<Long> getExistingStructureFragmentIds(long structureId) {
+		long classNameId = classNameLocalService.getClassNameId(
+			DDMStructure.class);
+
+		Set<Long> existingStructureFragmentIds = new HashSet<>();
+
+		List<DDMStructureLink> structureLinks =
+			ddmStructureLinkLocalService.getClassNameStructureLinks(
+				classNameId, structureId);
+
+		for (DDMStructureLink structureLink : structureLinks) {
+			existingStructureFragmentIds.add(structureLink.getClassPK());
+		}
+
+		return existingStructureFragmentIds;
+	}
+
+	protected Set<Long> getMissingStructureFragmentIds(
+		Set<Long> structureFragmentIds,
+		Set<Long> existingStructureFragmentIds) {
+
+		Set<Long> missingStructureFragmentIds = new HashSet<>(
+			structureFragmentIds);
+
+		missingStructureFragmentIds.removeAll(existingStructureFragmentIds);
+
+		return missingStructureFragmentIds;
+	}
+
 	protected String getNextVersion(String version, boolean majorVersion) {
 		int[] versionParts = StringUtil.split(version, StringPool.PERIOD, 0);
 
@@ -1631,6 +1708,13 @@ public class DDMStructureLocalServiceImpl
 		}
 
 		return parentStructure.getFullHierarchyDDMForm();
+	}
+
+	protected Set<Long> getStructureFragmentIds(ServiceContext serviceContext) {
+		long[] structureFragmentIds = (long[])serviceContext.getAttribute(
+			DDMStructureConstants.STRUCTURE_FRAGMENT_IDS);
+
+		return SetUtil.fromArray(structureFragmentIds);
 	}
 
 	protected String getStructureKey(String structureKey) {
@@ -1674,6 +1758,27 @@ public class DDMStructureLocalServiceImpl
 				}
 
 			});
+	}
+
+	protected void updateStructureFragments(
+			long structureId, ServiceContext serviceContext)
+		throws PortalException {
+
+		Set<Long> structureFragmentIds = getStructureFragmentIds(
+			serviceContext);
+
+		Set<Long> existingStructureFragmentIds =
+			getExistingStructureFragmentIds(structureId);
+
+		deleteStructureFragments(
+			structureId,
+			getDeletableStructureFragmentIds(
+				structureFragmentIds, existingStructureFragmentIds));
+
+		addStructureFragments(
+			structureId,
+			getMissingStructureFragmentIds(
+				structureFragmentIds, existingStructureFragmentIds));
 	}
 
 	protected void validate(DDMForm parentDDMForm, DDMForm ddmForm)

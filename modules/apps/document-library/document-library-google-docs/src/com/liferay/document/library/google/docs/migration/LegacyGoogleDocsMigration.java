@@ -70,17 +70,13 @@ public class LegacyGoogleDocsMigration {
 	}
 
 	public void migrate() throws PortalException {
-		DDMStructure ddmStructure =
-			_googleDocsDLFileEntryTypeHelper.addGoogleDocsDDMStructure();
+		_googleDocsDLFileEntryTypeHelper.addGoogleDocsDDMStructure();
 
 		_dlFileEntryType.setFileEntryTypeKey(
 			GoogleDocsConstants.DL_FILE_ENTRY_TYPE_KEY);
 
 		_dlFileEntryType = _dlFileEntryTypeLocalService.updateDLFileEntryType(
 			_dlFileEntryType);
-
-		_dlFileEntryTypeLocalService.addDDMStructureDLFileEntryType(
-			ddmStructure.getStructureId(), _dlFileEntryType);
 
 		upgradeDLFileEntries();
 

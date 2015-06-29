@@ -22,6 +22,8 @@ public class DDMStructureConstants {
 
 	public static final long DEFAULT_PARENT_STRUCTURE_ID = 0;
 
+	public static final String STRUCTURE_FRAGMENT_IDS = "structureFragmentIds";
+
 	public static final int TYPE_AUTO = 1;
 
 	public static final int TYPE_DEFAULT = 0;

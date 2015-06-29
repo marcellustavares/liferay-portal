@@ -33,7 +33,6 @@ import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -104,12 +103,13 @@ public class GoogleDocsDLFileEntryTypeHelper {
 			ddmStructure = addGoogleDocsDDMStructure();
 		}
 
-		List<DLFileEntryType> dlFileEntryTypes =
-			_dlFileEntryTypeLocalService.getDDMStructureDLFileEntryTypes(
-				ddmStructure.getStructureId());
+		DLFileEntryType dlFileEntryType =
+			_dlFileEntryTypeLocalService.fetchFileEntryType(
+				_company.getGroupId(),
+				GoogleDocsConstants.DL_FILE_ENTRY_TYPE_KEY);
 
-		if (!dlFileEntryTypes.isEmpty()) {
-			return dlFileEntryTypes.get(0);
+		if (dlFileEntryType != null) {
+			return dlFileEntryType;
 		}
 
 		return addGoogleDocsDLFileEntryType(ddmStructure.getStructureId());
@@ -133,6 +133,8 @@ public class GoogleDocsDLFileEntryTypeHelper {
 
 		serviceContext.setAddGuestPermissions(true);
 		serviceContext.setAddGroupPermissions(true);
+		serviceContext.setAttribute(
+			"ddmForm", createEmptyDDMForm(LocaleUtil.getDefault()));
 		serviceContext.setScopeGroupId(_company.getGroupId());
 		serviceContext.setUserId(defaultUserId);
 
@@ -140,6 +142,15 @@ public class GoogleDocsDLFileEntryTypeHelper {
 			defaultUserId, _company.getGroupId(),
 			GoogleDocsConstants.DL_FILE_ENTRY_TYPE_KEY, nameMap, descriptionMap,
 			new long[] {ddmStructureId}, serviceContext);
+	}
+
+	protected DDMForm createEmptyDDMForm(Locale defaultLocale) {
+		DDMForm ddmForm = new DDMForm();
+
+		ddmForm.addAvailableLocale(defaultLocale);
+		ddmForm.setDefaultLocale(defaultLocale);
+
+		return ddmForm;
 	}
 
 	private final ClassNameLocalService _classNameLocalService;

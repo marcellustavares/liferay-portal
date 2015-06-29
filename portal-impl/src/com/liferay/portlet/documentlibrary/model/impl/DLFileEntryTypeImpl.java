@@ -20,11 +20,18 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,8 +43,15 @@ public class DLFileEntryTypeImpl extends DLFileEntryTypeBaseImpl {
 
 	@Override
 	public List<DDMStructure> getDDMStructures() {
-		return DDMStructureLocalServiceUtil.getDLFileEntryTypeStructures(
-			getFileEntryTypeId());
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(
+			getGroupId(), PortalUtil.getClassNameId(DLFileEntryMetadata.class),
+			DLUtil.getDDMStructureKey(this));
+
+		if (ddmStructure == null) {
+			return Collections.emptyList();
+		}
+
+		return getDDMStructures(ddmStructure);
 	}
 
 	@Override
@@ -100,6 +114,33 @@ public class DLFileEntryTypeImpl extends DLFileEntryTypeBaseImpl {
 		}
 
 		return true;
+	}
+
+	protected List<DDMStructure> getDDMStructures(DDMStructure ddmStructure) {
+		List<DDMStructure> ddmStructures = new ArrayList<>();
+
+		ddmStructures.add(ddmStructure);
+
+		// DDM Structure fragments
+
+		List<DDMStructureLink> ddmStructureLinks =
+			DDMStructureLinkLocalServiceUtil.getClassNameStructureLinks(
+				PortalUtil.getClassNameId(DDMStructure.class),
+				ddmStructure.getStructureId());
+
+		for (DDMStructureLink ddmStructureLink : ddmStructureLinks) {
+			DDMStructure ddmStructureFragment =
+				DDMStructureLocalServiceUtil.fetchStructure(
+					ddmStructureLink.getClassPK());
+
+			if (ddmStructureFragment == null) {
+				continue;
+			}
+
+			ddmStructures.add(ddmStructureFragment);
+		}
+
+		return ddmStructures;
 	}
 
 }
