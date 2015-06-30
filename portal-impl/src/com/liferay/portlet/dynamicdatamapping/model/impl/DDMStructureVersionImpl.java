@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.model.impl;
 
-import java.util.List;
-
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
@@ -31,6 +29,8 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLayoutLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+
+import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
@@ -62,7 +62,7 @@ public class DDMStructureVersionImpl extends DDMStructureVersionBaseImpl {
 
 		return ddmStructureLayout.getDDMFormLayout();
 	}
-	
+
 	@Override
 	public DDMStructure getStructure() throws PortalException {
 		return DDMStructureLocalServiceUtil.getStructure(getStructureId());

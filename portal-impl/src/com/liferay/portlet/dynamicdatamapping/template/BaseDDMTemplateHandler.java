@@ -108,11 +108,11 @@ public abstract class BaseDDMTemplateHandler extends BaseTemplateHandler {
 		DDMStructureVersion ddmStructureVersion =
 			DDMStructureVersionLocalServiceUtil.getStructureVersion(
 				ddmStructureVersionId);
-		
-		List<DDMFormField> ddmFormFields = 
+
+		List<DDMFormField> ddmFormFields =
 			ddmStructureVersion.getDDMForm().getDDMFormFields();
 
-		for(DDMFormField ddmFormField : ddmFormFields) {
+		for (DDMFormField ddmFormField : ddmFormFields) {
 			String label = ddmFormField.getLabel().getString(locale);
 			String tip = ddmFormField.getTip().getString(locale);
 			String dataType = ddmFormField.getDataType();
@@ -123,10 +123,10 @@ public abstract class BaseDDMTemplateHandler extends BaseTemplateHandler {
 			}
 
 			templateVariableGroup.addFieldVariable(
-				label, getFieldVariableClass(), ddmFormField.getName(), tip, 
+				label, getFieldVariableClass(), ddmFormField.getName(), tip,
 				dataType, repeatable, getTemplateVariableCodeHandler());
 		}
-		
+
 		return templateVariableGroup;
 	}
 

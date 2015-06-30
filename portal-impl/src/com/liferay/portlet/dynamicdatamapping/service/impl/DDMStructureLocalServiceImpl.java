@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.search.DDMStructureIndexer;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.GroupThreadLocal;
@@ -54,10 +53,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMStructureLocalServiceBaseImpl;
-import com.liferay.portlet.dynamicdatamapping.util.DDMFormTemplateSynchonizer;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 
@@ -68,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 /**
  * Provides the local service for accessing, adding, deleting, and updating
@@ -478,7 +473,6 @@ public class DDMStructureLocalServiceImpl
 					MustNotDeleteStructureThatHasChild(
 						structure.getStructureId());
 			}
-
 		}
 
 		// Structure
@@ -492,13 +486,12 @@ public class DDMStructureLocalServiceImpl
 				structure.getStructureId());
 
 		for (DDMStructureVersion structureVersion : structureVersions) {
-			
-			if(!structureVersion.getTemplates().isEmpty()) {
+			if (!structureVersion.getTemplates().isEmpty()) {
 				throw new RequiredStructureException.
 					MustNotDeleteStructureReferencedByTemplates(
 						structureVersion.getStructureVersionId());
 			}
-			
+
 			ddmStructureLayoutPersistence.removeByStructureVersionId(
 				structureVersion.getStructureVersionId());
 

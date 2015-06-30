@@ -73,10 +73,9 @@ public class DDMTemplateImpl extends DDMTemplateBaseImpl {
 
 		return _smallImageType;
 	}
-	
+
 	@Override
-	public DDMStructureVersion getStructureVersion() 
-		throws PortalException {
+	public DDMStructureVersion getStructureVersion() throws PortalException {
 		return DDMStructureVersionLocalServiceUtil.getStructureVersion(
 			getClassPK());
 	}

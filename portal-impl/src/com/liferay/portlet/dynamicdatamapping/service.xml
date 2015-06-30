@@ -251,7 +251,7 @@
 			<finder-column name="structureId" />
 			<finder-column name="status" />
 		</finder>
-		
+
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMTemplate" />
 	</entity>
 	<entity name="DDMTemplate" uuid="true" local-service="true" remote-service="true">

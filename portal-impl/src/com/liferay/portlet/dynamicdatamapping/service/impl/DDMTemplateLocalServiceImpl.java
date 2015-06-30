@@ -737,7 +737,7 @@ public class DDMTemplateLocalServiceImpl
 		return ddmTemplatePersistence.findByG_C_C_T_M(
 			groupId, classNameId, classPK, type, mode);
 	}
-	
+
 	@Override
 	public List<DDMTemplate> getTemplates(
 		long[] groupIds, long classNameId, long classPK) {
@@ -750,8 +750,7 @@ public class DDMTemplateLocalServiceImpl
 	public List<DDMTemplate> getTemplatesByClassNameId(
 		long companyId, long classNameId) {
 
-		return ddmTemplatePersistence.findByC_C(
-			companyId, classNameId);
+		return ddmTemplatePersistence.findByC_C(companyId, classNameId);
 	}
 
 	@Override
