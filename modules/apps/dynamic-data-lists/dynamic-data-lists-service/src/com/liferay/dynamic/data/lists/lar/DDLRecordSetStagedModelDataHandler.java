@@ -102,7 +102,8 @@ public class DDLRecordSetStagedModelDataHandler
 			portletDataContext, recordSet, ddmStructure,
 			PortletDataContext.REFERENCE_TYPE_STRONG);
 
-		List<DDMTemplate> ddmTemplates = ddmStructure.getTemplates();
+		List<DDMTemplate> ddmTemplates = 
+			ddmStructure.getStructureVersion().getTemplates();
 
 		Element recordSetElement = portletDataContext.getExportDataElement(
 			recordSet);

@@ -287,7 +287,8 @@ public class DDLPortletDataHandler extends BasePortletDataHandler {
 					StagedModelDataHandlerUtil.exportStagedModel(
 						portletDataContext, ddmStructure);
 
-					ddmTemplates.addAll(ddmStructure.getTemplates());
+					ddmTemplates.addAll(
+						ddmStructure.getStructureVersion().getTemplates());
 				}
 
 			});
