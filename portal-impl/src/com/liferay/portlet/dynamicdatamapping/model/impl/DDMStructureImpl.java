@@ -284,11 +284,6 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	}
 
 	@Override
-	public List<DDMTemplate> getTemplates() {
-		return DDMTemplateLocalServiceUtil.getTemplates(getStructureId());
-	}
-
-	@Override
 	public String getUnambiguousName(
 			List<DDMStructure> structures, long groupId, final Locale locale)
 		throws PortalException {
