@@ -22,10 +22,10 @@ if (Validator.isNotNull(portletResourceNamespace)) {
 }
 
 if (Validator.isNull(script)) {
-	script = structure.getDefinition();
+	script = structureVersion.getDefinition();
 }
 
-JSONArray fieldsJSONArray = _getFormTemplateFieldsJSONArray(structure, script);
+JSONArray fieldsJSONArray = _getFormTemplateFieldsJSONArray(structureVersion, script);
 
 String fieldsJSONArrayString = fieldsJSONArray.toString();
 %>
@@ -91,7 +91,7 @@ String fieldsJSONArrayString = fieldsJSONArray.toString();
 	window['<%= HtmlUtil.escapeJS(namespace) %>getAvailableFields'] = function(A, FormBuilder) {
 
 		<%
-		JSONArray structureJSONArray = _getFormTemplateFieldsJSONArray(structure, structure.getDefinition());
+		JSONArray structureJSONArray = _getFormTemplateFieldsJSONArray(structureVersion, structureVersion.getDefinition());
 		%>
 
 		var availableFields = <%= structureJSONArray.toString() %>;

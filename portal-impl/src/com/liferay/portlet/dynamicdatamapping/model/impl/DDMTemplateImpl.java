@@ -29,7 +29,9 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.webserver.WebServerServletTokenUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateVersion;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateVersionLocalServiceUtil;
 
 import java.util.Locale;
@@ -70,6 +72,12 @@ public class DDMTemplateImpl extends DDMTemplateBaseImpl {
 		}
 
 		return _smallImageType;
+	}
+
+	@Override
+	public DDMStructureVersion getStructureVersion() throws PortalException {
+		return DDMStructureVersionLocalServiceUtil.getStructureVersion(
+			getClassPK());
 	}
 
 	@Override

@@ -41,12 +41,10 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLayoutLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 
 import java.util.ArrayList;
@@ -281,11 +279,6 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public DDMStructureVersion getStructureVersion() throws PortalException {
 		return DDMStructureVersionLocalServiceUtil.getStructureVersion(
 			getStructureId(), getVersion());
-	}
-
-	@Override
-	public List<DDMTemplate> getTemplates() {
-		return DDMTemplateLocalServiceUtil.getTemplates(getStructureId());
 	}
 
 	@Override

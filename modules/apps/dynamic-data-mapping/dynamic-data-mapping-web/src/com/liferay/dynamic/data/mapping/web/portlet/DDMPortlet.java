@@ -38,8 +38,10 @@ import com.liferay.portlet.dynamicdatamapping.TemplateScriptException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageNameException;
 import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 
 import java.io.IOException;
@@ -68,7 +70,6 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.autopropagated-parameters=showManageTemplates",
 		"com.liferay.portlet.autopropagated-parameters=showToolbar",
 		"com.liferay.portlet.css-class-wrapper=portlet-dynamic-data-mapping",
-		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.header-portlet-javascript=/js/main.js",
 		"com.liferay.portlet.header-portlet-javascript=/js/custom_fields.js",
@@ -76,6 +77,7 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.private-request-attributes=false",
 		"com.liferay.portlet.private-session-attributes=false",
 		"com.liferay.portlet.render-weight=50",
+		"com.liferay.portlet.show-portlet-access-denied=false",
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Dynamic Data Mapping Web",
 		"javax.portlet.expiration-cache=0",
@@ -184,17 +186,28 @@ public class DDMPortlet extends MVCPortlet {
 		long classPK = ParamUtil.getLong(renderRequest, "classPK");
 
 		if ((classNameId > 0) && (classPK > 0)) {
-			DDMStructure structure = null;
-
 			long structureClassNameId = PortalUtil.getClassNameId(
 				DDMStructure.class);
 
-			if ((structureClassNameId == classNameId) && (classPK > 0)) {
-				structure = DDMStructureServiceUtil.getStructure(classPK);
-			}
+			long structureVersionClassNameId = PortalUtil.getClassNameId(
+				DDMStructureVersion.class);
 
-			renderRequest.setAttribute(
-				WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structure);
+			if ((structureClassNameId == classNameId) && (classPK > 0)) {
+				DDMStructure structure = DDMStructureServiceUtil.getStructure(
+					classPK);
+
+				renderRequest.setAttribute(
+					WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structure);
+			}
+			else if ((structureVersionClassNameId == classNameId) &&
+					 (classPK > 0)) {
+
+				DDMStructureVersion structureVersion =
+					DDMStructureVersionServiceUtil.getStructureVersion(classPK);
+
+				renderRequest.setAttribute(
+					WebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE, structureVersion);
+			}
 		}
 	}
 

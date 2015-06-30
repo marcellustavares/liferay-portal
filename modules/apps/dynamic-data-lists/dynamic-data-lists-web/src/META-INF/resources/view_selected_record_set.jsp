@@ -58,8 +58,8 @@ DDLRecordSet recordSet = ddlDisplayContext.getRecordSet();
 					<portlet:param name="portletResourceNamespace" value="<%= renderResponse.getNamespace() %>" />
 					<portlet:param name="refererPortletName" value="<%= DDLPortletKeys.DYNAMIC_DATA_LISTS %>" />
 					<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructureId()) %>" />
+					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructureVersion.class)) %>" />
+					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructure().getStructureVersion().getStructureVersionId()) %>" />
 					<portlet:param name="resourceClassNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDLRecordSet.class)) %>" />
 					<portlet:param name="structureAvailableFields" value='<%= renderResponse.getNamespace() + "getAvailableFields" %>' />
 				</liferay-portlet:renderURL>
@@ -84,8 +84,8 @@ DDLRecordSet recordSet = ddlDisplayContext.getRecordSet();
 					<portlet:param name="portletResource" value="<%= portletDisplay.getId() %>" />
 					<portlet:param name="refererPortletName" value="<%= DDLPortletKeys.DYNAMIC_DATA_LISTS %>" />
 					<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructureId()) %>" />
+					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructureVersion.class)) %>" />
+					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructure().getStructureVersion().getStructureVersionId()) %>" />
 					<portlet:param name="resourceClassNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDLRecordSet.class)) %>" />
 					<portlet:param name="type" value="<%= DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY %>" />
 				</liferay-portlet:renderURL>
@@ -140,8 +140,8 @@ DDLRecordSet recordSet = ddlDisplayContext.getRecordSet();
 					<portlet:param name="portletResourceNamespace" value="<%= renderResponse.getNamespace() %>" />
 					<portlet:param name="refererPortletName" value="<%= DDLPortletKeys.DYNAMIC_DATA_LISTS %>" />
 					<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructureId()) %>" />
+					<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructureVersion.class)) %>" />
+					<portlet:param name="classPK" value="<%= String.valueOf(recordSet.getDDMStructure().getStructureVersion().getStructureVersionId()) %>" />
 					<portlet:param name="templateId" value="<%= String.valueOf(ddlDisplayContext.getFormDDMTemplateId()) %>" />
 					<portlet:param name="resourceClassNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDLRecordSet.class)) %>" />
 					<portlet:param name="type" value="<%= DDMTemplateConstants.TEMPLATE_TYPE_FORM %>" />

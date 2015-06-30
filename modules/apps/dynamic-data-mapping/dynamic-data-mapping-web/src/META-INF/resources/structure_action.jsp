@@ -53,8 +53,8 @@ DDMStructure structure = (DDMStructure)row.getObject();
 	<c:if test="<%= DDMStructurePermission.contains(permissionChecker, structure, refererPortletName, ActionKeys.VIEW) && showManageTemplates %>">
 		<portlet:renderURL var="manageViewURL">
 			<portlet:param name="mvcPath" value="/view_template.jsp" />
-			<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructure.class)) %>" />
-			<portlet:param name="classPK" value="<%= String.valueOf(structure.getStructureId()) %>" />
+			<portlet:param name="classNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(DDMStructureVersion.class)) %>" />
+			<portlet:param name="classPK" value="<%= String.valueOf(structure.getStructureVersion().getStructureVersionId()) %>" />
 			<portlet:param name="resourceClassNameId" value="<%= String.valueOf(structure.getClassNameId()) %>" />
 		</portlet:renderURL>
 

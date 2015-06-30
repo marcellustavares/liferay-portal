@@ -728,6 +728,11 @@ public class DDMTemplateLocalServiceUtil {
 		return getService().getTemplates(groupIds, classNameId, classPK);
 	}
 
+	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplatesByClassNameId(
+		long companyId, long classNameId) {
+		return getService().getTemplatesByClassNameId(companyId, classNameId);
+	}
+
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplatesByClassPK(
 		long groupId, long classPK) {
 		return getService().getTemplatesByClassPK(groupId, classPK);

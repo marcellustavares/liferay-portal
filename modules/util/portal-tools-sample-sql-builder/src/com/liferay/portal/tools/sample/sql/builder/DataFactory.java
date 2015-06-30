@@ -148,12 +148,15 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLinkModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureModel;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersionModel;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateModel;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMContentModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStorageLinkModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureLinkModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureModelImpl;
+import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStructureVersionModelImpl;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMTemplateModelImpl;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.messageboards.model.MBCategory;
@@ -844,9 +847,11 @@ public class DataFactory {
 		_defaultJournalDDMStructureModel = newDDMStructureModel(
 			_globalGroupId, _defaultUserId, getJournalArticleClassNameId(),
 			"BASIC-WEB-CONTENT", _journalDDMStructureContent);
+		_ddmStructureVersionModel = newDDMStructureVersionModel(
+			_defaultJournalDDMStructureModel);
 		_defaultJournalDDMTemplateModel = newDDMTemplateModel(
 			_globalGroupId, _defaultUserId,
-			_defaultJournalDDMStructureModel.getStructureId(),
+			_ddmStructureVersionModel.getStructureVersionId(),
 			getJournalArticleClassNameId());
 	}
 
@@ -2580,8 +2585,34 @@ public class DataFactory {
 		return dDMStructureModel;
 	}
 
+	protected DDMStructureVersionModel newDDMStructureVersionModel(
+		DDMStructureModel structureModel) {
+
+		DDMStructureVersionModel dDMStructureVersionModel =
+			new DDMStructureVersionModelImpl();
+
+		dDMStructureVersionModel.setStructureVersionId(_counter.get());
+		dDMStructureVersionModel.setStructureId(
+			structureModel.getStructureId());
+		dDMStructureVersionModel.setGroupId(structureModel.getGroupId());
+		dDMStructureVersionModel.setCompanyId(_companyId);
+		dDMStructureVersionModel.setUserId(structureModel.getUserId());
+		dDMStructureVersionModel.setUserName(_SAMPLE_USER_NAME);
+		dDMStructureVersionModel.setCreateDate(nextFutureDate());
+		dDMStructureVersionModel.setVersion(
+			DDMStructureConstants.VERSION_DEFAULT);
+
+		dDMStructureVersionModel.setName(structureModel.getName());
+
+		dDMStructureVersionModel.setDefinition(structureModel.getDefinition());
+		dDMStructureVersionModel.setStorageType(StorageType.JSON.toString());
+
+		return dDMStructureVersionModel;
+	}
+
 	protected DDMTemplateModel newDDMTemplateModel(
-		long groupId, long userId, long structureId, long sourceClassNameId) {
+		long groupId, long userId, long structureVersionId,
+		long resourceClassNameId) {
 
 		DDMTemplateModel ddmTemplateModel = new DDMTemplateModelImpl();
 
@@ -2593,9 +2624,9 @@ public class DataFactory {
 		ddmTemplateModel.setCreateDate(nextFutureDate());
 		ddmTemplateModel.setModifiedDate(nextFutureDate());
 		ddmTemplateModel.setClassNameId(
-			_classNameModelsMap.get(DDMStructure.class.getName()));
-		ddmTemplateModel.setClassPK(structureId);
-		ddmTemplateModel.setResourceClassNameId(structureId);
+			_classNameModelsMap.get(DDMStructureVersion.class.getName()));
+		ddmTemplateModel.setClassPK(structureVersionId);
+		ddmTemplateModel.setResourceClassNameId(resourceClassNameId);
 		ddmTemplateModel.setTemplateKey(String.valueOf(_counter.get()));
 		ddmTemplateModel.setVersion(DDMTemplateConstants.VERSION_DEFAULT);
 		ddmTemplateModel.setVersionUserId(userId);
@@ -3037,6 +3068,7 @@ public class DataFactory {
 	private final long _companyId;
 	private CompanyModel _companyModel;
 	private final SimpleCounter _counter;
+	private DDMStructureVersionModel _ddmStructureVersionModel;
 	private final PortletPreferencesImpl
 		_defaultAssetPublisherPortletPreference;
 	private AssetVocabularyModel _defaultAssetVocabularyModel;
