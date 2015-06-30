@@ -145,7 +145,6 @@
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructureLayout" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructureLink" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructureVersion" />
-		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMTemplate" />
 	</entity>
 	<entity name="DDMStructureLayout" uuid="true" local-service="true" remote-service="false">
 
@@ -252,6 +251,8 @@
 			<finder-column name="structureId" />
 			<finder-column name="status" />
 		</finder>
+		
+		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMTemplate" />
 	</entity>
 	<entity name="DDMTemplate" uuid="true" local-service="true" remote-service="true">
 
@@ -311,6 +312,10 @@
 		<finder name="SmallImageId" return-type="DDMTemplate">
 			<finder-column name="smallImageId" />
 		</finder>
+		<finder name="C_C" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="classNameId" />
+		</finder>
 		<finder name="G_C" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="classNameId" />
@@ -356,7 +361,7 @@
 		<reference package-path="com.liferay.portal" entity="Resource" />
 		<reference package-path="com.liferay.portal" entity="SystemEvent" />
 		<reference package-path="com.liferay.portal" entity="User" />
-		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructure" />
+		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructureVersion" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMTemplateLink" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMTemplateVersion" />
 	</entity>
