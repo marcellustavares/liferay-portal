@@ -135,6 +135,7 @@ create unique index IX_64C3C42 on DDMStructureVersion (structureId, version);
 
 create index IX_B6356F93 on DDMTemplate (classNameId, classPK, type_);
 create index IX_32F83D16 on DDMTemplate (classPK);
+create index IX_5EDDA093 on DDMTemplate (companyId, classNameId);
 create index IX_F0C3449 on DDMTemplate (groupId, classNameId, classPK, type_, mode_);
 create unique index IX_E6DFAB84 on DDMTemplate (groupId, classNameId, templateKey);
 create index IX_B1C33EA6 on DDMTemplate (groupId, classPK);
