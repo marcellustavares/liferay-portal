@@ -14,20 +14,22 @@
 
 package com.liferay.calendar.web.messaging;
 
-import com.liferay.calendar.constants.CalendarPortletKeys;
-import com.liferay.calendar.service.CalendarBookingLocalService;
-import com.liferay.calendar.service.configuration.CalendarServiceConfigurationValues;
-import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
-import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.scheduler.SchedulerEntry;
-import com.liferay.portal.kernel.scheduler.TimeUnit;
-import com.liferay.portal.kernel.scheduler.TriggerType;
-
 import javax.portlet.Portlet;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.liferay.calendar.constants.CalendarPortletKeys;
+import com.liferay.calendar.service.CalendarBookingLocalService;
+import com.liferay.calendar.service.configuration.CalendarServiceConfigurationValues;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.messaging.BaseSchedulerEntryMessageListener;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.scheduler.SchedulerEntry;
+import com.liferay.portal.kernel.scheduler.TimeUnit;
+import com.liferay.portal.kernel.scheduler.TriggerType;
 
 /**
  * @author Fabio Pezzutto
@@ -54,6 +56,9 @@ public class CheckBookingsMessageListener
 		if (_calendarBookingLocalService != null) {
 			_calendarBookingLocalService.checkCalendarBookings();
 		}
+		else {
+			_log.error("Should not happen NPE" );
+		}
 	}
 
 	@Reference
@@ -71,4 +76,7 @@ public class CheckBookingsMessageListener
 
 	private CalendarBookingLocalService _calendarBookingLocalService;
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		CheckBookingsMessageListener.class);
+	
 }
