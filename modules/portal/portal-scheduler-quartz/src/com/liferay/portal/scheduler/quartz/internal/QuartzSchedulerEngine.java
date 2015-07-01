@@ -1028,6 +1028,10 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		else {
 			Portlet portlet = _portletLocalService.getPortletById(portletId);
 
+			if (portlet == null) {
+				_log.error("should no happen NPE " + portletId);
+			}
+
 			PortletApp portletApp = portlet.getPortletApp();
 
 			ServletContext servletContext = portletApp.getServletContext();
