@@ -1530,12 +1530,6 @@ public class DDMStructureLocalServiceImpl
 		structure.setDescriptionMap(descriptionMap);
 		structure.setDefinition(DDMFormJSONSerializerUtil.serialize(ddmForm));
 
-		ddmStructurePersistence.update(structure);
-
-		// Structure templates
-
-		syncStructureTemplatesFields(structure);
-
 		// Structure version
 
 		DDMStructureVersion structureVersion = addStructureVersion(
@@ -1548,19 +1542,31 @@ public class DDMStructureLocalServiceImpl
 			structureVersion.getStructureVersionId(), ddmFormLayout,
 			serviceContext);
 
-		// Indexer
+		if (structureVersion.isApproved()) {
+			ddmStructurePersistence.update(structure);
 
-		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-			structure.getClassName());
+			// Structure templates
 
-		if (indexer instanceof DDMStructureIndexer) {
-			DDMStructureIndexer ddmStructureIndexer =
-				(DDMStructureIndexer)indexer;
+			syncStructureTemplatesFields(structure);
 
-			List<Long> ddmStructureIds = getChildrenStructureIds(
-				structure.getGroupId(), structure.getStructureId());
+			// Indexer
 
-			ddmStructureIndexer.reindexDDMStructures(ddmStructureIds);
+			Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+				structure.getClassName());
+
+			if (indexer instanceof DDMStructureIndexer) {
+				DDMStructureIndexer ddmStructureIndexer =
+					(DDMStructureIndexer)indexer;
+
+				List<Long> ddmStructureIds = getChildrenStructureIds(
+					structure.getGroupId(), structure.getStructureId());
+
+				ddmStructureIndexer.reindexDDMStructures(ddmStructureIds);
+			}
+		}
+		else {
+			structure = ddmStructurePersistence.findByPrimaryKey(
+				structure.getStructureId());
 		}
 
 		return structure;
