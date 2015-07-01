@@ -172,7 +172,7 @@ contextObjects.put("formattedContent", formattedContent);
 contextObjects.put("wikiPortletInstanceSettings", wikiPortletInstanceSettings);
 %>
 
-<liferay-ui:ddm-template-renderer className="<%= WikiPage.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= wikiPortletInstanceSettingsHelper.getDisplayStyle() %>" displayStyleGroupId="<%= wikiPortletInstanceSettingsHelper.getDisplayStyleGroupId() %>" entries="<%= entries %>">
+<liferay-ddm:ddm-template-renderer className="<%= WikiPage.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= wikiPortletInstanceSettingsHelper.getDisplayStyle() %>" displayStyleGroupId="<%= wikiPortletInstanceSettingsHelper.getDisplayStyleGroupId() %>" entries="<%= entries %>">
 	<liferay-ui:header
 		backLabel="<%= parentTitle %>"
 		backURL="<%= (viewParentPageURL != null) ? viewParentPageURL.toString() : null %>"
@@ -379,7 +379,7 @@ contextObjects.put("wikiPortletInstanceSettings", wikiPortletInstanceSettings);
 			</liferay-ui:panel-container>
 		</c:if>
 	</c:if>
-</liferay-ui:ddm-template-renderer>
+</liferay-ddm:ddm-template-renderer>
 
 <aui:script sandbox="<%= true %>">
 	var toc = $('#p_p_id<portlet:namespace /> .toc');
