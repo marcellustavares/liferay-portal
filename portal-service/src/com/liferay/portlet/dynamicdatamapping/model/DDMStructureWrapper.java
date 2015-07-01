@@ -624,11 +624,6 @@ public class DDMStructureWrapper implements DDMStructure,
 		return _ddmStructure.getStructureVersion();
 	}
 
-	@Override
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplates() {
-		return _ddmStructure.getTemplates();
-	}
-
 	/**
 	* Returns the type of this d d m structure.
 	*
@@ -746,6 +741,11 @@ public class DDMStructureWrapper implements DDMStructure,
 	@Override
 	public boolean hasField(java.lang.String fieldName) {
 		return _ddmStructure.hasField(fieldName);
+	}
+
+	@Override
+	public boolean hasStructureVersion(long ddmStructureVersionId) {
+		return _ddmStructure.hasStructureVersion(ddmStructureVersionId);
 	}
 
 	@Override

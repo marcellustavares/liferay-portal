@@ -113,7 +113,8 @@ public class JournalArticleExpirationTest {
 			groupId, JournalArticle.class.getName());
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			groupId, ddmStructure.getStructureId());
+			groupId,
+			ddmStructure.getStructureVersion().getStructureVersionId());
 
 		Calendar displayDateCalendar = new GregorianCalendar();
 

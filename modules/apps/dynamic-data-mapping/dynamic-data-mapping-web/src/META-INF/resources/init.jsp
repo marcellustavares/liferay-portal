@@ -99,8 +99,8 @@ page import="com.liferay.portlet.dynamicdatamapping.search.TemplateDisplayTerms"
 page import="com.liferay.portlet.dynamicdatamapping.search.TemplateSearch" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.search.TemplateSearchTerms" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil" %><%@
+page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionLocalServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMStructureVersionServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.DDMTemplateServiceUtil" %><%@
@@ -219,10 +219,10 @@ private JSONArray _getFieldReadOnlyAttributes(DDMStructure structure, String fie
 	return readOnlyAttributesJSONArray;
 }
 
-private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String script) throws Exception {
-	JSONArray jsonArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+private JSONArray _getFormTemplateFieldsJSONArray(DDMStructureVersion structureVersion, String script) throws Exception {
+	JSONArray jsonArray = DDMUtil.getDDMFormFieldsJSONArray(structureVersion, script);
 
-	_addFormTemplateFieldAttributes(structure, jsonArray);
+	_addFormTemplateFieldAttributes(structureVersion.getStructure(), jsonArray);
 
 	return jsonArray;
 }

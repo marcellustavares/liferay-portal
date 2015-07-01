@@ -747,6 +747,13 @@ public class DDMTemplateLocalServiceImpl
 	}
 
 	@Override
+	public List<DDMTemplate> getTemplatesByClassNameId(
+		long companyId, long classNameId) {
+
+		return ddmTemplatePersistence.findByC_C(companyId, classNameId);
+	}
+
+	@Override
 	public List<DDMTemplate> getTemplatesByClassPK(long groupId, long classPK) {
 		return ddmTemplatePersistence.findByG_CPK(groupId, classPK);
 	}

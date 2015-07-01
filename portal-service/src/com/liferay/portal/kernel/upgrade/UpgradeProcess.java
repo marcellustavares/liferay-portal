@@ -30,6 +30,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 /**
  * @author Brian Wing Shun Chan
@@ -193,6 +194,61 @@ public abstract class UpgradeProcess extends BaseDBProcess {
 
 	public void upgrade(UpgradeProcess upgradeProcess) throws UpgradeException {
 		upgradeProcess.upgrade();
+	}
+
+	protected long checkClassNameId(Class<?> clazz) throws SQLException {
+		return checkClassNameId(clazz.getName());
+	}
+
+	protected long checkClassNameId(String className) throws SQLException {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select classNameId from ClassName_ where value = ?");
+
+			ps.setString(1, className);
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getLong("classNameId");
+			}
+			else {
+				return createClassNameId(className);
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
+	protected long createClassNameId(String className) throws SQLException {
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"insert into ClassName_ (classNameId, value) values (?, ?)");
+
+			long classNameId = increment();
+
+			ps.setLong(1, classNameId);
+			ps.setString(2, className);
+
+			ps.executeUpdate();
+
+			return classNameId;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
 	}
 
 	protected boolean doHasTable(String tableName) throws Exception {

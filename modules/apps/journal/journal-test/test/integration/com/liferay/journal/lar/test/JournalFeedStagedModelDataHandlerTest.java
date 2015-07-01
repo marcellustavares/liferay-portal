@@ -91,7 +91,8 @@ public class JournalFeedStagedModelDataHandlerTest
 
 		for (int i = 0; i < 2; i++) {
 			DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-				group.getGroupId(), ddmStructure.getStructureId());
+				group.getGroupId(),
+				ddmStructure.getStructureVersion().getStructureVersionId());
 
 			addDependentStagedModel(
 				dependentStagedModelsMap, DDMTemplate.class, ddmTemplate);

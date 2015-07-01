@@ -80,7 +80,8 @@ public class DDMTemplateStagedModelDataHandlerTest
 		DDMStructure structure = (DDMStructure)dependentStagedModels.get(0);
 
 		return DDMTemplateTestUtil.addTemplate(
-			group.getGroupId(), structure.getStructureId());
+			group.getGroupId(),
+			structure.getStructureVersion().getStructureVersionId());
 	}
 
 	@Override

@@ -513,7 +513,8 @@ public class JournalIndexerTest {
 			ddmForm);
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			serviceContext.getScopeGroupId(), ddmStructure.getStructureId());
+			serviceContext.getScopeGroupId(),
+			ddmStructure.getStructureVersion().getStructureId());
 
 		String content = DDMStructureTestUtil.getSampleStructuredContent(
 			"name", keywords);

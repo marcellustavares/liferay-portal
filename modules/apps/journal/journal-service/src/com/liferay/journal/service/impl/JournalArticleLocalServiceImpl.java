@@ -135,6 +135,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
@@ -6852,7 +6853,8 @@ public class JournalArticleLocalServiceImpl
 			try {
 				ddmTemplate = ddmTemplateLocalService.getTemplate(
 					PortalUtil.getSiteGroupId(article.getGroupId()),
-					classNameLocalService.getClassNameId(DDMStructure.class),
+					classNameLocalService.getClassNameId(
+						DDMStructureVersion.class),
 					ddmTemplateKey, true);
 
 				Group companyGroup = groupLocalService.getCompanyGroup(
@@ -7413,7 +7415,7 @@ public class JournalArticleLocalServiceImpl
 
 		DDMTemplate ddmTemplate = ddmTemplateLocalService.getTemplate(
 			PortalUtil.getSiteGroupId(groupId),
-			classNameLocalService.getClassNameId(DDMStructure.class),
+			classNameLocalService.getClassNameId(DDMStructureVersion.class),
 			ddmTemplateKey, true);
 
 		if (incrementVersion) {
@@ -7563,10 +7565,10 @@ public class JournalArticleLocalServiceImpl
 		if (Validator.isNotNull(ddmTemplateKey)) {
 			DDMTemplate ddmTemplate = ddmTemplateLocalService.getTemplate(
 				PortalUtil.getSiteGroupId(groupId),
-				classNameLocalService.getClassNameId(DDMStructure.class),
+				classNameLocalService.getClassNameId(DDMStructureVersion.class),
 				ddmTemplateKey, true);
 
-			if (ddmTemplate.getClassPK() != ddmStructure.getStructureId()) {
+			if (!ddmStructure.hasStructureVersion(ddmTemplate.getClassPK())) {
 				throw new NoSuchTemplateException(
 					"{templateKey=" + ddmTemplateKey + "}");
 			}

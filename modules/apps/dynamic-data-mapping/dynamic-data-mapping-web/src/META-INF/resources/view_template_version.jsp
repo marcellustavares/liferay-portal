@@ -50,13 +50,13 @@ backURL.setParameter("templateId", String.valueOf(template.getTemplateId()));
 	<c:when test="<%= template.getType().equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM) %>">
 
 		<%
-		DDMStructure structure = DDMTemplateHelperUtil.fetchStructure(template);
+		DDMStructureVersion structureVersion = DDMTemplateHelperUtil.fetchStructure(template);
 
 		String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace", renderResponse.getNamespace());
 
 		String script = templateVersion.getScript();
 
-		JSONArray fieldsJSONArray = _getFormTemplateFieldsJSONArray(structure, script);
+		JSONArray fieldsJSONArray = _getFormTemplateFieldsJSONArray(structureVersion, script);
 
 		String fieldsJSONArrayString = fieldsJSONArray.toString();
 		%>

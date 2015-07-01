@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
@@ -57,35 +57,37 @@ public class DDMTemplateTestUtil {
 		return dynamicElementElement;
 	}
 
-	public static DDMTemplate addTemplate(long structureId) throws Exception {
-		return addTemplate(
-			structureId, TemplateConstants.LANG_TYPE_VM, getSampleTemplateXSL(),
-			LocaleUtil.getSiteDefault());
-	}
-
-	public static DDMTemplate addTemplate(
-			long structureId, Locale defaultLocale)
+	public static DDMTemplate addTemplate(long structureVersionId)
 		throws Exception {
 
 		return addTemplate(
-			structureId, TemplateConstants.LANG_TYPE_VM, getSampleTemplateXSL(),
-			defaultLocale);
-	}
-
-	public static DDMTemplate addTemplate(long groupId, long structureId)
-		throws Exception {
-
-		return addTemplate(
-			groupId, structureId, TemplateConstants.LANG_TYPE_VM,
+			structureVersionId, TemplateConstants.LANG_TYPE_VM,
 			getSampleTemplateXSL(), LocaleUtil.getSiteDefault());
 	}
 
 	public static DDMTemplate addTemplate(
-			long groupId, long structureId, Locale defaultLocale)
+			long structureVersionId, Locale defaultLocale)
 		throws Exception {
 
 		return addTemplate(
-			groupId, structureId, TemplateConstants.LANG_TYPE_VM,
+			structureVersionId, TemplateConstants.LANG_TYPE_VM,
+			getSampleTemplateXSL(), defaultLocale);
+	}
+
+	public static DDMTemplate addTemplate(long groupId, long structureVersionId)
+		throws Exception {
+
+		return addTemplate(
+			groupId, structureVersionId, TemplateConstants.LANG_TYPE_VM,
+			getSampleTemplateXSL(), LocaleUtil.getSiteDefault());
+	}
+
+	public static DDMTemplate addTemplate(
+			long groupId, long structureVersionId, Locale defaultLocale)
+		throws Exception {
+
+		return addTemplate(
+			groupId, structureVersionId, TemplateConstants.LANG_TYPE_VM,
 			getSampleTemplateXSL(), defaultLocale);
 	}
 
@@ -119,31 +121,31 @@ public class DDMTemplateTestUtil {
 	}
 
 	public static DDMTemplate addTemplate(
-			long groupId, long structureId, String language, String script,
-			Locale defaultLocale)
+			long groupId, long structureVersionId, String language,
+			String script, Locale defaultLocale)
 		throws Exception {
 
 		return addTemplate(
-			groupId, PortalUtil.getClassNameId(DDMStructure.class), structureId,
-			language, script, defaultLocale);
+			groupId, PortalUtil.getClassNameId(DDMStructureVersion.class),
+			structureVersionId, language, script, defaultLocale);
 	}
 
 	public static DDMTemplate addTemplate(
-			long structureId, String language, String script)
+			long structureVersionId, String language, String script)
 		throws Exception {
 
 		return addTemplate(
-			TestPropsValues.getGroupId(), structureId, language, script,
+			TestPropsValues.getGroupId(), structureVersionId, language, script,
 			LocaleUtil.getSiteDefault());
 	}
 
 	public static DDMTemplate addTemplate(
-			long structureId, String language, String script,
+			long structureVersionId, String language, String script,
 			Locale defaultLocale)
 		throws Exception {
 
 		return addTemplate(
-			TestPropsValues.getGroupId(), structureId, language, script,
+			TestPropsValues.getGroupId(), structureVersionId, language, script,
 			defaultLocale);
 	}
 

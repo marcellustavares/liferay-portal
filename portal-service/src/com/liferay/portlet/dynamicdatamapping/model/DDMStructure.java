@@ -97,8 +97,6 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion getStructureVersion()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
-	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplates();
-
 	public java.lang.String getUnambiguousName(
 		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> structures,
 		long groupId, java.util.Locale locale)
@@ -118,6 +116,8 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 		java.lang.String webDAVToken);
 
 	public boolean hasField(java.lang.String fieldName);
+
+	public boolean hasStructureVersion(long ddmStructureVersionId);
 
 	public boolean isFieldRepeatable(java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException;

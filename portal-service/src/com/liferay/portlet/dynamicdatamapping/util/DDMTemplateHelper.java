@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.util;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface DDMTemplateHelper {
 
-	public DDMStructure fetchStructure(DDMTemplate template);
+	public DDMStructureVersion fetchStructure(DDMTemplate template);
 
 	public String getAutocompleteJSON(
 			HttpServletRequest request, String language)

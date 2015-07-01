@@ -769,6 +769,13 @@ public class DDMTemplateLocalServiceWrapper implements DDMTemplateLocalService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplatesByClassNameId(
+		long companyId, long classNameId) {
+		return _ddmTemplateLocalService.getTemplatesByClassNameId(companyId,
+			classNameId);
+	}
+
+	@Override
 	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplatesByClassPK(
 		long groupId, long classPK) {
 		return _ddmTemplateLocalService.getTemplatesByClassPK(groupId, classPK);

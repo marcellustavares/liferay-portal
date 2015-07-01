@@ -538,6 +538,11 @@ public class DDMStructureVersionWrapper implements DDMStructureVersion,
 		return _ddmStructureVersion.getStructureVersionId();
 	}
 
+	@Override
+	public java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMTemplate> getTemplates() {
+		return _ddmStructureVersion.getTemplates();
+	}
+
 	/**
 	* Returns the type of this d d m structure version.
 	*

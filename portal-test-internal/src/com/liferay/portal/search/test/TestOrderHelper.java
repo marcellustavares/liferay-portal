@@ -169,7 +169,8 @@ public abstract class TestOrderHelper {
 		throws Exception {
 
 		return DDMTemplateTestUtil.addTemplate(
-			_serviceContext.getScopeGroupId(), ddmStructure.getStructureId());
+			_serviceContext.getScopeGroupId(),
+			ddmStructure.getStructureVersion().getStructureVersionId());
 	}
 
 	protected void addSearchableAssetEntries(

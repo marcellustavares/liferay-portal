@@ -42,6 +42,7 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
 import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
@@ -94,8 +95,11 @@ public class JournalArticleFinderTest {
 		_basicWebContentDDMStructure = DDMStructureTestUtil.addStructure(
 			_group.getGroupId(), JournalArticle.class.getName());
 
+		DDMStructureVersion ddmStructureVersion =
+			_basicWebContentDDMStructure.getStructureVersion();
+
 		DDMTemplate basicWebContentTemplate = DDMTemplateTestUtil.addTemplate(
-			_group.getGroupId(), _basicWebContentDDMStructure.getStructureId());
+			_group.getGroupId(), ddmStructureVersion.getStructureVersionId());
 
 		JournalArticle article = JournalTestUtil.addArticleWithXMLContent(
 			_group.getGroupId(), _folder.getFolderId(),
@@ -110,7 +114,8 @@ public class JournalArticleFinderTest {
 			_group.getGroupId(), "Folder 2");
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			_group.getGroupId(), _ddmStructure.getStructureId());
+			_group.getGroupId(),
+			_ddmStructure.getStructureVersion().getStructureVersionId());
 
 		article = JournalTestUtil.addArticleWithXMLContent(
 			_group.getGroupId(), folder.getFolderId(),

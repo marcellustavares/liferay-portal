@@ -86,7 +86,8 @@ public class JournalTestUtilTest {
 			JournalArticle.class.getName());
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			ddmStructure.getStructureId(), TemplateConstants.LANG_TYPE_VM,
+			ddmStructure.getStructureVersion().getStructureVersionId(),
+			TemplateConstants.LANG_TYPE_VM,
 			JournalTestUtil.getSampleTemplateXSL());
 
 		Assert.assertNotNull(
@@ -166,7 +167,8 @@ public class JournalTestUtilTest {
 			JournalArticle.class.getName());
 
 		Assert.assertNotNull(
-			DDMTemplateTestUtil.addTemplate(ddmStructure.getStructureId()));
+			DDMTemplateTestUtil.addTemplate(
+				ddmStructure.getStructureVersion().getStructureVersionId()));
 	}
 
 	@Test
@@ -178,7 +180,8 @@ public class JournalTestUtilTest {
 
 		Assert.assertNotNull(
 			DDMTemplateTestUtil.addTemplate(
-				ddmStructure.getStructureId(), TemplateConstants.LANG_TYPE_VM,
+				ddmStructure.getStructureVersion().getStructureVersionId(),
+				TemplateConstants.LANG_TYPE_VM,
 				JournalTestUtil.getSampleTemplateXSL()));
 	}
 

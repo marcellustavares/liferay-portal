@@ -134,7 +134,7 @@ public class JournalArticleAssetSearchTest extends BaseAssetSearchTestCase {
 		if (_ddmTemplate == null) {
 			_ddmTemplate = DDMTemplateTestUtil.addTemplate(
 				serviceContext.getScopeGroupId(),
-				_ddmStructure.getStructureId());
+				_ddmStructure.getStructureVersion().getStructureVersionId());
 		}
 
 		String content = DDMStructureTestUtil.getSampleStructuredContent();

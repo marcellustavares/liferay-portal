@@ -118,7 +118,8 @@ public class JournalArticleStagedModelDataHandlerTest
 			dependentStagedModelsMap, DDMStructure.class, ddmStructure);
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			companyGroup.getGroupId(), ddmStructure.getStructureId());
+			companyGroup.getGroupId(),
+			ddmStructure.getStructureVersion().getStructureVersionId());
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, DDMTemplate.class, ddmTemplate);
@@ -144,7 +145,8 @@ public class JournalArticleStagedModelDataHandlerTest
 			group.getGroupId(), JournalArticle.class.getName());
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			group.getGroupId(), ddmStructure.getStructureId());
+			group.getGroupId(),
+			ddmStructure.getStructureVersion().getStructureVersionId());
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, DDMTemplate.class, ddmTemplate);

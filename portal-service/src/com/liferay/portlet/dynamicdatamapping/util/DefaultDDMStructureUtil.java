@@ -35,6 +35,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
@@ -145,9 +146,11 @@ public class DefaultDDMStructureUtil {
 				templateElement.elementText("cacheable"));
 
 			DDMTemplateLocalServiceUtil.addTemplate(
-				userId, groupId, PortalUtil.getClassNameId(DDMStructure.class),
-				ddmStructure.getStructureId(), ddmStructure.getClassNameId(),
-				null, nameMap, null, DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY,
+				userId, groupId,
+				PortalUtil.getClassNameId(DDMStructureVersion.class),
+				ddmStructure.getStructureVersion().getStructureVersionId(),
+				ddmStructure.getClassNameId(), null, nameMap, null,
+				DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY,
 				DDMTemplateConstants.TEMPLATE_MODE_CREATE,
 				TemplateConstants.LANG_TYPE_FTL, script, cacheable, false,
 				StringPool.BLANK, null, serviceContext);

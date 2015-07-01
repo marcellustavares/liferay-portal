@@ -64,7 +64,8 @@ public class JournalSubscriptionClassTypeTest
 		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
 			classTypeId);
 
-		List<DDMTemplate> ddmTemplates = ddmStructure.getTemplates();
+		List<DDMTemplate> ddmTemplates =
+			ddmStructure.getStructureVersion().getTemplates();
 
 		DDMTemplate ddmTemplate = ddmTemplates.get(0);
 
@@ -88,9 +89,10 @@ public class JournalSubscriptionClassTypeTest
 			group.getGroupId(), JournalArticle.class.getName());
 
 		DDMTemplateTestUtil.addTemplate(
-			group.getGroupId(), ddmStructure.getStructureId());
+			group.getGroupId(),
+			ddmStructure.getStructureVersion().getStructureVersionId());
 
-		return ddmStructure.getStructureId();
+		return ddmStructure.getStructureVersion().getStructureVersionId();
 	}
 
 	@Override

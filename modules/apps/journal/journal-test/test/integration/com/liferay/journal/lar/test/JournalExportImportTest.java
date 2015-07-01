@@ -243,7 +243,8 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 			groupId, JournalArticle.class.getName());
 
 		ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			groupId, ddmStructure.getStructureId());
+			groupId,
+			ddmStructure.getStructureVersion().getStructureVersionId());
 
 		String content = DDMStructureTestUtil.getSampleStructuredContent();
 
