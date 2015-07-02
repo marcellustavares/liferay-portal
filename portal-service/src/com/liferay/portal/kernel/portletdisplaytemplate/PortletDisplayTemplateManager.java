@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.portletdisplaytemplate.util;
+package com.liferay.portal.kernel.portletdisplaytemplate;
 
 import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
@@ -25,36 +25,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Eduardo Garcia
+ * @author Leonardo Barros
  */
-public interface PortletDisplayTemplate {
+public interface PortletDisplayTemplateManager {
 
 	public static final String DISPLAY_STYLE_PREFIX = "ddmTemplate_";
 
-	public DDMTemplate fetchDDMTemplate(long groupId, String displayStyle);
+	public static final String ENTRIES = "entries";
 
-	public long getDDMTemplateGroupId(long groupId);
-
-	public String getDDMTemplateKey(String displayStyle);
-
-	@Deprecated
-	public String getDDMTemplateUuid(String displayStyle);
-
-	public DDMTemplate getDefaultPortletDisplayTemplateDDMTemplate(
-		long groupId, long classNameId);
-
-	public String getDisplayStyle(String ddmTemplateKey);
-
-	public DDMTemplate getPortletDisplayTemplateDDMTemplate(
-		long groupId, long classNameId, String displayStyle);
-
-	public DDMTemplate getPortletDisplayTemplateDDMTemplate(
+	public DDMTemplate getDDMTemplate(
 		long groupId, long classNameId, String displayStyle,
 		boolean useDefault);
 
-	@Deprecated
-	public long getPortletDisplayTemplateDDMTemplateId(
-		long groupId, String displayStyle);
+	public long getDDMTemplateGroupId(long groupId);
 
 	public List<TemplateHandler> getPortletDisplayTemplateHandlers();
 
@@ -63,23 +46,7 @@ public interface PortletDisplayTemplate {
 
 	public String renderDDMTemplate(
 			HttpServletRequest request, HttpServletResponse response,
-			DDMTemplate ddmTemplate, List<?> entries)
-		throws Exception;
-
-	public String renderDDMTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			DDMTemplate ddmTemplate, List<?> entries,
-			Map<String, Object> contextObjects)
-		throws Exception;
-
-	public String renderDDMTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			long ddmTemplateId, List<?> entries)
-		throws Exception;
-
-	public String renderDDMTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			long ddmTemplateId, List<?> entries,
+			long templateId, List<?> entries,
 			Map<String, Object> contextObjects)
 		throws Exception;
 

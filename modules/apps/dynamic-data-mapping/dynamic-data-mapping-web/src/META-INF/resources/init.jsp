@@ -73,6 +73,7 @@ page import="com.liferay.portlet.PortalPreferences" %><%@
 page import="com.liferay.portlet.PortletPreferencesFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLFactoryUtil" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
+page import="com.liferay.portlet.display.template.service.PortletDisplayTemplate" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.NoSuchStructureException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.RequiredStructureException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.RequiredTemplateException" %><%@
@@ -114,8 +115,7 @@ page import="com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil"
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMTemplateHelperUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMUtil" %><%@
-page import="com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplate" %><%@
-page import="com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplateUtil" %><%@
+page import="com.liferay.registry.RegistryUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.util.ContentUtil" %>
 
@@ -225,5 +225,9 @@ private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 
 	return jsonArray;
+}
+
+private PortletDisplayTemplate getPortletDisplayTemplate() {
+	return RegistryUtil.getRegistry().getService(PortletDisplayTemplate.class);
 }
 %>

@@ -242,7 +242,7 @@ public class ResourcePermissionLocalServiceImpl
 				session.save(resourcePermission);
 
 				PermissionCacheUtil.clearResourcePermissionCache(
-					resourcePermission.getName(),
+					resourcePermission.getScope(), resourcePermission.getName(),
 					resourcePermission.getPrimKey());
 			}
 		}
@@ -824,8 +824,8 @@ public class ResourcePermissionLocalServiceImpl
 	}
 
 	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #getRoles(long, String, int, String, String}
+	 * @deprecated As of 7.0.0, replaced by {@link #getRoles(long, String, int,
+	 *             String, String}
 	 */
 	@Deprecated
 	@Override
@@ -1318,7 +1318,8 @@ public class ResourcePermissionLocalServiceImpl
 			PermissionThreadLocal.setFlushResourcePermissionEnabled(
 				name, primKey, flushResourcePermissionEnabled);
 
-			PermissionCacheUtil.clearResourcePermissionCache(name, primKey);
+			PermissionCacheUtil.clearResourcePermissionCache(
+				scope, name, primKey);
 
 			SearchEngineUtil.updatePermissionFields(name, primKey);
 		}
