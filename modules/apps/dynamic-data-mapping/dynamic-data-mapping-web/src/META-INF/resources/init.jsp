@@ -39,7 +39,6 @@ page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.log.Log" %><%@
 page import="com.liferay.portal.kernel.log.LogFactoryUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
-page import="com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManagerUtil" %><%@
 page import="com.liferay.portal.kernel.template.TemplateConstants" %><%@
 page import="com.liferay.portal.kernel.template.TemplateHandler" %><%@
 page import="com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil" %><%@
@@ -116,6 +115,7 @@ page import="com.liferay.portlet.dynamicdatamapping.util.DDMDisplayRegistryUtil"
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMPermissionHandler" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMTemplateHelperUtil" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.util.DDMUtil" %><%@
+page import="com.liferay.registry.RegistryUtil"%><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.util.ContentUtil" %>
 
@@ -225,5 +225,9 @@ private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 
 	return jsonArray;
+}
+
+private PortletDisplayTemplate getPortletDisplayTemplate() {
+	return RegistryUtil.getRegistry().getService(PortletDisplayTemplate.class);
 }
 %>
