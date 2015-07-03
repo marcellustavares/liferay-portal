@@ -26,7 +26,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplateUtil;
+import com.liferay.portlet.display.template.service.PortletDisplayTemplate;
+import com.liferay.registry.RegistryUtil;
 import com.liferay.site.navigation.language.web.configuration.LanguagePortletInstanceConfiguration;
 
 import java.util.ArrayList;
@@ -119,8 +120,8 @@ public class LanguageDisplayContext {
 			_languagePortletInstanceConfiguration.displayStyle();
 
 		if (displayStyle != null) {
-			_ddmTemplateKey = PortletDisplayTemplateUtil.getDDMTemplateKey(
-				displayStyle);
+			_ddmTemplateKey =
+				getPortletDisplayTemplate().getDDMTemplateKey(displayStyle);
 		}
 
 		return _ddmTemplateKey;
@@ -160,6 +161,11 @@ public class LanguageDisplayContext {
 		getLanguagePortletInstanceConfiguration() {
 
 		return _languagePortletInstanceConfiguration;
+	}
+
+	protected PortletDisplayTemplate getPortletDisplayTemplate() {
+		return RegistryUtil.getRegistry().getService(
+			PortletDisplayTemplate.class);
 	}
 
 	private String[] _availableLanguageIds;
