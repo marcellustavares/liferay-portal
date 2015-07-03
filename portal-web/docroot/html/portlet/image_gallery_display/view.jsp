@@ -61,7 +61,7 @@ String[] mediaGalleryMimeTypes = dlPortletInstanceSettings.getMimeTypes();
 List fileEntries = DLAppServiceUtil.getGroupFileEntries(scopeGroupId, 0, folderId, mediaGalleryMimeTypes, status, 0, SearchContainer.MAX_DELTA, null);
 %>
 
-<liferay-ui:ddm-template-renderer className="<%= FileEntry.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= displayStyle %>" displayStyleGroupId="<%= displayStyleGroupId %>" entries="<%= fileEntries %>">
+<liferay-ddm:ddm-template-renderer className="<%= FileEntry.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= displayStyle %>" displayStyleGroupId="<%= displayStyleGroupId %>" entries="<%= fileEntries %>">
 
 	<%
 	String topLink = ParamUtil.getString(request, "topLink", "home");
@@ -283,4 +283,4 @@ List fileEntries = DLAppServiceUtil.getGroupFileEntries(scopeGroupId, 0, folderI
 
 		</c:when>
 	</c:choose>
-</liferay-ui:ddm-template-renderer>
+</liferay-ddm:ddm-template-renderer>
