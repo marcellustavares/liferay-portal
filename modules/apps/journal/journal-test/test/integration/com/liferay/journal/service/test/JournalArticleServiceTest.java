@@ -22,6 +22,7 @@ import com.liferay.journal.model.JournalFolderConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.journal.service.impl.JournalArticleLocalServiceImpl;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -54,8 +55,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.io.InputStream;
 
@@ -145,10 +144,10 @@ public class JournalArticleServiceTest {
 
 	@Test(expected = StructureDefinitionException.class)
 	public void testCheckArticleWithInvalidStructure() throws Exception {
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			JournalArticle.class.getName());
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			ddmStructure.getStructureId());
 
 		String content = "<?xml version=\"1.0\"?><root></root>";
@@ -184,10 +183,10 @@ public class JournalArticleServiceTest {
 	public void testDeleteTemplateReferencedByJournalArticles()
 		throws Exception {
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			_group.getGroupId(), JournalArticle.class.getName());
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			_group.getGroupId(), ddmStructure.getStructureId());
 
 		JournalTestUtil.addArticleWithXMLContent(
@@ -651,10 +650,10 @@ public class JournalArticleServiceTest {
 
 		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			_group.getGroupId(), JournalArticle.class.getName(), ddmForm);
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			_group.getGroupId(), ddmStructure.getStructureId());
 
 		String xmlContent = readText(journalArticleContent);

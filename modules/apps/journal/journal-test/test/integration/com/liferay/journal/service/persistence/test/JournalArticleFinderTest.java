@@ -20,6 +20,7 @@ import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.persistence.JournalArticleFinder;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.journal.util.comparator.ArticleCreateDateComparator;
 import com.liferay.journal.util.comparator.ArticleDisplayDateComparator;
@@ -43,8 +44,6 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -86,15 +85,15 @@ public class JournalArticleFinderTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_ddmStructure = DDMStructureTestUtil.addStructure(
+		_ddmStructure = DDMTestUtil.addDDMStructure(
 			_group.getGroupId(), JournalArticle.class.getName());
 
 		_folder = JournalTestUtil.addFolder(_group.getGroupId(), "Folder 1");
 
-		_basicWebContentDDMStructure = DDMStructureTestUtil.addStructure(
+		_basicWebContentDDMStructure = DDMTestUtil.addDDMStructure(
 			_group.getGroupId(), JournalArticle.class.getName());
 
-		DDMTemplate basicWebContentTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate basicWebContentTemplate = DDMTestUtil.addDDMTemplate(
 			_group.getGroupId(), _basicWebContentDDMStructure.getStructureId());
 
 		JournalArticle article = JournalTestUtil.addArticleWithXMLContent(
@@ -109,7 +108,7 @@ public class JournalArticleFinderTest {
 		JournalFolder folder = JournalTestUtil.addFolder(
 			_group.getGroupId(), "Folder 2");
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			_group.getGroupId(), _ddmStructure.getStructureId());
 
 		article = JournalTestUtil.addArticleWithXMLContent(
