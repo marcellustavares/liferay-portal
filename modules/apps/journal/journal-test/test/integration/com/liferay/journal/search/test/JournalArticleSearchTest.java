@@ -23,6 +23,7 @@ import com.liferay.journal.model.JournalFolderConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.journal.service.JournalFolderServiceUtil;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -56,8 +57,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -271,16 +270,15 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		String content = DDMStructureTestUtil.getSampleStructuredContent(
-			keywords);
+		String content = JournalTestUtil.getSampleStructuredContent(keywords);
 
-		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm("name");
+		DDMForm ddmForm = DDMTestUtil.getSampleDDMForm("name");
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			serviceContext.getScopeGroupId(), JournalArticle.class.getName(),
 			ddmForm);
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			serviceContext.getScopeGroupId(), ddmStructure.getStructureId());
 
 		return addArticleWithXmlContent(
@@ -475,7 +473,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	protected void updateDDMStructure(ServiceContext serviceContext)
 		throws Exception {
 
-		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm("title");
+		DDMForm ddmForm = DDMTestUtil.getSampleDDMForm("title");
 
 		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
 
@@ -502,7 +500,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 				ServiceContext serviceContext)
 			throws Exception {
 
-			String content = DDMStructureTestUtil.getSampleStructuredContent(
+			String content = JournalTestUtil.getSampleStructuredContent(
 				fieldValue);
 
 			return addArticleWithXmlContent(
@@ -528,7 +526,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 				contents.add(map);
 			}
 
-			String content = DDMStructureTestUtil.getSampleStructuredContent(
+			String content = JournalTestUtil.getSampleStructuredContent(
 				"name", contents, "en_US");
 
 			return addArticleWithXmlContent(

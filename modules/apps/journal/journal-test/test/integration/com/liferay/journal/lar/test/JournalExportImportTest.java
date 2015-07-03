@@ -20,6 +20,7 @@ import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.model.JournalFolderConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.journal.web.lar.JournalPortletDataHandler;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -49,8 +50,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 import com.liferay.portlet.exportimport.lar.PortletDataHandlerKeys;
 import com.liferay.portlet.exportimport.lar.UserIdStrategy;
 
@@ -239,13 +238,13 @@ public class JournalExportImportTest extends BasePortletExportImportTestCase {
 			groupId = companyGroup.getGroupId();
 		}
 
-		ddmStructure = DDMStructureTestUtil.addStructure(
+		ddmStructure = DDMTestUtil.addDDMStructure(
 			groupId, JournalArticle.class.getName());
 
-		ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		ddmTemplate = DDMTestUtil.addDDMTemplate(
 			groupId, ddmStructure.getStructureId());
 
-		String content = DDMStructureTestUtil.getSampleStructuredContent();
+		String content = JournalTestUtil.getSampleStructuredContent();
 
 		article = JournalTestUtil.addArticleWithXMLContent(
 			group.getGroupId(), content, ddmStructure.getStructureKey(),

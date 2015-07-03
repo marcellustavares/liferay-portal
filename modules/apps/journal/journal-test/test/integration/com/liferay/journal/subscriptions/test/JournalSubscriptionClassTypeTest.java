@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -32,8 +33,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 import com.liferay.portlet.subscriptions.test.BaseSubscriptionClassTypeTestCase;
 
 import java.util.List;
@@ -84,10 +83,10 @@ public class JournalSubscriptionClassTypeTest
 
 	@Override
 	protected long addClassType() throws Exception {
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			group.getGroupId(), JournalArticle.class.getName());
 
-		DDMTemplateTestUtil.addTemplate(
+		DDMTestUtil.addDDMTemplate(
 			group.getGroupId(), ddmStructure.getStructureId());
 
 		return ddmStructure.getStructureId();

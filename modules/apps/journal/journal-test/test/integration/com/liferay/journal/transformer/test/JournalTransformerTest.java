@@ -16,6 +16,7 @@ package com.liferay.journal.transformer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.journal.transformer.RegexTransformerUtil;
 import com.liferay.journal.util.impl.JournalUtil;
@@ -38,11 +39,10 @@ import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMFormTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
+import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,24 +74,21 @@ public class JournalTransformerTest {
 
 		ddmForm.addAvailableLocale(LocaleUtil.US);
 		ddmForm.addDDMFormField(
-			DDMFormTestUtil.createTextDDMFormField(
-				"link", false, false, false));
+			createTextDDMFormField("link", false, false, false));
 		ddmForm.addDDMFormField(
-			DDMFormTestUtil.createTextDDMFormField(
-				"name", false, false, false));
+			createTextDDMFormField("name", false, false, false));
 		ddmForm.setDefaultLocale(LocaleUtil.US);
 
-		_ddmStructure = DDMStructureTestUtil.addStructure(
+		_ddmStructure = DDMTestUtil.addDDMStructure(
 			JournalArticle.class.getName(), ddmForm);
 
-		String xsl = "$name.getData()";
+		String script = "$name.getData()";
 
-		_ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			_ddmStructure.getStructureId(), TemplateConstants.LANG_TYPE_VM,
-			xsl);
+		_ddmTemplate = DDMTestUtil.addDDMTemplate(
+			TestPropsValues.getGroupId(), _ddmStructure.getStructureId(),
+			TemplateConstants.LANG_TYPE_VM, script);
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent(
-			"Joe Bloggs");
+		String xml = JournalTestUtil.getSampleStructuredContent("Joe Bloggs");
 
 		_article = JournalTestUtil.addArticleWithXMLContent(
 			xml, _ddmStructure.getStructureKey(),
@@ -101,7 +98,7 @@ public class JournalTransformerTest {
 
 		String content = JournalUtil.transform(
 			null, tokens, Constants.VIEW, "en_US",
-			UnsecureSAXReaderUtil.read(xml), null, xsl,
+			UnsecureSAXReaderUtil.read(xml), null, script,
 			TemplateConstants.LANG_TYPE_VM);
 
 		Assert.assertEquals("Joe Bloggs", content);
@@ -114,7 +111,7 @@ public class JournalTransformerTest {
 		element.setText("[@" + _article.getArticleId() + ";name@]");
 
 		content = JournalUtil.transform(
-			null, tokens, Constants.VIEW, "en_US", document, null, xsl,
+			null, tokens, Constants.VIEW, "en_US", document, null, script,
 			TemplateConstants.LANG_TYPE_VM);
 
 		Assert.assertEquals("Joe Bloggs", content);
@@ -124,7 +121,7 @@ public class JournalTransformerTest {
 	public void testFTLTransformation() throws Exception {
 		Map<String, String> tokens = getTokens();
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+		String xml = JournalTestUtil.getSampleStructuredContent(
 			"name", "Joe Bloggs");
 
 		String script = "${name.getData()} - ${viewMode}";
@@ -146,7 +143,7 @@ public class JournalTransformerTest {
 		contents.put(LocaleUtil.BRAZIL, "Joao da Silva");
 		contents.put(LocaleUtil.US, "Joe Bloggs");
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+		String xml = JournalTestUtil.getSampleStructuredContent(
 			contents, LanguageUtil.getLanguageId(LocaleUtil.US));
 
 		String script = "$name.getData()";
@@ -179,7 +176,7 @@ public class JournalTransformerTest {
 
 		Map<String, String> tokens = getTokens();
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+		String xml = JournalTestUtil.getSampleStructuredContent(
 			"name", "Joe Bloggs");
 
 		String script = "Hello $name.getData(), Welcome to beta.sample.com.";
@@ -197,7 +194,7 @@ public class JournalTransformerTest {
 	public void testTokensTransformerListener() throws Exception {
 		Map<String, String> tokens = getTokens();
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent();
+		String xml = JournalTestUtil.getSampleStructuredContent();
 
 		String script = "@company_id@";
 
@@ -226,7 +223,7 @@ public class JournalTransformerTest {
 
 		tokens.put("article_resource_pk", "1");
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent();
+		String xml = JournalTestUtil.getSampleStructuredContent();
 
 		String script = "@view_counter@";
 
@@ -250,14 +247,13 @@ public class JournalTransformerTest {
 	public void testVMTransformation() throws Exception {
 		Map<String, String> tokens = getTokens();
 
-		_ddmStructure = DDMStructureTestUtil.addStructure(
+		_ddmStructure = DDMTestUtil.addDDMStructure(
 			TestPropsValues.getGroupId(), "name");
 
-		_ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			_ddmStructure.getStructureId(), TemplateConstants.LANG_TYPE_VM,
-			"$name.getData()");
+		_ddmTemplate = DDMTestUtil.addDDMTemplate(
+			_ddmStructure.getStructureId());
 
-		String xml = DDMStructureTestUtil.getSampleStructuredContent(
+		String xml = JournalTestUtil.getSampleStructuredContent(
 			"name", "Joe Bloggs");
 
 		String content = JournalUtil.transform(
@@ -277,6 +273,24 @@ public class JournalTransformerTest {
 			TemplateConstants.LANG_TYPE_VM);
 
 		Assert.assertEquals("Joe Bloggs", content);
+	}
+
+	protected DDMFormField createTextDDMFormField(
+		String name, boolean localizable, boolean repeatable,
+		boolean required) {
+
+		DDMFormField ddmFormField = new DDMFormField(name, "text");
+
+		ddmFormField.setDataType("string");
+		ddmFormField.setLocalizable(localizable);
+		ddmFormField.setRepeatable(repeatable);
+		ddmFormField.setRequired(required);
+
+		LocalizedValue localizedValue = ddmFormField.getLabel();
+
+		localizedValue.addString(LocaleUtil.US, name);
+
+		return ddmFormField;
 	}
 
 	protected Map<String, String> getTokens() throws Exception {

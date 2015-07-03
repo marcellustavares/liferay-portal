@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalFeed;
 import com.liferay.journal.service.JournalFeedLocalServiceUtil;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
@@ -35,8 +36,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -86,11 +85,11 @@ public class JournalFeedStagedModelDataHandlerTest
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			new LinkedHashMap<>();
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			group.getGroupId(), JournalArticle.class.getName());
 
 		for (int i = 0; i < 2; i++) {
-			DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+			DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 				group.getGroupId(), ddmStructure.getStructureId());
 
 			addDependentStagedModel(

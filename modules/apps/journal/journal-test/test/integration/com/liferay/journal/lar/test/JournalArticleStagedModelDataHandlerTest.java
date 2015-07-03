@@ -23,6 +23,7 @@ import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleResourceLocalServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.journal.service.persistence.JournalArticleResourceUtil;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -43,8 +44,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 
 import java.util.ArrayList;
@@ -111,13 +110,13 @@ public class JournalArticleStagedModelDataHandlerTest
 
 		Group companyGroup = company.getGroup();
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			companyGroup.getGroupId(), JournalArticle.class.getName());
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, DDMStructure.class, ddmStructure);
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			companyGroup.getGroupId(), ddmStructure.getStructureId());
 
 		addDependentStagedModel(
@@ -140,10 +139,10 @@ public class JournalArticleStagedModelDataHandlerTest
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			new LinkedHashMap<>();
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			group.getGroupId(), JournalArticle.class.getName());
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			group.getGroupId(), ddmStructure.getStructureId());
 
 		addDependentStagedModel(
@@ -188,7 +187,7 @@ public class JournalArticleStagedModelDataHandlerTest
 		return JournalTestUtil.addArticleWithXMLContent(
 			group.getGroupId(), folder.getFolderId(),
 			JournalArticleConstants.CLASSNAME_ID_DEFAULT,
-			DDMStructureTestUtil.getSampleStructuredContent(),
+			JournalTestUtil.getSampleStructuredContent(),
 			ddmStructure.getStructureKey(), ddmTemplate.getTemplateKey());
 	}
 

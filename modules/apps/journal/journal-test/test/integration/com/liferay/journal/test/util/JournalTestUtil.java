@@ -56,8 +56,6 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -148,16 +146,15 @@ public class JournalTestUtil {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		String content = DDMStructureTestUtil.getSampleStructuredContent(
+		String content = JournalTestUtil.getSampleStructuredContent(
 			contentMap, LocaleUtil.toLanguageId(defaultLocale));
 
-		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm(
-			_locales, defaultLocale);
+		DDMForm ddmForm = DDMTestUtil.getSampleDDMForm(_locales, defaultLocale);
 
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+		DDMStructure ddmStructure = DDMTestUtil.addDDMStructure(
 			groupId, JournalArticle.class.getName(), ddmForm, defaultLocale);
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+		DDMTemplate ddmTemplate = DDMTestUtil.addDDMTemplate(
 			groupId, ddmStructure.getStructureId());
 
 		boolean neverExpire = true;

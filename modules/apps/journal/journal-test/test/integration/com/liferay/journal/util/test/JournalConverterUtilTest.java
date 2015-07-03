@@ -16,6 +16,7 @@ package com.liferay.journal.util.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -59,7 +60,6 @@ import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageType;
 import com.liferay.portlet.dynamicdatamapping.util.DDMImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLImpl;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestHelper;
 import com.liferay.portlet.journal.util.JournalConverterUtil;
 
 import java.io.InputStream;
@@ -96,15 +96,14 @@ public class JournalConverterUtilTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_ddmStructureTestHelper = new DDMStructureTestHelper(_group);
-
 		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
 
 		String definition = read("test-ddm-structure-all-fields.xml");
 
-		_ddmStructure = _ddmStructureTestHelper.addStructure(
-			classNameId, null, "Test Structure", definition,
-			StorageType.JSON.getValue(), DDMStructureConstants.TYPE_DEFAULT);
+		_ddmStructure = DDMTestUtil.addDDMStructure(
+			_group.getGroupId(), classNameId, null, "Test Structure",
+			definition, StorageType.JSON.getValue(),
+			DDMStructureConstants.TYPE_DEFAULT);
 	}
 
 	@Test
@@ -978,7 +977,6 @@ public class JournalConverterUtilTest {
 	private static final String _PUBLIC_USER_LAYOUT = "publicUserLayout";
 
 	private DDMStructure _ddmStructure;
-	private DDMStructureTestHelper _ddmStructureTestHelper;
 	private final Locale _enLocale = LocaleUtil.fromLanguageId("en_US");
 
 	@DeleteAfterTestRun

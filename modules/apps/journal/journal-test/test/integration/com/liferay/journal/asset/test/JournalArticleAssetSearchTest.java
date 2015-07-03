@@ -18,6 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.model.JournalFolderConstants;
+import com.liferay.journal.test.util.DDMTestUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
@@ -33,8 +34,6 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.asset.search.test.BaseAssetSearchTestCase;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
 
 import java.util.Date;
 import java.util.Locale;
@@ -126,18 +125,18 @@ public class JournalArticleAssetSearchTest extends BaseAssetSearchTestCase {
 		throws Exception {
 
 		if (_ddmStructure == null) {
-			_ddmStructure = DDMStructureTestUtil.addStructure(
+			_ddmStructure = DDMTestUtil.addDDMStructure(
 				serviceContext.getScopeGroupId(),
 				JournalArticle.class.getName());
 		}
 
 		if (_ddmTemplate == null) {
-			_ddmTemplate = DDMTemplateTestUtil.addTemplate(
+			_ddmTemplate = DDMTestUtil.addDDMTemplate(
 				serviceContext.getScopeGroupId(),
 				_ddmStructure.getStructureId());
 		}
 
-		String content = DDMStructureTestUtil.getSampleStructuredContent();
+		String content = JournalTestUtil.getSampleStructuredContent();
 
 		return JournalTestUtil.addArticleWithXMLContent(
 			serviceContext.getScopeGroupId(), content,
