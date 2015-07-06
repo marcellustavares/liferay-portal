@@ -73,6 +73,7 @@ page import="com.liferay.journal.service.permission.JournalFeedPermission" %><%@
 page import="com.liferay.journal.service.permission.JournalFolderPermission" %><%@
 page import="com.liferay.journal.service.permission.JournalPermission" %><%@
 page import="com.liferay.journal.util.JournalContentUtil" %><%@
+page import="com.liferay.journal.util.JournalConverter" %><%@
 page import="com.liferay.journal.util.comparator.ArticleVersionComparator" %><%@
 page import="com.liferay.journal.util.impl.JournalUtil" %><%@
 page import="com.liferay.journal.web.asset.JournalArticleAssetRenderer" %><%@
@@ -178,9 +179,9 @@ page import="com.liferay.portlet.dynamicdatamapping.service.DDMTemplateServiceUt
 page import="com.liferay.portlet.dynamicdatamapping.service.permission.DDMStructurePermission" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.service.permission.DDMTemplatePermission" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.storage.Fields" %><%@
-page import="com.liferay.portlet.journal.util.JournalConverterUtil" %><%@
 page import="com.liferay.portlet.trash.model.TrashEntry" %><%@
 page import="com.liferay.portlet.trash.util.TrashUtil" %><%@
+page import="com.liferay.registry.RegistryUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.util.RSSUtil" %>
 
@@ -219,6 +220,13 @@ PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPre
 JournalDisplayContext journalDisplayContext = new JournalDisplayContext(liferayPortletRequest, portletPreferences);
 
 Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
+%>
+
+<%!
+
+private JournalConverter _getJournalConverter() {
+	return RegistryUtil.getRegistry().getService(JournalConverter.class);
+}
 %>
 
 <%@ include file="/init-ext.jsp" %>
