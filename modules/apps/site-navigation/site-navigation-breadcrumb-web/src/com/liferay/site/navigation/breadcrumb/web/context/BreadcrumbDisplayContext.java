@@ -167,8 +167,9 @@ public class BreadcrumbDisplayContext {
 	}
 
 	protected PortletDisplayTemplate getPortletDisplayTemplate() {
-		return RegistryUtil.getRegistry().getService(
-			PortletDisplayTemplate.class);
+		Registry registry = RegistryUtil.getRegistry();
+
+		return registry.getService(PortletDisplayTemplate.class);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

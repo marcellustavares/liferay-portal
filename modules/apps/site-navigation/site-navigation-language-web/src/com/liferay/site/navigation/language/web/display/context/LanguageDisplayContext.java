@@ -164,8 +164,9 @@ public class LanguageDisplayContext {
 	}
 
 	protected PortletDisplayTemplate getPortletDisplayTemplate() {
-		return RegistryUtil.getRegistry().getService(
-			PortletDisplayTemplate.class);
+		Registry registry = RegistryUtil.getRegistry();
+
+		return registry.getService(PortletDisplayTemplate.class);
 	}
 
 	private String[] _availableLanguageIds;
