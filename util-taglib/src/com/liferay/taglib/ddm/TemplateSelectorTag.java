@@ -29,14 +29,6 @@ import com.liferay.taglib.ddm.base.BaseTemplateSelectorTag;
 public class TemplateSelectorTag extends BaseTemplateSelectorTag {
 
 	@Override
-	protected void cleanUp() {
-		super.cleanUp();
-
-		setDefaultDisplayStyle(StringPool.BLANK);
-		setLabel("display-template");
-	}
-
-	@Override
 	public String getDisplayStyle() {
 		String displayStyle = getDisplayStyle();
 
@@ -69,11 +61,19 @@ public class TemplateSelectorTag extends BaseTemplateSelectorTag {
 		return themeDisplay.getScopeGroupId();
 	}
 
+	@Override
+	protected void cleanUp() {
+		super.cleanUp();
+
+		setDefaultDisplayStyle(StringPool.BLANK);
+		setLabel("display-template");
+	}
+
 	protected DDMTemplate getPortletDisplayDDMTemplate(String displayStyle) {
 		DDMTemplate portletDisplayDDMTemplate =
 			PortletDisplayTemplateUtil.getPortletDisplayTemplateDDMTemplate(
-				getDisplayStyleGroupId(), PortalUtil.getClassNameId(
-					getClassName()), displayStyle, true);
+				getDisplayStyleGroupId(),
+				PortalUtil.getClassNameId(getClassName()), displayStyle, true);
 
 		return portletDisplayDDMTemplate;
 	}
