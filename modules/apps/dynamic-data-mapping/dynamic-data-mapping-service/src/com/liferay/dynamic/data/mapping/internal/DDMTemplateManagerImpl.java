@@ -29,11 +29,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
  */
+@Component(immediate = true)
 public class DDMTemplateManagerImpl implements DDMTemplateManager {
 
 	@Override
@@ -64,6 +66,10 @@ public class DDMTemplateManagerImpl implements DDMTemplateManager {
 			_ddmTemplateLocalService.fetchTemplate(
 				groupId, classNameId, templateKey);
 
+		if (template == null) {
+			return null;
+		}
+
 		return new DDMTemplateImpl(template);
 	}
 
@@ -76,6 +82,10 @@ public class DDMTemplateManagerImpl implements DDMTemplateManager {
 		com.liferay.portlet.dynamicdatamapping.model.DDMTemplate template =
 			_ddmTemplateLocalService.fetchTemplate(
 				groupId, classNameId, templateKey, includeAncestorTemplates);
+
+		if (template == null) {
+			return null;
+		}
 
 		return new DDMTemplateImpl(template);
 	}
