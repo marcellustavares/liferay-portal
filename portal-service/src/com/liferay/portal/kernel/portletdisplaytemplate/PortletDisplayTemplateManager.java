@@ -16,7 +16,7 @@ package com.liferay.portal.kernel.portletdisplaytemplate;
 
 import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
 
 import java.util.List;
 import java.util.Map;
