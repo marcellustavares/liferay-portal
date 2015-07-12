@@ -41,14 +41,16 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.PortletURLUtil;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.portlet.display.template.PortletDisplayTemplateConstants;
-import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.DDMTemplateManager;
+import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalService;
 import com.liferay.portlet.dynamicdatamapping.NoSuchTemplateException;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.PortletDataException;
+import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
 import com.liferay.taglib.servlet.PipingServletResponse;
 import com.liferay.taglib.util.VelocityTaglib;
 
 import java.lang.reflect.InvocationHandler;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -60,7 +62,6 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -93,14 +94,14 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 			}
 
 			try {
-				return _ddmTemplateManager.getTemplateByUuidAndGroupId(
+				return _ddmTemplateLocalService.getDDMTemplateByUuidAndGroupId(
 					uuid, groupId);
 			}
 			catch (PortalException pe) {
 			}
 
 			try {
-				return _ddmTemplateManager.getTemplateByUuidAndGroupId(
+				return _ddmTemplateLocalService.getDDMTemplateByUuidAndGroupId(
 					uuid, companyGroup.getGroupId());
 			}
 			catch (NoSuchTemplateException nste) {
@@ -206,7 +207,7 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 			if (Validator.isNotNull(ddmTemplateKey)) {
 				try {
 					portletDisplayDDMTemplate =
-						_ddmTemplateManager.fetchTemplate(
+						_ddmTemplateLocalService.fetchTemplate(
 							portletDisplayDDMTemplateGroupId, classNameId,
 							ddmTemplateKey, true);
 				}
@@ -473,7 +474,7 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 			Map<String, Object> contextObjects)
 		throws Exception {
 
-		DDMTemplate ddmTemplate = _ddmTemplateManager.getTemplate(
+		DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
 			ddmTemplateId);
 
 		return renderDDMTemplate(
@@ -481,10 +482,10 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 	}
 
 	@Reference
-	protected void setDDMTemplateManager(
-		DDMTemplateManager ddmTemplateManager) {
+	protected void setDDMTemplateLocalService(
+		DDMTemplateLocalService ddmTemplateLocalService) {
 
-		_ddmTemplateManager = ddmTemplateManager;
+		_ddmTemplateLocalService = ddmTemplateLocalService;
 	}
 
 	private Map<String, Object> _getPortletPreferences(
@@ -517,11 +518,28 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 
 		return contextObjects;
 	}
+	
+	@Override
+	public void exportDDMTemplateStagedModel(
+			PortletDataContext portletDataContext, String portletId,
+			long classNameId, String displayStyle) 
+		throws PortletDataException {
+		
+		DDMTemplate ddmTemplate = getPortletDisplayTemplateDDMTemplate(
+			portletDataContext.getGroupId(), classNameId, displayStyle);
+		
+		if (ddmTemplate == null) {
+			return;
+		}
+		
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, portletId, ddmTemplate);
+	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletDisplayTemplateImpl.class);
 
-	private DDMTemplateManager _ddmTemplateManager;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 	private static class TransformerHolder {
 
@@ -533,5 +551,7 @@ public class PortletDisplayTemplateImpl implements PortletDisplayTemplate {
 			PropsKeys.PORTLET_DISPLAY_TEMPLATES_ERROR, true);
 
 	}
+
+	
 
 }

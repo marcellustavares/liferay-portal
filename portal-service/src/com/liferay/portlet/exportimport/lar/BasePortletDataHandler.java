@@ -671,16 +671,9 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 			portletDataContext.setScopeGroupId(displayStyleGroupId);
 		}
 
-		DDMTemplate ddmTemplate =
-			PortletDisplayTemplateManagerUtil.getDDMTemplate(
-				portletDataContext.getGroupId(),
-				getClassNameId(portletDataContext, portletId), displayStyle,
-				false);
-
-		if (ddmTemplate != null) {
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, portletId, ddmTemplate);
-		}
+		PortletDisplayTemplateManagerUtil.exportDDMTemplateStagedModel(
+			portletDataContext, portletId, 
+			getClassNameId(portletDataContext, portletId), displayStyle);
 
 		portletDataContext.setScopeGroupId(previousScopeGroupId);
 	}

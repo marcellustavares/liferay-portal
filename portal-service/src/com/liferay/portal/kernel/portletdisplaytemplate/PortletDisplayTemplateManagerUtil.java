@@ -14,18 +14,20 @@
 
 package com.liferay.portal.kernel.portletdisplaytemplate;
 
-import com.liferay.portal.kernel.template.TemplateHandler;
-import com.liferay.portal.kernel.template.TemplateVariableGroup;
-import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceTracker;
-
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.liferay.portal.kernel.template.TemplateHandler;
+import com.liferay.portal.kernel.template.TemplateVariableGroup;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.PortletDataException;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceTracker;
 
 /**
  * @author Leonardo Barros
@@ -100,6 +102,18 @@ public class PortletDisplayTemplateManagerUtil {
 
 		return portletDisplayTemplateManager;
 	}
+	
+	public static void exportDDMTemplateStagedModel(
+			PortletDataContext portletDataContext, String portletId,
+			long classNameId, String displayStyle) 
+		throws PortletDataException {
+		
+		PortletDisplayTemplateManager portletDisplayTemplateManager =
+			_instance._serviceTracker.getService();
+		
+		portletDisplayTemplateManager.exportDDMTemplateStagedModel(
+			portletDataContext, portletId, classNameId, displayStyle);
+	}
 
 	private PortletDisplayTemplateManagerUtil() {
 		Registry registry = RegistryUtil.getRegistry();
@@ -121,4 +135,5 @@ public class PortletDisplayTemplateManagerUtil {
 		<PortletDisplayTemplateManager, PortletDisplayTemplateManager>
 			_serviceTracker;
 
+	
 }
