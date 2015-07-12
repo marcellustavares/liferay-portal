@@ -14,15 +14,17 @@
 
 package com.liferay.portal.kernel.portletdisplaytemplate;
 
-import com.liferay.portal.kernel.template.TemplateHandler;
-import com.liferay.portal.kernel.template.TemplateVariableGroup;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.liferay.portal.kernel.template.TemplateHandler;
+import com.liferay.portal.kernel.template.TemplateVariableGroup;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.PortletDataException;
 
 /**
  * @author Leonardo Barros
@@ -51,5 +53,10 @@ public interface PortletDisplayTemplateManager {
 			long templateId, List<?> entries,
 			Map<String, Object> contextObjects)
 		throws Exception;
+
+	public void exportDDMTemplateStagedModel(
+			PortletDataContext portletDataContext, String portletId,
+			long classNameId, String displayStyle) 
+		throws PortletDataException;
 
 }

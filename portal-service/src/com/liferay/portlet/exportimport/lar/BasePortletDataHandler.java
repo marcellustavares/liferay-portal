@@ -35,7 +35,7 @@ import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
 
 import java.io.IOException;
 
@@ -671,16 +671,9 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 			portletDataContext.setScopeGroupId(displayStyleGroupId);
 		}
 
-		DDMTemplate ddmTemplate =
-			PortletDisplayTemplateManagerUtil.getDDMTemplate(
-				portletDataContext.getGroupId(),
-				getClassNameId(portletDataContext, portletId), displayStyle,
-				false);
-
-		if (ddmTemplate != null) {
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, portletId, ddmTemplate);
-		}
+		PortletDisplayTemplateManagerUtil.exportDDMTemplateStagedModel(
+			portletDataContext, portletId, 
+			getClassNameId(portletDataContext, portletId), displayStyle);
 
 		portletDataContext.setScopeGroupId(previousScopeGroupId);
 	}
