@@ -49,12 +49,17 @@ public class PortletDisplayTemplateManagerImpl
 			_portletDisplayTemplate.getPortletDisplayTemplateDDMTemplate(
 				groupId, classNameId, displayStyle, useDefault);
 		
+		if (ddmTemplate == null) {
+			return null;
+		}
+		
 		try {
 			return _ddmTemplateManager.getTemplate(ddmTemplate.getTemplateId());
 		} 
 		catch (PortalException pe) {
-			return null;
 		}
+		
+		return null;
 	}
 
 	@Override
