@@ -14,68 +14,64 @@
 
 package com.liferay.portlet.journal.util;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceTracker;
 
 import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
  * @author Bruno Basto
+ * @author Leonardo Barros
  */
-@ProviderType
 public class JournalConverterUtil {
 
-	public static String getContent(DDMStructure ddmStructure, Fields ddmFields)
-		throws Exception {
-
-		return getJournalConverter().getContent(ddmStructure, ddmFields);
-	}
-
-	public static Fields getDDMFields(
-			DDMStructure ddmStructure, Document document)
-		throws Exception {
-
-		return getJournalConverter().getDDMFields(ddmStructure, document);
-	}
-
-	public static Fields getDDMFields(DDMStructure ddmStructure, String content)
-		throws Exception {
-
-		return getJournalConverter().getDDMFields(ddmStructure, content);
-	}
-
 	public static String getDDMXSD(String journalXSD) throws Exception {
-		return getJournalConverter().getDDMXSD(journalXSD);
+		JournalConverterManager journalConverterManager =
+			_getJournalConverterManager();
+
+		return journalConverterManager.getDDMXSD(
+			journalXSD, LocaleUtil.getSiteDefault());
 	}
 
 	public static String getDDMXSD(String journalXSD, Locale defaultLocale)
 		throws Exception {
 
-		return getJournalConverter().getDDMXSD(journalXSD, defaultLocale);
+		JournalConverterManager journalConverterManager =
+			_getJournalConverterManager();
+
+		return journalConverterManager.getDDMXSD(journalXSD, defaultLocale);
 	}
 
-	public static JournalConverter getJournalConverter() {
-		PortalRuntimePermission.checkGetBeanProperty(
-			JournalConverterUtil.class);
+	private static JournalConverterManager _getJournalConverterManager() {
+		JournalConverterManager journalConverterManager =
+			_instance._serviceTracker.getService();
 
-		return _journalConverter;
+		if (journalConverterManager == null) {
+			return _dummyJournalConverterManagerImpl;
+		}
+
+		return journalConverterManager;
 	}
 
-	public static String getJournalXSD(String ddmXSD) throws Exception {
-		return getJournalConverter().getJournalXSD(ddmXSD);
+	private JournalConverterUtil() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_serviceTracker = registry.trackServices(JournalConverterManager.class);
+
+		_serviceTracker.open();
 	}
 
-	public void setJournalConverter(JournalConverter journalConverter) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
+	private static final JournalConverterUtil _instance =
+		new JournalConverterUtil();
 
-		_journalConverter = journalConverter;
-	}
+	private static final DummyJournalConverterManagerImpl
+		_dummyJournalConverterManagerImpl =
+			new DummyJournalConverterManagerImpl();
 
-	private static JournalConverter _journalConverter;
+	private final ServiceTracker
+		<JournalConverterManager, JournalConverterManager> _serviceTracker;
 
 }
