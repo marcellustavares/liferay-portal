@@ -12,37 +12,17 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
+package com.liferay.portlet.dynamicdatamapping;
 
-import com.liferay.portal.kernel.util.ListUtil;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public class DDMFormLayoutColumn {
-
-	public static final int FULL = 12;
-
-	public DDMFormLayoutColumn() {
-	}
-
-	public DDMFormLayoutColumn(DDMFormLayoutColumn ddmFormLayoutColumn) {
-		_ddmFormFieldNames = new ArrayList<>(
-			ddmFormLayoutColumn._ddmFormFieldNames);
-		_size = ddmFormLayoutColumn._size;
-	}
-
-	public DDMFormLayoutColumn(int size, String... ddmFormFieldNames) {
-		_size = size;
-		_ddmFormFieldNames = ListUtil.toList(ddmFormFieldNames);
-	}
-
-	public String getDDMFormFieldName(int index) {
-		return _ddmFormFieldNames.get(index);
-	}
+public class DDMFormLayoutColumn implements Serializable {
 
 	public List<String> getDDMFormFieldNames() {
 		return _ddmFormFieldNames;
