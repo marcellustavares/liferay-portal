@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateMa
 import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplateManager;
 
 import java.util.List;
 import java.util.Map;
@@ -75,11 +75,17 @@ public class PortletDisplayTemplateManagerImpl
 			Map<String, Object> contextObjects)
 		throws Exception {
 
-		DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getDDMTemplate(
-			templateId);
+		DDMTemplate ddmTemplate = _ddmTemplateManager.getTemplate(templateId);
 
 		return _portletDisplayTemplate.renderDDMTemplate(
 			request, response, ddmTemplate, entries, contextObjects);
+	}
+
+	@Reference
+	protected void setDDMTemplateManager(
+		DDMTemplateManager ddmTemplateManager) {
+
+		_ddmTemplateManager = ddmTemplateManager;
 	}
 
 	@Reference
@@ -89,6 +95,7 @@ public class PortletDisplayTemplateManagerImpl
 		_portletDisplayTemplate = portletDisplayTemplate;
 	}
 
-	protected PortletDisplayTemplate _portletDisplayTemplate;
+	private DDMTemplateManager _ddmTemplateManager;
+	private PortletDisplayTemplate _portletDisplayTemplate;
 
 }
