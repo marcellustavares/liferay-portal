@@ -122,7 +122,6 @@ public class ExportImportConfigurationTrashHandler extends BaseTrashHandler {
 
 	@Activate
 	protected void activate() {
-		System.out.println(_servletContext);
 	}
 
 	@Override
