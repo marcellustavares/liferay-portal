@@ -16,7 +16,7 @@ package com.liferay.social.requests.web.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
-import com.liferay.social.requests.web.upgrade.RequestsWebUpgrade;
+import com.liferay.social.requests.web.upgrade.SocialRequestsWebUpgrade;
 
 import javax.portlet.Portlet;
 
