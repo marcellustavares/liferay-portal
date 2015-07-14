@@ -515,10 +515,6 @@
 
 		<action path="/our_activities/view" forward="portlet.our_activities.view" />
 
-		<!-- Page Flags -->
-
-		<action path="/page_flags/view" forward="portlet.page_flags.view" />
-
 		<!-- Page Ratings -->
 
 		<action path="/page_ratings/view" forward="portlet.page_ratings.view" />
