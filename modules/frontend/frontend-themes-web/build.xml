@@ -171,8 +171,6 @@
 
 		<property name="lexicon.zip.path" refid="lexicon.zip.path" />
 
-		<property name="lexicon.deploy.theme.dir" value="${alloy.bootstrap.deploy.theme.dir}/lexicon" />
-
 		<basename file="${lexicon.zip.path}" property="lexicon.file" />
 
 		<property name="lexicon.assets.dir" value="${frontend.js.web.dir}/tmp/META-INF/resources/html/lexicon-assets" />
@@ -189,9 +187,11 @@
 			</then>
 		</if>
 
-		<delete dir="${lexicon.deploy.theme.dir}" />
-
 		<!-- Process files for inclusion in the theme -->
+
+		<property name="lexicon.deploy.theme.dir" value="${alloy.bootstrap.deploy.theme.dir}/lexicon" />
+
+		<delete dir="${lexicon.deploy.theme.dir}" />
 
 		<replaceregexp match="^// INSERT CUSTOM VARS" replace="@import &quot;../../aui_variables&quot;;${line.separator}@import &quot;../alloy-font-awesome/scss/font-awesome&quot;;" byline="true">
 			<fileset
