@@ -77,7 +77,7 @@ Map<String, Object> contextObjects = new HashMap<String, Object>();
 contextObjects.put("blogsPortletInstanceSettings", blogsPortletInstanceSettings);
 %>
 
-<liferay-ui:template-renderer className="<%= BlogsEntry.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= blogsPortletInstanceSettings.getDisplayStyle() %>" displayStyleGroupId="<%= blogsPortletInstanceSettings.getDisplayStyleGroupId(themeDisplay.getScopeGroupId()) %>" entries="<%= _convertToBlogEntries(results) %>">
+<liferay-ddm:template-renderer className="<%= BlogsEntry.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= blogsPortletInstanceSettings.getDisplayStyle() %>" displayStyleGroupId="<%= blogsPortletInstanceSettings.getDisplayStyleGroupId(themeDisplay.getScopeGroupId()) %>" entries="<%= _convertToBlogEntries(results) %>">
 
 	<%
 	int index = 0;
@@ -117,7 +117,7 @@ contextObjects.put("blogsPortletInstanceSettings", blogsPortletInstanceSettings)
 	}
 	%>
 
-</liferay-ui:template-renderer>
+</liferay-ddm:template-renderer>
 
 <liferay-ui:search-paginator searchContainer="<%= searchContainer %>" />
 
