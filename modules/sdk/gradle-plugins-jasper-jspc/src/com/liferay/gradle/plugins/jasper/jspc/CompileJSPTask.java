@@ -64,7 +64,7 @@ public class CompileJSPTask extends JavaExec implements CompileJSPSpec {
 			String output = byteArrayOutputStream.toString();
 
 			if (output.contains("JasperException")) {
-				throw new GradleException("JSPs failed to compile.");
+				throw new GradleException("Unable to compile JSPs");
 			}
 		}
 		finally {
