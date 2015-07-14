@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.name=" + SocialRequestsPortletKeys.REQUESTS,
-		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/requests-default-portlet-preferences.xml",
+		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/default-portlet-preferences.xml",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=guest,power-user,user",
 		"javax.portlet.supports.mime-type=text/html"
