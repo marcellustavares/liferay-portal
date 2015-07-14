@@ -17,7 +17,7 @@ package com.liferay.social.requests.web.constants;
 /**
  * @author Adolfo Pérez
  */
-public class RequestsWebKeys {
+public class SocialRequestsWebKeys {
 
 	public static final String SOCIAL_REQUESTS = "SOCIAL_REQUESTS";
 

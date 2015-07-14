@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-List<SocialRequest> requests = (List<SocialRequest>)request.getAttribute(RequestsWebKeys.SOCIAL_REQUESTS);
+List<SocialRequest> requests = (List<SocialRequest>)request.getAttribute(SocialRequestsWebKeys.SOCIAL_REQUESTS);
 %>
 
 <c:choose>

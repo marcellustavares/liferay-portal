@@ -28,7 +28,7 @@ import com.liferay.portlet.social.model.SocialRequest;
 import com.liferay.portlet.social.model.SocialRequestConstants;
 import com.liferay.portlet.social.service.SocialRequestLocalService;
 import com.liferay.social.requests.web.constants.RequestsPortletKeys;
-import com.liferay.social.requests.web.constants.RequestsWebKeys;
+import com.liferay.social.requests.web.constants.SocialRequestsWebKeys;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class ViewMVCRenderCommand implements MVCRenderCommand {
 					100);
 
 			renderRequest.setAttribute(
-				RequestsWebKeys.SOCIAL_REQUESTS, requests);
+				SocialRequestsWebKeys.SOCIAL_REQUESTS, requests);
 		}
 
 		return "/view.jsp";

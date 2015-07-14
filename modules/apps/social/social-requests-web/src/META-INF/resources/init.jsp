@@ -30,7 +30,7 @@ page import="com.liferay.portlet.social.model.SocialRequest" %><%@
 page import="com.liferay.portlet.social.model.SocialRequestConstants" %><%@
 page import="com.liferay.portlet.social.model.SocialRequestFeedEntry" %><%@
 page import="com.liferay.portlet.social.service.SocialRequestInterpreterLocalServiceUtil" %><%@
-page import="com.liferay.social.requests.web.constants.RequestsWebKeys" %>
+page import="com.liferay.social.requests.web.constants.SocialRequestsWebKeys" %>
 
 <%@ page import="java.util.List" %>
 
