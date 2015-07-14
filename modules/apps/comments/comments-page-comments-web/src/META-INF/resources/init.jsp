@@ -26,8 +26,9 @@ page import="com.liferay.portal.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.service.permission.LayoutPermissionUtil" %><%@
 page import="com.liferay.portal.util.PortalUtil" %>
 
-<liferay-theme:defineObjects />
 <portlet:defineObjects/>
+
+<liferay-theme:defineObjects />
 
 <%
 String currentURL = PortalUtil.getCurrentURL(request);
