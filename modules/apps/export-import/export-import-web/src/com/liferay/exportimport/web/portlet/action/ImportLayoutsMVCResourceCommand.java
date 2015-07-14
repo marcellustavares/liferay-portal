@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 
-import javax.portlet.PortletContext;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -47,18 +46,15 @@ public class ImportLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 
 		String cmd = ParamUtil.getString(resourceRequest, Constants.CMD);
 
-		PortletContext portletContext = getPortletConfig(
-			resourceRequest).getPortletContext();
-
 		PortletRequestDispatcher portletRequestDispatcher = null;
 
 		if (cmd.equals(Constants.IMPORT)) {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/import_layouts_processes.jsp");
+			portletRequestDispatcher = getPortletRequestDispatcher(
+				resourceRequest, "/import_layouts_processes.jsp");
 		}
 		else {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/import_layouts_resources.jsp");
+			portletRequestDispatcher = getPortletRequestDispatcher(
+				resourceRequest, "/import_layouts_resources.jsp");
 		}
 
 		portletRequestDispatcher.include(resourceRequest, resourceResponse);

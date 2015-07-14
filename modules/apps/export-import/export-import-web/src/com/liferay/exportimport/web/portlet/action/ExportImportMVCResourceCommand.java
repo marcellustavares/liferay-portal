@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 
-import javax.portlet.PortletContext;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -47,26 +46,23 @@ public class ExportImportMVCResourceCommand extends BaseMVCResourceCommand {
 
 		String cmd = ParamUtil.getString(resourceRequest, Constants.CMD);
 
-		PortletContext portletContext = getPortletConfig(
-			resourceRequest).getPortletContext();
-
 		PortletRequestDispatcher portletRequestDispatcher = null;
 
 		if (cmd.equals(Constants.EXPORT)) {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/export_portlet_processes.jsp");
+			getPortletRequestDispatcher(
+				resourceRequest, "/export_portlet_processes.jsp");
 		}
 		else if (cmd.equals(Constants.IMPORT)) {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/import_portlet_processes.jsp");
+			getPortletRequestDispatcher(
+				resourceRequest, "/import_portlet_processes.jsp");
 		}
 		else if (cmd.equals(Constants.PUBLISH)) {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/publish_portlet_processes.jsp");
+			getPortletRequestDispatcher(
+				resourceRequest, "/publish_portlet_processes.jsp");
 		}
 		else {
-			portletRequestDispatcher = portletContext.getRequestDispatcher(
-				"/import_portlet_resources.jsp");
+			getPortletRequestDispatcher(
+				resourceRequest, "/import_portlet_resources.jsp");
 		}
 
 		resourceRequest = ActionUtil.getWrappedResourceRequest(
