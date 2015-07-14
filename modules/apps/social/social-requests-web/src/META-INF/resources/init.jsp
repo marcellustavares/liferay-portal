@@ -35,6 +35,7 @@ page import="com.liferay.social.requests.web.constants.RequestsWebKeys" %>
 <%@ page import="java.util.List" %>
 
 <portlet:defineObjects />
+
 <liferay-theme:defineObjects />
 
 <%
