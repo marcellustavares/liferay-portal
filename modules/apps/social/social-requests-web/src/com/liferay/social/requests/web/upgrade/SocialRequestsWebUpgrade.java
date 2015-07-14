@@ -31,8 +31,8 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Adolfo Pérez
  */
-@Component(immediate = true, service = RequestsWebUpgrade.class)
-public class RequestsWebUpgrade {
+@Component(immediate = true, service = SocialRequestsWebUpgrade.class)
+public class SocialRequestsWebUpgrade {
 
 	@Reference(unbind = "-")
 	protected void setReleaseLocalService(
