@@ -323,14 +323,16 @@ public class AssetPublisherUtil {
 	public static String filterAssetTagNames(
 		long groupId, String assetTagNames) {
 
-		String[] names = StringUtil.split(assetTagNames);
-
-		long[] tagIds = AssetTagLocalServiceUtil.getTagIds(groupId, names);
-
 		List<String> filteredAssetTagNames = new ArrayList<>();
 
-		for (long tagId : tagIds) {
-			AssetTag assetTag = AssetTagLocalServiceUtil.fetchAssetTag(tagId);
+		String[] assetTagNamesArray = StringUtil.split(assetTagNames);
+
+		long[] assetTagIds = AssetTagLocalServiceUtil.getTagIds(
+			groupId, assetTagNamesArray);
+
+		for (long assetTagId : assetTagIds) {
+			AssetTag assetTag = AssetTagLocalServiceUtil.fetchAssetTag(
+				assetTagId);
 
 			if (assetTag != null) {
 				filteredAssetTagNames.add(assetTag.getName());
