@@ -18,8 +18,8 @@
 		<dirset dir="apps/document-library" includes="*" />
 		<dirset dir="apps/dynamic-data-lists" includes="*" />
 		<dirset dir="apps/dynamic-data-mapping" includes="*" />
-		<dirset dir="apps/export-import" includes="*" />
 		<dirset dir="apps/expando" includes="*" />
+		<dirset dir="apps/export-import" includes="*" />
 		<dirset dir="apps/flags" includes="*" />
 		<dirset dir="apps/hello-velocity" includes="*" />
 		<dirset dir="apps/iframe" includes="*" />
