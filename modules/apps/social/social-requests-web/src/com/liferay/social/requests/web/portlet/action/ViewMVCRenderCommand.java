@@ -27,7 +27,7 @@ import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.social.model.SocialRequest;
 import com.liferay.portlet.social.model.SocialRequestConstants;
 import com.liferay.portlet.social.service.SocialRequestLocalService;
-import com.liferay.social.requests.web.constants.RequestsPortletKeys;
+import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
 import com.liferay.social.requests.web.constants.SocialRequestsWebKeys;
 
 import java.util.List;
@@ -45,7 +45,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + RequestsPortletKeys.REQUESTS,
+		"javax.portlet.name=" + SocialRequestsPortletKeys.REQUESTS,
 		"mvc.command.name=/", "mvc.command.name=/requests/view"
 	},
 	service = MVCRenderCommand.class

@@ -15,7 +15,7 @@
 package com.liferay.social.requests.web.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.social.requests.web.constants.RequestsPortletKeys;
+import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
 import com.liferay.social.requests.web.upgrade.RequestsWebUpgrade;
 
 import javax.portlet.Portlet;
@@ -38,7 +38,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.display-name=Requests",
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.name=" + RequestsPortletKeys.REQUESTS,
+		"javax.portlet.name=" + SocialRequestsPortletKeys.REQUESTS,
 		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/requests-default-portlet-preferences.xml",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=guest,power-user,user",

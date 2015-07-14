@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.service.ReleaseLocalService;
 import com.liferay.portal.upgrade.util.UpgradePortletId;
-import com.liferay.social.requests.web.constants.RequestsPortletKeys;
+import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
 
 import java.util.Collections;
 
@@ -52,7 +52,7 @@ public class SocialRequestsWebUpgrade {
 			@Override
 			protected String[][] getRenamePortletIdsArray() {
 				return new String[][] {
-					new String[] {"121", RequestsPortletKeys.REQUESTS}
+					new String[] {"121", SocialRequestsPortletKeys.REQUESTS}
 				};
 			}
 

@@ -25,7 +25,7 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.social.NoSuchRequestException;
 import com.liferay.portlet.social.service.SocialRequestService;
-import com.liferay.social.requests.web.constants.RequestsPortletKeys;
+import com.liferay.social.requests.web.constants.SocialRequestsPortletKeys;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + RequestsPortletKeys.REQUESTS,
+		"javax.portlet.name=" + SocialRequestsPortletKeys.REQUESTS,
 		"mvc.command.name=/update_request"
 	},
 	service = MVCActionCommand.class
