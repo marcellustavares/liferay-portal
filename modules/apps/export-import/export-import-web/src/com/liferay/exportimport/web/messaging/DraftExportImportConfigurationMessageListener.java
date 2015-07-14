@@ -98,8 +98,7 @@ public class DraftExportImportConfigurationMessageListener
 	}
 
 	@Reference(
-		target =
-			"(javax.portlet.name=" + ExportImportPortletKeys.EXPORT_IMPORT + ")"
+		target = "(javax.portlet.name=" + ExportImportPortletKeys.EXPORT_IMPORT + ")"
 	)
 	protected void setPortlet(Portlet portlet) {
 	}
