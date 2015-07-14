@@ -208,7 +208,7 @@
 		</replaceregexp>
 
 		<copy todir="${lexicon.deploy.theme.dir}" overwrite="true" preservelastmodified="true">
-			<fileset dir="${lexicon.assets.dir}/scss/" />
+			<fileset dir="${lexicon.assets.dir}/scss" />
 		</copy>
 	</target>
 
