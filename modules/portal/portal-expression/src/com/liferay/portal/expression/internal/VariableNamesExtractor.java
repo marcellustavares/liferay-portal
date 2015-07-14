@@ -32,9 +32,9 @@ public class VariableNamesExtractor {
 			return Collections.emptyList();
 		}
 
-		expressionString = removeStringConstants(expressionString);
-
 		List<String> variableNames = new ArrayList<>();
+
+		expressionString = removeStringConstants(expressionString);
 
 		Matcher matcher = _pattern.matcher(expressionString);
 
