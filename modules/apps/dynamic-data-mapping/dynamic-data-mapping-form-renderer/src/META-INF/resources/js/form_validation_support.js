@@ -9,21 +9,17 @@ AUI.add(
 		};
 
 		FormValidationSupport.ATTRS = {
-			url: {
+			validationURL: {
 				value: ''
 			}
 		};
 
 		FormValidationSupport.prototype = {
-			initializer: function() {
-				var instance = this;
-			},
-
 			validate: function(callback) {
 				var instance = this;
 
 				A.io.request(
-					instance.get('url'),
+					instance.get('validationURL'),
 					{
 						dataType: 'JSON',
 						on: {
@@ -31,7 +27,9 @@ AUI.add(
 								callback(false);
 							},
 							success: function() {
-								callback(instance._validateResponse(this.get('responseData')));
+								var valid = instance._validateResponse(this.get('responseData'));
+
+								callback(valid);
 							}
 						}
 					}
@@ -49,14 +47,14 @@ AUI.add(
 
 						var data = Util.getFieldByKey(responseData, instanceId, 'instanceId');
 
-						if (data.valid === false) {
-							valid = false;
-						}
-
 						var messages = data.messages;
 
 						if (messages && messages.length) {
 							field.set('errorMessages', messages);
+						}
+
+						if (data.valid === false) {
+							valid = false;
 						}
 					}
 				);
