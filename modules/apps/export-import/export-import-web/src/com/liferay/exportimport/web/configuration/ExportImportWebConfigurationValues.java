@@ -24,11 +24,11 @@ public class ExportImportWebConfigurationValues {
 	public static final String
 		DRAFT_EXPORT_IMPORT_CONFIGURATION_CHECK_INTERVAL = GetterUtil.getString(
 			ExportImportWebConfigurationUtil.get(
-				"staging.draft.export.import.configuration.check.interval"));
+				"draft.export.import.configuration.check.interval"));
 
 	public static int DRAFT_EXPORT_IMPORT_CONFIGURATION_CLEAN_UP_COUNT =
 		GetterUtil.getInteger(
 			ExportImportWebConfigurationUtil.get(
-				"staging.draft.export.import.configuration.clean.up.count"));
+				"draft.export.import.configuration.clean.up.count"));
 
 }
