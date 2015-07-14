@@ -29,8 +29,8 @@ public class DummyDDMStructureManagerImpl implements DDMStructureManager {
 
 	@Override
 	public DDMStructure addStructure(
-		long userId, long groupId, String parentStructureKey,
-		long classNameId, String structureKey, Map<Locale, String> nameMap,
+		long userId, long groupId, String parentStructureKey, long classNameId,
+		String structureKey, Map<Locale, String> nameMap,
 		Map<Locale, String> descriptionMap, DDMForm ddmForm,
 		DDMFormLayout ddmFormLayout, String storageType, int type,
 		ServiceContext serviceContext) {
