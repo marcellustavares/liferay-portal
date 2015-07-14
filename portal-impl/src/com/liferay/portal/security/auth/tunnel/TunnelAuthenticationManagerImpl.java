@@ -70,15 +70,10 @@ public class TunnelAuthenticationManagerImpl
 			throw authException;
 		}
 
+		String expectedPassword = null;
+
 		String login = httpAuthorizationHeader.getAuthParameter(
 			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_USERNAME);
-
-		String password = httpAuthorizationHeader.getAuthParameter(
-			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_PASSWORD);
-
-		long companyId = PortalInstances.getCompanyId(httpServletRequest);
-
-		String expectedPassword = null;
 
 		try {
 			expectedPassword = Encryptor.encrypt(getSharedSecretKey(), login);
@@ -98,7 +93,10 @@ public class TunnelAuthenticationManagerImpl
 			throw authException;
 		}
 
-		if (!password.equals(expectedPassword)) {
+		String password = httpAuthorizationHeader.getAuthParameter(
+			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_PASSWORD);
+
+		if (!Validator.equals(expectedPassword, password)) {
 			AuthException authException = new RemoteAuthException();
 
 			authException.setType(RemoteAuthException.WRONG_SHARED_SECRET);
@@ -109,6 +107,8 @@ public class TunnelAuthenticationManagerImpl
 		User user = UserLocalServiceUtil.fetchUser(GetterUtil.getLong(login));
 
 		if (user == null) {
+			long companyId = PortalInstances.getCompanyId(httpServletRequest);
+
 			user = UserLocalServiceUtil.fetchUserByEmailAddress(
 				companyId, login);
 
@@ -139,17 +139,16 @@ public class TunnelAuthenticationManagerImpl
 			throw new IllegalArgumentException("Login is null");
 		}
 
-		String password = Encryptor.encrypt(getSharedSecretKey(), login);
-
 		HttpAuthorizationHeader httpAuthorizationHeader =
 			new HttpAuthorizationHeader(HttpAuthorizationHeader.SCHEME_BASIC);
 
-		httpAuthorizationHeader.setAuthParameter(
-			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_USERNAME, login);
+		String password = Encryptor.encrypt(getSharedSecretKey(), login);
 
 		httpAuthorizationHeader.setAuthParameter(
 			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_PASSWORD, password);
 
+		httpAuthorizationHeader.setAuthParameter(
+			HttpAuthorizationHeader.AUTH_PARAMETER_NAME_USERNAME, login);
 		httpURLConnection.setRequestProperty(
 			HttpHeaders.AUTHORIZATION, httpAuthorizationHeader.toString());
 	}
