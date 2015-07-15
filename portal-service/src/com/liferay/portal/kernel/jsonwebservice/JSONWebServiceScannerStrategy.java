@@ -25,7 +25,7 @@ public interface JSONWebServiceScannerStrategy {
 
 	public class MethodDescriptor {
 
-		public MethodDescriptor( Method method) {
+		public MethodDescriptor(Method method) {
 			_method = method;
 
 			_clazz = method.getDeclaringClass();
