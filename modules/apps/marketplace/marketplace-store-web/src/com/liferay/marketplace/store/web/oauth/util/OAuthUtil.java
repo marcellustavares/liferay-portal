@@ -33,6 +33,8 @@ import com.liferay.portlet.expando.service.ExpandoValueLocalService;
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -121,6 +123,10 @@ public class OAuthUtil {
 		ExpandoValueLocalService expandoValueLocalService) {
 
 		_expandoValueLocalService = expandoValueLocalService;
+	}
+
+	@Reference(target = "(original.bean=*)", unbind = "-")
+	protected void setServletContext(ServletContext servletContext) {
 	}
 
 	private void _deleteAccessToken(User user) throws PortalException {
