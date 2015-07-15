@@ -325,10 +325,10 @@ public class JSONWebServiceActionsManagerImpl
 			return -1;
 		}
 
-		DefaultJSONWebServiceRegistrator defaultJsonWebServiceRegistrator =
+		DefaultJSONWebServiceRegistrator defaultJSONWebServiceRegistrator =
 			new DefaultJSONWebServiceRegistrator();
 
-		defaultJsonWebServiceRegistrator.processAllBeans(
+		defaultJSONWebServiceRegistrator.processAllBeans(
 			contextName, contextPath, beanLocator);
 
 		int count = getJSONWebServiceActionsCount(contextPath);
