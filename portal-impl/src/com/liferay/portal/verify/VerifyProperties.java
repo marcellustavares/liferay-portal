@@ -670,19 +670,6 @@ public class VerifyProperties extends VerifyProcess {
 			"com.liferay.dynamic.data.lists.web"
 		},
 
-		// Export-Import
-
-		new String[] {
-			"staging.draft.export.import.configuration.check.interval",
-			"draft.export.import.configuration.check.interval",
-			"com.liferay.exportimport.web"
-		},
-		new String[] {
-			"staging.draft.export.import.configuration.clean.up.count",
-			"draft.export.import.configuration.clean.up.count",
-			"com.liferay.exportimport.web"
-		},
-
 		// Facebook Connect
 
 		new String[] {
@@ -1394,6 +1381,19 @@ public class VerifyProperties extends VerifyProcess {
 		new String[] {
 			"sitemap.display.templates.config", "display.templates.config",
 			"com.liferay.site.navigation.site.map.web"
+		},
+
+		// Staging
+
+		new String[] {
+			"staging.draft.export.import.configuration.check.interval",
+			"draft.export.import.configuration.check.interval",
+			"com.liferay.exportimport.web"
+		},
+		new String[] {
+			"staging.draft.export.import.configuration.clean.up.count",
+			"draft.export.import.configuration.clean.up.count",
+			"com.liferay.exportimport.web"
 		},
 
 		// Tags Compiler
