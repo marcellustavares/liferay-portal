@@ -90,17 +90,15 @@ public class AssetTagLocalServiceTest {
 
 		AssetTagLocalServiceUtil.deleteTag(assetTag);
 
-		AssetTag fetchAssetTag = AssetTagLocalServiceUtil.fetchAssetTag(
-			assetTag.getTagId());
-
-		Assert.assertNull(fetchAssetTag);
+		Assert.assertNull(
+			AssetTagLocalServiceUtil.fetchAssetTag(assetTag.getTagId()));
 
 		long classNameId = PortalUtil.getClassNameId(BlogsEntry.class);
 
-		AssetTagStats tagStats = AssetTagStatsLocalServiceUtil.getTagStats(
+		AssetTagStats assetTagStats = AssetTagStatsLocalServiceUtil.getTagStats(
 			assetTag.getTagId(), classNameId);
 
-		Assert.assertEquals(0, tagStats.getAssetCount());
+		Assert.assertEquals(0, assetTagStats.getAssetCount());
 	}
 
 	private Indexer<BlogsEntry> _blogsEntryIndexer;
