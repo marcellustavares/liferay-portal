@@ -51,6 +51,31 @@ import org.scribe.oauth.OAuthService;
 @Component(immediate = true, service = OAuthUtil.class)
 public class OAuthUtil {
 
+	public void deleteAccessToken(User user) throws PortalException {
+		_expandoValueLocalService.deleteValue(
+			user.getCompanyId(), User.class.getName(), "MP", "secret",
+			user.getUserId());
+		_expandoValueLocalService.deleteValue(
+			user.getCompanyId(), User.class.getName(), "MP", "token",
+			user.getUserId());
+	}
+
+	public Token getAccessToken(User user) throws PortalException {
+		ExpandoValue secretExpandoValue = _expandoValueLocalService.getValue(
+			user.getCompanyId(), User.class.getName(), "MP", "secret",
+			user.getUserId());
+		ExpandoValue tokenExpandoValue = _expandoValueLocalService.getValue(
+			user.getCompanyId(), User.class.getName(), "MP", "token",
+			user.getUserId());
+
+		if ((secretExpandoValue == null) || (tokenExpandoValue == null)) {
+			return null;
+		}
+
+		return new Token(
+			tokenExpandoValue.getString(), secretExpandoValue.getString());
+	}
+
 	public OAuthService getOAuthService() {
 		Api api = new MarketplaceApi();
 
@@ -117,33 +142,6 @@ public class OAuthUtil {
 
 	@Reference(target = "(original.bean=*)", unbind = "-")
 	protected void setServletContext(ServletContext servletContext) {
-	}
-
-	public void deleteAccessToken(User user) throws PortalException {
-		_expandoValueLocalService.deleteValue(
-			user.getCompanyId(), User.class.getName(), "MP", "secret",
-			user.getUserId());
-		_expandoValueLocalService.deleteValue(
-			user.getCompanyId(), User.class.getName(), "MP", "token",
-			user.getUserId());
-	}
-
-	public Token getAccessToken(User user) throws PortalException {
-		ExpandoValue secretExpandoValue =
-			_expandoValueLocalService.getValue(
-				user.getCompanyId(), User.class.getName(), "MP", "secret",
-				user.getUserId());
-		ExpandoValue tokenExpandoValue =
-			_expandoValueLocalService.getValue(
-				user.getCompanyId(), User.class.getName(), "MP", "token",
-				user.getUserId());
-
-		if ((secretExpandoValue == null) || (tokenExpandoValue == null)) {
-			return null;
-		}
-
-		return new Token(
-			tokenExpandoValue.getString(), secretExpandoValue.getString());
 	}
 
 	private void _setupExpando(long companyId) throws Exception {
