@@ -48,8 +48,8 @@ import org.scribe.oauth.OAuthService;
 /**
  * @author Ryan Park
  */
-@Component(immediate = true, service = OAuthUtil.class)
-public class OAuthUtil {
+@Component(immediate = true, service = OAuthManager.class)
+public class OAuthManager {
 
 	public void deleteAccessToken(User user) throws PortalException {
 		_expandoValueLocalService.deleteValue(
@@ -177,7 +177,7 @@ public class OAuthUtil {
 			user.getUserId(), token.getToken());
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(OAuthUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(OAuthManager.class);
 
 	private CompanyLocalService _companyLocalService;
 	private ExpandoColumnLocalService _expandoColumnLocalService;
