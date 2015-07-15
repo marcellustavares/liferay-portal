@@ -14,9 +14,12 @@
 
 package com.liferay.portlet.dynamicdatamapping;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +29,12 @@ import java.util.Map;
  * @author Marcellus Tavares
  */
 public class DummyDDMStructureManagerImpl implements DDMStructureManager {
+
+	@Override
+	public void addAttributes(
+			long structureId, Document document, DDMFormValues ddmFormValues)
+		throws PortalException {
+	}
 
 	@Override
 	public DDMStructure addStructure(
@@ -43,6 +52,14 @@ public class DummyDDMStructureManagerImpl implements DDMStructureManager {
 	}
 
 	@Override
+	public String extractAttributes(
+			long structureId, DDMFormValues ddmFormValues, Locale locale)
+		throws PortalException {
+
+		return null;
+	}
+
+	@Override
 	public DDMStructure fetchStructure(
 		long groupId, long classNameId, String structureKey) {
 
@@ -52,6 +69,13 @@ public class DummyDDMStructureManagerImpl implements DDMStructureManager {
 	@Override
 	public DDMStructure fetchStructureByUuidAndGroupId(
 		String uuid, long groupId) {
+
+		return null;
+	}
+
+	@Override
+	public List<DDMStructure> getClassStructures(
+		long companyId, long classNameId) {
 
 		return null;
 	}
@@ -90,6 +114,11 @@ public class DummyDDMStructureManagerImpl implements DDMStructureManager {
 		ServiceContext serviceContext) {
 
 		return null;
+	}
+
+	@Override
+	public void updateStructure(long structureId, String structureKey)
+		throws PortalException {
 	}
 
 }

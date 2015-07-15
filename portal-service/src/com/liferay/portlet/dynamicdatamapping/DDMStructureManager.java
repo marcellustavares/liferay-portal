@@ -15,9 +15,11 @@
 package com.liferay.portlet.dynamicdatamapping;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +36,10 @@ public interface DDMStructureManager {
 
 	public static final int STRUCTURE_TYPE_DEFAULT = 0;
 
+	public void addAttributes(
+			long structureId, Document document, DDMFormValues ddmFormValues)
+		throws PortalException;
+
 	public DDMStructure addStructure(
 			long userId, long groupId, String parentStructureKey,
 			long classNameId, String structureKey, Map<Locale, String> nameMap,
@@ -44,11 +50,18 @@ public interface DDMStructureManager {
 
 	public void deleteStructure(long structureId) throws PortalException;
 
+	public String extractAttributes(
+			long structureId, DDMFormValues ddmFormValues, Locale locale)
+		throws PortalException;
+
 	public DDMStructure fetchStructure(
 		long groupId, long classNameId, String structureKey);
 
 	public DDMStructure fetchStructureByUuidAndGroupId(
 		String uuid, long groupId);
+
+	public List<DDMStructure> getClassStructures(
+		long companyId, long classNameId);
 
 	public List<DDMStructure> getClassStructures(
 		long companyId, long classNameId, int start, int end);
@@ -67,6 +80,9 @@ public interface DDMStructureManager {
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 			ServiceContext serviceContext)
+		throws PortalException;
+
+	public void updateStructure(long structureId, String structureKey)
 		throws PortalException;
 
 }

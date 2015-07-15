@@ -69,8 +69,8 @@ import com.liferay.portlet.asset.service.permission.AssetCategoryPermission;
 import com.liferay.portlet.asset.service.permission.AssetTagPermission;
 import com.liferay.portlet.asset.service.permission.AssetVocabularyPermission;
 import com.liferay.portlet.asset.service.persistence.AssetEntryQuery;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.DDMStructure;
+import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexer;
 
 import java.io.Serializable;
@@ -785,7 +785,7 @@ public class AssetUtil {
 		long ddmStructureId = GetterUtil.getLong(sortFields[1]);
 		String fieldName = sortFields[2];
 
-		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+		DDMStructure ddmStructure = DDMStructureManagerUtil.getStructure(
 			ddmStructureId);
 
 		return ddmStructure.getFieldType(fieldName);

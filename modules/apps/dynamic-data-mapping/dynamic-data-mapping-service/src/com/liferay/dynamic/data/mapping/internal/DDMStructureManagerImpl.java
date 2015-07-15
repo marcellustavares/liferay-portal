@@ -15,12 +15,15 @@
 package com.liferay.dynamic.data.mapping.internal;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureManager;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,17 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true)
 public class DDMStructureManagerImpl implements DDMStructureManager {
+
+	@Override
+	public void addAttributes(
+			long structureId, Document document, DDMFormValues ddmFormValues)
+		throws PortalException {
+
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getStructure(structureId);
+
+		DDMIndexerUtil.addAttributes(document, ddmStructure, ddmFormValues);
+	}
 
 	@Override
 	public DDMStructure addStructure(
@@ -57,6 +71,18 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 	@Override
 	public void deleteStructure(long structureId) throws PortalException {
 		_ddmStructureLocalService.deleteStructure(structureId);
+	}
+
+	@Override
+	public String extractAttributes(
+			long structureId, DDMFormValues ddmFormValues, Locale locale)
+		throws PortalException {
+
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getStructure(structureId);
+
+		return DDMIndexerUtil.extractAttributes(
+			ddmStructure, ddmFormValues, locale);
 	}
 
 	@Override
@@ -87,6 +113,25 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 		}
 
 		return new DDMStructureImpl(ddmStructure);
+	}
+
+	@Override
+	public List<DDMStructure> getClassStructures(
+		long companyId, long classNameId) {
+
+		List<DDMStructure> ddmStructures = new ArrayList<>();
+
+		List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure>
+			structures = _ddmStructureLocalService.getClassStructures(
+				companyId, classNameId);
+
+		for (com.liferay.portlet.dynamicdatamapping.model.DDMStructure
+				structure : structures) {
+
+			ddmStructures.add(new DDMStructureImpl(structure));
+		}
+
+		return ddmStructures;
 	}
 
 	@Override
@@ -151,6 +196,18 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 				ddmForm, ddmFormLayout, serviceContext);
 
 		return new DDMStructureImpl(ddmStructure);
+	}
+
+	@Override
+	public void updateStructure(long structureId, String structureKey)
+		throws PortalException {
+
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getDDMStructure(structureId);
+
+		ddmStructure.setStructureKey(structureKey);
+
+		_ddmStructureLocalService.updateDDMStructure(ddmStructure);
 	}
 
 	@Reference

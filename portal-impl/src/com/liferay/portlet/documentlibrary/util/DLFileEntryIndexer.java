@@ -72,13 +72,11 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission;
+import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.StructureFieldException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexer;
-import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
@@ -228,8 +226,9 @@ public class DLFileEntryIndexer
 			String[] ddmStructureFieldNameParts = StringUtil.split(
 				ddmStructureFieldName, DDMIndexer.DDM_FIELD_SEPARATOR);
 
-			DDMStructure structure = DDMStructureLocalServiceUtil.getStructure(
-				GetterUtil.getLong(ddmStructureFieldNameParts[1]));
+			com.liferay.portlet.dynamicdatamapping.DDMStructure structure =
+				DDMStructureManagerUtil.getStructure(
+					GetterUtil.getLong(ddmStructureFieldNameParts[1]));
 
 			String fieldName = StringUtil.replaceLast(
 				ddmStructureFieldNameParts[2],
@@ -354,12 +353,9 @@ public class DLFileEntryIndexer
 			}
 
 			if (ddmFormValues != null) {
-				DDMStructure ddmStructure =
-					DDMStructureLocalServiceUtil.getStructure(
-						dlFileEntryMetadata.getDDMStructureId());
-
-				DDMIndexerUtil.addAttributes(
-					document, ddmStructure, ddmFormValues);
+				DDMStructureManagerUtil.addAttributes(
+					dlFileEntryMetadata.getDDMStructureId(), document,
+					ddmFormValues);
 			}
 		}
 	}
@@ -586,13 +582,10 @@ public class DLFileEntryIndexer
 			}
 
 			if (ddmFormValues != null) {
-				DDMStructure ddmStructure =
-					DDMStructureLocalServiceUtil.getStructure(
-						dlFileEntryMetadata.getDDMStructureId());
-
 				sb.append(
-					DDMIndexerUtil.extractAttributes(
-						ddmStructure, ddmFormValues, locale));
+					DDMStructureManagerUtil.extractAttributes(
+						dlFileEntryMetadata.getDDMStructureId(), ddmFormValues,
+						locale));
 			}
 		}
 

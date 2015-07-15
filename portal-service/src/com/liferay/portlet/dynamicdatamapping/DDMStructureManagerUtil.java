@@ -15,9 +15,11 @@
 package com.liferay.portlet.dynamicdatamapping;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceTracker;
@@ -30,6 +32,15 @@ import java.util.Map;
  * @author Leonardo Barros
  */
 public class DDMStructureManagerUtil {
+
+	public static void addAttributes(
+			long structureId, Document document, DDMFormValues ddmFormValues)
+		throws PortalException {
+
+		DDMStructureManager ddmStructureManager = _getDDMStructureManager();
+
+		ddmStructureManager.addAttributes(structureId, document, ddmFormValues);
+	}
 
 	public static DDMStructure addStructure(
 			long userId, long groupId, String parentStructureKey,
@@ -55,6 +66,16 @@ public class DDMStructureManagerUtil {
 		ddmStructureManager.deleteStructure(structureId);
 	}
 
+	public static String extractAttributes(
+			long structureId, DDMFormValues ddmFormValues, Locale locale)
+		throws PortalException {
+
+		DDMStructureManager ddmStructureManager = _getDDMStructureManager();
+
+		return ddmStructureManager.extractAttributes(
+			structureId, ddmFormValues, locale);
+	}
+
 	public static DDMStructure fetchStructure(
 		long groupId, long classNameId, String structureKey) {
 
@@ -71,6 +92,14 @@ public class DDMStructureManagerUtil {
 
 		return ddmStructureManager.fetchStructureByUuidAndGroupId(
 			uuid, groupId);
+	}
+
+	public static List<DDMStructure> getClassStructures(
+		long companyId, long classNameId) {
+
+		DDMStructureManager ddmStructureManager = _getDDMStructureManager();
+
+		return ddmStructureManager.getClassStructures(companyId, classNameId);
 	}
 
 	public static List<DDMStructure> getClassStructures(
@@ -121,6 +150,14 @@ public class DDMStructureManagerUtil {
 		return ddmStructureManager.updateStructure(
 			userId, structureId, parentStructureId, nameMap, descriptionMap,
 			ddmForm, ddmFormLayout, serviceContext);
+	}
+
+	public static void updateStructure(long structureId, String structureKey)
+		throws PortalException {
+
+		DDMStructureManager ddmStructureManager = _getDDMStructureManager();
+
+		ddmStructureManager.updateStructure(structureId, structureKey);
 	}
 
 	private static DDMStructureManager _getDDMStructureManager() {
