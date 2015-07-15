@@ -14,7 +14,6 @@
 
 package com.liferay.portal.jsonwebservice;
 
-import com.liferay.portal.jsonwebservice.scanner.SpringJSONWebServiceScannerStrategy;
 import com.liferay.portal.kernel.annotation.AnnotationLocator;
 import com.liferay.portal.kernel.bean.BeanLocator;
 import com.liferay.portal.kernel.bean.BeanLocatorException;
@@ -30,7 +29,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.lang.reflect.Method;
-
 import java.util.HashMap;
 import java.util.Map;
 
