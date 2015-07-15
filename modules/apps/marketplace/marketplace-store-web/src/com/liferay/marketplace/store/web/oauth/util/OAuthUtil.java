@@ -48,18 +48,10 @@ import org.scribe.oauth.OAuthService;
 /**
  * @author Ryan Park
  */
-@Component(immediate = true)
+@Component(immediate = true, service = OAuthUtil.class)
 public class OAuthUtil {
 
-	public static void deleteAccessToken(User user) throws PortalException {
-		_instance._deleteAccessToken(user);
-	}
-
-	public static Token getAccessToken(User user) throws PortalException {
-		return _instance._getAccessToken(user);
-	}
-
-	public static OAuthService getOAuthService() {
+	public OAuthService getOAuthService() {
 		Api api = new MarketplaceApi();
 
 		OAuthConfig oAuthConfig = new OAuthConfig(
@@ -71,16 +63,14 @@ public class OAuthUtil {
 		return api.createService(oAuthConfig);
 	}
 
-	public static void updateAccessToken(User user, Token token)
+	public void updateAccessToken(User user, Token token)
 		throws PortalException {
 
-		_instance._updateAccessToken(user, token);
+		_updateAccessToken(user, token);
 	}
 
 	@Activate
 	protected void activate() {
-		_instance = this;
-
 		List<Company> companys = _companyLocalService.getCompanies();
 
 		for (Company company : companys) {
@@ -129,7 +119,7 @@ public class OAuthUtil {
 	protected void setServletContext(ServletContext servletContext) {
 	}
 
-	private void _deleteAccessToken(User user) throws PortalException {
+	public void deleteAccessToken(User user) throws PortalException {
 		_expandoValueLocalService.deleteValue(
 			user.getCompanyId(), User.class.getName(), "MP", "secret",
 			user.getUserId());
@@ -138,13 +128,13 @@ public class OAuthUtil {
 			user.getUserId());
 	}
 
-	private Token _getAccessToken(User user) throws PortalException {
+	public Token getAccessToken(User user) throws PortalException {
 		ExpandoValue secretExpandoValue =
-			_instance._expandoValueLocalService.getValue(
+			_expandoValueLocalService.getValue(
 				user.getCompanyId(), User.class.getName(), "MP", "secret",
 				user.getUserId());
 		ExpandoValue tokenExpandoValue =
-			_instance._expandoValueLocalService.getValue(
+			_expandoValueLocalService.getValue(
 				user.getCompanyId(), User.class.getName(), "MP", "token",
 				user.getUserId());
 
@@ -190,8 +180,6 @@ public class OAuthUtil {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(OAuthUtil.class);
-
-	private static OAuthUtil _instance;
 
 	private CompanyLocalService _companyLocalService;
 	private ExpandoColumnLocalService _expandoColumnLocalService;
