@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.json.scanner;
+package com.liferay.portal.jsonwebservice.scanner;
 
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceScannerStrategy;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -32,7 +32,8 @@ import org.springframework.aop.framework.AdvisedSupport;
 /**
  * @author Miguel Pastor
  */
-public class SpringScannerStrategy implements JSONWebServiceScannerStrategy {
+public class SpringJSONWebServiceScannerStrategy
+	implements JSONWebServiceScannerStrategy {
 
 	@Override
 	public MethodDescriptor[] scan(Object service) {
@@ -46,7 +47,9 @@ public class SpringScannerStrategy implements JSONWebServiceScannerStrategy {
 		}
 
 		Method[] methods = clazz.getMethods();
-		List<MethodDescriptor> result = new ArrayList<>(methods.length);
+
+		List<MethodDescriptor> methodDescriptors = new ArrayList<>(
+			methods.length);
 
 		for (Method method : methods) {
 			Class<?> declaringClass = method.getDeclaringClass();
@@ -55,10 +58,11 @@ public class SpringScannerStrategy implements JSONWebServiceScannerStrategy {
 				continue;
 			}
 
-			result.add(new MethodDescriptor(method));
+			methodDescriptors.add(new MethodDescriptor(method));
 		}
 
-		return result.toArray(new MethodDescriptor[result.size()]);
+		return methodDescriptors.toArray(
+			new MethodDescriptor[methodDescriptors.size()]);
 	}
 
 	protected Class<?> getTargetClass(Object service) throws Exception {

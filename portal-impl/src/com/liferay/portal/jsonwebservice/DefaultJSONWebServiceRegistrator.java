@@ -14,7 +14,7 @@
 
 package com.liferay.portal.jsonwebservice;
 
-import com.liferay.portal.json.scanner.SpringScannerStrategy;
+import com.liferay.portal.jsonwebservice.scanner.SpringJSONWebServiceScannerStrategy;
 import com.liferay.portal.kernel.annotation.AnnotationLocator;
 import com.liferay.portal.kernel.bean.BeanLocator;
 import com.liferay.portal.kernel.bean.BeanLocatorException;
@@ -47,7 +47,8 @@ public class DefaultJSONWebServiceRegistrator
 		_jsonWebServiceMappingResolver = new JSONWebServiceMappingResolver(
 			_jsonWebServiceNaming);
 
-		_jsonWebServiceScannerStrategy = new SpringScannerStrategy();
+		_jsonWebServiceScannerStrategy =
+			new SpringJSONWebServiceScannerStrategy();
 	}
 
 	public DefaultJSONWebServiceRegistrator(
@@ -181,7 +182,7 @@ public class DefaultJSONWebServiceRegistrator
 		for (JSONWebServiceScannerStrategy.MethodDescriptor methodDescriptor :
 				methodDescriptors) {
 
-			final Method method = methodDescriptor.getMethod();
+			Method method = methodDescriptor.getMethod();
 
 			if (!_jsonWebServiceNaming.isIncludedMethod(method)) {
 				continue;
@@ -190,13 +191,11 @@ public class DefaultJSONWebServiceRegistrator
 			JSONWebService methodJSONWebService = method.getAnnotation(
 				JSONWebService.class);
 
-			Class<?> declaringClass = methodDescriptor.getDeclaringClass();
-
 			if (jsonWebServiceMode.equals(JSONWebServiceMode.AUTO)) {
 				if (methodJSONWebService == null) {
 					registerJSONWebServiceAction(
-						contextName, contextPath, serviceBean, declaringClass,
-						method);
+						contextName, contextPath, serviceBean,
+						methodDescriptor.getDeclaringClass(), method);
 				}
 				else {
 					JSONWebServiceMode methodJSONWebServiceMode =
@@ -207,7 +206,7 @@ public class DefaultJSONWebServiceRegistrator
 
 						registerJSONWebServiceAction(
 							contextName, contextPath, serviceBean,
-							declaringClass, method);
+							methodDescriptor.getDeclaringClass(), method);
 					}
 				}
 			}
@@ -219,8 +218,8 @@ public class DefaultJSONWebServiceRegistrator
 						JSONWebServiceMode.IGNORE)) {
 
 					registerJSONWebServiceAction(
-						contextName, contextPath, serviceBean, declaringClass,
-						method);
+						contextName, contextPath, serviceBean,
+						methodDescriptor.getDeclaringClass(), method);
 				}
 			}
 		}
