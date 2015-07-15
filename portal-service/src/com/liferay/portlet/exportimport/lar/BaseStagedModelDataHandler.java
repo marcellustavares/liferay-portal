@@ -750,8 +750,7 @@ public abstract class BaseStagedModelDataHandler<T extends StagedModel>
 
 			if (className.equals(AssetCategory.class.getName()) ||
 				className.equals(RatingsEntry.class.getName()) ||
-				((stagedModelClassName != null) &&
-				 className.equals(stagedModelClassName))) {
+				className.equals(stagedModelClassName)) {
 
 				continue;
 			}
