@@ -93,9 +93,7 @@ public class PortletPanelAppAdapter implements PanelApp {
 	}
 
 	@Override
-	public PortletURL getPortletURL(HttpServletRequest request)
-		throws PortalException {
-
+	public PortletURL getPortletURL(HttpServletRequest request) {
 		return null;
 	}
 
