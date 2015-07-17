@@ -52,7 +52,7 @@ public class ExpressionImpl<T> implements Expression<T> {
 			ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 
 			expressionEvaluator.setExpressionType(_expressionClass);
-			expressionEvaluator.setExtendedClass(MathUtil.class);
+//			expressionEvaluator.setExtendedClass(MathUtil.class);
 			expressionEvaluator.setParameters(
 				getVariableNames(), getVariableClasses());
 

@@ -119,6 +119,14 @@ AUI.add(
 						(new A.EventHandle(instance._eventHandlers)).detach();
 					},
 
+					focus: function() {
+						var instance = this;
+
+						instance.get('container').scrollIntoView();
+
+						instance.getInputNode().focus();
+					},
+
 					getInputNode: function() {
 						var instance = this;
 
@@ -308,7 +316,7 @@ AUI.add(
 						var instance = this;
 
 						return instance.getRoot().filterNodes(
-							function(qualifiedName) {
+							function(node, qualifiedName) {
 								var nodeInstanceId = Util.getInstanceIdFromQualifiedName(qualifiedName);
 
 								return instanceId === nodeInstanceId;
@@ -320,7 +328,7 @@ AUI.add(
 						var instance = this;
 
 						return instance.getRoot().filterNodes(
-							function(qualifiedName) {
+							function(node, qualifiedName) {
 								var nodeFieldName = Util.getFieldNameFromQualifiedName(qualifiedName);
 
 								return name === nodeFieldName;

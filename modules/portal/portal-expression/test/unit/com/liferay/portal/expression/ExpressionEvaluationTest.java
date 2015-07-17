@@ -16,6 +16,7 @@ package com.liferay.portal.expression;
 
 import com.liferay.portal.expression.internal.ExpressionFactoryImpl;
 import com.liferay.portal.kernel.util.MathUtil;
+import com.liferay.portal.kernel.util.StringPool;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -271,6 +272,20 @@ public class ExpressionEvaluationTest {
 
 		Assert.assertEquals(
 			MathUtil.sum(var1, var2, var3), (long)expression.evaluate());
+	}
+
+	@Test
+	public void testStringComparisson() throws Exception {
+		Expression<Boolean> expression =
+			_expressionFactory.createBooleanExpression("var1 == \"\"");
+
+		expression.setStringVariableValue("var1", StringPool.BLANK);
+
+		Assert.assertTrue(expression.evaluate());
+
+		expression.setStringVariableValue("var1", "Marcellus");
+
+		Assert.assertFalse(expression.evaluate());
 	}
 
 	private final ExpressionFactory _expressionFactory =

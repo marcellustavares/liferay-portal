@@ -28,7 +28,6 @@ import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMFormField;
 
 import java.lang.reflect.Method;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -147,6 +146,14 @@ public class DDMFormFactoryHelper {
 		}
 
 		return "text";
+	}
+
+	public String getDDMFormFieldValidationExpression() {
+		if (Validator.isNotNull(_ddmFormField.validationExpression())) {
+			return _ddmFormField.validationExpression();
+		}
+
+		return StringPool.TRUE;
 	}
 
 	public String getDDMFormFieldVisibilityExpression() {

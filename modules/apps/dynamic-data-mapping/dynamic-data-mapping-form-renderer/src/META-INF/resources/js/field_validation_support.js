@@ -11,6 +11,10 @@ AUI.add(
 		FieldValidationSupport.ATTRS = {
 			errorMessages: {
 				value: []
+			},
+
+			validationExpression: {
+				value: 'true'
 			}
 		};
 

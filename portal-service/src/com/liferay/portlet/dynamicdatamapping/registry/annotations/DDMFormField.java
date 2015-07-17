@@ -42,4 +42,6 @@ public @interface DDMFormField {
 
 	public String visibilityExpression() default StringPool.TRUE;
 
+	public String validationExpression() default StringPool.TRUE;
+
 }

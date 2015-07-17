@@ -1,6 +1,7 @@
 AUI.add(
 	'liferay-ddm-form-renderer-validation',
 	function(A) {
+		var JSON = A.JSON;
 		var Renderer = Liferay.DDM.Renderer;
 
 		var Util = Renderer.Util;
@@ -10,33 +11,60 @@ AUI.add(
 
 		FormValidationSupport.ATTRS = {
 			validationURL: {
-				value: ''
+				value: '/o/ddm-eval'
 			}
 		};
 
 		FormValidationSupport.prototype = {
+			syncValidationUI: function() {
+				var instance = this;
+
+				instance.eachField(
+					function(field) {
+						var errorMessages = field.get('errorMessages');
+
+						var hasError = errorMessages.length > 0;
+
+						if (hasError) {
+							field.focus();
+						}
+
+						return hasError;
+					}
+				);
+			},
+
 			validate: function(callback) {
 				var instance = this;
 
 				A.io.request(
 					instance.get('validationURL'),
 					{
+						data: {
+							serializedDDMForm: JSON.stringify(instance.get('definition')),
+							serializedDDMFormValues: JSON.stringify(instance.toJSON()),
+						},
 						dataType: 'JSON',
+						method: 'POST',
 						on: {
 							error: function() {
 								callback(false);
 							},
 							success: function() {
-								var valid = instance._validateResponse(this.get('responseData'));
+								var data = this.get('responseData');
 
-								callback(valid);
+								var valid = instance._parseResponse(data);
+
+								instance.syncValidationUI();
+
+								callback(valid, data);
 							}
 						}
 					}
 				);
 			},
 
-			_validateResponse: function(responseData) {
+			_parseResponse: function(responseData) {
 				var instance = this;
 
 				var valid = true;
@@ -47,14 +75,18 @@ AUI.add(
 
 						var data = Util.getFieldByKey(responseData, instanceId, 'instanceId');
 
+						if (data.valid === false) {
+							valid = false;
+						}
+
 						var messages = data.messages;
+
+						if (!messages && !data.valid) {
+							messages = ['Unexpected error.'];
+						}
 
 						if (messages && messages.length) {
 							field.set('errorMessages', messages);
-						}
-
-						if (data.valid === false) {
-							valid = false;
 						}
 					}
 				);
@@ -67,6 +99,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-request']
+		requires: ['aui-request', 'json']
 	}
 );
