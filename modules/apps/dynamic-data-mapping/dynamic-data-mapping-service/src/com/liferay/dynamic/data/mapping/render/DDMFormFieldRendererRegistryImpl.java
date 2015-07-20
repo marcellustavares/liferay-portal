@@ -30,9 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Pablo Carvalho
  */
+@Component(immediate = true)
 public class DDMFormFieldRendererRegistryImpl
 	implements DDMFormFieldRendererRegistry {
 
