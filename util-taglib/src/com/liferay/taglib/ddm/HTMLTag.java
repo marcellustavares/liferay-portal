@@ -14,6 +14,9 @@
 
 package com.liferay.taglib.ddm;
 
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
+import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -24,9 +27,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
-import com.liferay.portlet.dynamicdatamapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMUtil;
 import com.liferay.taglib.ddm.base.BaseHTMLTag;
 
 import javax.servlet.http.HttpServletRequest;
