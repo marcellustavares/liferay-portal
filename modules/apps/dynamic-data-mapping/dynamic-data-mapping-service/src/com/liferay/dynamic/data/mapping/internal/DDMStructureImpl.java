@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.internal;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
 import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
@@ -32,8 +33,9 @@ import java.util.Set;
 
 /**
  * @author Leonardo Barros
+ * @author Rafael Praxedes
  */
-public class DDMStructureImpl implements DDMStructure {
+public class DDMStructureImpl implements DDMStructure, StagedGroupedModel {
 
 	public DDMStructureImpl(
 		com.liferay.portlet.dynamicdatamapping.model.DDMStructure
@@ -233,6 +235,16 @@ public class DDMStructureImpl implements DDMStructure {
 	}
 
 	@Override
+	public String getUserName() {
+		return _ddmStructure.getUserName();
+	}
+
+	@Override
+	public String getUserUuid() {
+		return _ddmStructure.getUserUuid();
+	}
+
+	@Override
 	public String getUuid() {
 		return _ddmStructure.getUuid();
 	}
@@ -263,6 +275,11 @@ public class DDMStructureImpl implements DDMStructure {
 	}
 
 	@Override
+	public void setGroupId(long groupId) {
+		_ddmStructure.setGroupId(groupId);
+	}
+
+	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		_ddmStructure.setModifiedDate(modifiedDate);
 	}
@@ -270,6 +287,21 @@ public class DDMStructureImpl implements DDMStructure {
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_ddmStructure.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public void setUserId(long userId) {
+		_ddmStructure.setUserId(userId);
+	}
+
+	@Override
+	public void setUserName(String userName) {
+		_ddmStructure.setUserName(userName);
+	}
+
+	@Override
+	public void setUserUuid(String userUuid) {
+		_ddmStructure.setUserUuid(userUuid);
 	}
 
 	@Override
