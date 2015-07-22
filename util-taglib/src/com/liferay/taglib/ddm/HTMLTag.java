@@ -14,19 +14,16 @@
 
 package com.liferay.taglib.ddm;
 
-import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
+import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplateManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.DDMTemplate;
 import com.liferay.taglib.ddm.base.BaseHTMLTag;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +35,8 @@ public class HTMLTag extends BaseHTMLTag {
 
 	protected DDMForm getDDMForm() {
 		try {
-			return DDMUtil.getDDMForm(getClassNameId(), getClassPK());
+			return DDMStructureManagerUtil.getDDMForm(
+				getClassNameId(), getClassPK());
 		}
 		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
@@ -58,22 +56,20 @@ public class HTMLTag extends BaseHTMLTag {
 	protected Fields getFields() {
 		try {
 			long ddmStructureId = getClassPK();
-
+			
 			if (getClassNameId() ==
-					PortalUtil.getClassNameId(DDMTemplate.class)) {
+					PortalUtil.getClassNameId(
+						DDMTemplateManagerUtil.getDDMTemplateModelClass())) {
 
 				DDMTemplate ddmTemplate =
-					DDMTemplateLocalServiceUtil.getTemplate(getClassPK());
+					DDMTemplateManagerUtil.getTemplate(getClassPK());
 
 				ddmStructureId = ddmTemplate.getClassPK();
 			}
 
-			DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(
-				ddmStructureId);
-
 			if (getDdmFormValues() != null) {
-				return DDMFormValuesToFieldsConverterUtil.convert(
-					ddmStructure, getDdmFormValues());
+				return DDMStructureManagerUtil.convertDDMFormValues(
+					ddmStructureId, getDdmFormValues());
 			}
 		}
 		catch (PortalException pe) {
@@ -86,7 +82,8 @@ public class HTMLTag extends BaseHTMLTag {
 	}
 
 	protected String getLogMessage() {
-		if (getClassNameId() == PortalUtil.getClassNameId(DDMTemplate.class)) {
+		if (getClassNameId() == PortalUtil.getClassNameId(
+			DDMTemplateManagerUtil.getDDMTemplateModelClass())) {
 			return "Unable to retrieve DDM template with class PK " +
 				getClassPK();
 		}
@@ -95,12 +92,13 @@ public class HTMLTag extends BaseHTMLTag {
 	}
 
 	protected String getMode() {
-		if (getClassNameId() != PortalUtil.getClassNameId(DDMTemplate.class)) {
+		if (getClassNameId() != PortalUtil.getClassNameId(
+			DDMTemplateManagerUtil.getDDMTemplateModelClass())) {
 			return null;
 		}
 
 		try {
-			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
+			DDMTemplate ddmTemplate = DDMTemplateManagerUtil.getTemplate(
 				getClassPK());
 
 			return ddmTemplate.getMode();
