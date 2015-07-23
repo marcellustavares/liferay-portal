@@ -12,24 +12,28 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.registry;
+package com.liferay.dynamic.data.mapping.expression.evaluator;
 
-import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMFormField;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.ws.rs.core.Application;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Marcellus Tavares
+ * @author Pablo Carvalho
  */
-@DDMForm(localization = "content/Language")
-public interface DDMFormFieldTypeSettings {
+@Component(
+	immediate = true, property = "jaxrs.application=true",
+	service = Application.class
+)
+public class DDMExpressionEvaluatorRestApplication extends Application {
 
-	@DDMFormField(visibilityExpression = "false")
-	public String dataType();
-
-	@DDMFormField(label = "%name", validationExpression = "!name.equals(\"\")")
-	public String name();
-
-	@DDMFormField(visibilityExpression = "false")
-	public String type();
+	@Override
+	public Set<Class<?>> getClasses() {
+		return Collections.<Class<?>>singleton(
+			DDMExpressionEvaluatorRestResource.class);
+	}
 
 }

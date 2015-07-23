@@ -42,16 +42,22 @@ AUI.add(
 			eachField: function(fn) {
 				var instance = this;
 
-				var queue = new A.Queue(instance);
+				var queue = new A.Queue();
 
 				var addToQueue = function(item) {
 					queue.add(item);
 				};
 
+				instance.get('fields').forEach(addToQueue);
+
 				while (queue.size() > 0) {
 					var field = queue.next();
 
-					fn.call(instance, field);
+					var stop = fn.call(instance, field, queue);
+
+					if (stop === true) {
+						break;
+					}
 
 					field.get('fields').forEach(addToQueue);
 				}
@@ -93,6 +99,8 @@ AUI.add(
 						if (item.get('name') === name) {
 							field = item;
 						}
+
+						return field !== undefined;
 					}
 				);
 
