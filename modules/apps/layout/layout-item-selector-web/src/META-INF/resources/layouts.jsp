@@ -65,8 +65,8 @@ if (group.getPrivateLayoutsPageCount() > 0) {
 					portletURL="<%= editLayoutURL %>"
 					rootNodeName="<%= group.getLayoutRootNodeName(false, themeDisplay.getLocale()) %>"
 					saveState="<%= false %>"
-					selectedLayoutIds="<%= selectedLayoutIds %>"
 					selPlid="<%= selPlid %>"
+					selectedLayoutIds="<%= selectedLayoutIds %>"
 					treeId="treeContainerPublicPages"
 				/>
 			</div>
@@ -89,8 +89,8 @@ if (group.getPrivateLayoutsPageCount() > 0) {
 					privateLayout="<%= true %>"
 					rootNodeName="<%= group.getLayoutRootNodeName(true, themeDisplay.getLocale()) %>"
 					saveState="<%= false %>"
-					selectedLayoutIds="<%= selectedLayoutIds %>"
 					selPlid="<%= selPlid %>"
+					selectedLayoutIds="<%= selectedLayoutIds %>"
 					treeId="treeContainerPrivatePages"
 				/>
 			</div>
