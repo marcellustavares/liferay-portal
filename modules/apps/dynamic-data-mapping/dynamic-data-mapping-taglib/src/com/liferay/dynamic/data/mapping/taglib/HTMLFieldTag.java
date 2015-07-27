@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.taglib.ui;
+package com.liferay.dynamic.data.mapping.taglib;
 
-import com.liferay.dynamic.data.mapping.taglib.ui.base.BaseHTMLFieldTag;
+import com.liferay.dynamic.data.mapping.taglib.base.BaseHTMLFieldTag;
 
 /**
  * @author Sergio González

@@ -17,7 +17,7 @@
 <%@ include file="/taglib/ui/template_renderer/init.jsp" %>
 
 <%
-DDMTemplate portletDisplayDDMTemplate = (DDMTemplate)request.getAttribute("ddm:template-renderer:portletDisplayDDMTemplate");
+DDMTemplate portletDisplayDDMTemplate = (DDMTemplate)request.getAttribute("liferay-ddm:template-renderer:portletDisplayDDMTemplate");
 %>
 
 <c:if test="<%= portletDisplayDDMTemplate != null %>">

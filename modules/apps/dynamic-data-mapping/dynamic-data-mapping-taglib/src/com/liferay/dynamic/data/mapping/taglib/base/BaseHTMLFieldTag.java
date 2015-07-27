@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.taglib.ui.base;
+package com.liferay.dynamic.data.mapping.taglib.base;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -168,7 +168,7 @@ public abstract class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTa
 		setNamespacedAttribute(request, "servletContext", _servletContext);
 	}
 
-	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:html-field:";
+	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-ddm:html-field:";
 
 	private static final String _END_PAGE =
 		"/taglib/ui/html_field/end.jsp";

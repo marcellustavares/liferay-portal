@@ -17,8 +17,8 @@
 <%@ include file="/taglib/ui/template_selector/init.jsp" %>
 
 <%
-long classNameId = GetterUtil.getLong((String)request.getAttribute("ddm:template-selector:classNameId"));
-DDMTemplate portletDisplayDDMTemplate = (DDMTemplate)request.getAttribute("ddm:template-selector:portletDisplayDDMTemplate");
+long classNameId = GetterUtil.getLong((String)request.getAttribute("liferay-ddm:template-selector:classNameId"));
+DDMTemplate portletDisplayDDMTemplate = (DDMTemplate)request.getAttribute("liferay-ddm:template-selector:portletDisplayDDMTemplate");
 
 long ddmTemplateGroupId = PortletDisplayTemplateManagerUtil.getDDMTemplateGroupId(themeDisplay.getScopeGroupId());
 

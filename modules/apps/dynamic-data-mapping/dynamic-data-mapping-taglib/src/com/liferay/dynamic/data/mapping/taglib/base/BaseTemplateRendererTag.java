@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.taglib.ui.base;
+package com.liferay.dynamic.data.mapping.taglib.base;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -128,7 +128,7 @@ public abstract class BaseTemplateRendererTag extends com.liferay.taglib.util.In
 		setNamespacedAttribute(request, "servletContext", _servletContext);
 	}
 
-	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:template-renderer:";
+	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-ddm:template-renderer:";
 
 	private static final String _END_PAGE =
 		"/taglib/ui/template_renderer/end.jsp";

@@ -19,17 +19,17 @@
 <%@ include file="/taglib/common/taglib-init.jsp" %>
 
 <%
-boolean checkRequired = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html:checkRequired")), true);
-long classNameId = GetterUtil.getLong(String.valueOf(request.getAttribute("ddm:html:classNameId")));
-long classPK = GetterUtil.getLong(String.valueOf(request.getAttribute("ddm:html:classPK")));
-com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues ddmFormValues = (com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues)request.getAttribute("ddm:html:ddmFormValues");
-java.lang.String fieldsNamespace = GetterUtil.getString((java.lang.String)request.getAttribute("ddm:html:fieldsNamespace"));
-boolean readOnly = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html:readOnly")));
-boolean repeatable = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html:repeatable")), true);
-java.util.Locale requestedLocale = (java.util.Locale)request.getAttribute("ddm:html:requestedLocale");
-boolean showEmptyFieldLabel = GetterUtil.getBoolean(String.valueOf(request.getAttribute("ddm:html:showEmptyFieldLabel")), true);
-Map<String, Object> dynamicAttributes = (Map<String, Object>)request.getAttribute("ddm:html:dynamicAttributes");
-Map<String, Object> scopedAttributes = (Map<String, Object>)request.getAttribute("ddm:html:scopedAttributes");
+boolean checkRequired = GetterUtil.getBoolean(String.valueOf(request.getAttribute("liferay-ddm:html:checkRequired")), true);
+long classNameId = GetterUtil.getLong(String.valueOf(request.getAttribute("liferay-ddm:html:classNameId")));
+long classPK = GetterUtil.getLong(String.valueOf(request.getAttribute("liferay-ddm:html:classPK")));
+com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues ddmFormValues = (com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues)request.getAttribute("liferay-ddm:html:ddmFormValues");
+java.lang.String fieldsNamespace = GetterUtil.getString((java.lang.String)request.getAttribute("liferay-ddm:html:fieldsNamespace"));
+boolean readOnly = GetterUtil.getBoolean(String.valueOf(request.getAttribute("liferay-ddm:html:readOnly")));
+boolean repeatable = GetterUtil.getBoolean(String.valueOf(request.getAttribute("liferay-ddm:html:repeatable")), true);
+java.util.Locale requestedLocale = (java.util.Locale)request.getAttribute("liferay-ddm:html:requestedLocale");
+boolean showEmptyFieldLabel = GetterUtil.getBoolean(String.valueOf(request.getAttribute("liferay-ddm:html:showEmptyFieldLabel")), true);
+Map<String, Object> dynamicAttributes = (Map<String, Object>)request.getAttribute("liferay-ddm:html:dynamicAttributes");
+Map<String, Object> scopedAttributes = (Map<String, Object>)request.getAttribute("liferay-ddm:html:scopedAttributes");
 %>
 
 <%@ include file="/taglib/ui/html/init-ext.jspf" %>
