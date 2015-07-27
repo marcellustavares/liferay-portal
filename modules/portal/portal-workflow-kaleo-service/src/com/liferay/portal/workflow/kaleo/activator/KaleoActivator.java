@@ -15,10 +15,10 @@
 package com.liferay.portal.workflow.kaleo.activator;
 
 import com.liferay.portal.workflow.kaleo.manager.PortalKaleoManager;
-import com.liferay.portal.workflow.kaleo.manager.PortalKaleoManagerUtil;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -29,12 +29,16 @@ public class KaleoActivator {
 
 	@Activate
 	protected void activate() throws Exception {
-		PortalKaleoManager portalKaleoManager =
-			PortalKaleoManagerUtil.getPortalKaleoManager();
-
-		if (portalKaleoManager != null) {
-			portalKaleoManager.deployKaleoDefaults();
-		}
+		_portalKaleoManager.deployKaleoDefaults();
 	}
+
+	@Reference
+	protected void setPortalKaleoManager(
+		PortalKaleoManager portalKaleoManager) {
+
+		_portalKaleoManager = portalKaleoManager;
+	}
+
+	private PortalKaleoManager _portalKaleoManager;
 
 }
