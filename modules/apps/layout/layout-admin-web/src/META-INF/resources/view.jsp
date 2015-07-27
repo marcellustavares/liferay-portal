@@ -170,8 +170,8 @@ boolean showHeader = ParamUtil.getBoolean(request, "showHeader");
 					portletURL="<%= layoutsAdminDisplayContext.getEditLayoutURL() %>"
 					privateLayout="<%= layoutsAdminDisplayContext.isPrivateLayout() %>"
 					rootNodeName="<%= layoutsAdminDisplayContext.getRootNodeName() %>"
-					selectedLayoutIds="<%= selectedLayoutIds %>"
 					selPlid="<%= layoutsAdminDisplayContext.getSelPlid() %>"
+					selectedLayoutIds="<%= selectedLayoutIds %>"
 					treeId="layoutsTree"
 				/>
 			</div>
