@@ -1737,6 +1737,8 @@
 		</field>
 		<field name="version" type="String" />
 		<field name="name" type="String" localized="true">
+			<hint-collection name="CLOB" />
+			<hint name="display-width">210</hint>
 			<validator name="required" />
 		</field>
 		<field name="description" type="String" localized="true">

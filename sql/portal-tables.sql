@@ -486,7 +486,7 @@ create table DDMTemplate (
 	resourceClassNameId LONG,
 	templateKey VARCHAR(75) null,
 	version VARCHAR(75) null,
-	name STRING null,
+	name TEXT null,
 	description TEXT null,
 	type_ VARCHAR(75) null,
 	mode_ VARCHAR(75) null,
