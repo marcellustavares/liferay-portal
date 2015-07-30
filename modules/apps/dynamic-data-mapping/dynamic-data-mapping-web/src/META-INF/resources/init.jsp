@@ -25,7 +25,8 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.portal.LocaleException" %><%@
+<%@ page import="com.liferay.dynamic.data.mapping.bridge.DDMForm" %><%@
+page import="com.liferay.portal.LocaleException" %><%@
 page import="com.liferay.portal.PortletPreferencesException" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.configuration.Filter" %><%@
@@ -87,7 +88,6 @@ page import="com.liferay.portlet.dynamicdatamapping.TemplateScriptException" %><
 page import="com.liferay.portlet.dynamicdatamapping.TemplateSmallImageNameException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.io.DDMFormJSONDeserializerUtil" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.model.DDMForm" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructure" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.model.DDMStructureVersion" %><%@

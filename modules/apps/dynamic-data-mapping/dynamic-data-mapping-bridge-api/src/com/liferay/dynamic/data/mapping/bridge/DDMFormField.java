@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.bridge;
 
+import com.liferay.dynamic.data.mapping.bridge.util.MapUtil;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -69,7 +71,7 @@ public class DDMFormField implements Serializable {
 	}
 
 	public String getDataType() {
-		return getString("dataType");
+		return MapUtil.getString(_properties, "dataType");
 	}
 
 	public DDMForm getDDMForm() {
@@ -81,11 +83,11 @@ public class DDMFormField implements Serializable {
 	}
 
 	public String getFieldNamespace() {
-		return getString("fieldNamespace");
+		return MapUtil.getString(_properties, "fieldNamespace");
 	}
 
 	public String getIndexType() {
-		return getString("indexType");
+		return MapUtil.getString(_properties, "indexType");
 	}
 
 	public LocalizedValue getLabel() {
@@ -93,7 +95,7 @@ public class DDMFormField implements Serializable {
 	}
 
 	public String getName() {
-		return getString("name");
+		return MapUtil.getString(_properties, "name");
 	}
 
 	public List<DDMFormField> getNestedDDMFormFields() {
@@ -132,35 +134,35 @@ public class DDMFormField implements Serializable {
 	}
 
 	public String getType() {
-		return getString("type");
+		return MapUtil.getString(_properties, "type");
 	}
 
 	public String getVisibilityExpression() {
-		return getString("visibilityExpression");
+		return MapUtil.getString(_properties, "visibilityExpression");
 	}
 
 	public boolean isLocalizable() {
-		return getBoolean("localizable");
+		return MapUtil.getBoolean(_properties, "localizable");
 	}
 
 	public boolean isMultiple() {
-		return getBoolean("multiple");
+		return MapUtil.getBoolean(_properties, "multiple");
 	}
 
 	public boolean isReadOnly() {
-		return getBoolean("readOnly");
+		return MapUtil.getBoolean(_properties, "readOnly");
 	}
 
 	public boolean isRepeatable() {
-		return getBoolean("repeatable");
+		return MapUtil.getBoolean(_properties, "repeatable");
 	}
 
 	public boolean isRequired() {
-		return getBoolean("required");
+		return MapUtil.getBoolean(_properties, "required");
 	}
 
 	public boolean isShowLabel() {
-		return getBoolean("showLabel");
+		return MapUtil.getBoolean(_properties, "showLabel");
 	}
 
 	public boolean isTransient() {
@@ -256,28 +258,6 @@ public class DDMFormField implements Serializable {
 	public void setVisibilityExpression(String visibilityExpression) {
 		_properties.put("visibilityExpression", visibilityExpression);
 	}
-
-	protected boolean getBoolean(String key) {
-		Object value = _properties.get(key);
-
-		if (value == null) {
-			return false;
-		}
-
-		return (Boolean)_properties.get(key);
-	}
-
-	protected String getString(String key) {
-		Object value = _properties.get(key);
-
-		if (value == null) {
-			return _BLANK;
-		}
-
-		return (String)_properties.get(key);
-	}
-
-	private static final String _BLANK = "";
 
 	private DDMForm _ddmForm;
 	private List<DDMFormField> _nestedDDMFormFields = new ArrayList<>();

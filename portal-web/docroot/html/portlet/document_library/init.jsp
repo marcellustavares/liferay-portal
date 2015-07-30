@@ -16,7 +16,8 @@
 
 <%@ include file="/html/portlet/init.jsp" %>
 
-<%@ page import="com.liferay.portal.InvalidRepositoryException" %><%@
+<%@ page import="com.liferay.dynamic.data.mapping.bridge.DDMFormValues" %><%@
+page import="com.liferay.portal.InvalidRepositoryException" %><%@
 page import="com.liferay.portal.NoSuchRepositoryException" %><%@
 page import="com.liferay.portal.kernel.lock.DuplicateLockException" %><%@
 page import="com.liferay.portal.kernel.repository.LocalRepository" %><%@
@@ -80,8 +81,7 @@ page import="com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil" %>
 page import="com.liferay.portlet.dynamicdatamapping.StructureDefinitionException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureDuplicateElementException" %><%@
 page import="com.liferay.portlet.dynamicdatamapping.StructureNameException" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil" %><%@
-page import="com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues" %>
+page import="com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil" %>
 
 <%
 PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(liferayPortletRequest);

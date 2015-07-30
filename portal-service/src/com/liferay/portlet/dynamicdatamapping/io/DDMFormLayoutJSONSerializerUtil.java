@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.io;
 
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
 
 /**
  * @author Marcellus Tavares

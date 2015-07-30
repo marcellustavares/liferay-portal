@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.storage.bundle.storageadapterregistryimpl;
 
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageAdapter;
 
 import org.osgi.service.component.annotations.Component;

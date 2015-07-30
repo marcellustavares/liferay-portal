@@ -14,9 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.render;
 
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.bridge.Value;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portlet.dynamicdatamapping.model.Value;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 
 import java.text.NumberFormat;
 

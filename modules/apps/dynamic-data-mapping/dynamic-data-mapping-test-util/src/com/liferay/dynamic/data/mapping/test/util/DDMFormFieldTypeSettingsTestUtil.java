@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.test.util;
 
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldOptions;
 import com.liferay.portlet.dynamicdatamapping.registry.DDMFormFieldTypeSettings;
 import com.liferay.portlet.dynamicdatamapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.portlet.dynamicdatamapping.registry.annotations.DDMForm;

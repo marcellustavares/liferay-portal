@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.util;
 
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 
 /**
  * @author Marcellus Tavares

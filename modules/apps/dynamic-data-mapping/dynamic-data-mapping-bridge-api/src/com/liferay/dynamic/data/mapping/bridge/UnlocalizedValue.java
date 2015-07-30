@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.bridge;
 
+import com.liferay.dynamic.data.mapping.bridge.util.Validator;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class UnlocalizedValue implements Value {
 
 		UnlocalizedValue unlocalizedValue = (UnlocalizedValue)obj;
 
-		if (_values.equals(unlocalizedValue._values)) {
+		if (Validator.equals(_values, unlocalizedValue._values)) {
 			return true;
 		}
 
