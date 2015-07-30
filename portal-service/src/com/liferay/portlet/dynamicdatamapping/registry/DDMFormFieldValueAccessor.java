@@ -14,8 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.registry;
 
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
 import com.liferay.portal.kernel.util.Accessor;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
 
 import java.util.Locale;
 

@@ -12,10 +12,9 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
+package com.liferay.dynamic.data.mapping.bridge;
 
-import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.dynamic.data.mapping.bridge.util.MapUtil;
 
 import java.io.Serializable;
 
@@ -167,7 +166,7 @@ public class DDMFormField implements Serializable {
 	}
 
 	public boolean isTransient() {
-		if (Validator.isNull(getDataType())) {
+		if ((getDataType() == null) || (getDataType().trim().length() == 0)) {
 			return true;
 		}
 

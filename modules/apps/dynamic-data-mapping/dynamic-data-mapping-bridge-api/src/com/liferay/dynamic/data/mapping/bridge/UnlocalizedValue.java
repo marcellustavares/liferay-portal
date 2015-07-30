@@ -12,10 +12,9 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
+package com.liferay.dynamic.data.mapping.bridge;
 
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.dynamic.data.mapping.bridge.util.Validator;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,17 +27,16 @@ import java.util.Set;
 public class UnlocalizedValue implements Value {
 
 	public UnlocalizedValue(String value) {
-		_values.put(LocaleUtil.ROOT, value);
+		_values.put(Locale.ROOT, value);
 	}
 
 	public UnlocalizedValue(UnlocalizedValue unlocalizedValue) {
-		_values.put(
-			LocaleUtil.ROOT, unlocalizedValue.getString(LocaleUtil.ROOT));
+		_values.put(Locale.ROOT, unlocalizedValue.getString(Locale.ROOT));
 	}
 
 	@Override
 	public void addString(Locale locale, String value) {
-		_values.put(LocaleUtil.ROOT, value);
+		_values.put(Locale.ROOT, value);
 	}
 
 	@Override
@@ -67,12 +65,12 @@ public class UnlocalizedValue implements Value {
 
 	@Override
 	public Locale getDefaultLocale() {
-		return LocaleUtil.ROOT;
+		return Locale.ROOT;
 	}
 
 	@Override
 	public String getString(Locale locale) {
-		return _values.get(LocaleUtil.ROOT);
+		return _values.get(Locale.ROOT);
 	}
 
 	@Override

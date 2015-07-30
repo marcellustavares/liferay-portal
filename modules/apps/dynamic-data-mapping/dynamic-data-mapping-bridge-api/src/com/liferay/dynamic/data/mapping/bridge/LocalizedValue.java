@@ -12,11 +12,10 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
+package com.liferay.dynamic.data.mapping.bridge;
 
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.dynamic.data.mapping.bridge.util.HashUtil;
+import com.liferay.dynamic.data.mapping.bridge.util.Validator;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,7 +28,7 @@ import java.util.Set;
 public class LocalizedValue implements Value {
 
 	public LocalizedValue() {
-		this(LocaleUtil.getDefault());
+		this(Locale.US);
 	}
 
 	public LocalizedValue(Locale defaultLocale) {

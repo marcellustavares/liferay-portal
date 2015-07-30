@@ -1,0 +1,7 @@
+Bundle-Name: Liferay Portal Dynamic Data Mapping Bridge API
+Bundle-SymbolicName: com.liferay.dynamic.data.mapping.bridge.api
+Bundle-Version: 1.0.0
+Include-Resource:\
+	classes
+Export-Package:  \
+	com.liferay.dynamic.data.mapping.bridge
