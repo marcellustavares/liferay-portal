@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
+package com.liferay.dynamic.data.mapping.model;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -139,7 +139,7 @@ public class DDMStructureLayoutWrapper implements DDMStructureLayout,
 
 	@Override
 	public int compareTo(
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout ddmStructureLayout) {
+		com.liferay.dynamic.data.mapping.model.DDMStructureLayout ddmStructureLayout) {
 		return _ddmStructureLayout.compareTo(ddmStructureLayout);
 	}
 
@@ -457,12 +457,12 @@ public class DDMStructureLayoutWrapper implements DDMStructureLayout,
 	}
 
 	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout> toCacheModel() {
+	public com.liferay.portal.model.CacheModel<com.liferay.dynamic.data.mapping.model.DDMStructureLayout> toCacheModel() {
 		return _ddmStructureLayout.toCacheModel();
 	}
 
 	@Override
-	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout toEscapedModel() {
+	public com.liferay.dynamic.data.mapping.model.DDMStructureLayout toEscapedModel() {
 		return new DDMStructureLayoutWrapper(_ddmStructureLayout.toEscapedModel());
 	}
 
@@ -472,7 +472,7 @@ public class DDMStructureLayoutWrapper implements DDMStructureLayout,
 	}
 
 	@Override
-	public com.liferay.portlet.dynamicdatamapping.model.DDMStructureLayout toUnescapedModel() {
+	public com.liferay.dynamic.data.mapping.model.DDMStructureLayout toUnescapedModel() {
 		return new DDMStructureLayoutWrapper(_ddmStructureLayout.toUnescapedModel());
 	}
 
