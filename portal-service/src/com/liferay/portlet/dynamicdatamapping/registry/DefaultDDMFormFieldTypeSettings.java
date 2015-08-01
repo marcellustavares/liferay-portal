@@ -63,6 +63,9 @@ public interface DefaultDDMFormFieldTypeSettings
 	@DDMFormField(label = "%tip", type = "text")
 	public LocalizedValue tip();
 
+	@DDMFormField(visibilityExpression = "true")
+	public String validationExpression();
+
 	@DDMFormField(visibilityExpression = "false")
 	public String visibilityExpression();
 

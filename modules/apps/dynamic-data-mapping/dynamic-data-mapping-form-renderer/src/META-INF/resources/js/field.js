@@ -86,7 +86,7 @@ AUI.add(
 					}
 				},
 
-				AUGMENTS: [Renderer.FieldRepetitionSupport, Renderer.NestedFieldsSupport],
+				AUGMENTS: [Renderer.FieldEventsSupport, Renderer.FieldRepetitionSupport, Renderer.FieldValidationSupport, Renderer.NestedFieldsSupport],
 
 				EXTENDS: A.Base,
 
@@ -102,7 +102,15 @@ AUI.add(
 							instance.after('valueChange', instance._afterValueChange)
 						];
 
-						instance._uiSetParent(instance.get('parent'));
+						var parent = instance.get('parent');
+
+						instance.addTarget(parent);
+
+						var container = instance.get('container');
+
+						if (!container.inDoc()) {
+							instance._uiSetParent(parent);
+						}
 
 						instance.render();
 					},
@@ -119,12 +127,26 @@ AUI.add(
 						(new A.EventHandle(instance._eventHandlers)).detach();
 					},
 
+					focus: function() {
+						var instance = this;
+
+						instance.get('container').scrollIntoView();
+
+						instance.getInputNode().focus();
+					},
+
 					getInputNode: function() {
+						var instance = this;
+
+						return instance.get('container').one(instance.getInputSelector());
+					},
+
+					getInputSelector: function() {
 						var instance = this;
 
 						var qualifiedName = instance.getQualifiedName().replace(/\$/ig, '\\$');
 
-						return instance.get('container').one('[name=' + qualifiedName + ']');
+						return '[name=' + qualifiedName + ']';
 					},
 
 					getLabel: function() {
@@ -287,7 +309,13 @@ AUI.add(
 					_afterParentChange: function(event) {
 						var instance = this;
 
-						event.prevVal.removeChild(instance);
+						instance.addTarget(event.newVal);
+
+						var prevParent = event.prevVal;
+
+						prevParent.removeChild(instance);
+
+						instance.removeTarget(prevParent);
 
 						instance._uiSetParent(event.newVal);
 					},
@@ -347,18 +375,7 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						if (!container.inDoc()) {
-							container.appendTo(parent.get('container'));
-						}
-
-						var index = parent.indexOf(instance);
-
-						if (index > -1) {
-							parent.insert(index, instance);
-						}
-						else {
-							parent.appendChild(instance);
-						}
+						container.appendTo(parent.get('container'));
 					},
 
 					_valueContainer: function() {
@@ -406,6 +423,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-datatype', 'aui-node', 'liferay-ddm-form-renderer', 'liferay-ddm-form-renderer-field-repetition', 'liferay-ddm-form-renderer-field-types', 'liferay-ddm-form-renderer-nested-fields', 'liferay-ddm-form-renderer-util']
+		requires: ['aui-datatype', 'aui-node', 'liferay-ddm-form-renderer', 'liferay-ddm-form-renderer-field-events', 'liferay-ddm-form-renderer-field-repetition', 'liferay-ddm-form-renderer-field-types', 'liferay-ddm-form-renderer-field-validation', 'liferay-ddm-form-renderer-nested-fields', 'liferay-ddm-form-renderer-util']
 	}
 );

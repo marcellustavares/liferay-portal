@@ -4,7 +4,7 @@
 		module="janino-parent"
 		revision="2.7.8"
 		status="release"
-		publication="20150130134123"
+		publication="20150130184123"
 	>
 		<license name="New BSD License" url="http://dist.codehaus.org/janino/new_bsd_license.txt" />
 		<description homepage="http://docs.codehaus.org/display/JANINO/Home">

@@ -123,7 +123,8 @@
 								'aui-component',
 								'aui-tabview',
 								'liferay-ddm-form-renderer-field-types',
-								'liferay-ddm-form-renderer-util'
+								'liferay-ddm-form-renderer-util',
+								'liferay-ddm-form-renderer-validation'
 							]
 						},
 						'liferay-ddm-form-renderer-definition': {
@@ -143,6 +144,10 @@
 								'liferay-ddm-form-renderer-util'
 							]
 						},
+						'liferay-ddm-form-renderer-field-events': {
+							path: 'field_events_support.js',
+							requires: []
+						},
 						'liferay-ddm-form-renderer-field-repetition': {
 							path: 'field_repetition_support.js',
 							requires: [
@@ -159,6 +164,12 @@
 								'liferay-ddm-form-renderer-util'
 							]
 						},
+						'liferay-ddm-form-renderer-field-validation': {
+							path: 'field_validation_support.js',
+							requires: [
+								'aui-base'
+							]
+						},
 						'liferay-ddm-form-renderer-nested-fields': {
 							path: 'nested_fields_support.js',
 							requires: [
@@ -171,6 +182,13 @@
 							requires: [
 								'liferay-ddm-form-renderer-field-types',
 								'queue'
+							]
+						},
+						'liferay-ddm-form-renderer-validation': {
+							path: 'form_validation_support.js',
+							requires: [
+								'aui-alert',
+								'aui-request'
 							]
 						}
 					},

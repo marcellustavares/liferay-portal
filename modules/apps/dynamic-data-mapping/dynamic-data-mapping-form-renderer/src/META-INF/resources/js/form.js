@@ -17,7 +17,7 @@ AUI.add(
 					}
 				},
 
-				AUGMENTS: [Renderer.DefinitionSupport, Renderer.NestedFieldsSupport],
+				AUGMENTS: [Renderer.DefinitionSupport, Renderer.FormValidationSupport, Renderer.NestedFieldsSupport],
 
 				EXTENDS: A.Base,
 
@@ -55,8 +55,12 @@ AUI.add(
 					toJSON: function() {
 						var instance = this;
 
+						var definition = instance.get('definition');
+
 						return {
-							fields: AArray.invoke(instance.get('fields'), 'toJSON')
+							availableLanguageIds: definition.availableLanguageIds,
+							defaultLanguageId: definition.defaultLanguageId,
+							fieldValues: AArray.invoke(instance.get('fields'), 'toJSON')
 						};
 					},
 
@@ -73,6 +77,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-component', 'aui-tabview', 'liferay-ddm-form-renderer-definition', 'liferay-ddm-form-renderer-nested-fields']
+		requires: ['aui-component', 'aui-tabview', 'liferay-ddm-form-renderer-definition', 'liferay-ddm-form-renderer-nested-fields', 'liferay-ddm-form-renderer-validation']
 	}
 );
