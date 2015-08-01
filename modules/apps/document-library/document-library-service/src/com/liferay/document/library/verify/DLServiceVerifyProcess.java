@@ -12,7 +12,9 @@
  * details.
  */
 
-package com.liferay.portal.verify;
+package com.liferay.document.library.verify;
+
+import aQute.bnd.annotation.component.Activate;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -40,6 +42,7 @@ import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFolder;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -65,12 +68,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import org.springframework.context.ApplicationContext;
+
 /**
  * @author Raymond Augé
  * @author Douglas Wong
  * @author Alexander Chow
  */
-public class VerifyDocumentLibrary extends VerifyProcess {
+@Component(immediate = true, service = DLServiceVerifyProcess.class)
+public class DLServiceVerifyProcess extends VerifyProcess {
 
 	protected void addDLFileVersion(DLFileEntry dlFileEntry) {
 		long fileVersionId = CounterLocalServiceUtil.increment();
@@ -463,6 +472,7 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 			dlFileEntryMetadata);
 	}
 
+	@Activate
 	@Override
 	protected void doVerify() throws Exception {
 		checkMisversionedDLFileEntries();
@@ -570,6 +580,14 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		return renamedDLFileEntry;
 	}
 
+	@Reference(
+		target = "(org.springframework.context.service.name=com.liferay.dynamic.data.mapping.service)",
+		unbind = "-"
+	)
+	protected void setApplicationContext(
+		ApplicationContext applicationContext) {
+	}
+
 	protected void updateClassNameId() {
 		try {
 			runSQL(
@@ -658,6 +676,6 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		VerifyDocumentLibrary.class);
+		DLServiceVerifyProcess.class);
 
 }

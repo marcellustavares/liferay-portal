@@ -15,6 +15,7 @@
 package com.liferay.document.library.verify.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.verify.DLServiceVerifyProcess;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -43,7 +44,6 @@ import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.verify.VerifyDocumentLibrary;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.test.BaseVerifyProcessTestCase;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -86,7 +86,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Sync
-public class VerifyDocumentLibraryTest extends BaseVerifyProcessTestCase {
+public class DLServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 	@ClassRule
 	@Rule
@@ -439,7 +439,7 @@ public class VerifyDocumentLibraryTest extends BaseVerifyProcessTestCase {
 
 	@Override
 	protected VerifyProcess getVerifyProcess() {
-		return new VerifyDocumentLibrary();
+		return new DLServiceVerifyProcess();
 	}
 
 	protected void setUpPermissionThreadLocal() throws Exception {
