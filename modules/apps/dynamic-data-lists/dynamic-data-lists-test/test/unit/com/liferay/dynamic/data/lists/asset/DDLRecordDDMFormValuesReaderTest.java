@@ -16,15 +16,17 @@ package com.liferay.dynamic.data.lists.asset;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.web.asset.DDLRecordDDMFormValuesReader;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portlet.asset.model.DDMFormValuesReader;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.util.DDMBeanCopyUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portlet.asset.model.DDMFormValuesReader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -53,8 +55,17 @@ public class DDLRecordDDMFormValuesReaderTest extends PowerMockito {
 		DDMFormValuesReader ddmFormValuesReader =
 			new DDLRecordDDMFormValuesReader(_ddlRecord);
 
-		List<DDMFormFieldValue> ddmFormFieldValues =
-			ddmFormValuesReader.getDDMFormFieldValues("text");
+		List<com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue>
+			formFieldValues = ddmFormValuesReader.getDDMFormFieldValues("text");
+
+		List<DDMFormFieldValue> ddmFormFieldValues = new ArrayList<>();
+
+		for (com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue
+				formFieldValue : formFieldValues) {
+
+			ddmFormFieldValues.add(
+				DDMBeanCopyUtil.copyDDMFormFieldValue(formFieldValue));
+		}
 
 		Assert.assertEquals(3, ddmFormFieldValues.size());
 		Assert.assertEquals(

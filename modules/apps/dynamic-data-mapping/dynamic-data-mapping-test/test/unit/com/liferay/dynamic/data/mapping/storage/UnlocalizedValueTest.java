@@ -14,9 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.storage;
 
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import org.junit.Assert;
 import org.junit.Test;

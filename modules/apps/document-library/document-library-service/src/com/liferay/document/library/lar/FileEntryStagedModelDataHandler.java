@@ -682,8 +682,8 @@ public class FileEntryStagedModelDataHandler
 			structureFields.addAttribute(
 				"structureUuid", ddmStructure.getUuid());
 
-			DDMFormValues ddmFormValues =
-				StorageEngineManagerUtil.getDDMFormValues(
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues
+				ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(
 					dlFileEntryMetadata.getDDMStorageId());
 
 			portletDataContext.addZipEntry(path, ddmFormValues);
