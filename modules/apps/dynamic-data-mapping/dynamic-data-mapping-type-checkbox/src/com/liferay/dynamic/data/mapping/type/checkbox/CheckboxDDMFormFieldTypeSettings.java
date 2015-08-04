@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.mapping.type.checkbox;
 import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
  * @author Marcellus Tavares

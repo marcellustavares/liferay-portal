@@ -67,7 +67,9 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 			_ddmStructureLocalService.getStructure(structureId);
 
-		DDMIndexerUtil.addAttributes(document, ddmStructure, ddmFormValues);
+		DDMIndexerUtil.addAttributes(
+			document, ddmStructure,
+			DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues));
 	}
 
 	@Override
@@ -83,8 +85,10 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 			com.liferay.dynamic.data.mapping.model.DDMStructure
 				ddmStructure = _ddmStructureLocalService.addStructure(
 					userId, groupId, parentStructureKey, classNameId,
-					structureKey, nameMap, descriptionMap, ddmForm,
-					ddmFormLayout, storageType, type, serviceContext);
+					structureKey, nameMap, descriptionMap,
+					DDMBeanCopyUtil.copyDDMForm(ddmForm),
+					DDMBeanCopyUtil.copyDDMFormLayout(ddmFormLayout),
+					storageType, type, serviceContext);
 
 			return new DDMStructureImpl(ddmStructure);
 		}
@@ -132,7 +136,8 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 			_ddmStructureLocalService.getStructure(structureId);
 
 		return DDMIndexerUtil.extractAttributes(
-			ddmStructure, ddmFormValues, locale);
+			ddmStructure, DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues),
+			locale);
 	}
 
 	@Override
@@ -235,7 +240,7 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 	public DDMForm getDDMForm(PortletRequest portletRequest)
 		throws PortalException {
 
-		return _ddm.getDDMForm(portletRequest);
+		return DDMBeanCopyUtil.copyDDMForm(_ddm.getDDMForm(portletRequest));
 	}
 
 	@Override
@@ -255,7 +260,8 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 
 	@Override
 	public DDMFormLayout getDefaultDDMFormLayout(DDMForm ddmForm) {
-		return _ddm.getDefaultDDMFormLayout(ddmForm);
+		return DDMBeanCopyUtil.copyDDMFormLayout(
+			_ddm.getDefaultDDMFormLayout(DDMBeanCopyUtil.copyDDMForm(ddmForm)));
 	}
 
 	@Override
@@ -345,7 +351,9 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 			com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 				_ddmStructureLocalService.updateStructure(
 					userId, structureId, parentStructureId, nameMap,
-					descriptionMap, ddmForm, ddmFormLayout, serviceContext);
+					descriptionMap, DDMBeanCopyUtil.copyDDMForm(ddmForm),
+					DDMBeanCopyUtil.copyDDMFormLayout(ddmFormLayout),
+					serviceContext);
 
 			return new DDMStructureImpl(ddmStructure);
 		}

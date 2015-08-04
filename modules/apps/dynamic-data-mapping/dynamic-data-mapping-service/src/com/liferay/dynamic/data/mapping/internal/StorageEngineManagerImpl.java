@@ -39,7 +39,9 @@ public class StorageEngineManagerImpl implements StorageEngineManager {
 
 		try {
 			return _storageEngine.create(
-				companyId, ddmStructureId, ddmFormValues, serviceContext);
+				companyId, ddmStructureId,
+				DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues),
+				serviceContext);
 		}
 		catch (PortalException pe) {
 			throw translate(pe);
@@ -60,7 +62,8 @@ public class StorageEngineManagerImpl implements StorageEngineManager {
 
 	@Override
 	public DDMFormValues getDDMFormValues(long classPK) throws PortalException {
-		return _storageEngine.getDDMFormValues(classPK);
+		return DDMBeanCopyUtil.copyDDMFormValues(
+			_storageEngine.getDDMFormValues(classPK));
 	}
 
 	@Override
@@ -69,8 +72,9 @@ public class StorageEngineManagerImpl implements StorageEngineManager {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		return _ddm.getDDMFormValues(
-			ddmStructureId, fieldNamespace, serviceContext);
+		return DDMBeanCopyUtil.copyDDMFormValues(
+			_ddm.getDDMFormValues(
+				ddmStructureId, fieldNamespace, serviceContext));
 	}
 
 	@Override
@@ -80,7 +84,9 @@ public class StorageEngineManagerImpl implements StorageEngineManager {
 		throws PortalException {
 
 		try {
-			_storageEngine.update(classPK, ddmFormValues, serviceContext);
+			_storageEngine.update(
+				classPK, DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues),
+				serviceContext);
 		}
 		catch (PortalException pe) {
 			throw translate(pe);

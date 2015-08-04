@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.lists.web.asset;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.asset.model.BaseDDMFormValuesReader;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 
 /**
  * @author Adolfo Pérez
