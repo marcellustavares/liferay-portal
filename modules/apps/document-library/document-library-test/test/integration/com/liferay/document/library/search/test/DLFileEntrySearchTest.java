@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
+import com.liferay.dynamic.data.mapping.util.DDMBeanCopyUtil;
 import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -283,8 +284,8 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 			serviceContext, dlFileEntryType.getFileEntryTypeId());
 
 		serviceContext.setAttribute(
-			DDMFormValues.class.getName() + ddmStructure.getStructureId(),
-			ddmFormValues);
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues.class.getName() + ddmStructure.getStructureId(),
+			DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues));
 
 		FileEntry fileEntry = DLAppLocalServiceUtil.addFileEntry(
 			TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
