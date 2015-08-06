@@ -17,8 +17,10 @@ package com.liferay.document.library.service.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.events.AddDefaultDocumentLibraryStructuresAction;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDMBeanCopyUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverterUtil;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
 import com.liferay.portal.kernel.events.SimpleAction;
@@ -60,7 +62,6 @@ import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.model.ExpandoTable;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
@@ -371,8 +372,8 @@ public class DLFileVersionTest {
 					fields);
 
 			serviceContext.setAttribute(
-				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
-				ddmFormValues);
+				com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues.class.getName() + ddmStructure.getStructureId(),
+				DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues));
 		}
 
 		return serviceContext;
@@ -477,9 +478,9 @@ public class DLFileVersionTest {
 		List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
 
 		for (DDMStructure ddmStructure : ddmStructures) {
-			DDMFormValues ddmFormValues =
-				(DDMFormValues)_serviceContext.getAttribute(
-					DDMFormValues.class.getName() +
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues ddmFormValues =
+				(com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues)_serviceContext.getAttribute(
+					com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues.class.getName() +
 					ddmStructure.getStructureId());
 
 			com.liferay.dynamic.data.mapping.model.DDMStructure
@@ -487,7 +488,7 @@ public class DLFileVersionTest {
 					ddmStructure.getStructureId());
 
 			Fields fields = DDMFormValuesToFieldsConverterUtil.convert(
-				structure, ddmFormValues);
+				structure, DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues));
 
 			for (Field field : fields) {
 				String type = field.getType();
@@ -497,12 +498,12 @@ public class DLFileVersionTest {
 				}
 			}
 
-			ddmFormValues = FieldsToDDMFormValuesConverterUtil.convert(
-				structure, fields);
+			DDMFormValues convertedDDMFormValues =
+				FieldsToDDMFormValuesConverterUtil.convert(structure, fields);
 
 			_serviceContext.setAttribute(
-				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
-				ddmFormValues);
+				com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues.class.getName() + ddmStructure.getStructureId(),
+				DDMBeanCopyUtil.copyDDMFormValues(convertedDDMFormValues));
 		}
 	}
 

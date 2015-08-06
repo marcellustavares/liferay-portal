@@ -56,7 +56,6 @@ import com.liferay.portlet.documentlibrary.util.DLProcessorThreadLocal;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
 import com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
 import com.liferay.portlet.exportimport.lar.ExportImportThreadLocal;
@@ -682,8 +681,8 @@ public class FileEntryStagedModelDataHandler
 			structureFields.addAttribute(
 				"structureUuid", ddmStructure.getUuid());
 
-			DDMFormValues ddmFormValues =
-				StorageEngineManagerUtil.getDDMFormValues(
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues
+				ddmFormValues = StorageEngineManagerUtil.getDDMFormValues(
 					dlFileEntryMetadata.getDDMStorageId());
 
 			portletDataContext.addZipEntry(path, ddmFormValues);
@@ -735,11 +734,13 @@ public class FileEntryStagedModelDataHandler
 
 			String path = structureFieldsElement.attributeValue("path");
 
-			DDMFormValues ddmFormValues =
-				(DDMFormValues)portletDataContext.getZipEntryAsObject(path);
+			com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues
+				ddmFormValues =
+			(com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues)
+				portletDataContext.getZipEntryAsObject(path);
 
 			serviceContext.setAttribute(
-				DDMFormValues.class.getName() + ddmStructure.getStructureId(),
+				com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues.class.getName() + ddmStructure.getStructureId(),
 				ddmFormValues);
 		}
 	}
