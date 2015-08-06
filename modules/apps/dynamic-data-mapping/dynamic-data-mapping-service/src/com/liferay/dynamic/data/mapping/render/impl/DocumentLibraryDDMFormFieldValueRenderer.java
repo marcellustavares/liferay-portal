@@ -23,9 +23,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldType;
-import com.liferay.portlet.dynamicdatamapping.model.Value;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldType;
+import com.liferay.dynamic.data.mapping.bridge.Value;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
 
 import java.util.Locale;
 

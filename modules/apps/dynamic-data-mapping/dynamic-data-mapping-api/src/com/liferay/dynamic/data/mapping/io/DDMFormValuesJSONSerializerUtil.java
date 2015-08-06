@@ -15,7 +15,7 @@
 package com.liferay.dynamic.data.mapping.io;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 
 /**
  * @author Marcellus Tavares

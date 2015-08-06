@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormField;
 
 import java.util.ArrayList;
 import java.util.List;

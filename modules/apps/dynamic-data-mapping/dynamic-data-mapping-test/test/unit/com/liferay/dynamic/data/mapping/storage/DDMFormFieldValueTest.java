@@ -16,8 +16,8 @@ package com.liferay.dynamic.data.mapping.storage;
 
 import com.liferay.dynamic.data.mapping.BaseDDMTestCase;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portlet.dynamicdatamapping.model.UnlocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.bridge.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
 
 import org.junit.Assert;
 import org.junit.Test;

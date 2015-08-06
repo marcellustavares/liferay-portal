@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.mapping.registry;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.LocalizedValue;
 
 /**
  * @author Marcellus Tavares

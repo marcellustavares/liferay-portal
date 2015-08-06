@@ -25,7 +25,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 
 /**
  * @author Eduardo Lundgren

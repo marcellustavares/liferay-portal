@@ -20,7 +20,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.model.CacheField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
 
 /**
  * @author Marcellus Tavares
