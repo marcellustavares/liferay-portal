@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 
 <project>
-	<import file="../../../../tools/sdk/build-common-osgi-plugin.xml" />
+	<import file="../../../tools/sdk/build-common-osgi-plugin.xml" />
 
 	<path id="plugin.classpath" path="." />
 
