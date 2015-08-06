@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.internal;
 
+import com.liferay.dynamic.data.mapping.util.DDMBeanCopyUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
@@ -24,6 +25,7 @@ import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -75,24 +77,44 @@ public class DDMStructureImpl implements DDMStructure {
 
 	@Override
 	public DDMForm getDDMForm() {
-		return _ddmStructure.getDDMForm();
+		return DDMBeanCopyUtil.copyDDMForm(_ddmStructure.getDDMForm());
 	}
 
 	@Override
 	public DDMFormField getDDMFormField(String fieldName)
 		throws PortalException {
 
-		return _ddmStructure.getDDMFormField(fieldName);
+		com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField =
+			_ddmStructure.getDDMFormField(fieldName);
+
+		return DDMBeanCopyUtil.copyDDMFormField(
+			ddmFormField,
+			DDMBeanCopyUtil.copyDDMForm(ddmFormField.getDDMForm()));
 	}
 
 	@Override
 	public List<DDMFormField> getDDMFormFields(boolean includeTransientFields) {
-		return _ddmStructure.getDDMFormFields(includeTransientFields);
+		List<com.liferay.dynamic.data.mapping.model.DDMFormField> formFields =
+			_ddmStructure.getDDMFormFields(includeTransientFields);
+
+		List<DDMFormField> ddmFormFields = new ArrayList<>();
+
+		for (com.liferay.dynamic.data.mapping.model.DDMFormField formField :
+				formFields) {
+
+			ddmFormFields.add(
+				DDMBeanCopyUtil.copyDDMFormField(
+					formField,
+					DDMBeanCopyUtil.copyDDMForm(formField.getDDMForm())));
+		}
+
+		return ddmFormFields;
 	}
 
 	@Override
 	public DDMFormLayout getDDMFormLayout() throws PortalException {
-		return _ddmStructure.getDDMFormLayout();
+		return DDMBeanCopyUtil.copyDDMFormLayout(
+			_ddmStructure.getDDMFormLayout());
 	}
 
 	@Override
@@ -144,7 +166,8 @@ public class DDMStructureImpl implements DDMStructure {
 
 	@Override
 	public DDMForm getFullHierarchyDDMForm() {
-		return _ddmStructure.getFullHierarchyDDMForm();
+		return DDMBeanCopyUtil.copyDDMForm(
+			_ddmStructure.getFullHierarchyDDMForm());
 	}
 
 	@Override
