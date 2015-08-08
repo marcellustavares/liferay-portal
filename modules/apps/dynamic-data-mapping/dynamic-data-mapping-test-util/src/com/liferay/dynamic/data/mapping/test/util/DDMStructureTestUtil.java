@@ -36,10 +36,10 @@ import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormField;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.LocalizedValue;
 
 import java.util.Collections;
 import java.util.HashMap;

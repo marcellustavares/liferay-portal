@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
 
 /**
  * @author Marcellus Tavares

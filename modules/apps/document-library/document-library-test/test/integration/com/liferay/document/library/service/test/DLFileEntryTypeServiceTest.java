@@ -54,7 +54,7 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 

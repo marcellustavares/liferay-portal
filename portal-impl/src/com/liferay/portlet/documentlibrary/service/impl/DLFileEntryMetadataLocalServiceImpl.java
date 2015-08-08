@@ -22,7 +22,7 @@ import com.liferay.portlet.documentlibrary.service.base.DLFileEntryMetadataLocal
 import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureLinkManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageEngineManagerUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 
 import java.util.List;
 import java.util.Map;

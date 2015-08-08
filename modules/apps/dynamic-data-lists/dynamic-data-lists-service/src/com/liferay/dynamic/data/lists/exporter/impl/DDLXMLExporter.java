@@ -31,9 +31,9 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormField;
+import com.liferay.dynamic.data.mapping.bridge.LocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 
 import java.io.Serializable;
 

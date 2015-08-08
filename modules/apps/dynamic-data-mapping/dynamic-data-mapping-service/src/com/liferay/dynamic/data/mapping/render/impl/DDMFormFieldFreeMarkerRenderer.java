@@ -38,10 +38,10 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormFieldOptions;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormField;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.bridge.LocalizedValue;
 
 import java.io.Writer;
 

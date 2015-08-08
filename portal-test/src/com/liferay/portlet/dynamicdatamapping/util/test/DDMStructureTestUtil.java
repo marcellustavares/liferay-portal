@@ -24,10 +24,10 @@ import com.liferay.portlet.dynamicdatamapping.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureManager;
 import com.liferay.portlet.dynamicdatamapping.DDMStructureManagerUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageEngineManager;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
-import com.liferay.portlet.dynamicdatamapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormField;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.LocalizedValue;
 
 import java.util.HashMap;
 import java.util.Locale;

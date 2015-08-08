@@ -28,8 +28,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
 
 import java.util.HashMap;
 import java.util.Locale;

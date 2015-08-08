@@ -50,7 +50,7 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
 import com.liferay.portlet.trash.test.BaseTrashHandlerTestCase;
 import com.liferay.portlet.trash.test.DefaultWhenIsAssetable;
 import com.liferay.portlet.trash.test.DefaultWhenIsIndexableBaseModel;

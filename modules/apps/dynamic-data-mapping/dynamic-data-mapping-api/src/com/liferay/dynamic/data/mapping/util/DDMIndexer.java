@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.mapping.util;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 
 import java.util.Locale;
 

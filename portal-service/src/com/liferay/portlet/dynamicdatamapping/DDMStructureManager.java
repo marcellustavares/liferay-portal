@@ -21,9 +21,9 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormLayout;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.bridge.DDMForm;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormValues;
 import com.liferay.portlet.exportimport.lar.PortletDataContext;
 import com.liferay.portlet.exportimport.lar.PortletDataException;
 

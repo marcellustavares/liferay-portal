@@ -12,11 +12,7 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
-
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
+package com.liferay.dynamic.data.mapping.bridge;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,7 +25,7 @@ import java.util.Set;
 public class LocalizedValue implements Value {
 
 	public LocalizedValue() {
-		this(LocaleUtil.getDefault());
+		this(Locale.US);
 	}
 
 	public LocalizedValue(Locale defaultLocale) {
@@ -63,8 +59,8 @@ public class LocalizedValue implements Value {
 
 		LocalizedValue localizedValue = (LocalizedValue)obj;
 
-		if (Validator.equals(_defaultLocale, localizedValue._defaultLocale) &&
-			Validator.equals(_values, localizedValue._values)) {
+		if (_defaultLocale.equals(localizedValue._defaultLocale) &&
+			_values.equals(localizedValue._values)) {
 
 			return true;
 		}
@@ -100,9 +96,9 @@ public class LocalizedValue implements Value {
 
 	@Override
 	public int hashCode() {
-		int hash = HashUtil.hash(0, _defaultLocale);
+		int hash = hash(0, _defaultLocale);
 
-		return HashUtil.hash(hash, _values);
+		return hash(hash, _values);
 	}
 
 	@Override
@@ -113,6 +109,10 @@ public class LocalizedValue implements Value {
 	@Override
 	public void setDefaultLocale(Locale defaultLocale) {
 		_defaultLocale = defaultLocale;
+	}
+
+	protected int hash(int seed, Object value) {
+		return seed * 11 + (value == null ? 0 : value.hashCode());
 	}
 
 	private Locale _defaultLocale;

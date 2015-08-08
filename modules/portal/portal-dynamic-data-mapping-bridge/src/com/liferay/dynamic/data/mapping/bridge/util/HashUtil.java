@@ -12,31 +12,15 @@
  * details.
  */
 
-package com.liferay.portlet.dynamicdatamapping.model;
-
-import java.io.Serializable;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+package com.liferay.dynamic.data.mapping.bridge.util;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public interface Value extends Serializable {
+public class HashUtil {
 
-	public void addString(Locale locale, String value);
-
-	public Set<Locale> getAvailableLocales();
-
-	public Locale getDefaultLocale();
-
-	public String getString(Locale locale);
-
-	public Map<Locale, String> getValues();
-
-	public boolean isLocalized();
-
-	public void setDefaultLocale(Locale defaultLocale);
+	public static int hash(int seed, Object value) {
+		return seed * 11 + (value == null ? 0 : value.hashCode());
+	}
 
 }

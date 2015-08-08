@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portlet.dynamicdatamapping.model.Value;
-import com.liferay.portlet.dynamicdatamapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.bridge.Value;
+import com.liferay.dynamic.data.mapping.bridge.DDMFormFieldValue;
 
 import java.util.Locale;
 
