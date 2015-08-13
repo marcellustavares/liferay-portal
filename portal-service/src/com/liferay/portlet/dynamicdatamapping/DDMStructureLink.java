@@ -19,10 +19,6 @@ package com.liferay.portlet.dynamicdatamapping;
  */
 public interface DDMStructureLink {
 
-	public String getClassName();
-
-	public long getClassNameId();
-
 	public long getClassPK();
 
 	public long getStructureId();

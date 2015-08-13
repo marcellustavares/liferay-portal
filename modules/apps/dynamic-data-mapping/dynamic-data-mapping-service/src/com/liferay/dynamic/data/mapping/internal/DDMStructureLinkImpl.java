@@ -29,16 +29,6 @@ public class DDMStructureLinkImpl implements DDMStructureLink {
 	}
 
 	@Override
-	public String getClassName() {
-		return _ddmStructureLink.getClassName();
-	}
-
-	@Override
-	public long getClassNameId() {
-		return _ddmStructureLink.getClassNameId();
-	}
-
-	@Override
 	public long getClassPK() {
 		return _ddmStructureLink.getClassPK();
 	}

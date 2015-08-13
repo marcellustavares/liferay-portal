@@ -17,48 +17,21 @@ package com.liferay.portlet.dynamicdatamapping;
 import com.liferay.portal.model.StagedGroupedModel;
 
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
  */
 public interface DDMTemplate extends StagedGroupedModel {
 
-	public boolean getCacheable();
-
-	public long getClassNameId();
-
-	public long getClassPK();
-
-	public String getDescription();
-
-	public String getDescription(Locale locale);
-
 	@Override
 	public long getGroupId();
-
-	public String getLanguage();
-
-	public String getMode();
 
 	@Override
 	public Date getModifiedDate();
 
-	public String getName();
-
-	public String getName(Locale locale);
-
 	public long getPrimaryKey();
 
-	public long getResourceClassNameId();
-
 	public String getScript();
-
-	public boolean getSmallImage();
-
-	public long getSmallImageId();
-
-	public String getSmallImageURL();
 
 	public long getTemplateId();
 
@@ -71,15 +44,5 @@ public interface DDMTemplate extends StagedGroupedModel {
 
 	@Override
 	public String getUserName();
-
-	public String getVersion();
-
-	public long getVersionUserId();
-
-	public String getVersionUserName();
-
-	public boolean isCacheable();
-
-	public boolean isSmallImage();
 
 }

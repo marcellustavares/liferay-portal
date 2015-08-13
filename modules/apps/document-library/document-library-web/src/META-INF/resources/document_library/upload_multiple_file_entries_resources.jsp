@@ -172,7 +172,7 @@ else {
 										<liferay-ddm:html
 											classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 											classPK="<%= ddmStructure.getPrimaryKey() %>"
-											ddmFormValues="<%= DDMBeanCopyUtil.copyDDMFormValues(ddmFormValues) %>"
+											ddmFormValues="<%= DDMBeanTranslatorUtil.translate(ddmFormValues) %>"
 											fieldsNamespace="<%= String.valueOf(ddmStructure.getPrimaryKey()) %>"
 											requestedLocale="<%= locale %>"
 										/>

@@ -21,7 +21,6 @@ import com.liferay.portlet.exportimport.lar.StagedModelType;
 import java.io.Serializable;
 
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
@@ -45,21 +44,6 @@ public class DDMTemplateImpl implements DDMTemplate {
 	}
 
 	@Override
-	public boolean getCacheable() {
-		return _ddmTemplate.getCacheable();
-	}
-
-	@Override
-	public long getClassNameId() {
-		return _ddmTemplate.getClassNameId();
-	}
-
-	@Override
-	public long getClassPK() {
-		return _ddmTemplate.getClassPK();
-	}
-
-	@Override
 	public long getCompanyId() {
 		return _ddmTemplate.getCompanyId();
 	}
@@ -67,16 +51,6 @@ public class DDMTemplateImpl implements DDMTemplate {
 	@Override
 	public Date getCreateDate() {
 		return _ddmTemplate.getCreateDate();
-	}
-
-	@Override
-	public String getDescription() {
-		return _ddmTemplate.getDescription();
-	}
-
-	@Override
-	public String getDescription(Locale locale) {
-		return _ddmTemplate.getDescription(locale);
 	}
 
 	@Override
@@ -90,18 +64,8 @@ public class DDMTemplateImpl implements DDMTemplate {
 	}
 
 	@Override
-	public String getLanguage() {
-		return _ddmTemplate.getLanguage();
-	}
-
-	@Override
 	public Date getLastPublishDate() {
 		return _ddmTemplate.getLastPublishDate();
-	}
-
-	@Override
-	public String getMode() {
-		return _ddmTemplate.getMode();
 	}
 
 	@Override
@@ -120,16 +84,6 @@ public class DDMTemplateImpl implements DDMTemplate {
 	}
 
 	@Override
-	public String getName() {
-		return _ddmTemplate.getName();
-	}
-
-	@Override
-	public String getName(Locale locale) {
-		return _ddmTemplate.getName(locale);
-	}
-
-	@Override
 	public long getPrimaryKey() {
 		return _ddmTemplate.getPrimaryKey();
 	}
@@ -140,28 +94,8 @@ public class DDMTemplateImpl implements DDMTemplate {
 	}
 
 	@Override
-	public long getResourceClassNameId() {
-		return _ddmTemplate.getResourceClassNameId();
-	}
-
-	@Override
 	public String getScript() {
 		return _ddmTemplate.getScript();
-	}
-
-	@Override
-	public boolean getSmallImage() {
-		return _ddmTemplate.getSmallImage();
-	}
-
-	@Override
-	public long getSmallImageId() {
-		return _ddmTemplate.getSmallImageId();
-	}
-
-	@Override
-	public String getSmallImageURL() {
-		return _ddmTemplate.getSmallImageURL();
 	}
 
 	@Override
@@ -202,31 +136,6 @@ public class DDMTemplateImpl implements DDMTemplate {
 	@Override
 	public String getUuid() {
 		return _ddmTemplate.getUuid();
-	}
-
-	@Override
-	public String getVersion() {
-		return _ddmTemplate.getVersion();
-	}
-
-	@Override
-	public long getVersionUserId() {
-		return _ddmTemplate.getVersionUserId();
-	}
-
-	@Override
-	public String getVersionUserName() {
-		return _ddmTemplate.getVersionUserName();
-	}
-
-	@Override
-	public boolean isCacheable() {
-		return _ddmTemplate.isCacheable();
-	}
-
-	@Override
-	public boolean isSmallImage() {
-		return _ddmTemplate.isSmallImage();
 	}
 
 	@Override
