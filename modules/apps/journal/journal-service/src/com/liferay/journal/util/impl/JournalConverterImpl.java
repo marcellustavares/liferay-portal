@@ -665,6 +665,8 @@ public class JournalConverterImpl implements JournalConverter {
 
 		dynamicElementElement.addAttribute("instance-id", instanceId);
 
+		dynamicElementElement.addAttribute("default-language-id", ddmStructure.getDefaultLanguageId());
+
 		Field ddmField = ddmFields.get(fieldName);
 
 		if (!ddmStructure.isFieldTransient(fieldName) && (ddmField != null)) {
