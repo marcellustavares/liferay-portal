@@ -4446,8 +4446,9 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public String getPortletNamespace(String portletId) {
-		return StringPool.UNDERLINE.concat(portletId).concat(
-			StringPool.UNDERLINE);
+		String hash = StringUtil.toHexString(portletId.hashCode());
+
+		return StringPool.UNDERLINE.concat(hash).concat(StringPool.UNDERLINE);
 	}
 
 	@Override
