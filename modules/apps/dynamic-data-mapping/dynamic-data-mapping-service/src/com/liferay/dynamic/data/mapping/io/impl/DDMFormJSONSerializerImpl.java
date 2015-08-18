@@ -140,6 +140,18 @@ public class DDMFormJSONSerializerImpl implements DDMFormJSONSerializer {
 	protected Object serializeDDMFormFieldProperty(
 		Object property, DDMFormField ddmFormFieldTypeSetting) {
 
+		if (ddmFormFieldTypeSetting.isRepeatable()) {
+			return toJSONArray((Object[])property, ddmFormFieldTypeSetting);
+		}
+		else {
+			return serializeDDMFormFieldPropertyValue(
+				property, ddmFormFieldTypeSetting);
+		}
+	}
+
+	protected Object serializeDDMFormFieldPropertyValue(
+		Object property, DDMFormField ddmFormFieldTypeSetting) {
+
 		if (ddmFormFieldTypeSetting.isLocalizable()) {
 			return toJSONObject((LocalizedValue)property);
 		}
@@ -185,6 +197,20 @@ public class DDMFormJSONSerializerImpl implements DDMFormJSONSerializer {
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			jsonArray.put(toJSONObject(ddmFormField));
+		}
+
+		return jsonArray;
+	}
+
+	protected JSONArray toJSONArray(
+		Object[] property, DDMFormField ddmFormFieldTypeSetting) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (Object propertyValue : property) {
+			jsonArray.put(
+				serializeDDMFormFieldPropertyValue(
+					propertyValue, ddmFormFieldTypeSetting));
 		}
 
 		return jsonArray;

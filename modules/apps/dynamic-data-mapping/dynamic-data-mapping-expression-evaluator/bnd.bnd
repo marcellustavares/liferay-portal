@@ -1,0 +1,5 @@
+Bundle-Name: Liferay Dynamic Data Mapping Expression Evaluator
+Bundle-SymbolicName: com.liferay.dynamic.data.mapping.expression.evaluator
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.dynamic.data.mapping.expression.evaluator
+Include-Resource: classes

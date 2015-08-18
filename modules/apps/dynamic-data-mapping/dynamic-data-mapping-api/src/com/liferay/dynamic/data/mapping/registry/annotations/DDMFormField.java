@@ -38,7 +38,13 @@ public @interface DDMFormField {
 
 	public String[] optionValues() default {};
 
+	public boolean repeatable() default false;
+
 	public String type() default StringPool.BLANK;
+
+	public String[] validationExpressions() default {};
+
+	public String[] validationMessages() default {};
 
 	public String visibilityExpression() default StringPool.TRUE;
 

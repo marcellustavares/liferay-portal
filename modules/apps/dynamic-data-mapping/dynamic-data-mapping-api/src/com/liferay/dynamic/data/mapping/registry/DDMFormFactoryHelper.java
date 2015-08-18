@@ -149,6 +149,14 @@ public class DDMFormFactoryHelper {
 		return "text";
 	}
 
+	public String[] getDDMFormFieldValidationExpressions() {
+		return _ddmFormField.validationExpressions();
+	}
+
+	public String[] getDDMFormFieldValidationMessages() {
+		return _ddmFormField.validationMessages();
+	}
+
 	public String getDDMFormFieldVisibilityExpression() {
 		if (Validator.isNotNull(_ddmFormField.visibilityExpression())) {
 			return _ddmFormField.visibilityExpression();
@@ -165,6 +173,10 @@ public class DDMFormFactoryHelper {
 		}
 
 		return false;
+	}
+
+	public boolean isDDMFormFieldRepeatable() {
+		return _ddmFormField.repeatable();
 	}
 
 	protected String getKey(String value) {

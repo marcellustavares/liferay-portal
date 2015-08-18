@@ -54,6 +54,8 @@ public interface JSONArray extends Externalizable {
 
 	public JSONArray put(long value);
 
+	public JSONArray put(Object value);
+
 	public JSONArray put(String value);
 
 	@Override

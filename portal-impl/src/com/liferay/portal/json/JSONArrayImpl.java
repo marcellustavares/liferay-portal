@@ -173,6 +173,28 @@ public class JSONArrayImpl implements JSONArray {
 	}
 
 	@Override
+	public JSONArray put(Object value) {
+		try {
+			if (value instanceof JSONArray) {
+				put((JSONArray)value);
+			}
+			else if (value instanceof JSONObject) {
+				put((JSONObject)value);
+			}
+			else {
+				_jsonArray.put(value);
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(e, e);
+			}
+		}
+
+		return this;
+	}
+
+	@Override
 	public JSONArray put(String value) {
 		_jsonArray.put(value);
 

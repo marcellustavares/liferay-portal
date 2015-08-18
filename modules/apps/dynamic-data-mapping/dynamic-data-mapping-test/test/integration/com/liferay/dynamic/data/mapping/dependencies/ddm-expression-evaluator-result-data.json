@@ -1,0 +1,48 @@
+{
+	"fields":[
+		{
+			"nestedFields":[
+				{
+					"nestedFields":[],
+					"visible":false,
+					"validationMessages":[],
+					"name":"Integer",
+					"instanceId":"lroa"
+				}
+			],
+			"visible":true,
+			"validationMessages":["This field is never valid"],
+			"name":"Text",
+			"instanceId":"gfkm"
+		},
+		{
+			"nestedFields":[
+				{
+					"nestedFields":[],
+					"visible":false,
+					"validationMessages":["Must be equals to zero"],
+					"name":"Integer",
+					"instanceId":"uvwn"
+				},
+				{
+					"nestedFields":[],
+					"visible":false,
+					"validationMessages":["Must be equals to zero"],
+					"name":"Integer",
+					"instanceId":"lsky"
+				}
+			],
+			"visible":true,
+			"validationMessages":["This field is never valid"],
+			"name":"Text",
+			"instanceId":"xucq"
+		},
+		{
+			"nestedFields":[],
+			"visible":false,
+			"validationMessages":[],
+			"name":"Boolean",
+			"instanceId":"mnst"
+		}
+	]
+}

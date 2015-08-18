@@ -25,6 +25,12 @@
 				"pt_BR": ""
 			},
 			"type": "checkbox",
+			"validationExpressions": [
+				"Boolean2282"
+			],
+			"validationMessages": [
+				"You must check this box to continue"
+			],
 			"visibilityExpression": "true"
 		},
 		{

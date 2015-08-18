@@ -16,8 +16,8 @@
 					"dataType": "string",
 					"indexType": "",
 					"localizable": false,
-					"name": "ChildField",
 					"multiple": true,
+					"name": "ChildField",
 					"options": [
 						{
 							"label": {
@@ -25,23 +25,29 @@
 								"pt_BR": "Opcao 1"
 							},
 							"value": "Value 1"
-						}, 
+						},
 						{
 							"label": {
 								"en_US": "Option 2",
 								"pt_BR": "Opcao 2"
 							},
 							"value": "Value 2"
-			         	}
+						}
 					],
 					"readOnly": false,
 					"repeatable": false,
 					"required": false,
 					"showLabel": true,
 					"type": "select",
+					"validationExpressions": [
+						"!ChildField.isEmpty()"
+					],
+					"validationMessages": [
+						"Field ChildField must not be empty."
+					],
 					"visibilityExpression": "true"
 				}
-		     ],
+			],
 			"predefinedValue": {
 				"en_US": "Example",
 				"pt_BR": "Exemplo"
@@ -51,6 +57,12 @@
 			"required": false,
 			"showLabel": true,
 			"type": "text",
+			"validationExpressions": [
+				"!ParentField.isEmpty()"
+			],
+			"validationMessages": [
+				"Field ParentField must not be empty."
+			],
 			"visibilityExpression": "true"
 		},
 		{
@@ -71,13 +83,19 @@
 						"pt_BR": "Opcao 2"
 					},
 					"value": "Value 2"
-		     	}
+				}
 			],
 			"readOnly": false,
 			"repeatable": false,
 			"required": true,
 			"showLabel": false,
 			"type": "radio",
+			"validationExpressions": [
+				"!BooleanField.isEmpty()"
+			],
+			"validationMessages": [
+				"Field BooleanField must not be empty."
+			],
 			"visibilityExpression": "false"
 		},
 		{
@@ -93,7 +111,7 @@
 						"pt_BR": "Opcao 1"
 					},
 					"value": "Value 1"
-				}, 
+				},
 				{
 					"label": {
 						"en_US": "Option 2",
@@ -107,26 +125,38 @@
 			"required": false,
 			"showLabel": true,
 			"type": "select",
+			"validationExpressions": [
+				"!SelectField.isEmpty()"
+			],
+			"validationMessages": [
+				"Field SelectField must not be empty."
+			],
 			"visibilityExpression": "true"
 		},
 		{
 			"dataType": "string",
 			"indexType": "keyword",
 			"label": {
-				"pt_BR": "Texto",
-				"en_US": "Text"
+				"en_US": "Text",
+				"pt_BR": "Texto"
 			},
 			"localizable": false,
 			"name": "TextField",
 			"predefinedValue": {
 				"en_US": "Example",
 				"pt_BR": "Exemplo"
-		     },
+			},
 			"readOnly": false,
 			"repeatable": true,
 			"required": false,
 			"showLabel": true,
 			"type": "text",
+			"validationExpressions": [
+				"!TextField.isEmpty()"
+			],
+			"validationMessages": [
+				"Field TextField must not be empty."
+			],
 			"visibilityExpression": "true"
 		},
 		{

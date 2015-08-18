@@ -71,6 +71,14 @@ public class DDMFormJSONDeserializerTest
 	protected void testBooleanDDMFormField(DDMFormField ddmFormField) {
 		super.testBooleanDDMFormField(ddmFormField);
 
+		String[] validationExpressions = { "Boolean2282" };
+		String[] validationMessages = { "You must check this box to continue" };
+
+		Assert.assertArrayEquals(
+			validationExpressions, ddmFormField.getValidationExpressions());
+		Assert.assertArrayEquals(
+			validationMessages, ddmFormField.getValidationMessages());
+
 		Assert.assertEquals("true", ddmFormField.getVisibilityExpression());
 	}
 

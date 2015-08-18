@@ -100,6 +100,21 @@ public class DDMFormJSONDeserializerImpl implements DDMFormJSONDeserializer {
 			DDMFormField ddmFormFieldTypeSetting)
 		throws PortalException {
 
+		if (ddmFormFieldTypeSetting.isRepeatable()) {
+			return deserializeDDMFormFieldPropertyValuesArray(
+				serializedDDMFormFieldProperty, ddmFormFieldTypeSetting);
+		}
+		else {
+			return deserializeDDMFormFieldPropertyValue(
+				serializedDDMFormFieldProperty, ddmFormFieldTypeSetting);
+		}
+	}
+
+	protected Object deserializeDDMFormFieldPropertyValue(
+			String serializedDDMFormFieldProperty,
+			DDMFormField ddmFormFieldTypeSetting)
+		throws PortalException {
+
 		if (ddmFormFieldTypeSetting.isLocalizable()) {
 			return deserializeLocalizedValue(serializedDDMFormFieldProperty);
 		}
@@ -116,6 +131,37 @@ public class DDMFormJSONDeserializerImpl implements DDMFormJSONDeserializer {
 		else {
 			return serializedDDMFormFieldProperty;
 		}
+	}
+
+	protected Object deserializeDDMFormFieldPropertyValuesArray(
+			String serializedDDMFormFieldProperty,
+			DDMFormField ddmFormFieldTypeSetting)
+		throws PortalException {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			serializedDDMFormFieldProperty);
+
+		Object[] objects;
+
+		if (ddmFormFieldTypeSetting.isLocalizable()) {
+			objects = new LocalizedValue[jsonArray.length()];
+		}
+
+		String dataType = ddmFormFieldTypeSetting.getDataType();
+
+		if (Validator.equals(dataType, "boolean")) {
+			objects = new Boolean[jsonArray.length()];
+		}
+		else {
+			objects = new String[jsonArray.length()];
+		}
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			objects[i] = deserializeDDMFormFieldPropertyValue(
+				jsonArray.getString(i), ddmFormFieldTypeSetting);
+		}
+
+		return objects;
 	}
 
 	protected LocalizedValue deserializeLocalizedValue(
