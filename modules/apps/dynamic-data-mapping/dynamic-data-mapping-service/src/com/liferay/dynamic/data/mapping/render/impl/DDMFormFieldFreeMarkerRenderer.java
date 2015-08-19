@@ -284,6 +284,8 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		DDMFieldsCounter ddmFieldsCounter = getFieldsCounter(
 			request, response, fields, portletNamespace, namespace);
 
+		ddmFieldsCounter.clear();
+
 		String name = ddmFormField.getName();
 
 		String fieldDisplayValue = getFieldsDisplayValue(
