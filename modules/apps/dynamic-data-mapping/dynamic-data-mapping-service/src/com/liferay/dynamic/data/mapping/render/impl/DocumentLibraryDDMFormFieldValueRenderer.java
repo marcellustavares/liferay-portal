@@ -25,7 +25,9 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.util.Locale;
 
@@ -60,7 +62,9 @@ public class DocumentLibraryDDMFormFieldValueRenderer
 						DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
 							uuid, groupId);
 
-					return fileEntry.getTitle();
+					return DLUtil.getPreviewURL(
+						fileEntry, fileEntry.getFileVersion(), null,
+						StringPool.BLANK, false, true);
 				}
 				catch (Exception e) {
 					return LanguageUtil.format(
