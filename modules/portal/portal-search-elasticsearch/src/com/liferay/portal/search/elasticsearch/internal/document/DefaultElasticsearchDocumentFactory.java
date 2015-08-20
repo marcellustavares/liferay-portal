@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch.document.ElasticsearchDocumentFactory;
@@ -69,28 +70,31 @@ public class DefaultElasticsearchDocumentFactory
 		if (!field.isLocalized()) {
 			String[] values = field.getValues();
 
-			List<String> valuesList = new ArrayList<>(values.length);
+			if (ArrayUtil.isNotEmpty(values)) {
+				List<String> valuesList = new ArrayList<>(values.length);
 
-			for (String value : values) {
-				if (Validator.isNull(value)) {
-					continue;
+				for (String value : values) {
+					if (Validator.isNull(value)) {
+						continue;
+					}
+
+					valuesList.add(value.trim());
 				}
 
-				valuesList.add(value.trim());
-			}
+				if (valuesList.isEmpty()) {
+					return;
+				}
 
-			if (valuesList.isEmpty()) {
-				return;
-			}
+				values = valuesList.toArray(new String[valuesList.size()]);
 
-			values = valuesList.toArray(new String[valuesList.size()]);
+				addField(xContentBuilder, field, name, values);
 
-			addField(xContentBuilder, field, name, values);
+				if (field.isSortable()) {
+					String sortFieldName = DocumentImpl.getSortableFieldName(
+						name);
 
-			if (field.isSortable()) {
-				String sortFieldName = DocumentImpl.getSortableFieldName(name);
-
-				addField(xContentBuilder, field, sortFieldName, values);
+					addField(xContentBuilder, field, sortFieldName, values);
+				}
 			}
 		}
 		else {
