@@ -15,13 +15,13 @@
 package com.liferay.dynamic.data.mapping.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.lar.test.BaseStagedModelDataHandlerTestCase;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.StagedModel;
@@ -118,6 +118,6 @@ public class DDMStructureStagedModelDataHandlerTest
 			ddmStructure.getUuid(), group.getGroupId());
 	}
 
-	private static final String _CLASS_NAME = StringUtil.randomString();
+	private static final String _CLASS_NAME = DDLRecordSet.class.getName();
 
 }
