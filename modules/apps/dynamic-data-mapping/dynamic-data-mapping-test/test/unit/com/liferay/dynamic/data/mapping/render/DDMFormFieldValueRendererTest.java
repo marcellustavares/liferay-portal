@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
@@ -46,6 +47,8 @@ import com.liferay.portal.util.CalendarFactoryImpl;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 import com.liferay.portal.util.HtmlImpl;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.util.DL;
+import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.util.Calendar;
 
@@ -61,7 +64,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
  * @author Marcellus Tavares
  */
 @PrepareForTest( {
-	DLAppLocalServiceUtil.class, LocaleUtil.class, LayoutServiceUtil.class
+	DLAppLocalServiceUtil.class, DLUtil.class, LocaleUtil.class,
+	LayoutServiceUtil.class
 })
 public class DDMFormFieldValueRendererTest extends BaseDDMTestCase {
 
@@ -198,7 +202,7 @@ public class DDMFormFieldValueRendererTest extends BaseDDMTestCase {
 		String renderedValue = ddmFormFieldValueRenderer.render(
 			ddmFormFieldValue, LocaleUtil.US);
 
-		Assert.assertEquals("File Entry Title", renderedValue);
+		Assert.assertEquals("File Preview URL", renderedValue);
 	}
 
 	@Test
@@ -441,15 +445,23 @@ public class DDMFormFieldValueRendererTest extends BaseDDMTestCase {
 	}
 
 	protected void setUpDLAppLocalServiceUtil() throws Exception {
-		mockStatic(DLAppLocalServiceUtil.class);
+		mockStatic(DLAppLocalServiceUtil.class, DLUtil.class);
 
 		FileEntry fileEntry = mock(FileEntry.class);
 
+		FileVersion fileVersion = mock(FileVersion.class);
+
+		DL dl = mock(DL.class);
+
+		when(fileEntry.getFileVersion()).thenReturn(fileVersion);
+
+		when(DLUtil.getDL()).thenReturn(dl);
+
 		when(
-			fileEntry.getTitle()
-		).thenReturn(
-			"File Entry Title"
-		);
+			DLUtil.getPreviewURL(
+				fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK,
+				false, true)
+		).thenReturn("File Preview URL");
 
 		when(
 			DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
