@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.storage.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -39,7 +40,6 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -76,7 +76,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 	@BeforeClass
 	public static void setUpClass() {
-		_CLASS_NAME_ID = PortalUtil.getClassNameId(StringUtil.randomString());
+		_CLASS_NAME_ID = PortalUtil.getClassNameId(DDLRecordSet.class);
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");

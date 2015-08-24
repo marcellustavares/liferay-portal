@@ -27,9 +27,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.util.PortalUtil;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,8 +48,10 @@ public class DDMStructureTestHelper {
 		return map;
 	}
 
-	public DDMStructureTestHelper(Group group) throws Exception {
-		_classNameId = PortalUtil.getClassNameId(StringUtil.randomString());
+	public DDMStructureTestHelper(long classNameId, Group group)
+		throws Exception {
+
+		_classNameId = classNameId;
 		_group = group;
 	}
 
