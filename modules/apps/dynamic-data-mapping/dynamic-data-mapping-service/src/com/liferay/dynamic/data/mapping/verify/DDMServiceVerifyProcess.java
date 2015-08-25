@@ -166,6 +166,7 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	}
 
 	protected void verifyContent(DDMContent content) throws PortalException {
+
 		DDMFormValues ddmFormValues = getDDMFormValues(content);
 
 		_ddmFormValuesValidator.validate(ddmFormValues);
@@ -205,13 +206,9 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	protected void verifyStructure(DDMStructure structure)
 		throws PortalException {
 
-		try {
-			verifyDDMForm(structure.getDDMForm());
-			verifyDDMFormLayout(structure.getDDMFormLayout());
+		verifyDDMForm(structure.getDDMForm());
+		verifyDDMFormLayout(structure.getDDMFormLayout());
 
-		}catch (PortalException e) {
-			_log.error(e, e);
-		}
 	}
 
 	protected void verifyStructures() throws Exception {
