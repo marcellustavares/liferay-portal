@@ -20,13 +20,19 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStorageLink;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateLink;
 import com.liferay.dynamic.data.mapping.service.DDMContentLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesValidatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesValidator;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidator;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -34,6 +40,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.verify.VerifyProcess;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -46,9 +54,42 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = DDMServiceVerifyProcess.class)
 public class DDMServiceVerifyProcess extends VerifyProcess {
 
+	protected void checkDDMStructureLinks() throws PortalException {
+		List<DDMStructureLink> ddmStructureLinks =
+			_ddmStructureLinkLocalService.findAll();
+
+		for (DDMStructureLink ddmStructureLink : ddmStructureLinks) {
+			DDMStructure ddmStructure =
+				_ddmStructureLocalService.fetchDDMStructure(
+					ddmStructureLink.getStructureId());
+
+			if (ddmStructure == null) {
+				_ddmStructureLinkLocalService.deleteStructureLink(
+					ddmStructureLink);
+			}
+		}
+	}
+
+	protected void checkDDMTemplateLinks() throws PortalException {
+		List<DDMTemplateLink> ddmTemplateLinks =
+			_ddmTemplateLinkLocalService.findAll();
+
+		for (DDMTemplateLink ddmTemplateLink : ddmTemplateLinks) {
+			DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchDDMTemplate(
+				ddmTemplateLink.getTemplateId());
+
+			if (ddmTemplate == null) {
+				_ddmTemplateLinkLocalService.deleteTemplateLink(
+					ddmTemplateLink);
+			}
+		}
+	}
+
 	@Activate
 	@Override
 	protected void doVerify() throws Exception {
+		checkDDMStructureLinks();
+		checkDDMTemplateLinks();
 		verifyStructures();
 		verifyContents();
 	}
@@ -87,6 +128,18 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	}
 
 	@Reference
+	protected void setDDMFormValuesValidator(DDMFormValuesValidator ddmFormValuesValidator) {
+		_ddmFormValuesValidator = ddmFormValuesValidator;
+	}
+
+	@Reference
+	protected void setDDMStructureLinkLocalService(
+		DDMStructureLinkLocalService ddmStructureLinkLocalService) {
+
+		_ddmStructureLinkLocalService = ddmStructureLinkLocalService;
+	}
+
+	@Reference
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 
@@ -98,10 +151,24 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 		DDMStructureVersionLocalService ddmStructureVersionLocalService) {
 	}
 
+	@Reference
+	protected void setDDMTemplateLinkLocalService(
+		DDMTemplateLinkLocalService ddmTemplateLinkLocalService) {
+
+		_ddmTemplateLinkLocalService = ddmTemplateLinkLocalService;
+	}
+
+	@Reference
+	protected void setDDMTemplateLocalService(
+		DDMTemplateLocalService ddmTemplateLocalService) {
+
+		_ddmTemplateLocalService = ddmTemplateLocalService;
+	}
+
 	protected void verifyContent(DDMContent content) throws PortalException {
 		DDMFormValues ddmFormValues = getDDMFormValues(content);
 
-		DDMFormValuesValidatorUtil.validate(ddmFormValues);
+		_ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
 	protected void verifyContents() throws Exception {
@@ -174,6 +241,10 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	private DDMContentLocalService _ddmContentLocalService;
 	private DDMFormLayoutValidator _ddmFormLayoutValidator;
 	private DDMFormValidator _ddmFormValidator;
+	private DDMFormValuesValidator _ddmFormValuesValidator;
+	private DDMStructureLinkLocalService _ddmStructureLinkLocalService;
 	private DDMStructureLocalService _ddmStructureLocalService;
+	private DDMTemplateLinkLocalService _ddmTemplateLinkLocalService;
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 }
