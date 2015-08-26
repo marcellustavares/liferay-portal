@@ -175,8 +175,7 @@ public class DDMServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			LoggingEvent loggingEvent = loggingEvents.get(0);
 
 			Assert.assertEquals(
-				StorageFieldNameException.class.getName() +
-				": There is no such field name defined on DDM Form content_2",
+				"There is no such field name defined on DDM Form content_2",
 				loggingEvent.getMessage());
 
 			ThrowableInformation throwableInformation =
@@ -209,8 +208,7 @@ public class DDMServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 			LoggingEvent loggingEvent = loggingEvents.get(0);
 
 			Assert.assertEquals(
-				DDMFormValidationException.class.getName() +
-				": Invalid characters were defined for field name invalid-name",
+				"Invalid characters were defined for field name invalid-name",
 				loggingEvent.getMessage());
 
 			ThrowableInformation throwableInformation =
