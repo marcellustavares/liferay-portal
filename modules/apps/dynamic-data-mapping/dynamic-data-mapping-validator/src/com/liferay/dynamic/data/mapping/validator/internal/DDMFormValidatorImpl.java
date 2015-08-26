@@ -19,7 +19,6 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeRegistryUtil;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
@@ -27,7 +26,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -199,21 +197,21 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 	protected void validateDDMFormFieldType(DDMFormField ddmFormField)
 		throws DDMFormValidationException {
 
-		if(ddmFormField.getType() == null 
-			|| ddmFormField.getType().trim().length() == 0){
-			throw new DDMFormValidationException(
-				"The field type was never set for DDM form field");
+		if ((ddmFormField.getType() == null) ||
+			(ddmFormField.getType().trim().length() == 0)) {
+
+				throw new DDMFormValidationException(
+					"The field type was never set for DDM form field");
 		}
 
 		Matcher matcher = _ddmFormFieldTypePattern.matcher(
-				ddmFormField.getType());
+			ddmFormField.getType());
 
 		if (!matcher.matches()) {
 			throw new DDMFormValidationException(
 				"Invalid characters were defined for field type " +
 					ddmFormField.getType());
 		}
-		
 	}
 
 	protected void validateDDMFormLocales(DDMForm ddmForm)
@@ -254,6 +252,6 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 	private final Pattern _ddmFormFieldNamePattern = Pattern.compile(
 		"(\\w|_)+");
 	private final Pattern _ddmFormFieldTypePattern = Pattern.compile(
-			"(\\w|-|_)+");
+		"(\\w|-|_)+");
 
 }

@@ -128,7 +128,9 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 	}
 
 	@Reference
-	protected void setDDMFormValuesValidator(DDMFormValuesValidator ddmFormValuesValidator) {
+	protected void setDDMFormValuesValidator(
+		DDMFormValuesValidator ddmFormValuesValidator) {
+
 		_ddmFormValuesValidator = ddmFormValuesValidator;
 	}
 
@@ -165,11 +167,15 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 	}
 
-	protected void verifyContent(DDMContent content) throws PortalException {
+	protected void verifyContent(DDMContent content) {
+		try {
+			DDMFormValues ddmFormValues = getDDMFormValues(content);
 
-		DDMFormValues ddmFormValues = getDDMFormValues(content);
-
-		_ddmFormValuesValidator.validate(ddmFormValues);
+			_ddmFormValuesValidator.validate(ddmFormValues);
+		}
+		catch (Exception e) {
+			_log.error(e.getMessage(), e);
+		}
 	}
 
 	protected void verifyContents() throws Exception {
@@ -203,12 +209,14 @@ public class DDMServiceVerifyProcess extends VerifyProcess {
 		_ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
 
-	protected void verifyStructure(DDMStructure structure)
-		throws PortalException {
-
-		verifyDDMForm(structure.getDDMForm());
-		verifyDDMFormLayout(structure.getDDMFormLayout());
-
+	protected void verifyStructure(DDMStructure structure) {
+		try {
+			verifyDDMForm(structure.getDDMForm());
+			verifyDDMFormLayout(structure.getDDMFormLayout());
+		}
+		catch (Exception e) {
+			_log.error(e.getMessage(), e);
+		}
 	}
 
 	protected void verifyStructures() throws Exception {
