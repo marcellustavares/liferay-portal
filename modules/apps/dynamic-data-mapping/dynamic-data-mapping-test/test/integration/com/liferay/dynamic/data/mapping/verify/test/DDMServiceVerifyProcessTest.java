@@ -71,7 +71,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -96,6 +95,7 @@ public class DDMServiceVerifyProcessTest extends BaseVerifyProcessTestCase {
 
 		_ddmStructureTestHelper = new DDMStructureTestHelper(_group);
 	}
+
 	@Test
 	public void testDeleteDDMStructureLinkWithoutDDMStructure()
 		throws Exception {
