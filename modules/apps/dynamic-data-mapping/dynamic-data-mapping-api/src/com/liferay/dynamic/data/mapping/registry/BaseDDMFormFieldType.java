@@ -26,9 +26,4 @@ public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
 		return DefaultDDMFormFieldTypeSettings.class;
 	}
 
-	@Override
-	public boolean isSystem() {
-		return false;
-	}
-
 }
