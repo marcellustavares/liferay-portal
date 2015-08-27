@@ -60,7 +60,9 @@ import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.RoleConstants;
+import com.liferay.portal.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
@@ -264,6 +266,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		upgradeXMLStorageAdapter();
 
 		upgradeFileUploadReferences();
+
+		updateResourceClassNameIds();
 	}
 
 	protected DDMForm getDDMForm(long structureId) throws Exception {
@@ -430,6 +434,35 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 
 		return copyDDMForm;
+	}
+
+	protected void updateResourceClassNameIds() throws Exception {
+		StringBundler sb = new StringBundler(3);
+
+		sb.append("update DDMTemplate set resourceClassNameId = (select ");
+		sb.append("classNameId from DDMStructure where DDMStructure.");
+		sb.append("structureId = DDMTemplate.classPK) where classPK != 0;");
+
+		runSQL(sb.toString());
+
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			long resourceClassNameId = ClassNameLocalServiceUtil.getClassNameId(
+				PortletDisplayTemplate.class);
+
+			ps = con.prepareStatement(
+				"update DDMTemplate set resourceClassNameId = ? where " +
+					"classPK = 0");
+
+			ps.setLong(1, resourceClassNameId);
+		}
+		finally {
+			DataAccess.cleanUp(con, ps);
+		}
 	}
 
 	protected void updateStructureStorageType() throws Exception {
