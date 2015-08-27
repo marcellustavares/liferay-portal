@@ -20,11 +20,6 @@ package com.liferay.dynamic.data.mapping.registry;
 public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
 
 	@Override
-	public String getDDMFormFieldTypeJavaScriptClass() {
-		return "Liferay.DDM.Renderer.Field";
-	}
-
-	@Override
 	public String getDDMFormFieldTypeJavaScriptModule() {
 		return "liferay-ddm-form-renderer-field";
 	}

@@ -23,8 +23,6 @@ public interface DDMFormFieldType {
 
 	public DDMFormFieldRenderer getDDMFormFieldRenderer();
 
-	public String getDDMFormFieldTypeJavaScriptClass();
-
 	public String getDDMFormFieldTypeJavaScriptModule();
 
 	public Class<? extends DDMFormFieldTypeSettings>
