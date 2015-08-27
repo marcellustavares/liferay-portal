@@ -29,17 +29,18 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Renato Rego
  */
-@Component(immediate = true, service = DDMFormFieldType.class)
+@Component(
+	immediate = true, 
+	property = {
+		"ddm.form.field.type.js.class=Liferay.DDM.Field.Options"
+	}, 
+	service = DDMFormFieldType.class
+)
 public class OptionsDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
 		return _ddmFormFieldRenderer;
-	}
-
-	@Override
-	public String getDDMFormFieldTypeJavaScriptClass() {
-		return "Liferay.DDM.Field.Options";
 	}
 
 	@Override
