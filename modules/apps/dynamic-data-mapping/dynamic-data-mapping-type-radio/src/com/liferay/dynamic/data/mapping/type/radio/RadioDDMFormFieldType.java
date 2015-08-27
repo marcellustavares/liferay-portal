@@ -38,6 +38,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true, 
 	property = {
+		"ddm.form.field.type.icon=icon-ok-circle",
 		"ddm.form.field.type.js.class=Liferay.DDM.Field.Radio",
 		"ddm.form.field.type.js.module=liferay-ddm-form-field-radio"
 	}, 
@@ -92,11 +93,6 @@ public class RadioDDMFormFieldType extends BaseDDMFormFieldType {
 
 		return new RadioDDMFormFieldValueRendererAccessor(
 			getDDMFormFieldValueAccessor(locale));
-	}
-
-	@Override
-	public String getIcon() {
-		return "icon-ok-circle";
 	}
 
 	@Override
