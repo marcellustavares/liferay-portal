@@ -27,11 +27,6 @@ public abstract class BaseDDMFormFieldType implements DDMFormFieldType {
 	}
 
 	@Override
-	public String getIcon() {
-		return "icon-ok-circle";
-	}
-
-	@Override
 	public boolean isSystem() {
 		return false;
 	}
