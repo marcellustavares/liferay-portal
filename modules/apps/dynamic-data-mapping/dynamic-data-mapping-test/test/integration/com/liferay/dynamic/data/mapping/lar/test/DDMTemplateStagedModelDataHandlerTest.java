@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.lar.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -23,11 +24,11 @@ import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.TransactionalTestRule;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.lar.test.BaseStagedModelDataHandlerTestCase;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.PortalUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +81,8 @@ public class DDMTemplateStagedModelDataHandlerTest
 		DDMStructure structure = (DDMStructure)dependentStagedModels.get(0);
 
 		return DDMTemplateTestUtil.addTemplate(
-			group.getGroupId(), structure.getStructureId());
+			group.getGroupId(), structure.getStructureId(),
+			PortalUtil.getClassNameId(DDLRecordSet.class));
 	}
 
 	@Override
@@ -116,6 +118,6 @@ public class DDMTemplateStagedModelDataHandlerTest
 			structure.getUuid(), group.getGroupId());
 	}
 
-	private static final String _CLASS_NAME = StringUtil.randomString();
+	private static final String _CLASS_NAME = DDLRecordSet.class.getName();
 
 }
