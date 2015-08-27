@@ -33,7 +33,8 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true, 
 	property = {
 		"ddm.form.field.type.js.class=Liferay.DDM.Field.Options",
-		"ddm.form.field.type.js.module=liferay-ddm-form-field-options"
+		"ddm.form.field.type.js.module=liferay-ddm-form-field-options",
+		"ddm.form.field.type.name=options"
 	}, 
 	service = DDMFormFieldType.class
 )
