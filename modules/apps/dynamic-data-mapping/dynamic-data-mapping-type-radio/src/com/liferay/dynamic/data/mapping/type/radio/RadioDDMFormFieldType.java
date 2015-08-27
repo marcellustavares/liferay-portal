@@ -38,7 +38,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true, 
 	property = {
-		"ddm.form.field.type.js.class=Liferay.DDM.Field.Radio"
+		"ddm.form.field.type.js.class=Liferay.DDM.Field.Radio",
+		"ddm.form.field.type.js.module=liferay-ddm-form-field-radio"
 	}, 
 	service = DDMFormFieldType.class
 )
@@ -47,11 +48,6 @@ public class RadioDDMFormFieldType extends BaseDDMFormFieldType {
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
 		return _ddmFormFieldRenderer;
-	}
-
-	@Override
-	public String getDDMFormFieldTypeJavaScriptModule() {
-		return "liferay-ddm-form-field-radio";
 	}
 
 	@Override

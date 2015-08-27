@@ -34,7 +34,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true, 
 	property = {
-		"ddm.form.field.type.js.class=Liferay.DDM.Field.Checkbox"
+		"ddm.form.field.type.js.class=Liferay.DDM.Field.Checkbox",
+		"ddm.form.field.type.js.module=liferay-ddm-form-field-checkbox"
 	}, 
 	service = DDMFormFieldType.class
 )
@@ -43,11 +44,6 @@ public class CheckboxDDMFormFieldType extends BaseDDMFormFieldType {
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer() {
 		return _ddmFormFieldRenderer;
-	}
-
-	@Override
-	public String getDDMFormFieldTypeJavaScriptModule() {
-		return "liferay-ddm-form-field-checkbox";
 	}
 
 	@Override
