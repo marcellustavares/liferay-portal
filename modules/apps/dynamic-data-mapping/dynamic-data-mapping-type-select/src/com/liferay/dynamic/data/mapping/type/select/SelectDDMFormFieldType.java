@@ -17,7 +17,6 @@ package com.liferay.dynamic.data.mapping.type.select;
 import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeSettings;
-import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueRendererAccessor;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -51,12 +50,6 @@ public class SelectDDMFormFieldType extends BaseDDMFormFieldType {
 	}
 
 	@Override
-	public DDMFormFieldValueAccessor<JSONArray> getDDMFormFieldValueAccessor(
-		Locale locale) {
-
-		return new SelectDDMFormFieldValueAccessor(locale);
-	}
-
 
 	@Override
 	public DDMFormFieldValueRendererAccessor
