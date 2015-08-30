@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.mapping.type.options;
 
 import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
-import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueParameterSerializer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueRendererAccessor;
 
 import java.util.Locale;
@@ -39,13 +38,6 @@ import org.osgi.service.component.annotations.Component;
 public class OptionsDDMFormFieldType extends BaseDDMFormFieldType {
 
 	@Override
-
-	@Override
-	public DDMFormFieldValueParameterSerializer
-		getDDMFormFieldValueParameterSerializer() {
-
-		return null;
-	}
 
 	@Override
 	public DDMFormFieldValueRendererAccessor
