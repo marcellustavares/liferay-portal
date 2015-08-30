@@ -18,9 +18,7 @@ import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueAccessor;
-import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueParameterSerializer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldValueRendererAccessor;
-import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldValueParameterSerializer;
 
 import java.util.Locale;
 
@@ -50,13 +48,6 @@ public class TextDDMFormFieldType extends BaseDDMFormFieldType {
 		Locale locale) {
 
 		return new TextDDMFormFieldValueAccessor(locale);
-	}
-
-	@Override
-	public DDMFormFieldValueParameterSerializer
-		getDDMFormFieldValueParameterSerializer() {
-
-		return new DefaultDDMFormFieldValueParameterSerializer();
 	}
 
 	@Override
