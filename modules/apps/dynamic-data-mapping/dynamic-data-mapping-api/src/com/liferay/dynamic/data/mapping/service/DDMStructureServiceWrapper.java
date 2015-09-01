@@ -462,9 +462,10 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
 		java.lang.String keywords, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
+		int status) {
 		return _ddmStructureService.search(companyId, groupIds, classNameId,
-			keywords, start, end, orderByComparator);
+			keywords, start, end, orderByComparator, status);
 	}
 
 	/**
@@ -507,10 +508,11 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 		java.lang.String name, java.lang.String description,
 		java.lang.String storageType, int type, boolean andOperator, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
+		int status) {
 		return _ddmStructureService.search(companyId, groupIds, classNameId,
 			name, description, storageType, type, andOperator, start, end,
-			orderByComparator);
+			orderByComparator, status);
 	}
 
 	/**
@@ -527,9 +529,9 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	*/
 	@Override
 	public int searchCount(long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords) {
+		java.lang.String keywords, int status) {
 		return _ddmStructureService.searchCount(companyId, groupIds,
-			classNameId, keywords);
+			classNameId, keywords, status);
 	}
 
 	/**
@@ -554,9 +556,10 @@ public class DDMStructureServiceWrapper implements DDMStructureService,
 	@Override
 	public int searchCount(long companyId, long[] groupIds, long classNameId,
 		java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator) {
+		java.lang.String storageType, int type, boolean andOperator, int status) {
 		return _ddmStructureService.searchCount(companyId, groupIds,
-			classNameId, name, description, storageType, type, andOperator);
+			classNameId, name, description, storageType, type, andOperator,
+			status);
 	}
 
 	/**
