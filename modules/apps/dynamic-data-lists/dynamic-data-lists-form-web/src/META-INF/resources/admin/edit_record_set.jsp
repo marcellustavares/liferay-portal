@@ -79,6 +79,8 @@ String description = BeanParamUtil.getString(recordSet, request, "description");
 		<aui:button href="<%= redirect %>" name="cancelButton" type="cancel" />
 	</aui:button-row>
 
+	<link href="/o/ddm-form-renderer/css/main.css" rel="stylesheet" type="text/css" />
+
 	<aui:script>
 		var initHandler = Liferay.after(
 			'form:registered',

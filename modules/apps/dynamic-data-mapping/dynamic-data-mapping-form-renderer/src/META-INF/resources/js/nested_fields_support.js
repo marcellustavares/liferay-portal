@@ -43,7 +43,11 @@ AUI.add(
 				var queue = new A.Queue();
 
 				var addToQueue = function(item) {
-					queue.add(item);
+					item.getRepeatedSiblings().forEach(
+						function(field) {
+							queue.add(field);
+						}
+					);
 				};
 
 				instance.get('fields').forEach(addToQueue);
@@ -134,7 +138,7 @@ AUI.add(
 
 				fields.splice(index, 0, field);
 
-				instance.set('fields', fields);
+				// instance.set('fields', fields);
 			},
 
 			removeChild: function(field) {
@@ -148,24 +152,25 @@ AUI.add(
 					fields.splice(index, 1);
 				}
 
-				instance.set('fields', fields);
+				// instance.set('fields', fields);
 			},
 
 			_afterContainerChange: function(event) {
 				var instance = this;
 
-				A.each(
-					instance.get('fields'),
-					function(item) {
-						event.newVal.append(item.get('container'));
-					}
-				);
+				instance.render();
 			},
 
 			_afterFieldsChange: function(event) {
 				var instance = this;
 
 				instance._updateFieldsParent(event.newVal);
+
+				instance.eachField(
+					function(field) {
+						field.render();
+					}
+				);
 			},
 
 			_updateFieldsParent: function(fields) {

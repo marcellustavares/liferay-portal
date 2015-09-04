@@ -39,14 +39,17 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import com.liferay.portal.kernel.util.LocaleUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
  * @author Bruno Basto
@@ -100,9 +103,11 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	}
 
 	protected DDMFormLayoutPage createSettingPage(
-		List<DDMFormFieldSetting> ddmFormFieldSettings) {
+		LocalizedValue title, List<DDMFormFieldSetting> ddmFormFieldSettings) {
 
 		DDMFormLayoutPage ddmFormLayoutPage = new DDMFormLayoutPage();
+
+		ddmFormLayoutPage.setTitle(title);
 
 		DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
 
@@ -147,11 +152,20 @@ public class DDMFormFieldTypesJSONSerializerImpl
 			ddmFormLayoutSettings, ddmFormFieldSettingsMap);
 
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
+		
+		LocalizedValue basicTitle = new LocalizedValue();
+
+		basicTitle.addString(LocaleUtil.getDefault(), "Advanced");
 
 		ddmFormLayout.addDDMFormLayoutPage(
-			createSettingPage(ddmFormFieldSettingsMap.get("basic")));
+			createSettingPage(basicTitle, ddmFormFieldSettingsMap.get("basic")));
+		
+		LocalizedValue advancedTitle = new LocalizedValue();
+
+		advancedTitle.addString(LocaleUtil.getDefault(), "Advanced");
+
 		ddmFormLayout.addDDMFormLayoutPage(
-			createSettingPage(ddmFormFieldSettingsMap.get("advanced")));
+			createSettingPage(advancedTitle, ddmFormFieldSettingsMap.get("advanced")));
 
 		return ddmFormLayout;
 	}

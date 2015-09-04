@@ -15,7 +15,7 @@ AUI.add(
 
 		var CSS_FORM_GROUP = A.getClassName('form', 'group');
 
-		var TPL_SETTINGS_FORM = '<form action="javascript:;"><button class="hide" type="submit" /></form>';
+		var TPL_SETTINGS_FORM = '<form class="lfr-ddm-form-container" action="javascript:;"><button class="hide" type="submit" /></form>';
 
 		var FormBuilderFieldSupport = function() {
 		};
@@ -103,6 +103,8 @@ AUI.add(
 				instance._updateSettingsFormValues();
 
 				var settingsForm = instance.get('settingsForm');
+
+				settingsForm.render();
 
 				settingsForm.clearValidationMessages();
 				settingsForm.clearValidationStatus();
@@ -267,7 +269,9 @@ AUI.add(
 				return new Liferay.DDM.Renderer.Form(
 					{
 						definition: fieldType.get('settings'),
-						portletNamespace: instance.get('portletNamespace')
+						layout: fieldType.get('settingsLayout'),
+						portletNamespace: instance.get('portletNamespace'),
+						templateNamespace: 'ddm.settings_form'
 					}
 				);
 			}
