@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.registry;
 
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
@@ -64,15 +65,11 @@ public interface DefaultDDMFormFieldTypeSettings
 	public LocalizedValue tip();
 
 	@DDMFormField(
-		label = "%validation", type = "validation",
-		visibilityExpression = "true"
+		dataType = "ddm-validation", label = "%validation", type = "validation"
 	)
-	public String validationExpression();
+	public DDMFormFieldValidation validation();
 
-	@DDMFormField(label = "%validation-message", visibilityExpression = "true")
-	public String validationMessage();
-
-	@DDMFormField(label = "%visibility", visibilityExpression = "true")
+	@DDMFormField(label = "%visibility")
 	public String visibilityExpression();
 
 }
