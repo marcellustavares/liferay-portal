@@ -8,6 +8,22 @@ AUI.add(
 			initializer: function() {
 				var instance = this;
 
+				instance._domEventHandlers = [];
+
+				instance._eventHandlers.push(
+					instance.after('render', instance._afterFieldEventsRender)
+				);
+			},
+
+			destructor: function() {
+				var instance = this;
+
+				(new A.EventHandle(instance._domEventHandlers)).detach();
+			},
+
+			_afterFieldEventsRender: function() {
+				var instance = this;
+
 				instance._eventHandlers.push(
 					instance.after('containerChange', instance._bindEvents)
 				);
@@ -18,10 +34,12 @@ AUI.add(
 			_bindEvents: function() {
 				var instance = this;
 
-				instance._eventHandlers.push(
+				(new A.EventHandle(instance._domEventHandlers)).detach();
+
+				instance._domEventHandlers = [
 					instance._bindOnBlur(),
 					instance._bindOnChange()
-				);
+				];
 			},
 
 			_bindOnBlur: function() {

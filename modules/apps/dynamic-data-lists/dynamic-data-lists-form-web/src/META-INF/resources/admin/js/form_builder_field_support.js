@@ -15,7 +15,7 @@ AUI.add(
 
 		var CSS_FORM_GROUP = A.getClassName('form', 'group');
 
-		var TPL_SETTINGS_FORM = '<form action="javascript:;"><button class="hide" type="submit" /></form>';
+		var TPL_SETTINGS_FORM = '<form class="lfr-ddm-form-container" action="javascript:;"><button class="hide" type="submit" /></form>';
 
 		var FormBuilderFieldSupport = function() {
 		};
@@ -43,8 +43,10 @@ AUI.add(
 				var instance = this;
 
 				instance.settingsLoader = A.Node.create('<div class="hide loading-animation"></div>');
+				instance.modeToggler = A.Node.create('<a class="settings-toggler" href="javascript:;"></a>');
 
 				instance._eventHandlers.push(
+					instance.modeToggler.on('click', A.bind(instance._onClickModeToggler, instance)),
 					instance.after(instance._renderFormBuilderField, instance, 'render')
 				);
 			},
@@ -98,11 +100,17 @@ AUI.add(
 
 				cancelButton.insert(instance.settingsLoader, 'after');
 
+				cancelButton.insert(instance.modeToggler, 'after');
+
 				instance._renderFormNode();
 
 				instance._updateSettingsFormValues();
 
 				var settingsForm = instance.get('settingsForm');
+
+				settingsForm.render();
+
+				instance._syncModeToggler();
 
 				settingsForm.clearValidationMessages();
 				settingsForm.clearValidationStatus();
@@ -110,6 +118,9 @@ AUI.add(
 
 			saveSettings: function() {
 				var instance = this;
+
+				instance.modeToggler.remove();
+				instance.settingsLoader.remove();
 
 				instance.setAttrs(instance.getSettings());
 
@@ -194,6 +205,21 @@ AUI.add(
 				return settingsModal._modal.getStdModNode(mode);
 			},
 
+			_onClickModeToggler: function() {
+				var instance = this;
+
+				var settingsForm = instance.get('settingsForm');
+
+				if (settingsForm.getCurrentPage() == 1) {
+					settingsForm.showPage(2);
+				}
+				else {
+					settingsForm.showPage(1);
+				}
+
+				instance._syncModeToggler();
+			},
+
 			_renderFormBuilderField: function() {
 				var instance = this;
 
@@ -247,6 +273,19 @@ AUI.add(
 				settingsFormNode.on('submit', A.bind('_save', settingsModal));
 			},
 
+			_syncModeToggler: function() {
+				var instance = this;
+
+				var settingsForm = instance.get('settingsForm');
+
+				if (settingsForm.getCurrentPage() == 1) {
+					instance.modeToggler.html('Show Advanced Settings');
+				}
+				else {
+					instance.modeToggler.html('Show Basic Settings');
+				}
+			},
+
 			_updateSettingsFormValues: function() {
 				var instance = this;
 
@@ -267,7 +306,9 @@ AUI.add(
 				return new Liferay.DDM.Renderer.Form(
 					{
 						definition: fieldType.get('settings'),
-						portletNamespace: instance.get('portletNamespace')
+						layout: fieldType.get('settingsLayout'),
+						portletNamespace: instance.get('portletNamespace'),
+						templateNamespace: 'ddm.settings_form'
 					}
 				);
 			}
