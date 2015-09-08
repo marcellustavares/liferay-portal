@@ -101,33 +101,44 @@ AUI.add(
 
 						instance._eventHandlers = [
 							instance.after('localizableChange', instance._afterLocalizableChange),
-							instance.after('parentChange', instance._afterParentChange),
 							instance.after('valueChange', instance._afterValueChange)
 						];
 
-						var parent = instance.get('parent');
-
-						instance.addTarget(parent);
-
-						var container = instance.get('container');
-
-						if (!container.inDoc()) {
-							instance._uiSetParent(parent);
-						}
-
-						instance.render();
+						instance.addTarget(instance.get('parent'));
 					},
 
 					destructor: function() {
 						var instance = this;
 
+						var container = instance.get('container');
+
+						if (container) {
+							container.remove(true);
+						}
+
 						var parent = instance.get('parent');
 
 						parent.removeChild(instance);
 
-						instance.get('container').remove(true);
-
 						(new A.EventHandle(instance._eventHandlers)).detach();
+					},
+
+					fetchContainer: function() {
+						var instance = this;
+
+						var instanceId = instance.get('instanceId');
+
+						var container = instance._getContainerByInstanceId(instanceId);
+
+						if (!container) {
+							var name = instance.get('name');
+
+							var repeatedIndex = instance.get('repeatedIndex');
+
+							container = instance._getContainerByNameAndIndex(name, repeatedIndex);
+						}
+
+						return container;
 					},
 
 					focus: function() {
@@ -136,6 +147,16 @@ AUI.add(
 						instance.get('container').scrollIntoView();
 
 						instance.getInputNode().focus();
+					},
+
+					getChildElementsHTML: function() {
+						var instance = this;
+
+						return instance.get('fields').map(
+							function(field) {
+								return field.getTemplate();
+							}
+						).join('');
 					},
 
 					getInputNode: function() {
@@ -236,7 +257,7 @@ AUI.add(
 						return A.merge(
 							context,
 							{
-								childElementsHTML: '',
+								childElementsHTML: instance.getChildElementsHTML(),
 								label: instance.getLabel(),
 								name: instance.getQualifiedName(),
 								value: value || '',
@@ -272,9 +293,11 @@ AUI.add(
 					render: function() {
 						var instance = this;
 
-						var container = instance.get('container');
+						var container = instance._valueContainer();
 
 						container.html(instance.getTemplate());
+
+						instance.fire('render');
 
 						return instance;
 					},
@@ -309,20 +332,6 @@ AUI.add(
 						instance.set('value', instance._getDefaultValue());
 					},
 
-					_afterParentChange: function(event) {
-						var instance = this;
-
-						instance.addTarget(event.newVal);
-
-						var prevParent = event.prevVal;
-
-						prevParent.removeChild(instance);
-
-						instance.removeTarget(prevParent);
-
-						instance._uiSetParent(event.newVal);
-					},
-
 					_afterValueChange: function() {
 						var instance = this;
 
@@ -332,7 +341,11 @@ AUI.add(
 					_createContainer: function() {
 						var instance = this;
 
-						return A.Node.create('<div class="lfr-ddm-form-field-container"></div>');
+						var container = A.Node.create('<div class="lfr-ddm-form-field-container"></div>');
+
+						container.html(instance.getTemplate());
+
+						return container;
 					},
 
 					_getContainerByInstanceId: function(instanceId) {
@@ -384,17 +397,7 @@ AUI.add(
 					_valueContainer: function() {
 						var instance = this;
 
-						var instanceId = instance.get('instanceId');
-
-						var container = instance._getContainerByInstanceId(instanceId);
-
-						if (!container) {
-							var name = instance.get('name');
-
-							var repeatedIndex = instance.get('repeatedIndex');
-
-							container = instance._getContainerByNameAndIndex(name, repeatedIndex);
-						}
+						var container = instance.fetchContainer();
 
 						if (!container) {
 							container = instance._createContainer();
@@ -416,7 +419,7 @@ AUI.add(
 							{
 								fields: [instance]
 							}
-						);
+						).render();
 					}
 				}
 			}

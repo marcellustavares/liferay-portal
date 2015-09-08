@@ -35,10 +35,8 @@ AUI.add(
 					instance._eventHandlers.push(
 						instance.after(instance.renderRepeatable, instance, 'render'),
 						instance.after('repeatedIndexChange', instance._afterRepeatableIndexChange),
-						instance.get('container').delegate('click', instance._handleToolbarClick, SELECTOR_REPEAT_BUTTONS, instance)
+						instance.after('render', instance._afterRepeatableFieldRender)
 					);
-
-					instance.renderRepeatable();
 				}
 			},
 
@@ -90,19 +88,23 @@ AUI.add(
 
 				var field = new fieldClass(
 					{
-						container: instance._createContainer(),
 						label: instance.get('label'),
 						name: instance.get('name'),
 						parent: parent,
 						portletNamespace: instance.get('portletNamespace'),
 						repeatable: instance.get('repeatable'),
+						repeatedIndex: instance.getRepeatedSiblings().length,
 						type: type
 					}
-				);
+				).render();
 
-				parent.insert(parent.indexOf(instance) + 1, field);
+				var fieldIndex = parent.indexOf(instance) + 1;
+
+				parent.insert(fieldIndex, field);
 
 				instance.get('container').insert(field.get('container'), 'after');
+
+				// parent.render();
 
 				A.each(
 					instance.getRepeatedSiblings(),
@@ -118,6 +120,12 @@ AUI.add(
 				var container = instance.get('container');
 
 				container.one('.lfr-ddm-form-field-repeatable-delete-button').toggle(instance.get('repeatedIndex') > 0);
+			},
+
+			_afterRepeatableFieldRender: function() {
+				var instance = this;
+
+				instance.get('container').delegate('click', instance._handleToolbarClick, SELECTOR_REPEAT_BUTTONS, instance);
 			},
 
 			_afterRepeatableIndexChange: function() {

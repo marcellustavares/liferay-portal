@@ -9,12 +9,24 @@ AUI.add(
 		var FormBuilder = A.Component.create(
 			{
 				ATTRS: {
+					container: {
+						getter: function() {
+							var instance = this;
+
+							return instance.get('contentBox');
+						}
+					},
+
 					definition: {
 						validator: Lang.isObject
 					},
 
 					deserializer: {
 						valueFn: '_valueDeserializer'
+					},
+
+					fields: {
+						getter: 'getFields'
 					},
 
 					fieldTypes: {
@@ -38,6 +50,8 @@ AUI.add(
 					}
 				},
 
+				AUGMENTS: [Liferay.DDM.Renderer.NestedFieldsSupport],
+
 				CSS_PREFIX: 'form-builder',
 
 				EXTENDS: A.FormBuilder,
@@ -50,7 +64,9 @@ AUI.add(
 
 						var boundingBox = instance.get('boundingBox');
 
-						boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a');
+						instance._eventHandlers = [
+							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a')
+						];
 					},
 
 					renderUI: function() {
@@ -160,6 +176,7 @@ AUI.add(
 						var instance = this;
 
 						field.set('builder', instance);
+						field.set('parent', instance);
 
 						field.render();
 					},
@@ -192,6 +209,7 @@ AUI.add(
 
 						return new Liferay.DDL.LayoutDeserializer(
 							{
+								builder: instance,
 								definition: instance.get('definition')
 							}
 						);

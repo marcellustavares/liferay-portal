@@ -10,28 +10,7 @@ AUI.add(
 			initializer: function() {
 				var instance = this;
 
-				var controls = instance._getPaginationControlsNode();
-
-				if (controls) {
-					instance._eventHandlers.push(
-						controls.delegate('click', A.bind('_onClickPaginationControls', instance), 'button')
-					);
-
-					instance._syncPaginationControlsUI();
-				}
-
-				var container = instance.get('container');
-
-				var wizardNode = container.one('.lfr-ddm-form-wizard');
-
-				if (wizardNode) {
-					instance.wizard = new Renderer.Wizard(
-						{
-							boundingBox: wizardNode,
-							srcNode: wizardNode.one('> ul')
-						}
-					).render();
-				}
+				instance.after('render', instance._afterPaginatedFormRender);
 			},
 
 			getCurrentPage: function() {
@@ -103,6 +82,33 @@ AUI.add(
 				var pagination = instance.getPagination();
 
 				pagination.prev();
+			},
+
+			_afterPaginatedFormRender: function() {
+				var instance = this;
+
+				var controls = instance._getPaginationControlsNode();
+
+				if (controls) {
+					instance._eventHandlers.push(
+						controls.delegate('click', A.bind('_onClickPaginationControls', instance), 'button')
+					);
+
+					instance._syncPaginationControlsUI();
+				}
+
+				var container = instance.get('container');
+
+				var wizardNode = container.one('.lfr-ddm-form-wizard');
+
+				if (container.inDoc() && wizardNode) {
+					instance.wizard = new Renderer.Wizard(
+						{
+							boundingBox: wizardNode,
+							srcNode: wizardNode.one('> ul')
+						}
+					).render();
+				}
 			},
 
 			_afterPaginationPageChange: function(event) {
