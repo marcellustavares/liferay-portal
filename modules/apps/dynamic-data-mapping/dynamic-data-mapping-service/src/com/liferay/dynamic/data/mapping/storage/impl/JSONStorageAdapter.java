@@ -25,8 +25,11 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.BaseStorageAdapter;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.util.List;
 
@@ -40,6 +43,8 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 			long companyId, long ddmStructureId, DDMFormValues ddmFormValues,
 			ServiceContext serviceContext)
 		throws Exception {
+
+		validate(ddmFormValues);
 
 		long classNameId = PortalUtil.getClassNameId(
 			DDMContent.class.getName());
@@ -64,6 +69,8 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 			long classPK, DDMFormValues ddmFormValues,
 			ServiceContext serviceContext)
 		throws Exception {
+
+		validate(ddmFormValues);
 
 		DDMContent ddmContent = DDMContentLocalServiceUtil.getContent(classPK);
 
@@ -120,6 +127,21 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 				ddmStructure.getDDMForm(), ddmContent.getData());
 
 		return ddmFormValues;
+	}
+
+	protected DDMFormValuesValidator getDDMFormValuesValidator() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		return registry.getService(DDMFormValuesValidator.class);
+	}
+
+	protected void validate(DDMFormValues ddmFormValues) throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		DDMFormValuesValidator ddmFormValuesValidator = registry.getService(
+			DDMFormValuesValidator.class);
+
+		ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
 }

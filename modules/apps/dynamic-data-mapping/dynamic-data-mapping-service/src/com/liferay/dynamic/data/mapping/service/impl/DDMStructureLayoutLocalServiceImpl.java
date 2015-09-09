@@ -20,11 +20,14 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.service.base.DDMStructureLayoutLocalServiceBaseImpl;
+import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 /**
  * @author Marcellus Tavares
@@ -40,6 +43,8 @@ public class DDMStructureLayoutLocalServiceImpl
 		throws PortalException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
+
+		validate(ddmFormLayout);
 
 		long structureLayoutId = counterLocalService.increment();
 
@@ -100,10 +105,23 @@ public class DDMStructureLayoutLocalServiceImpl
 		DDMStructureLayout structureLayout =
 			ddmStructureLayoutPersistence.findByPrimaryKey(structureLayoutId);
 
+		validate(ddmFormLayout);
+
 		structureLayout.setDefinition(
 			DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout));
 
 		return ddmStructureLayoutPersistence.update(structureLayout);
+	}
+
+	protected void validate(DDMFormLayout ddmFormLayout)
+		throws PortalException {
+
+		Registry registry = RegistryUtil.getRegistry();
+
+		DDMFormLayoutValidator ddmFormLayoutValidator = registry.getService(
+			DDMFormLayoutValidator.class);
+
+		ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
 
 }
