@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.web.lar;
 
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -241,6 +242,9 @@ public class DDMStructureStagedModelDataHandler
 		if (defaultUserId == structure.getUserId()) {
 			structureElement.addAttribute("preloaded", "true");
 		}
+
+		structure.setDDMForm(
+			DDMFormJSONDeserializerUtil.deserialize(structure.getDefinition()));
 
 		portletDataContext.addClassedModel(
 			structureElement, ExportImportPathUtil.getModelPath(structure),
