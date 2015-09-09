@@ -1045,12 +1045,11 @@ public class DDMStructureLocalServiceUtil {
 	*/
 	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
-		int status) {
+		java.lang.String keywords, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
 		return getService()
-				   .search(companyId, groupIds, classNameId, keywords, start,
-			end, orderByComparator, status);
+				   .search(companyId, groupIds, classNameId, keywords, status,
+			start, end, orderByComparator);
 	}
 
 	/**
@@ -1088,14 +1087,13 @@ public class DDMStructureLocalServiceUtil {
 	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
 		java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
-		int status) {
+		java.lang.String storageType, int type, int status,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
 		return getService()
 				   .search(companyId, groupIds, classNameId, name, description,
-			storageType, type, andOperator, start, end, orderByComparator,
-			status);
+			storageType, type, status, andOperator, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -1136,10 +1134,10 @@ public class DDMStructureLocalServiceUtil {
 	*/
 	public static int searchCount(long companyId, long[] groupIds,
 		long classNameId, java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator, int status) {
+		java.lang.String storageType, int type, int status, boolean andOperator) {
 		return getService()
 				   .searchCount(companyId, groupIds, classNameId, name,
-			description, storageType, type, andOperator, status);
+			description, storageType, type, status, andOperator);
 	}
 
 	/**
