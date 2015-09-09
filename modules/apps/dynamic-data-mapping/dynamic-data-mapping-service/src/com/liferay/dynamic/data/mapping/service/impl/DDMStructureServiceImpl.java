@@ -555,8 +555,8 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	@Override
 	public List<DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId, String keywords,
-		int start, int end, OrderByComparator<DDMStructure> orderByComparator,
-		int status) {
+		int status, int start, int end,
+		OrderByComparator<DDMStructure> orderByComparator) {
 
 		return ddmStructureFinder.filterFindByKeywords(
 			companyId, groupIds, classNameId, keywords, status, start, end,
@@ -600,9 +600,9 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	@Override
 	public List<DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId, String name,
-		String description, String storageType, int type, boolean andOperator,
-		int start, int end, OrderByComparator<DDMStructure> orderByComparator,
-		int status) {
+		String description, String storageType, int type, int status,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMStructure> orderByComparator) {
 
 		return ddmStructureFinder.filterFindByC_G_C_N_D_S_T_S(
 			companyId, groupIds, classNameId, name, description, storageType,
@@ -652,8 +652,8 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 	@Override
 	public int searchCount(
 		long companyId, long[] groupIds, long classNameId, String name,
-		String description, String storageType, int type, boolean andOperator,
-		int status) {
+		String description, String storageType, int type, int status,
+		boolean andOperator) {
 
 		return ddmStructureFinder.filterCountByC_G_C_N_D_S_T_S(
 			companyId, groupIds, classNameId, name, description, storageType,

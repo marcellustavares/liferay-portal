@@ -274,7 +274,7 @@ public class DDMStructureFinderImpl
 
 			if (status == WorkflowConstants.STATUS_ANY) {
 				sql = StringUtil.replace(
-					sql, "AND DDMStructureVersion.status = ?",
+					sql, "AND (DDMStructureVersion.status = ?)",
 					StringPool.BLANK);
 			}
 
@@ -358,7 +358,7 @@ public class DDMStructureFinderImpl
 
 			if (status == WorkflowConstants.STATUS_ANY) {
 				sql = StringUtil.replace(
-					sql, "AND DDMStructureVersion.status = ?",
+					sql, "AND (DDMStructureVersion.status = ?)",
 					StringPool.BLANK);
 			}
 
