@@ -559,8 +559,8 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 		int status) {
 
 		return ddmStructureFinder.filterFindByKeywords(
-			companyId, groupIds, classNameId, keywords, start, end,
-			orderByComparator, status);
+			companyId, groupIds, classNameId, keywords, status, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -606,7 +606,7 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 
 		return ddmStructureFinder.filterFindByC_G_C_N_D_S_T_S(
 			companyId, groupIds, classNameId, name, description, storageType,
-			type, andOperator, start, end, orderByComparator, status);
+			type, status, andOperator, start, end, orderByComparator);
 	}
 
 	/**
@@ -657,7 +657,7 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 
 		return ddmStructureFinder.filterCountByC_G_C_N_D_S_T_S(
 			companyId, groupIds, classNameId, name, description, storageType,
-			type, andOperator, status);
+			type, status, andOperator);
 	}
 
 	@Override
