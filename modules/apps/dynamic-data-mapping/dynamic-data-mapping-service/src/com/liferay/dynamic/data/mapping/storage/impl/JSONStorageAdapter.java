@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.storage.impl;
 
-import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMContent;
@@ -27,9 +26,6 @@ import com.liferay.dynamic.data.mapping.storage.BaseStorageAdapter;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.registry.Registry;
@@ -48,7 +44,7 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		validateDDMFormValues(ddmFormValues);
+		validate(ddmFormValues);
 
 		long classNameId = PortalUtil.getClassNameId(
 			DDMContent.class.getName());
@@ -74,7 +70,7 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		validateDDMFormValues(ddmFormValues);
+		validate(ddmFormValues);
 
 		DDMContent ddmContent = DDMContentLocalServiceUtil.getContent(classPK);
 
@@ -134,33 +130,18 @@ public class JSONStorageAdapter extends BaseStorageAdapter {
 	}
 
 	protected DDMFormValuesValidator getDDMFormValuesValidator() {
-		try {
-			Registry registry = RegistryUtil.getRegistry();
+		Registry registry = RegistryUtil.getRegistry();
 
-			return registry.getService(DDMFormValuesValidator.class);
-		}
-		catch (NullPointerException npe) {
-			_log.error(npe.getMessage(), npe);
-
-			throw npe;
-		}
+		return registry.getService(DDMFormValuesValidator.class);
 	}
 
-	protected void validateDDMFormValues(DDMFormValues ddmFormValues)
-		throws PortalException {
+	protected void validate(DDMFormValues ddmFormValues) throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
 
-		try {
-			DDMFormValuesValidator ddmFormValuesValidator =
-				getDDMFormValuesValidator();
+		DDMFormValuesValidator ddmFormValuesValidator = registry.getService(
+			DDMFormValuesValidator.class);
 
-			ddmFormValuesValidator.validate(ddmFormValues);
-		}
-		catch (StorageException se) {
-			throw se;
-		}
+		ddmFormValuesValidator.validate(ddmFormValues);
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		JSONStorageAdapter.class);
 
 }

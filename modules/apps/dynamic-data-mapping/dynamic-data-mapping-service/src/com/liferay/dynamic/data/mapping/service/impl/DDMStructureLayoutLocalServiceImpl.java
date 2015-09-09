@@ -20,11 +20,8 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.service.base.DDMStructureLayoutLocalServiceBaseImpl;
-import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidator;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
@@ -47,7 +44,7 @@ public class DDMStructureLayoutLocalServiceImpl
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
-		validateDDMFormLayout(ddmFormLayout);
+		validate(ddmFormLayout);
 
 		long structureLayoutId = counterLocalService.increment();
 
@@ -108,7 +105,7 @@ public class DDMStructureLayoutLocalServiceImpl
 		DDMStructureLayout structureLayout =
 			ddmStructureLayoutPersistence.findByPrimaryKey(structureLayoutId);
 
-		validateDDMFormLayout(ddmFormLayout);
+		validate(ddmFormLayout);
 
 		structureLayout.setDefinition(
 			DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout));
@@ -116,34 +113,15 @@ public class DDMStructureLayoutLocalServiceImpl
 		return ddmStructureLayoutPersistence.update(structureLayout);
 	}
 
-	protected DDMFormLayoutValidator getDDMFormLayoutValidator() {
-		try {
-			Registry registry = RegistryUtil.getRegistry();
+	protected void validate(DDMFormLayout ddmFormLayout)
+		throws PortalException {
 
-			return registry.getService(DDMFormLayoutValidator.class);
-		}
-		catch (NullPointerException npe) {
-			_log.error(npe.getMessage(), npe);
+		Registry registry = RegistryUtil.getRegistry();
 
-			throw npe;
-		}
+		DDMFormLayoutValidator ddmFormLayoutValidator = registry.getService(
+			DDMFormLayoutValidator.class);
+
+		ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
-
-	protected void validateDDMFormLayout(DDMFormLayout ddmFormLayout)
-		throws DDMFormLayoutValidationException {
-
-		try {
-			DDMFormLayoutValidator ddmFormLayoutValidator =
-				getDDMFormLayoutValidator();
-
-			ddmFormLayoutValidator.validate(ddmFormLayout);
-		}
-		catch (DDMFormLayoutValidationException ddmflve) {
-			throw ddmflve;
-		}
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMStructureLayoutLocalServiceImpl.class);
 
 }
