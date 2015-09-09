@@ -455,10 +455,11 @@ public class DDMStructureServiceUtil {
 	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> search(
 		long companyId, long[] groupIds, long classNameId,
 		java.lang.String keywords, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
+		int status) {
 		return getService()
 				   .search(companyId, groupIds, classNameId, keywords, start,
-			end, orderByComparator);
+			end, orderByComparator, status);
 	}
 
 	/**
@@ -500,10 +501,12 @@ public class DDMStructureServiceUtil {
 		java.lang.String name, java.lang.String description,
 		java.lang.String storageType, int type, boolean andOperator, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
+		int status) {
 		return getService()
 				   .search(companyId, groupIds, classNameId, name, description,
-			storageType, type, andOperator, start, end, orderByComparator);
+			storageType, type, andOperator, start, end, orderByComparator,
+			status);
 	}
 
 	/**
@@ -519,9 +522,10 @@ public class DDMStructureServiceUtil {
 	* @return the number of matching structures
 	*/
 	public static int searchCount(long companyId, long[] groupIds,
-		long classNameId, java.lang.String keywords) {
+		long classNameId, java.lang.String keywords, int status) {
 		return getService()
-				   .searchCount(companyId, groupIds, classNameId, keywords);
+				   .searchCount(companyId, groupIds, classNameId, keywords,
+			status);
 	}
 
 	/**
@@ -545,10 +549,10 @@ public class DDMStructureServiceUtil {
 	*/
 	public static int searchCount(long companyId, long[] groupIds,
 		long classNameId, java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator) {
+		java.lang.String storageType, int type, boolean andOperator, int status) {
 		return getService()
 				   .searchCount(companyId, groupIds, classNameId, name,
-			description, storageType, type, andOperator);
+			description, storageType, type, andOperator, status);
 	}
 
 	/**

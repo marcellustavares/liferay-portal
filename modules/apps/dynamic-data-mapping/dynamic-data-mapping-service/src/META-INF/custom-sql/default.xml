@@ -1,40 +1,48 @@
 <?xml version="1.0"?>
 
 <custom-sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMStructureFinder.countByC_G_C_N_D_S_T">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMStructureFinder.countByC_G_C_N_D_S_T_S">
 		<![CDATA[
 			SELECT
 				COUNT(DDMStructure.structureId) AS COUNT_VALUE
 			FROM
 				DDMStructure
+			INNER JOIN
+				DDMStructureVersion ON
+					(DDMStructureVersion.structureId = DDMStructure.structureId)
 			WHERE
-				(companyId = ?) AND
+				(DDMStructure.companyId = ?) AND
 				[$GROUP_ID$]
-				(classNameId = ?) AND
+				(DDMStructure.classNameId = ?) AND
 				(
-					(lower(CAST_TEXT(name)) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
-					(description LIKE ? [$AND_OR_NULL_CHECK$])
+					(lower(CAST_TEXT(DDMStructure.name)) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
+					(DDMStructure.description LIKE ? [$AND_OR_NULL_CHECK$])
 				) AND
-				(storageType = ? OR ? IS NULL) AND
-				(type_ = ?)
+				(DDMStructure.storageType = ? OR ? IS NULL) AND
+				(DDMStructure.type_ = ?) AND
+				(DDMStructureVersion.status = ?)
 		]]>
 	</sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMStructureFinder.findByC_G_C_N_D_S_T">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMStructureFinder.findByC_G_C_N_D_S_T_S">
 		<![CDATA[
 			SELECT
 				{DDMStructure.*}
 			FROM
 				DDMStructure
+			INNER JOIN
+				DDMStructureVersion ON
+					(DDMStructureVersion.structureId = DDMStructure.structureId)
 			WHERE
-				(companyId = ?) AND
+				(DDMStructure.companyId = ?) AND
 				[$GROUP_ID$]
-				(classNameId = ?) AND
+				(DDMStructure.classNameId = ?) AND
 				(
-					(lower(CAST_TEXT(name)) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
-					(description LIKE ? [$AND_OR_NULL_CHECK$])
+					(lower(CAST_TEXT(DDMStructure.name)) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
+					(DDMStructure.description LIKE ? [$AND_OR_NULL_CHECK$])
 				) AND
-				(storageType = ? OR ? IS NULL) AND
-				(type_ = ?)
+				(DDMStructure.storageType = ? OR ? IS NULL) AND
+				(DDMStructure.type_ = ?) AND
+				(DDMStructureVersion.status = ?)
 			ORDER BY
 				DDMStructure.structureId DESC
 		]]>
