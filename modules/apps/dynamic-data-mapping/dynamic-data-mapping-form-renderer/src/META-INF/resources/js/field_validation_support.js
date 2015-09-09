@@ -12,7 +12,7 @@ AUI.add(
 
 		FieldValidationSupport.ATTRS = {
 			evaluator: {
-				valueFn: '_valueEvaluator'
+				getter: '_getEvaluator'
 			},
 
 			strings: {
@@ -31,11 +31,7 @@ AUI.add(
 			initializer: function() {
 				var instance = this;
 
-				var evaluator = instance.get('evaluator');
-
 				instance._eventHandlers.push(
-					evaluator.after('evaluationEnded', A.bind('_afterEvaluationEnded', instance)),
-					evaluator.after('evaluationStarted', A.bind('_afterEvaluationStarted', instance)),
 					instance.after('blur', instance._afterBlur)
 				);
 			},
@@ -52,6 +48,23 @@ AUI.add(
 				var validationExpression = instance.get('validationExpression');
 
 				return !!validationExpression && validationExpression !== 'true';
+			},
+
+			processEvaluation: function(result) {
+				var instance = this;
+
+				if (result && Lang.isObject(result)) {
+					instance.processValidation(result);
+
+					instance.showValidationStatus();
+				}
+				else {
+					var root = instance.getRoot();
+
+					var strings = instance.get('strings');
+
+					root.showAlert(strings.requestErrorMessage);
+				}
 			},
 
 			processValidation: function(result) {
@@ -85,8 +98,14 @@ AUI.add(
 				if (instance.hasValidation()) {
 					var evaluator = instance.get('evaluator');
 
+					instance.showLoadingFeedback();
+
 					evaluator.evaluate(
 						function(result) {
+							instance.hideFeedback();
+
+							instance.processEvaluation(result);
+
 							if (callback) {
 								var hasErrors = instance.hasErrors();
 
@@ -110,34 +129,7 @@ AUI.add(
 				instance.validate();
 			},
 
-			_afterEvaluationEnded: function(event) {
-				var instance = this;
-
-				var result = event.result;
-
-				instance.hideFeedback();
-
-				if (result && Lang.isObject(result)) {
-					instance.processValidation(result);
-
-					instance.showValidationStatus();
-				}
-				else {
-					var root = instance.getRoot();
-
-					var strings = instance.get('strings');
-
-					root.showAlert(strings.requestErrorMessage);
-				}
-			},
-
-			_afterEvaluationStarted: function() {
-				var instance = this;
-
-				instance.showLoadingFeedback();
-			},
-
-			_valueEvaluator: function() {
+			_getEvaluator: function() {
 				var instance = this;
 
 				return new Renderer.ExpressionsEvaluator(
