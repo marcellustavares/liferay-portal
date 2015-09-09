@@ -687,13 +687,13 @@ public class DDMStructureServiceSoap {
 	*/
 	public static com.liferay.dynamic.data.mapping.model.DDMStructureSoap[] search(
 		long companyId, long[] groupIds, long classNameId,
-		java.lang.String keywords, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
-		int status) throws RemoteException {
+		java.lang.String keywords, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator)
+		throws RemoteException {
 		try {
 			java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> returnValue =
 				DDMStructureServiceUtil.search(companyId, groupIds,
-					classNameId, keywords, start, end, orderByComparator, status);
+					classNameId, keywords, status, start, end, orderByComparator);
 
 			return com.liferay.dynamic.data.mapping.model.DDMStructureSoap.toSoapModels(returnValue);
 		}
@@ -741,15 +741,15 @@ public class DDMStructureServiceSoap {
 	public static com.liferay.dynamic.data.mapping.model.DDMStructureSoap[] search(
 		long companyId, long[] groupIds, long classNameId,
 		java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator,
-		int status) throws RemoteException {
+		java.lang.String storageType, int type, int status,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructure> orderByComparator)
+		throws RemoteException {
 		try {
 			java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> returnValue =
 				DDMStructureServiceUtil.search(companyId, groupIds,
-					classNameId, name, description, storageType, type,
-					andOperator, start, end, orderByComparator, status);
+					classNameId, name, description, storageType, type, status,
+					andOperator, start, end, orderByComparator);
 
 			return com.liferay.dynamic.data.mapping.model.DDMStructureSoap.toSoapModels(returnValue);
 		}
@@ -809,12 +809,12 @@ public class DDMStructureServiceSoap {
 	*/
 	public static int searchCount(long companyId, long[] groupIds,
 		long classNameId, java.lang.String name, java.lang.String description,
-		java.lang.String storageType, int type, boolean andOperator, int status)
+		java.lang.String storageType, int type, int status, boolean andOperator)
 		throws RemoteException {
 		try {
 			int returnValue = DDMStructureServiceUtil.searchCount(companyId,
 					groupIds, classNameId, name, description, storageType,
-					type, andOperator, status);
+					type, status, andOperator);
 
 			return returnValue;
 		}
