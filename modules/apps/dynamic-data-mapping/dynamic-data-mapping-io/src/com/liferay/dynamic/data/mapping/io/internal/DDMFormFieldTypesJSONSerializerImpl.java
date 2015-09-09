@@ -307,7 +307,7 @@ public class DDMFormFieldTypesJSONSerializerImpl
 		}
 
 		private String _category;
-		private String _name;
+		private final String _name;
 		private int _weight;
 
 	}

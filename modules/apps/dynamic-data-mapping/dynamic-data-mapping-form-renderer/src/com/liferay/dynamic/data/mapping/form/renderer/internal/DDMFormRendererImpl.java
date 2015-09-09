@@ -114,14 +114,19 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			template.put(TemplateConstants.NAMESPACE, "ddm.paginated_form");
 		}
 
-		populateCommonContext(template, ddmForm, ddmFormRenderingContext);
-
 		List<Object> pages = getPages(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
 		template.put("pages", pages);
 
-		return render(template);
+		String markup = render(template);
+//
+		populateCommonContext(template, ddmForm, ddmFormRenderingContext);
+//		template.put(TemplateConstants.NAMESPACE, "ddm.form_renderer_js");
+//
+//		String javascript = render(template);
+
+		return markup;// + javascript;
 	}
 
 	protected String doRender(
