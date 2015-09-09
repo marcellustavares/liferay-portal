@@ -121,7 +121,13 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 		template.put("pages", pages);
 
-		return render(template);
+		String markup = render(template);
+
+		template.put(TemplateConstants.NAMESPACE, "ddm.form_renderer_js");
+
+		String javascript = render(template);
+
+		return markup + javascript;
 	}
 
 	protected String doRender(
