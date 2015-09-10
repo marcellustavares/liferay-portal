@@ -140,6 +140,21 @@ AUI.add(
 						return fields;
 					},
 
+					_getPageManagerInstance: function(config) {
+						var contentBox = this.get('contentBox');
+
+						if (!this._pageManager) {
+							this._pageManager = new Liferay.DDL.FormBuilderPagesManager(A.merge({
+								pageHeader: contentBox.one('.form-builder-pages-header'),
+								pagesQuantity: this.get('layouts').length,
+								paginationContainer: contentBox.one('.form-builder-pages'),
+								tabviewContainer: contentBox.one('.form-builder-tabs')
+							}, config));
+						}
+
+						return this._pageManager;
+					},
+
 					_getVisitor: function(visitor) {
 						var instance = this;
 
@@ -253,6 +268,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-form-builder', 'aui-form-builder-pages', 'liferay-ddl-form-builder-field', 'liferay-ddl-form-builder-layout-deserializer', 'liferay-ddl-form-builder-layout-visitor', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer']
+		requires: ['aui-form-builder', 'aui-form-builder-pages', 'liferay-ddl-form-builder-pages-manager', 'liferay-ddl-form-builder-field', 'liferay-ddl-form-builder-layout-deserializer', 'liferay-ddl-form-builder-layout-visitor', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-field-types', 'liferay-ddm-form-renderer']
 	}
 );
