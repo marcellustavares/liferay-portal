@@ -30,6 +30,8 @@ OrderByComparator<DDLRecordSet> orderByComparator = DDLFormPortletUtil.getDDLRec
 recordSetSearch.setOrderByCol(orderByCol);
 recordSetSearch.setOrderByComparator(orderByComparator);
 recordSetSearch.setOrderByType(orderByType);
+
+List<DDLRecordSet> ddlRecordSetList = ddlFormAdminDisplayContext.getSearchContainerResults(recordSetSearch);
 %>
 
 <liferay-util:include page="/admin/search_bar.jsp" servletContext="<%= application %>" />
@@ -37,11 +39,17 @@ recordSetSearch.setOrderByType(orderByType);
 <liferay-util:include page="/admin/toolbar.jsp" servletContext="<%= application %>" />
 
 <div class="container-fluid-1280" id="<portlet:namespace />formContainer">
+
+	<c:if test="<%= ddlRecordSetList.isEmpty() %>">
+		<div class="alert alert-info entries-empty">
+			<liferay-ui:message key="no-forms-were-found" />
+		</div>
+	</c:if>
+
 	<aui:form action="<%= portletURL.toString() %>" method="post" name="searchContainerForm">
 		<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
 
 		<liferay-ui:search-container
-			emptyResultsMessage="no-forms-were-found"
 			id="searchContainer"
 			searchContainer="<%= recordSetSearch %>"
 		>
@@ -51,8 +59,8 @@ recordSetSearch.setOrderByType(orderByType);
 			%>
 
 			<liferay-ui:search-container-results
-				results="<%= ddlFormAdminDisplayContext.getSearchContainerResults(searchContainer) %>"
-				total="<%= ddlFormAdminDisplayContext.getSearchContainerTotal(searchContainer) %>"
+				results="<%= ddlRecordSetList %>"
+				total="<%= ddlFormAdminDisplayContext.getSearchContainerTotal(recordSetSearch) %>"
 			/>
 
 			<liferay-ui:search-container-row

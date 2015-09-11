@@ -51,6 +51,8 @@ page import="com.liferay.portal.util.WebKeys" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
 
+<%@ page import="java.util.List" %>
+
 <%@ page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.WindowState" %>
 
