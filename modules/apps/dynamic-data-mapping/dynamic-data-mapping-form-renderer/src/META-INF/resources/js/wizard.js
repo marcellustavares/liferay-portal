@@ -101,7 +101,7 @@ AUI.add(
 						var items = instance.get('items');
 
 						items.forEach(
-							function(item, index){
+							function(item, index) {
 								instance._setState(index, '');
 							}
 						);
@@ -119,7 +119,7 @@ AUI.add(
 						var items = instance.get('items');
 
 						items.push(item);
-						
+
 						instance.set('items', items);
 					},
 
