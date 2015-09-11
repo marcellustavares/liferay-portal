@@ -65,7 +65,7 @@ public class SearchContainerColumnDateTag<R> extends SearchContainerColumnTag {
 			dateSearchEntry.setColspan(getColspan());
 			dateSearchEntry.setCssClass(getCssClass());
 			dateSearchEntry.setDate(_value);
-			dateSearchEntry.setHref(String.valueOf(getHref()));
+			dateSearchEntry.setHref((String)getHref());
 			dateSearchEntry.setValign(getValign());
 
 			resultRow.addSearchEntry(index, dateSearchEntry);
