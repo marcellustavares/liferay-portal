@@ -43,6 +43,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoInstanceTokenLocalService;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoActionPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoConditionPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoDefinitionPersistence;
+import com.liferay.portal.workflow.kaleo.service.persistence.KaleoDraftDefinitionPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstancePersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstanceTokenPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoLogPersistence;
@@ -448,6 +449,63 @@ public abstract class KaleoInstanceTokenLocalServiceBaseImpl
 	public void setKaleoDefinitionPersistence(
 		KaleoDefinitionPersistence kaleoDefinitionPersistence) {
 		this.kaleoDefinitionPersistence = kaleoDefinitionPersistence;
+	}
+
+	/**
+	 * Returns the kaleo draft definition local service.
+	 *
+	 * @return the kaleo draft definition local service
+	 */
+	public com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionLocalService getKaleoDraftDefinitionLocalService() {
+		return kaleoDraftDefinitionLocalService;
+	}
+
+	/**
+	 * Sets the kaleo draft definition local service.
+	 *
+	 * @param kaleoDraftDefinitionLocalService the kaleo draft definition local service
+	 */
+	public void setKaleoDraftDefinitionLocalService(
+		com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionLocalService kaleoDraftDefinitionLocalService) {
+		this.kaleoDraftDefinitionLocalService = kaleoDraftDefinitionLocalService;
+	}
+
+	/**
+	 * Returns the kaleo draft definition remote service.
+	 *
+	 * @return the kaleo draft definition remote service
+	 */
+	public com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionService getKaleoDraftDefinitionService() {
+		return kaleoDraftDefinitionService;
+	}
+
+	/**
+	 * Sets the kaleo draft definition remote service.
+	 *
+	 * @param kaleoDraftDefinitionService the kaleo draft definition remote service
+	 */
+	public void setKaleoDraftDefinitionService(
+		com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionService kaleoDraftDefinitionService) {
+		this.kaleoDraftDefinitionService = kaleoDraftDefinitionService;
+	}
+
+	/**
+	 * Returns the kaleo draft definition persistence.
+	 *
+	 * @return the kaleo draft definition persistence
+	 */
+	public KaleoDraftDefinitionPersistence getKaleoDraftDefinitionPersistence() {
+		return kaleoDraftDefinitionPersistence;
+	}
+
+	/**
+	 * Sets the kaleo draft definition persistence.
+	 *
+	 * @param kaleoDraftDefinitionPersistence the kaleo draft definition persistence
+	 */
+	public void setKaleoDraftDefinitionPersistence(
+		KaleoDraftDefinitionPersistence kaleoDraftDefinitionPersistence) {
+		this.kaleoDraftDefinitionPersistence = kaleoDraftDefinitionPersistence;
 	}
 
 	/**
@@ -1189,6 +1247,12 @@ public abstract class KaleoInstanceTokenLocalServiceBaseImpl
 	protected com.liferay.portal.workflow.kaleo.service.KaleoDefinitionService kaleoDefinitionService;
 	@BeanReference(type = KaleoDefinitionPersistence.class)
 	protected KaleoDefinitionPersistence kaleoDefinitionPersistence;
+	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionLocalService.class)
+	protected com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionLocalService kaleoDraftDefinitionLocalService;
+	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionService.class)
+	protected com.liferay.portal.workflow.kaleo.service.KaleoDraftDefinitionService kaleoDraftDefinitionService;
+	@BeanReference(type = KaleoDraftDefinitionPersistence.class)
+	protected KaleoDraftDefinitionPersistence kaleoDraftDefinitionPersistence;
 	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService.class)
 	protected com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService kaleoInstanceLocalService;
 	@BeanReference(type = KaleoInstancePersistence.class)

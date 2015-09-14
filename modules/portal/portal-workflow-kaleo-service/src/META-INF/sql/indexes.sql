@@ -10,6 +10,8 @@ create index IX_408542BA on KaleoDefinition (companyId, active_);
 create index IX_4C23F11B on KaleoDefinition (companyId, name, active_);
 create index IX_EC14F81A on KaleoDefinition (companyId, name, version);
 
+create unique index IX_A500C06 on KaleoDraftDefinition (companyId, name, version, draftVersion);
+
 create index IX_58D85ECB on KaleoInstance (className, classPK);
 create index IX_BF5839F8 on KaleoInstance (companyId, kaleoDefinitionName, kaleoDefinitionVersion, completionDate);
 create index IX_C6D7A867 on KaleoInstance (companyId, userId);

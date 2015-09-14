@@ -5,6 +5,7 @@
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoAction" />
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoCondition" />
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoDefinition" />
+	<import class="com.liferay.portal.workflow.kaleo.model.KaleoDraftDefinition" />
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoInstance" />
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken" />
 	<import class="com.liferay.portal.workflow.kaleo.model.KaleoLog" />
@@ -73,6 +74,22 @@
 		<property name="version" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="active" type="com.liferay.portal.dao.orm.hibernate.BooleanType" column="active_" />
 		<property name="startKaleoNodeId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
+	<class name="com.liferay.portal.workflow.kaleo.model.impl.KaleoDraftDefinitionImpl" table="KaleoDraftDefinition">
+		<id name="kaleoDraftDefinitionId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="title" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="content" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="version" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+		<property name="draftVersion" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 	</class>
 	<class name="com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceImpl" table="KaleoInstance">
 		<id name="kaleoInstanceId" type="long">

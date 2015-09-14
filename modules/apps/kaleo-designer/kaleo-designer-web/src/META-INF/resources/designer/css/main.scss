@@ -1,0 +1,126 @@
+.actions-cell-editor-hidden, .assignments-cell-editor-hidden, .forms-cell-editor-hidden, .notifications-cell-editor-hidden , .script-cell-editor-hidden {
+	display: none;
+}
+
+.celleditor-actions-view, .celleditor-notifications-view, .celleditor-assignment-view {
+	background: #EEE;
+	border: 1px solid #DBDCDC;
+	margin: 10px 0;
+	padding: 5px;
+}
+
+.celleditor-label {
+	display: block;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.celleditor-label-checkbox {
+	font-weight: bold;
+	padding-left: 3px;
+}
+
+.celleditor-textarea, .celleditor-textarea-small {
+	height: 100px;
+	width: 300px;
+}
+
+.celleditor-textarea-small {
+	height: 100px;
+}
+
+.celleditor-view-menu {
+	text-align: right;
+}
+
+.diagram-builder {
+	height: 600px;
+
+	.property-builder-fields-container {
+		margin: 0;
+	}
+
+	.property-builder-canvas .diagram-node {
+		font-size: 34px;
+		padding-top: 2px;
+		text-align: center;
+
+		&.icon-db-condition, &.icon-db-fork, &.icon-db-join, &.icon-db-joinxor {
+			font-size: 62px;
+			padding-top: 0;
+		}
+
+		&.icon-db-task {
+			font-size: 60px;
+			padding-top: 1px;
+
+			.diagram-node-content .yui3-widget-bd {
+				display: inline-block;
+				margin-top: -4px;
+			}
+		}
+
+		.diagram-node-content {
+			background: transparent;
+
+			.yui3-widget-bd {
+				display: inline;
+			}
+		}
+
+		.diagram-node-label {
+			font-size: 14px;
+			margin-top: 5px;
+			width: auto;
+		}
+	}
+
+	.property-builder-content-content {
+		.tabbable {
+			width: 15%;
+		}
+	}
+
+	.property-builder-field {
+		position: relative;
+		width: 78px;
+
+		.property-builder-field-icon {
+			font-size: 32px;
+		}
+	}
+}
+
+.diagram-node-suggest-connector .popover-content {
+	.diagram-node-label {
+		font-size: 14px;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	.property-builder-field {
+		margin: 5px 0;
+		position: relative;
+		width: 50%;
+
+		.property-builder-field-icon {
+			font-size: 32px;
+		}
+	}
+}
+
+.property-builder-disabled {
+	.property-builder-controls {
+		display: none;
+	}
+
+	.property-builder-field-draggable, .property-builder-anchor-node {
+		cursor: auto;
+	}
+}
+
+.script-cell-editor-content .ace-editor {
+	height: 300px;
+	position: relative;
+	width: 550px;
+}

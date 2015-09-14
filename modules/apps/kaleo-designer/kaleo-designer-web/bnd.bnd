@@ -1,0 +1,17 @@
+Bundle-Name: Kaleo Designer Web
+Bundle-SymbolicName: com.liferay.kaleo.designer.web
+Bundle-Version: 1.0.0
+Import-Package:\
+	com.liferay.portal.kernel.messaging.config,\
+	com.liferay.portal.kernel.messaging.proxy,\
+	com.liferay.portal.kernel.scheduler.messaging,\
+	com.liferay.portal.kernel.workflow.comparator,\
+	com.liferay.portal.kernel.workflow.messaging,\
+	com.liferay.portal.workflow.kaleo.service,\
+	com.liferay.portal.workflow.kaleo.exception,\
+	com.liferay.portal.workflow.kaleo.model,\
+	*
+Include-Resource:\
+	classes,\
+	META-INF/resources=src/META-INF/resources
+Web-ContextPath: /kaleo-designer-web

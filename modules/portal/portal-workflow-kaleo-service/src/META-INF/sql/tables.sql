@@ -51,6 +51,21 @@ create table KaleoDefinition (
 	startKaleoNodeId LONG
 );
 
+create table KaleoDraftDefinition (
+	kaleoDraftDefinitionId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	userName VARCHAR(75) null,
+	createDate DATE null,
+	modifiedDate DATE null,
+	name VARCHAR(75) null,
+	title STRING null,
+	content VARCHAR(75) null,
+	version INTEGER,
+	draftVersion INTEGER
+);
+
 create table KaleoInstance (
 	kaleoInstanceId LONG not null primary key,
 	groupId LONG,
