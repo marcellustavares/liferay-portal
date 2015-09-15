@@ -140,6 +140,19 @@ AUI.add(
 						return fields;
 					},
 
+					_buidUI: function(){
+						var contentBox = this.get('contentBox'),
+							headerTemplate = A.Lang.sub(this.TPL_HEADER, {
+								formTitle: this.get('strings').formTitle
+							});
+
+						contentBox.append(this.TPL_TABVIEW);
+						contentBox.append(this.TPL_PAGE_HEADER);
+						contentBox.append(headerTemplate);
+						contentBox.append(this.TPL_LAYOUT);
+						contentBox.append(this.TPL_PAGES);
+					},
+
 					_getPageManagerInstance: function(config) {
 						var instance = this;
 
@@ -152,7 +165,8 @@ AUI.add(
 										pageHeader: contentBox.one('.form-builder-pages-header'),
 										pagesQuantity: instance.get('layouts').length,
 										paginationContainer: contentBox.one('.form-builder-pages'),
-										tabviewContainer: contentBox.one('.form-builder-tabs')
+										tabviewContainer: contentBox.one('.form-builder-tabs'),
+										mode: 'wizard'
 									},
 									config
 								)
