@@ -1,28 +1,50 @@
 @import "bourbon";
 
 .portlet-forms {
-	.form-builder-header-title {
-		display: none;
-	}
-
 	.aspect-ratio img {
 	    top: 0;
 	}
 
+	.form-builder-header-title {
+		display: none;
+	}
+
+	.form-builder-tabview {
+		padding: 20px 70px 11px 34px;
+		border: 1px solid #dee4e9;
+		position: relative;
+	}
+
+	.form-builder-page-header {
+		position: relative;
+	}
+
+	.form-builder-page-header,
+	.form-builder-tabview {
+		.form-builder-controls-trigger  {
+			position: absolute;
+			right: 20px;
+			top: 40px;
+		}
+	}
+
+	.form-builder-controls-trigger {
+		font-size: 20px;
+	}
+
 	.ddl-form-builder-basic-info {
-		margin-top: -25px;
+		height: 300px;
+		background-color: #869cad;
 
-		.ddl-form-builder-description .alloy-editor.alloy-editor-placeholder {
-			font-weight: 400;
-		}
+		.ddl-form-builder-name,
+		.ddl-form-builder-description {
+			h1,h2,h3,h4,h5,h6,p {
+				margin: 0;
+			}
 
-		.ddl-form-builder-name .alloy-editor.alloy-editor-placeholder {
-			font-weight: 300;
-		}
-
-		.ddl-form-builder-description, .ddl-form-builder-name {
 			.alloy-editor.alloy-editor-placeholder {
-				padding-left: 0;
+				margin: 0;
+				color: white;
 
 				&:empty:not(:focus) {
 					border-width: 0;
@@ -34,21 +56,38 @@
 				top: -15px;
 			}
 		}
+
+		.ddl-form-builder-name {
+			padding: 52px 0 0 0;
+
+			.alloy-editor.alloy-editor-placeholder {
+				font-size: 32px;
+				font-weight: 300;
+				line-height: 32px;
+			}
+		}
+
+		.ddl-form-builder-description {
+			padding: 23px 0 0 0;
+
+			.alloy-editor.alloy-editor-placeholder {
+				font-size: 14px;
+				font-weight: 400;
+				line-height: 24px;
+			}
+		}
+
 	}
 
 	.ddl-form-builder-app {
-		background-color: #F5F5F5;
-		margin-left: -40px;
-		margin-right: -25px;
-		padding-left: 40px;
-		padding-right: 25px;
+		margin-top: -120px;
 
 		.form-builder-header {
 			display: none;
 		}
 
 		.form-builder-layout {
-			margin: 3px auto;
+			margin: 0 auto;
 			width: auto;
 
 			.layout-builder-add-row-area {
@@ -65,10 +104,10 @@
 					.col {
 						border-radius: 0;
 						border-width: 0;
-						min-height: 100px;
+						min-height: 50px;
 
 						.form-group {
-							min-height: 60px;
+							min-height: 40px;
 						}
 					}
 				}
@@ -76,7 +115,10 @@
 		}
 
 		.form-builder-content {
-			background: transparent;
+			background: #fff;
+			border: 1px solid #dce0e3;
+			border-radius: 1px;
+			box-shadow: 0 2px 4px rgba(188, 197, 204, 0.3);
 			margin: 0 auto;
 			width: auto;
 
@@ -93,12 +135,12 @@
 					border-width: 0;
 
 					&.form-builder-page-header-description {
-						margin-bottom: 5px;
+						margin-bottom: 17px;
 						padding-top: 0;
 					}
 
 					&.form-builder-page-header-title {
-						margin: 10px 0 0 0;
+						margin: 19px 0 0 0;
 						padding-bottom: 0;
 					}
 
@@ -107,13 +149,11 @@
 					}
 				}
 			}
+		}
 
-			.form-builder-pages {
-				width: auto;
-
-				.pagination .pagination-content li.active a {
-					z-index: 0;
-				}
+		.form-builder-pages {
+			li.active a {
+				z-index: 0;
 			}
 		}
 	}
@@ -128,6 +168,12 @@
 		position: absolute;
 		right: 15px;
 		top: 0;
+	}
+
+	.liferay-ddm-form-renderer-wizard-navigation-allowed {
+		> li {
+			cursor: pointer;
+		}
 	}
 }
 
@@ -213,5 +259,30 @@
 			display: inline-block;
 			margin: -2px 0 0 4px;
 		}
+	}
+}
+
+.form-builder-page-manager-popover-header.popover.left > .arrow {
+	margin-left: 19px;
+}
+
+.form-builder-page-manager-popover-header  {
+	.popover-content {
+	 	padding: 7px 21px;
+	}
+
+	ul {
+	 	margin: 0;
+	 	padding: 0;
+	}
+
+	li {
+	 	list-style-type: none;
+		color: #869cad;
+		cursor: pointer;
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 16px;
+		padding: 11px 0 11px 0;
 	}
 }

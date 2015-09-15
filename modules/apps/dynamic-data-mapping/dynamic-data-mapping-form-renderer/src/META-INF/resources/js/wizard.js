@@ -69,6 +69,14 @@ AUI.add(
 				prototype: {
 					CONTENT_TEMPLATE: '<ul class="multi-step-progress-bar"></ul>',
 
+					renderUI: function() {
+						var instance = this;
+
+						if (instance.get('allowNavigation')) {
+							instance.get('contentBox').addClass('liferay-ddm-form-renderer-wizard-navigation-allowed')
+						}
+					},
+
 					bindUI: function() {
 						var instance = this;
 
