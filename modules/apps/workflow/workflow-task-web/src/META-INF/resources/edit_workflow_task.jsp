@@ -16,6 +16,10 @@
 
 <%@ include file="/init.jsp" %>
 
+<portlet:renderURL var="backURL">
+	<portlet:param name="mvcPath" value="/view.jsp" />
+</portlet:renderURL>
+
 <%
 String randomId = StringUtil.randomId();
 
@@ -39,17 +43,12 @@ if (assetRenderer != null) {
 String headerTitle = workflowTaskDisplayContext.getHeaderTitle(workflowTask);
 
 boolean showEditURL = workflowTaskDisplayContext.showEditURL(workflowTask);
+
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(backURL.toString());
+
+renderResponse.setTitle(headerTitle);
 %>
-
-<portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath" value="/view.jsp" />
-</portlet:renderURL>
-
-<liferay-ui:header
-	backURL="<%= backURL.toString() %>"
-	localizeTitle="<%= false %>"
-	title="<%= headerTitle %>"
-/>
 
 <aui:row>
 	<aui:col cssClass="lfr-asset-column lfr-asset-column-details" width="<%= 75 %>">
@@ -99,7 +98,7 @@ boolean showEditURL = workflowTaskDisplayContext.showEditURL(workflowTask);
 			<aui:col width="<%= 50 %>">
 				<aui:input name="createDate" type="resource" value="<%= workflowTaskDisplayContext.getCreateDate(workflowTask) %>" />
 
-				<aui:input inlineField="<%= true %>" name="dueDate" type="resource" value="<%= workflowTaskDisplayContext.getDueDate(workflowTask) %>" />
+				<aui:input inlineField="<%= true %>" name="dueDate" type="resource" value="<%= workflowTaskDisplayContext.getDueDateAsString(workflowTask) %>" />
 
 				<c:if test="<%= !workflowTask.isCompleted() %>">
 					<portlet:actionURL name="updateWorkflowTask" var="updateDueDateURL">
@@ -241,7 +240,3 @@ boolean showEditURL = workflowTaskDisplayContext.showEditURL(workflowTask);
 	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskAssignLink', onTaskClickFn);
 	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskDueDateLink', onTaskClickFn);
 </aui:script>
-
-<%
-PortalUtil.addPortletBreadcrumbEntry(request, headerTitle, currentURL);
-%>

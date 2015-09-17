@@ -16,6 +16,10 @@
 
 <%@ include file="/init.jsp" %>
 
+<portlet:renderURL var="backURL">
+	<portlet:param name="mvcPath" value="/view.jsp" />
+</portlet:renderURL>
+
 <%
 WorkflowInstanceEditDisplayContext workflowInstanceEditDisplayContext = null;
 
@@ -25,17 +29,12 @@ if (portletName.equals(WorkflowInstancePortletKeys.WORKFLOW_INSTANCE)) {
 else {
 	workflowInstanceEditDisplayContext = new MyWorkflowInstanceEditDisplayContext(renderRequest, renderResponse);
 }
+
+portletDisplay.setShowBackIcon(true);
+portletDisplay.setURLBack(backURL.toString());
+
+renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 %>
-
-<portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath" value="/view.jsp" />
-</portlet:renderURL>
-
-<liferay-ui:header
-	backURL="<%= backURL.toString() %>"
-	localizeTitle="<%= false %>"
-	title="<%= workflowInstanceEditDisplayContext.getHeaderTitle() %>"
-/>
 
 <aui:row>
 	<aui:col cssClass="lfr-asset-column lfr-asset-column-details" width="<%= 75 %>">
@@ -153,7 +152,7 @@ else {
 							/>
 
 						</liferay-ui:search-container-row>
-						<liferay-ui:search-iterator />
+						<liferay-ui:search-iterator displayStyle="list" markupView="lexicon" />
 					</liferay-ui:search-container>
 				</liferay-ui:panel>
 			</c:if>
@@ -184,7 +183,3 @@ else {
 		<liferay-util:include page="/workflow_instance_action.jsp" servletContext="<%= application %>" />
 	</aui:col>
 </aui:row>
-
-<%
-PortalUtil.addPortletBreadcrumbEntry(request, workflowInstanceEditDisplayContext.getHeaderTitle(), currentURL);
-%>

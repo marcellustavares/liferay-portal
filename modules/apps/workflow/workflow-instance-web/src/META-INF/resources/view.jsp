@@ -25,35 +25,48 @@ if (portletName.equals(WorkflowInstancePortletKeys.WORKFLOW_INSTANCE)) {
 else {
 	workflowInstanceViewDisplayContext = new MyWorkflowInstanceViewDisplayContext(renderRequest, renderResponse);
 }
-
-PortletURL portletURL = workflowInstanceViewDisplayContext.getViewPortletURL();
 %>
 
-<liferay-ui:tabs
-	names="pending,completed"
-	param="tabs2"
-	portletURL="<%= portletURL %>"
-/>
+<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
+	<aui:nav cssClass="navbar-nav">
 
-<%
-try {
-%>
+		<portlet:renderURL var="viewPendingURL">
+			<portlet:param name="mvcPath" value="/view.jsp" />
+			<portlet:param name="tabs2" value="pending" />
+		</portlet:renderURL>
 
-	<liferay-ui:search-container
-		emptyResultsMessage="<%= workflowInstanceViewDisplayContext.getSearchContainerEmptyResultsMessage() %>"
-		iteratorURL="<%= portletURL %>"
-	>
-
-		<liferay-ui:search-container-results
-			results="<%= workflowInstanceViewDisplayContext.getSearchContainerResults(searchContainer.getStart(), searchContainer.getEnd()) %>"
-			total="<%= workflowInstanceViewDisplayContext.getSearchContainerTotal() %>"
+		<aui:nav-item
+			href="<%= viewPendingURL %>"
+			label="pending"
+			selected='<%= ParamUtil.getString(renderRequest, "tabs2", "pending").equals("pending") %>'
 		/>
 
+		<portlet:renderURL var="viewCompletedURL">
+			<portlet:param name="mvcPath" value="/view.jsp" />
+			<portlet:param name="tabs2" value="completed" />
+		</portlet:renderURL>
+
+		<aui:nav-item
+			href="<%= viewCompletedURL %>"
+			label="completed"
+			selected='<%= ParamUtil.getString(renderRequest, "tabs2", "pending").equals("completed") %>'
+		/>
+
+	</aui:nav>
+</aui:nav-bar>
+
+<div class="container-fluid-1280">
+
+	<liferay-ui:search-container
+		searchContainer="<%= workflowInstanceViewDisplayContext.getSearchContainer() %>"
+	>
 		<liferay-ui:search-container-row
 			className="com.liferay.portal.kernel.workflow.WorkflowInstance"
+			cssClass="entry-display-style"
 			modelVar="workflowInstance"
 			stringKey="<%= true %>"
 		>
+
 			<liferay-ui:search-container-row-parameter
 				name="workflowInstance"
 				value="<%= workflowInstance %>"
@@ -89,13 +102,13 @@ try {
 				value="<%= workflowInstanceViewDisplayContext.getStatus(workflowInstance) %>"
 			/>
 
-			<liferay-ui:search-container-column-text
+			<liferay-ui:search-container-column-date
 				href="<%= rowURL %>"
 				name="last-activity-date"
 				value="<%= workflowInstanceViewDisplayContext.getLastActivityDate(workflowInstance) %>"
 			/>
 
-			<liferay-ui:search-container-column-text
+			<liferay-ui:search-container-column-date
 				href="<%= rowURL %>"
 				name="end-date"
 				value="<%= workflowInstanceViewDisplayContext.getEndDate(workflowInstance) %>"
@@ -103,34 +116,12 @@ try {
 
 			<c:if test="<%= workflowInstanceViewDisplayContext.isShowEntryAction() %>">
 				<liferay-ui:search-container-column-jsp
-					align="right"
-					cssClass="entry-action"
 					path="/workflow_instance_action.jsp"
 				/>
 			</c:if>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator displayStyle="list" markupView="lexicon" />
 	</liferay-ui:search-container>
 
-<%
-}
-catch (Exception e) {
-	if (_log.isWarnEnabled()) {
-		_log.warn("Unable to retrieve workflow instances", e);
-	}
-%>
-
-	<div class="alert alert-danger">
-		<liferay-ui:message key="an-error-occurred-while-retrieving-the-list-of-instances" />
-	</div>
-
-<%
-}
-
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, workflowInstanceViewDisplayContext.getTabs2()), currentURL);
-%>
-
-<%!
-private static Log _log = LogFactoryUtil.getLog("modules.apps.workflow.workflow-instance-web.view_jsp");
-%>
+</div>
