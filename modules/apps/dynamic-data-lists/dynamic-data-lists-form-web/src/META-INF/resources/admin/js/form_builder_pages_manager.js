@@ -298,7 +298,7 @@ AUI.add(
 
 						instance.set('titles', titles);
 
-						instance._upWizardTitle(activePageNumber - 1, title);
+						instance._updateWizardTitle(activePageNumber - 1, title);
 					},
 
 					_removeWizardPage: function(index) {
@@ -374,7 +374,7 @@ AUI.add(
 						wizardView.set('items', items);
 					},
 
-					_upWizardTitle: function(index, title) {
+					_updateWizardTitle: function(index, title) {
 						var instance = this;
 
 						var wizardView = instance._getWizardView();
