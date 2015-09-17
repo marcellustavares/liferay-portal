@@ -1,23 +1,34 @@
 AUI.add(
 	'liferay-ddl-form-builder-pages-manager',
 	function(A) {
-		var AArray = A.Array;
 		var Renderer = Liferay.DDM.Renderer;
 
 		var CSS_FORM_BUILDER_CONTENT = A.getClassName('form', 'builder', 'content');
-		var CSS_FORM_BUILDER_PAGINATION = A.getClassName('form', 'builder', 'pagination');
+
 		var CSS_FORM_BUILDER_PAGE_CONTROLS = A.getClassName('form', 'builder', 'page', 'controls');
+
 		var CSS_FORM_BUILDER_PAGE_MANAGER_ADD_PAGE_LAST_POSITION = A.getClassName('form', 'builder', 'page', 'manager', 'add', 'last', 'position');
+
 		var CSS_FORM_BUILDER_PAGE_MANAGER_DELETE_PAGE = A.getClassName('form', 'builder', 'page', 'manager', 'delete', 'page');
+
 		var CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE = A.getClassName('form', 'builder', 'page', 'manager', 'switch', 'mode');
+
 		var CSS_FORM_BUILDER_PAGES_CONTENT = A.getClassName('form', 'builder', 'page', 'manager', 'content');
+
+		var CSS_FORM_BUILDER_PAGINATION = A.getClassName('form', 'builder', 'pagination');
+
 		var CSS_FORM_BUILDER_SWITCH_VIEW = A.getClassName('form', 'builder', 'controls', 'trigger');
+
 		var CSS_FORM_BUILDER_TABVIEW = A.getClassName('form', 'builder', 'tabview');
+
 		var CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'page', 'header');
 
 		var FormBuilderPagesManager = A.Component.create(
 			{
 				ATTRS: {
+					builder: {
+					},
+
 					mode: {
 						validator: '_validateMode',
 						value: 'pagination'
@@ -33,17 +44,18 @@ AUI.add(
 				prototype: {
 					TPL_PAGES: '<div class="' + CSS_FORM_BUILDER_PAGES_CONTENT + '">' +
 						'<div class="' + CSS_FORM_BUILDER_PAGINATION + '">' +
-							'<div class="' + CSS_FORM_BUILDER_PAGE_CONTROLS + '">' +
-							'</div>'+
+							'<div class="' + CSS_FORM_BUILDER_PAGE_CONTROLS + '"></div>' +
 						'</div></div>',
 
-					TPL_PAGE_CONTROL_TRIGGER: 
+					TPL_PAGE_CONTROL_TRIGGER:
 						'<a href="javascript:;" data-position="{position}" class="' + CSS_FORM_BUILDER_SWITCH_VIEW + '">' +
 							'<span class="icon-ellipsis-vertical icon-monospaced"></span>' +
 						'</a>',
 
 					initializer: function() {
+						var instance = this;
 
+						instance.after('titlesChange', A.bind('_afterTitlesChange', instance));
 					},
 
 					_addWizardPage: function() {
@@ -51,31 +63,9 @@ AUI.add(
 
 						var activePageNumber = instance.get('activePageNumber');
 
-						var pagesQuantity = instance.get('pagesQuantity');
+						var wizard = instance._getWizard();
 
-						var wizardView = instance._getWizardView();
-
-						wizardView._addItem(
-							{
-								title: instance._createUntitledPageLabel(activePageNumber, pagesQuantity)
-							}
-						);
-
-						wizardView.set('selected', activePageNumber - 1);
-					},
-
-					_afterWizardViewSelectionChange: function() {
-						var instance = this;
-
-						var pagination = instance._getPagination();
-
-						var selectedWizard = instance._getWizardView().get('selected');
-
-						if (selectedWizard > -1) {
-							pagination.set('page', selectedWizard + 1);
-
-							instance.set('activePageNumber', selectedWizard + 1);
-						}
+						wizard.set('selected', activePageNumber - 1);
 					},
 
 					_afterPagesQuantityChange: function(event) {
@@ -85,27 +75,49 @@ AUI.add(
 
 						instance._uiSetMode(instance.get('mode'));
 
-						if (event.newVal > 1) {
-							A.one('.' + CSS_PAGE_HEADER).one('.' + CSS_FORM_BUILDER_SWITCH_VIEW).hide();
-						}
-						else {
-							A.one('.' + CSS_PAGE_HEADER).one('.' + CSS_FORM_BUILDER_SWITCH_VIEW).show();
+						var pageHeader = instance.get('pageHeader');
+
+						var switchViewNode = pageHeader.one('.' + CSS_FORM_BUILDER_SWITCH_VIEW);
+
+						switchViewNode.toggle(event.newVal <= 1);
+					},
+
+					_afterTitlesChange: function(event) {
+						var instance = this;
+
+						instance._syncWizardItems();
+					},
+
+					_afterWizardSelectionChange: function() {
+						var instance = this;
+
+						var selectedWizard = instance._getWizard().get('selected');
+
+						if (selectedWizard > -1) {
+							var pagination = instance._getPagination();
+
+							pagination.set('page', selectedWizard + 1);
+
+							instance.set('activePageNumber', selectedWizard + 1);
 						}
 					},
 
 					_createPopover: function() {
 						var instance = this;
 
-						var popover;
+						var strings = instance.get('strings');
 
-						popover = new A.Popover(
+						var popover = new A.Popover(
 							{
-								bodyContent: A.Lang.sub(instance.TPL_POPOVER_CONTENT, {
-									addPageLastPosition: instance.get('strings').addPageLastPosition,
-									addPageNextPosition: instance.get('strings').addPageNextPosition,
-									deleteCurrentPage: instance.get('strings').deleteCurrentPage,
-									switchMode: instance.get('strings').switchMode
-								}),
+								bodyContent: A.Lang.sub(
+									instance.TPL_POPOVER_CONTENT,
+									{
+										addPageLastPosition: strings.addPageLastPosition,
+										addPageNextPosition: strings.addPageNextPosition,
+										deleteCurrentPage: strings.deleteCurrentPage,
+										switchMode: strings.switchMode
+									}
+								),
 								constrain: true,
 								cssClass: 'form-builder-page-manager-popover-header',
 								visible: false,
@@ -113,17 +125,11 @@ AUI.add(
 							}
 						).render();
 
-						popover.get('boundingBox').one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_ADD_PAGE_LAST_POSITION).on('click',
-							A.bind(this._onAddLastPageClick, this)
-						);
+						var popoverBoundingBox = popover.get('boundingBox');
 
-						popover.get('boundingBox').one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_DELETE_PAGE).on('click',
-							A.bind(this._onRemovePageClick, this)
-						);
-
-						popover.get('boundingBox').one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE).on('click',
-							A.bind(this._onSwitchViewClick, this)
-						);
+						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_ADD_PAGE_LAST_POSITION).on('click', A.bind('_onAddLastPageClick', instance));
+						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_DELETE_PAGE).on('click', A.bind('_onRemovePageClick', instance));
+						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE).on('click', A.bind('_onSwitchViewClick', instance));
 
 						instance._createPopoverTriggers(popover);
 
@@ -133,18 +139,36 @@ AUI.add(
 					_createPopoverTriggers: function(popover) {
 						var instance = this;
 
-						A.one('.' + CSS_FORM_BUILDER_TABVIEW).append(A.Lang.sub(instance.TPL_PAGE_CONTROL_TRIGGER, { position: 'top' }));
+						var builder = instance.get('builder');
 
-						A.one('.' + CSS_FORM_BUILDER_PAGE_CONTROLS).append(A.Lang.sub(instance.TPL_PAGE_CONTROL_TRIGGER, { position: 'left' }));
+						var boundingBox = builder.get('boundingBox');
 
-						A.one('.' + CSS_PAGE_HEADER).prepend(A.Lang.sub(instance.TPL_PAGE_CONTROL_TRIGGER, { position: 'left' }));
+						var topControlTrigger = A.Lang.sub(
+							instance.TPL_PAGE_CONTROL_TRIGGER,
+							{
+								position: 'top'
+							}
+						);
 
-						A.one('.' + CSS_FORM_BUILDER_CONTENT).delegate('click', A.bind(instance._onPageControlOptionClick, instance), '.' + CSS_FORM_BUILDER_SWITCH_VIEW);
+						boundingBox.one('.' + CSS_FORM_BUILDER_TABVIEW).append(topControlTrigger);
 
-						A.all('.' + CSS_FORM_BUILDER_SWITCH_VIEW).on('clickoutside',  popover.hide, popover);
+						var leftControlTrigger = A.Lang.sub(
+							instance.TPL_PAGE_CONTROL_TRIGGER,
+							{
+								position: 'left'
+							}
+						);
+
+						boundingBox.one('.' + CSS_FORM_BUILDER_PAGE_CONTROLS).append(leftControlTrigger);
+
+						instance.get('pageHeader').one('.' + CSS_PAGE_HEADER).append(leftControlTrigger);
+
+						boundingBox.delegate('click', A.bind(instance._onPageControlOptionClick, instance), '.' + CSS_FORM_BUILDER_SWITCH_VIEW);
+
+						boundingBox.all('.' + CSS_FORM_BUILDER_SWITCH_VIEW).on('clickoutside', popover.hide, popover);
 					},
 
-					_createWizardItens: function() {
+					_createWizardItems: function() {
 						var instance = this;
 
 						var activePageNumber = instance.get('activePageNumber');
@@ -173,22 +197,25 @@ AUI.add(
 						return items;
 					},
 
-					_getWizardView: function() {
+					_getWizard: function() {
 						var instance = this;
 
 						if (!instance.wizard) {
-							var wizardNode = A.one('.' + CSS_FORM_BUILDER_TABVIEW);
+							var builder = instance.get('builder');
+
+							var wizardNode = builder.get('boundingBox').one('.' + CSS_FORM_BUILDER_TABVIEW);
 
 							instance.wizard = new Renderer.Wizard(
 								{
+									after: {
+										selectedChange: A.bind(instance._afterWizardSelectionChange, instance)
+									},
 									allowNavigation: true,
 									boundingBox: wizardNode,
-									items: instance._createWizardItens(),
+									items: instance._createWizardItems(),
 									srcNode: wizardNode.one('> ul')
 								}
 							).render();
-
-							instance.wizard.after('selectedChange', A.bind(instance._afterWizardViewSelectionChange, instance));
 						}
 
 						return instance.wizard;
@@ -198,9 +225,8 @@ AUI.add(
 						var instance = this;
 
 						instance._addPage();
-
 						instance._addWizardPage();
-						
+
 						instance._getPopover().hide();
 					},
 
@@ -208,7 +234,6 @@ AUI.add(
 						var instance = this;
 
 						instance._addPage();
-
 						instance._addWizardPage();
 					},
 
@@ -217,10 +242,13 @@ AUI.add(
 
 						event.stopPropagation();
 
-						popover.set('align', {
-							node: event.currentTarget,
-							points:[A.WidgetPositionAlign.RC, A.WidgetPositionAlign.TC]
-						});
+						popover.set(
+							'align',
+							{
+								node: event.currentTarget,
+								points: [A.WidgetPositionAlign.RC, A.WidgetPositionAlign.TC]
+							}
+						);
 
 						popover.set('position', event.currentTarget.getData('position'));
 
@@ -232,7 +260,9 @@ AUI.add(
 
 						var activePageNumber = instance.get('activePageNumber');
 
-						instance._getPagination().prev();
+						var pagination = instance._getPagination();
+
+						pagination.prev();
 
 						instance.set('pagesQuantity', instance.get('pagesQuantity') - 1);
 
@@ -245,31 +275,29 @@ AUI.add(
 
 						var page = Math.max(1, activePageNumber - 1);
 
-						instance._pagination.getItem(page).addClass('active');
+						pagination.getItem(page).addClass('active');
 
 						var titles = instance.get('titles');
 
 						titles.splice(activePageNumber - 1, 1);
 
 						instance.set('titles', titles);
-
 						instance.set('activePageNumber', page);
 
 						instance._removeWizardPage(activePageNumber - 1);
 
 						if (!instance.get('pagesQuantity')) {
 							instance._addPage();
-
 							instance._addWizardPage();
 
-							instance._getWizardView().activate(0);
+							instance._getWizard().activate(0);
 						}
 					},
 
 					_onSwitchViewClick: function() {
 						var instance = this;
 
-						this._getPopover().hide();
+						instance._getPopover().hide();
 
 						if (instance.get('mode') === 'pagination') {
 							instance.set('mode', 'wizard');
@@ -284,8 +312,6 @@ AUI.add(
 
 						var activePageNumber = instance.get('activePageNumber');
 
-						var pagesQuantity = instance.get('pagesQuantity');
-
 						var title = event.newVal.trim();
 
 						var titles = instance.get('titles');
@@ -293,97 +319,66 @@ AUI.add(
 						titles[activePageNumber - 1] = title;
 
 						if (!title) {
+							var pagesQuantity = instance.get('pagesQuantity');
+
 							title = instance._createUntitledPageLabel(activePageNumber, pagesQuantity);
 						}
 
 						instance.set('titles', titles);
-
-						instance._updateWizardTitle(activePageNumber - 1, title);
 					},
 
 					_removeWizardPage: function(index) {
 						var instance = this;
 
-						var wizardView = instance._getWizardView();
+						var wizard = instance._getWizard();
 
-						wizardView._removeItem(index);
+						wizard._removeItem(index);
 
-						instance._updateWizardContent();
+						instance._syncWizardItems();
 					},
 
 					_renderTopPagination: function() {
 						var instance = this;
 
-						instance._getWizardView();
+						instance._getWizard();
+					},
+
+					_syncWizardItems: function() {
+						var instance = this;
+
+						var wizard = instance._getWizard();
+
+						wizard.set('selected', instance.get('activePageNumber') - 1);
+						wizard.set('items', instance._createWizardItems());
 					},
 
 					_uiSetMode: function(type) {
 						var instance = this;
 
-						var activePageNumber = instance.get('activePageNumber');
-
 						var pagination = instance._getPagination();
+						var wizard = instance._getWizard();
 
-						var wizardView = instance._getWizardView();
+						var paginationBoundingBox = pagination.get('boundingBox');
+						var wizardBoundingBox = wizard.get('boundingBox');
 
 						if (instance.get('pagesQuantity') > 1) {
 							if (type === 'wizard') {
-								pagination.get('boundingBox').hide();
+								paginationBoundingBox.hide();
+								wizardBoundingBox.show();
 
-								wizardView.get('boundingBox').show();
-
-								instance._updateWizardContent();
+								instance._syncWizardItems();
 							}
 							else if (type === 'pagination') {
-								pagination.get('boundingBox').show();
+								paginationBoundingBox.show();
+								wizardBoundingBox.hide();
 
-								wizardView.get('boundingBox').hide();
-
-								pagination.set('page', activePageNumber);
+								pagination.set('page', instance.get('activePageNumber'));
 							}
 						}
 						else {
-							wizardView.get('boundingBox').hide();
-
-							pagination.get('boundingBox').hide();
+							paginationBoundingBox.hide();
+							wizardBoundingBox.hide();
 						}
-					},
-
-					_updateWizardContent: function() {
-						var instance = this;
-
-						var wizardView = instance._getWizardView();
-
-						var items = wizardView.get('items');
-
-						wizardView.set('selected', instance.get('activePageNumber') - 1);
-
-						AArray.each(
-							items,
-							function(item, index) {
-								var title = instance.get('titles')[index];
-
-								if (!title) {
-									title = instance._createUntitledPageLabel(index + 1, instance.get('pagesQuantity'));
-								}
-
-								item.title = title;
-							}
-						);
-
-						wizardView.set('items', items);
-					},
-
-					_updateWizardTitle: function(index, title) {
-						var instance = this;
-
-						var wizardView = instance._getWizardView();
-
-						var items = wizardView.get('items');
-
-						items[index].title = title;
-
-						wizardView.set('items', items);
 					},
 
 					_validateMode: function(mode) {
