@@ -140,19 +140,6 @@ AUI.add(
 						return fields;
 					},
 
-					_buidUI: function(){
-						var contentBox = this.get('contentBox'),
-							headerTemplate = A.Lang.sub(this.TPL_HEADER, {
-								formTitle: this.get('strings').formTitle
-							});
-
-						contentBox.append(this.TPL_TABVIEW);
-						contentBox.append(this.TPL_PAGE_HEADER);
-						contentBox.append(headerTemplate);
-						contentBox.append(this.TPL_LAYOUT);
-						contentBox.append(this.TPL_PAGES);
-					},
-
 					_getPageManagerInstance: function(config) {
 						var instance = this;
 
@@ -162,11 +149,12 @@ AUI.add(
 							instance._pageManager = new Liferay.DDL.FormBuilderPagesManager(
 								A.merge(
 									{
+										builder: instance,
+										mode: 'wizard',
 										pageHeader: contentBox.one('.form-builder-pages-header'),
 										pagesQuantity: instance.get('layouts').length,
 										paginationContainer: contentBox.one('.form-builder-pages'),
-										tabviewContainer: contentBox.one('.form-builder-tabs'),
-										mode: 'wizard'
+										tabviewContainer: contentBox.one('.form-builder-tabs')
 									},
 									config
 								)
@@ -201,6 +189,27 @@ AUI.add(
 						var instance = this;
 
 						event.halt();
+					},
+
+					_renderContentBox: function() {
+						var instance = this;
+
+						var contentBox = instance.get('contentBox');
+
+						var strings = instance.get('strings');
+
+						var headerTemplate = A.Lang.sub(
+							instance.TPL_HEADER,
+							{
+								formTitle: strings.formTitle
+							}
+						);
+
+						contentBox.append(instance.TPL_TABVIEW);
+						contentBox.append(instance.TPL_PAGE_HEADER);
+						contentBox.append(headerTemplate);
+						contentBox.append(instance.TPL_LAYOUT);
+						contentBox.append(instance.TPL_PAGES);
 					},
 
 					_renderField: function(field) {
