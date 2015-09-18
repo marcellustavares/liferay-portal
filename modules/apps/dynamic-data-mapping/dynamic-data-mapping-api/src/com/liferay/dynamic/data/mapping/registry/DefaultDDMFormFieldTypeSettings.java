@@ -41,8 +41,11 @@ public interface DefaultDDMFormFieldTypeSettings
 	public String indexType();
 
 	@DDMFormField(
-		label = "%label",
-		properties = {"setting.category=basic", "setting.weight=4"},
+		label = "%question",
+		properties = {
+			"placeholder=Type here your question.",
+			"setting.category=basic", "setting.weight=4"
+		},
 		type = "text"
 	)
 	public LocalizedValue label();
@@ -79,8 +82,11 @@ public interface DefaultDDMFormFieldTypeSettings
 	public boolean showLabel();
 
 	@DDMFormField(
-		label = "%tip",
-		properties = {"setting.category=basic", "setting.weight=2"},
+		label = "%help-text",
+		properties = {
+			"placeholder=Add a text to help users better understand what you want.",
+			"setting.category=basic", "setting.weight=3"
+		},
 		type = "text"
 	)
 	public LocalizedValue tip();
