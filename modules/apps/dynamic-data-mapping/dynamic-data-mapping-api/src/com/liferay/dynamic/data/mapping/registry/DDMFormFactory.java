@@ -82,6 +82,8 @@ public class DDMFormFactory {
 			ddmFormField.setProperty(entry.getKey(), entry.getValue());
 		}
 
+		ddmFormField.setTip(ddmFormFactoryHelper.getDDMFormFieldTip());
+
 		ddmFormField.setDataType(
 			ddmFormFactoryHelper.getDDMFormFieldDataType());
 		ddmFormField.setLabel(ddmFormFactoryHelper.getDDMFormFieldLabel());

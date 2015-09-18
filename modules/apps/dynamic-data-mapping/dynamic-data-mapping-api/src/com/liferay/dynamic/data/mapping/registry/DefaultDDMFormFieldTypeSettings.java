@@ -46,6 +46,7 @@ public interface DefaultDDMFormFieldTypeSettings
 			"placeholder=Type here your question.",
 			"setting.category=basic", "setting.weight=4"
 		},
+		tip = "Type here what you want to ask",
 		type = "text"
 	)
 	public LocalizedValue label();
@@ -87,6 +88,7 @@ public interface DefaultDDMFormFieldTypeSettings
 			"placeholder=Add a text to help users better understand what you want.",
 			"setting.category=basic", "setting.weight=3"
 		},
+		tip = "The text you type here will be displayed to the user just like this text you are reading right now.",
 		type = "text"
 	)
 	public LocalizedValue tip();

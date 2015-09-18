@@ -92,6 +92,30 @@ public class DDMFormFactoryHelper {
 
 		return localizedValue;
 	}
+	
+	public LocalizedValue getDDMFormFieldTip() {
+		LocalizedValue localizedValue = new LocalizedValue(_defaultLocale);
+
+		String tip = _ddmFormField.tip();
+
+		if (Validator.isNull(tip)) {
+			return localizedValue;
+		}
+
+		if (!isLocalizableKey(tip)) {
+			localizedValue.addString(_defaultLocale, tip);
+
+			return localizedValue;
+		}
+
+		String key = getKey(tip);
+
+		for (Locale locale : _availableLocales) {
+			localizedValue.addString(locale, getLocalizedKey(locale, key));
+		}
+
+		return null;
+	}
 
 	public String getDDMFormFieldName() {
 		if (Validator.isNotNull(_ddmFormField.name())) {

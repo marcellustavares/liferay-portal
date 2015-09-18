@@ -40,6 +40,8 @@ public @interface DDMFormField {
 
 	public String[] properties() default {};
 
+	public String tip() default StringPool.BLANK;
+
 	public String type() default StringPool.BLANK;
 
 	public String validationErrorMessage() default StringPool.BLANK;

@@ -13,6 +13,7 @@
 							},
 							path: 'text_field.js',
 							requires: [
+								'aui-tooltip',
 								'liferay-ddm-form-renderer-field'
 							]
 						},
