@@ -61,7 +61,7 @@ public class DDLFormAdminPortletUtil {
 		String thumbPath = DDLFormWebConfigurationUtil.get("thumb.path") + recordSetId + ".png";
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(
-			DDLFormWebConfigurationUtil.get("wkhtmltoimage.path"), "-f", "png", "--height", "400", url, thumbPath);
+			DDLFormWebConfigurationUtil.get("wkhtmltoimage.path"), "-f", "png", "--height", "800", url, thumbPath);
 		
 		Process process = processBuilder.start();
 		
