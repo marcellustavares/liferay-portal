@@ -56,7 +56,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%predefined-value",
-		properties = {"setting.category=advanced", "setting.weight=0"},
+		properties = {"setting.category=advanced", "setting.weight=1"},
 		type = "text"
 	)
 	public LocalizedValue predefinedValue();
@@ -66,7 +66,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%repeatable",
-		properties = {"setting.category=advanced", "setting.weight=0", "showAsSwitcher=true"}
+		properties = {"setting.category=advanced", "setting.weight=3", "showAsSwitcher=true"}
 	)
 	public boolean repeatable();
 
@@ -78,7 +78,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%show-label",
-		properties = {"setting.category=advanced", "setting.weight=0", "showAsSwitcher=true"}
+		properties = {"setting.category=advanced", "setting.weight=4", "showAsSwitcher=true"}
 	)
 	public boolean showLabel();
 
@@ -95,7 +95,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "ddm-validation", label = "%validation",
-		properties = {"setting.category=advanced", "setting.weight=0"},
+		properties = {"setting.category=advanced", "setting.weight=5"},
 		type = "validation"
 	)
 	public DDMFormFieldValidation validation();

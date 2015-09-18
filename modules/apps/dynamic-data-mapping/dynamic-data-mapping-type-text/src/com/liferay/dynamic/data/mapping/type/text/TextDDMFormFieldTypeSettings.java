@@ -27,7 +27,7 @@ public interface TextDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "string", label = "%placeholder",
-		properties = {"setting.category=advanced"},
+		properties = {"setting.category=advanced", "setting.weight=2"},
 		type = "text"
 	)
 	public String placeholder();
