@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
+import com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfigurationUtil;
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
@@ -37,6 +38,7 @@ import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -88,7 +90,7 @@ public class AddRecordSetMVCActionCommand
 			serviceContext);
 	}
 
-	protected void addRecordSet(
+	protected DDLRecordSet addRecordSet(
 			ActionRequest actionRequest, long ddmStructureId)
 		throws Exception {
 
@@ -105,7 +107,7 @@ public class AddRecordSetMVCActionCommand
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecordSet.class.getName(), actionRequest);
 
-		_ddlRecordSetService.addRecordSet(
+		return _ddlRecordSetService.addRecordSet(
 			groupId, ddmStructureId, recordSetKey,
 			getLocalizedMap(themeDisplay.getLocale(), name),
 			getLocalizedMap(themeDisplay.getLocale(), description),
