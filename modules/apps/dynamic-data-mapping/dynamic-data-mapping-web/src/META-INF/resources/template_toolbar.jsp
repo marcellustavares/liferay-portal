@@ -23,9 +23,11 @@
 >
 
 	<liferay-frontend:management-bar-buttons>
+
 		<%
 		String taglibURL = "javascript:" + renderResponse.getNamespace() + "deleteTemplates();";
 		%>
+
 		<aui:a cssClass="btn" href="<%= taglibURL %>" iconCssClass="icon-trash" />
 
 	</liferay-frontend:management-bar-buttons>
