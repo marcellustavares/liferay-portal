@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@ include file="/display/init.jsp" %>
 
 <%
@@ -38,7 +39,23 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 			<aui:input name="availableLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 			<aui:input name="defaultLanguageId" type="hidden" value="<%= themeDisplay.getLanguageId() %>" />
 			<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
-
+	
+			<div class="ddl-form-builder-basic-info">
+				<div class="ddl-form-builder-name">
+					<h1><%= recordSet.getName(locale) %></h1>
+				</div>
+				
+				<%
+				String description = recordSet.getDescription(locale);
+				%>
+				
+				<c:if test="<%=Validator.isNotNull(description) %>">
+					<div class="ddl-form-builder-description">
+						<h2><%= recordSet.getDescription(locale) %></h2>
+					</div>	
+				</c:if>
+			</div>
+	
 			<%= request.getAttribute(DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML) %>
 		</aui:form>
 	</c:otherwise>

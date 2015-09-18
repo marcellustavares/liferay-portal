@@ -1,6 +1,10 @@
 @import "bourbon";
 
-.portlet-forms {
+body.portal-popup.open {
+	padding: 0;
+}
+
+.portlet-forms-admin, .portlet-forms-display {
 	.aspect-ratio img {
 	    top: 0;
 	}
@@ -41,14 +45,11 @@
 			h1,h2,h3,h4,h5,h6,p {
 				margin: 0;
 			}
+			
+			color: white;
 
-			.alloy-editor.alloy-editor-placeholder {
-				margin: 0;
-				color: white;
-
-				&:empty:not(:focus) {
-					border-width: 0;
-				}
+			&:empty:not(:focus) {
+				border-width: 0;
 			}
 
 			.help-block {
@@ -60,21 +61,18 @@
 		.ddl-form-builder-name {
 			padding: 52px 0 0 0;
 
-			.alloy-editor.alloy-editor-placeholder {
-				font-size: 32px;
-				font-weight: 300;
-				line-height: 32px;
-			}
+
+			font-size: 32px;
+			font-weight: 300;
+			line-height: 32px;
 		}
 
 		.ddl-form-builder-description {
 			padding: 23px 0 0 0;
 
-			.alloy-editor.alloy-editor-placeholder {
-				font-size: 14px;
-				font-weight: 400;
-				line-height: 24px;
-			}
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 24px;
 		}
 
 	}
