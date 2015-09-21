@@ -5,12 +5,12 @@
  *
  * @param childElementsHTML
  * @param dir
+ * @param displayStyle
  * @param label
  * @param name
  * @param required
  * @param value
  * @param visible
- * @param multline
  */
 {template .text}
 	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
@@ -21,13 +21,15 @@
 				<b>*</b>
 			{/if}
 		</label>
-		{if $multline}
+		
+		{if $displayStyle == 'multiline'}
 			<textarea class="field form-control" dir="{$dir}" id="{$name}" name="{$name}">
 				{$value}
 			</textarea>
 		{else}
-				<input class="field form-control" dir="{$dir}" id="{$name}" name="{$name}" type="text" value="{$value}">
+			<input class="field form-control" dir="{$dir}" id="{$name}" name="{$name}" type="text" value="{$value}">
 		{/if}
+
 		{$childElementsHTML|noAutoescape}
 	</div>
 {/template}

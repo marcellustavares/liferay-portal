@@ -42,7 +42,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%label",
-		properties = {"setting.category=basic", "setting.weight=4"},
+		properties = {"setting.category=basic", "setting.weight=5"},
 		type = "text"
 	)
 	public LocalizedValue label();
@@ -80,7 +80,7 @@ public interface DefaultDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%tip",
-		properties = {"setting.category=basic", "setting.weight=2"},
+		properties = {"setting.category=basic", "setting.weight=3"},
 		type = "text"
 	)
 	public LocalizedValue tip();

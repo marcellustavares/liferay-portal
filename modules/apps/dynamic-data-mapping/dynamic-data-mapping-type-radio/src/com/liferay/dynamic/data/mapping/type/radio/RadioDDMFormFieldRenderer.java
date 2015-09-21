@@ -83,6 +83,14 @@ public class RadioDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		template.put(
 			"options", getOptions(ddmFormField, ddmFormFieldRenderingContext));
 	}
+	
+	@Override
+	protected void populateOptionalContext(
+		Template template, DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+		
+		template.put("inline", ddmFormField.getProperty("inline"));
+	}
 
 	private TemplateResource _templateResource;
 

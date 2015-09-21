@@ -17,21 +17,24 @@ package com.liferay.dynamic.data.mapping.type.text;
 import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
+import com.liferay.portal.kernel.util.StringPool;
 
 /**
- *
  * @author Lino Alves
- *
  */
-
 @DDMForm
 public interface TextDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-			label = "%multline",
-			properties = {"setting.category=basic", "setting.weight=0", "showAsSwitcher=true"}
-		)
-		public boolean multline();
+		label = "%my-text-field-type-is",
+		optionLabels = {"%single-line", "%multiline"},
+		optionValues = {"singleline", "multiline"},
+		properties = {
+			"inline=true", "setting.category=basic", "setting.weight=2"
+		},
+		type="radio"
+	)
+	public String displayStyle();
 
 }

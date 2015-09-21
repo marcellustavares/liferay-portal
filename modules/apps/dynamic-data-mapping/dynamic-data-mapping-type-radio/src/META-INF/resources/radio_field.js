@@ -4,6 +4,10 @@ AUI.add(
 		var RadioField = A.Component.create(
 			{
 				ATTRS: {
+					inline: {
+						value: true
+					},
+					
 					options: {
 						validator: Array.isArray,
 						value: []
@@ -46,9 +50,20 @@ AUI.add(
 						return A.merge(
 							RadioField.superclass.getTemplateContext.apply(instance, arguments),
 							{
+								inline: instance.get('inline'),
 								options: instance.getOptions()
 							}
 						);
+					},
+
+					_renderErrorMessage: function() {
+						var instance = this;
+
+						var container = instance.get('container');
+
+						RadioField.superclass._renderErrorMessage.apply(instance, arguments);
+
+						container.all('.validation-message').appendTo(container);
 					}
 				}
 			}

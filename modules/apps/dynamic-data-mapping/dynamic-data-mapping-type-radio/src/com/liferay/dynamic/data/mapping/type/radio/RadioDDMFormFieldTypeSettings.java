@@ -27,6 +27,11 @@ public interface RadioDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
+		label = "%inline", properties = {"showAsSwitcher=true"}
+	)
+	public boolean inline();
+	
+	@DDMFormField(
 		dataType = "ddm-options", label = "%options", type = "options"
 	)
 	public DDMFormFieldOptions options();
