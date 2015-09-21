@@ -17,11 +17,11 @@ package com.liferay.dynamic.data.mapping.type.text;
 import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
  * @author Lino Alves
- */
+*/
 @DDMForm
 public interface TextDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
@@ -36,5 +36,12 @@ public interface TextDDMFormFieldTypeSettings
 		type="radio"
 	)
 	public String displayStyle();
+
+	@DDMFormField(
+		dataType = "string", label = "%placeholder",
+		properties = {"setting.category=advanced", "setting.weight=2"},
+		type = "text"
+	)
+	public LocalizedValue placeholder();
 
 }

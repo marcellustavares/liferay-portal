@@ -66,10 +66,11 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-		
+
 		template.put("displayStyle", ddmFormField.getProperty("displayStyle"));
+		template.put("placeholder", ddmFormField.getProperty("placeholder"));
 	}
-	
+
 	private TemplateResource _templateResource;
 
 }
