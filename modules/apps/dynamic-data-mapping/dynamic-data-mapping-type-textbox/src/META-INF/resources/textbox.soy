@@ -1,0 +1,24 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form text box field.
+ *
+ * @param childElementsHTML
+ * @param dir
+ * @param label
+ * @param name
+ * @param value
+ */
+{template .textbox}
+	<div class="form-group field-wrapper" data-fieldname="{$name}">
+		<label class="control-fieldLabel" for="{$name}">
+			{$label}
+		</label>
+
+		<textarea class="field form-control" dir="{$dir}" id="{$name}" name="{$name}">
+			{$value}
+		</textarea>
+
+		{$childElementsHTML|noAutoescape}
+	</div>
+{/template}
