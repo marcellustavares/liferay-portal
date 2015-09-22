@@ -236,7 +236,11 @@ AUI.add(
 
 						var messageNode = container.one('.message-input');
 
-						return messageNode.val();
+						var errorMessage = {};
+
+						errorMessage[instance.get('locale')] = messageNode.val();
+
+						return errorMessage;
 					},
 
 					_getParameterValue: function() {

@@ -23,17 +23,11 @@ AUI.add(
 					getTemplateContext: function() {
 						var instance = this;
 
-						var tip = instance.get('tip');
-
-						if (Lang.isObject(tip)) {
-							tip = tip[instance.get('locale')];
-						}
-
 						return A.merge(
 							TextField.superclass.getTemplateContext.apply(instance, arguments),
 							{
-								placeholder: instance.get('placeholder'),
-								tip: tip
+								placeholder: instance._getLocalizedValue(instance.get('placeholder')),
+								tip: instance._getLocalizedValue(instance.get('tip'))
 							}
 						);
 					},
@@ -52,6 +46,16 @@ AUI.add(
 								visible: false
 							}
 						).render();
+					},
+
+					_getLocalizedValue: function(localizedValue) {
+						var instance = this;
+
+						if (Lang.isObject(localizedValue)) {
+							localizedValue = localizedValue[instance.get('locale')];
+						}
+
+						return localizedValue;
 					},
 
 					_renderErrorMessage: function() {
