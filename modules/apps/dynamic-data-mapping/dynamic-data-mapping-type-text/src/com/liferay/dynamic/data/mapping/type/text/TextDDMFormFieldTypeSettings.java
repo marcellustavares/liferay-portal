@@ -12,29 +12,25 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.registry;
+package com.liferay.dynamic.data.mapping.type.text;
 
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
 
 /**
- * @author Marcellus Tavares
+ * @author Bruno Basto
  */
-@DDMForm(localization = "content/Language")
-public interface DDMFormFieldTypeSettings {
-
-	@DDMFormField(visibilityExpression = "false")
-	public String dataType();
+@DDMForm
+public interface TextDDMFormFieldTypeSettings
+	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		label = "%name",
-		properties = {"setting.category=basic", "setting.weight=2"},
-		validationErrorMessage = "%please-type-a-name-for-your-field",
-		validationExpression = "!name.equals(\"\")"
+		dataType = "string", label = "%placeholder",
+		properties = {"setting.category=advanced", "setting.weight=2"},
+		type = "text"
 	)
-	public String name();
-
-	@DDMFormField(visibilityExpression = "false")
-	public String type();
+	public LocalizedValue placeholder();
 
 }

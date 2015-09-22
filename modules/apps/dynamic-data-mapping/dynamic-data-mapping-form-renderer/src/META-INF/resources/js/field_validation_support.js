@@ -80,6 +80,10 @@ AUI.add(
 				if (validation) {
 					var errorMessage = validation.errorMessage;
 
+					if (Lang.isObject(errorMessage)) {
+						errorMessage = errorMessage[instance.get('locale')];
+					}
+
 					if (!errorMessage && !validation.valid) {
 						var strings = instance.get('strings');
 

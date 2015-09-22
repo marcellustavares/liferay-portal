@@ -25,6 +25,7 @@ AUI.add(
 
 					strings: {
 						value: {
+							disableValidation: Liferay.Language.get('disable-validation'),
 							enableValidation: Liferay.Language.get('enable-validation'),
 							errorMessageGoesHere: Liferay.Language.get('error-message-goes-here'),
 							number: Liferay.Language.get('number'),
@@ -153,6 +154,7 @@ AUI.add(
 						return A.merge(
 							ValidationField.superclass.getTemplateContext.apply(instance, arguments),
 							{
+								disableValidationMessage: strings.disableValidation,
 								enableValidationMessage: strings.enableValidation,
 								enableValidationValue: !!value.expression,
 								errorMessagePlaceholder: strings.errorMessageGoesHere,
@@ -234,7 +236,11 @@ AUI.add(
 
 						var messageNode = container.one('.message-input');
 
-						return messageNode.val();
+						var errorMessage = {};
+
+						errorMessage[instance.get('locale')] = messageNode.val();
+
+						return errorMessage;
 					},
 
 					_getParameterValue: function() {
