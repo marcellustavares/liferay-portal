@@ -85,6 +85,10 @@ AUI.add(
 					if (fieldData.visible) {
 						var errorMessage = fieldData.errorMessage;
 
+						if (Lang.isObject(errorMessage)) {
+							errorMessage = errorMessage[instance.get('locale')];
+						}
+
 						if (!errorMessage && !fieldData.valid) {
 							var strings = instance.get('strings');
 
