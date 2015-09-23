@@ -3,7 +3,7 @@ AUI.add(
 	function(A) {
 		var Renderer = Liferay.DDM.Renderer;
 
-		var CSS_FORM_BUILDER_CONTENT = A.getClassName('form', 'builder', 'content');
+		var CSS_FORM_BUILDER_CONTROLS_TRIGGER = A.getClassName('form', 'builder', 'controls', 'trigger');
 
 		var CSS_FORM_BUILDER_PAGE_CONTROLS = A.getClassName('form', 'builder', 'page', 'controls');
 
@@ -16,8 +16,6 @@ AUI.add(
 		var CSS_FORM_BUILDER_PAGES_CONTENT = A.getClassName('form', 'builder', 'page', 'manager', 'content');
 
 		var CSS_FORM_BUILDER_PAGINATION = A.getClassName('form', 'builder', 'pagination');
-
-		var CSS_FORM_BUILDER_SWITCH_VIEW = A.getClassName('form', 'builder', 'controls', 'trigger');
 
 		var CSS_FORM_BUILDER_TABVIEW = A.getClassName('form', 'builder', 'tabview');
 
@@ -48,7 +46,7 @@ AUI.add(
 						'</div></div>',
 
 					TPL_PAGE_CONTROL_TRIGGER:
-						'<a href="javascript:;" data-position="{position}" class="' + CSS_FORM_BUILDER_SWITCH_VIEW + '">' +
+						'<a href="javascript:;" data-position="{position}" class="' + CSS_FORM_BUILDER_CONTROLS_TRIGGER + '">' +
 							'<span class="icon-ellipsis-vertical icon-monospaced"></span>' +
 						'</a>',
 
@@ -77,9 +75,17 @@ AUI.add(
 
 						var pageHeader = instance.get('pageHeader');
 
-						var switchViewNode = pageHeader.one('.' + CSS_FORM_BUILDER_SWITCH_VIEW);
+						var controlsTriggerNode = pageHeader.one('.' + CSS_FORM_BUILDER_CONTROLS_TRIGGER);
 
-						switchViewNode.toggle(event.newVal <= 1);
+						controlsTriggerNode.toggle(event.newVal <= 1);
+
+						var popover = instance._getPopover();
+
+						var popoverBoundingBox = popover.get('boundingBox');
+
+						var switchModeNode = popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE);
+
+						switchModeNode.toggle(event.newVal > 1);
 					},
 
 					_afterTitlesChange: function(event) {
@@ -129,7 +135,11 @@ AUI.add(
 
 						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_ADD_PAGE_LAST_POSITION).on('click', A.bind('_onAddLastPageClick', instance));
 						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_DELETE_PAGE).on('click', A.bind('_onRemovePageClick', instance));
-						popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE).on('click', A.bind('_onSwitchViewClick', instance));
+
+						var switchModeNode = popoverBoundingBox.one('.' + CSS_FORM_BUILDER_PAGE_MANAGER_SWITCH_MODE);
+
+						switchModeNode.on('click', A.bind('_onSwitchViewClick', instance));
+						switchModeNode.toggle(instance.get('pagesQuantity') > 1);
 
 						instance._createPopoverTriggers(popover);
 
@@ -150,8 +160,6 @@ AUI.add(
 							}
 						);
 
-						boundingBox.one('.' + CSS_FORM_BUILDER_TABVIEW).append(topControlTrigger);
-
 						var leftControlTrigger = A.Lang.sub(
 							instance.TPL_PAGE_CONTROL_TRIGGER,
 							{
@@ -159,13 +167,19 @@ AUI.add(
 							}
 						);
 
+						boundingBox.one('.' + CSS_FORM_BUILDER_TABVIEW).append(topControlTrigger);
+
 						boundingBox.one('.' + CSS_FORM_BUILDER_PAGE_CONTROLS).append(leftControlTrigger);
 
 						instance.get('pageHeader').one('.' + CSS_PAGE_HEADER).append(leftControlTrigger);
 
-						boundingBox.delegate('click', A.bind(instance._onPageControlOptionClick, instance), '.' + CSS_FORM_BUILDER_SWITCH_VIEW);
+						boundingBox.delegate('click', A.bind(instance._onPageControlOptionClick, instance), '.' + CSS_FORM_BUILDER_CONTROLS_TRIGGER);
 
-						boundingBox.all('.' + CSS_FORM_BUILDER_SWITCH_VIEW).on('clickoutside', popover.hide, popover);
+						var controlsTriggerNodeList = boundingBox.all('.' + CSS_FORM_BUILDER_CONTROLS_TRIGGER);
+
+						controlsTriggerNodeList.on('clickoutside', popover.hide, popover);
+
+						controlsTriggerNodeList.toggle(instance.get('pagesQuantity') <= 1);
 					},
 
 					_createWizardItems: function() {
