@@ -1,8 +1,15 @@
 @import "bourbon";
 
+.form-builder-field-settings-cancel {
+	border-width: 0;
+	color: #65B6F0;
+}
+
 .portlet-forms {
+	$side-spacing: 34px;
+
 	.aspect-ratio img {
-	    top: 0;
+		top: 0;
 	}
 
 	.form-builder-header-title {
@@ -10,8 +17,8 @@
 	}
 
 	.form-builder-tabview {
+		border: 1px solid #DEE4E9;
 		padding: 20px 70px 11px 34px;
-		border: 1px solid #dee4e9;
 		position: relative;
 	}
 
@@ -33,18 +40,18 @@
 	}
 
 	.ddl-form-builder-basic-info {
+		background-color: #869CAD;
 		height: 300px;
-		background-color: #869cad;
 
 		.ddl-form-builder-name,
 		.ddl-form-builder-description {
-			h1,h2,h3,h4,h5,h6,p {
+			h1, h2, h3, h4, h5, h6, p {
 				margin: 0;
 			}
 
 			.alloy-editor.alloy-editor-placeholder {
-				margin: 0;
 				color: white;
+				margin: 0;
 
 				&:empty:not(:focus) {
 					border-width: 0;
@@ -76,7 +83,6 @@
 				line-height: 24px;
 			}
 		}
-
 	}
 
 	.ddl-form-builder-app {
@@ -115,8 +121,8 @@
 		}
 
 		.form-builder-content {
-			background: #fff;
-			border: 1px solid #dce0e3;
+			background: #FFF;
+			border: 1px solid #DCE0E3;
 			border-radius: 1px;
 			box-shadow: 0 2px 4px rgba(188, 197, 204, 0.3);
 			margin: 0 auto;
@@ -158,6 +164,25 @@
 		}
 	}
 
+	.form-builder-field {
+		border-radius: 0;
+		border-width: 0;
+		box-shadow: none;
+		margin: 0;
+		padding: 10px $side-spacing 10px $side-spacing;
+	}
+
+	.form-builder-field-list-add-button {
+		cursor: pointer;
+		margin: 0 $side-spacing;
+		width: auto;
+	}
+
+	.form-builder-field-list-add-button-label {
+		color: #4A90E2;
+		margin-bottom: 5px;
+	}
+
 	.lfr-ddm-repeatable-add-button {
 		position: absolute;
 		right: 0;
@@ -175,13 +200,6 @@
 			cursor: pointer;
 		}
 	}
-}
-
-.form-builder-field {
-	border-radius: 0;
-	border-width: 0;
-	box-shadow: none;
-	margin: 0;
 }
 
 .lfr-ddl-field-settings-modal.form-builder-field-settings {
@@ -268,21 +286,21 @@
 
 .form-builder-page-manager-popover-header  {
 	.popover-content {
-	 	padding: 7px 21px;
+		padding: 7px 21px;
 	}
 
 	ul {
-	 	margin: 0;
-	 	padding: 0;
+		margin: 0;
+		padding: 0;
 	}
 
 	li {
-	 	list-style-type: none;
-		color: #869cad;
+		color: #869CAD;
 		cursor: pointer;
 		font-size: 15px;
 		font-weight: 400;
 		line-height: 16px;
+		list-style-type: none;
 		padding: 11px 0 11px 0;
 	}
 }
