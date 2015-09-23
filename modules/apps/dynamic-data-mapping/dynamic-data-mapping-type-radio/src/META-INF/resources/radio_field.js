@@ -7,7 +7,7 @@ AUI.add(
 					inline: {
 						value: true
 					},
-					
+
 					options: {
 						validator: Array.isArray,
 						value: []
@@ -23,6 +23,24 @@ AUI.add(
 				NAME: 'liferay-ddm-form-field-radio',
 
 				prototype: {
+					getInputNode: function() {
+						var instance = this;
+
+						var container = instance.get('container');
+
+						var radiosNodeList = container.all(instance.getInputSelector());
+
+						var inputNode = radiosNodeList.item(0);
+
+						var checkedNodeList = radiosNodeList.filter(':checked');
+
+						if (checkedNodeList.size()) {
+							inputNode = checkedNodeList.item(0);
+						}
+
+						return inputNode;
+					},
+
 					getOptions: function() {
 						var instance = this;
 
