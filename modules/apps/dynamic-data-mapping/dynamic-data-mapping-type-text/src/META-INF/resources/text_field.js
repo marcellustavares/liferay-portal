@@ -6,6 +6,10 @@ AUI.add(
 		var TextField = A.Component.create(
 			{
 				ATTRS: {
+					displayStyle: {
+						value: 'singleline'
+					},
+
 					placeholder: {
 						value: ''
 					},
@@ -30,6 +34,7 @@ AUI.add(
 						return A.merge(
 							TextField.superclass.getTemplateContext.apply(instance, arguments),
 							{
+								displayStyle: instance.get('displayStyle'),
 								placeholder: instance._getLocalizedValue(instance.get('placeholder')),
 								tip: instance._getLocalizedValue(instance.get('tip'))
 							}
