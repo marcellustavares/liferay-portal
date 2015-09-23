@@ -157,7 +157,7 @@ public class DDMFormFactoryHelper {
 			localizedValue.addString(locale, getLocalizedKey(locale, key));
 		}
 
-		return null;
+		return localizedValue;
 	}
 
 	public String getDDMFormFieldType() {

@@ -14,10 +14,10 @@
 
 package com.liferay.dynamic.data.mapping.type.text;
 
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
  * @author Lino Alves
@@ -33,7 +33,7 @@ public interface TextDDMFormFieldTypeSettings
 		properties = {
 			"inline=true", "setting.category=basic", "setting.weight=2"
 		},
-		type="radio"
+		type = "radio"
 	)
 	public String displayStyle();
 
