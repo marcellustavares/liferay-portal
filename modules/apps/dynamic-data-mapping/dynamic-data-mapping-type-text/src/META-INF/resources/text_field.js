@@ -10,6 +10,10 @@ AUI.add(
 						value: ''
 					},
 
+					tooltip: {
+						valueFn: '_valueTooltip'
+					},
+
 					type: {
 						value: 'text'
 					}
@@ -39,13 +43,13 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						new A.Tooltip(
-							{
-								position: 'left',
-								trigger: container.one('.help-icon'),
-								visible: false
-							}
-						).render();
+						var helpIcon = container.one('.help-icon');
+
+						if (helpIcon) {
+							var tooltip = instance.get('tooltip');
+
+							tooltip.set('trigger', helpIcon);
+						}
 					},
 
 					_getLocalizedValue: function(localizedValue) {
@@ -91,6 +95,17 @@ AUI.add(
 
 							inputGroupContainer.insert(feedBack, 'after');
 						}
+					},
+
+					_valueTooltip: function() {
+						var instance = this;
+
+						return new A.Tooltip(
+							{
+								position: 'left',
+								visible: false
+							}
+						).render();
 					}
 				}
 			}
