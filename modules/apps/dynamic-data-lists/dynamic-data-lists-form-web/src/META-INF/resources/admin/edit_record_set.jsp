@@ -69,10 +69,10 @@ String description = BeanParamUtil.getString(recordSet, request, "description");
 			<aui:input name="definition" type="hidden" />
 			<aui:input name="layout" type="hidden" />
 
-			<div id="<portlet:namespace />formBuilder"></div>
+			<div id="<portlet:namespace />formBuilder">
+				<span class="icon-refresh icon-spin" id="<portlet:namespace />loader"></span>
+			</div>
 		</aui:fieldset>
-
-		<div class="loading-animation" id="<portlet:namespace />loader"></div>
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddl-form-builder-buttons">
