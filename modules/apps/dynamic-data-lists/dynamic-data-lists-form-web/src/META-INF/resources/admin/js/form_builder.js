@@ -6,6 +6,10 @@ AUI.add(
 		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
 		var Lang = A.Lang;
 
+		var CSS_PAGES = A.getClassName('form', 'builder', 'pages', 'lexicon');
+		var CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'pages', 'header');
+		var CSS_FORM_BUILDER_TABS = A.getClassName('form', 'builder', 'tabs');
+
 		var FormBuilder = A.Component.create(
 			{
 				ATTRS: {
@@ -54,6 +58,8 @@ AUI.add(
 				NAME: 'liferay-ddl-form-builder',
 
 				prototype: {
+					TPL_PAGES: '<div class="' + CSS_PAGES + '" ></div>',
+
 					initializer: function() {
 						var instance = this;
 
@@ -151,10 +157,10 @@ AUI.add(
 									{
 										builder: instance,
 										mode: 'wizard',
-										pageHeader: contentBox.one('.form-builder-pages-header'),
+										pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
 										pagesQuantity: instance.get('layouts').length,
-										paginationContainer: contentBox.one('.form-builder-pages'),
-										tabviewContainer: contentBox.one('.form-builder-tabs')
+										paginationContainer: contentBox.one('.' + CSS_PAGES),
+										tabviewContainer: contentBox.one('.' + CSS_FORM_BUILDER_TABS)
 									},
 									config
 								)

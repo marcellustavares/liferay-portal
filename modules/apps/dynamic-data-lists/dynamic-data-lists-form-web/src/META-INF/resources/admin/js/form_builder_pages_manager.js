@@ -5,8 +5,6 @@ AUI.add(
 
 		var CSS_FORM_BUILDER_CONTROLS_TRIGGER = A.getClassName('form', 'builder', 'controls', 'trigger');
 
-		var CSS_FORM_BUILDER_PAGE_CONTROLS = A.getClassName('form', 'builder', 'page', 'controls');
-
 		var CSS_FORM_BUILDER_PAGE_MANAGER_ADD_PAGE_LAST_POSITION = A.getClassName('form', 'builder', 'page', 'manager', 'add', 'last', 'position');
 
 		var CSS_FORM_BUILDER_PAGE_MANAGER_DELETE_PAGE = A.getClassName('form', 'builder', 'page', 'manager', 'delete', 'page');
@@ -42,7 +40,6 @@ AUI.add(
 				prototype: {
 					TPL_PAGES: '<div class="' + CSS_FORM_BUILDER_PAGES_CONTENT + '">' +
 						'<div class="' + CSS_FORM_BUILDER_PAGINATION + '">' +
-							'<div class="' + CSS_FORM_BUILDER_PAGE_CONTROLS + '"></div>' +
 						'</div></div>',
 
 					TPL_PAGE_CONTROL_TRIGGER:
@@ -169,7 +166,7 @@ AUI.add(
 
 						boundingBox.one('.' + CSS_FORM_BUILDER_TABVIEW).append(topControlTrigger);
 
-						boundingBox.one('.' + CSS_FORM_BUILDER_PAGE_CONTROLS).append(leftControlTrigger);
+						boundingBox.one('.' + CSS_FORM_BUILDER_PAGINATION).append(leftControlTrigger);
 
 						instance.get('pageHeader').one('.' + CSS_PAGE_HEADER).append(leftControlTrigger);
 
@@ -372,7 +369,7 @@ AUI.add(
 						var pagination = instance._getPagination();
 						var wizard = instance._getWizard();
 
-						var paginationBoundingBox = pagination.get('boundingBox');
+						var paginationBoundingBox = pagination.get('boundingBox').get('parentNode');
 						var wizardBoundingBox = wizard.get('boundingBox');
 
 						if (instance.get('pagesQuantity') > 1) {
