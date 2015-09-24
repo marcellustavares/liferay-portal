@@ -54,15 +54,19 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						instance.autoFields = new Liferay.AutoFields(
-							{
-								contentBox: container.one('.auto-fields'),
-								fieldIndexes: instance.getQualifiedName(),
-								namespace: instance.get('portletNamespace'),
-								sortable: true,
-								sortableHandle: '.ddm-options-row'
-							}
-						).render();
+						var autoFieldsContainer = container.one('.auto-fields');
+
+						if (autoFieldsContainer) {
+							instance.autoFields = new Liferay.AutoFields(
+								{
+									contentBox: autoFieldsContainer,
+									fieldIndexes: instance.getQualifiedName(),
+									namespace: instance.get('portletNamespace'),
+									sortable: true,
+									sortableHandle: '.ddm-options-row'
+								}
+							).render();
+						}
 
 						return instance;
 					},
@@ -72,28 +76,30 @@ AUI.add(
 
 						var autoFields = instance.autoFields;
 
-						var visibleRows = autoFields._contentBox.all('.lfr-form-row').each(autoFields._clearHiddenRows, autoFields);
-
 						var serializedData = [];
 
-						visibleRows.each(
-							function(item) {
-								var labelField = item.one('.ddm-options-field-label');
+						if (autoFields) {
+							var visibleRows = autoFields._contentBox.all('.lfr-form-row').each(autoFields._clearHiddenRows, autoFields);
 
-								var valueField = item.one('.ddm-options-field-value');
+							visibleRows.each(
+								function(item) {
+									var labelField = item.one('.ddm-options-field-label');
 
-								var label = {};
+									var valueField = item.one('.ddm-options-field-value');
 
-								label[instance.get('locale')] = labelField.val();
+									var label = {};
 
-								serializedData.push(
-									{
-										label: label,
-										value: valueField.val()
-									}
-								);
-							}
-						);
+									label[instance.get('locale')] = labelField.val();
+
+									serializedData.push(
+										{
+											label: label,
+											value: valueField.val()
+										}
+									);
+								}
+							);
+						}
 
 						return serializedData;
 					}

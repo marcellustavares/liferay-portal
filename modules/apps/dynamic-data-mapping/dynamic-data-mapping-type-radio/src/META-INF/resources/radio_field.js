@@ -1,6 +1,8 @@
 AUI.add(
 	'liferay-ddm-form-field-radio',
 	function(A) {
+		var Lang = A.Lang;
+
 		var RadioField = A.Component.create(
 			{
 				ATTRS: {
@@ -46,7 +48,7 @@ AUI.add(
 
 						var value = instance.get('value');
 
-						if (instance.get('localizable')) {
+						if (Lang.isObject(value)) {
 							value = value[instance.get('locale')];
 						}
 

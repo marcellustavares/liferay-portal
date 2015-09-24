@@ -1,0 +1,33 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form datasource field.
+ *
+ * @param label
+ * @param name
+ * @param required
+ * @param visible
+ */
+{template .datasource}
+	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
+		<label class="control-label">
+			{$label}
+
+			{if $required}
+				<b>*</b>
+			{/if}
+		</label>
+
+		<input name="{$name}" type="hidden" />
+
+		<div class="datasource-container">
+			<div class="form-group">
+				<select class="datasource-select form-control"></select>
+			</div>
+
+			<div class="datasource-form"></div>
+		</div>
+
+		<span class="hide icon-refresh icon-spin"></span>
+	</div>
+{/template}

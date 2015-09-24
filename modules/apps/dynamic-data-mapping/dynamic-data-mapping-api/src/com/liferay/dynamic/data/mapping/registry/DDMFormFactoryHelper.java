@@ -136,6 +136,20 @@ public class DDMFormFactoryHelper {
 		return ddmFormFieldOptions;
 	}
 
+	public LocalizedValue getDDMFormFieldPredefinedValue() {
+		LocalizedValue localizedValue = new LocalizedValue(_defaultLocale);
+
+		String predefinedValue = _ddmFormField.predefinedValue();
+
+		if (Validator.isNull(predefinedValue)) {
+			return localizedValue;
+		}
+
+		localizedValue.addString(_defaultLocale, predefinedValue);
+
+		return localizedValue;
+	}
+
 	public LocalizedValue getDDMFormFieldTip() {
 		LocalizedValue localizedValue = new LocalizedValue(_defaultLocale);
 

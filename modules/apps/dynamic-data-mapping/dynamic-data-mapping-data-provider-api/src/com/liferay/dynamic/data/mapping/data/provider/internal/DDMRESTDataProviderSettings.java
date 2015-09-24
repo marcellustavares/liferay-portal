@@ -23,7 +23,7 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Marcellus Tavares
  */
-@Component(immediate = true, properties = "ddm.data.provider.name=rest")
+@Component(immediate = true, property = "ddm.data.provider.name=rest")
 public class DDMRESTDataProviderSettings implements DDMDataProviderSettings {
 
 	@Override
@@ -34,15 +34,19 @@ public class DDMRESTDataProviderSettings implements DDMDataProviderSettings {
 	@DDMForm
 	public interface RESTSettings {
 
+		@DDMFormField
 		public String key();
 
+		@DDMFormField
 		public String password();
 
 		@DDMFormField
 		public String url();
 
+		@DDMFormField
 		public String username();
 
+		@DDMFormField
 		public String value();
 
 	}

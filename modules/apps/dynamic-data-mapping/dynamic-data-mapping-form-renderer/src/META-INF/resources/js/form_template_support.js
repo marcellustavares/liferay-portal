@@ -66,13 +66,13 @@ AUI.add(
 
 				instance.eachField(
 					function(field) {
-						var container = field.fetchContainer();
+						var fieldContainer = field.fetchContainer();
 
-						if (!container) {
-							container = field._createContainer();
+						if (!fieldContainer) {
+							fieldContainer = field._createContainer();
 						}
 
-						field.set('container', container);
+						field.set('container', fieldContainer);
 					}
 				);
 

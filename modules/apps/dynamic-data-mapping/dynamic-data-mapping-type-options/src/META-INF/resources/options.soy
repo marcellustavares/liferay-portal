@@ -11,13 +11,13 @@
  */
 {template .options}
 	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
-		<span class="control-label">
+		<label class="control-label">
 			{$label}
 
 			{if $required}
 				<b>*</b>
 			{/if}
-		</span>
+		</label>
 
 		<input name="{$name}" type="hidden" />
 

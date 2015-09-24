@@ -26,8 +26,10 @@ import java.util.Map;
  */
 public class DDMDataProviderContext {
 
-	public DDMDataProviderContext(DDMFormField ddmFormField) {
-		_ddmFormField = ddmFormField;
+	public DDMDataProviderContext(
+		Map<String, Object> properties) {
+		
+		_properties = properties;
 	}
 
 	public Map<String, String> getParameters() {
@@ -35,15 +37,15 @@ public class DDMDataProviderContext {
 	}
 
 	public <T> T getSettings(Class<T> clazz) {
-		return Configurable.createConfigurable(
-			clazz, _ddmFormField.getProperties());
+		return Configurable.createConfigurable(clazz, _properties);
 	}
 
 	public void setParameter(String key, String value) {
 		_parameters.put(key, value);
 	}
 
-	private final DDMFormField _ddmFormField;
+	//private final String _dataProviderName;
+	private final Map<String, Object> _properties;
 	private final Map<String, String> _parameters = new HashMap<>();
 
 }

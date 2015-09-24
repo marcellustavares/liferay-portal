@@ -224,6 +224,10 @@
 		.lfr-ddm-form-container {
 			padding: 0 50px;
 
+			.datasource-form .lfr-ddm-form-container {
+				padding: 0;
+			}
+
 			.lfr-ddm-form-field-container {
 				.lfr-form-row {
 					border-width: 0;
