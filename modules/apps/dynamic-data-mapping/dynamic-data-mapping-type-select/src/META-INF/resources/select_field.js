@@ -11,7 +11,6 @@ AUI.add(
 					},
 
 					datasource: {
-						setter: JSON.parse,
 						value: {}
 					},
 
@@ -81,8 +80,8 @@ AUI.add(
 
 							instance._getJSON(
 								{
-									name: datasource.datasourceName,
-									settings: JSON.stringify(datasource)
+									name: JSON.parse(datasource).datasourceName,
+									settings: datasource
 								},
 								function(options) {
 									instance._loading = false;

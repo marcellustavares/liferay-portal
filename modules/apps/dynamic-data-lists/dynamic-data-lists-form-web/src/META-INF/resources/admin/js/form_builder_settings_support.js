@@ -31,14 +31,6 @@ AUI.add(
 				}
 			},
 
-			datasource: {
-				value: {}
-			},
-
-			datasourceType: {
-				value: 'manually'
-			},
-
 			settingsForm: {
 				valueFn: '_valueSettingsForm'
 			}
