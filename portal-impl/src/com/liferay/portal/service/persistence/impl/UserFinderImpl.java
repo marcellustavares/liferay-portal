@@ -63,7 +63,7 @@ import java.util.Map;
  * @author Shuyang Zhou
  */
 public class UserFinderImpl
-	extends BasePersistenceImpl<User> implements UserFinder {
+	extends UserFinderBaseImpl implements UserFinder {
 
 	public static final String COUNT_BY_SOCIAL_USERS =
 		UserFinder.class.getName() + ".countBySocialUsers";
