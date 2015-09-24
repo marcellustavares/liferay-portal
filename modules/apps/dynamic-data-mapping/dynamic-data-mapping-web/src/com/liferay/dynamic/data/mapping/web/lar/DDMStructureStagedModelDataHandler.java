@@ -15,8 +15,15 @@
 package com.liferay.dynamic.data.mapping.web.lar;
 
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -242,6 +249,10 @@ public class DDMStructureStagedModelDataHandler
 			structureElement.addAttribute("preloaded", "true");
 		}
 
+		exportForm(portletDataContext, structure, structureElement);
+
+		exportFormLayout(portletDataContext, structure, structureElement);
+
 		portletDataContext.addClassedModel(
 			structureElement, ExportImportPathUtil.getModelPath(structure),
 			structure);
@@ -271,6 +282,13 @@ public class DDMStructureStagedModelDataHandler
 
 		DDMStructure importedStructure = null;
 
+		Element structureElement = portletDataContext.getImportDataElement(
+			structure);
+
+		DDMForm form = loadForm(portletDataContext, structureElement);
+		DDMFormLayout formLayout = loadFormLayout(
+			portletDataContext, structureElement);
+
 		if (portletDataContext.isDataStrategyMirror()) {
 			Element element =
 				portletDataContext.getImportDataStagedModelElement(structure);
@@ -290,17 +308,17 @@ public class DDMStructureStagedModelDataHandler
 					userId, portletDataContext.getScopeGroupId(),
 					parentStructureId, structure.getClassNameId(),
 					structure.getStructureKey(), structure.getNameMap(),
-					structure.getDescriptionMap(), structure.getDDMForm(),
-					structure.getDDMFormLayout(), structure.getStorageType(),
-					structure.getType(), serviceContext);
+					structure.getDescriptionMap(), form, formLayout,
+					structure.getStorageType(), structure.getType(),
+					serviceContext);
 			}
 			else if (isModifiedStructure(existingStructure, structure)) {
 				importedStructure =
 					DDMStructureLocalServiceUtil.updateStructure(
 						userId, existingStructure.getStructureId(),
 						parentStructureId, structure.getNameMap(),
-						structure.getDescriptionMap(), structure.getDDMForm(),
-						structure.getDDMFormLayout(), serviceContext);
+						structure.getDescriptionMap(), form, formLayout,
+						serviceContext);
 			}
 			else {
 				if (_log.isDebugEnabled()) {
@@ -317,15 +335,48 @@ public class DDMStructureStagedModelDataHandler
 			importedStructure = DDMStructureLocalServiceUtil.addStructure(
 				userId, portletDataContext.getScopeGroupId(), parentStructureId,
 				structure.getClassNameId(), null, structure.getNameMap(),
-				structure.getDescriptionMap(), structure.getDDMForm(),
-				structure.getDDMFormLayout(), structure.getStorageType(),
-				structure.getType(), serviceContext);
+				structure.getDescriptionMap(), form, formLayout,
+				structure.getStorageType(), structure.getType(),
+				serviceContext);
 		}
 
 		portletDataContext.importClassedModel(structure, importedStructure);
 
 		structureKeys.put(
 			structure.getStructureKey(), importedStructure.getStructureKey());
+	}
+
+	protected void exportForm(
+		PortletDataContext portletDataContext, DDMStructure structure,
+		Element structureElement) {
+
+		String formPath = ExportImportPathUtil.getModelPath(
+			structure, "form.json");
+
+		structureElement.addAttribute("form-path", formPath);
+
+		portletDataContext.addZipEntry(formPath, structure.getDefinition());
+	}
+
+	protected void exportFormLayout(
+			PortletDataContext portletDataContext, DDMStructure structure,
+			Element structureElement)
+		throws PortalException {
+
+		DDMStructureVersion structureVersion = structure.getStructureVersion();
+
+		DDMStructureLayout structureLayout =
+			DDMStructureLayoutLocalServiceUtil.
+				getStructureLayoutByStructureVersionId(
+					structureVersion.getStructureVersionId());
+
+		String formLayoutPath = ExportImportPathUtil.getModelPath(
+			structure, "form-layout.json");
+
+		structureElement.addAttribute("form-layout-path", formLayoutPath);
+
+		portletDataContext.addZipEntry(
+			formLayoutPath, structureLayout.getDefinition());
 	}
 
 	protected DDMStructure fetchExistingStructure(
@@ -392,6 +443,28 @@ public class DDMStructureStagedModelDataHandler
 		}
 
 		return false;
+	}
+
+	protected DDMForm loadForm(
+			PortletDataContext portletDataContext, Element structureElement)
+		throws PortalException {
+
+		String formPath = structureElement.attributeValue("form-path");
+		String formJson = portletDataContext.getZipEntryAsString(formPath);
+
+		return DDMFormJSONDeserializerUtil.deserialize(formJson);
+	}
+
+	protected DDMFormLayout loadFormLayout(
+			PortletDataContext portletDataContext, Element structureElement)
+		throws PortalException {
+
+		String formLayoutPath = structureElement.attributeValue(
+			"form-layout-path");
+		String formLayoutJson = portletDataContext.getZipEntryAsString(
+			formLayoutPath);
+
+		return DDMFormLayoutJSONDeserializerUtil.deserialize(formLayoutJson);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
