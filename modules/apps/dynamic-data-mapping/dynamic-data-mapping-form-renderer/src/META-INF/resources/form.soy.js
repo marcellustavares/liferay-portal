@@ -56,7 +56,7 @@ return output;
 
 
 ddm.paginated_form = function(opt_data, opt_ignored) {
-var output = '\t<div class="lfr-ddm-form-container" id="' + soy.$$escapeHtml(opt_data.containerId) + '"><div class="lfr-ddm-form-wizard"><ul class="multi-step-progress-bar">';
+var output = '\t<div class="lfr-ddm-form-container" id="' + soy.$$escapeHtml(opt_data.containerId) + '"><div class="lfr-ddm-form-content"><div class="lfr-ddm-form-wizard"><ul class="multi-step-progress-bar">';
 var pageList63 = opt_data.pages;
 var pageListLen63 = pageList63.length;
 for (var pageIndex63 = 0; pageIndex63 < pageListLen63; pageIndex63++) {
@@ -68,9 +68,9 @@ var pageList76 = opt_data.pages;
 var pageListLen76 = pageList76.length;
 for (var pageIndex76 = 0; pageIndex76 < pageListLen76; pageIndex76++) {
 	var pageData76 = pageList76[pageIndex76];
-	output += '<div class="' + ((pageIndex76 == 0) ? 'active' : '') + ' lfr-ddm-form-page">' + ((pageData76.title != null) ? '<h3>' + soy.$$filterNoAutoescape(pageData76.title) + '</h3>' : '') + ((pageData76.description != null) ? '<h4>' + soy.$$filterNoAutoescape(pageData76.description) + '</h4>' : '') + ddm.form_rows(soy.$$augmentMap(opt_data, {rows: pageData76.rows})) + '</div>';
+	output += '<div class="' + ((pageIndex76 == 0) ? 'active' : '') + ' lfr-ddm-form-page">' + ((pageData76.title != null) ? '<h3 class="lfr-ddm-form-page-title">' + soy.$$filterNoAutoescape(pageData76.title) + '</h3>' : '') + ((pageData76.description != null) ? '<h4 class="lfr-ddm-form-page-description">' + soy.$$filterNoAutoescape(pageData76.description) + '</h4>' : '') + ddm.form_rows(soy.$$augmentMap(opt_data, {rows: pageData76.rows})) + '</div>';
 }
-output += '</div><div class="lfr-ddm-form-pagination-controls"><button class="btn btn-primary hide lfr-ddm-form-pagination-prev" type="button">Prev</button><button class="btn btn-primary' + ((opt_data.pages.length == 1) ? ' hide' : '') + ' lfr-ddm-form-pagination-next pull-right" type="button">Next</button><button class="btn btn-primary' + ((opt_data.pages.length > 1) ? ' hide' : '') + ' lfr-ddm-form-submit pull-right" type="submit">Submit</button></div></div>';
+output += '</div></div><div class="lfr-ddm-form-pagination-controls"><button class="btn btn-lg btn-primary hide lfr-ddm-form-pagination-prev" type="button"><i class="icon-angle-left"></i> Prev</button><button class="btn btn-lg btn-primary' + ((opt_data.pages.length == 1) ? ' hide' : '') + ' lfr-ddm-form-pagination-next pull-right" type="button">Next <i class="icon-angle-right"></i></button><button class="btn btn-lg btn-primary' + ((opt_data.pages.length > 1) ? ' hide' : '') + ' lfr-ddm-form-submit pull-right" type="submit">Submit</button></div></div>';
 return output;
 };
 
