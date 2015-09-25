@@ -6,9 +6,11 @@ AUI.add(
 		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
 		var Lang = A.Lang;
 
-		var CSS_PAGES = A.getClassName('form', 'builder', 'pages', 'lexicon');
-		var CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'pages', 'header');
 		var CSS_FORM_BUILDER_TABS = A.getClassName('form', 'builder', 'tabs');
+
+		var CSS_PAGE_HEADER = A.getClassName('form', 'builder', 'pages', 'header');
+
+		var CSS_PAGES = A.getClassName('form', 'builder', 'pages', 'lexicon');
 
 		var FormBuilder = A.Component.create(
 			{

@@ -27,8 +27,7 @@ public interface DDMFormFieldTypeSettings {
 	public String dataType();
 
 	@DDMFormField(
-		label = "%name",
-		required = true,
+		label = "%name", required = true,
 		properties = {"setting.category=basic", "setting.weight=2"},
 		validationErrorMessage = "%please-type-a-name-for-your-field",
 		validationExpression = "!name.equals(\"\")"

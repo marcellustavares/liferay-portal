@@ -14,15 +14,15 @@
 
 package com.liferay.dynamic.data.mapping.type.datasource;
 
-import java.util.Map;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
+
+import java.util.Map;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Bruno Basto

@@ -14,26 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.data.provider.internal.servlet;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderSettings;
@@ -53,8 +33,27 @@ import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.io.IOException;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -81,10 +80,11 @@ public class DDMDataProviderServlet extends HttpServlet {
 				bundleContext));
 
 		_ddmDataProviderServiceTrackerMap.open();
-		
+
 		_ddmDataProviderSettingsServiceTrackerMap =
 			ServiceTrackerMapFactory.singleValueMap(
-				bundleContext, DDMDataProviderSettings.class, "ddm.data.provider.name");
+				bundleContext, DDMDataProviderSettings.class,
+				"ddm.data.provider.name");
 
 		_ddmDataProviderSettingsServiceTrackerMap.open();
 	}
@@ -92,7 +92,7 @@ public class DDMDataProviderServlet extends HttpServlet {
 	@Deactivate
 	protected void deactivate() {
 		_ddmDataProviderServiceTrackerMap.close();
-		
+
 		_ddmDataProviderSettingsServiceTrackerMap.close();
 	}
 
@@ -117,7 +117,7 @@ public class DDMDataProviderServlet extends HttpServlet {
 		}
 		else if (Validator.equals(cmd, "getSettings")) {
 			String name = ParamUtil.getString(request, "name");
-			
+
 			DDMDataProviderSettings ddmDataProviderSettings =
 				_ddmDataProviderSettingsServiceTrackerMap.getService(name);
 
@@ -133,52 +133,49 @@ public class DDMDataProviderServlet extends HttpServlet {
 			try {
 				String name = ParamUtil.getString(request, "name");
 				String settings = ParamUtil.getString(request, "settings");
-				
+
 				JSONObject datasourceJONObject =
 					JSONFactoryUtil.createJSONObject(settings);
-				
-				JSONArray fields = datasourceJONObject.getJSONArray("fieldValues");
-				
+
+				JSONArray fields = datasourceJONObject.getJSONArray(
+					"fieldValues");
+
 				Map<String, Object> properties = new HashMap<>();
-				
+
 				for (int i = 0; i < fields.length(); i++) {
 					JSONObject field = fields.getJSONObject(i);
-					
+
 					String key = field.getString("name");
 					String value = field.getString("value");
-					
+
 					properties.put(key, value);
 				}
-				
-				DDMDataProviderContext ddmDataProviderContext = 
+
+				DDMDataProviderContext ddmDataProviderContext =
 					new DDMDataProviderContext(properties);
-				
+
 				DDMDataProvider ddmDataProvider =
-					_ddmDataProviderServiceTrackerMap.getService(name).getService();
-				
+					_ddmDataProviderServiceTrackerMap.getService(
+						name).getService();
+
 				List<KeyValuePair> data = ddmDataProvider.getData(
 					ddmDataProviderContext);
-				
+
 				for (KeyValuePair keyValuePair : data) {
-					JSONObject optionJSONObject = JSONFactoryUtil.createJSONObject();
-	
+					JSONObject optionJSONObject =
+						JSONFactoryUtil.createJSONObject();
+
 					optionJSONObject.put("label", keyValuePair.getKey());
 					optionJSONObject.put("value", keyValuePair.getValue());
-			
+
 					optionsJSONArray.put(optionJSONObject);
 				}
 			}
 			catch (Exception e) {
 			}
-			
+
 			ServletResponseUtil.write(response, optionsJSONArray.toString());
 		}
-		
-	}
-
-	@Reference
-	protected void setJSONFactory(JSONFactory jsonFactory) {
-		_jsonFactory = jsonFactory;
 	}
 
 	@Reference
@@ -188,14 +185,18 @@ public class DDMDataProviderServlet extends HttpServlet {
 		_ddmFormJSONSerializer = ddmFormJSONSerializer;
 	}
 
-	private static final long serialVersionUID = 1L;
-	
-	private DDMFormJSONSerializer _ddmFormJSONSerializer;
+	@Reference
+	protected void setJSONFactory(JSONFactory jsonFactory) {
+		_jsonFactory = jsonFactory;
+	}
 
-	private ServiceTrackerMap<String, DDMDataProviderSettings>
-		_ddmDataProviderSettingsServiceTrackerMap;
+	private static final long serialVersionUID = 1L;
+
 	private ServiceTrackerMap<String, ServiceWrapper<DDMDataProvider>>
 		_ddmDataProviderServiceTrackerMap;
+	private ServiceTrackerMap<String, DDMDataProviderSettings>
+		_ddmDataProviderSettingsServiceTrackerMap;
+	private DDMFormJSONSerializer _ddmFormJSONSerializer;
 	private JSONFactory _jsonFactory;
 
 }

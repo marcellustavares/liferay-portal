@@ -17,18 +17,12 @@ package com.liferay.dynamic.data.mapping.type.select;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.dynamic.data.mapping.util.DDMStructurePermissionSupport;
-import com.liferay.dynamic.data.mapping.util.DDMTemplatePermissionSupport;
-import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
-import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory.ServiceWrapper;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.template.Template;
@@ -74,14 +68,15 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	}
 
 	@Activate
-	protected void activate(BundleContext bundleContext, Map<String, Object> properties) throws InvalidSyntaxException {
+	protected void activate(
+			BundleContext bundleContext, Map<String, Object> properties)
+		throws InvalidSyntaxException {
+
 		_templateResource = getTemplateResource(
 			"/META-INF/resources/select.soy");
-		
-		_serviceTracker =
-				ServiceTrackerMapFactory.singleValueMap(
-					bundleContext, DDMDataProvider.class,
-					"ddm.data.provider.name");
+
+		_serviceTracker = ServiceTrackerMapFactory.singleValueMap(
+			bundleContext, DDMDataProvider.class, "ddm.data.provider.name");
 
 		_serviceTracker.open();
 	}
@@ -89,45 +84,48 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	protected List<Object> getOptions(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-		
-		String datasourceType = (String)ddmFormField.getProperty("datasourceType");
-		
+
+		String datasourceType = (String)ddmFormField.getProperty(
+			"datasourceType");
+
 		if (Validator.equals(datasourceType, "datasource")) {
-			String datasourceSettings = (String)ddmFormField.getProperty("datasource");
-			
+			String datasourceSettings = (String)ddmFormField.getProperty(
+				"datasource");
+
 			try {
 				JSONObject datasourceJONObject =
 					JSONFactoryUtil.createJSONObject(datasourceSettings);
-				
-				String datasourceName = datasourceJONObject.getString("datasourceName");
-				
-				JSONArray fields = datasourceJONObject.getJSONArray("fieldValues");
-				
+
+				String datasourceName = datasourceJONObject.getString(
+					"datasourceName");
+
+				JSONArray fields = datasourceJONObject.getJSONArray(
+					"fieldValues");
+
 				Map<String, Object> properties = new HashMap<>();
-				
+
 				for (int i = 0; i < fields.length(); i++) {
 					JSONObject field = fields.getJSONObject(i);
-					
+
 					String key = field.getString("name");
 					String value = field.getString("value");
-					
+
 					properties.put(key, value);
 				}
-				
-				DDMDataProviderContext ddmDataProviderContext = 
+
+				DDMDataProviderContext ddmDataProviderContext =
 					new DDMDataProviderContext(properties);
-				
-				DDMDataProvider ddmDataProvider = _serviceTracker.getService(datasourceName);
-				
+
+				DDMDataProvider ddmDataProvider = _serviceTracker.getService(
+					datasourceName);
+
 				List<Object> options = new ArrayList<>();
 
-				List<KeyValuePair> data = ddmDataProvider.getData(ddmDataProviderContext);
-				
+				List<KeyValuePair> data = ddmDataProvider.getData(
+					ddmDataProviderContext);
+
 				for (KeyValuePair keyValuePair : data) {
 					Map<String, String> optionMap = new HashMap<>();
-//
-//					LocalizedValue optionLabel = _ddmFormFieldOptions.getOptionLabels(
-//						optionValue);
 
 					optionMap.put("label", keyValuePair.getKey());
 					optionMap.put("status", StringPool.BLANK);
@@ -141,7 +139,6 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			catch (Exception e) {
 				return Collections.emptyList();
 			}
-			
 		}
 		else {
 			SelectDDMFormFieldContextHelper selectDDMFormFieldContextHelper =
@@ -150,7 +147,7 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 					ddmFormFieldRenderingContext.getValue(),
 					ddmFormField.getPredefinedValue(),
 					ddmFormFieldRenderingContext.getLocale());
-			
+
 			return selectDDMFormFieldContextHelper.getOptions();
 		}
 	}
@@ -170,7 +167,7 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			"options", getOptions(ddmFormField, ddmFormFieldRenderingContext));
 	}
 
-	private TemplateResource _templateResource;
 	private ServiceTrackerMap<String, DDMDataProvider> _serviceTracker;
-	
+	private TemplateResource _templateResource;
+
 }

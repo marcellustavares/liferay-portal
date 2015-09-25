@@ -67,7 +67,7 @@ public class DDMRESTDataProviderTest {
 		ddmFormField.setProperty("password", "test");
 		ddmFormField.setProperty("key", "countryId");
 		ddmFormField.setProperty("value", "nameCurrentValue");
-		
+
 		Map<String, Object> properties = new HashMap<>();
 
 		DDMDataProviderContext ddmDataProviderContext =

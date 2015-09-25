@@ -133,7 +133,7 @@ public class DDMFormEvaluatorHelper {
 			if (!valid) {
 				LocalizedValue errorMessage =
 					ddmFormFieldValidation.getErrorMessage();
-	
+
 				ddmFormFieldEvaluationResult.setErrorMessage(
 					errorMessage.getString(_locale));
 			}

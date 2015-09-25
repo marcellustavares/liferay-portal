@@ -73,7 +73,7 @@ AUI.add(
 						var instance = this;
 
 						if (instance.get('allowNavigation')) {
-							instance.get('contentBox').addClass('liferay-ddm-form-renderer-wizard-navigation-allowed')
+							instance.get('contentBox').addClass('liferay-ddm-form-renderer-wizard-navigation-allowed');
 						}
 					},
 

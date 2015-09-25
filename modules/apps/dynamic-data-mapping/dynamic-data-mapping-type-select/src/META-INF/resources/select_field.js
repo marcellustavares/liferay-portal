@@ -107,12 +107,8 @@ AUI.add(
 						return instance;
 					},
 
-					_onInputChange: function() {},
-
 					_getJSON: function(data, callback) {
 						var instance = this;
-
-						console.log(data);
 
 						A.io.request(
 							instance.get('dataProviderURL'),
