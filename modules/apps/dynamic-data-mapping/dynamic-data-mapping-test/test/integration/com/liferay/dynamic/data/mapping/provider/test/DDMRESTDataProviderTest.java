@@ -24,7 +24,9 @@ import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -65,9 +67,11 @@ public class DDMRESTDataProviderTest {
 		ddmFormField.setProperty("password", "test");
 		ddmFormField.setProperty("key", "countryId");
 		ddmFormField.setProperty("value", "nameCurrentValue");
+		
+		Map<String, Object> properties = new HashMap<>();
 
 		DDMDataProviderContext ddmDataProviderContext =
-			new DDMDataProviderContext(ddmFormField);
+			new DDMDataProviderContext(properties);
 
 		List<KeyValuePair> actualKeyValuePairs = _ddmDataProvider.getData(
 			ddmDataProviderContext);
