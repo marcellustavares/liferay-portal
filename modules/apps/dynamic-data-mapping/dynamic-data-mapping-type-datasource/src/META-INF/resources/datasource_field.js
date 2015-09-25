@@ -22,6 +22,12 @@ AUI.add(
 				NAME: 'liferay-ddm-form-field-datasource',
 
 				prototype: {
+					destructor: function() {
+						var instance = this;
+
+						instance._destroyed = true;
+					},
+
 					getValue: function() {
 						var instance = this;
 
@@ -159,10 +165,14 @@ AUI.add(
 								method: 'GET',
 								on: {
 									failure: function() {
-										callback.call(instance, null);
+										if (!instance._destroyed) {
+											callback.call(instance, null);
+										}
 									},
 									success: function() {
-										callback.call(instance, this.get('responseData'));
+										if (!instance._destroyed) {
+											callback.call(instance, this.get('responseData'));
+										}
 									}
 								}
 							}

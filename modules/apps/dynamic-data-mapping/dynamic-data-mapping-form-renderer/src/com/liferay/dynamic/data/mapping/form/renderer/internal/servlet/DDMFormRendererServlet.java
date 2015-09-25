@@ -45,12 +45,19 @@ public class DDMFormRendererServlet extends HttpServlet {
 		StringBundler sb = new StringBundler();
 		
 		sb.append("<html><head>");
-		sb.append("<link class=\"lfr-css-file\" href=\"/o/frontend-theme-classic-web/classic/css/aui.css?browserId=other&themeId=classic&languageId=en_US&b=7000&t=14\" rel=\"stylesheet\" type=\"text/css\" />");
+		sb.append("<link class=\"lfr-css-file\" href=\"/o/frontend-theme-classic-web/classic/css/aui.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		sb.append("<link class=\"lfr-css-file\" href=\"/o/frontend-theme-classic-web/classic/css/main.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		sb.append("<link class=\"lfr-css-file\" href=\"/o/ddm-form-renderer/css/main.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		sb.append("<link class=\"lfr-css-file\" href=\"/o/ddl-form-web/admin/css/main.css\" rel=\"stylesheet\" type=\"text/css\" />");
 		sb.append("</head>");
-		sb.append("<body style=\"padding:20px;\">");
+		sb.append("<body class=\"portal-popup\"><div class=\"portlet-forms\"><div class=\"ddl-form-basic-info\"> <div class=\"container-fluid-1280\">");
 		
 		DDLRecordSet ddlRecordSet = DDLRecordSetLocalServiceUtil.getRecordSet(recordSetId);
-		
+
+		sb.append("<h1 class=\"ddl-form-name\">");
+		sb.append(ddlRecordSet.getNameCurrentValue());
+		sb.append("</h1></div></div><div class=\"container-fluid-1280 ddl-form-builder-app\">");
+
 		DDMStructure ddmStructure = ddlRecordSet.getDDMStructure();
 		
 		DDMFormRenderingContext ddmFormRenderingContext = new DDMFormRenderingContext();
@@ -61,10 +68,8 @@ public class DDMFormRendererServlet extends HttpServlet {
 		ddmFormRenderingContext.setPortletNamespace("");
 		
 		sb.append(_ddmFormRenderer.render(ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(), ddmFormRenderingContext));
-		sb.append("</body>");
+		sb.append("</div></div></body>");
 		sb.append("</html>");
-		
-		
 		
 		resp.setContentType(ContentTypes.TEXT_HTML);
 		
@@ -72,9 +77,7 @@ public class DDMFormRendererServlet extends HttpServlet {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			
 		}
-		
 	}
 	
 	@Reference

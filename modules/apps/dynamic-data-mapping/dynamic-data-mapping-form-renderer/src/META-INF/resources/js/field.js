@@ -125,6 +125,8 @@ AUI.add(
 						}
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
+
+						instance._destroyed = true;
 					},
 
 					fetchContainer: function() {
@@ -304,29 +306,31 @@ AUI.add(
 					render: function(target) {
 						var instance = this;
 
-						var container = instance.get('container');
+						if (!instance._destroyed) {
+							var container = instance.get('container');
 
-						var parent = instance.get('parent');
+							var parent = instance.get('parent');
 
-						if (target && !parent) {
-							container.appendTo(target);
-						}
-
-						container.html(instance.getTemplate());
-
-						instance.eachField(
-							function(field) {
-								var container = field.fetchContainer();
-
-								if (!container) {
-									container = field._createContainer();
-								}
-
-								field.set('container', container);
+							if (target && !parent) {
+								container.appendTo(target);
 							}
-						);
 
-						instance.fire('render');
+							container.html(instance.getTemplate());
+
+							instance.eachField(
+								function(field) {
+									var container = field.fetchContainer();
+
+									if (!container) {
+										container = field._createContainer();
+									}
+
+									field.set('container', container);
+								}
+							);
+
+							instance.fire('render');
+						}
 
 						return instance;
 					},

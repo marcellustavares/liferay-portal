@@ -32,11 +32,11 @@ import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +165,13 @@ public class DDMDataProviderServlet extends HttpServlet {
 					JSONObject optionJSONObject =
 						JSONFactoryUtil.createJSONObject();
 
-					optionJSONObject.put("label", keyValuePair.getKey());
+					JSONObject labelJSONObject =
+						JSONFactoryUtil.createJSONObject();
+					
+					labelJSONObject.put(
+						LocaleUtil.US.toString(), keyValuePair.getKey());
+					
+					optionJSONObject.put("label", labelJSONObject);
 					optionJSONObject.put("value", keyValuePair.getValue());
 
 					optionsJSONArray.put(optionJSONObject);
