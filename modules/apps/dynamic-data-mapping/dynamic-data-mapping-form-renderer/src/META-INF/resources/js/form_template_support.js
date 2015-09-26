@@ -66,13 +66,13 @@ AUI.add(
 
 				instance.eachField(
 					function(field) {
-						var container = field.fetchContainer();
+						var fieldContainer = field.fetchContainer();
 
-						if (!container) {
-							container = field._createContainer();
+						if (!fieldContainer) {
+							fieldContainer = field._createContainer();
 						}
 
-						field.set('container', container);
+						field.set('container', fieldContainer);
 					}
 				);
 
@@ -123,9 +123,9 @@ AUI.add(
 				return A.merge(
 					page,
 					{
-						description: page.description && page.description[locale] || '',
+						description: (page.description && page.description[locale]) || '',
 						rows: page.rows.map(A.bind('_normalizeLayoutRow', instance)),
-						title: page.title && page.title[locale] || ''
+						title: (page.title && page.title[locale]) || ''
 					}
 				);
 			},
