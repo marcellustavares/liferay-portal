@@ -14,6 +14,13 @@
 
 package com.liferay.dynamic.data.lists.web.context;
 
+import java.util.Locale;
+
+import javax.portlet.PortletPreferences;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
+import com.liferay.dynamic.data.lists.configuration.DDLServiceConfiguration;
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.constants.DDLWebKeys;
@@ -21,7 +28,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLPermission;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
-import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfigurationValues;
+import com.liferay.dynamic.data.lists.web.context.util.DDLWebRequestHelper;
 import com.liferay.dynamic.data.lists.web.portlet.DDLPortletUtil;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
@@ -41,12 +48,6 @@ import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
-
-import java.util.Locale;
-
-import javax.portlet.PortletPreferences;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 
 /**
  * @author Marcellus Tavares
@@ -91,10 +92,18 @@ public class DDLDisplayContext {
 
 	public String[] getDDLRecordSetDisplayViews() {
 		if (_ddlRecordDisplayViews == null) {
+			DDLWebRequestHelper ddlWebRequestHelper =
+					new DDLWebRequestHelper(
+						PortalUtil.getHttpServletRequest(_renderRequest));
+
+			DDLServiceConfiguration ddlConfigurationService =
+				ddlWebRequestHelper.getDDLServiceConfiguration();
+
 			_ddlRecordDisplayViews = StringUtil.split(
 				PrefsParamUtil.getString(
 					_portletPreferences, _renderRequest, "displayViews",
-					StringUtil.merge(DDLWebConfigurationValues.DISPLAY_VIEWS)));
+					StringUtil.merge(
+						ddlConfigurationService.displayViews())));
 		}
 
 		return _ddlRecordDisplayViews;
