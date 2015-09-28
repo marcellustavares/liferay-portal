@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationRes
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -130,8 +131,11 @@ public class DDMFormEvaluatorHelper {
 			ddmFormFieldEvaluationResult.setValid(valid);
 
 			if (!valid) {
+				LocalizedValue errorMessage =
+					ddmFormFieldValidation.getErrorMessage();
+
 				ddmFormFieldEvaluationResult.setErrorMessage(
-					ddmFormFieldValidation.getErrorMessage());
+					errorMessage.getString(_locale));
 			}
 		}
 

@@ -31,7 +31,7 @@ public class DDMFormFieldValidation implements Serializable {
 		_errorMessage = ddmFormFieldValidation._errorMessage;
 	}
 
-	public String getErrorMessage() {
+	public LocalizedValue getErrorMessage() {
 		return _errorMessage;
 	}
 
@@ -39,7 +39,7 @@ public class DDMFormFieldValidation implements Serializable {
 		return _expression;
 	}
 
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(LocalizedValue errorMessage) {
 		_errorMessage = errorMessage;
 	}
 
@@ -47,7 +47,7 @@ public class DDMFormFieldValidation implements Serializable {
 		_expression = expression;
 	}
 
-	private String _errorMessage;
+	private LocalizedValue _errorMessage;
 	private String _expression;
 
 }

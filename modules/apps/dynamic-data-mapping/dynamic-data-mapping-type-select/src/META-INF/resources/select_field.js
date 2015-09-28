@@ -1,9 +1,23 @@
 AUI.add(
 	'liferay-ddm-form-field-select',
 	function(A) {
+		var Lang = A.Lang;
+
 		var SelectField = A.Component.create(
 			{
 				ATTRS: {
+					dataProviderURL: {
+						value: '/o/ddm-data-provider'
+					},
+
+					datasource: {
+						value: {}
+					},
+
+					datasourceType: {
+						value: 'manually'
+					},
+
 					options: {
 						validator: Array.isArray,
 						value: []
@@ -30,8 +44,14 @@ AUI.add(
 						return A.map(
 							instance.get('options'),
 							function(item) {
+								var label = item.label;
+
+								if (Lang.isObject(label)) {
+									label = label[instance.get('locale')];
+								}
+
 								return {
-									label: item.label[instance.get('locale')],
+									label: label,
 									status: instance._getOptionStatus(item),
 									value: item.value
 								};
@@ -43,9 +63,73 @@ AUI.add(
 						var instance = this;
 
 						return A.merge(
-								SelectField.superclass.getTemplateContext.apply(instance, arguments),
+							SelectField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								options: instance.getOptions()
+							}
+						);
+					},
+
+					loadOptions: function() {
+						var instance = this;
+
+						var datasource = instance.get('datasource');
+
+						if (!instance._loading) {
+							instance._loading = true;
+
+							instance._getJSON(
+								{
+									name: JSON.parse(datasource).datasourceName,
+									settings: datasource
+								},
+								function(options) {
+									instance._loading = false;
+									instance._loaded = true;
+
+									instance.set('options', options);
+
+									instance.render();
+								}
+							);
+						}
+					},
+
+					render: function() {
+						var instance = this;
+
+						var datasourceType = instance.get('datasourceType');
+
+						var hasOptions = instance.getInputNode().all('option').size();
+
+						if (!hasOptions) {
+							SelectField.superclass.render.apply(instance, arguments);
+						}
+
+						if (!instance._loaded && datasourceType === 'datasource') {
+							instance.loadOptions();
+						}
+
+						return instance;
+					},
+
+					_getJSON: function(data, callback) {
+						var instance = this;
+
+						A.io.request(
+							instance.get('dataProviderURL'),
+							{
+								data: data,
+								dataType: 'JSON',
+								method: 'GET',
+								on: {
+									failure: function() {
+										callback.call(instance, null);
+									},
+									success: function() {
+										callback.call(instance, this.get('responseData'));
+									}
+								}
 							}
 						);
 					},
@@ -79,6 +163,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddm-form-renderer-field']
+		requires: ['aui-request', 'liferay-ddm-form-renderer-field']
 	}
 );

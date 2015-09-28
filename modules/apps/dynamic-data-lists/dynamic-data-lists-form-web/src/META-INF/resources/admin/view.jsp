@@ -14,6 +14,9 @@
  */
 --%>
 
+<%@page import="com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil"%>
+<%@page import="com.liferay.dynamic.data.lists.form.web.configuration.DDLFormWebConfigurationUtil"%>
+<%@page import="com.liferay.portal.kernel.util.FileUtil"%>
 <%@ include file="/admin/init.jsp" %>
 
 <%
@@ -97,7 +100,9 @@ recordSetSearch.setOrderByType(orderByType);
 						<liferay-ui:search-container-column-text colspan="<%= 2 %>">
 
 							<%
-								User userDisplay = UserLocalServiceUtil.fetchUserById(recordSet.getUserId());
+							User userDisplay = UserLocalServiceUtil.fetchUserById(recordSet.getUserId());
+							
+							DDLFormAdminPortletUtil.saveThumbnail(recordSet.getRecordSetId());
 							%>
 
 							<liferay-frontend:card
@@ -105,7 +110,7 @@ recordSetSearch.setOrderByType(orderByType);
 								actionJspServletContext="<%= application %>"
 								cssClass="entry-display-style"
 								header='<%= LanguageUtil.format(request, "x-ago-by-x", new String[] {LanguageUtil.getTimeDescription(locale, System.currentTimeMillis() - recordSet.getModifiedDate().getTime(), true), HtmlUtil.escape(recordSet.getUserName())}, false) %>'
-								imageUrl='<%= themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
+								imageUrl='<%= "/o/ddm-form-thumbnail?recordSetId=" +  recordSet.getRecordSetId()  %>'
 								resultRow="<%= row %>"
 								showCheckbox= "<%= false %>"
 								smallImageCSSClass="user-icon user-icon-lg"
