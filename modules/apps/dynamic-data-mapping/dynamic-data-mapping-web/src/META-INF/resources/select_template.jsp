@@ -21,6 +21,7 @@ long templateId = ParamUtil.getLong(request, "templateId");
 
 long classNameId = ParamUtil.getLong(request, "classNameId");
 long classPK = ParamUtil.getLong(request, "classPK");
+long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId());
 long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
 String eventName = ParamUtil.getString(request, "eventName", "selectStructure");
 
@@ -120,6 +121,14 @@ String title = ddmDisplay.getViewTemplatesTitle(structure, locale);
 		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
+
+<liferay-util:include page="/template_add_buttons.jsp" servletContext="<%= application %>">
+	<liferay-util:param name="redirect" value="<%= currentURL %>" />
+	<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+	<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
+	<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
+	<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
+</liferay-util:include>
 
 <aui:script>
 	Liferay.Util.focusFormField(document.<portlet:namespace />selectTemplateFm.<portlet:namespace />keywords);
