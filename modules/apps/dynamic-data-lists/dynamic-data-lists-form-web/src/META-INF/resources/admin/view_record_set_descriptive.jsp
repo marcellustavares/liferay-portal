@@ -39,7 +39,7 @@ if (ddlRecordSet.getPublishedURL() != null) {
 	actionJspServletContext="<%= application %>"
 	author="<%= ddlRecordSet.getUserName() %>"
 	createDate="<%= ddlRecordSet.getCreateDate() %>"
-	description="<%= HtmlUtil.escape(ddlRecordSet.getDescription(locale) + publishedURL) %>"
+	description='<%= HtmlUtil.escape(ddlRecordSet.getDescription(locale) + " " + publishedURL) %>'
 	displayStyle="descriptive"
 	groupId="<%= ddlRecordSet.getGroupId() %>"
 	latestApprovedVersion="<%= ddmStructureVersion.getVersion() %>"
