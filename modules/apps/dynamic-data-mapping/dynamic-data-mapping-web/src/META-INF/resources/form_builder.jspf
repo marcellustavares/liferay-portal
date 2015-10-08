@@ -195,6 +195,10 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 			<c:if test="<%= Validator.isNotNull(fieldsJSONArrayString) %>">
 				fields: <%= fieldsJSONArrayString %>,
 			</c:if>
+			
+			<c:if test="<%= Validator.isNotNull(parentFieldsJSONArrayString) %>">
+				parentFields: <%= parentFieldsJSONArrayString %>,
+			</c:if>
 
 			portletNamespace: '<portlet:namespace />',
 			portletResourceNamespace: '<%= HtmlUtil.escapeJS(portletResourceNamespace) %>',

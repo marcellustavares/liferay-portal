@@ -126,7 +126,15 @@ AUI.add(
 					portletNamespace: {
 						value: STR_BLANK
 					},
-
+					
+					parentFields: {
+				        value: [],
+				        setter: '_setParentFields',
+				        validator: function(val) {
+				            return A.Lang.isArray(val) || isArrayList(val);
+				        }
+				    },
+					
 					portletResourceNamespace: {
 						value: STR_BLANK
 					},
@@ -307,6 +315,18 @@ AUI.add(
 						return LiferayFormBuilder.superclass.plotField.apply(instance, arguments);
 					},
 
+					plotFields: function(fields, container) {
+						var instance = this;
+
+						 parentFields = instance.get('parentFields');
+						
+						 A.each(parentFields, function(field) {
+							 LiferayFormBuilder.UNIQUE_FIELD_NAMES_MAP.put(field.get('name'), field);
+				            });
+
+						return LiferayFormBuilder.superclass.plotFields.apply(instance, arguments);
+					},
+					
 					_afterEditingLocaleChange: function(event) {
 						var instance = this;
 
@@ -538,12 +558,23 @@ AUI.add(
 
 					_setFields: function() {
 						var instance = this;
-
+						
 						LiferayFormBuilder.UNIQUE_FIELD_NAMES_MAP.clear();
 
 						return LiferayFormBuilder.superclass._setFields.apply(instance, arguments);
 					},
 
+					_setParentFields: function(val) {
+						var instance = this;
+						var parentFields = [];
+
+				        A.Array.each(val, function(field, index) {
+				        	parentFields.push(instance.createField(field));
+				        });
+
+				        return new A.ArrayList(parentFields);
+					},
+					
 					_toggleInputDirection: function(locale) {
 						var rtl = Liferay.Language.direction[locale] === 'rtl';
 

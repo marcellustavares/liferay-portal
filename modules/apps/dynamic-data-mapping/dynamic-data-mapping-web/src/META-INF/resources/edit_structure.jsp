@@ -37,10 +37,20 @@ long parentStructureId = BeanParamUtil.getLong(structure, request, "parentStruct
 
 String parentStructureName = StringPool.BLANK;
 
+String parentFieldsJSONArrayString = StringPool.BLANK;
+
 try {
 	DDMStructure parentStructure = DDMStructureServiceUtil.getStructure(parentStructureId);
 
 	parentStructureName = parentStructure.getName(locale);
+	
+	String parentScript = BeanParamUtil.getString(parentStructure, request, "definition");
+	
+	JSONArray parentFieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(parentStructure, parentScript);
+	
+	if (parentFieldsJSONArray != null) {
+		parentFieldsJSONArrayString = parentFieldsJSONArray.toString();
+	}
 }
 catch (NoSuchStructureException nsee) {
 }

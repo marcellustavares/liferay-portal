@@ -20,6 +20,7 @@
 String portletResourceNamespace = ParamUtil.getString(request, "portletResourceNamespace");
 String script = ParamUtil.getString(request, "script");
 String fieldsJSONArrayString = ParamUtil.getString(request, "fieldsJSONArrayString");
+String parentFieldsJSONArrayString = ParamUtil.getString(request, "parentFieldsJSONArrayString");
 %>
 
 <%@ include file="/form_builder.jspf" %>
