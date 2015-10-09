@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
+ * <p/>
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * <p/>
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -16,88 +16,25 @@ package com.liferay.portal.template;
 
 import com.liferay.portal.kernel.security.pacl.NotPrivileged;
 import com.liferay.portal.kernel.template.Template;
-import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateResource;
-import com.liferay.portal.kernel.template.TemplateResourceLoader;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Raymond Augé
  */
-public abstract class BaseTemplateManager implements TemplateManager {
-
-	@Override
-	public void addContextObjects(
-		Map<String, Object> contextObjects,
-		Map<String, Object> newContextObjects) {
-
-		for (String variableName : newContextObjects.keySet()) {
-			if (contextObjects.containsKey(variableName)) {
-				continue;
-			}
-
-			Object object = newContextObjects.get(variableName);
-
-			if (object instanceof Class) {
-				addStaticClassSupport(
-					contextObjects, variableName, (Class<?>)object);
-			}
-			else {
-				contextObjects.put(variableName, object);
-			}
-		}
-	}
-
-	@Override
-	public void addStaticClassSupport(
-		Map<String, Object> contextObjects, String variableName,
-		Class<?> variableClass) {
-	}
-
-	@Override
-	public void addTaglibApplication(
-		Map<String, Object> contextObjects, String applicationName,
-		ServletContext servletContext) {
-	}
-
-	@Override
-	public void addTaglibFactory(
-		Map<String, Object> contextObjects, String taglibLiferayHash,
-		ServletContext servletContext) {
-	}
-
-	@Override
-	public void addTaglibRequest(
-		Map<String, Object> contextObjects, String applicationName,
-		HttpServletRequest request, HttpServletResponse response) {
-	}
-
-	@Override
-	public void addTaglibTheme(
-		Map<String, Object> contextObjects, String themeName,
-		HttpServletRequest request, HttpServletResponse response) {
-	}
-
-	@Override
-	public String[] getRestrictedVariables() {
-		return new String[0];
-	}
+public abstract class BaseTemplateManager extends BaseMultiTemplateManager {
 
 	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		TemplateResource templateResource, boolean restricted) {
 
-		return getTemplate(templateResource, null, restricted);
+		return super.getTemplates(Collections.singletonList(templateResource),
+			null, restricted);
 	}
 
 	@NotPrivileged
@@ -106,47 +43,24 @@ public abstract class BaseTemplateManager implements TemplateManager {
 		TemplateResource templateResource,
 		TemplateResource errorTemplateResource, boolean restricted) {
 
-		TemplateControlContext templateControlContext =
-			templateContextHelper.getTemplateControlContext();
-
-		AccessControlContext accessControlContext =
-			templateControlContext.getAccessControlContext();
-
-		ClassLoader classLoader = templateControlContext.getClassLoader();
-
-		if (accessControlContext == null) {
-			Map<String, Object> helperUtilities =
-				templateContextHelper.getHelperUtilities(
-					classLoader, restricted);
-
-			return doGetTemplate(
-				templateResource, errorTemplateResource, restricted,
-				helperUtilities, false);
-		}
-
-		Map<String, Object> helperUtilities = AccessController.doPrivileged(
-			new DoGetHelperUtilitiesPrivilegedAction(
-				templateContextHelper, classLoader, restricted),
-			accessControlContext);
-
-		Template template = AccessController.doPrivileged(
-			new DoGetTemplatePrivilegedAction(
-				templateResource, errorTemplateResource, restricted,
-				helperUtilities));
-
-		return new PrivilegedTemplateWrapper(accessControlContext, template);
+		return super.getTemplates(Collections.singletonList(templateResource),
+			errorTemplateResource, restricted);
 	}
 
-	public void setTemplateContextHelper(
-		TemplateContextHelper templateContextHelper) {
 
-		this.templateContextHelper = templateContextHelper;
+	public Template getTemplates(
+		List<TemplateResource> templateResources, boolean restricted) {
+
+		throw new UnsupportedOperationException(
+			"Template type does not support multi templates.");
 	}
 
-	public void setTemplateResourceLoader(
-		TemplateResourceLoader templateResourceLoader) {
+	public Template getTemplates(
+		List<TemplateResource> templateResources,
+		TemplateResource errorTemplateResource, boolean restricted) {
 
-		this.templateResourceLoader = templateResourceLoader;
+		throw new UnsupportedOperationException(
+			"Template type does not support multi templates.");
 	}
 
 	protected abstract Template doGetTemplate(
@@ -154,59 +68,18 @@ public abstract class BaseTemplateManager implements TemplateManager {
 		TemplateResource errorTemplateResource, boolean restricted,
 		Map<String, Object> helperUtilities, boolean privileged);
 
-	protected TemplateContextHelper templateContextHelper;
-	protected TemplateResourceLoader templateResourceLoader;
+	protected Template doGetTemplate(
+		List<TemplateResource> templateResources,
+		TemplateResource errorTemplateResource, boolean restricted,
+		Map<String, Object> helperUtilities, boolean privileged) {
 
-	private class DoGetHelperUtilitiesPrivilegedAction
-		implements PrivilegedAction<Map<String, Object>> {
-
-		public DoGetHelperUtilitiesPrivilegedAction(
-			TemplateContextHelper templateContextHelper,
-			ClassLoader classLoader, boolean restricted) {
-
-			_templateContextHelper = templateContextHelper;
-			_classLoader = classLoader;
-			_restricted = restricted;
+		if (templateResources == null || templateResources.isEmpty()) {
+			throw new IllegalArgumentException(
+				"TemplateResource parameter is empty");
 		}
 
-		@Override
-		public Map<String, Object> run() {
-			return _templateContextHelper.getHelperUtilities(
-				_classLoader, _restricted);
-		}
-
-		private final ClassLoader _classLoader;
-		private boolean _restricted;
-		private final TemplateContextHelper _templateContextHelper;
-
-	}
-
-	private class DoGetTemplatePrivilegedAction
-		implements PrivilegedAction<Template> {
-
-		public DoGetTemplatePrivilegedAction(
-			TemplateResource templateResource,
-			TemplateResource errorTemplateResource, boolean restricted,
-			Map<String, Object> helperUtilities) {
-
-			_templateResource = templateResource;
-			_errorTemplateResource = errorTemplateResource;
-			_restricted = restricted;
-			_helperUtilities = helperUtilities;
-		}
-
-		@Override
-		public Template run() {
-			return doGetTemplate(
-				_templateResource, _errorTemplateResource, _restricted,
-				_helperUtilities, true);
-		}
-
-		private final TemplateResource _errorTemplateResource;
-		private final Map<String, Object> _helperUtilities;
-		private boolean _restricted;
-		private final TemplateResource _templateResource;
-
+		return doGetTemplate(templateResources.get(0),
+			errorTemplateResource, restricted, helperUtilities, privileged);
 	}
 
 }

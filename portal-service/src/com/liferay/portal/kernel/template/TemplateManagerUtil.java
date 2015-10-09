@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,6 +68,25 @@ public class TemplateManagerUtil {
 
 		return _instance._getTemplate(
 			templateManagerName, templateResource, errorTemplateResource,
+			restricted);
+	}
+
+	public static Template getTemplates(
+			String templateManagerName, List<TemplateResource> templateResources,
+			boolean restricted)
+		throws TemplateException {
+
+		return _instance._getTemplates(
+			templateManagerName, templateResources, restricted);
+	}
+
+	public static Template getTemplate(
+			String templateManagerName, List<TemplateResource> templateResources,
+			TemplateResource errorTemplateResource, boolean restricted)
+		throws TemplateException {
+
+		return _instance._getTemplates(
+			templateManagerName, templateResources, errorTemplateResource,
 			restricted);
 	}
 
@@ -170,6 +190,30 @@ public class TemplateManagerUtil {
 		return templateManager.getTemplate(
 			templateResource, errorTemplateResource, restricted);
 	}
+
+	private Template _getTemplates(
+		String templateManagerName, List<TemplateResource> templateResources,
+		boolean restricted)
+		throws TemplateException {
+
+		TemplateManager templateManager = _getTemplateManagerChecked(
+			templateManagerName);
+
+		return templateManager.getTemplates(templateResources, restricted);
+	}
+
+	private Template _getTemplates(
+		String templateManagerName, List<TemplateResource> templateResources,
+		TemplateResource errorTemplateResource, boolean restricted)
+		throws TemplateException {
+
+		TemplateManager templateManager = _getTemplateManagerChecked(
+			templateManagerName);
+
+		return templateManager.getTemplates(
+			templateResources, errorTemplateResource, restricted);
+	}
+
 
 	private TemplateManager _getTemplateManager(String templateManagerName) {
 		Collection<TemplateManager> templateManagers =
