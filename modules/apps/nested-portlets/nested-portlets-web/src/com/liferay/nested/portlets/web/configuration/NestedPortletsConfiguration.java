@@ -29,15 +29,10 @@ public interface NestedPortletsConfiguration {
 
 	public static final String TEMPLATE_ID = "TEMPLATE_ID";
 
-	@Meta.AD(
-		deflt = "2_columns_i", id = "layout.template.default", required = false
-	)
+	@Meta.AD(deflt = "2_columns_i", required = false)
 	public String layoutTemplateDefault();
 
-	@Meta.AD(
-		deflt = "freeform,1_column", id = "layout.template.unsupported",
-		required = false
-	)
+	@Meta.AD(deflt = "freeform,1_column", required = false)
 	public String[] layoutTemplatesUnsupported();
 
 }
