@@ -90,7 +90,7 @@
 </tr>
 <tr>
 	<td>ADT_TEMPLATE</td>
-	<td>//a[@role='menuitem' and contains(.,'${key_adtType} Template')]</td>
+	<td>//a[contains(.,'${key_adtType} Template')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -445,7 +445,7 @@
 </tr>
 <tr>
 	<td>PERMISSIONS</td>
-	<td>//div[contains(@class,'open') and contains(@class,'dropdown')]//a[contains(.,'Permissions')] | //li[contains(@class,'open')]//a[contains(.,'Permissions')]</td>
+	<td>//div[contains(@class,'open') and contains(@class,'dropdown')]//a[contains(.,'Permissions')] | //a[contains(.,'Permissions')]</td>
 	<td></td>
 </tr>
 <tr>
