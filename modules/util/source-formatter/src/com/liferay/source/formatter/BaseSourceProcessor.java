@@ -82,6 +82,8 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			}
 		}
 
+		postFormat();
+
 		_sourceFormatterHelper.close();
 	}
 
@@ -763,10 +765,10 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 			return;
 		}
 
-		File file = new File(fileName);
-
 		fileName = StringUtil.replace(
 			fileName, StringPool.BACK_SLASH, StringPool.SLASH);
+
+		File file = new File(fileName);
 
 		String absolutePath = getAbsolutePath(file);
 
@@ -1453,6 +1455,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 	protected boolean isModulesFile(String absolutePath) {
 		return absolutePath.contains("/modules/");
+	}
+
+	protected void postFormat() throws Exception {
 	}
 
 	protected void processErrorMessage(String fileName, String message) {

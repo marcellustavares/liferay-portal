@@ -97,8 +97,20 @@ public class SyncAccount extends StateAwareModel {
 		return oAuthEnabled;
 	}
 
+	public String getOAuthToken() {
+		return oAuthToken;
+	}
+
+	public String getOAuthTokenSecret() {
+		return oAuthTokenSecret;
+	}
+
 	public String getPassword() {
 		return password;
+	}
+
+	public String getPluginVersion() {
+		return pluginVersion;
 	}
 
 	public int getPollInterval() {
@@ -174,8 +186,20 @@ public class SyncAccount extends StateAwareModel {
 		this.oAuthEnabled = oAuthEnabled;
 	}
 
+	public void setOAuthToken(String oAuthToken) {
+		this.oAuthToken = oAuthToken;
+	}
+
+	public void setOAuthTokenSecret(String oAuthTokenSecret) {
+		this.oAuthTokenSecret = oAuthTokenSecret;
+	}
+
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
 	}
 
 	public void setPollInterval(int pollInterval) {
@@ -223,7 +247,16 @@ public class SyncAccount extends StateAwareModel {
 	protected boolean oAuthEnabled;
 
 	@DatabaseField(useGetSet = true, width = 16777216)
+	protected String oAuthToken;
+
+	@DatabaseField(useGetSet = true, width = 16777216)
+	protected String oAuthTokenSecret;
+
+	@DatabaseField(useGetSet = true, width = 16777216)
 	protected String password;
+
+	@DatabaseField(useGetSet = true)
+	protected String pluginVersion;
 
 	@DatabaseField(useGetSet = true)
 	protected int pollInterval;

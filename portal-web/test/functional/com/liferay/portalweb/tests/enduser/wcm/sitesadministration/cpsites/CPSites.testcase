@@ -79,7 +79,7 @@
 		</execute>
 	</command>
 
-	<command name="AddPublicVirtualHostsSiteURL" priority="4">
+	<command name="AddPublicVirtualHostsSiteURL" priority="3">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
 		</execute>
@@ -352,7 +352,7 @@
 		</execute>
 	</command>
 
-	<command name="EditSiteFriendlyURLInvalid" priority="4">
+	<command name="EditSiteFriendlyURLInvalid" priority="3">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
 		</execute>
@@ -412,7 +412,7 @@
 		</execute>
 	</command>
 
-	<command name="SiteCannotBeItsOwnParent" priority="4">
+	<command name="SiteCannotBeItsOwnParent" priority="3">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
 		</execute>
@@ -432,7 +432,7 @@
 		</execute>
 	</command>
 
-	<command name="SiteCannotBeItsOwnParentStaging" priority="4">
+	<command name="SiteCannotBeItsOwnParentStaging" priority="3">
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Sites" />
 		</execute>
@@ -736,10 +736,6 @@
 			<var name="siteName" value="Child ChildSite2Name" />
 		</execute>
 
-		<execute macro="Site#viewSiteHierarchyInBreadcrumbPG">
-			<var name="breadcrumbListVisible" value="Site Name,Child Site1Name,Site Page" />
-		</execute>
-
 		<execute macro="Page#gotoPG">
 			<var name="pageName" value="Site Page" />
 			<var name="siteName" value="Child ChildSite1Name" />
@@ -811,9 +807,5 @@
 		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No sites were found." />
-
-		<execute macro="Site#viewSiteHierarchyInBreadcrumbPG">
-			<var name="breadcrumbListVisible" value="Site Name,Child Site1Name,Child ChildSite1Name,Site Page" />
-		</execute>
 	</command>
 </definition>

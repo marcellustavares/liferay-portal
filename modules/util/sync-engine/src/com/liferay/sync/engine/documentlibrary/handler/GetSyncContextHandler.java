@@ -73,6 +73,10 @@ public class GetSyncContextHandler extends BaseJSONHandler {
 
 		String login = syncAccount.getLogin();
 
+		if (login == null) {
+			login = "";
+		}
+
 		String authType = syncContext.getAuthType();
 
 		if (authType.equals(SyncContext.AUTH_TYPE_EMAIL_ADDRESS)) {
@@ -112,6 +116,8 @@ public class GetSyncContextHandler extends BaseJSONHandler {
 			1);
 
 		syncAccount.setMaxConnections(maxConnections);
+
+		syncAccount.setPluginVersion(syncContext.getPluginVersion());
 
 		int pollInterval = GetterUtil.getInteger(
 			portletPreferencesMap.get(SyncContext.PREFERENCE_KEY_POLL_INTERVAL),
