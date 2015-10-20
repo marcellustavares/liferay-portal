@@ -19,8 +19,8 @@ import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
-import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
-import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordPermission;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -59,6 +59,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -221,7 +222,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 
 	@Override
 	protected void doReindex(String className, long classPK) throws Exception {
-		DDLRecord record = DDLRecordLocalServiceUtil.getRecord(classPK);
+		DDLRecord record = _ddlRecordLocalService.getRecord(classPK);
 
 		doReindex(record);
 	}
@@ -254,7 +255,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 
 	protected String getTitle(long recordSetId, Locale locale) {
 		try {
-			DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.getRecordSet(
+			DDLRecordSet recordSet = _ddlRecordSetLocalService.getRecordSet(
 				recordSetId);
 
 			DDMStructure ddmStructure = recordSet.getDDMStructure();
@@ -276,7 +277,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 
 	protected void reindexRecords(long companyId, int scope) throws Exception {
 		Long[] minAndMaxRecordIds =
-			DDLRecordLocalServiceUtil.getMinAndMaxCompanyRecordIds(
+			_ddlRecordLocalService.getMinAndMaxCompanyRecordIds(
 				companyId, WorkflowConstants.STATUS_APPROVED, scope);
 
 		if ((minAndMaxRecordIds[0] == null) ||
@@ -304,7 +305,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		throws Exception {
 
 		List<DDLRecord> records =
-			DDLRecordLocalServiceUtil.getMinAndMaxCompanyRecords(
+			_ddlRecordLocalService.getMinAndMaxCompanyRecords(
 				companyId, WorkflowConstants.STATUS_APPROVED, scope,
 				startRecordId, endRecordId);
 
@@ -330,7 +331,24 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 			getSearchEngineId(), companyId, documents, isCommitImmediately());
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDLRecordLocalService(
+		DDLRecordLocalService ddlRecordLocalService) {
+
+		_ddlRecordLocalService = ddlRecordLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDLRecordSetLocalService(
+		DDLRecordSetLocalService ddlRecordSetLocalService) {
+
+		_ddlRecordSetLocalService = ddlRecordSetLocalService;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDLRecordIndexer.class);
+
+	private DDLRecordLocalService _ddlRecordLocalService;
+	private DDLRecordSetLocalService _ddlRecordSetLocalService;
 
 }

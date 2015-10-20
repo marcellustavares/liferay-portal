@@ -19,9 +19,9 @@ import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
-import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
-import com.liferay.dynamic.data.lists.service.DDLRecordServiceUtil;
-import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
+import com.liferay.dynamic.data.lists.service.DDLRecordService;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
@@ -49,9 +49,9 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.service.LayoutServiceUtil;
+import com.liferay.portal.service.LayoutService;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.DLAppLocalService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +63,7 @@ import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -180,8 +181,7 @@ public class DDLImpl implements DDL {
 					com.liferay.portal.kernel.search.Field.ENTRY_CLASS_PK));
 
 			try {
-				DDLRecord record = DDLRecordLocalServiceUtil.getRecord(
-					recordId);
+				DDLRecord record = _ddlRecordLocalService.getRecord(recordId);
 
 				records.add(record);
 			}
@@ -324,12 +324,12 @@ public class DDLImpl implements DDL {
 			boolean checkPermission, ServiceContext serviceContext)
 		throws Exception {
 
-		DDLRecord record = DDLRecordLocalServiceUtil.fetchRecord(recordId);
+		DDLRecord record = _ddlRecordLocalService.fetchRecord(recordId);
 
 		boolean majorVersion = ParamUtil.getBoolean(
 			serviceContext, "majorVersion");
 
-		DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.getDDLRecordSet(
+		DDLRecordSet recordSet = _ddlRecordSetLocalService.getDDLRecordSet(
 			recordSetId);
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
@@ -339,13 +339,13 @@ public class DDLImpl implements DDL {
 
 		if (record != null) {
 			if (checkPermission) {
-				record = DDLRecordServiceUtil.updateRecord(
+				record = _ddlRecordService.updateRecord(
 					recordId, majorVersion,
 					DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields,
 					mergeFields, serviceContext);
 			}
 			else {
-				record = DDLRecordLocalServiceUtil.updateRecord(
+				record = _ddlRecordLocalService.updateRecord(
 					serviceContext.getUserId(), recordId, majorVersion,
 					DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields,
 					mergeFields, serviceContext);
@@ -353,13 +353,13 @@ public class DDLImpl implements DDL {
 		}
 		else {
 			if (checkPermission) {
-				record = DDLRecordServiceUtil.addRecord(
+				record = _ddlRecordService.addRecord(
 					serviceContext.getScopeGroupId(), recordSetId,
 					DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields,
 					serviceContext);
 			}
 			else {
-				record = DDLRecordLocalServiceUtil.addRecord(
+				record = _ddlRecordLocalService.addRecord(
 					serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), recordSetId,
 					DDLRecordConstants.DISPLAY_INDEX_DEFAULT, fields,
@@ -383,8 +383,7 @@ public class DDLImpl implements DDL {
 	protected String getFileEntryTitle(String uuid, long groupId) {
 		try {
 			FileEntry fileEntry =
-				DLAppLocalServiceUtil.getFileEntryByUuidAndGroupId(
-					uuid, groupId);
+				_dlAppLocalService.getFileEntryByUuidAndGroupId(uuid, groupId);
 
 			return fileEntry.getTitle();
 		}
@@ -399,7 +398,7 @@ public class DDLImpl implements DDL {
 		long groupId, boolean privateLayout, long layoutId, String languageId) {
 
 		try {
-			return LayoutServiceUtil.getLayoutName(
+			return _layoutService.getLayoutName(
 				groupId, privateLayout, layoutId, languageId);
 		}
 		catch (Exception e) {
@@ -409,6 +408,41 @@ public class DDLImpl implements DDL {
 		}
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDLRecordLocalService(
+		DDLRecordLocalService ddlRecordLocalService) {
+
+		_ddlRecordLocalService = ddlRecordLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDLRecordService(DDLRecordService ddlRecordService) {
+		_ddlRecordService = ddlRecordService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDLRecordSetLocalService(
+		DDLRecordSetLocalService ddlRecordSetLocalService) {
+
+		_ddlRecordSetLocalService = ddlRecordSetLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
+		_dlAppLocalService = dlAppLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setLayoutService(LayoutService layoutService) {
+		_layoutService = layoutService;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(DDLImpl.class);
+
+	private DDLRecordLocalService _ddlRecordLocalService;
+	private DDLRecordService _ddlRecordService;
+	private DDLRecordSetLocalService _ddlRecordSetLocalService;
+	private DLAppLocalService _dlAppLocalService;
+	private LayoutService _layoutService;
 
 }
