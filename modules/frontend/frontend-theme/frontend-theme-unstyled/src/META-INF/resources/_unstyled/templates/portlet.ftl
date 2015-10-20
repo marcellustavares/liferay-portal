@@ -3,9 +3,13 @@
 <#assign portlet_display = portletDisplay />
 
 <#assign portlet_id = htmlUtil.escapeAttribute(portlet_display.getId()) />
-<#assign portlet_name = htmlUtil.escape(portalUtil.getPortletTitle(renderRequest)) />
+<#assign portlet_name = htmlUtil.escape(portalUtil.getPortletTitle(portlet_id, user)) />
 <#assign portlet_title = htmlUtil.escape(portlet_display.getTitle()) />
 <#assign portlet_back_url = htmlUtil.escapeHREF(portlet_display.getURLBack()) />
+
+<#if !portlet_name??>
+	<#assign portlet_name = portlet_title />
+</#if>
 
 <#assign portlet_toolbar = portlet_display.getPortletToolbar() />
 
