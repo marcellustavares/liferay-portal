@@ -15,8 +15,7 @@
 package com.liferay.asset.publisher.web.upgrade;
 
 import com.liferay.asset.publisher.web.upgrade.v1_0_0.UpgradePortletId;
-import com.liferay.asset.publisher.web.upgrade.v1_0_0.UpgradePortletPreferences;
-import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.asset.publisher.web.upgrade.v1_0_0.UpgradePortletPreferences;import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
