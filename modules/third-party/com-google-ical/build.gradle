@@ -1,28 +1,26 @@
 import com.liferay.gradle.util.FileUtil
 import com.liferay.gradle.util.OSDetector
 
-dependencies {
-	compile group: "joda-time", name: "joda-time", version: "1.5.2"
-}
+import groovy.io.FileType
 
-ext {
-	srcUrl = "http://google-rfc-2445.googlecode.com/svn/trunk/src@36"
-}
-
-liferay {
-	deployDir = file("${liferayHome}/osgi/modules")
-}
+task downloadSrc(type: Exec)
 
 sourceCompatibility = "1.6"
 targetCompatibility = "1.6"
 
-task downloadSrc(type: Exec)
+String srcUrl = "http://google-rfc-2445.googlecode.com/svn/trunk/src@36"
 
 compileJava {
 	dependsOn downloadSrc
 }
 
+dependencies {
+	compile group: "joda-time", name: "joda-time", version: "1.5.2"
+}
+
 downloadSrc {
+	File srcTmpDir = new File(temporaryDir, "src")
+
 	if (OSDetector.windows) {
 		executable "cmd.exe"
 
@@ -34,19 +32,37 @@ downloadSrc {
 		args "-c"
 	}
 
-	args "\"svn export ${srcUrl} src\""
+	args "\"svn export ${srcUrl} ${relativePath(srcTmpDir)}\""
 
 	doFirst {
-		delete "src"
+		delete srcTmpDir
+		delete "src/main/java"
+		delete "src/main/resources"
 	}
 
 	doLast {
-		File sourceFormatterIgnoreFile = file("src/source_formatter.ignore")
+		srcTmpDir.eachFileRecurse(FileType.FILES) {
+			String dirName = "resources"
 
-		sourceFormatterIgnoreFile.createNewFile()
+			if (it.name.endsWith(".java")) {
+				dirName = "java"
+			}
+
+			File dir = file("src/main/" + dirName)
+
+			File destFile = new File(dir, FileUtil.relativize(it, srcTmpDir))
+
+			destFile.parentFile.mkdirs()
+
+			it.renameTo(destFile)
+		}
 	}
 
 	onlyIf {
-		!FileUtil.exists(project, "src/com")
+		!FileUtil.exists(project, "src/main/java")
 	}
+}
+
+liferay {
+	deployDir = file("${liferayHome}/osgi/modules")
 }

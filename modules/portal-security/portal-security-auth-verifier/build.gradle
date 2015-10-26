@@ -1,7 +1,7 @@
 task deployConfigs(type: Copy)
 
 dependencies {
-	compile group: "org.osgi", name: "org.osgi.compendium", version: "5.0.0"
+	compile group: "com.liferay.portal", name: "portal-impl", version: liferay.portalVersion
 	compile group: "org.osgi", name: "org.osgi.core", version: "5.0.0"
 	compile project(":portal-security:portal-security-auto-login")
 }
@@ -11,6 +11,10 @@ deploy {
 }
 
 deployConfigs {
+	ext {
+		autoClean = false
+	}
+
 	from "configs"
 	into new File(liferay.liferayHome, "osgi/configs")
 }

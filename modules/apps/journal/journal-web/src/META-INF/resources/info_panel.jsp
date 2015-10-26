@@ -17,20 +17,21 @@
 <%@ include file="/init.jsp" %>
 
 <%
-JournalFolder folder = (JournalFolder)request.getAttribute("view.jsp-folder");
-long folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folderId"));
+JournalFolder folder = journalDisplayContext.getFolder();
 %>
 
 <div class="sidebar-header">
-	<ul class="list-inline list-unstyled sidebar-header-actions">
-		<li>
-			<liferay-util:include page="/subscribe.jsp" servletContext="<%= application %>" />
-		</li>
+	<c:if test="<%= journalDisplayContext.isShowEditActions() %>">
+		<ul class="list-inline list-unstyled sidebar-header-actions">
+			<li>
+				<liferay-util:include page="/subscribe.jsp" servletContext="<%= application %>" />
+			</li>
 
-		<li>
-			<liferay-util:include page="/folder_action.jsp" servletContext="<%= application %>" />
-		</li>
-	</ul>
+			<li>
+				<liferay-util:include page="/folder_action.jsp" servletContext="<%= application %>" />
+			</li>
+		</ul>
+	</c:if>
 
 	<h4><%= (folder != null) ? folder.getName() : LanguageUtil.get(request, "home") %></h4>
 
@@ -49,14 +50,14 @@ long folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folder
 	<h5><liferay-ui:message key="num-of-items" /></h5>
 
 	<p>
-		<%= JournalFolderServiceUtil.getFoldersAndArticlesCount(scopeGroupId, folderId, WorkflowConstants.STATUS_ANY) %>
+		<%= JournalFolderServiceUtil.getFoldersAndArticlesCount(scopeGroupId, journalDisplayContext.getFolderId(), journalDisplayContext.getStatus()) %>
 	</p>
 
 	<c:if test="<%= folder != null %>">
 		<h5><liferay-ui:message key="created" /></h5>
 
 		<p>
-			<%= folder.getUserName() %>
+			<%= HtmlUtil.escape(folder.getUserName()) %>
 		</p>
 	</c:if>
 </div>

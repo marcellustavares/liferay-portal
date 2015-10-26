@@ -20,6 +20,8 @@ import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
+import com.liferay.portal.model.ShardedModel;
+import com.liferay.portal.model.StagedAuditedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -43,7 +45,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface DDMStructureLayoutModel extends BaseModel<DDMStructureLayout>,
-	GroupedModel {
+	GroupedModel, ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -70,6 +72,7 @@ public interface DDMStructureLayoutModel extends BaseModel<DDMStructureLayout>,
 	 * @return the uuid of this d d m structure layout
 	 */
 	@AutoEscape
+	@Override
 	public String getUuid();
 
 	/**
@@ -77,6 +80,7 @@ public interface DDMStructureLayoutModel extends BaseModel<DDMStructureLayout>,
 	 *
 	 * @param uuid the uuid of this d d m structure layout
 	 */
+	@Override
 	public void setUuid(String uuid);
 
 	/**

@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface ContactModel extends AttachedModel, AuditedModel,
-	BaseModel<Contact>, MVCCModel {
+	BaseModel<Contact>, MVCCModel, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -455,21 +455,6 @@ public interface ContactModel extends AttachedModel, AuditedModel,
 	 * @param jabberSn the jabber sn of this contact
 	 */
 	public void setJabberSn(String jabberSn);
-
-	/**
-	 * Returns the msn sn of this contact.
-	 *
-	 * @return the msn sn of this contact
-	 */
-	@AutoEscape
-	public String getMsnSn();
-
-	/**
-	 * Sets the msn sn of this contact.
-	 *
-	 * @param msnSn the msn sn of this contact
-	 */
-	public void setMsnSn(String msnSn);
 
 	/**
 	 * Returns the my space sn of this contact.

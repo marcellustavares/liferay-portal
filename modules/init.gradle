@@ -1,22 +1,31 @@
 import org.gradle.internal.hash.HashUtil
 import org.gradle.internal.hash.HashValue
 
-if (System.getenv("JENKINS_HOME")) {
-	System.setProperty "http.proxyHost", "squid.lax.liferay.com"
-	System.setProperty "http.proxyPort", "3128"
+if (System.properties["http.proxyHost"] == "squid.lax.liferay.com") {
+	println "Using proxy ${System.properties['http.proxyHost']}:${System.properties['http.proxyPort']}."
+
 	System.setProperty "repository.url", "http://repository.liferay.com/nexus/content/groups/public"
 }
 
 gradle.buildFinished {
-	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
+	ByteArrayOutputStream errorByteArrayOutputStream = new ByteArrayOutputStream()
+	ByteArrayOutputStream outputByteArrayOutputStream = new ByteArrayOutputStream()
 
 	exec {
 		commandLine "git", "ls-files", "--exclude-standard", "--others"
-		standardOutput = byteArrayOutputStream
+		ignoreExitValue = true
+		errorOutput = errorByteArrayOutputStream
+		standardOutput = outputByteArrayOutputStream
 		workingDir = gradle.gradleUserHomeDir
 	}
 
-	String output = byteArrayOutputStream.toString()
+	String errorString = errorByteArrayOutputStream.toString()
+
+	if (!errorString.contains("Not a git repository")) {
+		logger.error errorString
+	}
+
+	String output = outputByteArrayOutputStream.toString()
 
 	List<String> fileNames = output.readLines()
 

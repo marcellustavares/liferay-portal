@@ -4,6 +4,10 @@ AUI.add(
 		var CheckboxField = A.Component.create(
 			{
 				ATTRS: {
+					dataType: {
+						value: 'boolean'
+					},
+
 					showAsSwitcher: {
 						value: false
 					},
@@ -46,6 +50,14 @@ AUI.add(
 						var inputNode = instance.getInputNode();
 
 						return inputNode.attr('checked');
+					},
+
+					setValue: function(value) {
+						var instance = this;
+
+						var inputNode = instance.getInputNode();
+
+						inputNode.attr('checked', !!value);
 					},
 
 					_renderErrorMessage: function() {

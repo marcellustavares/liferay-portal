@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.struts.LastPath;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -119,9 +120,19 @@ public class FriendlyURLServlet extends HttpServlet {
 			forcePermanentRedirect = (Boolean)redirectArray[1];
 
 			if (request.getAttribute(WebKeys.LAST_PATH) == null) {
-				LastPath lastPath = new LastPath(
-					_friendlyURLPathPrefix, pathInfo,
-					request.getParameterMap());
+				LastPath lastPath = null;
+
+				String lifecycle = ParamUtil.getString(
+					request, "p_p_lifecycle");
+
+				if (lifecycle.equals("1")) {
+					lastPath = new LastPath(_friendlyURLPathPrefix, pathInfo);
+				}
+				else {
+					lastPath = new LastPath(
+						_friendlyURLPathPrefix, pathInfo,
+						request.getParameterMap());
+				}
 
 				request.setAttribute(WebKeys.LAST_PATH, lastPath);
 			}
@@ -315,6 +326,8 @@ public class FriendlyURLServlet extends HttpServlet {
 
 				Layout layout = layoutFriendlyURLComposite.getLayout();
 
+				request.setAttribute(WebKeys.LAYOUT, layout);
+
 				String layoutFriendlyURLCompositeFriendlyURL =
 					layoutFriendlyURLComposite.getFriendlyURL();
 
@@ -330,8 +343,23 @@ public class FriendlyURLServlet extends HttpServlet {
 
 					Locale locale = PortalUtil.getLocale(request);
 
-					if (LanguageUtil.isAvailableLocale(
-							group.getGroupId(), locale) &&
+					boolean i18nRedirect = false;
+
+					String i18nLanguageId = (String)request.getAttribute(
+						WebKeys.I18N_LANGUAGE_ID);
+
+					if (Validator.isNotNull(i18nLanguageId)) {
+						Locale i18nLocale = LocaleUtil.fromLanguageId(
+							i18nLanguageId);
+
+						if (!LanguageUtil.isAvailableLocale(
+								group.getGroupId(), i18nLocale)) {
+
+							i18nRedirect = true;
+						}
+					}
+
+					if (i18nRedirect ||
 						!StringUtil.equalsIgnoreCase(
 							layoutFriendlyURLCompositeFriendlyURL,
 							layout.getFriendlyURL(locale))) {

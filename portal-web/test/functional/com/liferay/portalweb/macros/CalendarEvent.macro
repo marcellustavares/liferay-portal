@@ -627,7 +627,7 @@
 								<execute function="ClickNoError" locator1="PGCalendarAgendaView#SCHEDULER_EVENT_DIALOG_BOX_DELETE_BUTTON" value1="Delete" />
 								<execute function="Pause" value1="1000" />
 								<execute function="AssertClick" locator1="CalendarEditEvent#ALL_EVENTS_IN_THE_SERIES_BUTTON" value1="All Events in the Series"  />
-								<execute function="Pause" value1="2000" />
+								<execute function="Pause" value1="10000" />
 							</else>
 						</if>
 					</else>
@@ -1569,10 +1569,7 @@
 
 		<execute function="AssertClick" locator1="Calendar#MY_CALENDARS_CALENDAR" value1="${userCalendarName}" />
 
-		<execute macro="CalendarEvent#viewApprovedRSVP">
-			<var name="eventTitle" value="${eventTitle}" />
-			<var name="rsvp" value="${rsvp}" />
-		</execute>
+		<execute function="AssertElementNotPresent" locator1="Calendar#SCHEDULER_EVENT_ATTENDING_ROW_OPTIONS" />
 
 		<execute function="AssertClick" locator1="Calendar#MY_CALENDARS_CALENDAR" value1="${userCalendarName}" />
 	</command>
@@ -1590,6 +1587,11 @@
 	<command name="viewTimes">
 		<execute function="AssertTextEquals#assertValue" locator1="CalendarEditEvent#START_DATE_TIME" value1="${startDateTime}" />
 		<execute function="AssertTextEquals#assertValue" locator1="CalendarEditEvent#END_DATE_TIME" value1="${endDateTime}" />
+	</command>
+
+	<command name="viewTimes24Hour">
+		<execute function="AssertTextEquals#assertValue" locator1="CalendarEditEvent#START_DATE_TIME_24_HOUR" value1="${startDateTime}" />
+		<execute function="AssertTextEquals#assertValue" locator1="CalendarEditEvent#END_DATE_TIME_24_HOUR" value1="${endDateTime}" />
 	</command>
 
 	<command name="viewTimesViaDetails">

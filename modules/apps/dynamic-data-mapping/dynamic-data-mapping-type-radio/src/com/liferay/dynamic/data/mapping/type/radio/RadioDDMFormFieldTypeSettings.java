@@ -26,8 +26,15 @@ import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
 public interface RadioDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
+	@DDMFormField(label = "%inline", properties = {"showAsSwitcher=true"})
+	public boolean inline();
+
 	@DDMFormField(
-		dataType = "ddm-options", label = "%options", type = "options"
+		dataType = "ddm-options", label = "%options",
+		properties = {
+			"setting.category=basic", "setting.weight=0", "showLabel=false"
+		},
+		type = "options"
 	)
 	public DDMFormFieldOptions options();
 

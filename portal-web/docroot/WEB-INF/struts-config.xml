@@ -131,16 +131,6 @@
 
 		<action path="/asset/get_categories" type="com.liferay.portlet.asset.action.GetCategoriesAction" />
 
-		<!-- Directory -->
-
-		<action path="/directory/find_user" type="com.liferay.portlet.usersadmin.action.FindUserAction" />
-
-		<action path="/directory/view" forward="portlet.directory.view" />
-
-		<action path="/directory/view_organization" forward="portlet.directory.view_organization" />
-
-		<action path="/directory/view_user" forward="portlet.directory.view_user" />
-
 		<!-- Flags -->
 
 		<action path="/flags/edit_entry" type="com.liferay.portlet.flags.action.EditEntryAction">
@@ -191,38 +181,6 @@
 
 		<action path="/recent_documents/view" forward="portlet.recent_documents.view" />
 
-		<!-- Sites Directory -->
-
-		<action path="/sites_directory/view" forward="portlet.sites_directory.view" />
-
-		<!-- Software Catalog -->
-
-		<action path="/software_catalog/edit_framework_version" type="com.liferay.portlet.softwarecatalog.action.EditFrameworkVersionAction">
-			<forward name="portlet.software_catalog.edit_framework_version" path="portlet.software_catalog.edit_framework_version" />
-			<forward name="portlet.software_catalog.error" path="portlet.software_catalog.error" />
-		</action>
-
-		<action path="/software_catalog/edit_license" type="com.liferay.portlet.softwarecatalog.action.EditLicenseAction">
-			<forward name="portlet.software_catalog.edit_license" path="portlet.software_catalog.edit_license" />
-			<forward name="portlet.software_catalog.error" path="portlet.software_catalog.error" />
-		</action>
-
-		<action path="/software_catalog/edit_product_entry" type="com.liferay.portlet.softwarecatalog.action.EditProductEntryAction">
-			<forward name="portlet.software_catalog.edit_product_entry" path="portlet.software_catalog.edit_product_entry" />
-			<forward name="portlet.software_catalog.error" path="portlet.software_catalog.error" />
-		</action>
-
-		<action path="/software_catalog/edit_product_version" type="com.liferay.portlet.softwarecatalog.action.EditProductVersionAction">
-			<forward name="portlet.software_catalog.edit_product_version" path="portlet.software_catalog.edit_product_version" />
-			<forward name="portlet.software_catalog.error" path="portlet.software_catalog.error" />
-		</action>
-
-		<action path="/software_catalog/view" forward="portlet.software_catalog.view" />
-
-		<action path="/software_catalog/view_product_entry" type="com.liferay.portlet.softwarecatalog.action.ViewProductEntryAction">
-			<forward name="portlet.software_catalog.view_product_entry" path="portlet.software_catalog.view_product_entry" />
-			<forward name="portlet.software_catalog.error" path="portlet.software_catalog.error" />
-		</action>
 	</action-mappings>
 
 	<!-- Custom Request Processor -->

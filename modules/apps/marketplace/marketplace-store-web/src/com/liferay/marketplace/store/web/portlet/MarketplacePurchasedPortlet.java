@@ -42,6 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.render-weight=50",
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.description=", "javax.portlet.display-name=Purchased",
+		"javax.portlet.init-param.add-process-action-success-action=false",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + MarketplaceStorePortletKeys.MARKETPLACE_PURCHASED,
@@ -52,6 +53,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = {Portlet.class}
 )
 public class MarketplacePurchasedPortlet extends MarketplaceStorePortlet {
+
+	@Override
+	protected String getClientPortletId() {
+		return MarketplaceStorePortletKeys.MARKETPLACE_PURCHASED;
+	}
 
 	@Reference
 	protected void setAppLocalService(AppLocalService appLocalService) {

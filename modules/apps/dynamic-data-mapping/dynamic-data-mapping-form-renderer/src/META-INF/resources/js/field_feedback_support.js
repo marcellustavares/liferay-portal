@@ -12,7 +12,7 @@ AUI.add(
 
 		FieldFeedbackSupport.ATTRS = {
 			errorMessage: {
-				value: []
+				value: ''
 			}
 		};
 
@@ -81,12 +81,7 @@ AUI.add(
 				var instance = this;
 
 				if (instance.hasValidation()) {
-					var container = instance.get('container');
-
 					var hasErrors = instance.hasErrors();
-
-					container.toggleClass('has-error', hasErrors);
-					container.toggleClass('has-success', !hasErrors);
 
 					if (hasErrors) {
 						instance.showErrorFeedback();
@@ -110,15 +105,21 @@ AUI.add(
 
 				container.all('.validation-message').remove();
 
-				instance.getInputNode().insert(
-					Lang.sub(
-						TPL_ERROR_MESSAGE,
-						{
-							errorMessage: instance.get('errorMessage')
-						}
-					),
-					'after'
-				);
+				var errorMessage = instance.get('errorMessage');
+
+				var inputNode = instance.getInputNode();
+
+				if (errorMessage && inputNode) {
+					inputNode.insert(
+						Lang.sub(
+							TPL_ERROR_MESSAGE,
+							{
+								errorMessage: errorMessage
+							}
+						),
+						'after'
+					);
+				}
 			},
 
 			_showFeedback: function(icon) {

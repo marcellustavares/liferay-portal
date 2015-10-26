@@ -65,12 +65,12 @@
 </tr>
 <tr>
 	<td>ERROR_FIELD_REQUIRED</td>
-	<td>//div[@role='alert' and contains(.,'This field is required')] |//span[contains(@id,'title')]//div[contains(.,'This field is required.')]</td>
+	<td>//div[@role='alert' and contains(.,'This field is required')] | //span[contains(@id,'title')]//div[contains(.,'This field is required.')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>INFO</td>
-	<td>//div[contains(@class,'alert') and contains(@class,'alert-info')]</td>
+	<td>//div[contains(@class,'alert alert-info') and not(contains(@class,'hide'))]</td>
 	<td></td>
 </tr>
 <tr>

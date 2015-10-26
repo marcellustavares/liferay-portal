@@ -39,7 +39,8 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface UserModel extends BaseModel<User>, MVCCModel, StagedModel {
+public interface UserModel extends BaseModel<User>, MVCCModel, ShardedModel,
+	StagedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -703,22 +704,6 @@ public interface UserModel extends BaseModel<User>, MVCCModel, StagedModel {
 	 * @param emailAddressVerified the email address verified of this user
 	 */
 	public void setEmailAddressVerified(boolean emailAddressVerified);
-
-	/**
-	 * Returns the last publish date of this user.
-	 *
-	 * @return the last publish date of this user
-	 */
-	@Override
-	public Date getLastPublishDate();
-
-	/**
-	 * Sets the last publish date of this user.
-	 *
-	 * @param lastPublishDate the last publish date of this user
-	 */
-	@Override
-	public void setLastPublishDate(Date lastPublishDate);
 
 	/**
 	 * Returns the status of this user.

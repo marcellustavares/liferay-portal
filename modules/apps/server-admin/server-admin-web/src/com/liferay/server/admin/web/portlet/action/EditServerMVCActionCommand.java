@@ -14,18 +14,21 @@
 
 package com.liferay.server.admin.web.portlet.action;
 
-import com.liferay.mail.service.MailServiceUtil;
+import com.liferay.mail.service.MailService;
 import com.liferay.portal.captcha.CaptchaImpl;
 import com.liferay.portal.captcha.recaptcha.ReCaptchaImpl;
 import com.liferay.portal.captcha.simplecaptcha.SimpleCaptchaImpl;
 import com.liferay.portal.convert.ConvertException;
 import com.liferay.portal.convert.ConvertProcess;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.captcha.Captcha;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.image.GhostscriptUtil;
 import com.liferay.portal.kernel.image.ImageMagickUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
@@ -37,13 +40,18 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.SanitizerLogWrapper;
 import com.liferay.portal.kernel.mail.Account;
 import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
+import com.liferay.portal.kernel.messaging.MessageListener;
+import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingHelperUtil;
 import com.liferay.portal.kernel.scripting.ScriptingUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -61,6 +69,7 @@ import com.liferay.portal.kernel.util.ThreadUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.xuggler.XugglerUtil;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -74,7 +83,7 @@ import com.liferay.portal.security.membershippolicy.SiteMembershipPolicyFactoryU
 import com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicy;
 import com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicyFactoryUtil;
 import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.service.ServiceComponentLocalServiceUtil;
+import com.liferay.portal.service.ServiceComponentLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.struts.ActionConstants;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -97,6 +106,8 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -110,6 +121,7 @@ import javax.portlet.WindowState;
 import org.apache.log4j.Level;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
@@ -201,6 +213,9 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		}
 		else if (cmd.equals("threadDump")) {
 			threadDump();
+		}
+		else if (cmd.equals("toggleIndexerEnabled")) {
+			toggleIndexerEnabled(actionRequest);
 		}
 		else if (cmd.equals("updateCaptcha")) {
 			updateCaptcha(actionRequest, portletPreferences);
@@ -383,9 +398,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 		taskContextMap.put("className", className);
 
-		long[] companyIds = PortalInstances.getCompanyIds();
-
-		taskContextMap.put("companyIds", companyIds);
+		taskContextMap.put("companyIds", PortalInstances.getCompanyIds());
 
 		String taskExecutorClassName =
 			_CLASS_NAME_REINDEX_PORTAL_BACKGROUND_TASK_EXECUTOR;
@@ -395,9 +408,70 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 				_CLASS_NAME_REINDEX_SINGLE_INDEXER_BACKGROUND_TASK_EXECUTOR;
 		}
 
-		BackgroundTaskManagerUtil.addBackgroundTask(
-			themeDisplay.getUserId(), CompanyConstants.SYSTEM, "reindex",
-			taskExecutorClassName, taskContextMap, new ServiceContext());
+		if (!ParamUtil.getBoolean(actionRequest, "blocking")) {
+			BackgroundTaskManagerUtil.addBackgroundTask(
+				themeDisplay.getUserId(), CompanyConstants.SYSTEM, "reindex",
+				taskExecutorClassName, taskContextMap, new ServiceContext());
+
+			return;
+		}
+
+		final String uuid = PortalUUIDUtil.generate();
+
+		taskContextMap.put("uuid", uuid);
+
+		final CountDownLatch countDownLatch = new CountDownLatch(1);
+
+		MessageListener messageListener = new MessageListener() {
+
+			@Override
+			public void receive(Message message)
+				throws MessageListenerException {
+
+				try {
+					BackgroundTask backgroundTask =
+						BackgroundTaskManagerUtil.getBackgroundTask(
+							message.getLong("backgroundTaskId"));
+
+					Map<String, Serializable> taskContextMap =
+						backgroundTask.getTaskContextMap();
+
+					if (!uuid.equals(taskContextMap.get("uuid"))) {
+						return;
+					}
+				}
+				catch (PortalException pe) {
+					throw new MessageListenerException(pe);
+				}
+
+				int status = message.getInteger("status");
+
+				if ((status ==
+						BackgroundTaskConstants.STATUS_CANCELLED) ||
+					(status == BackgroundTaskConstants.STATUS_FAILED) ||
+					(status == BackgroundTaskConstants.STATUS_SUCCESSFUL)) {
+
+					countDownLatch.countDown();
+				}
+			}
+		};
+
+		MessageBusUtil.registerMessageListener(
+			DestinationNames.BACKGROUND_TASK_STATUS, messageListener);
+
+		try {
+			BackgroundTaskManagerUtil.addBackgroundTask(
+				themeDisplay.getUserId(), CompanyConstants.SYSTEM, "reindex",
+				taskExecutorClassName, taskContextMap, new ServiceContext());
+
+			countDownLatch.await(
+				ParamUtil.getLong(actionRequest, "timeout", Time.HOUR),
+				TimeUnit.MILLISECONDS);
+		}
+		finally {
+			MessageBusUtil.unregisterMessageListener(
+				DestinationNames.BACKGROUND_TASK_STATUS, messageListener);
+		}
 	}
 
 	protected void reindexDictionaries(ActionRequest actionRequest)
@@ -457,6 +531,18 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
+	@Reference(unbind = "-")
+	protected void setMailService(MailService mailService) {
+		_mailService = mailService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setServiceComponentLocalService(
+		ServiceComponentLocalService serviceComponentLocalService) {
+
+		_serviceComponentLocalService = serviceComponentLocalService;
+	}
+
 	protected void shutdown(ActionRequest actionRequest) throws Exception {
 		if (ShutdownUtil.isInProcess()) {
 			ShutdownUtil.cancel();
@@ -488,6 +574,25 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 			_log.error(
 				"Thread dumps require the log level to be at least INFO for " +
 					clazz.getName());
+		}
+	}
+
+	protected void toggleIndexerEnabled(ActionRequest actionRequest)
+		throws Exception {
+
+		String className = ParamUtil.getString(actionRequest, "className");
+
+		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(className);
+
+		boolean indexerEnabled = indexer.isIndexerEnabled();
+
+		if (indexerEnabled) {
+			indexer.setIndexerEnabled(false);
+		}
+		else {
+			indexer.setIndexerEnabled(true);
+
+			reindex(actionRequest);
 		}
 	}
 
@@ -770,7 +875,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 		portletPreferences.store();
 
-		MailServiceUtil.clearSession();
+		_mailService.clearSession();
 	}
 
 	protected void validateCaptcha(ActionRequest actionRequest)
@@ -820,7 +925,7 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	protected void verifyPluginTables() throws Exception {
-		ServiceComponentLocalServiceUtil.verifyDB();
+		_serviceComponentLocalService.verifyDB();
 	}
 
 	private static final String
@@ -835,5 +940,8 @@ public class EditServerMVCActionCommand extends BaseMVCActionCommand {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditServerMVCActionCommand.class);
+
+	private MailService _mailService;
+	private ServiceComponentLocalService _serviceComponentLocalService;
 
 }

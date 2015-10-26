@@ -180,21 +180,20 @@ public class RolesAdminPortletDataHandler extends BasePortletDataHandler {
 
 			});
 
-		final ActionableDynamicQuery.PerformActionMethod performActionMethod =
-			actionableDynamicQuery.getPerformActionMethod();
+		@SuppressWarnings("unchecked")
+		final ActionableDynamicQuery.PerformActionMethod<Role>
+			performActionMethod =
+				(ActionableDynamicQuery.PerformActionMethod<Role>)
+					actionableDynamicQuery.getPerformActionMethod();
 
 		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			new ActionableDynamicQuery.PerformActionMethod<Role>() {
 
 				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
+				public void performAction(Role role) throws PortalException {
 					if (!export) {
 						return;
 					}
-
-					Role role = (Role)object;
 
 					long defaultUserId = _userLocalService.getDefaultUserId(
 						portletDataContext.getCompanyId());
@@ -206,7 +205,7 @@ public class RolesAdminPortletDataHandler extends BasePortletDataHandler {
 						return;
 					}
 
-					performActionMethod.performAction(object);
+					performActionMethod.performAction(role);
 				}
 
 			});

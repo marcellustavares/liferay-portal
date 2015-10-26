@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface EmailAddressModel extends AttachedModel, BaseModel<EmailAddress>,
-	MVCCModel, StagedAuditedModel {
+	MVCCModel, ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -296,22 +296,6 @@ public interface EmailAddressModel extends AttachedModel, BaseModel<EmailAddress
 	 * @param primary the primary of this email address
 	 */
 	public void setPrimary(boolean primary);
-
-	/**
-	 * Returns the last publish date of this email address.
-	 *
-	 * @return the last publish date of this email address
-	 */
-	@Override
-	public Date getLastPublishDate();
-
-	/**
-	 * Sets the last publish date of this email address.
-	 *
-	 * @param lastPublishDate the last publish date of this email address
-	 */
-	@Override
-	public void setLastPublishDate(Date lastPublishDate);
 
 	@Override
 	public boolean isNew();
