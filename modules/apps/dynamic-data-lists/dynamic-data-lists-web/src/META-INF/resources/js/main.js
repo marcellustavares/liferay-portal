@@ -426,8 +426,9 @@ AUI.add(
 											}
 											else {
 												date = new Date();
-												date = DateMath.add(date, DateMath.MINUTES, date.getTimezoneOffset());
 											}
+
+											date = DateMath.add(date, DateMath.MINUTES, date.getTimezoneOffset());
 
 											return date;
 										}
