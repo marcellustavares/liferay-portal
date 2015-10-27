@@ -25,19 +25,19 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface XSLContentConfiguration {
 
-	@Meta.AD(deflt = "@portlet_context_url@", id = "valid.url.prefixes")
+	@Meta.AD(deflt = "@portlet_context_url@")
 	public String validUrlPrefixes();
 
-	@Meta.AD(deflt = "false", id = "xml.doctype.declaration.allowed")
+	@Meta.AD(deflt = "false")
 	public boolean xmlDoctypeDeclarationAllowed();
 
-	@Meta.AD(deflt = "false", id = "xml.external.general.entities.allowed")
+	@Meta.AD(deflt = "false")
 	public boolean xmlExternalGeneralEntitiesAllowed();
 
-	@Meta.AD(deflt = "false", id = "xml.external.parameter.entities.allowed")
+	@Meta.AD(deflt = "false")
 	public boolean xmlExternalParameterEntitiesAllowed();
 
-	@Meta.AD(deflt = "true", id = "xsl.secure.processing.enabled")
+	@Meta.AD(deflt = "true")
 	public boolean xslSecureProcessingEnabled();
 
 }
