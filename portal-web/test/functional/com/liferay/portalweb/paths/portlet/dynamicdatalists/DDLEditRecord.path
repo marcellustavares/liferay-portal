@@ -120,6 +120,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GEOLOCATION_GOOGLE_MAP</td>
+	<td>//div[@data-fieldname='${key_fieldName}']//div[contains(@class,'lfrmapgoogle')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GEOLOCATION_LOCATION_LABEL</td>
 	<td>//div[@data-fieldname='${key_fieldName}']/p/strong</td>
 	<td></td>
@@ -136,7 +141,7 @@
 </tr>
 <tr>
 	<td>INTEGER_FIELD</td>
-	<td>//div[@data-fieldname='${key_fieldName}']/input</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]/input</td>
 	<td></td>
 </tr>
 <tr>

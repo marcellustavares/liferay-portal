@@ -40,15 +40,15 @@ import com.liferay.calendar.recurrence.PositionalWeekday;
 import com.liferay.calendar.recurrence.Recurrence;
 import com.liferay.calendar.recurrence.RecurrenceSerializer;
 import com.liferay.calendar.recurrence.Weekday;
-import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
-import com.liferay.calendar.service.CalendarBookingServiceUtil;
-import com.liferay.calendar.service.CalendarLocalServiceUtil;
-import com.liferay.calendar.service.CalendarNotificationTemplateServiceUtil;
-import com.liferay.calendar.service.CalendarResourceServiceUtil;
-import com.liferay.calendar.service.CalendarServiceUtil;
+import com.liferay.calendar.search.CalendarSearcher;
+import com.liferay.calendar.service.CalendarBookingLocalService;
+import com.liferay.calendar.service.CalendarBookingService;
+import com.liferay.calendar.service.CalendarLocalService;
+import com.liferay.calendar.service.CalendarNotificationTemplateService;
+import com.liferay.calendar.service.CalendarResourceService;
+import com.liferay.calendar.service.CalendarService;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.CalendarResourceUtil;
-import com.liferay.calendar.util.CalendarSearcher;
 import com.liferay.calendar.util.CalendarUtil;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.util.RSSUtil;
@@ -78,6 +78,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -91,10 +92,10 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.comparator.UserFirstNameComparator;
@@ -112,6 +113,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -169,7 +171,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		long calendarId = ParamUtil.getLong(actionRequest, "calendarId");
 
-		CalendarServiceUtil.deleteCalendar(calendarId);
+		_calendarService.deleteCalendar(calendarId);
 	}
 
 	public void deleteCalendarResource(
@@ -179,7 +181,7 @@ public class CalendarPortlet extends MVCPortlet {
 		long calendarResourceId = ParamUtil.getLong(
 			actionRequest, "calendarResourceId");
 
-		CalendarResourceServiceUtil.deleteCalendarResource(calendarResourceId);
+		_calendarResourceService.deleteCalendarResource(calendarResourceId);
 	}
 
 	@Override
@@ -201,7 +203,7 @@ public class CalendarPortlet extends MVCPortlet {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			CalendarBooking.class.getName(), actionRequest);
 
-		CalendarBookingServiceUtil.invokeTransition(
+		_calendarBookingService.invokeTransition(
 			calendarBookingId, status, serviceContext);
 	}
 
@@ -212,8 +214,7 @@ public class CalendarPortlet extends MVCPortlet {
 		long calendarBookingId = ParamUtil.getLong(
 			actionRequest, "calendarBookingId");
 
-		CalendarBookingServiceUtil.moveCalendarBookingToTrash(
-			calendarBookingId);
+		_calendarBookingService.moveCalendarBookingToTrash(calendarBookingId);
 	}
 
 	@Override
@@ -309,16 +310,16 @@ public class CalendarPortlet extends MVCPortlet {
 
 		if (calendarId <= 0) {
 			CalendarResource calendarResource =
-				CalendarResourceServiceUtil.getCalendarResource(
+				_calendarResourceService.getCalendarResource(
 					calendarResourceId);
 
-			calendar = CalendarServiceUtil.addCalendar(
+			calendar = _calendarService.addCalendar(
 				calendarResource.getGroupId(), calendarResourceId, nameMap,
 				descriptionMap, timeZoneId, color, defaultCalendar,
 				enableComments, enableRatings, serviceContext);
 		}
 		else {
-			calendar = CalendarServiceUtil.updateCalendar(
+			calendar = _calendarService.updateCalendar(
 				calendarId, nameMap, descriptionMap, timeZoneId, color,
 				defaultCalendar, enableComments, enableRatings, serviceContext);
 		}
@@ -338,7 +339,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		long calendarId = ParamUtil.getLong(actionRequest, "calendarId");
 
-		Calendar calendar = CalendarServiceUtil.getCalendar(calendarId);
+		Calendar calendar = _calendarService.getCalendar(calendarId);
 
 		long[] childCalendarIds = ParamUtil.getLongValues(
 			actionRequest, "childCalendarIds");
@@ -363,7 +364,7 @@ public class CalendarPortlet extends MVCPortlet {
 		CalendarBooking calendarBooking = null;
 
 		if (calendarBookingId <= 0) {
-			calendarBooking = CalendarBookingServiceUtil.addCalendarBooking(
+			calendarBooking = _calendarBookingService.addCalendarBooking(
 				calendarId, childCalendarIds,
 				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
 				titleMap, descriptionMap, location,
@@ -381,14 +382,14 @@ public class CalendarPortlet extends MVCPortlet {
 
 			if (updateCalendarBookingInstance) {
 				calendarBooking =
-					CalendarBookingLocalServiceUtil.getCalendarBooking(
+					_calendarBookingLocalService.getCalendarBooking(
 						calendarBookingId);
 
 				boolean allFollowing = ParamUtil.getBoolean(
 					actionRequest, "allFollowing");
 
 				calendarBooking =
-					CalendarBookingServiceUtil.updateCalendarBookingInstance(
+					_calendarBookingService.updateCalendarBookingInstance(
 						calendarBookingId, instanceIndex, calendarId,
 						childCalendarIds, titleMap, descriptionMap, location,
 						startTimeJCalendar.getTimeInMillis(),
@@ -398,7 +399,7 @@ public class CalendarPortlet extends MVCPortlet {
 			}
 			else {
 				calendarBooking =
-					CalendarBookingServiceUtil.getCalendarBookingInstance(
+					_calendarBookingService.getCalendarBookingInstance(
 						calendarBookingId, instanceIndex);
 
 				long duration =
@@ -409,18 +410,16 @@ public class CalendarPortlet extends MVCPortlet {
 						calendarBooking.getStartTime());
 
 				calendarBooking =
-					CalendarBookingServiceUtil.
+					_calendarBookingService.
 						getNewStartTimeAndDurationCalendarBooking(
 							calendarBookingId, offset, duration);
 
-				calendarBooking =
-					CalendarBookingServiceUtil.updateCalendarBooking(
-						calendarBookingId, calendarId, childCalendarIds,
-						titleMap, descriptionMap, location,
-						calendarBooking.getStartTime(),
-						calendarBooking.getEndTime(), allDay, recurrence,
-						reminders[0], remindersType[0], reminders[1],
-						remindersType[1], serviceContext);
+				calendarBooking = _calendarBookingService.updateCalendarBooking(
+					calendarBookingId, calendarId, childCalendarIds, titleMap,
+					descriptionMap, location, calendarBooking.getStartTime(),
+					calendarBooking.getEndTime(), allDay, recurrence,
+					reminders[0], remindersType[0], reminders[1],
+					remindersType[1], serviceContext);
 			}
 		}
 
@@ -453,7 +452,7 @@ public class CalendarPortlet extends MVCPortlet {
 			CalendarNotificationTemplate.class.getName(), actionRequest);
 
 		if (calendarNotificationTemplateId <= 0) {
-			CalendarNotificationTemplateServiceUtil.
+			_calendarNotificationTemplateService.
 				addCalendarNotificationTemplate(
 					calendarId, notificationType,
 					getNotificationTypeSettings(
@@ -461,7 +460,7 @@ public class CalendarPortlet extends MVCPortlet {
 					notificationTemplateType, subject, body, serviceContext);
 		}
 		else {
-			CalendarNotificationTemplateServiceUtil.
+			_calendarNotificationTemplateService.
 				updateCalendarNotificationTemplate(
 					calendarNotificationTemplateId,
 					getNotificationTypeSettings(
@@ -490,20 +489,19 @@ public class CalendarPortlet extends MVCPortlet {
 			CalendarResource.class.getName(), actionRequest);
 
 		if (calendarResourceId <= 0) {
-			CalendarResourceServiceUtil.addCalendarResource(
+			_calendarResourceService.addCalendarResource(
 				serviceContext.getScopeGroupId(),
 				PortalUtil.getClassNameId(CalendarResource.class), 0,
 				PortalUUIDUtil.generate(), code, nameMap, descriptionMap,
 				active, serviceContext);
 		}
 		else {
-			CalendarResourceServiceUtil.updateCalendarResource(
+			_calendarResourceService.updateCalendarResource(
 				calendarResourceId, nameMap, descriptionMap, active,
 				serviceContext);
 
 			if (defaultCalendarId > 0) {
-				CalendarLocalServiceUtil.updateCalendar(
-					defaultCalendarId, true);
+				_calendarLocalService.updateCalendar(defaultCalendarId, true);
 			}
 		}
 	}
@@ -528,7 +526,7 @@ public class CalendarPortlet extends MVCPortlet {
 			themeDisplay.getPermissionChecker();
 
 		List<Calendar> calendars =
-			CalendarLocalServiceUtil.getCalendarResourceCalendars(
+			_calendarLocalService.getCalendarResourceCalendars(
 				calendarResource.getGroupId(),
 				calendarResource.getCalendarResourceId());
 
@@ -567,7 +565,7 @@ public class CalendarPortlet extends MVCPortlet {
 			return;
 		}
 
-		Calendar calendar = CalendarServiceUtil.getCalendar(calendarId);
+		Calendar calendar = _calendarService.getCalendar(calendarId);
 
 		portletRequest.setAttribute(CalendarWebKeys.CALENDAR, calendar);
 	}
@@ -589,7 +587,7 @@ public class CalendarPortlet extends MVCPortlet {
 		}
 
 		CalendarBooking calendarBooking =
-			CalendarBookingServiceUtil.getCalendarBooking(calendarBookingId);
+			_calendarBookingService.getCalendarBooking(calendarBookingId);
 
 		portletRequest.setAttribute(
 			CalendarWebKeys.CALENDAR_BOOKING, calendarBooking);
@@ -607,7 +605,7 @@ public class CalendarPortlet extends MVCPortlet {
 		CalendarResource calendarResource = null;
 
 		if (calendarResourceId > 0) {
-			calendarResource = CalendarResourceServiceUtil.getCalendarResource(
+			calendarResource = _calendarResourceService.getCalendarResource(
 				calendarResourceId);
 		}
 		else if ((classNameId > 0) && (classPK > 0)) {
@@ -902,7 +900,7 @@ public class CalendarPortlet extends MVCPortlet {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		List<CalendarBooking> childCalendarBookings =
-			CalendarBookingServiceUtil.getChildCalendarBookings(
+			_calendarBookingService.getChildCalendarBookings(
 				parentCalendarBookingId);
 
 		Collection<CalendarResource> calendarResources =
@@ -938,7 +936,7 @@ public class CalendarPortlet extends MVCPortlet {
 			Collections.<CalendarBooking>emptyList();
 
 		if (!ArrayUtil.isEmpty(calendarIds)) {
-			calendarBookings = CalendarBookingServiceUtil.search(
+			calendarBookings = _calendarBookingService.search(
 				themeDisplay.getCompanyId(), new long[0], calendarIds,
 				new long[0], -1, null, startTimeJCalendar.getTimeInMillis(),
 				endTimeJCalendar.getTimeInMillis(), true, statuses,
@@ -991,7 +989,7 @@ public class CalendarPortlet extends MVCPortlet {
 		String displayStyle = portletPreferences.getValue(
 			"rssDisplayStyle", RSSUtil.DISPLAY_STYLE_DEFAULT);
 
-		String rss = CalendarBookingServiceUtil.getCalendarBookingsRSS(
+		String rss = _calendarBookingService.getCalendarBookingsRSS(
 			calendarId, startTime, endTime, max, type, version, displayStyle,
 			themeDisplay);
 
@@ -1045,7 +1043,7 @@ public class CalendarPortlet extends MVCPortlet {
 			long calendarId = GetterUtil.getLong(
 				document.get(Field.ENTRY_CLASS_PK));
 
-			Calendar calendar = CalendarServiceUtil.getCalendar(calendarId);
+			Calendar calendar = _calendarService.getCalendar(calendarId);
 
 			CalendarResource calendarResource = calendar.getCalendarResource();
 
@@ -1063,7 +1061,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		params.put("usersGroups", themeDisplay.getUserId());
 
-		List<Group> groups = GroupLocalServiceUtil.search(
+		List<Group> groups = _groupLocalService.search(
 			themeDisplay.getCompanyId(), name, null, params, true, 0,
 			SearchContainer.DEFAULT_DELTA);
 
@@ -1075,7 +1073,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		long userClassNameId = PortalUtil.getClassNameId(User.class);
 
-		List<User> users = UserLocalServiceUtil.search(
+		List<User> users = _userLocalService.search(
 			themeDisplay.getCompanyId(), keywords, 0, null, 0,
 			SearchContainer.DEFAULT_DELTA, new UserFirstNameComparator());
 
@@ -1106,7 +1104,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		long calendarId = ParamUtil.getLong(resourceRequest, "calendarId");
 
-		Calendar calendar = CalendarLocalServiceUtil.getCalendar(calendarId);
+		Calendar calendar = _calendarService.getCalendar(calendarId);
 
 		String fileName =
 			calendar.getName(themeDisplay.getLocale()) + CharPool.PERIOD +
@@ -1162,8 +1160,11 @@ public class CalendarPortlet extends MVCPortlet {
 			}
 		}
 		else {
-			String message = themeDisplay.translate(
-				"failed-to-import-empty-file");
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", themeDisplay.getLocale(), getClass());
+
+			String message = ResourceBundleUtil.getString(
+				resourceBundle, "failed-to-import-empty-file");
 
 			jsonObject.put("error", message);
 		}
@@ -1181,7 +1182,7 @@ public class CalendarPortlet extends MVCPortlet {
 		long calendarResourceId = ParamUtil.getLong(
 			resourceRequest, "calendarResourceId");
 
-		List<Calendar> calendars = CalendarServiceUtil.search(
+		List<Calendar> calendars = _calendarService.search(
 			themeDisplay.getCompanyId(), null, new long[] {calendarResourceId},
 			null, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
@@ -1192,8 +1193,70 @@ public class CalendarPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setCalendarBookingLocalService(
+		CalendarBookingLocalService calendarBookingLocalService) {
+
+		_calendarBookingLocalService = calendarBookingLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCalendarBookingService(
+		CalendarBookingService calendarBookingService) {
+
+		_calendarBookingService = calendarBookingService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCalendarLocalService(
+		CalendarLocalService calendarLocalService) {
+
+		_calendarLocalService = calendarLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCalendarNotificationTemplateService(
+		CalendarNotificationTemplateService
+			calendarNotificationTemplateService) {
+
+		_calendarNotificationTemplateService =
+			calendarNotificationTemplateService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCalendarResourceService(
+		CalendarResourceService calendarResourceService) {
+
+		_calendarResourceService = calendarResourceService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCalendarService(CalendarService calendarService) {
+		_calendarService = calendarService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setCalendarWebUpgrade(
 		CalendarWebUpgrade calendarWebUpgrade) {
 	}
+
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		_groupLocalService = groupLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setUserLocalService(UserLocalService userLocalService) {
+		_userLocalService = userLocalService;
+	}
+
+	private CalendarBookingLocalService _calendarBookingLocalService;
+	private CalendarBookingService _calendarBookingService;
+	private CalendarLocalService _calendarLocalService;
+	private CalendarNotificationTemplateService
+		_calendarNotificationTemplateService;
+	private CalendarResourceService _calendarResourceService;
+	private CalendarService _calendarService;
+	private GroupLocalService _groupLocalService;
+	private UserLocalService _userLocalService;
 
 }

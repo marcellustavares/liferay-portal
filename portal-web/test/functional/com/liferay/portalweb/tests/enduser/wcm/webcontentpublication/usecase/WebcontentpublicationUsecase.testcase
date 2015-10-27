@@ -19,6 +19,10 @@
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Asset Publisher" />
 		</execute>
+
+		<execute macro="Page#gotoPG">
+			<var name="pageName" value="Asset Publisher Page" />
+		</execute>
 	</set-up>
 
 	<tear-down>
@@ -66,16 +70,17 @@
 			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
-		<execute macro="Page#gotoConfigurationCP">
-			<var name="portletName" value="Site Settings" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-		</execute>
+		<for list="Home,Documents and Media,News" param="sitePageName">
+			<execute macro="ProductMenu#gotoControlPanelSites">
+				<var name="portlet" value="Sites" />
+			</execute>
 
-		<execute macro="Organization#addPrivatePageToSiteViaSiteTemplateCP">
-			<var name="organizationSite" value="Intranet Site" />
-			<var name="orgName" value="Organization Name" />
-		</execute>
+			<execute macro="SitePage#addCP">
+				<var name="siteName" value="Organization Name" />
+				<var name="sitePageName" value="${sitePageName}" />
+				<var name="sitePagePrivacy" value="Private" />
+			</execute>
+		</for>
 
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Users and Organizations" />
@@ -637,7 +642,7 @@
 			<execute macro="DynamicDataMapping#addField">
 				<var name="field" value="${structureFieldName}" />
 				<var name="fieldFieldLabel" value="${structureFieldName}" />
-				<var method="StringUtil#replace('${structureFieldName}', ' ', '_')" name="fieldName" />
+				<var method="StringUtil#replace('${structureFieldName}', ' ', '')" name="fieldName" />
 			</execute>
 		</for>
 
@@ -904,8 +909,8 @@
 	</command>
 
 	<command name="AssetPublisherHasOpenOfficeFileTypeLinks" priority="3">
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Server Administration" />
+		<execute macro="ProductMenu#gotoControlPanelSystem">
+			<var name="portlet" value="Server Administration" />
 		</execute>
 
 		<execute macro="ServerAdministration#configureExternalServices">
@@ -1602,14 +1607,16 @@
 			<var name="roleName" value="WC Author" />
 		</execute>
 
-		<execute macro="Page#gotoCP">
-			<var name="portletName" value="Roles" />
-		</execute>
+		<for list="SITE_ADMIN_CONTENT_WEB_CONTENT_GENERAL_PERMISSIONS_ACTION_CHECKBOX,SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ACTION_CHECKBOX,SITE_ADMIN_CONTENT_WEB_CONTENT_RESOURCE_PERMISSIONS_WEB_CONTENT_ARTICLE_ACTION_CHECKBOX" param="permissionDefinitionKeys">
+			<execute macro="Page#gotoCP">
+				<var name="portletName" value="Roles" />
+			</execute>
 
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_CONTENT_WEB_CONTENT_GENERAL_PERMISSIONS_ACTION_CHECKBOX" />
-			<var name="roleName" value="WC Author" />
-		</execute>
+			<execute macro="Role#definePermissionsCP">
+				<var name="permissionDefinitionKeys" value="${permissionDefinitionKeys}" />
+				<var name="roleName" value="WC Author" />
+			</execute>
+		</for>
 
 		<execute macro="Page#gotoCP">
 			<var name="portletName" value="Users and Organizations" />
@@ -1768,10 +1775,9 @@
 			<var name="pageName" value="Blogs Page" />
 		</execute>
 
-		<execute macro="BlogsEntry#gotoPG">
+		<execute macro="BlogsNavigator#gotoEntrySpecific">
 			<var name="entryContent" value="Blogs Entry1 Content" />
 			<var name="entryTitle" value="Blogs Entry1 Title" />
-			<var name="viewSpecificEntry" value="true" />
 		</execute>
 
 		<execute macro="BlogsEntry#viewPG">
@@ -1787,10 +1793,9 @@
 			<var name="pageName" value="Blogs Page" />
 		</execute>
 
-		<execute macro="BlogsEntry#gotoPG">
+		<execute macro="BlogsNavigator#gotoEntrySpecific">
 			<var name="entryContent" value="Blogs Entry2 Content" />
 			<var name="entryTitle" value="Blogs Entry2 Title" />
-			<var name="viewSpecificEntry" value="true" />
 		</execute>
 
 		<execute macro="BlogsEntry#viewPG">

@@ -186,8 +186,6 @@ public class PasswordPolicyPersistenceTest {
 
 		newPasswordPolicy.setResetTicketMaxAge(RandomTestUtil.nextLong());
 
-		newPasswordPolicy.setLastPublishDate(RandomTestUtil.nextDate());
-
 		_passwordPolicies.add(_persistence.update(newPasswordPolicy));
 
 		PasswordPolicy existingPasswordPolicy = _persistence.findByPrimaryKey(newPasswordPolicy.getPrimaryKey());
@@ -264,9 +262,6 @@ public class PasswordPolicyPersistenceTest {
 			newPasswordPolicy.getResetFailureCount());
 		Assert.assertEquals(existingPasswordPolicy.getResetTicketMaxAge(),
 			newPasswordPolicy.getResetTicketMaxAge());
-		Assert.assertEquals(Time.getShortTimestamp(
-				existingPasswordPolicy.getLastPublishDate()),
-			Time.getShortTimestamp(newPasswordPolicy.getLastPublishDate()));
 	}
 
 	@Test
@@ -346,7 +341,7 @@ public class PasswordPolicyPersistenceTest {
 			true, "maxAge", true, "warningTime", true, "graceLimit", true,
 			"lockout", true, "maxFailure", true, "lockoutDuration", true,
 			"requireUnlock", true, "resetFailureCount", true,
-			"resetTicketMaxAge", true, "lastPublishDate", true);
+			"resetTicketMaxAge", true);
 	}
 
 	@Test
@@ -455,11 +450,9 @@ public class PasswordPolicyPersistenceTest {
 
 		ActionableDynamicQuery actionableDynamicQuery = PasswordPolicyLocalServiceUtil.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<PasswordPolicy>() {
 				@Override
-				public void performAction(Object object) {
-					PasswordPolicy passwordPolicy = (PasswordPolicy)object;
-
+				public void performAction(PasswordPolicy passwordPolicy) {
 					Assert.assertNotNull(passwordPolicy);
 
 					count.increment();
@@ -641,8 +634,6 @@ public class PasswordPolicyPersistenceTest {
 		passwordPolicy.setResetFailureCount(RandomTestUtil.nextLong());
 
 		passwordPolicy.setResetTicketMaxAge(RandomTestUtil.nextLong());
-
-		passwordPolicy.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_passwordPolicies.add(_persistence.update(passwordPolicy));
 

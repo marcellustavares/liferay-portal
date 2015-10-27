@@ -59,6 +59,7 @@
 	<command name="addPG" summary="Add a page named '${pageName}'">
 		<execute macro="Page#gotoPagesCP">
 			<var name="friendlyURL" value="${friendlyURL}" />
+			<var name="nodePort" value="${nodePort}" />
 			<var name="pageAccess" value="${pageAccess}" />
 			<var name="pageStaging" value="${pageStaging}" />
 			<var name="portletName" value="Site Pages" />
@@ -573,7 +574,22 @@
 			<then>
 				<var name="key_portletName" value="${portletName}" />
 
-				<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="${portletName}" />
+				<if>
+					<equals arg1="${portletName}" arg2="Workflow Configuration" />
+					<then>
+						<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM_2" value1="${portletName}" />
+					</then>
+					<else>
+						<execute function="AssertClick" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="${portletName}" />
+					</else>
+				</if>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${portletName}" arg2="Portal Settings" />
+			<then>
+				<execute function="Pause" locator1="5000" />
 			</then>
 		</if>
 	</command>
@@ -1008,7 +1024,7 @@
 		<if>
 			<isset var="viewChildPageDropdown" />
 			<then>
-				<execute function="Click" locator1="Home#${viewChildPageDropdown}" />
+				<execute function="ClickNoError" locator1="Home#${viewChildPageDropdown}" />
 
 				<if>
 					<isset var="javaScriptPage" />
@@ -1229,7 +1245,6 @@
 		<execute function="Pause" locator1="1073" />
 		<execute function="Pause" locator1="5000" />
 
-		<execute function="AssertClick#assertTextClickAtClickDockbar" locator1="Staging#STAGING_DROP_DOWN_BUTTON" value1="Staging" />
 		<execute function="AssertTextEquals" locator1="Message#STATUS" value1="${workflowStatus}" />
 		<execute function="AssertClick" locator1="Staging#LIVE_BUTTON" value1="Live" />
 

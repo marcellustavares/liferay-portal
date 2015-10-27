@@ -140,8 +140,6 @@ public class EmailAddressPersistenceTest {
 
 		newEmailAddress.setPrimary(RandomTestUtil.randomBoolean());
 
-		newEmailAddress.setLastPublishDate(RandomTestUtil.nextDate());
-
 		_emailAddresses.add(_persistence.update(newEmailAddress));
 
 		EmailAddress existingEmailAddress = _persistence.findByPrimaryKey(newEmailAddress.getPrimaryKey());
@@ -174,9 +172,6 @@ public class EmailAddressPersistenceTest {
 			newEmailAddress.getTypeId());
 		Assert.assertEquals(existingEmailAddress.getPrimary(),
 			newEmailAddress.getPrimary());
-		Assert.assertEquals(Time.getShortTimestamp(
-				existingEmailAddress.getLastPublishDate()),
-			Time.getShortTimestamp(newEmailAddress.getLastPublishDate()));
 	}
 
 	@Test
@@ -263,8 +258,7 @@ public class EmailAddressPersistenceTest {
 			"mvccVersion", true, "uuid", true, "emailAddressId", true,
 			"companyId", true, "userId", true, "userName", true, "createDate",
 			true, "modifiedDate", true, "classNameId", true, "classPK", true,
-			"address", true, "typeId", true, "primary", true,
-			"lastPublishDate", true);
+			"address", true, "typeId", true, "primary", true);
 	}
 
 	@Test
@@ -373,11 +367,9 @@ public class EmailAddressPersistenceTest {
 
 		ActionableDynamicQuery actionableDynamicQuery = EmailAddressLocalServiceUtil.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<EmailAddress>() {
 				@Override
-				public void performAction(Object object) {
-					EmailAddress emailAddress = (EmailAddress)object;
-
+				public void performAction(EmailAddress emailAddress) {
 					Assert.assertNotNull(emailAddress);
 
 					count.increment();
@@ -491,8 +483,6 @@ public class EmailAddressPersistenceTest {
 		emailAddress.setTypeId(RandomTestUtil.nextLong());
 
 		emailAddress.setPrimary(RandomTestUtil.randomBoolean());
-
-		emailAddress.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_emailAddresses.add(_persistence.update(emailAddress));
 

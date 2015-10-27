@@ -19,7 +19,7 @@ import com.liferay.calendar.constants.CalendarPortletKeys;
 import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarResource;
-import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
+import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.CalendarResourceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -30,10 +30,12 @@ import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
 import javax.servlet.ServletContext;
@@ -68,7 +70,7 @@ public class CalendarBookingAssetRendererFactory
 		throws PortalException {
 
 		CalendarBooking calendarBooking =
-			CalendarBookingLocalServiceUtil.getCalendarBooking(classPK);
+			_calendarBookingLocalService.getCalendarBooking(classPK);
 
 		CalendarBookingAssetRenderer calendarBookingAssetRenderer =
 			new CalendarBookingAssetRenderer(calendarBooking);
@@ -113,8 +115,9 @@ public class CalendarBookingAssetRendererFactory
 			return null;
 		}
 
-		PortletURL portletURL = liferayPortletResponse.createRenderURL(
-			CalendarPortletKeys.CALENDAR);
+		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
+			liferayPortletRequest, CalendarPortletKeys.CALENDAR, 0,
+			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("mvcPath", "/edit_calendar_booking.jsp");
 
@@ -156,7 +159,7 @@ public class CalendarBookingAssetRendererFactory
 		throws Exception {
 
 		CalendarBooking calendarBooking =
-			CalendarBookingLocalServiceUtil.getCalendarBooking(classPK);
+			_calendarBookingLocalService.getCalendarBooking(classPK);
 
 		if (actionId.equals(ActionKeys.DELETE) ||
 			actionId.equals(ActionKeys.UPDATE)) {
@@ -181,6 +184,14 @@ public class CalendarBookingAssetRendererFactory
 		return themeDisplay.getPathThemeImages() + "/common/date.png";
 	}
 
+	@Reference(unbind = "-")
+	protected void setCalendarBookingLocalService(
+		CalendarBookingLocalService calendarBookingLocalService) {
+
+		_calendarBookingLocalService = calendarBookingLocalService;
+	}
+
+	private CalendarBookingLocalService _calendarBookingLocalService;
 	private ServletContext _servletContext;
 
 }

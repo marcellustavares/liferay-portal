@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface PasswordPolicyModel extends BaseModel<PasswordPolicy>, MVCCModel,
-	StagedAuditedModel {
+	ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -648,22 +648,6 @@ public interface PasswordPolicyModel extends BaseModel<PasswordPolicy>, MVCCMode
 	 * @param resetTicketMaxAge the reset ticket max age of this password policy
 	 */
 	public void setResetTicketMaxAge(long resetTicketMaxAge);
-
-	/**
-	 * Returns the last publish date of this password policy.
-	 *
-	 * @return the last publish date of this password policy
-	 */
-	@Override
-	public Date getLastPublishDate();
-
-	/**
-	 * Sets the last publish date of this password policy.
-	 *
-	 * @param lastPublishDate the last publish date of this password policy
-	 */
-	@Override
-	public void setLastPublishDate(Date lastPublishDate);
 
 	@Override
 	public boolean isNew();

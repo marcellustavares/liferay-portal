@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface AddressModel extends AttachedModel, BaseModel<Address>,
-	MVCCModel, StagedAuditedModel {
+	MVCCModel, ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -405,22 +405,6 @@ public interface AddressModel extends AttachedModel, BaseModel<Address>,
 	 * @param primary the primary of this address
 	 */
 	public void setPrimary(boolean primary);
-
-	/**
-	 * Returns the last publish date of this address.
-	 *
-	 * @return the last publish date of this address
-	 */
-	@Override
-	public Date getLastPublishDate();
-
-	/**
-	 * Sets the last publish date of this address.
-	 *
-	 * @param lastPublishDate the last publish date of this address
-	 */
-	@Override
-	public void setLastPublishDate(Date lastPublishDate);
 
 	@Override
 	public boolean isNew();

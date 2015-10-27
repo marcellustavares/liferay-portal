@@ -808,6 +808,9 @@
 		<attribute default="${app.server.@{app.server.type}.version}" name="app.server.version" />
 		<attribute name="database.type" />
 		<attribute default="${database.@{database.type}.version}" name="database.version" />
+		<attribute default="" name="test.license.xml.url" />
+		<attribute default="" name="test.portal.bundle.zip.url" />
+		<attribute default="false" name="test.release.bundle" />
 		<attribute default="false" name="tomcat.gc.log" />
 		<attribute default="false" name="tsant.gc.log" />
 
@@ -821,10 +824,10 @@
 				<test-action>
 					<database-test-run-test database.type="@{database.type}">
 						<test-action>
-							<ant antfile="build-test-@{app.server.type}.xml" inheritAll="false" target="run-selenium-@{app.server.type}">
+							<ant antfile="build-test-${app.server.type}.xml" inheritAll="false" target="run-selenium-${app.server.type}">
 								<property name="database.type" value="@{database.type}" />
 								<property name="print.java.process.on.fail" value="Bootstrap" />
-								<property name="test.class" value="${axis.variable}" />
+								<property name="test.class" value="${test.class}" />
 							</ant>
 						</test-action>
 					</database-test-run-test>
@@ -833,7 +836,25 @@
 				<test-set-up>
 					<antcall target="compile" />
 
-					<ant antfile="build-dist.xml" target="build-dist-@{app.server.type}" />
+					<if>
+						<equals arg1="@{test.release.bundle}" arg2="true" />
+						<then>
+							<propertycopy from="app.server.${app.server.type}.bin.dir" name="test.app.server.bin.dir" />
+
+							<antcall inheritAll="false" target="prepare-test-bundle">
+								<param name="app.server.type" value="${app.server.type}" />
+								<param name="test.app.server.bin.dir" value="${test.app.server.bin.dir}" />
+								<param name="test.build.bundle.zip.url" value="@{test.portal.bundle.zip.url}" />
+							</antcall>
+
+							<antcall target="deploy-license-xml">
+								<param name="test.build.license.xml.zip.url" value="@{test.license.xml.url}" />
+							</antcall>
+						</then>
+						<else>
+							<ant antfile="build-dist.xml" target="build-dist-${app.server.type}" />
+						</else>
+					</if>
 
 					<antcall target="record-test-generated-properties" />
 
@@ -909,6 +930,7 @@
 							<antcall target="prepare-system-ext-properties" inheritAll="false" />
 
 							<gradle-execute dir="modules" task="testIntegration">
+								<arg value="-Ddatabase.type=@{database.type}" />
 								<arg value="-Dtest.class.group.index=${axis.variable}" />
 							</gradle-execute>
 
@@ -945,9 +967,11 @@
 		<sequential>
 			<echo>Sending testray results to @{testray.results.dir}.</echo>
 
-			<copy failonerror="false" todir="@{testray.results.dir}">
-				<fileset dir="@{test.results.suite.dir}" erroronmissingdir="false" includes="TESTS-*.xml" />
-			</copy>
+			<for list="uat" param="testray.base.dir.name">
+				<sequential>
+					<rsync rsync.dest="testray-results/@{testray.base.dir.name}" rsync.src="@{test.results.suite.dir}" />
+				</sequential>
+			</for>
 		</sequential>
 	</macrodef>
 
@@ -991,6 +1015,18 @@
 			<property name="testray.axis.name" value="${test.batch.name}#${axis.variable}" />
 		</sequential>
 	</macrodef>
+
+	<target name="functional-release-tomcat-mysql">
+		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
+
+		<run-functional-test
+			app.server.type="tomcat"
+			database.type="mysql"
+			test.license.xml.url="${test.license.xml.url}"
+			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
+			test.release.bundle="true"
+		/>
+	</target>
 
 	<target name="functional-tomcat-hypersonic">
 		<run-functional-test app.server.type="tomcat" database.type="hypersonic" />
@@ -1115,6 +1151,34 @@
 		</run-batch-test>
 	</target>
 
+	<target name="ruby-sass-compiler">
+		<echo file="build.${user.name}.properties">sass.compiler.class.name=ruby</echo>
+
+		<antcall target="setup-sdk" inheritAll="false" />
+
+		<record action="start" name="${project.dir}/sass-compiler-log" />
+
+		<gradle-execute dir="modules" task="buildCSS" />
+
+		<ant dir="portal-web" target="build-css" inheritAll="false" />
+
+		<record action="stop" name="${project.dir}/sass-compiler-log" />
+
+		<fail message="The Sass compiler is not using Ruby.">
+			<condition>
+				<and>
+					<not>
+						<resourcecontains resource="${project.dir}/sass-compiler-log" substring="Using Ruby Sass compiler" />
+					</not>
+					<or>
+						<resourcecontains resource="${project.dir}/sass-compiler-log" substring="Unable to load Ruby compiler, falling back to native" />
+						<resourcecontains resource="${project.dir}/sass-compiler-log" substring="Using native Sass compiler" />
+					</or>
+				</and>
+			</condition>
+		</fail>
+	</target>
+
 	<target name="service-builder">
 		<property name="testray.main.component.name" value="Service Builder" />
 		<property name="testray.testcase.priority" value="4" />
@@ -1131,6 +1195,7 @@
 
 				<record action="stop" name="${project.dir}/build.services.output.txt" />
 
+				<replace file="${project.dir}/build.services.output.txt" token="Writing src/main/resources/service.properties" value="" />
 				<replace file="${project.dir}/build.services.output.txt" token="Writing src/service.properties" value="" />
 
 				<loadfile property="build.services.output.txt.content" srcfile="${project.dir}/build.services.output.txt" />
@@ -1185,6 +1250,17 @@ go</echo>
 
 		<retry retrycount="10">
 			<sequential>
+				<if>
+					<not>
+						<available file="/opt/sybase/charsets" />
+					</not>
+					<then>
+						<clean-restart-sybase retry="true" />
+
+						<fail message="Missing /opt/sybase/charsets." />
+					</then>
+				</if>
+
 				<local name="output.content" />
 				<local name="return.code" />
 

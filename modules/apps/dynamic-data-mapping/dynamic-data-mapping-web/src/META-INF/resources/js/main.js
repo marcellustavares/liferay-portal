@@ -40,6 +40,9 @@ AUI.add(
 					localizationMap: {
 						validator: isObject,
 						value: {}
+					},
+					name: {
+						validator: A.Lang.isString
 					}
 				},
 
@@ -623,7 +626,7 @@ AUI.add(
 						}
 					}
 
-					str = str.replace(/\s/g, '_');
+					str = Liferay.Util.camelize(str, STR_SPACE);
 				}
 
 				return str;

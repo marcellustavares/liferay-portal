@@ -146,8 +146,6 @@ public class RolePersistenceTest {
 
 		newRole.setSubtype(RandomTestUtil.randomString());
 
-		newRole.setLastPublishDate(RandomTestUtil.nextDate());
-
 		_roles.add(_persistence.update(newRole));
 
 		Role existingRole = _persistence.findByPrimaryKey(newRole.getPrimaryKey());
@@ -173,9 +171,6 @@ public class RolePersistenceTest {
 			newRole.getDescription());
 		Assert.assertEquals(existingRole.getType(), newRole.getType());
 		Assert.assertEquals(existingRole.getSubtype(), newRole.getSubtype());
-		Assert.assertEquals(Time.getShortTimestamp(
-				existingRole.getLastPublishDate()),
-			Time.getShortTimestamp(newRole.getLastPublishDate()));
 	}
 
 	@Test
@@ -295,8 +290,7 @@ public class RolePersistenceTest {
 			true, "uuid", true, "roleId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
 			"classNameId", true, "classPK", true, "name", true, "title", true,
-			"description", true, "type", true, "subtype", true,
-			"lastPublishDate", true);
+			"description", true, "type", true, "subtype", true);
 	}
 
 	@Test
@@ -401,11 +395,9 @@ public class RolePersistenceTest {
 
 		ActionableDynamicQuery actionableDynamicQuery = RoleLocalServiceUtil.getActionableDynamicQuery();
 
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<Role>() {
 				@Override
-				public void performAction(Object object) {
-					Role role = (Role)object;
-
+				public void performAction(Role role) {
 					Assert.assertNotNull(role);
 
 					count.increment();
@@ -547,8 +539,6 @@ public class RolePersistenceTest {
 		role.setType(RandomTestUtil.nextInt());
 
 		role.setSubtype(RandomTestUtil.randomString());
-
-		role.setLastPublishDate(RandomTestUtil.nextDate());
 
 		_roles.add(_persistence.update(role));
 

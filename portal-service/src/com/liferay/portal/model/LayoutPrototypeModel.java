@@ -43,7 +43,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface LayoutPrototypeModel extends BaseModel<LayoutPrototype>,
-	LocalizedModel, MVCCModel, StagedAuditedModel {
+	LocalizedModel, MVCCModel, ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -443,22 +443,6 @@ public interface LayoutPrototypeModel extends BaseModel<LayoutPrototype>,
 	 * @param active the active of this layout prototype
 	 */
 	public void setActive(boolean active);
-
-	/**
-	 * Returns the last publish date of this layout prototype.
-	 *
-	 * @return the last publish date of this layout prototype
-	 */
-	@Override
-	public Date getLastPublishDate();
-
-	/**
-	 * Sets the last publish date of this layout prototype.
-	 *
-	 * @param lastPublishDate the last publish date of this layout prototype
-	 */
-	@Override
-	public void setLastPublishDate(Date lastPublishDate);
 
 	@Override
 	public boolean isNew();

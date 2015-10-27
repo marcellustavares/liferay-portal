@@ -18,7 +18,7 @@ import com.liferay.calendar.constants.CalendarActionKeys;
 import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarResource;
-import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
+import com.liferay.calendar.service.CalendarBookingServiceUtil;
 import com.liferay.calendar.service.CalendarResourceLocalServiceUtil;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.comparator.CalendarNameComparator;
@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
+import com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 
 import java.util.ArrayList;
@@ -64,11 +65,12 @@ public class CalendarUtil {
 	}
 
 	public static JSONObject getCalendarRenderingRules(
-		ThemeDisplay themeDisplay, long[] calendarIds, int[] statuses,
-		long startTime, long endTime, String ruleName, TimeZone timeZone) {
+			ThemeDisplay themeDisplay, long[] calendarIds, int[] statuses,
+			long startTime, long endTime, String ruleName, TimeZone timeZone)
+		throws PortalException {
 
 		List<CalendarBooking> calendarBookings =
-			CalendarBookingLocalServiceUtil.search(
+			CalendarBookingServiceUtil.search(
 				themeDisplay.getCompanyId(), null, calendarIds, new long[0], -1,
 				null, startTime, endTime, true, statuses, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, null);
@@ -257,7 +259,12 @@ public class CalendarUtil {
 
 		jsonObject.put(
 			"hasChildCalendarBookings", childCalendarBookings.size() > 1);
-
+		jsonObject.put(
+			"hasWorkflowInstanceLink",
+			WorkflowInstanceLinkLocalServiceUtil.hasWorkflowInstanceLink(
+				themeDisplay.getCompanyId(), calendarBooking.getGroupId(),
+				CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId()));
 		jsonObject.put("instanceIndex", calendarBooking.getInstanceIndex());
 		jsonObject.put("location", calendarBooking.getLocation());
 		jsonObject.put(
