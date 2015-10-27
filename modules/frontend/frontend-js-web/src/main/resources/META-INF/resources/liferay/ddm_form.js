@@ -3,6 +3,8 @@ AUI.add(
 	function(A) {
 		var AArray = A.Array;
 
+		var DateMath = A.DataType.DateMath;
+
 		var Lang = A.Lang;
 
 		var INSTANCE_ID_PREFIX = '_INSTANCE_';
@@ -775,6 +777,9 @@ AUI.add(
 
 						if (value) {
 							var date = A.DataType.Date.parse(value);
+
+							date = DateMath.add(date, DateMath.MINUTES, date.getTimezoneOffset());
+
 							datePicker.selectDates(date);
 						}
 					}
