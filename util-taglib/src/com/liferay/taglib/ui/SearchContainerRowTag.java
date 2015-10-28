@@ -48,7 +48,7 @@ public class SearchContainerRowTag<R>
 	public static final String DEFAULT_ROW_VAR = "row";
 
 	@Override
-	public void addParam(String name, String value) {
+	public void addParam(String name, String value, boolean append) {
 		if (name.equals("className")) {
 			_resultRow.setClassName(value);
 		}
