@@ -62,7 +62,7 @@ public class ParamAndPropertyAncestorTagImpl
 
 		String[] values = params.get(name);
 
-		if (values == null) {
+		if (!append || (values == null)) {
 			values = new String[] {value};
 		}
 		else {
