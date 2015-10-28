@@ -36,7 +36,7 @@ public class ParamAndPropertyAncestorTagImpl
 	implements ParamAncestorTag, PropertyAncestorTag {
 
 	@Override
-	public void addParam(String name, String value) {
+	public void addParam(String name, String value, boolean append) {
 		if (_dynamicServletRequest == null) {
 			_dynamicServletRequest = new DynamicServletRequest(request);
 
@@ -62,7 +62,7 @@ public class ParamAndPropertyAncestorTagImpl
 
 		String[] values = params.get(name);
 
-		if (values == null) {
+		if (!append || (values == null)) {
 			values = new String[] {value};
 		}
 		else {

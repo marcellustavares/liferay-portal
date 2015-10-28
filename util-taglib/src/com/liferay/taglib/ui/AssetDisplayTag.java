@@ -246,9 +246,9 @@ public class AssetDisplayTag extends IncludeTag {
 
 		request.setAttribute(WebKeys.ASSET_ENTRY_VIEW_URL, _viewURL);
 
-		addParam("showComments", String.valueOf(_showComments));
-		addParam("showExtraInfo", String.valueOf(_showExtraInfo));
-		addParam("showHeader", String.valueOf(_showHeader));
+		addParam("showComments", String.valueOf(_showComments), true);
+		addParam("showExtraInfo", String.valueOf(_showExtraInfo), true);
+		addParam("showHeader", String.valueOf(_showHeader), true);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
