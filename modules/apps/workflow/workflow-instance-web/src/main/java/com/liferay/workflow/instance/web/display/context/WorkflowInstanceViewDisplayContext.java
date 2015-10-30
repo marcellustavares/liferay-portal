@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowLog;
 import com.liferay.portal.kernel.workflow.WorkflowLogManagerUtil;
 import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portlet.PortletURLUtil;
 import com.liferay.workflow.instance.web.search.WorkflowInstanceSearch;
 
@@ -174,16 +175,29 @@ public class WorkflowInstanceViewDisplayContext
 		throws PortalException {
 
 		return WorkflowInstanceManagerUtil.getWorkflowInstances(
-			workflowInstanceRequestHelper.getCompanyId(), null,
+			workflowInstanceRequestHelper.getCompanyId(), getUserId(),
 			WorkflowHandlerUtil.getSearchableAssetTypes(),
 			isShowCompletedInstances(), start, end, comparator);
 	}
 
 	protected int getSearchContainerTotal() throws PortalException {
 		return WorkflowInstanceManagerUtil.getWorkflowInstanceCount(
-			workflowInstanceRequestHelper.getCompanyId(), null,
+			workflowInstanceRequestHelper.getCompanyId(), getUserId(),
 			WorkflowHandlerUtil.getSearchableAssetTypes(),
 			isShowCompletedInstances());
+	}
+
+	protected Long getUserId() {
+		Long userId = workflowInstanceRequestHelper.getUserId();
+
+		PermissionChecker permissionChecker =
+			workflowInstanceRequestHelper.getPermissionChecker();
+
+		if (permissionChecker.isOmniadmin()) {
+			userId = null;
+		}
+
+		return userId;
 	}
 
 	protected String getWorkflowContextEntryClassName(
