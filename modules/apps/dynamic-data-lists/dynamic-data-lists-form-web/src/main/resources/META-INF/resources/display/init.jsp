@@ -42,7 +42,9 @@ page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %>
+page import="com.liferay.portlet.PortletURLUtil" %><%@
+page import="com.liferay.portal.kernel.captcha.CaptchaTextException"%><%@
+page import="com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException"%>
 
 <%@ page import="javax.portlet.PortletURL" %>
 
