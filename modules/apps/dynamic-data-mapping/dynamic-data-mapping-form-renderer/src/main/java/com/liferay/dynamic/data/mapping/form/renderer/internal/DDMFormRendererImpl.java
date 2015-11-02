@@ -25,6 +25,9 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -34,22 +37,29 @@ import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializer;
+import com.liferay.portal.kernel.servlet.JSPSupportServlet;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.taglib.servlet.PipingPageContext;
+import com.liferay.taglib.ui.CaptchaTag;
 
+import java.io.StringReader;
 import java.io.Writer;
-
 import java.net.URL;
-
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspFactory;
+import javax.servlet.jsp.PageContext;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -117,10 +127,10 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			template, ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
 		String html = render(template, getTemplateNamespace(ddmFormLayout));
-
+		
 		String javaScript = render(template, "ddm.form_renderer_js");
 
-		return html.concat(javaScript);
+		return html + javaScript;
 	}
 
 	protected List<Object> getPages(
@@ -135,8 +145,53 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			new DDMFormLayoutTransformer(
 				ddmFormLayout, renderedDDMFormFieldsMap,
 				ddmFormRenderingContext.getLocale());
+		
+		boolean requireCapctha = GetterUtil.getBoolean(ddmFormRenderingContext.getAttribute("requireCaptcha"));
+		
+		if (requireCapctha) {
+			List<DDMFormLayoutPage> ddmFormLayoutPages = ddmFormLayout.getDDMFormLayoutPages();
+			
+			DDMFormLayoutPage ddmFormLayoutPage = ddmFormLayoutPages.get(ddmFormLayoutPages.size() - 1);
+			
+			DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
+			
+			DDMFormLayoutColumn ddmFormLayoutColumn = new DDMFormLayoutColumn(DDMFormLayoutColumn.FULL, "#captcha#");
+			
+			ddmFormLayoutRow.addDDMFormLayoutColumn(ddmFormLayoutColumn);
+			
+			ddmFormLayoutPage.addDDMFormLayoutRow(ddmFormLayoutRow);
+			
+			renderedDDMFormFieldsMap.put("#captcha#", renderCaptcha(ddmFormRenderingContext));
+		}
 
 		return ddmFormLayoutTransformer.getPages();
+	}
+	
+	protected String renderCaptcha(DDMFormRenderingContext ddmFormRenderingContext) {
+		CaptchaTag captchaTag = new CaptchaTag();
+		
+		String url = String.valueOf(ddmFormRenderingContext.getAttribute("captchaURL"));
+		
+		captchaTag.setUrl(url);
+		
+		JspFactory jspFactory = JspFactory.getDefaultFactory();
+
+		PageContext pageContext = jspFactory.getPageContext(
+			new JSPSupportServlet(ddmFormRenderingContext.getHttpServletRequest().getServletContext()), ddmFormRenderingContext.getHttpServletRequest(), ddmFormRenderingContext.getHttpServletResponse(), null,
+			false, 0, false);
+
+		UnsyncStringWriter writer = new UnsyncStringWriter();
+		
+		captchaTag.setPageContext(new PipingPageContext(pageContext, writer ));
+
+		try {
+			captchaTag.runTag();
+		} catch (JspException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return writer.getStringBundler().toString();
 	}
 
 	protected Map<String, String> getRenderedDDMFormFieldsMap(

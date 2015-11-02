@@ -16,7 +16,9 @@ package com.liferay.dynamic.data.mapping.form.renderer;
 
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,11 +69,20 @@ public class DDMFormRenderingContext {
 	public void setPortletNamespace(String portletNamespace) {
 		_portletNamespace = portletNamespace;
 	}
+	
+	public void setAttribute(String key, Object value) {
+		_attributes.put(key, value);
+	}
+	
+	public Object getAttribute(String key) {
+		return _attributes.get(key);
+	}
 
 	private DDMFormValues _ddmFormValues;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
 	private String _portletNamespace;
+	private Map<String, Object> _attributes = new HashMap<>();
 
 }
