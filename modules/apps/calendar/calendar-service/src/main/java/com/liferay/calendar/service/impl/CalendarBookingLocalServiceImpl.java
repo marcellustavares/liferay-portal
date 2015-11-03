@@ -613,6 +613,11 @@ public class CalendarBookingLocalServiceImpl
 			SocialActivityConstants.TYPE_MOVE_TO_TRASH,
 			getExtraDataJSON(calendarBooking), 0);
 
+		workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId());
+
 		return calendarBooking;
 	}
 
@@ -656,6 +661,12 @@ public class CalendarBookingLocalServiceImpl
 			CalendarBooking.class.getName(), calendarBookingId,
 			SocialActivityConstants.TYPE_RESTORE_FROM_TRASH,
 			getExtraDataJSON(calendarBooking), 0);
+
+		WorkflowHandlerRegistryUtil.startWorkflowInstance(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				userId, CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId(), calendarBooking,
+				serviceContext);
 
 		return calendarBooking;
 	}
