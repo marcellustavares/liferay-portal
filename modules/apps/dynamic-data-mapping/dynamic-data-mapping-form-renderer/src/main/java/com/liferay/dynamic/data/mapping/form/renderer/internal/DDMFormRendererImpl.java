@@ -24,10 +24,12 @@ import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -51,7 +53,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.servlet.PipingPageContext;
 import com.liferay.taglib.ui.CaptchaTag;
 
-import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.util.List;
@@ -146,31 +147,22 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 				ddmFormLayout, renderedDDMFormFieldsMap,
 				ddmFormRenderingContext.getLocale());
 		
-		boolean requireCapctha = GetterUtil.getBoolean(ddmFormRenderingContext.getAttribute("requireCaptcha"));
-		
-		if (requireCapctha) {
-			List<DDMFormLayoutPage> ddmFormLayoutPages = ddmFormLayout.getDDMFormLayoutPages();
-			
-			DDMFormLayoutPage ddmFormLayoutPage = ddmFormLayoutPages.get(ddmFormLayoutPages.size() - 1);
-			
-			DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
-			
-			DDMFormLayoutColumn ddmFormLayoutColumn = new DDMFormLayoutColumn(DDMFormLayoutColumn.FULL, "#captcha#");
-			
-			ddmFormLayoutRow.addDDMFormLayoutColumn(ddmFormLayoutColumn);
-			
-			ddmFormLayoutPage.addDDMFormLayoutRow(ddmFormLayoutRow);
-			
-			renderedDDMFormFieldsMap.put("#captcha#", renderCaptcha(ddmFormRenderingContext));
-		}
+		boolean requireCapctha = GetterUtil.getBoolean(
+			ddmFormRenderingContext.getAttribute("requireCaptcha"));
 
+		if (requireCapctha) {
+			renderedDDMFormFieldsMap.put(
+				"#captcha#", renderCaptcha(ddmFormRenderingContext));
+		}
+		
 		return ddmFormLayoutTransformer.getPages();
 	}
 	
 	protected String renderCaptcha(DDMFormRenderingContext ddmFormRenderingContext) {
 		CaptchaTag captchaTag = new CaptchaTag();
 		
-		String url = String.valueOf(ddmFormRenderingContext.getAttribute("captchaURL"));
+		String url = String.valueOf(
+			ddmFormRenderingContext.getAttribute("captchaURL"));
 		
 		captchaTag.setUrl(url);
 		
@@ -181,16 +173,24 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			false, 0, false);
 
 		UnsyncStringWriter writer = new UnsyncStringWriter();
-		
+
+		writer.append("<dic class=\"lfr-ddm-form-field-container\"><div class=\"form-group\" data-fieldname=\"");
+		writer.append(ddmFormRenderingContext.getPortletNamespace());
+		writer.append("ddm$$#captcha#$abc123aa$$en_US\">");
+
 		captchaTag.setPageContext(new PipingPageContext(pageContext, writer ));
 
 		try {
 			captchaTag.runTag();
-		} catch (JspException e) {
+		}
+		catch (JspException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
+		writer.append("</div></div>");
+		writer.close();
+
 		return writer.getStringBundler().toString();
 	}
 
@@ -237,8 +237,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		throws PortalException {
 
 		template.put("containerId", StringUtil.randomId());
-		template.put(
-			"definition", DDMFormJSONSerializerUtil.serialize(ddmForm));
+		
+		boolean requireCapctha = GetterUtil.getBoolean(
+			ddmFormRenderingContext.getAttribute("requireCaptcha"));
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
 			_ddmFormEvaluator.evaluate(
@@ -257,6 +258,25 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		template.put(
 			"fieldTypes",
 			DDMFormFieldTypesJSONSerializerUtil.serialize(ddmFormFieldTypes));
+		
+
+		if (requireCapctha) {
+			List<DDMFormLayoutPage> ddmFormLayoutPages =
+				ddmFormLayout.getDDMFormLayoutPages();
+
+			DDMFormLayoutPage ddmFormLayoutPage = ddmFormLayoutPages.get(
+				ddmFormLayoutPages.size() - 1);
+
+			DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
+
+			DDMFormLayoutColumn ddmFormLayoutColumn = new DDMFormLayoutColumn(
+				DDMFormLayoutColumn.FULL, "#captcha#");
+
+			ddmFormLayoutRow.addDDMFormLayoutColumn(ddmFormLayoutColumn);
+
+			ddmFormLayoutPage.addDDMFormLayoutRow(ddmFormLayoutRow);
+		}
+
 		template.put(
 			"layout", DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout));
 
@@ -264,6 +284,21 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
 		template.put("pages", pages);
+		
+		if (requireCapctha) {
+			DDMFormField captchaDDMFormField = new DDMFormField();
+
+			captchaDDMFormField.setName("#captcha#");
+			captchaDDMFormField.setType("captcha");
+			captchaDDMFormField.setPredefinedValue(new LocalizedValue());
+			captchaDDMFormField.setLabel(new LocalizedValue());
+
+			ddmForm.addDDMFormField(captchaDDMFormField);
+		}
+
+		template.put(
+			"definition", DDMFormJSONSerializerUtil.serialize(ddmForm));
+		
 		template.put(
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
 		template.put("templateNamespace", getTemplateNamespace(ddmFormLayout));

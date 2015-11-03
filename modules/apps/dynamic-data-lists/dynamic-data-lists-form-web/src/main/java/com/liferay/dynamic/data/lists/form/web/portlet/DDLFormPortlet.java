@@ -27,6 +27,8 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.PortletPreferencesException;
+import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
+import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -174,7 +176,7 @@ public class DDLFormPortlet extends MVCPortlet {
 				"requireCaptcha", Boolean.FALSE.toString()));
 		
 		ddmFormRenderingContext.setAttribute("requireCaptcha", requireCaptcha);
-		
+
 		if (requireCaptcha) {
 			ResourceURL resourceURL = renderResponse.createResourceURL();
 			
@@ -194,6 +196,8 @@ public class DDLFormPortlet extends MVCPortlet {
 	@Override
 	protected boolean isSessionErrorException(Throwable cause) {
 		if (cause instanceof DDMFormRenderingException ||
+			cause instanceof CaptchaTextException ||
+			cause instanceof CaptchaMaxChallengesException ||
 			cause instanceof NoSuchRecordSetException ||
 			cause instanceof NoSuchStructureException ||
 			cause instanceof NoSuchStructureLayoutException ||
