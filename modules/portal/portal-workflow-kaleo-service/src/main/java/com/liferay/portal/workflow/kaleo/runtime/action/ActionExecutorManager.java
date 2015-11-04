@@ -14,34 +14,18 @@
 
 package com.liferay.portal.workflow.kaleo.runtime.action;
 
-import com.liferay.portal.kernel.workflow.WorkflowException;
-
-import java.util.Map;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
+import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
 
 /**
- * @author Michael C. Han
+ * @author Leonardo Barros
  */
-public class ActionExecutorFactory {
+public interface ActionExecutorManager {
 
-	public static ActionExecutor getActionExecutor(String scriptLanguage)
-		throws WorkflowException {
-
-		ActionExecutor actionExecutor = _actionExecutors.get(scriptLanguage);
-
-		if (actionExecutor == null) {
-			throw new WorkflowException(
-				"Invalid script language " + scriptLanguage);
-		}
-
-		return actionExecutor;
-	}
-
-	public void setActionExecutors(
-		Map<String, ActionExecutor> actionExecutors) {
-
-		_actionExecutors = actionExecutors;
-	}
-
-	private static Map<String, ActionExecutor> _actionExecutors;
+	public void executeKaleoActions(
+			String kaleoClassName, long kaleoClassPK,
+			ExecutionType executionType, ExecutionContext executionContext)
+		throws PortalException;
 
 }

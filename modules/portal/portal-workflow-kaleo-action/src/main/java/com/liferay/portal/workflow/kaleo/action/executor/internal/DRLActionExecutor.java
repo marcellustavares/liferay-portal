@@ -12,13 +12,15 @@
  * details.
  */
 
-package com.liferay.portal.workflow.kaleo.runtime.action;
+package com.liferay.portal.workflow.kaleo.action.executor.internal;
 
 import com.liferay.portal.kernel.bi.rules.Fact;
 import com.liferay.portal.kernel.bi.rules.Query;
 import com.liferay.portal.kernel.bi.rules.RulesEngineUtil;
 import com.liferay.portal.kernel.bi.rules.RulesResourceRetriever;
 import com.liferay.portal.kernel.resource.StringResourceRetriever;
+import com.liferay.portal.workflow.kaleo.action.executor.ActionExecutor;
+import com.liferay.portal.workflow.kaleo.action.executor.ActionExecutorException;
 import com.liferay.portal.workflow.kaleo.model.KaleoAction;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
 import com.liferay.portal.workflow.kaleo.runtime.util.RulesContextBuilder;
@@ -29,9 +31,15 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * @author Michael C. Han
  */
+@Component(
+	immediate = true,
+	property = {"com.liferay.portal.workflow.kaleo.action.script.language=drl"}
+)
 public class DRLActionExecutor implements ActionExecutor {
 
 	@Override
