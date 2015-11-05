@@ -37,16 +37,6 @@ AUI.add(
 			}
 		);
 
-		FieldTypes.register(
-			{
-				javaScriptClass: 'Liferay.DDM.Field.Captcha',
-				name: 'captcha',
-				settings: [],
-				settingsLayout: {},
-				system: true
-			}
-		);
-
 		Liferay.namespace('DDM.Field').Captcha = CaptchaField;
 	},
 	'',

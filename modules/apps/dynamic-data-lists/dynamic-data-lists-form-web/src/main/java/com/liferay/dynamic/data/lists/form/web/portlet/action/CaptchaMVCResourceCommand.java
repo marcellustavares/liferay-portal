@@ -14,15 +14,15 @@
 
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
-
-import org.osgi.service.component.annotations.Component;
-
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Marcellus Tavares
@@ -41,7 +41,7 @@ public class CaptchaMVCResourceCommand extends BaseMVCResourceCommand {
 	protected void doServeResource(
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
-		
+
 		CaptchaUtil.serveImage(resourceRequest, resourceResponse);
 	}
 
