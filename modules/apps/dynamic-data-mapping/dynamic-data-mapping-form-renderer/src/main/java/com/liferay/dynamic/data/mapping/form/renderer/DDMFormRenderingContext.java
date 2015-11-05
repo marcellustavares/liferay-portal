@@ -69,20 +69,11 @@ public class DDMFormRenderingContext {
 	public void setPortletNamespace(String portletNamespace) {
 		_portletNamespace = portletNamespace;
 	}
-	
-	public void setAttribute(String key, Object value) {
-		_attributes.put(key, value);
-	}
-	
-	public Object getAttribute(String key) {
-		return _attributes.get(key);
-	}
 
 	private DDMFormValues _ddmFormValues;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
 	private String _portletNamespace;
-	private Map<String, Object> _attributes = new HashMap<>();
 
 }

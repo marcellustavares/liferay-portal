@@ -32,6 +32,8 @@ page import="com.liferay.dynamic.data.mapping.constants.DDMWebKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.exception.NoSuchStructureException" %><%@
 page import="com.liferay.dynamic.data.mapping.exception.NoSuchStructureLayoutException" %><%@
 page import="com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException" %><%@
+page import="com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException" %><%@
+page import="com.liferay.portal.kernel.captcha.CaptchaTextException" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
@@ -42,9 +44,7 @@ page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
-page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.portal.kernel.captcha.CaptchaTextException"%><%@
-page import="com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException"%>
+page import="com.liferay.portlet.PortletURLUtil" %>
 
 <%@ page import="javax.portlet.PortletURL" %>
 

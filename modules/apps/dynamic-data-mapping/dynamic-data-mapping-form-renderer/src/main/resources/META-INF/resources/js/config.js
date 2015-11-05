@@ -7,15 +7,6 @@
 				'form': {
 					base: PATH_FORM_RENDERER + '/js/',
 					modules: {
-						'liferay-ddm-form-field-captcha': {
-							condition: {
-								trigger: 'liferay-ddm-form-renderer'
-							},
-							path: 'captcha_field.js',
-							requires: [
-								'liferay-ddm-form-renderer-field'
-							]
-						},
 						'liferay-ddm-form-renderer': {
 							path: 'form.js',
 							requires: [

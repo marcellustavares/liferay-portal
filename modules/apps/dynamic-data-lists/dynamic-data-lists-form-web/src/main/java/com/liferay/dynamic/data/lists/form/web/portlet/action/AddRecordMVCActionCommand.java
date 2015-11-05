@@ -24,7 +24,6 @@ import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -33,10 +32,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.util.PortalUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -68,7 +65,7 @@ public class AddRecordMVCActionCommand extends BaseMVCActionCommand {
 		DDLRecordSet recordSet = _ddlRecordSetService.getRecordSet(recordSetId);
 
 		validateCaptcha(actionRequest, recordSet);
-		
+
 		DDMForm ddmForm = getDDMForm(recordSet);
 
 		DDMFormValues ddmFormValues = _ddmFormValuesFactory.create(
@@ -84,31 +81,10 @@ public class AddRecordMVCActionCommand extends BaseMVCActionCommand {
 
 	protected DDMForm getDDMForm(DDLRecordSet recordSet)
 		throws PortalException {
-		
+
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
 		return ddmStructure.getDDMForm();
-	}
-	
-	protected void validateCaptcha(
-			ActionRequest actionRequest, DDLRecordSet recordSet) 
-		throws Exception {
-		
-		boolean requireCaptcha = GetterUtil.getBoolean(
-			recordSet.getTypeSettingsProperty(
-				"requireCaptcha", Boolean.FALSE.toString()));
-		
-		if (requireCaptcha) {
-			try {
-				CaptchaUtil.check(actionRequest);
-			}
-			catch (CaptchaTextException cte) {
-				SessionErrors.add(
-					actionRequest, CaptchaTextException.class.getName());
-
-				throw cte;
-			}
-		}
 	}
 
 	@Reference
@@ -128,6 +104,27 @@ public class AddRecordMVCActionCommand extends BaseMVCActionCommand {
 		DDMFormValuesFactory ddmFormValuesFactory) {
 
 		_ddmFormValuesFactory = ddmFormValuesFactory;
+	}
+
+	protected void validateCaptcha(
+			ActionRequest actionRequest, DDLRecordSet recordSet)
+		throws Exception {
+
+		boolean requireCaptcha = GetterUtil.getBoolean(
+			recordSet.getTypeSettingsProperty(
+				"requireCaptcha", Boolean.FALSE.toString()));
+
+		if (requireCaptcha) {
+			try {
+				CaptchaUtil.check(actionRequest);
+			}
+			catch (CaptchaTextException cte) {
+				SessionErrors.add(
+					actionRequest, CaptchaTextException.class.getName());
+
+				throw cte;
+			}
+		}
 	}
 
 	private DDLRecordService _ddlRecordService;

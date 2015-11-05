@@ -26,12 +26,7 @@ AUI.add(
 			register: function(fieldTypes) {
 				var instance = this;
 
-				if (fieldTypes.length) {
-					_fieldTypes = _fieldTypes.concat(AArray(fieldTypes).map(instance._getFieldType));
-				}
-				else {
-					_fieldTypes.push(instance._getFieldType(fieldTypes));
-				}
+				_fieldTypes = AArray(fieldTypes).map(instance._getFieldType);
 			},
 
 			_getFieldType: function(config) {
@@ -53,7 +48,10 @@ AUI.add(
 				fieldType.set('settings', config.settings);
 				fieldType.set('settingsLayout', config.settingsLayout);
 				fieldType.set('system', config.system);
-				fieldType.set('templateNamespace', config.templateNamespace);
+
+				if (config.templateNamespace) {
+					fieldType.set('templateNamespace', config.templateNamespace);
+				}
 
 				return fieldType;
 			}
