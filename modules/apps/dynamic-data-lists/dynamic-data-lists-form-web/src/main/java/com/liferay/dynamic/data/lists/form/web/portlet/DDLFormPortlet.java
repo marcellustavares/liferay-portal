@@ -27,11 +27,16 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.PortletPreferencesException;
+import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
+import com.liferay.portal.kernel.captcha.CaptchaTextException;
+import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
@@ -44,6 +49,9 @@ import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+import javax.portlet.ResourceURL;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -127,7 +135,7 @@ public class DDLFormPortlet extends MVCPortlet {
 
 		return ddmFormRenderingContext;
 	}
-
+	
 	@Override
 	protected void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
@@ -157,11 +165,28 @@ public class DDLFormPortlet extends MVCPortlet {
 
 	protected String getDDMFormHTML(
 			RenderRequest renderRequest, RenderResponse renderResponse,
-			DDMStructure ddmStructure)
+			DDLRecordSet recordSet)
 		throws PortalException {
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext(renderRequest, renderResponse);
+		
+		boolean requireCaptcha = GetterUtil.getBoolean(
+			recordSet.getTypeSettingsProperty(
+				"requireCaptcha", Boolean.FALSE.toString()));
+		
+		ddmFormRenderingContext.setAttribute("requireCaptcha", requireCaptcha);
+
+		if (requireCaptcha) {
+			ResourceURL resourceURL = renderResponse.createResourceURL();
+			
+			resourceURL.setResourceID("captcha");
+			
+			ddmFormRenderingContext.setAttribute(
+				"captchaURL", resourceURL.toString());
+		}
+		
+		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
 		return _ddmFormRenderer.render(
 			ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
@@ -171,6 +196,8 @@ public class DDLFormPortlet extends MVCPortlet {
 	@Override
 	protected boolean isSessionErrorException(Throwable cause) {
 		if (cause instanceof DDMFormRenderingException ||
+			cause instanceof CaptchaTextException ||
+			cause instanceof CaptchaMaxChallengesException ||
 			cause instanceof NoSuchRecordSetException ||
 			cause instanceof NoSuchStructureException ||
 			cause instanceof NoSuchStructureLayoutException ||
@@ -212,7 +239,7 @@ public class DDLFormPortlet extends MVCPortlet {
 			DDLFormWebKeys.DYNAMIC_DATA_LISTS_RECORD_SET, recordSet);
 
 		String ddmFormHTML = getDDMFormHTML(
-			renderRequest, renderResponse, recordSet.getDDMStructure());
+			renderRequest, renderResponse, recordSet);
 
 		renderRequest.setAttribute(
 			DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML, ddmFormHTML);
