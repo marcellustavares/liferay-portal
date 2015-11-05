@@ -18,6 +18,7 @@ import com.liferay.layout.type.controller.full.page.application.controller.FullP
 import com.liferay.layout.type.controller.single.portlet.application.constants.SinglePortletApplicationLayoutTypeControllerConstants;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.LayoutTypeController;
+import com.liferay.portal.service.PortletLocalService;
 
 import javax.servlet.ServletContext;
 
@@ -60,6 +61,13 @@ public class SinglePortletApplicationLayoutTypeController
 	)
 	protected void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPortletLocalService(
+		PortletLocalService portletLocalService) {
+
+		this.portletLocalService = portletLocalService;
 	}
 
 	private static final String _URL =

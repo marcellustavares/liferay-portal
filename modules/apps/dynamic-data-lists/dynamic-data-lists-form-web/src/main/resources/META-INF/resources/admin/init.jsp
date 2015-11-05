@@ -60,7 +60,9 @@ page import="com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil" 
 page import="com.liferay.portal.util.PortalUtil" %><%@
 page import="com.liferay.portal.util.WebKeys" %><%@
 page import="com.liferay.portlet.PortletURLUtil" %><%@
-page import="com.liferay.taglib.search.ResultRow" %>
+page import="com.liferay.taglib.search.ResultRow" %><%@
+page import="com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys"%><%@
+page import="com.liferay.portal.model.PortletInstance"%>
 
 <%@ page import="java.util.List" %>
 

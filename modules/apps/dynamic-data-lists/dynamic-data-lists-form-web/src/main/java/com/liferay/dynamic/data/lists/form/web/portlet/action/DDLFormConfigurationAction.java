@@ -51,25 +51,6 @@ public class DDLFormConfigurationAction extends DefaultConfigurationAction {
 	}
 
 	@Override
-	public void processAction(
-			PortletConfig portletConfig, ActionRequest actionRequest,
-			ActionResponse actionResponse)
-		throws Exception {
-
-		PortletPreferencesImpl portletPreferences =
-			(PortletPreferencesImpl)actionRequest.getPreferences();
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Layout layout = PortletConfigurationLayoutUtil.getLayout(themeDisplay);
-
-		portletPreferences.setPlid(layout.getPlid());
-
-		super.processAction(portletConfig, actionRequest, actionResponse);
-	}
-
-	@Override
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.dynamic.data.lists.form.web)",
 		unbind = "-"

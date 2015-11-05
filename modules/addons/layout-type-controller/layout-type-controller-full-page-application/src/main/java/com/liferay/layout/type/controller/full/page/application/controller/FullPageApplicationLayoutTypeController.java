@@ -91,7 +91,7 @@ public class FullPageApplicationLayoutTypeController
 	protected void addAttributes(HttpServletRequest request) {
 		super.addAttributes(request);
 
-		List<Portlet> portlets = _portletLocalService.getPortlets();
+		List<Portlet> portlets = portletLocalService.getPortlets();
 
 		if (portlets.isEmpty()) {
 			return;
@@ -135,7 +135,7 @@ public class FullPageApplicationLayoutTypeController
 	protected void setPortletLocalService(
 		PortletLocalService portletLocalService) {
 
-		_portletLocalService = portletLocalService;
+		this.portletLocalService = portletLocalService;
 	}
 
 	@Reference(
@@ -155,6 +155,6 @@ public class FullPageApplicationLayoutTypeController
 	private static final String _VIEW_PAGE =
 		"/layout/view/full_page_application.jsp";
 
-	private PortletLocalService _portletLocalService;
+	protected PortletLocalService portletLocalService;
 
 }

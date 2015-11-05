@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutTypePortlet;
+import com.liferay.portal.service.LayoutService;
 import com.liferay.portal.service.LayoutServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -140,11 +141,16 @@ public class AddRecordSetMVCActionCommand
 			ParamUtil.getString(actionRequest, "publish"));
 
 		if (publish) {
-			String url = publish(
+			String publishedURL = publishRecordSet(
 				actionRequest, actionResponse, recordSet.getRecordSetId());
 
+			UnicodeProperties typeSettingsProperties =
+				recordSet.getTypeSettingsProperties();
+
+			typeSettingsProperties.setProperty("publishedURL", publishedURL);
+
 			_ddlRecordSetService.updateRecordSet(
-				recordSet.getRecordSetId(), url);
+				recordSet.getRecordSetId(), typeSettingsProperties.toString());
 		}
 	}
 
@@ -183,7 +189,7 @@ public class AddRecordSetMVCActionCommand
 		return localizedMap;
 	}
 
-	protected String publish(
+	protected String publishRecordSet(
 			ActionRequest actionRequest, ActionResponse actionResponse,
 			long recordSetId)
 		throws Exception {
@@ -217,7 +223,7 @@ public class AddRecordSetMVCActionCommand
 
 		serviceContext.setAttribute("layout.instanceable.allowed", true);
 
-		Layout layout = LayoutServiceUtil.addLayout(
+		Layout layout = _layoutService.addLayout(
 			groupId, false, 0, getLocalizedMap(themeDisplay.getLocale(), name),
 			titleMap, getLocalizedMap(themeDisplay.getLocale(), description),
 			keywordsMap, robotsMap, "single_portlet_application",
@@ -230,7 +236,7 @@ public class AddRecordSetMVCActionCommand
 		layoutTypePortlet.setLayoutTemplateId(
 			themeDisplay.getUserId(), PropsValues.DEFAULT_LAYOUT_TEMPLATE_ID);
 
-		LayoutServiceUtil.updateLayout(
+		_layoutService.updateLayout(
 			groupId, false, layout.getLayoutId(), layout.getTypeSettings());
 
 		storePortletPreferences(layout, portletId, recordSetId);
@@ -260,6 +266,12 @@ public class AddRecordSetMVCActionCommand
 
 		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
 	}
+
+	@Reference
+	protected void setLayoutService(LayoutService layoutService) {
+		_layoutService = layoutService;
+	}
+
 
 	@Reference
 	protected void setDDMFormLayoutJSONDeserializer(
@@ -292,5 +304,6 @@ public class AddRecordSetMVCActionCommand
 	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
 	private DDMFormLayoutJSONDeserializer _ddmFormLayoutJSONDeserializer;
 	private DDMStructureService _ddmStructureService;
+	private LayoutService _layoutService;
 
 }

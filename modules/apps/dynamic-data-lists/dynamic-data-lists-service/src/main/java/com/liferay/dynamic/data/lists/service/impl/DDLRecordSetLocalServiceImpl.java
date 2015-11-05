@@ -323,7 +323,7 @@ public class DDLRecordSetLocalServiceImpl
 
 		typeSettingsProperties.fastLoad(typeSettings);
 
-		validateTypeSettingsProperties(typeSettingsProperties);
+//		validateTypeSettingsProperties(typeSettingsProperties);
 
 		DDLRecordSet recordSet = ddlRecordSetPersistence.findByPrimaryKey(
 			recordSetId);

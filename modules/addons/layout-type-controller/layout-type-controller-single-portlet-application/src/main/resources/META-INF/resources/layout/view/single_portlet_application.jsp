@@ -17,6 +17,7 @@
 <%@ include file="/layout/view/init.jsp" %>
 
 <%
+System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa oi");
 String ppid = ParamUtil.getString(request, "p_p_id");
 
 UnicodeProperties typeSettingsProperties = layout.getTypeSettingsProperties();
