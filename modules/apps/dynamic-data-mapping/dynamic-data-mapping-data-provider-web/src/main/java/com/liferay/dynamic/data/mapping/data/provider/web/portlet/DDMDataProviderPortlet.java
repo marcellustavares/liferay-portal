@@ -75,12 +75,12 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMDataProviderService(
-		DDMDataProviderService ddmDataProviderService) {
-
-		_ddmDataProviderService = ddmDataProviderService;
-	}
+//	@Reference(unbind = "-")
+//	protected void setDDMDataProviderService(
+//		DDMDataProviderService ddmDataProviderService) {
+//
+//		_ddmDataProviderService = ddmDataProviderService;
+//	}
 
 	private DDMDataProviderService _ddmDataProviderService;
 

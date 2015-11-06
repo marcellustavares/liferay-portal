@@ -58,5 +58,5 @@ public class DDMDataProviderPortletConfigurationIconFactory
 	public void setServletContext(ServletContext servletContext) {
 		super.setServletContext(servletContext);
 	}
-
+	
 }
