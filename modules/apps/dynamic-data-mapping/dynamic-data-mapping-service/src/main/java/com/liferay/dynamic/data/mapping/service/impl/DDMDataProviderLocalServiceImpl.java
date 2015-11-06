@@ -14,14 +14,52 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.dynamic.data.mapping.model.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.service.base.DDMDataProviderLocalServiceBaseImpl;
+import com.liferay.portal.kernel.util.OrderByComparator;
+
+import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author Leonardo Barros
  */
-@ProviderType
 public class DDMDataProviderLocalServiceImpl
 	extends DDMDataProviderLocalServiceBaseImpl {
+
+	@Override
+	public List<DDMDataProvider> search(
+		long companyId, long[] groupIds, String keywords, int start, int end,
+		OrderByComparator<DDMDataProvider> orderByComparator) {
+
+		return ddmDataProviderFinder.findByKeywords(
+			companyId, groupIds, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMDataProvider> search(
+		long companyId, long[] groupIds, String name, String description,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMDataProvider> orderByComparator) {
+
+		return ddmDataProviderFinder.findByC_G_N_D(
+			companyId, groupIds, name, description, andOperator, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long[] groupIds, String keywords) {
+		return ddmDataProviderFinder.countByKeywords(
+			companyId, groupIds, keywords);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long[] groupIds, String name, String description,
+		boolean andOperator) {
+
+		return ddmDataProviderFinder.countByC_G_N_D(
+			companyId, groupIds, name, description, andOperator);
+	}
+
 }

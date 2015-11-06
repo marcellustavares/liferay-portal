@@ -317,6 +317,38 @@ public class DDMDataProviderLocalServiceWrapper
 		return _ddmDataProviderLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String keywords, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return _ddmDataProviderLocalService.search(companyId, groupIds,
+			keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String name,
+		java.lang.String description, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return _ddmDataProviderLocalService.search(companyId, groupIds, name,
+			description, andOperator, start, end, orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String keywords) {
+		return _ddmDataProviderLocalService.searchCount(companyId, groupIds,
+			keywords);
+	}
+
+	@Override
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String name, java.lang.String description, boolean andOperator) {
+		return _ddmDataProviderLocalService.searchCount(companyId, groupIds,
+			name, description, andOperator);
+	}
+
 	/**
 	* Updates the d d m data provider in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
