@@ -1,10 +1,6 @@
 AUI.add(
 	'liferay-ddm-form-field-captcha',
 	function(A) {
-		var TPL_CAPTCHA_FIELD = '<div class="form-group"></div>';
-
-		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
-
 		var CaptchaField = A.Component.create(
 			{
 				ATTRS: {

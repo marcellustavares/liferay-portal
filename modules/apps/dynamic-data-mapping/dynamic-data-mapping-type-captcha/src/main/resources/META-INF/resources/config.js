@@ -4,7 +4,7 @@
 	AUI().applyConfig(
 		{
 			groups: {
-				'field-text': {
+				'field-captcha': {
 					base: PATH_DDM_TYPE_CAPTCHA + '/',
 					modules: {
 						'liferay-ddm-form-field-captcha': {

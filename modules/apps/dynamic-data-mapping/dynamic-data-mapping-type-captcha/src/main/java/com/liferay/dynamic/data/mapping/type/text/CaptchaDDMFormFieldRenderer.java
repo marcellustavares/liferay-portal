@@ -78,10 +78,17 @@ public class CaptchaDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
 
+		unsyncStringWriter.append(
+			"<div class=\"form-group\" data-fieldname=\"");
+		unsyncStringWriter.append(ddmFormFieldRenderingContext.getName());
+		unsyncStringWriter.append("\">");
+
 		captchaTag.setPageContext(
 			new PipingPageContext(pageContext, unsyncStringWriter));
 
 		captchaTag.runTag();
+
+		unsyncStringWriter.append("</div>");
 
 		StringBundler sb = unsyncStringWriter.getStringBundler();
 
