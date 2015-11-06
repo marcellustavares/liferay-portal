@@ -300,6 +300,36 @@ public class DDMDataProviderLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String keywords, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return getService()
+				   .search(companyId, groupIds, keywords, start, end,
+			orderByComparator);
+	}
+
+	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String name,
+		java.lang.String description, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return getService()
+				   .search(companyId, groupIds, name, description, andOperator,
+			start, end, orderByComparator);
+	}
+
+	public static int searchCount(long companyId, long[] groupIds,
+		java.lang.String keywords) {
+		return getService().searchCount(companyId, groupIds, keywords);
+	}
+
+	public static int searchCount(long companyId, long[] groupIds,
+		java.lang.String name, java.lang.String description, boolean andOperator) {
+		return getService()
+				   .searchCount(companyId, groupIds, name, description,
+			andOperator);
+	}
+
 	/**
 	* Updates the d d m data provider in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
