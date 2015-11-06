@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -431,6 +432,43 @@ public class DDLRecordSetLocalServiceImpl
 		if (Validator.isNotNull(redirectURL) && !Validator.isUrl(redirectURL)) {
 			throw new RecordSetSettingsException(
 				"The property \"redirectURL\" is not a URL");
+		}
+
+		boolean sendEmailNotification = GetterUtil.getBoolean(
+			settingsProperties.getProperty("sendEmailNotification"));
+
+		if (sendEmailNotification) {
+			String emailFromName = GetterUtil.getString(
+				settingsProperties.getProperty("emailFromName"));
+
+			String emailFromAddress = GetterUtil.getString(
+				settingsProperties.getProperty("emailFromAddress"));
+
+			String emailToAddress = GetterUtil.getString(
+				settingsProperties.getProperty("emailToAddress"));
+
+			String emailSubject = GetterUtil.getString(
+				settingsProperties.getProperty("emailSubject"));
+
+			if (Validator.isNull(emailFromName)) {
+				throw new RecordSetSettingsException(
+					"The property \"emailFromName\" is empty");
+			}
+
+			if (!Validator.isEmailAddress(emailFromAddress)) {
+				throw new RecordSetSettingsException(
+					"The property \"emailFromAddress\" is not an email");
+			}
+
+			if (!Validator.isEmailAddress(emailToAddress)) {
+				throw new RecordSetSettingsException(
+					"The property \"emailToAddress\" is not an email");
+			}
+
+			if (Validator.isNull(emailSubject)) {
+				throw new RecordSetSettingsException(
+					"The property \"emailSubject\" is empty");
+			}
 		}
 	}
 
