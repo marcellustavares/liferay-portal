@@ -35,9 +35,10 @@ import java.util.Map;
 public class DDMDataProviderLocalServiceImpl
 	extends DDMDataProviderLocalServiceBaseImpl {
 
+	@Override
 	public DDMDataProvider addDataProvider(
 			long userId, long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String definition,
+			Map<Locale, String> descriptionMap, String definition, String type,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -58,6 +59,7 @@ public class DDMDataProviderLocalServiceImpl
 		ddmDataProvider.setDefinition(definition);
 		ddmDataProvider.setDescriptionMap(descriptionMap);
 		ddmDataProvider.setNameMap(nameMap);
+		ddmDataProvider.setType(type);
 
 		ddmDataProviderPersistence.update(ddmDataProvider);
 
@@ -97,6 +99,31 @@ public class DDMDataProviderLocalServiceImpl
 
 		return ddmDataProviderFinder.countByC_G_N_D(
 			companyId, groupIds, name, description, andOperator);
+	}
+
+	@Override
+	public DDMDataProvider updateDataProvider(
+			long userId, long dataProviderId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, String definition,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		User user = userPersistence.findByPrimaryKey(userId);
+
+		validateName(nameMap);
+
+		DDMDataProvider ddmDataProvider =
+			ddmDataProviderPersistence.findByPrimaryKey(dataProviderId);
+
+		ddmDataProvider.setUserId(user.getUserId());
+		ddmDataProvider.setUserName(user.getFullName());
+		ddmDataProvider.setDefinition(definition);
+		ddmDataProvider.setDescriptionMap(descriptionMap);
+		ddmDataProvider.setNameMap(nameMap);
+
+		ddmDataProviderPersistence.update(ddmDataProvider);
+
+		return ddmDataProvider;
 	}
 
 	protected void validateName(Map<Locale, String> nameMap)
