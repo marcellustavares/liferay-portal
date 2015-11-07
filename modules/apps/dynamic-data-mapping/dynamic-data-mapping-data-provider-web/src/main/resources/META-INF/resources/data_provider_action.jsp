@@ -24,16 +24,21 @@ DDMDataProvider ddmDataProvider = (DDMDataProvider)row.getObject();
 
 <liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
 
-	<portlet:renderURL var="editURL">
-		<portlet:param name="mvcPath" value="/edit_data_provider.jsp" />
-		<portlet:param name="redirect" value="<%= currentURL %>" />
-		<portlet:param name="dataProviderId" value="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>" />
-	</portlet:renderURL>
+	<c:if test="<%= ddmDataProviderDisplayContext.isShowEditDataProviderIcon(ddmDataProvider.getDataProviderId()) %>">
 
-	<liferay-ui:icon
-		message="edit"
-		url="<%= editURL %>"
-	/>
+		<portlet:renderURL var="editURL">
+			<portlet:param name="mvcPath" value="/edit_data_provider.jsp" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="dataProviderId" value="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>" />
+			<portlet:param name="dataProviderType" value="<%= ddmDataProvider.getType() %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message="edit"
+			url="<%= editURL %>"
+		/>
+
+	</c:if>
 
 	<c:if test="<%= ddmDataProviderDisplayContext.isShowDeleteDataProviderIcon(ddmDataProvider.getDataProviderId()) %>">
 

@@ -19,26 +19,15 @@ import com.liferay.dynamic.data.mapping.data.provider.web.constants.DDMDataProvi
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMDataProvider;
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderService;
-import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory;
-import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory.ServiceWrapper;
-import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -57,11 +46,12 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + DDMDataProviderPortletKeys.DYNAMIC_DATA_MAPPING_DATA_PROVIDER,
-		"mvc.command.name=addDataProvider"
+		"mvc.command.name=updateDataProvider"
 	},
 	service = MVCActionCommand.class
 )
-public class AddDataProviderMVCActionCommand extends BaseMVCActionCommand {
+public class UpdateDataProviderMVCActionCommand
+	extends AddDataProviderMVCActionCommand {
 
 	@Activate
 	protected void activate(final BundleContext bundleContext)
@@ -88,85 +78,44 @@ public class AddDataProviderMVCActionCommand extends BaseMVCActionCommand {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+		long dataProviderId = ParamUtil.getLong(
+			actionRequest, "dataProviderId");
 
 		String name = ParamUtil.getString(actionRequest, "name");
 
 		String definition = getDataProviderDefinition(
 			actionRequest, actionResponse);
 
-		String dataProviderType = ParamUtil.getString(
-			actionRequest, "dataProviderType");
-
 		String description = ParamUtil.getString(actionRequest, "description");
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMDataProvider.class.getName(), actionRequest);
 
-		_ddmDataProviderService.addDataProvider(
-			groupId, getLocalizedMap(themeDisplay.getLocale(), name),
+		getDDMDataProviderService().updateDataProvider(
+			dataProviderId, getLocalizedMap(themeDisplay.getLocale(), name),
 			getLocalizedMap(themeDisplay.getLocale(), description), definition,
-			dataProviderType, serviceContext);
-	}
-
-	protected String getDataProviderDefinition(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws PortalException {
-
-		String dataProviderType = ParamUtil.getString(
-			actionRequest, "dataProviderType");
-
-		DDMDataProviderSettings ddmDataProviderSettings =
-			ddmDataProvidersMap.getService(dataProviderType).getService();
-
-		Class<?> clazz = ddmDataProviderSettings.getSettings();
-
-		DDMForm ddmForm = DDMFormFactory.create(clazz);
-
-		DDMFormValues ddmFormValues = _ddmFormValuesFactory.create(
-			actionRequest, ddmForm);
-
-		return _ddmFormValuesJSONSerializer.serialize(ddmFormValues);
-	}
-
-	protected DDMDataProviderService getDDMDataProviderService() {
-		return _ddmDataProviderService;
-	}
-
-	protected Map<Locale, String> getLocalizedMap(Locale locale, String value) {
-		Map<Locale, String> localizedMap = new HashMap<>();
-
-		localizedMap.put(locale, value);
-
-		return localizedMap;
+			serviceContext);
 	}
 
 	@Reference(unbind = "-")
 	protected void setDDMDataProviderService(
 		DDMDataProviderService ddmDataProviderService) {
 
-		_ddmDataProviderService = ddmDataProviderService;
+		super.setDDMDataProviderService(ddmDataProviderService);
 	}
 
 	@Reference
 	protected void setDDMFormValuesFactory(
 		DDMFormValuesFactory ddmFormValuesFactory) {
 
-		_ddmFormValuesFactory = ddmFormValuesFactory;
+		super.setDDMFormValuesFactory(ddmFormValuesFactory);
 	}
 
 	@Reference
 	protected void setDDMFormValuesJSONSerializer(
 		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
 
-		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
+		super.setDDMFormValuesJSONSerializer(ddmFormValuesJSONSerializer);
 	}
-
-	protected ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
-		ddmDataProvidersMap;
-
-	private DDMDataProviderService _ddmDataProviderService;
-	private DDMFormValuesFactory _ddmFormValuesFactory;
-	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
 
 }
