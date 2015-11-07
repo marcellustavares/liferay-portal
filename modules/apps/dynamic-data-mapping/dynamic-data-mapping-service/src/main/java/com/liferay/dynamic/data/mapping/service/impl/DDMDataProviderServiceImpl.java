@@ -17,9 +17,11 @@ package com.liferay.dynamic.data.mapping.service.impl;
 import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
 import com.liferay.dynamic.data.mapping.model.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.service.base.DDMDataProviderServiceBaseImpl;
+import com.liferay.dynamic.data.mapping.service.permission.DDMDataProviderPermission;
 import com.liferay.dynamic.data.mapping.service.permission.DDMPermission;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 
 import java.util.List;
@@ -46,6 +48,14 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 		return ddmDataProviderLocalService.addDataProvider(
 			getUserId(), groupId, nameMap, descriptionMap, definition,
 			serviceContext);
+	}
+
+	@Override
+	public void deleteDataProvider(long dataProviderId) throws PortalException {
+		DDMDataProviderPermission.check(
+			getPermissionChecker(), dataProviderId, ActionKeys.DELETE);
+
+		ddmDataProviderLocalService.deleteDDMDataProvider(dataProviderId);
 	}
 
 	@Override

@@ -25,12 +25,14 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderService;
+import com.liferay.dynamic.data.mapping.service.permission.DDMDataProviderPermission;
 import com.liferay.dynamic.data.mapping.service.permission.DDMPermission;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory.ServiceWrapper;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.List;
@@ -167,6 +169,14 @@ public class DDMDataProviderDisplayContext {
 			_ddmDataProviderRequestHelper.getPermissionChecker(),
 			_ddmDataProviderRequestHelper.getScopeGroupId(),
 			DDMActionKeys.ADD_DATA_PROVIDER, DDMDataProvider.class.getName());
+	}
+
+	public boolean isShowDeleteDataProviderIcon(long dataProviderId)
+		throws PortalException {
+
+		return DDMDataProviderPermission.contains(
+			_ddmDataProviderRequestHelper.getPermissionChecker(),
+			dataProviderId, ActionKeys.DELETE);
 	}
 
 	protected DDMFormRenderingContext createDDMFormRenderingContext() {
