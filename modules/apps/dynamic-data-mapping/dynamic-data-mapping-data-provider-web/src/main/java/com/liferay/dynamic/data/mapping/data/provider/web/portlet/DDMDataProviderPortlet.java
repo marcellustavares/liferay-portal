@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderSettings;
 import com.liferay.dynamic.data.mapping.data.provider.web.constants.DDMDataProviderPortletKeys;
 import com.liferay.dynamic.data.mapping.data.provider.web.display.context.DDMDataProviderDisplayContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderService;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory;
@@ -80,7 +81,7 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 			new DDMDataProviderDisplayContext(
 				renderRequest, renderResponse, _ddmDataProviderService,
 				_ddmDataProviderLocalService, _ddmFormRenderer,
-				_ddmDataProvidersMap);
+				_ddmFormValuesJSONDeserializer, _ddmDataProvidersMap);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDataProviderDisplayContext);
@@ -124,10 +125,18 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 		_ddmFormRenderer = ddmFormRenderer;
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
 	private DDMDataProviderLocalService _ddmDataProviderLocalService;
 	private DDMDataProviderService _ddmDataProviderService;
 	private ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
 		_ddmDataProvidersMap;
 	private DDMFormRenderer _ddmFormRenderer;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 
 }

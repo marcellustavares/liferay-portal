@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.data.provider.web.display.context.util.D
 import com.liferay.dynamic.data.mapping.data.provider.web.search.DDMDataProviderSearchTerms;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
@@ -27,6 +28,7 @@ import com.liferay.dynamic.data.mapping.service.DDMDataProviderLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMDataProviderPermission;
 import com.liferay.dynamic.data.mapping.service.permission.DDMPermission;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerCustomizerFactory.ServiceWrapper;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -52,6 +54,7 @@ public class DDMDataProviderDisplayContext {
 		DDMDataProviderService ddmDataProviderService,
 		DDMDataProviderLocalService ddmDataProviderLocalService,
 		DDMFormRenderer ddmFormRenderer,
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer,
 		ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
 			ddmDataProvidersMap) {
 
@@ -60,6 +63,7 @@ public class DDMDataProviderDisplayContext {
 		_ddmDataProviderService = ddmDataProviderService;
 		_ddmDataProviderLocalService = ddmDataProviderLocalService;
 		_ddmFormRenderer = ddmFormRenderer;
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
 		_ddmDataProvidersMap = ddmDataProvidersMap;
 
 		_ddmDataProviderRequestHelper = new DDMDataProviderRequestHelper(
@@ -81,10 +85,6 @@ public class DDMDataProviderDisplayContext {
 	}
 
 	public String getDataProviderDefinition() throws PortalException {
-		if (_ddmDataProvider != null) {
-			return _ddmDataProvider.getDefinition();
-		}
-
 		String dataProviderType = ParamUtil.getString(
 			_renderRequest, "dataProviderType");
 
@@ -97,6 +97,14 @@ public class DDMDataProviderDisplayContext {
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext();
+
+		if (_ddmDataProvider != null) {
+			DDMFormValues ddmFormValues =
+				_ddmFormValuesJSONDeserializer.deserialize(
+					ddmForm, _ddmDataProvider.getDefinition());
+
+			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
+		}
 
 		return _ddmFormRenderer.render(ddmForm, ddmFormRenderingContext);
 	}
@@ -179,6 +187,14 @@ public class DDMDataProviderDisplayContext {
 			dataProviderId, ActionKeys.DELETE);
 	}
 
+	public boolean isShowEditDataProviderIcon(long dataProviderId)
+		throws PortalException {
+
+		return DDMDataProviderPermission.contains(
+			_ddmDataProviderRequestHelper.getPermissionChecker(),
+			dataProviderId, ActionKeys.UPDATE);
+	}
+
 	protected DDMFormRenderingContext createDDMFormRenderingContext() {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
@@ -203,6 +219,7 @@ public class DDMDataProviderDisplayContext {
 		ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
 			_ddmDataProvidersMap;
 	private final DDMFormRenderer _ddmFormRenderer;
+	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
 
