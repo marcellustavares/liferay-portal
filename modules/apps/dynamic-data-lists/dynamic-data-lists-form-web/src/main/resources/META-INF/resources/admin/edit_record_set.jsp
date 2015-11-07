@@ -80,7 +80,9 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddl-form-builder-buttons">
-				<aui:button cssClass="btn-lg" id="submit" label="save" primary="<%= true %>" type="submit" />
+				<aui:button cssClass="btn-lg" id="submit" label="save" primary="<%= true %>" type="submit">
+					<li><a href="#">Publish</a></li>
+				</aui:button>
 
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
