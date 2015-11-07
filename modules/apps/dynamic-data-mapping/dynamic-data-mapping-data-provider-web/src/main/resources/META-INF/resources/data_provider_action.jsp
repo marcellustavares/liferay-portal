@@ -35,13 +35,17 @@ DDMDataProvider ddmDataProvider = (DDMDataProvider)row.getObject();
 		url="<%= editURL %>"
 	/>
 
-	<portlet:actionURL name="deleteDataProvider" var="deleteURL">
-		<portlet:param name="dataProviderId" value="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>" />
-	</portlet:actionURL>
+	<c:if test="<%= ddmDataProviderDisplayContext.isShowDeleteDataProviderIcon(ddmDataProvider.getDataProviderId()) %>">
 
-	<liferay-ui:icon-delete
-		label="<%= true %>"
-		url="<%= deleteURL %>"
-	/>
+		<portlet:actionURL name="deleteDataProvider" var="deleteURL">
+			<portlet:param name="dataProviderId" value="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>" />
+		</portlet:actionURL>
+
+		<liferay-ui:icon-delete
+			label="<%= true %>"
+			url="<%= deleteURL %>"
+		/>
+
+	</c:if>
 
 </liferay-ui:icon-menu>
