@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@ include file="/admin/init.jsp" %>
 
 <%
@@ -26,6 +27,12 @@ long groupId = BeanParamUtil.getLong(recordSet, request, "groupId", scopeGroupId
 long ddmStructureId = BeanParamUtil.getLong(recordSet, request, "DDMStructureId");
 String name = BeanParamUtil.getString(recordSet, request, "name");
 String description = BeanParamUtil.getString(recordSet, request, "description");
+
+String publishedURL = StringPool.BLANK;
+
+if (recordSet != null) {
+	publishedURL = recordSet.getTypeSettingsProperty("publishedURL", StringPool.BLANK);
+}
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
@@ -47,11 +54,20 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="recordSetId" type="hidden" value="<%= recordSetId %>" />
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
+		<aui:input name="TypeSettingsProperties--singlePortletApplication--" type="hidden" value="<%= new PortletInstance(DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM).toString() %>" />
+		<aui:input name="publish" type="hidden" value="false" />
 
 		<liferay-ui:error exception="<%= RecordSetNameException.class %>" message="please-enter-a-valid-form-name" />
 		<liferay-ui:error exception="<%= StructureDefinitionException .class %>" message="please-enter-a-valid-form-definition" />
 		<liferay-ui:error exception="<%= StructureLayoutException .class %>" message="please-enter-a-valid-form-layout" />
 		<liferay-ui:error exception="<%= StructureNameException .class %>" message="please-enter-a-valid-form-name" />
+
+		<c:if test="<%= Validator.isNotNull(publishedURL) %>">
+			<div class="alert alert-info">
+				Form published at: <a href="<%= publishedURL %>" target="_PARENT"><%= publishedURL %></a>
+				<span class="icon-external-link"></span>
+			</div>
+		</c:if>
 
 		<aui:fieldset cssClass="ddl-form-basic-info">
 			<div class="container-fluid-1280">
@@ -80,12 +96,30 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 		<div class="container-fluid-1280">
 			<aui:button-row cssClass="ddl-form-builder-buttons">
-				<aui:button cssClass="btn-lg" id="submit" label="save" primary="<%= true %>" type="submit" />
+
+				<%
+				String taglibOnClick = renderResponse.getNamespace() + "save('false')";
+				%>
+
+				<aui:button cssClass="btn-lg" id="submit" onClick="<%= taglibOnClick %>" primary="<%= true %>" value="save">
+					<c:if test="<%= Validator.isNull(publishedURL) %>">
+						<li cssClass="btn-lg">
+
+							<%
+							taglibOnClick = renderResponse.getNamespace() + "save('true')";
+							%>
+
+							<aui:a href="javascript:;" onClick="<%= taglibOnClick %>"><%= LanguageUtil.get(request, "publish-form-page") %></aui:a>
+						</li>
+					</c:if>
+				</aui:button>
 
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
 		<aui:script>
+			var formPortlet = null;
+
 			var initHandler = Liferay.after(
 				'form:registered',
 				function(event) {
@@ -105,7 +139,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							function() {
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
 
-								new Liferay.DDL.Portlet(
+								formPortlet = new Liferay.DDL.Portlet(
 									{
 										definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
 										editForm: event.form,
@@ -134,3 +168,20 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		</aui:script>
 	</aui:form>
 </div>
+
+<aui:script>
+	function <portlet:namespace />save(publish) {
+
+		if (publish) {
+			<portlet:namespace />editForm.<portlet:namespace />publish.value = 'true';
+		}
+		else {
+			<portlet:namespace />editForm.<portlet:namespace />publish.value = 'false';
+		}
+
+		formPortlet._onSubmitEditForm();
+
+		<portlet:namespace />editForm.submit();
+
+	}
+</aui:script>
