@@ -61,6 +61,12 @@ public interface DDMDataProviderService extends BaseService {
 	public void deleteDataProvider(long dataProviderId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws PortalException,
+			com.liferay.portal.security.auth.PrincipalException;
+
 	/**
 	* Returns the OSGi service identifier.
 	*
