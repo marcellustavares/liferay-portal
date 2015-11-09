@@ -59,6 +59,13 @@ public class DDMDataProviderServiceUtil {
 		getService().deleteDataProvider(dataProviderId);
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.security.auth.PrincipalException {
+		return getService().getDataProvider(dataProviderId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

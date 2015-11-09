@@ -307,6 +307,13 @@ public class DDMDataProviderLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmDataProviderLocalService.getDataProvider(dataProviderId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext) {
 		return _ddmDataProviderLocalService.getExportActionableDynamicQuery(portletDataContext);

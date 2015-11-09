@@ -126,6 +126,20 @@ public class DDMDataProviderServiceSoap {
 		}
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMDataProviderSoap getDataProvider(
+		long dataProviderId) throws RemoteException {
+		try {
+			com.liferay.dynamic.data.mapping.model.DDMDataProvider returnValue = DDMDataProviderServiceUtil.getDataProvider(dataProviderId);
+
+			return com.liferay.dynamic.data.mapping.model.DDMDataProviderSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.dynamic.data.mapping.model.DDMDataProviderSoap[] search(
 		long companyId, long[] groupIds, java.lang.String name,
 		java.lang.String description, boolean andOperator, int start, int end,

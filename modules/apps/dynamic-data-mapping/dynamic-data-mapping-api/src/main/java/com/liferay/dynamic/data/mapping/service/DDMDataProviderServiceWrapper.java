@@ -51,6 +51,14 @@ public class DDMDataProviderServiceWrapper implements DDMDataProviderService,
 		_ddmDataProviderService.deleteDataProvider(dataProviderId);
 	}
 
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.security.auth.PrincipalException {
+		return _ddmDataProviderService.getDataProvider(dataProviderId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
