@@ -179,20 +179,26 @@ public class DDMDataProviderDisplayContext {
 			DDMActionKeys.ADD_DATA_PROVIDER, DDMDataProvider.class.getName());
 	}
 
-	public boolean isShowDeleteDataProviderIcon(long dataProviderId)
+	public boolean isShowDeleteDataProviderIcon(DDMDataProvider ddmDataProvider)
 		throws PortalException {
 
 		return DDMDataProviderPermission.contains(
 			_ddmDataProviderRequestHelper.getPermissionChecker(),
-			dataProviderId, ActionKeys.DELETE);
+			ddmDataProvider, ActionKeys.DELETE);
 	}
 
-	public boolean isShowEditDataProviderIcon(long dataProviderId)
+	public boolean isShowEditDataProviderIcon(DDMDataProvider ddmDataProvider)
 		throws PortalException {
 
 		return DDMDataProviderPermission.contains(
 			_ddmDataProviderRequestHelper.getPermissionChecker(),
-			dataProviderId, ActionKeys.UPDATE);
+			ddmDataProvider, ActionKeys.UPDATE);
+	}
+
+	public boolean isShowPermissionsIcon(DDMDataProvider ddmDataProvider) {
+		return DDMDataProviderPermission.contains(
+			_ddmDataProviderRequestHelper.getPermissionChecker(),
+			ddmDataProvider, ActionKeys.PERMISSIONS);
 	}
 
 	protected DDMFormRenderingContext createDDMFormRenderingContext() {
