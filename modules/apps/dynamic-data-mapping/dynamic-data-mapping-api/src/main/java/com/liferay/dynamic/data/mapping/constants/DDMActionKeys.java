@@ -19,6 +19,8 @@ package com.liferay.dynamic.data.mapping.constants;
  */
 public class DDMActionKeys {
 
+	public static final String ADD_DATA_PROVIDER = "ADD_DATA_PROVIDER";
+
 	public static final String ADD_STRUCTURE = "ADD_STRUCTURE";
 
 	public static final String ADD_TEMPLATE = "ADD_TEMPLATE";
