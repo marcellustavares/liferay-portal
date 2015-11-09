@@ -59,7 +59,7 @@ renderResponse.setTitle((ddmDataProvider == null) ? LanguageUtil.get(request, da
 		</aui:fieldset>
 
 		<aui:fieldset>
-			<%= ddmDataProviderDisplayContext.getDataProviderDefinition() %>
+			<%= ddmDataProviderDisplayContext.getDataProviderData() %>
 		</aui:fieldset>
 	</div>
 

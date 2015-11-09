@@ -84,7 +84,7 @@ public class DDMDataProviderDisplayContext {
 		return _ddmDataProvider;
 	}
 
-	public String getDataProviderDefinition() throws PortalException {
+	public String getDataProviderData() throws PortalException {
 		String dataProviderType = ParamUtil.getString(
 			_renderRequest, "dataProviderType");
 
@@ -101,7 +101,7 @@ public class DDMDataProviderDisplayContext {
 		if (_ddmDataProvider != null) {
 			DDMFormValues ddmFormValues =
 				_ddmFormValuesJSONDeserializer.deserialize(
-					ddmForm, _ddmDataProvider.getDefinition());
+					ddmForm, _ddmDataProvider.getData());
 
 			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 		}
