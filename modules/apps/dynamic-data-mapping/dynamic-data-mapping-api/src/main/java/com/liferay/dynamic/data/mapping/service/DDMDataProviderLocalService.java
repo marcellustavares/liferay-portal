@@ -58,6 +58,14 @@ public interface DDMDataProviderLocalService extends BaseLocalService,
 	public com.liferay.dynamic.data.mapping.model.DDMDataProvider addDDMDataProvider(
 		com.liferay.dynamic.data.mapping.model.DDMDataProvider ddmDataProvider);
 
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider addDataProvider(
+		long userId, long groupId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String data, java.lang.String type,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	* Creates a new d d m data provider with the primary key. Does not add the d d m data provider to the database.
 	*
@@ -267,6 +275,26 @@ public interface DDMDataProviderLocalService extends BaseLocalService,
 	public com.liferay.portal.model.PersistedModel getPersistedModel(
 		java.io.Serializable primaryKeyObj) throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String keywords, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String name,
+		java.lang.String description, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String keywords);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String name, java.lang.String description, boolean andOperator);
+
 	/**
 	* Updates the d d m data provider in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -276,4 +304,12 @@ public interface DDMDataProviderLocalService extends BaseLocalService,
 	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.dynamic.data.mapping.model.DDMDataProvider updateDDMDataProvider(
 		com.liferay.dynamic.data.mapping.model.DDMDataProvider ddmDataProvider);
+
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider updateDataProvider(
+		long userId, long dataProviderId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String data,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws PortalException;
 }

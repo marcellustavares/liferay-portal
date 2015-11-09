@@ -66,7 +66,7 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -88,8 +88,10 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 		sb.append(name);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", definition=");
-		sb.append(definition);
+		sb.append(", data=");
+		sb.append(data);
+		sb.append(", type=");
+		sb.append(type);
 		sb.append("}");
 
 		return sb.toString();
@@ -146,11 +148,18 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 			ddmDataProviderImpl.setDescription(description);
 		}
 
-		if (definition == null) {
-			ddmDataProviderImpl.setDefinition(StringPool.BLANK);
+		if (data == null) {
+			ddmDataProviderImpl.setData(StringPool.BLANK);
 		}
 		else {
-			ddmDataProviderImpl.setDefinition(definition);
+			ddmDataProviderImpl.setData(data);
+		}
+
+		if (type == null) {
+			ddmDataProviderImpl.setType(StringPool.BLANK);
+		}
+		else {
+			ddmDataProviderImpl.setType(type);
 		}
 
 		ddmDataProviderImpl.resetOriginalValues();
@@ -170,7 +179,8 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 		modifiedDate = objectInput.readLong();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
-		definition = objectInput.readUTF();
+		data = objectInput.readUTF();
+		type = objectInput.readUTF();
 	}
 
 	@Override
@@ -212,11 +222,18 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 			objectOutput.writeUTF(description);
 		}
 
-		if (definition == null) {
+		if (data == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
 		else {
-			objectOutput.writeUTF(definition);
+			objectOutput.writeUTF(data);
+		}
+
+		if (type == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(type);
 		}
 	}
 
@@ -230,5 +247,6 @@ public class DDMDataProviderCacheModel implements CacheModel<DDMDataProvider>,
 	public long modifiedDate;
 	public String name;
 	public String description;
-	public String definition;
+	public String data;
+	public String type;
 }
