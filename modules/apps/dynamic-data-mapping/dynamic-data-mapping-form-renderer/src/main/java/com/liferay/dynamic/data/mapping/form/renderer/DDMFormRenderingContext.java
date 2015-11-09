@@ -16,7 +16,9 @@ package com.liferay.dynamic.data.mapping.form.renderer;
 
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

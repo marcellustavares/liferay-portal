@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -50,6 +51,7 @@ public class UpdateRecordSetSettingsMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		updateRecordSetSettings(actionRequest);
 		updateWorkflowDefinitionLink(actionRequest);
 	}
 
@@ -66,6 +68,23 @@ public class UpdateRecordSetSettingsMVCActionCommand
 
 		_workflowDefinitionLinkLocalService =
 			workflowDefinitionLinkLocalService;
+	}
+
+	protected void updateRecordSetSettings(ActionRequest actionRequest)
+		throws PortalException {
+
+		long recordSetId = ParamUtil.getLong(actionRequest, "recordSetId");
+
+		boolean requireCaptcha = ParamUtil.getBoolean(
+			actionRequest, "requireCaptcha");
+
+		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
+
+		typeSettingsProperties.setProperty(
+			"requireCaptcha", String.valueOf(requireCaptcha));
+
+		_ddlRecordSetService.updateRecordSet(
+			recordSetId, typeSettingsProperties.toString());
 	}
 
 	protected void updateWorkflowDefinitionLink(ActionRequest actionRequest)
