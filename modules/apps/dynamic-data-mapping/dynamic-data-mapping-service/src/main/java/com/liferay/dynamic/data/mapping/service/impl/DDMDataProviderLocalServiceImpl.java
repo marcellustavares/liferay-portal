@@ -38,7 +38,7 @@ public class DDMDataProviderLocalServiceImpl
 	@Override
 	public DDMDataProvider addDataProvider(
 			long userId, long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String definition, String type,
+			Map<Locale, String> descriptionMap, String data, String type,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -56,7 +56,7 @@ public class DDMDataProviderLocalServiceImpl
 		ddmDataProvider.setCompanyId(user.getCompanyId());
 		ddmDataProvider.setUserId(user.getUserId());
 		ddmDataProvider.setUserName(user.getFullName());
-		ddmDataProvider.setDefinition(definition);
+		ddmDataProvider.setData(data);
 		ddmDataProvider.setDescriptionMap(descriptionMap);
 		ddmDataProvider.setNameMap(nameMap);
 		ddmDataProvider.setType(type);
@@ -104,7 +104,7 @@ public class DDMDataProviderLocalServiceImpl
 	@Override
 	public DDMDataProvider updateDataProvider(
 			long userId, long dataProviderId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String definition,
+			Map<Locale, String> descriptionMap, String data,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -117,7 +117,7 @@ public class DDMDataProviderLocalServiceImpl
 
 		ddmDataProvider.setUserId(user.getUserId());
 		ddmDataProvider.setUserName(user.getFullName());
-		ddmDataProvider.setDefinition(definition);
+		ddmDataProvider.setData(data);
 		ddmDataProvider.setDescriptionMap(descriptionMap);
 		ddmDataProvider.setNameMap(nameMap);
 

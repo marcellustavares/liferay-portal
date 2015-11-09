@@ -92,8 +92,7 @@ public class AddDataProviderMVCActionCommand extends BaseMVCActionCommand {
 
 		String name = ParamUtil.getString(actionRequest, "name");
 
-		String definition = getDataProviderDefinition(
-			actionRequest, actionResponse);
+		String data = getDataProviderData(actionRequest, actionResponse);
 
 		String dataProviderType = ParamUtil.getString(
 			actionRequest, "dataProviderType");
@@ -105,11 +104,11 @@ public class AddDataProviderMVCActionCommand extends BaseMVCActionCommand {
 
 		_ddmDataProviderService.addDataProvider(
 			groupId, getLocalizedMap(themeDisplay.getLocale(), name),
-			getLocalizedMap(themeDisplay.getLocale(), description), definition,
+			getLocalizedMap(themeDisplay.getLocale(), description), data,
 			dataProviderType, serviceContext);
 	}
 
-	protected String getDataProviderDefinition(
+	protected String getDataProviderData(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws PortalException {
 
