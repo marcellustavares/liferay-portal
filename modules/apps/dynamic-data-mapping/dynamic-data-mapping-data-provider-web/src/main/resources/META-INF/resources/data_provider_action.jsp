@@ -24,7 +24,7 @@ DDMDataProvider ddmDataProvider = (DDMDataProvider)row.getObject();
 
 <liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
 
-	<c:if test="<%= ddmDataProviderDisplayContext.isShowEditDataProviderIcon(ddmDataProvider.getDataProviderId()) %>">
+	<c:if test="<%= ddmDataProviderDisplayContext.isShowEditDataProviderIcon(ddmDataProvider) %>">
 
 		<portlet:renderURL var="editURL">
 			<portlet:param name="mvcPath" value="/edit_data_provider.jsp" />
@@ -40,7 +40,24 @@ DDMDataProvider ddmDataProvider = (DDMDataProvider)row.getObject();
 
 	</c:if>
 
-	<c:if test="<%= ddmDataProviderDisplayContext.isShowDeleteDataProviderIcon(ddmDataProvider.getDataProviderId()) %>">
+	<c:if test="<%= ddmDataProviderDisplayContext.isShowPermissionsIcon(ddmDataProvider) %>">
+		<liferay-security:permissionsURL
+			modelResource="<%= DDMDataProvider.class.getName() %>"
+			modelResourceDescription="<%= ddmDataProvider.getName(locale) %>"
+			resourcePrimKey="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>"
+			var="permissionsDataProviderURL"
+			windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+		/>
+
+		<liferay-ui:icon
+			message="permissions"
+			method="get"
+			url="<%= permissionsDataProviderURL %>"
+			useDialog="<%= true %>"
+		/>
+	</c:if>
+
+	<c:if test="<%= ddmDataProviderDisplayContext.isShowDeleteDataProviderIcon(ddmDataProvider) %>">
 
 		<portlet:actionURL name="deleteDataProvider" var="deleteURL">
 			<portlet:param name="dataProviderId" value="<%= String.valueOf(ddmDataProvider.getDataProviderId()) %>" />
