@@ -38,7 +38,7 @@ String href = (String)request.getAttribute(WebKeys.SEARCH_ENTRY_HREF);
 	rowCheckerName="<%= DDMDataProvider.class.getSimpleName() %>"
 	showCheckbox="<%= false %>"
 	thumbnailDivStyle="height: 146px; width: 146px;"
-	thumbnailSrc='<%= themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
+	thumbnailSrc="<%= ddmDataProviderDisplayContext.getUserPortraitURL(ddmDataProvider.getUserId()) %>"
 	thumbnailStyle="max-height: 128px; max-width: 128px;"
 	title="<%= ddmDataProvider.getName(locale) %>"
 	url="<%= href %>"

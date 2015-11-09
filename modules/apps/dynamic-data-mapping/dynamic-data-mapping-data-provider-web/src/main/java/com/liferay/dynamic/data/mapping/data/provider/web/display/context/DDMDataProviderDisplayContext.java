@@ -34,7 +34,9 @@ import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.List;
@@ -55,6 +57,7 @@ public class DDMDataProviderDisplayContext {
 		DDMDataProviderLocalService ddmDataProviderLocalService,
 		DDMFormRenderer ddmFormRenderer,
 		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer,
+		UserLocalService userLocalService,
 		ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
 			ddmDataProvidersMap) {
 
@@ -64,6 +67,7 @@ public class DDMDataProviderDisplayContext {
 		_ddmDataProviderLocalService = ddmDataProviderLocalService;
 		_ddmFormRenderer = ddmFormRenderer;
 		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+		_userLocalService = userLocalService;
 		_ddmDataProvidersMap = ddmDataProvidersMap;
 
 		_ddmDataProviderRequestHelper = new DDMDataProviderRequestHelper(
@@ -172,6 +176,12 @@ public class DDMDataProviderDisplayContext {
 		}
 	}
 
+	public String getUserPortraitURL(long userId) throws PortalException {
+		User user = _userLocalService.getUser(userId);
+		return user.getPortraitURL(
+			_ddmDataProviderRequestHelper.getThemeDisplay());
+	}
+
 	public boolean isShowAddDataProviderButton() {
 		return DDMPermission.contains(
 			_ddmDataProviderRequestHelper.getPermissionChecker(),
@@ -228,5 +238,6 @@ public class DDMDataProviderDisplayContext {
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
+	private final UserLocalService _userLocalService;
 
 }

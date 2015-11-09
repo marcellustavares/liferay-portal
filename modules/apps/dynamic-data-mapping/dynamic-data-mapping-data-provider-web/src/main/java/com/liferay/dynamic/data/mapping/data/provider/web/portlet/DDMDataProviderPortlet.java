@@ -27,6 +27,7 @@ import com.liferay.osgi.service.tracker.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.service.UserLocalService;
 
 import java.io.IOException;
 
@@ -81,7 +82,8 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 			new DDMDataProviderDisplayContext(
 				renderRequest, renderResponse, _ddmDataProviderService,
 				_ddmDataProviderLocalService, _ddmFormRenderer,
-				_ddmFormValuesJSONDeserializer, _ddmDataProvidersMap);
+				_ddmFormValuesJSONDeserializer, _userLocalService,
+				_ddmDataProvidersMap);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDataProviderDisplayContext);
@@ -132,11 +134,17 @@ public class DDMDataProviderPortlet extends MVCPortlet {
 		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
 	}
 
+	@Reference(unbind = "-")
+	protected void setUserLocalService(UserLocalService userLocalService) {
+		_userLocalService = userLocalService;
+	}
+
 	private DDMDataProviderLocalService _ddmDataProviderLocalService;
 	private DDMDataProviderService _ddmDataProviderService;
 	private ServiceTrackerMap<String, ServiceWrapper<DDMDataProviderSettings>>
 		_ddmDataProvidersMap;
 	private DDMFormRenderer _ddmFormRenderer;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private UserLocalService _userLocalService;
 
 }
