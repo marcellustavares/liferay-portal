@@ -37,7 +37,7 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 	@Override
 	public DDMDataProvider addDataProvider(
 			long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String definition, String type,
+			Map<Locale, String> descriptionMap, String data, String type,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -46,7 +46,7 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 			DDMDataProvider.class.getName());
 
 		return ddmDataProviderLocalService.addDataProvider(
-			getUserId(), groupId, nameMap, descriptionMap, definition, type,
+			getUserId(), groupId, nameMap, descriptionMap, data, type,
 			serviceContext);
 	}
 
@@ -96,7 +96,7 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 	@Override
 	public DDMDataProvider updateDataProvider(
 			long dataProviderId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String definition,
+			Map<Locale, String> descriptionMap, String data,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -104,7 +104,7 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 			getPermissionChecker(), dataProviderId, ActionKeys.UPDATE);
 
 		return ddmDataProviderLocalService.updateDataProvider(
-			getUserId(), dataProviderId, nameMap, descriptionMap, definition,
+			getUserId(), dataProviderId, nameMap, descriptionMap, data,
 			serviceContext);
 	}
 

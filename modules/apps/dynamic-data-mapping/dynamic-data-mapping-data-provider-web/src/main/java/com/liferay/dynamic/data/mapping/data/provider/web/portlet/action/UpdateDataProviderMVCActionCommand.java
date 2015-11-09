@@ -83,8 +83,7 @@ public class UpdateDataProviderMVCActionCommand
 
 		String name = ParamUtil.getString(actionRequest, "name");
 
-		String definition = getDataProviderDefinition(
-			actionRequest, actionResponse);
+		String data = getDataProviderData(actionRequest, actionResponse);
 
 		String description = ParamUtil.getString(actionRequest, "description");
 
@@ -93,7 +92,7 @@ public class UpdateDataProviderMVCActionCommand
 
 		getDDMDataProviderService().updateDataProvider(
 			dataProviderId, getLocalizedMap(themeDisplay.getLocale(), name),
-			getLocalizedMap(themeDisplay.getLocale(), description), definition,
+			getLocalizedMap(themeDisplay.getLocale(), description), data,
 			serviceContext);
 	}
 
