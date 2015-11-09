@@ -292,6 +292,12 @@ public class DDMDataProviderLocalServiceUtil {
 		return getService().getDDMDataProvidersCount();
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getDataProvider(dataProviderId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext) {
 		return getService().getExportActionableDynamicQuery(portletDataContext);
