@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.liferay.dynamic.data.mapping.service.http.DDMDataProviderServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.liferay.dynamic.data.mapping.service.http.DDMDataProviderServiceSoap
  * @generated
  */
 @ProviderType
@@ -43,7 +44,8 @@ public class DDMDataProviderSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setDefinition(model.getDefinition());
+		soapModel.setData(model.getData());
+		soapModel.setType(model.getType());
 
 		return soapModel;
 	}
@@ -178,12 +180,20 @@ public class DDMDataProviderSoap implements Serializable {
 		_description = description;
 	}
 
-	public String getDefinition() {
-		return _definition;
+	public String getData() {
+		return _data;
 	}
 
-	public void setDefinition(String definition) {
-		_definition = definition;
+	public void setData(String data) {
+		_data = data;
+	}
+
+	public String getType() {
+		return _type;
+	}
+
+	public void setType(String type) {
+		_type = type;
 	}
 
 	private String _uuid;
@@ -196,5 +206,6 @@ public class DDMDataProviderSoap implements Serializable {
 	private Date _modifiedDate;
 	private String _name;
 	private String _description;
-	private String _definition;
+	private String _data;
+	private String _type;
 }
