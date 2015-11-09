@@ -69,7 +69,7 @@ ddmDataProviderSearch.setOrderByType(orderByType);
 				</portlet:renderURL>
 
 				<liferay-ui:search-container-column-image
-					src='<%= themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
+					src="<%= ddmDataProviderDisplayContext.getUserPortraitURL(dataProvider.getUserId()) %>"
 					toggleRowChecker="<%= true %>"
 				/>
 
