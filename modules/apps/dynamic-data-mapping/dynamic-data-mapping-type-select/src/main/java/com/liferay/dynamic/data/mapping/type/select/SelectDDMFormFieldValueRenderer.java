@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
 
@@ -48,14 +49,26 @@ public class SelectDDMFormFieldValueRenderer
 			optionsValuesJSONArray.length() * 2);
 
 		for (int i = 0; i < optionsValuesJSONArray.length(); i++) {
+			String optionValue = optionsValuesJSONArray.getString(i);
+
 			if (i > 0) {
 				sb.append(StringPool.COMMA_AND_SPACE);
 			}
 
-			LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
-				optionsValuesJSONArray.getString(i));
+			DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
 
-			sb.append(optionLabel.getString(locale));
+			String dataSourceType = (String)ddmFormField.getProperty(
+				"dataSourceType");
+
+			if (Validator.equals(dataSourceType, "manual")) {
+				LocalizedValue optionLabel =
+					ddmFormFieldOptions.getOptionLabels(optionValue);
+
+				sb.append(optionLabel.getString(locale));
+			}
+			else {
+				sb.append(optionValue);
+			}
 		}
 
 		return sb.toString();
