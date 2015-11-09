@@ -30,27 +30,34 @@ import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldTypeServicesTrackerUtil;
+import com.liferay.dynamic.data.mapping.service.DDMDataProviderServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
@@ -201,6 +208,20 @@ public class DDLFormAdminDisplayContext {
 		}
 	}
 
+	public String getSerializedDataProviders() throws PortalException {
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		List<DDMDataProvider> ddmDataProviders =
+			DDMDataProviderServiceUtil.search(
+				themeDisplay.getCompanyId(),
+				PortalUtil.getCurrentAndAncestorSiteGroupIds(
+					themeDisplay.getScopeGroupId()),
+				StringPool.BLANK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		return serialize(ddmDataProviders, themeDisplay.getLocale());
+	}
+
 	public String getSerializedDDMForm() throws PortalException {
 		String definition = ParamUtil.getString(_renderRequest, "definition");
 
@@ -288,6 +309,31 @@ public class DDLFormAdminDisplayContext {
 		return DDLRecordSetPermission.contains(
 			_ddlFormAdminRequestHelper.getPermissionChecker(), recordSet,
 			ActionKeys.VIEW);
+	}
+
+	protected String serialize(
+		List<DDMDataProvider> ddmDataProviders, Locale locale) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (DDMDataProvider ddmDataProvider : ddmDataProviders) {
+			JSONObject jsonObject = toJSONObject(ddmDataProvider, locale);
+
+			jsonArray.put(jsonObject);
+		}
+
+		return jsonArray.toString();
+	}
+
+	protected JSONObject toJSONObject(
+		DDMDataProvider ddmDataProvider, Locale locale) {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("id", ddmDataProvider.getDataProviderId());
+		jsonObject.put("name", ddmDataProvider.getName(locale));
+
+		return jsonObject;
 	}
 
 	private final DDLFormAdminRequestHelper _ddlFormAdminRequestHelper;

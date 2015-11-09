@@ -107,6 +107,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 								new Liferay.DDL.Portlet(
 									{
+										dataProviders: <%= ddlFormAdminDisplayContext.getSerializedDataProviders() %>,
 										definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
 										editForm: event.form,
 										layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
