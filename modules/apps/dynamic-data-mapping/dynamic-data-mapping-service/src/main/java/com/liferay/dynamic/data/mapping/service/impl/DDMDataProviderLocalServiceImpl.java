@@ -67,6 +67,13 @@ public class DDMDataProviderLocalServiceImpl
 	}
 
 	@Override
+	public DDMDataProvider getDataProvider(long dataProviderId)
+		throws PortalException {
+
+		return ddmDataProviderPersistence.findByPrimaryKey(dataProviderId);
+	}
+
+	@Override
 	public List<DDMDataProvider> search(
 		long companyId, long[] groupIds, String keywords, int start, int end,
 		OrderByComparator<DDMDataProvider> orderByComparator) {

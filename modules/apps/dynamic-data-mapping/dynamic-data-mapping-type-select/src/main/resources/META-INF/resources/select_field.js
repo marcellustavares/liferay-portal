@@ -6,6 +6,14 @@ AUI.add(
 		var SelectField = A.Component.create(
 			{
 				ATTRS: {
+					dataSourceType: {
+						value: 'manual'
+					},
+
+					ddmDataProviderId: {
+						value: 0
+					},
+
 					options: {
 						validator: Array.isArray,
 						value: []
@@ -56,6 +64,27 @@ AUI.add(
 								options: instance.getOptions()
 							}
 						);
+					},
+
+					getTemplateRenderer: function() {
+						var instance = this;
+
+						var renderer;
+
+						if (instance.get('dataSourceType') === 'manual') {
+							renderer = SelectField.superclass.getTemplateRenderer.apply(instance, arguments);
+						}
+						else {
+							renderer = A.bind('renderTemplate', instance);
+						}
+
+						return renderer;
+					},
+
+					renderTemplate: function() {
+						var instance = this;
+
+						return instance.fetchContainer().html();
 					},
 
 					_getOptionStatus: function(option) {
