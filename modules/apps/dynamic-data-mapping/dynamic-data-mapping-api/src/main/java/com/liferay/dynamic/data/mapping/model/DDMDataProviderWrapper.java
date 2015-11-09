@@ -65,7 +65,8 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
-		attributes.put("definition", getDefinition());
+		attributes.put("data", getData());
+		attributes.put("type", getType());
 
 		return attributes;
 	}
@@ -132,10 +133,16 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 			setDescription(description);
 		}
 
-		String definition = (String)attributes.get("definition");
+		String data = (String)attributes.get("data");
 
-		if (definition != null) {
-			setDefinition(definition);
+		if (data != null) {
+			setData(data);
+		}
+
+		String type = (String)attributes.get("type");
+
+		if (type != null) {
+			setType(type);
 		}
 	}
 
@@ -176,6 +183,16 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	}
 
 	/**
+	* Returns the data of this d d m data provider.
+	*
+	* @return the data of this d d m data provider
+	*/
+	@Override
+	public java.lang.String getData() {
+		return _ddmDataProvider.getData();
+	}
+
+	/**
 	* Returns the data provider ID of this d d m data provider.
 	*
 	* @return the data provider ID of this d d m data provider
@@ -188,16 +205,6 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	@Override
 	public java.lang.String getDefaultLanguageId() {
 		return _ddmDataProvider.getDefaultLanguageId();
-	}
-
-	/**
-	* Returns the definition of this d d m data provider.
-	*
-	* @return the definition of this d d m data provider
-	*/
-	@Override
-	public java.lang.String getDefinition() {
-		return _ddmDataProvider.getDefinition();
 	}
 
 	/**
@@ -396,6 +403,16 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	}
 
 	/**
+	* Returns the type of this d d m data provider.
+	*
+	* @return the type of this d d m data provider
+	*/
+	@Override
+	public java.lang.String getType() {
+		return _ddmDataProvider.getType();
+	}
+
+	/**
 	* Returns the user ID of this d d m data provider.
 	*
 	* @return the user ID of this d d m data provider
@@ -499,6 +516,16 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	}
 
 	/**
+	* Sets the data of this d d m data provider.
+	*
+	* @param data the data of this d d m data provider
+	*/
+	@Override
+	public void setData(java.lang.String data) {
+		_ddmDataProvider.setData(data);
+	}
+
+	/**
 	* Sets the data provider ID of this d d m data provider.
 	*
 	* @param dataProviderId the data provider ID of this d d m data provider
@@ -506,16 +533,6 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	@Override
 	public void setDataProviderId(long dataProviderId) {
 		_ddmDataProvider.setDataProviderId(dataProviderId);
-	}
-
-	/**
-	* Sets the definition of this d d m data provider.
-	*
-	* @param definition the definition of this d d m data provider
-	*/
-	@Override
-	public void setDefinition(java.lang.String definition) {
-		_ddmDataProvider.setDefinition(definition);
 	}
 
 	/**
@@ -699,6 +716,16 @@ public class DDMDataProviderWrapper implements DDMDataProvider,
 	@Override
 	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
 		_ddmDataProvider.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the type of this d d m data provider.
+	*
+	* @param type the type of this d d m data provider
+	*/
+	@Override
+	public void setType(java.lang.String type) {
+		_ddmDataProvider.setType(type);
 	}
 
 	/**
