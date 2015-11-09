@@ -142,7 +142,9 @@ public class DDMDataProviderPersistenceTest {
 
 		newDDMDataProvider.setDescription(RandomTestUtil.randomString());
 
-		newDDMDataProvider.setDefinition(RandomTestUtil.randomString());
+		newDDMDataProvider.setData(RandomTestUtil.randomString());
+
+		newDDMDataProvider.setType(RandomTestUtil.randomString());
 
 		_ddmDataProviders.add(_persistence.update(newDDMDataProvider));
 
@@ -170,8 +172,10 @@ public class DDMDataProviderPersistenceTest {
 			newDDMDataProvider.getName());
 		Assert.assertEquals(existingDDMDataProvider.getDescription(),
 			newDDMDataProvider.getDescription());
-		Assert.assertEquals(existingDDMDataProvider.getDefinition(),
-			newDDMDataProvider.getDefinition());
+		Assert.assertEquals(existingDDMDataProvider.getData(),
+			newDDMDataProvider.getData());
+		Assert.assertEquals(existingDDMDataProvider.getType(),
+			newDDMDataProvider.getType());
 	}
 
 	@Test
@@ -242,11 +246,17 @@ public class DDMDataProviderPersistenceTest {
 			getOrderByComparator());
 	}
 
+	@Test
+	public void testFilterFindByGroupId() throws Exception {
+		_persistence.filterFindByGroupId(0, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, getOrderByComparator());
+	}
+
 	protected OrderByComparator<DDMDataProvider> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("DDMDataProvider", "uuid",
 			true, "dataProviderId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "name", true);
+			"modifiedDate", true, "name", true, "type", true);
 	}
 
 	@Test
@@ -482,7 +492,9 @@ public class DDMDataProviderPersistenceTest {
 
 		ddmDataProvider.setDescription(RandomTestUtil.randomString());
 
-		ddmDataProvider.setDefinition(RandomTestUtil.randomString());
+		ddmDataProvider.setData(RandomTestUtil.randomString());
+
+		ddmDataProvider.setType(RandomTestUtil.randomString());
 
 		_ddmDataProviders.add(_persistence.update(ddmDataProvider));
 
