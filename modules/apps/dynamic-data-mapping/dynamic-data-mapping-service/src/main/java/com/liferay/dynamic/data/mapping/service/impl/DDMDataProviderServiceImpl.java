@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.service.permission.DDMDataProviderPermis
 import com.liferay.dynamic.data.mapping.service.permission.DDMPermission;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 
@@ -56,6 +57,16 @@ public class DDMDataProviderServiceImpl extends DDMDataProviderServiceBaseImpl {
 			getPermissionChecker(), dataProviderId, ActionKeys.DELETE);
 
 		ddmDataProviderLocalService.deleteDDMDataProvider(dataProviderId);
+	}
+
+	@Override
+	public DDMDataProvider getDataProvider(long dataProviderId)
+		throws PortalException, PrincipalException {
+
+		DDMDataProviderPermission.check(
+			getPermissionChecker(), dataProviderId, ActionKeys.VIEW);
+
+		return ddmDataProviderLocalService.getDDMDataProvider(dataProviderId);
 	}
 
 	@Override
