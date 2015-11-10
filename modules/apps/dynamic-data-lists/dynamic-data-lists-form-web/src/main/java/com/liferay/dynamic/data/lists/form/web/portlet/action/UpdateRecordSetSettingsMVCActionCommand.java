@@ -70,6 +70,40 @@ public class UpdateRecordSetSettingsMVCActionCommand
 			workflowDefinitionLinkLocalService;
 	}
 
+	protected void updateRecordSetEmailNotificationSettings(
+		ActionRequest actionRequest, UnicodeProperties settingsProperties) {
+
+		boolean sendEmailNotification = ParamUtil.getBoolean(
+			actionRequest, "sendEmailNotification");
+		String emailFromName = ParamUtil.getString(
+			actionRequest, "emailFromName");
+		String emailFromAddress = ParamUtil.getString(
+			actionRequest, "emailFromAddress");
+		String emailToAddress = ParamUtil.getString(
+			actionRequest, "emailToAddress");
+		String emailSubject = ParamUtil.getString(
+			actionRequest, "emailSubject");
+
+		settingsProperties.setProperty(
+			"sendEmailNotification", String.valueOf(sendEmailNotification));
+
+		if (sendEmailNotification) {
+			settingsProperties.setProperty(
+				"emailFromAddress", emailFromAddress);
+			settingsProperties.setProperty("emailFromName", emailFromName);
+			settingsProperties.setProperty("emailToAddress", emailToAddress);
+			settingsProperties.setProperty("emailSubject", emailSubject);
+		}
+	}
+
+	protected void updateRecordSetRedirectURLSettings(
+		ActionRequest actionRequest, UnicodeProperties settingsProperties) {
+
+		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
+
+		settingsProperties.setProperty("redirectURL", redirectURL);
+	}
+
 	protected void updateRecordSetSettings(ActionRequest actionRequest)
 		throws PortalException {
 
@@ -77,9 +111,9 @@ public class UpdateRecordSetSettingsMVCActionCommand
 
 		UnicodeProperties settingsProperties = new UnicodeProperties(true);
 
-		String redirectURL = ParamUtil.getString(actionRequest, "redirectURL");
-
-		settingsProperties.setProperty("redirectURL", redirectURL);
+		updateRecordSetRedirectURLSettings(actionRequest, settingsProperties);
+		updateRecordSetEmailNotificationSettings(
+			actionRequest, settingsProperties);
 
 		_ddlRecordSetService.updateRecordSet(
 			recordSetId, settingsProperties.toString());
