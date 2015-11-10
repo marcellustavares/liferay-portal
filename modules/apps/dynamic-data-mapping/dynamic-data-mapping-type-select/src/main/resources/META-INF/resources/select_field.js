@@ -3,6 +3,8 @@ AUI.add(
 	function(A) {
 		var Lang = A.Lang;
 
+		var TPL_OPTION = '<option>{label}</option>';
+
 		var SelectField = A.Component.create(
 			{
 				ATTRS: {
@@ -17,6 +19,12 @@ AUI.add(
 					options: {
 						validator: Array.isArray,
 						value: []
+					},
+
+					strings: {
+						value: {
+							dynamicallyLoadedData: Liferay.Language.get('dynamically-loaded-data')
+						}
 					},
 
 					type: {
@@ -69,22 +77,57 @@ AUI.add(
 					getTemplateRenderer: function() {
 						var instance = this;
 
-						var renderer;
+						var renderer = SelectField.superclass.getTemplateRenderer.apply(instance, arguments);
 
-						if (instance.get('dataSourceType') === 'manual') {
-							renderer = SelectField.superclass.getTemplateRenderer.apply(instance, arguments);
-						}
-						else {
-							renderer = A.bind('renderTemplate', instance);
+						if (instance.get('dataSourceType') !== 'manual') {
+							renderer = A.bind('renderTemplate', instance, renderer);
 						}
 
 						return renderer;
 					},
 
-					renderTemplate: function() {
+					render: function() {
 						var instance = this;
 
-						return instance.fetchContainer().html();
+						var dataSourceType = instance.get('dataSourceType');
+
+						SelectField.superclass.render.apply(instance, arguments);
+
+						if (dataSourceType !== 'manual' && instance.get('builder')) {
+							var inputNode = instance.getInputNode();
+
+							var strings = instance.get('strings');
+
+							inputNode.attr('disabled', true);
+
+							inputNode.html(
+								Lang.sub(
+									TPL_OPTION,
+									{
+										label: strings.dynamicallyLoadedData
+									}
+								)
+							);
+						}
+
+						return instance;
+					},
+
+					renderTemplate: function(renderer, context) {
+						var instance = this;
+
+						var container = instance.fetchContainer();
+
+						var template;
+
+						if (container) {
+							template = container.html();
+						}
+						else {
+							template = renderer(context);
+						}
+
+						return template;
 					},
 
 					_getOptionStatus: function(option) {
