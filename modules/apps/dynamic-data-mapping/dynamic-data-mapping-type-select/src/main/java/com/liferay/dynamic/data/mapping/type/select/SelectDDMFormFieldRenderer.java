@@ -42,6 +42,7 @@ import com.liferay.portal.security.auth.PrincipalException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -229,7 +230,7 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		DDMDataProviderContext ddmDataProviderContext =
 			new DDMDataProviderContext(properties);
 
-		List<KeyValuePair> data = ddmDataProvider.getData(
+		Set<KeyValuePair> data = ddmDataProvider.getData(
 			ddmDataProviderContext);
 
 		DDMFormFieldOptions ddmFormFieldOptions = new DDMFormFieldOptions();
