@@ -8,6 +8,12 @@
 }
 
 .portlet-forms {
+	.ddl-form-alert {
+		position: absolute;
+		top: 0;
+		width: 100%;
+	}
+
 	.ddl-form-name {
 		font-size: 32px;
 		line-height: 32px;
