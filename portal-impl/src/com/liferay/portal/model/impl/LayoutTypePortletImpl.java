@@ -839,8 +839,10 @@ public class LayoutTypePortletImpl
 
 	@Override
 	public boolean isPortletEmbedded(String portletId) {
+		Layout layout = getLayout();
+
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(
-			getLayout().getCompanyId(), portletId);
+			layout.getCompanyId(), portletId);
 
 		long scopeGroupId = PortalUtil.getScopeGroupId(getLayout(), portletId);
 
