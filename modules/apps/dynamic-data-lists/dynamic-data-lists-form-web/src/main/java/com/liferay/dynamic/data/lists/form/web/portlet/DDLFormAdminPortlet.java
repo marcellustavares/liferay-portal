@@ -15,11 +15,40 @@
 package com.liferay.dynamic.data.lists.form.web.portlet;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.util.RecordSetSettingsForm;
+import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowDefinition;
+import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
+import com.liferay.portal.util.PortalUtil;
+
+import java.io.IOException;
+
+import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Bruno Basto
@@ -49,4 +78,113 @@ import org.osgi.service.component.annotations.Component;
 	service = Portlet.class
 )
 public class DDLFormAdminPortlet extends MVCPortlet {
+
+	@Override
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		try {
+			setRenderRequestAttributes(renderRequest, renderResponse);
+		}
+		catch (Exception e) {
+			if (isSessionErrorException(e)) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(e, e);
+				}
+
+				hideDefaultErrorMessage(renderRequest);
+
+				SessionErrors.add(renderRequest, e.getClass());
+			}
+			else {
+				throw new PortletException(e);
+			}
+		}
+
+		super.render(renderRequest, renderResponse);
+	}
+
+	protected DDMFormRenderingContext createDDMFormRenderingContext(
+		RenderRequest renderRequest, RenderResponse renderResponse) {
+
+		String languageId = ParamUtil.getString(renderRequest, "languageId");
+
+		DDMFormRenderingContext ddmFormRenderingContext =
+			new DDMFormRenderingContext();
+
+		ddmFormRenderingContext.setHttpServletRequest(
+			PortalUtil.getHttpServletRequest(renderRequest));
+		ddmFormRenderingContext.setHttpServletResponse(
+			PortalUtil.getHttpServletResponse(renderResponse));
+		ddmFormRenderingContext.setLocale(
+			LocaleUtil.fromLanguageId(languageId));
+		ddmFormRenderingContext.setPortletNamespace(
+			renderResponse.getNamespace());
+
+		return ddmFormRenderingContext;
+	}
+
+	@Reference
+	protected void setDDMFormRenderer(DDMFormRenderer ddmFormRenderer) {
+		_ddmFormRenderer = ddmFormRenderer;
+	}
+
+	protected void setRenderRequestAttributes(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws PortalException {
+
+		String languageId = ParamUtil.getString(renderRequest, "languageId");
+
+		Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+		long companyId = PortalUtil.getCompanyId(renderRequest);
+
+		DDMForm ddmForm = DDMFormFactory.create(RecordSetSettingsForm.class);
+
+		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
+			if (Validator.equals(
+					ddmFormField.getName(), "workflowDefinition")) {
+
+				ddmFormField.setProperty("dataSourceType", "manual");
+
+				DDMFormFieldOptions ddmFormFieldOptions =
+					new DDMFormFieldOptions();
+
+				ddmFormFieldOptions.addOptionLabel(
+					StringPool.BLANK, locale, "no-workflow");
+
+				List<WorkflowDefinition> workflowDefinitions =
+					WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(
+						companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+				for (WorkflowDefinition workflowDefinition :
+						workflowDefinitions) {
+
+					ddmFormFieldOptions.addOptionLabel(
+						workflowDefinition.getName(), locale,
+						workflowDefinition.getName());
+				}
+
+				ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
+
+				break;
+			}
+		}
+
+		DDMFormRenderingContext ddmFormRenderingContext =
+			createDDMFormRenderingContext(renderRequest, renderResponse);
+
+		String ddmFormHTML = _ddmFormRenderer.render(
+			ddmForm, ddmFormRenderingContext);
+
+		renderRequest.setAttribute(
+			DDMWebKeys.DYNAMIC_DATA_MAPPING_FORM_HTML, ddmFormHTML);
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDLFormAdminPortlet.class);
+
+	private DDMFormRenderer _ddmFormRenderer;
+
 }

@@ -112,6 +112,11 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
+
+		<div class="ddl-record-set-settings hide" id="<portlet:namespace />settings">
+			<%@ include file="/admin/record_set_settings.jspf" %>
+		</div>
+
 		<aui:script>
 			var initHandler = Liferay.after(
 				'form:registered',
@@ -159,6 +164,51 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			};
 
 			Liferay.on('destroyPortlet', clearPortletHandlers);
+		</aui:script>
+
+		<aui:script use="aui-base">
+			Liferay.namespace('DDL').openSettings = function() {
+				Liferay.Util.openWindow(
+					{
+						dialog: {
+							height: 420,
+							resizable: false,
+							'toolbars.footer': [
+								{
+									cssClass: 'btn-lg btn-primary',
+									label: '<liferay-ui:message key="done" />',
+									on: {
+										click: function() {
+											Liferay.Util.getWindow('settings').hide();
+										}
+									}
+								},
+								{
+									cssClass: 'btn-lg',
+									label: '<liferay-ui:message key="cancel" />',
+									on: {
+										click: function() {
+											Liferay.Util.getWindow('settings').hide();
+										}
+									}
+								}
+							],
+							width: 720
+						},
+						id: 'settings',
+						title: '<liferay-ui:message key="settings" />'
+					},
+					function(dialogWindow) {
+						var bodyNode = dialogWindow.bodyNode;
+
+						var settingsNode = A.one('#<portlet:namespace />settings');
+
+						settingsNode.show();
+
+						bodyNode.append(settingsNode);
+					}
+				);
+			};
 		</aui:script>
 	</aui:form>
 </div>

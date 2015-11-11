@@ -14,16 +14,9 @@
 
 package com.liferay.dynamic.data.lists.form.web.portlet.configuration.icon;
 
-import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.theme.PortletDisplay;
-import com.liferay.portal.util.PortalUtil;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,31 +39,13 @@ public class DDLRecordSetSettingsPortletConfigurationIcon
 
 	@Override
 	public String getURL() {
-		PortletURL portletURL = PortalUtil.getControlPanelPortletURL(
-			request, DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM_ADMIN, 0,
-			PortletRequest.RENDER_PHASE);
+		long recordSetId = getRecordSetId();
 
-		portletURL.setParameter("mvcPath", "/admin/record_set_settings.jsp");
-		portletURL.setParameter(
-			"recordSetId", String.valueOf(getRecordSetId()));
-
-		try {
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
-		}
-		catch (WindowStateException wse) {
-		}
-
-		return portletURL.toString();
+		return "javascript:Liferay.DDL.openSettings(" + String.valueOf(recordSetId) + ")";
 	}
 
 	@Override
 	public boolean isShow() {
-		long recordSetId = getRecordSetId();
-
-		if (recordSetId == 0) {
-			return false;
-		}
-
 		return true;
 	}
 
@@ -81,7 +56,7 @@ public class DDLRecordSetSettingsPortletConfigurationIcon
 
 	@Override
 	public boolean isUseDialog() {
-		return true;
+		return false;
 	}
 
 	protected long getRecordSetId() {
