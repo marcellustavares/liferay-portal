@@ -61,7 +61,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
 
-					<liferay-ui:message key="form-published-at" />: <a href="<%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %>" target="_PARENT"><%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %></a>
+					<liferay-ui:message key="form-published-at" />: <a href="<%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %>" target="_BLANK"><%= ddlFormAdminDisplayContext.getRecordSetLayoutURL() %></a>
 					<span class="icon-external-link"></span>
 				</div>
 			</div>

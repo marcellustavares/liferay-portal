@@ -93,6 +93,10 @@ AUI.add(
 
 						SelectField.superclass.render.apply(instance, arguments);
 
+						var container = instance.get('container');
+
+						container.one('select').attr('name', instance.getQualifiedName());
+
 						if (dataSourceType !== 'manual' && instance.get('builder')) {
 							var inputNode = instance.getInputNode();
 
