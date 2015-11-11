@@ -17,24 +17,21 @@ package com.liferay.dynamic.data.mapping.util;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.XPath;
 
 import java.util.List;
 import java.util.Locale;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
+
 /**
  * @author Bruno Basto
  * @author Brian Wing Shun Chan
  */
 public class DDMXMLUtil {
-
-	public static DDMXML getDDMXML() {
-		PortalRuntimePermission.checkGetBeanProperty(DDMXMLUtil.class);
-
-		return _ddmXML;
-	}
 
 	public static Fields getFields(DDMStructure structure, String xml)
 		throws PortalException {
@@ -70,12 +67,26 @@ public class DDMXMLUtil {
 		return getDDMXML().validateXML(xml);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0
+	 */
+	@Deprecated
 	public void setDDMXML(DDMXML ddmXML) {
-		PortalRuntimePermission.checkSetBeanProperty(getClass());
-
-		_ddmXML = ddmXML;
 	}
 
-	private static DDMXML _ddmXML;
+	protected static DDMXML getDDMXML() {
+		return _serviceTracker.getService();
+	}
+
+	private static final ServiceTracker<DDMXML, DDMXML> _serviceTracker;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(DDMUtil.class);
+
+		_serviceTracker = new ServiceTracker<>(
+			bundle.getBundleContext(), DDMXML.class, null);
+
+		_serviceTracker.open();
+	}
 
 }
