@@ -122,23 +122,28 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 
 		Set<String> optionValues = Collections.emptySet();
 
-		if (ddmFormFieldOptions != null) {
-			optionValues = ddmFormFieldOptions.getOptionsValues();
-		}
+		String dataSourceType = (String)ddmFormField.getProperty(
+			"dataSourceType");
 
-		if (optionValues.isEmpty()) {
-			throw new DDMFormValidationException(
-				"At least one option should be set for field " +
-					ddmFormField.getName());
-		}
+		if (Validator.equals(dataSourceType, "manual")) {
+			if (ddmFormFieldOptions != null) {
+				optionValues = ddmFormFieldOptions.getOptionsValues();
+			}
 
-		for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
-			LocalizedValue localizedValue = ddmFormFieldOptions.getOptionLabels(
-				optionValue);
+			if (optionValues.isEmpty()) {
+				throw new DDMFormValidationException(
+					"At least one option should be set for field " +
+						ddmFormField.getName());
+			}
 
-			validateDDMFormFieldPropertyValue(
-				ddmFormField.getName(), "options", localizedValue,
-				ddmFormAvailableLocales, ddmFormDefaultLocale);
+			for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
+				LocalizedValue localizedValue =
+					ddmFormFieldOptions.getOptionLabels(optionValue);
+
+				validateDDMFormFieldPropertyValue(
+					ddmFormField.getName(), "options", localizedValue,
+					ddmFormAvailableLocales, ddmFormDefaultLocale);
+			}
 		}
 	}
 

@@ -23,7 +23,8 @@ create table DDMDataProvider (
 	modifiedDate DATE null,
 	name STRING null,
 	description TEXT null,
-	definition TEXT null
+	data_ TEXT null,
+	type_ VARCHAR(75) null
 );
 
 create table DDMStorageLink (

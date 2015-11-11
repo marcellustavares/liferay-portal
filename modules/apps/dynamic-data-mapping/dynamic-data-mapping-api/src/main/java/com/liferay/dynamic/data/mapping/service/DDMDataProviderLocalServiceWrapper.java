@@ -46,6 +46,18 @@ public class DDMDataProviderLocalServiceWrapper
 		return _ddmDataProviderLocalService.addDDMDataProvider(ddmDataProvider);
 	}
 
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider addDataProvider(
+		long userId, long groupId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String data, java.lang.String type,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmDataProviderLocalService.addDataProvider(userId, groupId,
+			nameMap, descriptionMap, data, type, serviceContext);
+	}
+
 	/**
 	* Creates a new d d m data provider with the primary key. Does not add the d d m data provider to the database.
 	*
@@ -295,6 +307,13 @@ public class DDMDataProviderLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider getDataProvider(
+		long dataProviderId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmDataProviderLocalService.getDataProvider(dataProviderId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		com.liferay.portlet.exportimport.lar.PortletDataContext portletDataContext) {
 		return _ddmDataProviderLocalService.getExportActionableDynamicQuery(portletDataContext);
@@ -317,6 +336,38 @@ public class DDMDataProviderLocalServiceWrapper
 		return _ddmDataProviderLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String keywords, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return _ddmDataProviderLocalService.search(companyId, groupIds,
+			keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProvider> search(
+		long companyId, long[] groupIds, java.lang.String name,
+		java.lang.String description, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMDataProvider> orderByComparator) {
+		return _ddmDataProviderLocalService.search(companyId, groupIds, name,
+			description, andOperator, start, end, orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String keywords) {
+		return _ddmDataProviderLocalService.searchCount(companyId, groupIds,
+			keywords);
+	}
+
+	@Override
+	public int searchCount(long companyId, long[] groupIds,
+		java.lang.String name, java.lang.String description, boolean andOperator) {
+		return _ddmDataProviderLocalService.searchCount(companyId, groupIds,
+			name, description, andOperator);
+	}
+
 	/**
 	* Updates the d d m data provider in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -327,6 +378,18 @@ public class DDMDataProviderLocalServiceWrapper
 	public com.liferay.dynamic.data.mapping.model.DDMDataProvider updateDDMDataProvider(
 		com.liferay.dynamic.data.mapping.model.DDMDataProvider ddmDataProvider) {
 		return _ddmDataProviderLocalService.updateDDMDataProvider(ddmDataProvider);
+	}
+
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMDataProvider updateDataProvider(
+		long userId, long dataProviderId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String data,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmDataProviderLocalService.updateDataProvider(userId,
+			dataProviderId, nameMap, descriptionMap, data, serviceContext);
 	}
 
 	/**
