@@ -55,7 +55,7 @@ public class DDMRESTDataProviderTest {
 		_ddmDataProvider = ddmDataProviders[0];
 	}
 
-	@Test
+	//@Test
 	public void testGetCountries() throws Exception {
 		DDMFormField ddmFormField = new DDMFormField("test", "text");
 
