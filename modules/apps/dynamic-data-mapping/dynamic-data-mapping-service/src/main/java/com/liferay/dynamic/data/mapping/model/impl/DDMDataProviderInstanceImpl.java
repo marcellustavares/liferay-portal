@@ -14,15 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 /**
- * @author Brian Wing Shun Chan
+ * @author Leonardo Barros
  */
-@ProviderType
-public class DDMDataProviderImpl extends DDMDataProviderBaseImpl {
-
-	public DDMDataProviderImpl() {
-	}
-
+public class DDMDataProviderInstanceImpl
+	extends DDMDataProviderInstanceBaseImpl {
 }
