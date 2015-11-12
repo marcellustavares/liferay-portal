@@ -40,7 +40,7 @@
 
 		<reference package-path="com.liferay.portal" entity="User" />
 	</entity>
-	<entity name="DDMDataProvider" uuid="true" local-service="true" remote-service="false">
+	<entity name="DDMDataProvider" uuid="true" local-service="true" remote-service="true">
 
 		<!-- PK fields -->
 
@@ -62,7 +62,8 @@
 
 		<column name="name" type="String" localized="true" />
 		<column name="description" type="String" localized="true" />
-		<column name="definition" type="String" />
+		<column name="data" type="String" />
+		<column name="type" type="String" />
 
 		<!-- Finder methods -->
 
@@ -483,6 +484,7 @@
 		<exception>Content</exception>
 		<exception>ContentData</exception>
 		<exception>ContentName</exception>
+		<exception>DataProviderName</exception>
 		<exception>InvalidStructureVersion</exception>
 		<exception>InvalidTemplateVersion</exception>
 		<exception>RequiredStructure</exception>

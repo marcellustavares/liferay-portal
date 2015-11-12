@@ -415,19 +415,34 @@ public interface DDMDataProviderModel extends BaseModel<DDMDataProvider>,
 		Locale defaultLocale);
 
 	/**
-	 * Returns the definition of this d d m data provider.
+	 * Returns the data of this d d m data provider.
 	 *
-	 * @return the definition of this d d m data provider
+	 * @return the data of this d d m data provider
 	 */
 	@AutoEscape
-	public String getDefinition();
+	public String getData();
 
 	/**
-	 * Sets the definition of this d d m data provider.
+	 * Sets the data of this d d m data provider.
 	 *
-	 * @param definition the definition of this d d m data provider
+	 * @param data the data of this d d m data provider
 	 */
-	public void setDefinition(String definition);
+	public void setData(String data);
+
+	/**
+	 * Returns the type of this d d m data provider.
+	 *
+	 * @return the type of this d d m data provider
+	 */
+	@AutoEscape
+	public String getType();
+
+	/**
+	 * Sets the type of this d d m data provider.
+	 *
+	 * @param type the type of this d d m data provider
+	 */
+	public void setType(String type);
 
 	@Override
 	public boolean isNew();
