@@ -52,7 +52,7 @@
 		margin: 0;
 
 		.input-group-container,
-		.radio-default,
+		.radio-options,
 		.input-select-wrapper,
 		.checkbox {
 			margin-bottom: 50px;
@@ -78,6 +78,11 @@
 
 	label.radio-inline {
 		margin-right: 125px;
+		padding-top: 11px;
+
+		& + .radio-inline {
+			margin-left: 0;
+		}
 	}
 
 	.help-block {
