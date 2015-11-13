@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Polls Layout Set Prototype
+Bundle-SymbolicName: com.liferay.polls.layout.set.prototype
+Bundle-Version: 1.0.0
+Include-Resource: classes

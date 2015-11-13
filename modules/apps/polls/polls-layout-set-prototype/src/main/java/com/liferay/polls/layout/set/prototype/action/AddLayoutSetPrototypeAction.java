@@ -12,15 +12,14 @@
  * details.
  */
 
-package com.liferay.message.boards.layout.set.prototype.action;
+package com.liferay.polls.layout.set.prototype.action;
 
 import com.liferay.layout.set.prototype.web.constants.LayoutSetPrototypePortletKeys;
-import com.liferay.message.boards.web.constants.MBPortletKeys;
+import com.liferay.polls.constants.PollsPortletKeys;
+import com.liferay.portal.NoSuchResourceActionException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
-import com.liferay.portal.kernel.portlet.PortletProvider;
-import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -35,19 +34,22 @@ import com.liferay.portal.service.LayoutSetPrototypeLocalService;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.util.DefaultLayoutPrototypesUtil;
 import com.liferay.portal.util.DefaultLayoutSetPrototypesUtil;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.social.user.statistics.web.constants.SocialUserStatisticsPortletKeys;
 
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.servlet.Servlet;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Sergio González
+ *
+ * @author Lino Alves
+ *
  */
+
 @Component(immediate = true, service = AddLayoutSetPrototypeAction.class)
 public class AddLayoutSetPrototypeAction {
 
@@ -117,30 +119,20 @@ public class AddLayoutSetPrototypeAction {
 		// Home layout
 
 		Layout layout = LayoutLocalServiceUtil.fetchLayoutByFriendlyURL(
-			layoutSet.getGroupId(), true, "/home");
+					layoutSet.getGroupId(), true, "/home");
 
 		if (Validator.isNull(layout)) {
 			layout = DefaultLayoutPrototypesUtil.addLayout(
 				layoutSet, "home", "/home", "2_columns_iii");
 		}
 
-		String portletId = PortletProviderUtil.getPortletId(
-			MBMessage.class.getName(), PortletProvider.Action.EDIT);
-
-		if (layout.getTypeSettings().contains(portletId)) {
+		try {
+			String portletId = DefaultLayoutPrototypesUtil.addPortletId(
+				layout, PollsPortletKeys.POLLS_DISPLAY, "column-1");
+		}
+		catch (NoSuchResourceActionException e) {
 			return;
 		}
-
-		DefaultLayoutPrototypesUtil.addPortletId(layout, portletId, "column-1");
-
-		DefaultLayoutPrototypesUtil.addPortletId(
-			layout, SocialUserStatisticsPortletKeys.SOCIAL_USER_STATISTICS,
-			"column-2");
-
-		// Wiki layout
-
-		DefaultLayoutPrototypesUtil.addLayout(
-			layoutSet, "wiki", "/wiki", "2_columns_iii");
 	}
 
 	protected void doRun(long companyId) throws Exception {
@@ -174,23 +166,16 @@ public class AddLayoutSetPrototypeAction {
 	protected void setLayoutSetPrototypePortlet(Portlet portlet) {
 	}
 
-	@Reference(
-		target = "(javax.portlet.name=" + MBPortletKeys.MESSAGE_BOARDS + ")",
-		unbind = "-"
-	)
-	protected void setMessageBoardsPortlet(Portlet portlet) {
-	}
-
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
 	@Reference(
-		target = "(javax.portlet.name=" + SocialUserStatisticsPortletKeys.SOCIAL_USER_STATISTICS + ")",
-		unbind = "-"
-	)
-	protected void setSocialUserStatisticsPortletKeys(Portlet portlet) {
+			target = "(&(objectClass=javax.servlet.Servlet)(osgi.http.whiteboard.servlet.name=59 Servlet))",
+			unbind = "-"
+		)
+	protected void setServlet(Servlet servlet) {
 	}
 
 	@Reference(unbind = "-")
