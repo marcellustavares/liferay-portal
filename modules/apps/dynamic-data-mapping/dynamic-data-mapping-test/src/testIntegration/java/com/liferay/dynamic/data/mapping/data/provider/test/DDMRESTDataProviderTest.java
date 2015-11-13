@@ -25,6 +25,7 @@ import com.liferay.registry.RegistryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,7 +70,7 @@ public class DDMRESTDataProviderTest {
 		DDMDataProviderContext ddmDataProviderContext =
 			new DDMDataProviderContext(ddmFormField.getProperties());
 
-		List<KeyValuePair> actualKeyValuePairs = _ddmDataProvider.getData(
+		Set<KeyValuePair> actualKeyValuePairs = _ddmDataProvider.getData(
 			ddmDataProviderContext);
 
 		Assert.assertNotNull(actualKeyValuePairs);
@@ -80,6 +81,11 @@ public class DDMRESTDataProviderTest {
 		for (KeyValuePair expectedKeyValuePair : expectedKeyValuePairs) {
 			Assert.assertTrue(
 				actualKeyValuePairs.contains(expectedKeyValuePair));
+
+			String value = _ddmDataProvider.getValue(
+				ddmDataProviderContext, expectedKeyValuePair.getKey());
+
+			Assert.assertEquals(expectedKeyValuePair.getValue(), value);
 		}
 	}
 

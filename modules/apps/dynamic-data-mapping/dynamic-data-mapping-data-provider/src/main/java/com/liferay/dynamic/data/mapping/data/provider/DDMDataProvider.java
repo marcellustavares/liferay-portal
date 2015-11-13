@@ -16,15 +16,19 @@ package com.liferay.dynamic.data.mapping.data.provider;
 
 import com.liferay.portal.kernel.util.KeyValuePair;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Luca Comin
  */
 public interface DDMDataProvider {
 
-	public List<KeyValuePair> getData(
+	public Set<KeyValuePair> getData(
 			DDMDataProviderContext ddmDataProviderContext)
+		throws DDMDataProviderException;
+
+	public String getValue(
+			DDMDataProviderContext ddmDataProviderContext, String key)
 		throws DDMDataProviderException;
 
 }
