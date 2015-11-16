@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil"%>
 <%@ include file="/admin/init.jsp" %>
 
 <%
@@ -97,11 +98,16 @@ recordSetSearch.setOrderByType(orderByType);
 						%>
 
 						<liferay-ui:search-container-column-text colspan="<%= 2 %>">
+
+							<%
+							DDLFormAdminPortletUtil.saveThumbnail(request, recordSet.getRecordSetId());
+							%>
+
 							<liferay-frontend:vertical-card
 								actionJsp="/admin/record_set_action.jsp"
 								actionJspServletContext="<%= application %>"
 								cssClass="entry-display-style"
-								imageUrl='<%= themeDisplay.getPathThemeImages() + "/file_system/large/article.png" %>'
+								imageUrl='<%= "/o/ddm-form-thumbnail?recordSetId=" + recordSet.getRecordSetId() %>'
 								resultRow="<%= row %>"
 								showCheckbox= "<%= false %>"
 								title="<%= recordSet.getName(locale) %>"

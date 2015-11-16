@@ -98,6 +98,20 @@
 		margin: 0;
 	}
 
+	.user-icon-color-3.user-icon.user-icon-default {
+		display: none;
+	}
+
+	.aspect-ratio-bg-center {
+		background-position: 0 0;
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+
+	.searchcontainer-content .list-unstyled {
+		margin-top: 15px;
+	}
+
 	.ddl-form-basic-info {
 		background-color: #869CAD;
 		min-height: 300px;
