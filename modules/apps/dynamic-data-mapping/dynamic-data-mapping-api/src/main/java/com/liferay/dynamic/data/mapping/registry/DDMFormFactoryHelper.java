@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.registry.annotations.DDMFormField;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
@@ -29,7 +30,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.lang.reflect.Method;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -263,15 +263,13 @@ public class DDMFormFactoryHelper {
 	}
 
 	protected ResourceBundle getResourceBundle(Locale locale) {
-		try {
-			return ResourceBundleUtil.getBundle(
-				getResourceBundleBaseName(_clazz), locale, _clazz);
-		}
-		catch (Exception e) {
-			return ResourceBundleUtil.getBundle(
-				getResourceBundleBaseName(_clazz), locale,
-				PortalClassLoaderUtil.getClassLoader());
-		}
+		return new AggregateResourceBundle(
+				ResourceBundleUtil.getBundle(
+					getResourceBundleBaseName(_clazz), locale, _clazz),
+				ResourceBundleUtil.getBundle(
+					getResourceBundleBaseName(_clazz), locale,
+					PortalClassLoaderUtil.getClassLoader())
+			);
 	}
 
 	protected String getResourceBundleBaseName(Class<?> clazz) {

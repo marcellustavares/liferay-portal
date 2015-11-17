@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.registry.BaseDDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.registry.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.dynamic.data.mapping.service.DDMDataProviderLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -164,10 +165,10 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	}
 
 	@Reference
-	protected void setDDMDataProviderService(
-		DDMDataProviderService ddmDataProviderService) {
+	protected void setDDMDataProviderLocalService(
+		DDMDataProviderLocalService ddmDataProviderLocalService) {
 
-		_ddmDataProviderService = ddmDataProviderService;
+		_ddmDataProviderLocalService = ddmDataProviderLocalService;
 	}
 
 	protected synchronized void unregisterDDMDataProvider(
@@ -192,7 +193,7 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		throws PortalException, PrincipalException {
 
 		com.liferay.dynamic.data.mapping.model.DDMDataProvider
-			ddmDataProviderEntry = _ddmDataProviderService.getDataProvider(
+			ddmDataProviderEntry = _ddmDataProviderLocalService.getDataProvider(
 				ddmDataProviderId);
 
 		String type = ddmDataProviderEntry.getType();
@@ -244,7 +245,7 @@ public class SelectDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 
 	private final Map<String, DDMDataProvider> _ddmDataProviders =
 		new ConcurrentHashMap<>();
-	private DDMDataProviderService _ddmDataProviderService;
+	private DDMDataProviderLocalService _ddmDataProviderLocalService;
 	private final Map<String, DDMDataProviderSettings>
 		_ddmDataProviderSettings = new ConcurrentHashMap<>();
 	private TemplateResource _templateResource;
