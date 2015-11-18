@@ -12,16 +12,29 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
-
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.validator.exception.DDMFormValidationException;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public interface DDMFormValidator {
+public class InvalidDefaultLocaleForPropertyValidationException
+	extends DDMFormValidationException {
 
-	public void validate(DDMForm ddmForm) throws DDMFormValidationException;
+	public InvalidDefaultLocaleForPropertyValidationException() {
+	}
+
+	public InvalidDefaultLocaleForPropertyValidationException(String msg) {
+		super(msg);
+	}
+
+	public InvalidDefaultLocaleForPropertyValidationException(
+		String msg, Throwable cause) {
+
+		super(msg, cause);
+	}
+
+	public InvalidDefaultLocaleForPropertyValidationException(Throwable cause) {
+		super(cause);
+	}
 
 }

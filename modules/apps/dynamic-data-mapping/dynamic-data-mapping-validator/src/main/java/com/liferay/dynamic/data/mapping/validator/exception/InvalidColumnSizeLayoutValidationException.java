@@ -12,30 +12,28 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
-
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.exception.PortalException;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author Leonardo Barros
  */
-@ProviderType
-public class DDMFormValidationException extends PortalException {
+public class InvalidColumnSizeLayoutValidationException
+	extends DDMFormLayoutValidationException {
 
-	public DDMFormValidationException() {
+	public InvalidColumnSizeLayoutValidationException() {
 	}
 
-	public DDMFormValidationException(String msg) {
+	public InvalidColumnSizeLayoutValidationException(String msg) {
 		super(msg);
 	}
 
-	public DDMFormValidationException(String msg, Throwable cause) {
+	public InvalidColumnSizeLayoutValidationException(
+		String msg, Throwable cause) {
+
 		super(msg, cause);
 	}
 
-	public DDMFormValidationException(Throwable cause) {
+	public InvalidColumnSizeLayoutValidationException(Throwable cause) {
 		super(cause);
 	}
 

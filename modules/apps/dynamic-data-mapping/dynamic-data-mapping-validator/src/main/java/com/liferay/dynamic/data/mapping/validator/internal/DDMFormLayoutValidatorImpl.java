@@ -19,8 +19,13 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidator;
+import com.liferay.dynamic.data.mapping.validator.exception.DDMFormLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.DuplicateFieldNameLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.InvalidColumnSizeLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.InvalidRowSizeLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.MissingDefaultLocaleLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.WrongDefaultLocaleSetForPageTitleLayoutValidationException;
 import com.liferay.portal.kernel.util.SetUtil;
 
 import java.util.HashSet;
@@ -53,7 +58,7 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 		Locale defaultLocale = ddmFormLayout.getDefaultLocale();
 
 		if (defaultLocale == null) {
-			throw new DDMFormLayoutValidationException(
+			throw new MissingDefaultLocaleLayoutValidationException(
 				"DDM form layout does not have a default locale");
 		}
 	}
@@ -77,7 +82,7 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 						ddmFormLayoutColumn.getDDMFormFieldNames());
 
 					if (!intersectDDMFormFieldNames.isEmpty()) {
-						throw new DDMFormLayoutValidationException(
+						throw new DuplicateFieldNameLayoutValidationException(
 							"Field names " + intersectDDMFormFieldNames +
 								" were defined more than once");
 					}
@@ -100,7 +105,7 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 			LocalizedValue title = ddmFormLayoutPage.getTitle();
 
 			if (!defaultLocale.equals(title.getDefaultLocale())) {
-				throw new DDMFormLayoutValidationException(
+				throw new WrongDefaultLocaleSetForPageTitleLayoutValidationException(
 					"DDM form layout page title's default locale is not the " +
 						"same as the DDM form layout's default locale");
 			}
@@ -124,7 +129,7 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 					int columnSize = ddmFormLayoutColumn.getSize();
 
 					if ((columnSize <= 0) || (columnSize > _MAX_ROW_SIZE)) {
-						throw new DDMFormLayoutValidationException(
+						throw new InvalidColumnSizeLayoutValidationException(
 							"Invalid column size, it must be positive and " +
 								"less than maximum row size of 12");
 					}
@@ -133,7 +138,7 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 				}
 
 				if (rowSize != _MAX_ROW_SIZE) {
-					throw new DDMFormLayoutValidationException(
+					throw new InvalidRowSizeLayoutValidationException(
 						"Invalid row size, the sum of all column sizes of a " +
 							"row must be less than maximum row size of 12");
 				}

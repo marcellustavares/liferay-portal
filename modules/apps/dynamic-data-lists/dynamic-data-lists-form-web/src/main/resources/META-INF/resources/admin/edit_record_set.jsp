@@ -48,10 +48,26 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
 
+		<liferay-ui:error exception="<%= AvailableLocalesNotSetValidationException.class %>" message="available-locales-not-set-validation-exception" />
+		<liferay-ui:error exception="<%= DefaultLocaleNotSetAsAvailableLocationValidationException.class %>" message="default-locale-not-set-as-avalailable-locale-validation-exception" />
+		<liferay-ui:error exception="<%= DefaultLocalePropertyNotSetValidationException.class %>" message="default-locale-property-not-set-validation-exception" />
+		<liferay-ui:error exception="<%= DuplicateFieldNameLayoutValidationException.class %>" message="duplicated-field-name-layout-validation-exception" />
+		<liferay-ui:error exception="<%= DuplicateFieldNameValidationException.class %>" message="duplicated-field-name-validation-exception" />
+		<liferay-ui:error exception="<%= EmptyOptionSetValidationException.class %>" message="empty-option-set-validation-exception" />
+		<liferay-ui:error exception="<%= FieldTypeNotSetValidationException.class %>" message="field-type-not-set-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidAvailableLocalesValidationException.class %>" message="invalid-available-locales-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidCharacterForFieldNameValidationException.class %>" message="invalid-character-for-field-name-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidCharacterForFieldTypeValidationException.class %>" message="invalid-character-for-field-type-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidColumnSizeLayoutValidationException.class %>" message="invalid-column-size-layout-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidDefaultLocaleForPropertyValidationException.class %>" message="invalid-default-locale-set-for-a-field-property-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidIndexTypeSetForFieldValidationException.class %>" message="invalid-index-type-set-for-field-validation-exception" />
+		<liferay-ui:error exception="<%= InvalidRowSizeLayoutValidationException.class %>" message="invalid-row-size-layout-validation-exception" />
+		<liferay-ui:error exception="<%= MissingDefaultLocaleLayoutValidationException.class %>" message="missing-default-locale-layout-validation-exception" />
 		<liferay-ui:error exception="<%= RecordSetNameException.class %>" message="please-enter-a-valid-form-name" />
-		<liferay-ui:error exception="<%= StructureDefinitionException .class %>" message="please-enter-a-valid-form-definition" />
-		<liferay-ui:error exception="<%= StructureLayoutException .class %>" message="please-enter-a-valid-form-layout" />
-		<liferay-ui:error exception="<%= StructureNameException .class %>" message="please-enter-a-valid-form-name" />
+		<liferay-ui:error exception="<%= StructureDefinitionException.class %>" message="please-enter-a-valid-form-definition" />
+		<liferay-ui:error exception="<%= StructureLayoutException.class %>" message="please-enter-a-valid-form-layout" />
+		<liferay-ui:error exception="<%= StructureNameException.class %>" message="please-enter-a-valid-form-name" />
+		<liferay-ui:error exception="<%= WrongDefaultLocaleSetForPageTitleLayoutValidationException.class %>" message="wrong-default-locale-set-for-page-title-layout-validation-exception" />
 
 		<aui:fieldset cssClass="ddl-form-basic-info">
 			<div class="container-fluid-1280">

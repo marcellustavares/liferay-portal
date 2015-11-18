@@ -19,6 +19,11 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.validator.exception.DuplicateFieldNameLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.InvalidColumnSizeLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.InvalidRowSizeLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.MissingDefaultLocaleLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.exception.WrongDefaultLocaleSetForPageTitleLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.internal.DDMFormLayoutValidatorImpl;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
@@ -31,7 +36,7 @@ import org.junit.Test;
  */
 public class DDMFormLayoutValidatorTest {
 
-	@Test(expected = DDMFormLayoutValidationException.class)
+	@Test(expected = DuplicateFieldNameLayoutValidationException.class)
 	public void testDuplicateFieldNames() throws Exception {
 		DDMFormLayoutColumn ddmFormLayoutColumn1 = createDDMFormLayoutColumn(
 			6, "field1", "field2", "field3");
@@ -55,7 +60,26 @@ public class DDMFormLayoutValidatorTest {
 		_ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
 
-	@Test(expected = DDMFormLayoutValidationException.class)
+	@Test(expected = InvalidColumnSizeLayoutValidationException.class)
+	public void testInvalidColumnSize() throws Exception {
+		DDMFormLayoutColumn ddmFormLayoutColumn = createDDMFormLayoutColumn(
+			0, "field");
+
+		DDMFormLayoutRow ddmFormLayoutRow = createDDMFormLayoutRow(
+			ddmFormLayoutColumn);
+
+		LocalizedValue title = createLocalizedValue("Page1", LocaleUtil.US);
+
+		DDMFormLayoutPage ddmFormLayoutPage = createDDMFormLayoutPage(
+			ddmFormLayoutRow, title);
+
+		DDMFormLayout ddmFormLayout = createDDMFormLayout(
+			ddmFormLayoutPage, LocaleUtil.US);
+
+		_ddmFormLayoutValidator.validate(ddmFormLayout);
+	}
+
+	@Test(expected = InvalidRowSizeLayoutValidationException.class)
 	public void testInvalidRowSize() throws Exception {
 		DDMFormLayoutColumn ddmFormLayoutColumn1 = createDDMFormLayoutColumn(
 			6, "field1");
@@ -79,7 +103,7 @@ public class DDMFormLayoutValidatorTest {
 		_ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
 
-	@Test(expected = DDMFormLayoutValidationException.class)
+	@Test(expected = MissingDefaultLocaleLayoutValidationException.class)
 	public void testNullDefaultLocale() throws Exception {
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
@@ -107,7 +131,8 @@ public class DDMFormLayoutValidatorTest {
 		_ddmFormLayoutValidator.validate(ddmFormLayout);
 	}
 
-	@Test(expected = DDMFormLayoutValidationException.class)
+	@Test(expected =
+			WrongDefaultLocaleSetForPageTitleLayoutValidationException.class)
 	public void testWrongDefaultLocaleSetForPageTitle() throws Exception {
 		DDMFormLayoutColumn ddmFormLayoutColumn = createDDMFormLayoutColumn(
 			12, "field");

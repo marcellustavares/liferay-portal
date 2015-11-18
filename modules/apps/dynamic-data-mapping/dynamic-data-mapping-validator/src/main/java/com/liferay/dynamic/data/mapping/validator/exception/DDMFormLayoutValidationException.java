@@ -12,16 +12,31 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.validator.exception.DDMFormValidationException;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
- * @author Marcellus Tavares
+ * @author Brian Wing Shun Chan
  */
-public interface DDMFormValidator {
+@ProviderType
+public class DDMFormLayoutValidationException extends PortalException {
 
-	public void validate(DDMForm ddmForm) throws DDMFormValidationException;
+	public DDMFormLayoutValidationException() {
+	}
+
+	public DDMFormLayoutValidationException(String msg) {
+		super(msg);
+	}
+
+	public DDMFormLayoutValidationException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public DDMFormLayoutValidationException(Throwable cause) {
+		super(cause);
+	}
 
 }

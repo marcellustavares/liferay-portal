@@ -12,16 +12,29 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
-
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.validator.exception.DDMFormValidationException;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public interface DDMFormValidator {
+public class InvalidRowSizeLayoutValidationException
+	extends DDMFormLayoutValidationException {
 
-	public void validate(DDMForm ddmForm) throws DDMFormValidationException;
+	public InvalidRowSizeLayoutValidationException() {
+	}
+
+	public InvalidRowSizeLayoutValidationException(String msg) {
+		super(msg);
+	}
+
+	public InvalidRowSizeLayoutValidationException(
+		String msg, Throwable cause) {
+
+		super(msg, cause);
+	}
+
+	public InvalidRowSizeLayoutValidationException(Throwable cause) {
+		super(cause);
+	}
 
 }

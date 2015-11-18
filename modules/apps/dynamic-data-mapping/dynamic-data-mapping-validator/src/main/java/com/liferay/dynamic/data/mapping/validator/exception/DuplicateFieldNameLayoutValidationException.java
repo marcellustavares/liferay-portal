@@ -12,16 +12,29 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
-
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.validator.exception.DDMFormValidationException;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public interface DDMFormValidator {
+public class DuplicateFieldNameLayoutValidationException
+	extends DDMFormLayoutValidationException {
 
-	public void validate(DDMForm ddmForm) throws DDMFormValidationException;
+	public DuplicateFieldNameLayoutValidationException() {
+	}
+
+	public DuplicateFieldNameLayoutValidationException(String msg) {
+		super(msg);
+	}
+
+	public DuplicateFieldNameLayoutValidationException(
+		String msg, Throwable cause) {
+
+		super(msg, cause);
+	}
+
+	public DuplicateFieldNameLayoutValidationException(Throwable cause) {
+		super(cause);
+	}
 
 }

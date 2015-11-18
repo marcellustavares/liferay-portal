@@ -12,30 +12,28 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.validator;
-
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.exception.PortalException;
+package com.liferay.dynamic.data.mapping.validator.exception;
 
 /**
- * @author Brian Wing Shun Chan
+ * @author Leonardo Barros
  */
-@ProviderType
-public class DDMFormLayoutValidationException extends PortalException {
+public class InvalidAvailableLocalesValidationException
+	extends DDMFormValidationException {
 
-	public DDMFormLayoutValidationException() {
+	public InvalidAvailableLocalesValidationException() {
 	}
 
-	public DDMFormLayoutValidationException(String msg) {
+	public InvalidAvailableLocalesValidationException(String msg) {
 		super(msg);
 	}
 
-	public DDMFormLayoutValidationException(String msg, Throwable cause) {
+	public InvalidAvailableLocalesValidationException(
+		String msg, Throwable cause) {
+
 		super(msg, cause);
 	}
 
-	public DDMFormLayoutValidationException(Throwable cause) {
+	public InvalidAvailableLocalesValidationException(Throwable cause) {
 		super(cause);
 	}
 
