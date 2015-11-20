@@ -19,9 +19,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="Site Name" />
 			<var name="sitePageName" value="Staging Test Page" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 	</set-up>
 
@@ -3130,6 +3130,8 @@
 			<var name="site" value="Site Name" />
 		</execute>
 
+		<execute macro="Staging#gotoPublishToLive" />
+
 		<execute macro="Staging#configurePublishToLive">
 			<var name="checkPageName" value="Page 2" />
 		</execute>
@@ -3839,9 +3841,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="Site Name" />
 			<var name="sitePageName" value="Test Page 1" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -3849,9 +3851,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="Site Name" />
 			<var name="sitePageName" value="Test Page 2" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -3859,9 +3861,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="Site Name" />
 			<var name="sitePageName" value="Test Page 3" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoPG">
@@ -4275,9 +4277,9 @@
 		<execute macro="Navigator#gotoStagedView" />
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="Test Page 1" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoCP">
@@ -4285,9 +4287,9 @@
 		</execute>
 
 		<execute macro="SitePage#addCP">
+			<var name="page" value="Public Pages" />
 			<var name="siteName" value="${siteName}" />
 			<var name="sitePageName" value="Test Page 2" />
-			<var name="sitePagePrivacy" value="Public" />
 		</execute>
 
 		<execute macro="Page#gotoPagesCP">

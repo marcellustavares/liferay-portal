@@ -20,6 +20,7 @@ import com.liferay.application.list.constants.ApplicationListWebKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.marketplace.app.manager.web.constants.MarketplaceAppManagerPortletKeys;
 import com.liferay.marketplace.bundle.BundleManagerUtil;
+import com.liferay.marketplace.exception.FileExtensionException;
 import com.liferay.marketplace.service.AppService;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -157,6 +158,12 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 				SessionErrors.add(
 					actionRequest, UploadException.class.getName());
 			}
+			else if (!fileName.endsWith(".jar") &&
+					 !fileName.endsWith(".lpkg") &&
+					 !fileName.endsWith(".war")) {
+
+				throw new FileExtensionException();
+			}
 			else {
 				String deployDir = PrefsPropsUtil.getString(
 					PropsKeys.AUTO_DEPLOY_DEPLOY_DIR);
@@ -167,33 +174,29 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest, "pluginUploaded");
 			}
 		}
-		else {
-			try {
-				String url = ParamUtil.getString(uploadPortletRequest, "url");
+	}
 
-				URL urlObj = new URL(url);
+	public void installRemoteApp(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
 
-				String host = urlObj.getHost();
+		try {
+			String url = ParamUtil.getString(actionRequest, "url");
 
-				if (host.endsWith("sf.net") ||
-					host.endsWith("sourceforge.net")) {
+			URL urlObj = new URL(url);
 
-					doInstallSourceForgeApp(
-						urlObj.getPath(), uploadPortletRequest, actionRequest);
-				}
-				else {
-					doInstallRemoteApp(
-						url, uploadPortletRequest, actionRequest, true);
-				}
+			String host = urlObj.getHost();
+
+			if (host.endsWith("sf.net") || host.endsWith("sourceforge.net")) {
+				doInstallSourceForgeApp(urlObj.getPath(), actionRequest);
 			}
-			catch (MalformedURLException murle) {
-				SessionErrors.add(actionRequest, "invalidUrl", murle);
+			else {
+				doInstallRemoteApp(url, actionRequest, true);
 			}
 		}
-
-		String redirect = ParamUtil.getString(uploadPortletRequest, "redirect");
-
-		actionResponse.sendRedirect(redirect);
+		catch (MalformedURLException murle) {
+			SessionErrors.add(actionRequest, "invalidURL", murle);
+		}
 	}
 
 	public void uninstallApp(
@@ -356,14 +359,13 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 	}
 
 	protected int doInstallRemoteApp(
-			String url, UploadPortletRequest uploadPortletRequest,
-			ActionRequest actionRequest, boolean failOnError)
+			String url, ActionRequest actionRequest, boolean failOnError)
 		throws Exception {
 
 		int responseCode = HttpServletResponse.SC_OK;
 
 		String deploymentContext = ParamUtil.getString(
-			uploadPortletRequest, "deploymentContext");
+			actionRequest, "deploymentContext");
 
 		try {
 			String fileName = null;
@@ -427,8 +429,7 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 	}
 
 	protected void doInstallSourceForgeApp(
-			String path, UploadPortletRequest uploadPortletRequest,
-			ActionRequest actionRequest)
+			String path, ActionRequest actionRequest)
 		throws Exception {
 
 		String[] sourceForgeMirrors = PropsUtil.getArray(
@@ -445,7 +446,7 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 				}
 
 				int responseCode = doInstallRemoteApp(
-					url, uploadPortletRequest, actionRequest, failOnError);
+					url, actionRequest, failOnError);
 
 				if (responseCode == HttpServletResponse.SC_OK) {
 					return;
@@ -495,11 +496,11 @@ public class MarketplaceAppManagerPortlet extends MVCPortlet {
 
 	private static final String _DEPLOY_TO_PREFIX = "DEPLOY_TO__";
 
-	private AppService _appService;
-	private PanelAppRegistry _panelAppRegistry;
-	private PanelCategoryRegistry _panelCategoryRegistry;
-	private PluginSettingLocalService _pluginSettingLocalService;
-	private PluginSettingService _pluginSettingService;
-	private PortletService _portletService;
+	private volatile AppService _appService;
+	private volatile PanelAppRegistry _panelAppRegistry;
+	private volatile PanelCategoryRegistry _panelCategoryRegistry;
+	private volatile PluginSettingLocalService _pluginSettingLocalService;
+	private volatile PluginSettingService _pluginSettingService;
+	private volatile PortletService _portletService;
 
 }

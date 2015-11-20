@@ -74,7 +74,7 @@ recordSearchContainer.setOrderByComparator(orderByComparator);
 recordSearchContainer.setOrderByType(orderByType);
 %>
 
-<portlet:renderURL var="addRecordURL">
+<portlet:renderURL copyCurrentRenderParameters="<%= false %>" var="addRecordURL">
 	<portlet:param name="mvcPath" value="/edit_record.jsp" />
 	<portlet:param name="redirect" value="<%= currentURL %>" />
 	<portlet:param name="recordSetId" value="<%= String.valueOf(recordSet.getRecordSetId()) %>" />
@@ -87,7 +87,7 @@ recordSearchContainer.setOrderByType(orderByType);
 			<aui:nav-item href="<%= addRecordURL %>" iconCssClass="icon-plus" label='<%= LanguageUtil.format(request, "add-x", HtmlUtil.escape(ddmStructure.getName(locale)), false) %>' />
 
 			<c:if test="<%= DDLRecordSetPermission.contains(permissionChecker, recordSet, ActionKeys.UPDATE) %>">
-				<portlet:renderURL var="editRecordSetURL">
+				<portlet:renderURL copyCurrentRenderParameters="<%= false %>" var="editRecordSetURL">
 					<portlet:param name="mvcPath" value="/edit_record_set.jsp" />
 					<portlet:param name="redirect" value="<%= currentURL %>" />
 					<portlet:param name="recordSetId" value="<%= String.valueOf(recordSet.getRecordSetId()) %>" />
@@ -118,7 +118,7 @@ recordSearchContainer.setOrderByType(orderByType);
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
 
-<div class="container-fluid-1280" id="<portlet:namespace />formContainer">
+<div class="container-fluid-1280 view-records-container" id="<portlet:namespace />formContainer">
 	<aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
 		<liferay-ui:search-container
 			searchContainer="<%= recordSearchContainer %>"

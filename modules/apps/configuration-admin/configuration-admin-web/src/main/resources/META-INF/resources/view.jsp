@@ -20,12 +20,11 @@
 List<String> configurationCategories = (List<String>)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_CATEGORIES);
 String configurationCategory = (String)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_CATEGORY);
 ConfigurationModelIterator configurationModelIterator = (ConfigurationModelIterator)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_MODEL_ITERATOR);
-ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAttribute(ConfigurationAdminWebKeys.FACTORY_CONFIGURATION_MODEL);
-%>
 
-<c:if test="<%= factoryConfigurationModel != null %>">
-	<liferay-ui:header backURL="<%= String.valueOf(renderResponse.createRenderURL()) %>" title="<%= factoryConfigurationModel.getName() %>" />
-</c:if>
+PortletURL portletURL = renderResponse.createRenderURL();
+
+portletURL.setParameter("configurationCategory", configurationCategory);
+%>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
@@ -54,6 +53,7 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 <div class="container-fluid-1280">
 	<liferay-ui:search-container
 		emptyResultsMessage="no-configurations-were-found"
+		iteratorURL="<%= portletURL %>"
 		total="<%= configurationModelIterator.getTotal() %>"
 	>
 		<liferay-ui:search-container-results
@@ -66,14 +66,16 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 			modelVar="configurationModel"
 		>
 			<portlet:renderURL var="editURL">
-				<portlet:param name="mvcPath" value="/edit_configuration.jsp" />
+				<portlet:param name="mvcRenderCommandName" value="/edit_configuration" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="factoryPid" value="<%= configurationModel.getFactoryPid() %>" />
 				<portlet:param name="pid" value="<%= configurationModel.getID() %>" />
 			</portlet:renderURL>
 
 			<portlet:renderURL var="viewFactoryInstancesURL">
+				<portlet:param name="mvcRenderCommandName" value="/view_factory_instances" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="factoryPid" value="<%= configurationModel.getFactoryPid() %>" />
-				<portlet:param name="viewType" value="factoryInstances" />
 			</portlet:renderURL>
 
 			<liferay-ui:search-container-column-text name="name">
@@ -85,12 +87,6 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 						<aui:a href="<%= editURL %>"><%= configurationModel.getName() %></aui:a>
 					</c:otherwise>
 				</c:choose>
-
-				<c:if test="<%= factoryConfigurationModel != null %>">
-					<br />
-
-					<%= configurationModel.getID() %>
-				</c:if>
 			</liferay-ui:search-container-column-text>
 
 			<liferay-ui:search-container-column-text
@@ -138,7 +134,8 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 							/>
 
 							<portlet:renderURL var="createFactoryConfigURL">
-								<portlet:param name="mvcPath" value="/edit_configuration.jsp" />
+								<portlet:param name="mvcRenderCommandName" value="/edit_configuration" />
+								<portlet:param name="redirect" value="<%= currentURL %>" />
 								<portlet:param name="factoryPid" value="<%= configurationModel.getID() %>" />
 							</portlet:renderURL>
 
@@ -157,6 +154,7 @@ ConfigurationModel factoryConfigurationModel = (ConfigurationModel)request.getAt
 
 							<c:if test="<%= configurationModel.getConfiguration() != null %>">
 								<portlet:actionURL name="deleteConfiguration" var="deleteConfigActionURL">
+									<portlet:param name="redirect" value="<%= currentURL %>" />
 									<portlet:param name="factoryPid" value="<%= configurationModel.getFactoryPid() %>" />
 									<portlet:param name="pid" value="<%= configurationModel.getID() %>" />
 								</portlet:actionURL>

@@ -9,6 +9,10 @@
 			<available file="${test.base.dir.name}/test.properties" />
 		</and>
 		<then>
+			<property file="${test.base.dir.name}/test.${user.name}.properties" />
+			<property file="${test.base.dir.name}/test.${env.COMPUTERNAME}.properties" />
+			<property file="${test.base.dir.name}/test.${env.HOST}.properties" />
+			<property file="${test.base.dir.name}/test.${env.HOSTNAME}.properties" />
 			<property file="${test.base.dir.name}/test.properties" />
 		</then>
 	</if>
@@ -2011,6 +2015,7 @@ module.framework.base.dir=${liferay.home}/osgi]]></echo>
 				</then>
 				<elseif>
 					<or>
+						<equals arg1="@{liferay.portal.bundle}" arg2="6.2.1" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="6.2.2" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="6.2.3" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="6.2.10.1" />
@@ -3609,6 +3614,29 @@ go]]></replacevalue>
 					<property name="plugin.types" value="webs" />
 					<property name="plugins.includes" value="${web.plugins.includes}" />
 				</ant>
+			</then>
+		</if>
+	</target>
+
+	<target name="deploy-sql-zip">
+		<if>
+			<matches pattern="http" string="${test.sql.zip.url}" />
+			<then>
+				<mirrors-get
+					dest="sql/release-sql.zip"
+					src="${test.sql.zip.url}"
+				/>
+
+				<unzip dest="sql/" src="sql/release-sql.zip">
+					<patternset
+						includes="liferay-*/**"
+					/>
+					<mapper
+						from="[^/]+/(create.*)"
+						to="\1"
+						type="regexp"
+					/>
+				</unzip>
 			</then>
 		</if>
 	</target>
@@ -6233,6 +6261,20 @@ if (ppstate.equals("normal")) {
 		</gradle-execute>
 
 		<move file="portal-web/test.case.method.names.properties" tofile="test.case.method.names.properties" />
+
+		<echo></echo>
+		<echo>##</echo>
+		<echo>## test.case.method.names.properties</echo>
+		<echo>##</echo>
+		<echo></echo>
+
+		<var name="file.content" unset="true" />
+
+		<loadfile property="file.content" srcFile="test.case.method.names.properties" />
+
+		<echo>${file.content}</echo>
+
+		<var name="file.content" unset="true" />
 	</target>
 
 	<target name="record-test-class-file-names">

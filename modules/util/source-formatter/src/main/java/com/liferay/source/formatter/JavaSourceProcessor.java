@@ -874,6 +874,23 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		newContent = checkPrincipalException(newContent);
 
+		// LPS-59828
+
+		if (fileName.endsWith("Upgrade.java") &&
+			newContent.contains("implements UpgradeStepRegistrator")) {
+
+			matcher = _componentAnnotationPattern.matcher(newContent);
+
+			if (matcher.find()) {
+				String componentAnnotation = matcher.group();
+
+				if (!componentAnnotation.contains("service =")) {
+					processErrorMessage(
+						fileName, "Missing service in @Component " + fileName);
+				}
+			}
+		}
+
 		// LPS-60473
 
 		if (newContent.contains(".supportsBatchUpdates()") &&
@@ -962,8 +979,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		_secureXmlExclusionFiles = getPropertyList("secure.xml.excludes.files");
 		_staticLogVariableExclusionFiles = getPropertyList(
 			"static.log.excludes.files");
-		_temporaryLPS59076ExclusionFiles = getPropertyList(
-			"temporary.lps59076.excludes.files");
 		_testAnnotationsExclusionFiles = getPropertyList(
 			"test.annotations.excludes.files");
 		_upgradeServiceUtilExclusionFiles = getPropertyList(
@@ -2204,9 +2219,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		// LPS-60186
 
-		if (fileName.endsWith("Configuration.java") &&
-			!fileName.endsWith("OverriddenConfiguration.java") &&
-			absolutePath.contains("/modules/apps/") &&
+		if (!absolutePath.contains("/test/") &&
+			content.contains("@Meta.OCD") &&
 			!content.contains("@ConfigurationAdmin")) {
 
 			processErrorMessage(
@@ -2249,14 +2263,10 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				}
 			}
 
-			if (!isExcludedFile(
-					_temporaryLPS59076ExclusionFiles, absolutePath)) {
-
-				processErrorMessage(
-					fileName,
-					"LPS-59076: Use @Reference instead of calling " +
-						serviceUtilClassName + " directly: " + fileName);
-			}
+			processErrorMessage(
+				fileName,
+				"LPS-59076: Use @Reference instead of calling " +
+					serviceUtilClassName + " directly: " + fileName);
 		}
 
 		matcher = _setReferenceMethodPattern.matcher(content);
@@ -2290,10 +2300,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				}
 			}
 
-			if (!_checkModulesServiceUtil) {
-				continue;
-			}
-
 			String methodContent = matcher.group(6);
 
 			Matcher referenceMethodContentMatcher =
@@ -2303,15 +2309,41 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				continue;
 			}
 
+			String typeName = matcher.group(5);
+			String variableName = referenceMethodContentMatcher.group(1);
+
+			StringBundler sb = new StringBundler(5);
+
+			sb.append("private ");
+			sb.append(typeName);
+			sb.append("\\s+");
+			sb.append(variableName);
+			sb.append(StringPool.SEMICOLON);
+
+			Pattern privateVarPattern = Pattern.compile(sb.toString());
+
+			Matcher privateVarMatcher = privateVarPattern.matcher(content);
+
+			if (privateVarMatcher.find()) {
+				String match = privateVarMatcher.group();
+
+				String replacement = StringUtil.replace(
+					match, "private ", "private volatile ");
+
+				return StringUtil.replace(content, match, replacement);
+			}
+
+			if (!_checkModulesServiceUtil) {
+				continue;
+			}
+
 			if (moduleServicePackagePath == null) {
 				moduleServicePackagePath = getModuleServicePackagePath(
 					fileName);
 			}
 
 			if (Validator.isNotNull(moduleServicePackagePath)) {
-				String typeName = matcher.group(5);
-
-				StringBundler sb = new StringBundler(5);
+				sb = new StringBundler(5);
 
 				sb.append("\nimport ");
 				sb.append(moduleServicePackagePath);
@@ -3381,6 +3413,21 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						"\n" + firstLine + "\n" + secondLine + "\n");
 				}
 			}
+			else {
+				x = line.lastIndexOf(StringPool.SPACE);
+
+				if (x != -1) {
+					String firstLine = line.substring(0, x);
+					String secondLine =
+						indent + StringPool.TAB + line.substring(x + 1);
+
+					if (getLineLength(secondLine) <= _MAX_LINE_LENGTH) {
+						return StringUtil.replace(
+							content, "\n" + line + "\n",
+							"\n" + firstLine + "\n" + secondLine + "\n");
+					}
+				}
+			}
 		}
 
 		if (line.contains(StringPool.TAB + "for (") && line.endsWith(" {")) {
@@ -3549,6 +3596,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 		"\n(\t*).+(=|\\]) (\\{)\n");
 	private Pattern _combinedLinesPattern2 = Pattern.compile(
 		"\n(\t*)@.+(\\()\n");
+	private Pattern _componentAnnotationPattern = Pattern.compile(
+		"@Component(\n|\\([\\s\\S]*?\\)\n)");
 	private List<String> _diamondOperatorExclusionFiles;
 	private List<String> _diamondOperatorExclusionPaths;
 	private Pattern _diamondOperatorPattern = Pattern.compile(
@@ -3583,14 +3632,13 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private Pattern _serviceUtilImportPattern = Pattern.compile(
 		"\nimport ([A-Za-z1-9\\.]*)\\.([A-Za-z1-9]*ServiceUtil);");
 	private Pattern _setReferenceMethodContentPattern = Pattern.compile(
-		"^\\w+ =\\s+\\w+;$");
+		"^(\\w+) =\\s+\\w+;$");
 	private Pattern _setReferenceMethodPattern = Pattern.compile(
 		"\n(\t+)@Reference([\\s\\S]*?)\\s+(protected|public) void (set\\w+?)" +
 			"\\(\\s*([ ,<>\\w]+)\\s+\\w+\\) \\{\\s+([\\s\\S]*?)\\s*?\\}");
 	private Pattern _stagedModelTypesPattern = Pattern.compile(
 		"StagedModelType\\(([a-zA-Z.]*(class|getClassName[\\(\\)]*))\\)");
 	private List<String> _staticLogVariableExclusionFiles;
-	private List<String> _temporaryLPS59076ExclusionFiles;
 	private List<String> _testAnnotationsExclusionFiles;
 	private Pattern _throwsSystemExceptionPattern = Pattern.compile(
 		"(\n\t+.*)throws(.*) SystemException(.*)( \\{|;\n)");

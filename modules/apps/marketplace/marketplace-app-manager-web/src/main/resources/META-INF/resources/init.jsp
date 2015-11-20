@@ -26,11 +26,14 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.application.list.constants.ApplicationListWebKeys" %><%@
 page import="com.liferay.application.list.constants.PanelCategoryKeys" %><%@
 page import="com.liferay.application.list.display.context.logic.PanelCategoryHelper" %><%@
+page import="com.liferay.marketplace.exception.FileExtensionException" %><%@
 page import="com.liferay.marketplace.model.App" %><%@
 page import="com.liferay.marketplace.service.AppLocalServiceUtil" %><%@
 page import="com.liferay.marketplace.util.comparator.PluginComparator" %><%@
 page import="com.liferay.portal.kernel.deploy.DeployManagerUtil" %><%@
+page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.plugin.RequiredPluginPackageException" %><%@
+page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.servlet.ServletContextPool" %><%@
 page import="com.liferay.portal.kernel.upload.UploadException" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
