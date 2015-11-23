@@ -37,6 +37,13 @@ if (Validator.isNull(redirect)) {
 	redirect = redirectURL.toString();
 }
 
+if(ParamUtil.getBoolean(request,"recordReverted", false)){
+	PortletURL redirectURL = renderResponse.createRenderURL();
+	redirectURL.setParameter("mvcPath", "/view.jsp");
+	
+	redirect = redirectURL.toString();
+}
+
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("mvcPath", "/view_record_history.jsp");
