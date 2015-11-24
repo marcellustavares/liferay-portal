@@ -70,7 +70,6 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 
 import java.io.File;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -974,7 +973,17 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				DDMStructure.class.getName());
 
 		_structureModelResourceNames.put(
+			"com.liferay.portlet.journal.model.JournalArticle",
+			"com.liferay.journal.model.JournalArticle-" +
+				DDMStructure.class.getName());
+
+		_structureModelResourceNames.put(
 			"com.liferay.dynamic.data.lists.model.DDLRecordSet",
+			"com.liferay.dynamic.data.lists.model.DDLRecordSet-" +
+				DDMStructure.class.getName());
+
+		_structureModelResourceNames.put(
+			"com.liferay.portlet.dynamicdatalists.model.DDLRecordSet",
 			"com.liferay.dynamic.data.lists.model.DDLRecordSet-" +
 				DDMStructure.class.getName());
 
@@ -989,6 +998,11 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 		_templateModelResourceNames.put(
 			"com.liferay.journal.model.JournalArticle",
+			"com.liferay.journal.model.JournalArticle-" +
+				DDMStructure.class.getName());
+
+		_templateModelResourceNames.put(
+			"com.liferay.portlet.journal.model.JournalArticle",
 			"com.liferay.journal.model.JournalArticle-" +
 				DDMStructure.class.getName());
 
