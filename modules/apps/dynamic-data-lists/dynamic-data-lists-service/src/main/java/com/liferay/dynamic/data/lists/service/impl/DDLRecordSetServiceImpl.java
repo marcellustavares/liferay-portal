@@ -123,6 +123,18 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	}
 
 	@Override
+	public DDLRecordSet updatePublished(
+			long recordSetId, boolean published, ServiceContext serviceContext)
+		throws PortalException {
+
+		DDLRecordSetPermission.check(
+			getPermissionChecker(), recordSetId, ActionKeys.UPDATE);
+
+		return ddlRecordSetLocalService.updatePublished(
+			recordSetId, published, serviceContext);
+	}
+
+	@Override
 	public DDLRecordSet updateRecordSet(
 			long recordSetId, long ddmStructureId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int minDisplayRows,

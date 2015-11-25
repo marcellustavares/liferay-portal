@@ -68,6 +68,7 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("minDisplayRows", getMinDisplayRows());
+		attributes.put("published", getPublished());
 		attributes.put("scope", getScope());
 		attributes.put("settings", getSettings());
 		attributes.put("lastPublishDate", getLastPublishDate());
@@ -153,6 +154,12 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 
 		if (minDisplayRows != null) {
 			setMinDisplayRows(minDisplayRows);
+		}
+
+		Boolean published = (Boolean)attributes.get("published");
+
+		if (published != null) {
+			setPublished(published);
 		}
 
 		Integer scope = (Integer)attributes.get("scope");
@@ -454,6 +461,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	/**
+	* Returns the published of this d d l record set.
+	*
+	* @return the published of this d d l record set
+	*/
+	@Override
+	public boolean getPublished() {
+		return _ddlRecordSet.getPublished();
+	}
+
+	/**
 	* Returns the record set ID of this d d l record set.
 	*
 	* @return the record set ID of this d d l record set
@@ -567,6 +584,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public boolean isNew() {
 		return _ddlRecordSet.isNew();
+	}
+
+	/**
+	* Returns <code>true</code> if this d d l record set is published.
+	*
+	* @return <code>true</code> if this d d l record set is published; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isPublished() {
+		return _ddlRecordSet.isPublished();
 	}
 
 	@Override
@@ -823,6 +850,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
 		_ddlRecordSet.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets whether this d d l record set is published.
+	*
+	* @param published the published of this d d l record set
+	*/
+	@Override
+	public void setPublished(boolean published) {
+		_ddlRecordSet.setPublished(published);
 	}
 
 	/**

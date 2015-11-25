@@ -47,6 +47,7 @@ public class DDLRecordSetSoap implements Serializable {
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setMinDisplayRows(model.getMinDisplayRows());
+		soapModel.setPublished(model.getPublished());
 		soapModel.setScope(model.getScope());
 		soapModel.setSettings(model.getSettings());
 		soapModel.setLastPublishDate(model.getLastPublishDate());
@@ -206,6 +207,18 @@ public class DDLRecordSetSoap implements Serializable {
 		_minDisplayRows = minDisplayRows;
 	}
 
+	public boolean getPublished() {
+		return _published;
+	}
+
+	public boolean isPublished() {
+		return _published;
+	}
+
+	public void setPublished(boolean published) {
+		_published = published;
+	}
+
 	public int getScope() {
 		return _scope;
 	}
@@ -243,6 +256,7 @@ public class DDLRecordSetSoap implements Serializable {
 	private String _name;
 	private String _description;
 	private int _minDisplayRows;
+	private boolean _published;
 	private int _scope;
 	private String _settings;
 	private Date _lastPublishDate;

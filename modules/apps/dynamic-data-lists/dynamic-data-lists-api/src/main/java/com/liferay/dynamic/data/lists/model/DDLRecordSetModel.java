@@ -456,6 +456,27 @@ public interface DDLRecordSetModel extends BaseModel<DDLRecordSet>,
 	public void setMinDisplayRows(int minDisplayRows);
 
 	/**
+	 * Returns the published of this d d l record set.
+	 *
+	 * @return the published of this d d l record set
+	 */
+	public boolean getPublished();
+
+	/**
+	 * Returns <code>true</code> if this d d l record set is published.
+	 *
+	 * @return <code>true</code> if this d d l record set is published; <code>false</code> otherwise
+	 */
+	public boolean isPublished();
+
+	/**
+	 * Sets whether this d d l record set is published.
+	 *
+	 * @param published the published of this d d l record set
+	 */
+	public void setPublished(boolean published);
+
+	/**
 	 * Returns the scope of this d d l record set.
 	 *
 	 * @return the scope of this d d l record set

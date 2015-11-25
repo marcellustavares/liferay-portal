@@ -92,6 +92,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 			{ "name", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
 			{ "minDisplayRows", Types.INTEGER },
+			{ "published", Types.BOOLEAN },
 			{ "scope", Types.INTEGER },
 			{ "settings_", Types.CLOB },
 			{ "lastPublishDate", Types.TIMESTAMP }
@@ -112,12 +113,13 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("minDisplayRows", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("published", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("scope", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("settings_", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table DDLRecordSet (uuid_ VARCHAR(75) null,recordSetId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,DDMStructureId LONG,recordSetKey VARCHAR(75) null,name STRING null,description STRING null,minDisplayRows INTEGER,scope INTEGER,settings_ TEXT null,lastPublishDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table DDLRecordSet (uuid_ VARCHAR(75) null,recordSetId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,DDMStructureId LONG,recordSetKey VARCHAR(75) null,name STRING null,description STRING null,minDisplayRows INTEGER,published BOOLEAN,scope INTEGER,settings_ TEXT null,lastPublishDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table DDLRecordSet";
 	public static final String ORDER_BY_JPQL = " ORDER BY ddlRecordSet.recordSetId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY DDLRecordSet.recordSetId ASC";
@@ -165,6 +167,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		model.setName(soapModel.getName());
 		model.setDescription(soapModel.getDescription());
 		model.setMinDisplayRows(soapModel.getMinDisplayRows());
+		model.setPublished(soapModel.getPublished());
 		model.setScope(soapModel.getScope());
 		model.setSettings(soapModel.getSettings());
 		model.setLastPublishDate(soapModel.getLastPublishDate());
@@ -245,6 +248,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("minDisplayRows", getMinDisplayRows());
+		attributes.put("published", getPublished());
 		attributes.put("scope", getScope());
 		attributes.put("settings", getSettings());
 		attributes.put("lastPublishDate", getLastPublishDate());
@@ -333,6 +337,12 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 
 		if (minDisplayRows != null) {
 			setMinDisplayRows(minDisplayRows);
+		}
+
+		Boolean published = (Boolean)attributes.get("published");
+
+		if (published != null) {
+			setPublished(published);
 		}
 
 		Integer scope = (Integer)attributes.get("scope");
@@ -758,6 +768,22 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 
 	@JSON
 	@Override
+	public boolean getPublished() {
+		return _published;
+	}
+
+	@Override
+	public boolean isPublished() {
+		return _published;
+	}
+
+	@Override
+	public void setPublished(boolean published) {
+		_published = published;
+	}
+
+	@JSON
+	@Override
 	public int getScope() {
 		return _scope;
 	}
@@ -926,6 +952,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		ddlRecordSetImpl.setName(getName());
 		ddlRecordSetImpl.setDescription(getDescription());
 		ddlRecordSetImpl.setMinDisplayRows(getMinDisplayRows());
+		ddlRecordSetImpl.setPublished(getPublished());
 		ddlRecordSetImpl.setScope(getScope());
 		ddlRecordSetImpl.setSettings(getSettings());
 		ddlRecordSetImpl.setLastPublishDate(getLastPublishDate());
@@ -1082,6 +1109,8 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 
 		ddlRecordSetCacheModel.minDisplayRows = getMinDisplayRows();
 
+		ddlRecordSetCacheModel.published = getPublished();
+
 		ddlRecordSetCacheModel.scope = getScope();
 
 		ddlRecordSetCacheModel.settings = getSettings();
@@ -1106,7 +1135,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1134,6 +1163,8 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		sb.append(getDescription());
 		sb.append(", minDisplayRows=");
 		sb.append(getMinDisplayRows());
+		sb.append(", published=");
+		sb.append(getPublished());
 		sb.append(", scope=");
 		sb.append(getScope());
 		sb.append(", settings=");
@@ -1147,7 +1178,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(52);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.dynamic.data.lists.model.DDLRecordSet");
@@ -1206,6 +1237,10 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 		sb.append(getMinDisplayRows());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>published</column-name><column-value><![CDATA[");
+		sb.append(getPublished());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>scope</column-name><column-value><![CDATA[");
 		sb.append(getScope());
 		sb.append("]]></column-value></column>");
@@ -1249,6 +1284,7 @@ public class DDLRecordSetModelImpl extends BaseModelImpl<DDLRecordSet>
 	private String _description;
 	private String _descriptionCurrentLanguageId;
 	private int _minDisplayRows;
+	private boolean _published;
 	private int _scope;
 	private String _settings;
 	private Date _lastPublishDate;

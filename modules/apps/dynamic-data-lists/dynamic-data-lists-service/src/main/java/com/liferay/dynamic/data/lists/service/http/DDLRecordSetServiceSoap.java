@@ -225,6 +225,23 @@ public class DDLRecordSetServiceSoap {
 		}
 	}
 
+	public static com.liferay.dynamic.data.lists.model.DDLRecordSetSoap updatePublished(
+		long recordSetId, boolean published,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.dynamic.data.lists.model.DDLRecordSet returnValue = DDLRecordSetServiceUtil.updatePublished(recordSetId,
+					published, serviceContext);
+
+			return com.liferay.dynamic.data.lists.model.DDLRecordSetSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSetSoap updateRecordSet(
 		long recordSetId, long ddmStructureId,
 		java.lang.String[] nameMapLanguageIds,

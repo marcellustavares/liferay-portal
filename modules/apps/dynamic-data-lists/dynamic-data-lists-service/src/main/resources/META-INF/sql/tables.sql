@@ -30,6 +30,7 @@ create table DDLRecordSet (
 	name STRING null,
 	description STRING null,
 	minDisplayRows INTEGER,
+	published BOOLEAN,
 	scope INTEGER,
 	settings_ TEXT null,
 	lastPublishDate DATE null

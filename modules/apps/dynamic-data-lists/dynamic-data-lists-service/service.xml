@@ -78,6 +78,7 @@
 		<column name="name" type="String" localized="true" />
 		<column name="description" type="String" localized="true" />
 		<column name="minDisplayRows" type="int" />
+		<column name="published" type="boolean" />
 		<column name="scope" type="int" />
 		<column name="settings" type="String" />
 		<column name="lastPublishDate" type="Date" />

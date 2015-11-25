@@ -66,7 +66,7 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -94,6 +94,8 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 		sb.append(description);
 		sb.append(", minDisplayRows=");
 		sb.append(minDisplayRows);
+		sb.append(", published=");
+		sb.append(published);
 		sb.append(", scope=");
 		sb.append(scope);
 		sb.append(", settings=");
@@ -166,6 +168,7 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 		}
 
 		ddlRecordSetImpl.setMinDisplayRows(minDisplayRows);
+		ddlRecordSetImpl.setPublished(published);
 		ddlRecordSetImpl.setScope(scope);
 
 		if (settings == null) {
@@ -202,6 +205,7 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
 		minDisplayRows = objectInput.readInt();
+		published = objectInput.readBoolean();
 		scope = objectInput.readInt();
 		settings = objectInput.readUTF();
 		lastPublishDate = objectInput.readLong();
@@ -255,6 +259,7 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 		}
 
 		objectOutput.writeInt(minDisplayRows);
+		objectOutput.writeBoolean(published);
 		objectOutput.writeInt(scope);
 
 		if (settings == null) {
@@ -280,6 +285,7 @@ public class DDLRecordSetCacheModel implements CacheModel<DDLRecordSet>,
 	public String name;
 	public String description;
 	public int minDisplayRows;
+	public boolean published;
 	public int scope;
 	public String settings;
 	public long lastPublishDate;

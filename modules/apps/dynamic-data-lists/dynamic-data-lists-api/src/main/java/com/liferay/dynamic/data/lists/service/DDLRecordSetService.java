@@ -101,6 +101,11 @@ public interface DDLRecordSetService extends BaseService {
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws PortalException;
 
+	public com.liferay.dynamic.data.lists.model.DDLRecordSet updatePublished(
+		long recordSetId, boolean published,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws PortalException;
+
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
 		long groupId, long ddmStructureId, java.lang.String recordSetKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,

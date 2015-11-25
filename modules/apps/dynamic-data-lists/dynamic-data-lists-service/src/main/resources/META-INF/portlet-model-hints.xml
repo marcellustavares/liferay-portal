@@ -39,6 +39,7 @@
 			<hint-collection name="TEXTAREA" />
 		</field>
 		<field name="minDisplayRows" type="int" />
+		<field name="published" type="boolean" />
 		<field name="scope" type="int" />
 		<field name="settings" type="String">
 			<hint-collection name="CLOB" />

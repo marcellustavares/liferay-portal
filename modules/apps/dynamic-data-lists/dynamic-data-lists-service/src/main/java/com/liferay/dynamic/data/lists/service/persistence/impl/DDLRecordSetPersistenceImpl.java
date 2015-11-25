@@ -3496,6 +3496,7 @@ public class DDLRecordSetPersistenceImpl extends BasePersistenceImpl<DDLRecordSe
 		ddlRecordSetImpl.setName(ddlRecordSet.getName());
 		ddlRecordSetImpl.setDescription(ddlRecordSet.getDescription());
 		ddlRecordSetImpl.setMinDisplayRows(ddlRecordSet.getMinDisplayRows());
+		ddlRecordSetImpl.setPublished(ddlRecordSet.isPublished());
 		ddlRecordSetImpl.setScope(ddlRecordSet.getScope());
 		ddlRecordSetImpl.setSettings(ddlRecordSet.getSettings());
 		ddlRecordSetImpl.setLastPublishDate(ddlRecordSet.getLastPublishDate());

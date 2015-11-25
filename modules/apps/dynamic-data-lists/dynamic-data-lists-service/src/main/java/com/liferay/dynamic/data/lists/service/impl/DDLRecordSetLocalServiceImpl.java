@@ -285,6 +285,21 @@ public class DDLRecordSetLocalServiceImpl
 	}
 
 	@Override
+	public DDLRecordSet updatePublished(
+			long recordSetId, boolean published, ServiceContext serviceContext)
+		throws PortalException {
+
+		DDLRecordSet recordSet = ddlRecordSetPersistence.findByPrimaryKey(
+			recordSetId);
+
+		recordSet.setPublished(published);
+
+		ddlRecordSetPersistence.update(recordSet);
+
+		return recordSet;
+	}
+
+	@Override
 	public DDLRecordSet updateRecordSet(
 			long recordSetId, long ddmStructureId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int minDisplayRows,
