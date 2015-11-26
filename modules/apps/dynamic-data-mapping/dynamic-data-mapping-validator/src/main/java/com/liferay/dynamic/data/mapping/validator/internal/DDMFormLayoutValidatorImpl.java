@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
+import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException.MustNotDuplicateFieldName;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidator;
 import com.liferay.portal.kernel.util.SetUtil;
 
@@ -77,9 +78,8 @@ public class DDMFormLayoutValidatorImpl implements DDMFormLayoutValidator {
 						ddmFormLayoutColumn.getDDMFormFieldNames());
 
 					if (!intersectDDMFormFieldNames.isEmpty()) {
-						throw new DDMFormLayoutValidationException(
-							"Field names " + intersectDDMFormFieldNames +
-								" were defined more than once");
+						throw new MustNotDuplicateFieldName(
+							intersectDDMFormFieldNames);
 					}
 
 					ddmFormFieldNames.addAll(

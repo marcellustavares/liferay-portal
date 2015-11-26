@@ -18,6 +18,8 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 
+import java.util.Set;
+
 /**
  * @author Brian Wing Shun Chan
  */
@@ -37,6 +39,26 @@ public class DDMFormLayoutValidationException extends PortalException {
 
 	public DDMFormLayoutValidationException(Throwable cause) {
 		super(cause);
+	}
+
+	public static class MustNotDuplicateFieldName
+		extends DDMFormLayoutValidationException {
+
+		public MustNotDuplicateFieldName(Set<String> duplicatedFieldNames) {
+			super(
+				String.format(
+					"Field names %s were defined more than once",
+						duplicatedFieldNames));
+
+			_duplicatedFieldNames = duplicatedFieldNames;
+		}
+
+		public Set<String> getDuplicatedFieldNames() {
+			return _duplicatedFieldNames;
+		}
+
+		private final Set<String> _duplicatedFieldNames;
+
 	}
 
 }

@@ -23,6 +23,9 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetOptionsForField;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetValidCharactersForFieldName;
 import com.liferay.dynamic.data.mapping.validator.internal.DDMFormValidatorImpl;
 import com.liferay.portal.bean.BeanPropertiesImpl;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
@@ -58,7 +61,7 @@ public class DDMFormValidatorTest {
 		setUpDDMFormFieldTypeServicesTrackerUtil();
 	}
 
-	@Test(expected = DDMFormValidationException.class)
+	@Test(expected = MustSetValidCharactersForFieldName.class)
 	public void testDashInFieldName() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
@@ -79,7 +82,7 @@ public class DDMFormValidatorTest {
 		_ddmFormValidator.validate(ddmForm);
 	}
 
-	@Test(expected = DDMFormValidationException.class)
+	@Test(expected = MustNotDuplicateFieldName.class)
 	public void testDuplicateCaseInsensitiveFieldName() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
@@ -98,7 +101,7 @@ public class DDMFormValidatorTest {
 		_ddmFormValidator.validate(ddmForm);
 	}
 
-	@Test(expected = DDMFormValidationException.class)
+	@Test(expected = MustNotDuplicateFieldName.class)
 	public void testDuplicateFieldName() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
@@ -132,7 +135,7 @@ public class DDMFormValidatorTest {
 		_ddmFormValidator.validate(ddmForm);
 	}
 
-	@Test(expected = DDMFormValidationException.class)
+	@Test(expected = MustSetValidCharactersForFieldName.class)
 	public void testInvalidFieldName() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);
@@ -145,7 +148,7 @@ public class DDMFormValidatorTest {
 		_ddmFormValidator.validate(ddmForm);
 	}
 
-	@Test(expected = DDMFormValidationException.class)
+	@Test(expected = MustSetOptionsForField.class)
 	public void testNoOptionsSetForFieldOptions() throws Exception {
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
 			createAvailableLocales(LocaleUtil.US), LocaleUtil.US);

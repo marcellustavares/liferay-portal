@@ -39,4 +39,63 @@ public class DDMFormValidationException extends PortalException {
 		super(cause);
 	}
 
+	public static class MustNotDuplicateFieldName
+		extends DDMFormValidationException {
+
+		public MustNotDuplicateFieldName(String fieldName) {
+			super(
+				String.format(
+					"The field name %s was defined more than once", fieldName));
+
+			_fieldName = fieldName;
+		}
+
+		public String getFieldName() {
+			return _fieldName;
+		}
+
+		private String _fieldName;
+
+	}
+
+	public static class MustSetOptionsForField
+		extends DDMFormValidationException {
+
+		public MustSetOptionsForField(String fieldName) {
+			super(
+				String.format(
+					"At least one option should be set for field %s",
+					fieldName));
+
+			_fieldName = fieldName;
+		}
+
+		public String getFieldName() {
+			return _fieldName;
+		}
+
+		private String _fieldName;
+
+	}
+
+	public static class MustSetValidCharactersForFieldName
+		extends DDMFormValidationException {
+
+		public MustSetValidCharactersForFieldName(String fieldName) {
+			super(
+				String.format(
+					"Invalid characters were defined for field name %s",
+						fieldName));
+
+			_fieldName = fieldName;
+		}
+
+		public String getFieldName() {
+			return _fieldName;
+		}
+
+		private String _fieldName;
+
+	}
+
 }

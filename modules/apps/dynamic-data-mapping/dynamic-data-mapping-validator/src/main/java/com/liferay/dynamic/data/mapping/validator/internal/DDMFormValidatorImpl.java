@@ -20,6 +20,9 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetOptionsForField;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetValidCharactersForFieldName;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -88,17 +91,14 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 			ddmFormField.getName());
 
 		if (!matcher.matches()) {
-			throw new DDMFormValidationException(
-				"Invalid characters were defined for field name " +
-					ddmFormField.getName());
+			throw new MustSetValidCharactersForFieldName(
+				ddmFormField.getName());
 		}
 
 		if (ddmFormFieldNames.contains(
 				StringUtil.toLowerCase(ddmFormField.getName()))) {
 
-			throw new DDMFormValidationException(
-				"The field name " + ddmFormField.getName() +
-					" was defined more than once");
+			throw new MustNotDuplicateFieldName(ddmFormField.getName());
 		}
 
 		ddmFormFieldNames.add(StringUtil.toLowerCase(ddmFormField.getName()));
@@ -127,9 +127,7 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 		}
 
 		if (optionValues.isEmpty()) {
-			throw new DDMFormValidationException(
-				"At least one option should be set for field " +
-					ddmFormField.getName());
+			throw new MustSetOptionsForField(ddmFormField.getName());
 		}
 
 		for (String optionValue : ddmFormFieldOptions.getOptionsValues()) {
