@@ -32,14 +32,12 @@ import com.liferay.portal.service.UserLocalService;
 
 import java.util.List;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
  */
-@Component(immediate = true)
+//@Component(immediate = true)
 public class AddDefaultSharedPortletLayoutAction extends SimpleAction {
 
 	@Override
@@ -52,7 +50,7 @@ public class AddDefaultSharedPortletLayoutAction extends SimpleAction {
 		}
 	}
 
-	@Activate
+	//@Activate
 	protected void activate() throws ActionException {
 		Long companyId = CompanyThreadLocal.getCompanyId();
 
