@@ -31,13 +31,13 @@ import com.liferay.portal.kernel.test.rule.callback.SynchronousDestinationTestCa
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionAttribute;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.registry.Filter;
 import com.liferay.registry.Registry;
 import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.dependency.ServiceDependencyManager;
 
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -151,25 +151,26 @@ public class SynchronousDestinationTestCallback
 			ServiceDependencyManager serviceDependencyManager =
 				new ServiceDependencyManager();
 
-			Filter asyncFilter = _registerDestinationFilter(
-				DestinationNames.ASYNC_SERVICE);
-			Filter backgroundTaskFilter = _registerDestinationFilter(
-				DestinationNames.BACKGROUND_TASK);
-			Filter backgroundTaskStatusFilter = _registerDestinationFilter(
-				DestinationNames.BACKGROUND_TASK_STATUS);
-			Filter mailFilter = _registerDestinationFilter(
-				DestinationNames.MAIL);
-			Filter pdfProcessorFilter = _registerDestinationFilter(
-				DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR);
-			Filter rawMetaDataProcessorFilter = _registerDestinationFilter(
-				DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR);
-			Filter subscrpitionSenderFilter = _registerDestinationFilter(
-				DestinationNames.SUBSCRIPTION_SENDER);
+			Filter[] filters = new Filter[] {
+				_registerDestinationFilter(DestinationNames.ASYNC_SERVICE),
+				_registerDestinationFilter(DestinationNames.BACKGROUND_TASK),
+				_registerDestinationFilter(
+					DestinationNames.BACKGROUND_TASK_STATUS),
+				_registerDestinationFilter(DestinationNames.MAIL),
+				_registerDestinationFilter(
+					DestinationNames.DOCUMENT_LIBRARY_PDF_PROCESSOR),
+				_registerDestinationFilter(
+					DestinationNames.DOCUMENT_LIBRARY_RAW_METADATA_PROCESSOR),
+				_registerDestinationFilter(DestinationNames.SUBSCRIPTION_SENDER)
+			};
 
-			serviceDependencyManager.registerDependencies(
-				asyncFilter, backgroundTaskFilter, backgroundTaskStatusFilter,
-				mailFilter, pdfProcessorFilter, rawMetaDataProcessorFilter,
-				subscrpitionSenderFilter);
+			for (String destinationName : _sync.destinationNames()) {
+				Filter filter = _registerDestinationFilter(destinationName);
+
+				ArrayUtil.append(filters, filter);
+			}
+
+			serviceDependencyManager.registerDependencies(filters);
 
 			serviceDependencyManager.waitForDependencies();
 

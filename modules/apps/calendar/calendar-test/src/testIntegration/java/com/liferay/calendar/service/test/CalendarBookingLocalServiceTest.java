@@ -38,8 +38,13 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowDefinition;
+import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
+import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactoryUtil;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
+import com.liferay.portal.service.WorkflowInstanceLinkLocalServiceUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
 
@@ -51,6 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -61,7 +67,7 @@ import org.junit.runner.RunWith;
  * @author Adam Brandizzi
  */
 @RunWith(Arquillian.class)
-@Sync
+@Sync(destinationNames="liferay/kaleo_graph_walker")
 public class CalendarBookingLocalServiceTest {
 
 	@ClassRule
@@ -235,6 +241,67 @@ public class CalendarBookingLocalServiceTest {
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_PENDING, childCalendarBooking.getStatus());
+	}
+
+	@Test
+	public void testMoveToTrashCalendarBookingShouldDeleteWorkflowInstanceLink()
+		throws Exception {
+
+		List<WorkflowDefinition> workflowDefinitions =
+			WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(
+				_user.getCompanyId(), 0, 1,
+				WorkflowComparatorFactoryUtil.getDefinitionNameComparator());
+
+		Assume.assumeFalse(workflowDefinitions.isEmpty());
+
+		WorkflowDefinition workflowDefinition = workflowDefinitions.get(0);
+
+		WorkflowDefinitionLinkLocalServiceUtil.updateWorkflowDefinitionLink(
+			_user.getUserId(), _user.getCompanyId(), _user.getGroupId(),
+			CalendarBooking.class.getName(), 0, 0, workflowDefinition.getName(),
+			workflowDefinition.getVersion());
+
+		CalendarResource calendarResource =
+			CalendarResourceUtil.getUserCalendarResource(
+				_user.getUserId(), createServiceContext());
+
+		Calendar calendar = calendarResource.getDefaultCalendar();
+
+		long startTime = System.currentTimeMillis();
+
+		CalendarBooking calendarBooking =
+			CalendarBookingLocalServiceUtil.addCalendarBooking(
+				_user.getUserId(), calendar.getCalendarId(), new long[0],
+				CalendarBookingConstants.PARENT_CALENDAR_BOOKING_ID_DEFAULT,
+				RandomTestUtil.randomLocaleStringMap(),
+				RandomTestUtil.randomLocaleStringMap(),
+				RandomTestUtil.randomString(), startTime, startTime + 36000000,
+				false, null, 0, null, 0, null, createServiceContext());
+
+		Assert.assertTrue(
+			WorkflowInstanceLinkLocalServiceUtil.hasWorkflowInstanceLink(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId()));
+
+		CalendarBookingLocalServiceUtil.moveCalendarBookingToTrash(
+			calendarBooking.getUserId(), calendarBooking);
+
+		Assert.assertFalse(
+			WorkflowInstanceLinkLocalServiceUtil.hasWorkflowInstanceLink(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId()));
+
+		CalendarBookingLocalServiceUtil.restoreCalendarBookingFromTrash(
+			calendarBooking.getUserId(),
+			calendarBooking.getCalendarBookingId());
+
+		Assert.assertTrue(
+			WorkflowInstanceLinkLocalServiceUtil.hasWorkflowInstanceLink(
+				calendarBooking.getCompanyId(), calendarBooking.getGroupId(),
+				CalendarBooking.class.getName(),
+				calendarBooking.getCalendarBookingId()));
 	}
 
 	@Test
