@@ -14,30 +14,71 @@
 
 package com.liferay.portal.workflow.kaleo.upgrade.v1_3_0;
 
+import com.liferay.dynamic.data.lists.model.DDLRecord;
+import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
+import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.util.PortalUtil;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  * @author Christopher Kian
  */
 public class UpgradeKaleoInstance extends UpgradeProcess {
 
+	public UpgradeKaleoInstance(DDLRecordLocalService ddlRecordLocalService) {
+		_ddlRecordLocalService = ddlRecordLocalService;
+	}
+
 	protected void deleteOrphanedWorkflowInstanceLinks(
 			String tableName, String columnName, Object columnValue)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(7);
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-		sb.append("delete from ");
-		sb.append(tableName);
-		sb.append(" where ");
-		sb.append(columnName);
-		sb.append(" = ");
-		sb.append(columnValue);
-		sb.append(" and classPK not in (select recordId from DDLRecord)");
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
 
-		runSQL(sb.toString());
+			StringBundler sb = new StringBundler(6);
+			sb.append("select * from ");
+			sb.append(tableName);
+			sb.append(" where ");
+			sb.append(columnName);
+			sb.append(" = ");
+			sb.append(columnValue);
+
+			ps = con.prepareStatement(sb.toString());
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				long classPK = rs.getLong("classPK");
+
+					DDLRecord ddlRecord = _ddlRecordLocalService.fetchDDLRecord(
+						classPK);
+
+					if (ddlRecord == null) {
+						sb = new StringBundler(8);
+						sb.append("delete from ");
+						sb.append(tableName);
+						sb.append(" where ");
+						sb.append(columnName);
+						sb.append(" = ");
+						sb.append(columnValue);
+						sb.append(" and classPK = ");
+						sb.append(classPK);
+						runSQL(sb.toString());
+					}
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
 	}
 
 	@Override
@@ -48,10 +89,8 @@ public class UpgradeKaleoInstance extends UpgradeProcess {
 		deleteOrphanedWorkflowInstanceLinks(
 			"KaleoInstanceToken", "className",
 			"'com.liferay.portal.workflow.kaleo.forms.model.KaleoProcess'");
-		deleteOrphanedWorkflowInstanceLinks(
-			"WorkflowInstanceLink", "classNameId",
-			PortalUtil.getClassNameId(
-				"com.liferay.portal.workflow.kaleo.forms.model.KaleoProcess"));
 	}
+
+	private final DDLRecordLocalService _ddlRecordLocalService;
 
 }
