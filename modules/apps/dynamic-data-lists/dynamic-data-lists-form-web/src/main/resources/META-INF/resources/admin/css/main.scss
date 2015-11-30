@@ -173,6 +173,10 @@
 			margin: 0 auto;
 			width: auto;
 		}
+
+		.liferay-ddm-form-field-paragraph p {
+			min-height: 65px;
+		}
 	}
 }
 
@@ -276,6 +280,10 @@
 			.lfr-ddm-form-field-repeatable-toolbar {
 				display: none;
 			}
+		}
+
+		.liferay-ddm-form-field-text textarea + .input-group-addon {
+			vertical-align: bottom;
 		}
 
 		.lfr-ddm-form-container {
