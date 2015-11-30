@@ -20,6 +20,7 @@ import com.liferay.registry.ServiceReference;
 import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,6 +64,14 @@ public class TemplateResourceLoaderUtil {
 
 	public static Set<String> getTemplateResourceLoaderNames() {
 		return _instance._getTemplateResourceLoaderNames();
+	}
+
+	public static List<TemplateResource> getTemplateResources(
+			String templateResourceLoaderName, List<String> templateIds)
+		throws TemplateException {
+
+		return _instance._getTemplateResources(
+			templateResourceLoaderName, templateIds);
 	}
 
 	public static boolean hasTemplateResource(
@@ -144,6 +153,16 @@ public class TemplateResourceLoaderUtil {
 
 	private Set<String> _getTemplateResourceLoaderNames() {
 		return _templateResourceLoaders.keySet();
+	}
+
+	private List<TemplateResource> _getTemplateResources(
+			String templateResourceLoaderName, List<String> templateIds)
+		throws TemplateException {
+
+		TemplateResourceLoader templateResourceLoader =
+			_getTemplateResourceLoader(templateResourceLoaderName);
+
+		return templateResourceLoader.getTemplateResources(templateIds);
 	}
 
 	private boolean _hasTemplateResource(
