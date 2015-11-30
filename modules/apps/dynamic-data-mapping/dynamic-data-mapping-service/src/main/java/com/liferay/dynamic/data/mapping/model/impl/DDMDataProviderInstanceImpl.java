@@ -16,10 +16,69 @@ package com.liferay.dynamic.data.mapping.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.spring.extender.service.ServiceReference;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
- * @author Brian Wing Shun Chan
+ * @author Marcellus Tavares
  */
 @ProviderType
 public class DDMDataProviderInstanceImpl
 	extends DDMDataProviderInstanceBaseImpl {
+
+	public List<KeyValuePair> getData() throws PortalException {
+		DDMDataProvider ddmDataProvider =
+			ddmDataProviderTracker.getDDMDataProvider(getType());
+
+		DDMForm ddmForm = DDMFormFactory.create(ddmDataProvider.getSettings());
+
+		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
+			ddmForm, getDefinition());
+
+		DDMDataProviderContext ddmDataProviderContext =
+			createDDMDataProviderContext(ddmFormValues);
+
+		return ddmDataProvider.getData(ddmDataProviderContext);
+	}
+
+	protected DDMDataProviderContext createDDMDataProviderContext(
+		DDMFormValues ddmFormValues) {
+
+		Map<String, Object> properties = new HashMap<>();
+
+		Locale defaultLocale = ddmFormValues.getDefaultLocale();
+
+		for (DDMFormFieldValue ddmFormFieldValue :
+				ddmFormValues.getDDMFormFieldValues()) {
+
+			Value value = ddmFormFieldValue.getValue();
+
+			properties.put(
+				ddmFormFieldValue.getName(), value.getString(defaultLocale));
+		}
+
+		return new DDMDataProviderContext(properties);
+	}
+
+	@ServiceReference(type = DDMDataProviderTracker.class)
+	protected DDMDataProviderTracker ddmDataProviderTracker;
+
+	@ServiceReference(type = DDMFormValuesJSONDeserializer.class)
+	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
+
 }
