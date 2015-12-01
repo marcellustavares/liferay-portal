@@ -208,6 +208,10 @@ public class LayoutsTreeUtil {
 					request, groupId, privateLayout, parentLayoutId, layouts,
 					treeId)) {
 
+			if (layout.isHidden()) {
+				continue;
+			}
+
 			LayoutTreeNode layoutTreeNode = new LayoutTreeNode(layout);
 
 			LayoutTreeNodes childLayoutTreeNodes = null;
