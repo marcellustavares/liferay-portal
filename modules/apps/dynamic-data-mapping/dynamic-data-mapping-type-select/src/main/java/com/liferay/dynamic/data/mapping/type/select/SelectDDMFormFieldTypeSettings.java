@@ -16,6 +16,10 @@ package com.liferay.dynamic.data.mapping.type.select;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 
@@ -23,22 +27,48 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
  * @author Marcellus Tavares
  */
 @DDMForm
+@DDMFormLayout(
+	{
+		@DDMFormLayoutPage(
+			title = "basic",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							{"label", "tip", "required", "options"}
+						)
+					}
+				)
+			}
+		),
+		@DDMFormLayoutPage(
+			title = "advanced",
+			value = {
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							{
+								"validation", "showLabel", "repeatable",
+								"multiple", "predefinedValue",
+								"visibilityExpression", "fieldNamespace",
+								"indexType", "localizable", "readOnly",
+								"dataType", "type", "name"
+							}
+						)
+					}
+				)
+			}
+		)
+	}
+)
 public interface SelectDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
-	@DDMFormField(
-		label = "%multiple",
-		properties = {
-			"setting.category=advanced", "setting.weight=2",
-			"showAsSwitcher=true"
-		}
-	)
+	@DDMFormField(label = "%multiple", properties = { "showAsSwitcher=true" })
 	public boolean multiple();
 
 	@DDMFormField(
-		dataType = "ddm-options", label = "%options",
-		properties = {"setting.category=basic", "setting.weight=0"},
-		type = "options"
+		dataType = "ddm-options", label = "%options", type = "options"
 	)
 	public DDMFormFieldOptions options();
 
