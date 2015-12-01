@@ -19,9 +19,11 @@ import com.liferay.portal.kernel.events.SimpleAction;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
+import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.security.auth.CompanyThreadLocal;
 import com.liferay.portal.service.CompanyLocalService;
@@ -71,27 +73,42 @@ public class AddDefaultSharedPortletLayoutAction extends SimpleAction {
 	}
 
 	protected void doRun(long companyId) throws Exception {
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAddGuestPermissions(true);
-		serviceContext.setAddGroupPermissions(true);
-		serviceContext.setAttribute(
-			"layout.instanceable.allowed", Boolean.TRUE);
-
 		Group group = _groupLocalService.getGroup(
 			companyId, GroupConstants.GUEST);
 
-		serviceContext.setScopeGroupId(group.getGroupId());
+		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
+			group.getGroupId(), false, "/shared");
 
-		long defaultUserId = _userLocalService.getDefaultUserId(companyId);
+		if (layout == null) {
+			ServiceContext serviceContext = new ServiceContext();
 
-		serviceContext.setUserId(defaultUserId);
+			serviceContext.setAddGuestPermissions(true);
+			serviceContext.setAddGroupPermissions(true);
+			serviceContext.setAttribute(
+				"layout.instanceable.allowed", Boolean.TRUE);
+			serviceContext.setAttribute("layoutUpdateable", Boolean.FALSE);
 
-		_layoutLocalService.addLayout(
-			defaultUserId, group.getGroupId(), false,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "shared",
-			StringPool.BLANK, StringPool.BLANK, "shared_portlet", true,
-			"/shared", serviceContext);
+			serviceContext.setScopeGroupId(group.getGroupId());
+
+			long defaultUserId = _userLocalService.getDefaultUserId(companyId);
+
+			serviceContext.setUserId(defaultUserId);
+
+			layout = _layoutLocalService.addLayout(
+				defaultUserId, group.getGroupId(), false,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "shared",
+				StringPool.BLANK, StringPool.BLANK, "shared_portlet", true,
+				"/shared", serviceContext);
+
+			UnicodeProperties typeSettingsProperties =
+				layout.getTypeSettingsProperties();
+
+			typeSettingsProperties.setProperty("occult", "true");
+
+			_layoutLocalService.updateLayout(
+				group.getGroupId(), false, layout.getLayoutId(),
+				typeSettingsProperties.toString());
+		}
 	}
 
 	@Reference(unbind = "-")
