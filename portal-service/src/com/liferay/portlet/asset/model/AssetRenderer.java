@@ -152,6 +152,10 @@ public interface AssetRenderer<T> extends Renderer {
 
 	public boolean isDisplayable();
 
+	public Boolean isEnableComments();
+
+	public Boolean isEnableRatings();
+
 	public boolean isLocalizable();
 
 	public boolean isPreviewInContext();

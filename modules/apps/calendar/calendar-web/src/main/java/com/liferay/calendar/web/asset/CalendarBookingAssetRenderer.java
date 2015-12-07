@@ -227,6 +227,34 @@ public class CalendarBookingAssetRenderer
 	}
 
 	@Override
+	public Boolean isEnableComments() {
+		try {
+			Calendar calendar = _calendarBooking.getCalendar();
+
+			return calendar.isEnableComments();
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return false;
+	}
+
+	@Override
+	public Boolean isEnableRatings() {
+		try {
+			Calendar calendar = _calendarBooking.getCalendar();
+
+			return calendar.isEnableRatings();
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return false;
+	};
+
+	@Override
 	public boolean isPrintable() {
 		return true;
 	}

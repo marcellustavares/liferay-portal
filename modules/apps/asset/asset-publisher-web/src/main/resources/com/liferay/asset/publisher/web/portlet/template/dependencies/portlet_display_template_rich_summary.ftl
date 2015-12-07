@@ -70,7 +70,7 @@
 </#list>
 
 <#macro getDiscussion>
-	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && (getterUtil.getBoolean(enableComments))>
+	<#if assetRenderer.isEnableComments() && (getterUtil.getBoolean(enableComments))>
 		<br />
 
 		<#assign discussionURL = renderResponse.createActionURL() />
@@ -188,7 +188,7 @@
 </#macro>
 
 <#macro getRatings>
-	<#if getterUtil.getBoolean(enableRatings)>
+	<#if assetRenderer.isEnableRatings() && getterUtil.getBoolean(enableRatings)>
 		<div class="asset-ratings">
 			<@liferay_ui["ratings"]
 				className=entry.getClassName()
