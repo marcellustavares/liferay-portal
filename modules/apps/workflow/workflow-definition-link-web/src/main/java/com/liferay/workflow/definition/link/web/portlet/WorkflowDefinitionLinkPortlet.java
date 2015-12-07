@@ -14,12 +14,26 @@
 
 package com.liferay.workflow.definition.link.web.portlet;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Company;
+import com.liferay.portal.model.ResourceConstants;
+import com.liferay.portal.model.Role;
+import com.liferay.portal.security.permission.ActionKeys;
+import com.liferay.portal.service.CompanyLocalService;
+import com.liferay.portal.service.ResourcePermissionLocalService;
+import com.liferay.portal.service.RoleLocalService;
 import com.liferay.workflow.definition.link.web.portlet.constants.WorkflowDefinitionLinkPortletKeys;
 
+import java.util.List;
+
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
@@ -48,4 +62,82 @@ import org.osgi.service.component.annotations.Component;
 	service = Portlet.class
 )
 public class WorkflowDefinitionLinkPortlet extends MVCPortlet {
+
+	@Override
+	public void init() throws PortletException {
+		super.init();
+
+		List<Company> companies = _companyLocalService.getCompanies();
+
+		for (Company company : companies) {
+			long companyId = company.getCompanyId();
+
+			String[] reviewerRolesNames =
+				{"Organization Content Reviewer",
+					"Portal Content Reviewer", "Site Content Reviewer"
+				};
+
+			try {
+				for (String roleName : reviewerRolesNames) {
+					Role role = _roleLocalService.fetchRole(
+						companyId, roleName);
+
+					if (Validator.isNotNull(role)) {
+						_resourcePermissionLocalService.addResourcePermission(
+								companyId, "90",
+								ResourceConstants.SCOPE_COMPANY,
+								String.valueOf(role.getCompanyId()),
+								role.getRoleId(),
+								ActionKeys.VIEW_CONTROL_PANEL );
+					}
+				}
+			}
+			catch (PortalException e) {
+			}
+		}
+	}
+
+	protected CompanyLocalService getCompanyLocalService() {
+		return _companyLocalService;
+	}
+
+	protected ResourcePermissionLocalService getResourcePermissionLocalService(
+		) {
+
+		return _resourcePermissionLocalService;
+	}
+
+	protected RoleLocalService getRoleLocalService() {
+		return _roleLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCompanyLocalService(
+		CompanyLocalService companyLocalService) {
+
+		_companyLocalService = companyLocalService;
+	}
+
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
+	protected void setModuleServiceLifecycle(
+		ModuleServiceLifecycle moduleServiceLifecycle) {
+	}
+
+	@Reference(unbind = "-")
+	protected void setResourcePermissionLocalService(
+		ResourcePermissionLocalService resourcePermissionLocalService) {
+
+		_resourcePermissionLocalService = resourcePermissionLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setRoleLocalService(RoleLocalService roleLocalService) {
+		_roleLocalService = roleLocalService;
+	}
+
+	private volatile CompanyLocalService _companyLocalService;
+	private volatile ResourcePermissionLocalService
+		_resourcePermissionLocalService;
+	private volatile RoleLocalService _roleLocalService;
+
 }
