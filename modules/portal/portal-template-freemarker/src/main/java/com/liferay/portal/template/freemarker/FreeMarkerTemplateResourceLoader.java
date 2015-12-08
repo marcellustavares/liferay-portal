@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.template.TemplateResourceLoader;
 import com.liferay.portal.template.DefaultTemplateResourceLoader;
 import com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration;
 
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -68,6 +69,13 @@ public class FreeMarkerTemplateResourceLoader
 	@Override
 	public TemplateResource getTemplateResource(String templateId) {
 		return _defaultTemplateResourceLoader.getTemplateResource(templateId);
+	}
+
+	@Override
+	public List<TemplateResource> getTemplateResources(
+		List<String> templateIds) {
+
+		return _defaultTemplateResourceLoader.getTemplateResources(templateIds);
 	}
 
 	@Override

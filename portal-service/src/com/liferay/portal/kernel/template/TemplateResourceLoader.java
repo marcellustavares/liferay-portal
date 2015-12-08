@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.template;
 
+import java.util.List;
+
 /**
  * @author Tina Tian
  */
@@ -28,6 +30,9 @@ public interface TemplateResourceLoader {
 	public String getName();
 
 	public TemplateResource getTemplateResource(String templateId);
+
+	public List<TemplateResource> getTemplateResources(
+		List<String> templateIds);
 
 	public boolean hasTemplateResource(String templateId);
 

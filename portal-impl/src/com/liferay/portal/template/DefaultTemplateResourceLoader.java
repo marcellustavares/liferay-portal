@@ -38,7 +38,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Reader;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -156,6 +158,19 @@ public class DefaultTemplateResourceLoader implements TemplateResourceLoader {
 		_updateCache(templateId, templateResource);
 
 		return templateResource;
+	}
+
+	@Override
+	public List<TemplateResource> getTemplateResources(
+		List<String> templateIds) {
+
+		List<TemplateResource> templateResources = new ArrayList<>();
+
+		for (String templateId : templateIds) {
+			templateResources.add(getTemplateResource(templateId));
+		}
+
+		return templateResources;
 	}
 
 	@Override

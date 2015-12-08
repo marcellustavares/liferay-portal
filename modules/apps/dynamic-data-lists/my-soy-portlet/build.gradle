@@ -1,0 +1,8 @@
+dependencies {
+	compile project(":apps:application-list:application-list-api")
+	compile project(":portal:portal-soy-portlet-bridge")
+}
+
+liferay {
+	deployDir = file("${liferayHome}/osgi/modules")
+}

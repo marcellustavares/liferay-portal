@@ -1,0 +1,33 @@
+{namespace mysoyportlet}
+
+/**
+ * Prints the My Soy Portlet
+ *
+ * @param userName
+ */
+{template .view}
+	Hello World Soy {$userName}!
+
+	{call ddm.text}
+		{param childElementsHTML: '' /}
+		{param dir: '' /}
+		{param displayStyle: '' /}
+		{param label: 'Timao' /}
+		{param name: 'timao_name' /}
+		{param placeholder: '' /}
+		{param readOnly: false /}
+		{param required: true /}
+		{param showLabel: true /}
+		{param tip: '' /}
+		{param value: '' /}
+		{param visible: true /}
+	{/call}
+{/template}
+
+
+/**
+ * Prints the Alo
+ */
+{template .alo}
+	Alo Soy
+{/template}

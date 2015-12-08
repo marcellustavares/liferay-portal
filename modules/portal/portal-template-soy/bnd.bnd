@@ -5,6 +5,8 @@ Import-Package:\
 	!com.google.inject.internal.asm.util,\
 	!javax.microedition.io,\
 	!org.objectweb.asm.util,\
+	org.osgi.framework,\
+	com.liferay.portal.template,\
 	*
 Include-Resource:\
 	classes,\

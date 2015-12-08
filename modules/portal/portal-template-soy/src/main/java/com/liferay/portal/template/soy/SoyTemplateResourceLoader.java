@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.template.velocity;
+package com.liferay.portal.template.soy;
 
 import aQute.bnd.annotation.metatype.Configurable;
 
@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceLoader;
 import com.liferay.portal.template.DefaultTemplateResourceLoader;
-import com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration;
+import com.liferay.portal.template.soy.configuration.SoyTemplateEngineConfiguration;
 
 import java.util.List;
 import java.util.Map;
@@ -34,17 +34,14 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Igor Spasic
- * @author Peter Fellwock
+ * @author Miroslav Ligas
  */
 @Component(
-	configurationPid = "com.liferay.portal.template.velocity.configuration.VelocityEngineConfiguration",
+	configurationPid = "com.liferay.portal.template.soy.configuration.SoyTemplateEngineConfiguration",
 	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
-	service = {
-		TemplateResourceLoader.class, VelocityTemplateResourceLoader.class
-	}
+	service = {SoyTemplateResourceLoader.class, TemplateResourceLoader.class}
 )
-public class VelocityTemplateResourceLoader implements TemplateResourceLoader {
+public class SoyTemplateResourceLoader implements TemplateResourceLoader {
 
 	@Override
 	public void clearCache() {
@@ -86,13 +83,13 @@ public class VelocityTemplateResourceLoader implements TemplateResourceLoader {
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
-		_velocityEngineConfiguration = Configurable.createConfigurable(
-			VelocityEngineConfiguration.class, properties);
+		_soyTemplateEngineConfiguration = Configurable.createConfigurable(
+			SoyTemplateEngineConfiguration.class, properties);
 
 		_defaultTemplateResourceLoader = new DefaultTemplateResourceLoader(
-			TemplateConstants.LANG_TYPE_VM,
-			_velocityEngineConfiguration.resourceParsers(),
-			_velocityEngineConfiguration.resourceModificationCheckInterval(),
+			TemplateConstants.LANG_TYPE_SOY,
+			_soyTemplateEngineConfiguration.templateParsers(),
+			_soyTemplateEngineConfiguration.resourceModificationCheck(),
 			_multiVMPool, _singleVMPool);
 	}
 
@@ -108,8 +105,8 @@ public class VelocityTemplateResourceLoader implements TemplateResourceLoader {
 
 	private static volatile DefaultTemplateResourceLoader
 		_defaultTemplateResourceLoader;
-	private static volatile VelocityEngineConfiguration
-		_velocityEngineConfiguration;
+	private static volatile SoyTemplateEngineConfiguration
+		_soyTemplateEngineConfiguration;
 
 	private volatile MultiVMPool _multiVMPool;
 	private volatile SingleVMPool _singleVMPool;
