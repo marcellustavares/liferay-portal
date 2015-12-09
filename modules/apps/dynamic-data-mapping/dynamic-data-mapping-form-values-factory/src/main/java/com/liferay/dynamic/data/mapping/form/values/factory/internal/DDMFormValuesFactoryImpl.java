@@ -112,10 +112,6 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Set<String> ddmFormFieldParameterNames) {
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
-			if (ddmFormField.isTransient()) {
-				continue;
-			}
-
 			if (containsDDMFormFieldParameterName(
 					ddmFormField, ddmFormFieldParameterNames)) {
 
@@ -523,10 +519,6 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		Set<String> defaultDDMFormFieldParameterNames) {
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
-			if (ddmFormField.isTransient()) {
-				continue;
-			}
-
 			String defaultDDMFormFieldParameterName =
 				createDefaultDDMFormFieldParameterName(
 					ddmFormField, parentDefaultDDMFormFieldParameterName);
