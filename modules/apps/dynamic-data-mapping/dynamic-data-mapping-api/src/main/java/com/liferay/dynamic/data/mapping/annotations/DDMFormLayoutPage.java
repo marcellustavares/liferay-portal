@@ -12,26 +12,24 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.field.type;
+package com.liferay.dynamic.data.mapping.annotations;
 
-import com.liferay.dynamic.data.mapping.annotations.DDMForm;
-import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.portal.kernel.util.StringPool;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-@DDMForm(localization = "content/Language")
-public interface DDMFormFieldTypeSettings {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface DDMFormLayoutPage {
 
-	@DDMFormField(required = true, visibilityExpression = "false")
-	public String dataType();
+	public String title() default StringPool.BLANK;
 
-	@DDMFormField(
-		label = "%name", required = true, visibilityExpression = "false"
-	)
-	public String name();
-
-	@DDMFormField(required = true, visibilityExpression = "false")
-	public String type();
+	public DDMFormLayoutRow[] value() default {};
 
 }
