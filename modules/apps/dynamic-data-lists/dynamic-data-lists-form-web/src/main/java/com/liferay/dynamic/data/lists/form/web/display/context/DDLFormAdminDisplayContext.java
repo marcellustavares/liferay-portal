@@ -59,6 +59,7 @@ import com.liferay.portal.kernel.workflow.WorkflowEngineManagerUtil;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -179,6 +180,28 @@ public class DDLFormAdminDisplayContext {
 		return portletURL;
 	}
 
+	public String getPublishedFormURL() throws PortalException {
+		if (_recordSet == null) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getSiteGroup();
+
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(group.getPathFriendlyURL(false, themeDisplay));
+		sb.append(GroupConstants.FORMS_FRIENDLY_URL);
+		sb.append("/shared");
+		sb.append("/-/form/");
+		sb.append(_recordSet.getRecordSetId());
+
+		return sb.toString();
+	}
+
 	public DDLRecordSet getRecordSet() throws PortalException {
 		if (_recordSet != null) {
 			return _recordSet;
@@ -190,27 +213,6 @@ public class DDLFormAdminDisplayContext {
 			recordSetId);
 
 		return _recordSet;
-	}
-
-	public String getRecordSetLayoutURL() throws PortalException {
-		if (_recordSet == null) {
-			return StringPool.BLANK;
-		}
-
-		StringBundler sb = new StringBundler(5);
-
-		ThemeDisplay themeDisplay =
-			_ddlFormAdminRequestHelper.getThemeDisplay();
-
-		Group group = themeDisplay.getSiteGroup();
-
-		sb.append(themeDisplay.getPortalURL());
-		sb.append(group.getPathFriendlyURL(false, themeDisplay));
-		sb.append(group.getFriendlyURL());
-		sb.append("/shared");
-		sb.append(String.format("/-/form/%d", _recordSet.getRecordSetId()));
-
-		return sb.toString();
 	}
 
 	public List<DDLRecordSet> getSearchContainerResults(
