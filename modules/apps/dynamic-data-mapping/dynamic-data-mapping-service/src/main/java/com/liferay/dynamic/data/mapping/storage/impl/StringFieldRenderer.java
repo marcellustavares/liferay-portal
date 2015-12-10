@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.storage.BaseFieldRenderer;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -106,6 +107,15 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 		return ddmStructure.getFieldType(field.getName());
 	}
 
+	protected String getValue(String json) {
+		try {
+			return JSONFactoryUtil.createJSONObject(json).getString("value");
+		}
+		catch (JSONException jsone) {
+			return json;
+		}
+	}
+
 	protected String handleJSON(Field field, String json, Locale locale)
 		throws Exception {
 
@@ -115,7 +125,7 @@ public class StringFieldRenderer extends BaseFieldRenderer {
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			LocalizedValue label = getFieldOptionLabel(
-				field, jsonArray.getString(i));
+				field, getValue(jsonArray.getString(i)));
 
 			if (label == null) {
 				continue;

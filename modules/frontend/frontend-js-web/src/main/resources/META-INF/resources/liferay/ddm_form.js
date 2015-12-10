@@ -1502,7 +1502,20 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						return instance.getInputNode().all('option:selected').val();
+						var valueArray = [];
+
+						var options = instance.getInputNode().all('option:selected').getDOMNodes();
+
+						options.forEach(
+							function(item, index) {
+								valueArray[index] = {
+									'label' : item.label,
+									'value' : item.value
+								};
+							}
+						);
+
+						return valueArray;
 					},
 
 					setLabel: function() {
@@ -1529,7 +1542,11 @@ AUI.add(
 						var instance = this;
 
 						if (Lang.isString(value)) {
-							value = JSON.parse(value);
+							JSON.parse(value).forEach(
+								function(item, index) {
+									value[index] = item.value;
+								}
+							);
 						}
 
 						instance.getInputNode().all('option').each(

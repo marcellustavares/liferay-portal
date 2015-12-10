@@ -51,7 +51,7 @@ public abstract class BaseListDDMFormFieldValueRenderer
 
 				for (int i = 0; i < jsonArray.length(); i++) {
 					LocalizedValue label = getDDMFormFieldOptionLabel(
-						ddmFormFieldValue, jsonArray.getString(i));
+						ddmFormFieldValue, getValue(jsonArray.getString(i)));
 
 					if (label == null) {
 						continue;
@@ -73,6 +73,16 @@ public abstract class BaseListDDMFormFieldValueRenderer
 				}
 				catch (JSONException jsone) {
 					throw new ValueAccessorException(jsone);
+				}
+			}
+
+			protected String getValue(String json) {
+				try {
+					return JSONFactoryUtil.createJSONObject(
+						json).getString("value");
+				}
+				catch (JSONException jsone) {
+					return json;
 				}
 			}
 
