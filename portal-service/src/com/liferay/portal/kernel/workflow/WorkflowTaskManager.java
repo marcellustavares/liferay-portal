@@ -156,6 +156,10 @@ public interface WorkflowTaskManager {
 			Boolean completed, Boolean searchByUserRoles)
 		throws WorkflowException;
 
+	public WorkflowTask unassignWorkflowTask(
+			long companyId, long userId, long workflowTaskId, String comment)
+		throws WorkflowException;
+
 	public WorkflowTask updateDueDate(
 			long companyId, long userId, long workflowTaskId, String comment,
 			Date dueDate)

@@ -784,6 +784,33 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	}
 
 	@Override
+	public WorkflowTask unassignWorkflowTask(
+			long companyId, long userId, long workflowTaskId, String comment)
+		throws WorkflowException {
+
+		try {
+			ServiceContext serviceContext = new ServiceContext();
+
+			serviceContext.setCompanyId(companyId);
+			serviceContext.setUserId(userId);
+
+			KaleoTaskInstanceToken kaleoTaskInstanceToken =
+				KaleoTaskInstanceTokenLocalServiceUtil.
+				getKaleoTaskInstanceToken(workflowTaskId);
+
+			List<KaleoTaskAssignment> calculatedKaleoTaskAssignments =
+				getCalculatedKaleoTaskAssignments(kaleoTaskInstanceToken);
+
+			return _taskManager.unassignWorkflowTask(
+				workflowTaskId, calculatedKaleoTaskAssignments, comment,
+				serviceContext);
+		}
+		catch (Exception e) {
+			throw new WorkflowException(e);
+		}
+	}
+
+	@Override
 	public WorkflowTask updateDueDate(
 			long companyId, long userId, long workflowTaskInstanceId,
 			String comment, Date dueDate)

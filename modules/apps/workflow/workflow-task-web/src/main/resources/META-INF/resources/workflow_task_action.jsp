@@ -103,6 +103,24 @@ WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 		/>
 	</c:if>
 
+	<c:if test="<%= !workflowTask.isCompleted() && workflowTaskDisplayContext.isAssignedToUser(workflowTask) %>">
+		<liferay-portlet:actionURL name="unassignWorkflowTask" portletName="<%= PortletKeys.MY_WORKFLOW_TASK %>" var="unassignURL">
+			<portlet:param name="mvcPath" value="/edit_workflow_task.jsp" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="closeRedirect" value="<%= closeRedirect %>" />
+			<portlet:param name="workflowTaskId" value="<%= String.valueOf(workflowTask.getWorkflowTaskId()) %>" />
+		</liferay-portlet:actionURL>
+
+		<liferay-ui:icon
+			cssClass='<%= "workflow-task-" + randomId + " task-unassign-link" %>'
+			data="<%= workflowTaskDisplayContext.getWorkflowTaskActionLinkData() %>"
+			id='<%= randomId + "taskUnassignLink" %>'
+			message="drop-task"
+			method="get"
+			url="<%= unassignURL %>"
+		/>
+	</c:if>
+
 	<c:if test="<%= !workflowTask.isCompleted() %>">
 		<liferay-portlet:actionURL name="updateWorkflowTask" portletName="<%= PortletKeys.MY_WORKFLOW_TASK %>" var="updateDueDateURL">
 			<portlet:param name="mvcPath" value="/edit_workflow_task.jsp" />
@@ -174,4 +192,5 @@ WorkflowTask workflowTask = workflowTaskDisplayContext.getWorkflowTask();
 	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskAssignToMeLink', onTaskClickFn);
 	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskAssignLink', onTaskClickFn);
 	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskDueDateLink', onTaskClickFn);
+	Liferay.delegateClick('<portlet:namespace /><%= randomId %>taskUnassignLink', onTaskClickFn);
 </aui:script>

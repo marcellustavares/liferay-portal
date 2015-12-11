@@ -17,10 +17,12 @@ package com.liferay.portal.workflow.kaleo.runtime;
 import com.liferay.portal.kernel.workflow.WorkflowException;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment;
 
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +46,11 @@ public interface TaskManager {
 			long workflowTaskId, String transitionName, String comment,
 			Map<String, Serializable> workflowContext,
 			ServiceContext serviceContext)
+		throws WorkflowException;
+
+	public WorkflowTask unassignWorkflowTask(
+			long workflowTaskId, List<KaleoTaskAssignment> kaleoTaskAssignments,
+			String comment, ServiceContext serviceContext)
 		throws WorkflowException;
 
 	public WorkflowTask updateDueDate(

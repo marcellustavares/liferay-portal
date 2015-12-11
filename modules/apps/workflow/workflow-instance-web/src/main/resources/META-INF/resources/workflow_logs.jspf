@@ -71,6 +71,11 @@ for (WorkflowLog workflowLog : workflowInstanceEditDisplayContext.getWorkflowLog
 									</c:if>
 								</div>
 							</c:when>
+							<c:when test="<%= workflowLog.getPreviousUserId() != 0 %>">
+								<div>
+									<liferay-ui:message arguments="<%= workflowInstanceEditDisplayContext.getAssignedTheTaskToMessageArguments(workflowLog) %>" key="x-assigned-to-the-x-role" translateArguments="<%= false %>" />
+								</div>
+							</c:when>
 							<c:otherwise>
 								<div>
 									<liferay-ui:message arguments="<%= workflowInstanceEditDisplayContext.getTaskInitiallyAssignedMessageArguments(workflowLog) %>" key="task-initially-assigned-to-the-x-role" translateArguments="<%= false %>" />

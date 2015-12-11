@@ -273,6 +273,14 @@ public class WorkflowTaskManagerUtil {
 			searchByUserRoles);
 	}
 
+	public static WorkflowTask unassignWorkflowTask(
+			long companyId, long userId, long workflowTaskId, String comment)
+		throws WorkflowException {
+
+		return getWorkflowTaskManager().unassignWorkflowTask(
+			companyId, userId, workflowTaskId, comment);
+	}
+
 	public static WorkflowTask updateDueDate(
 			long companyId, long userId, long workflowTaskId, String comment,
 			Date dueDate)

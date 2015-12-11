@@ -225,6 +225,13 @@ public class WorkflowTaskManagerProxyBean
 	}
 
 	@Override
+	public WorkflowTask unassignWorkflowTask(
+		long companyId, long userId, long workflowTaskId, String comment) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public WorkflowTask updateDueDate(
 		long companyId, long userId, long workflowTaskId, String comment,
 		Date dueDate) {

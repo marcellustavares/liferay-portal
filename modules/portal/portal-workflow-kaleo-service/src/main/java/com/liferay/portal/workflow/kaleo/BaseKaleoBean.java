@@ -25,6 +25,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoNodeLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoNotificationLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoNotificationRecipientLocalService;
+import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentInstanceLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskLocalService;
@@ -67,6 +68,10 @@ public class BaseKaleoBean {
 	@BeanReference(type = KaleoNotificationRecipientLocalService.class)
 	protected KaleoNotificationRecipientLocalService
 		kaleoNotificationRecipientLocalService;
+
+	@BeanReference(type = KaleoTaskAssignmentInstanceLocalService.class)
+	protected KaleoTaskAssignmentInstanceLocalService
+		kaleoTaskAssignmentInstanceLocalService;
 
 	@BeanReference(type = KaleoTaskAssignmentLocalService.class)
 	protected KaleoTaskAssignmentLocalService kaleoTaskAssignmentLocalService;

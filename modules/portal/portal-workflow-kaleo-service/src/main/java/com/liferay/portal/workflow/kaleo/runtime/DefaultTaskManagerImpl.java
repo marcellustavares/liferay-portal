@@ -22,23 +22,32 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowException;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
+import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Role;
+import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.workflow.kaleo.BaseKaleoBean;
 import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
+import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 import com.liferay.portal.workflow.kaleo.model.KaleoNode;
 import com.liferay.portal.workflow.kaleo.model.KaleoTask;
+import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
+import com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentImpl;
 import com.liferay.portal.workflow.kaleo.runtime.notification.NotificationUtil;
 import com.liferay.portal.workflow.kaleo.util.WorkflowContextUtil;
 import com.liferay.portal.workflow.kaleo.util.WorkflowModelUtil;
 
 import java.io.Serializable;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +106,21 @@ public class DefaultTaskManagerImpl
 			return doCompleteWorkflowTask(
 				workflowTaskInstanceId, transitionName, comment,
 				workflowContext, serviceContext);
+		}
+		catch (Exception e) {
+			throw new WorkflowException(e);
+		}
+	}
+
+	@Override
+	public WorkflowTask unassignWorkflowTask(
+			long workflowTaskId, List<KaleoTaskAssignment> kaleoTaskAssignments,
+			String comment, ServiceContext serviceContext)
+		throws WorkflowException {
+
+		try {
+			return doUnassignWorkflowTask(
+				workflowTaskId, kaleoTaskAssignments, comment, serviceContext);
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -242,6 +266,124 @@ public class DefaultTaskManagerImpl
 
 		return WorkflowModelUtil.toWorkflowTask(
 			kaleoTaskInstanceToken, workflowContext);
+	}
+
+	protected WorkflowTask doUnassignWorkflowTask(
+			long workflowTaskId, List<KaleoTaskAssignment> kaleoTaskAssignments,
+			String comment, ServiceContext serviceContext)
+		throws PortalException, WorkflowException {
+
+		KaleoTaskInstanceToken kaleoTaskInstanceToken =
+			kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
+				workflowTaskId);
+
+		KaleoInstanceToken kaleoInstanceToken =
+			kaleoTaskInstanceToken.getKaleoInstanceToken();
+
+		KaleoTask kaleoTask = kaleoTaskLocalService.getKaleoNodeKaleoTask(
+			kaleoInstanceToken.getCurrentKaleoNodeId());
+
+		if (kaleoTaskAssignments.isEmpty()) {
+			Collection<KaleoTaskAssignment> configuredKaleoTaskAssignments =
+				kaleoTask.getKaleoTaskAssignments();
+
+			kaleoTaskAssignments.addAll(
+					getOrganizationKaleoTaskAssignments(
+				configuredKaleoTaskAssignments, serviceContext.getUserId()));
+		}
+
+		List<KaleoTaskAssignmentInstance> previousTaskAssignmentInstances =
+			kaleoTaskInstanceToken.getKaleoTaskAssignmentInstances();
+
+		Map<String, Serializable> workflowContext = updateWorkflowContext(
+			null, kaleoTaskInstanceToken);
+
+		if (kaleoTaskInstanceToken.isCompleted()) {
+			throw new WorkflowException(
+				"Cannot reassign a completed task " + workflowTaskId);
+		}
+
+		kaleoTaskAssignmentInstanceLocalService.
+			deleteKaleoInstanceKaleoTaskAssignmentInstances(
+				kaleoInstanceToken.getKaleoInstanceId());
+
+		serviceContext.setScopeGroupId(kaleoInstanceToken.getGroupId());
+
+		kaleoTaskInstanceToken =
+			kaleoTaskInstanceTokenLocalService.addKaleoTaskInstanceToken(
+				kaleoInstanceToken.getKaleoInstanceTokenId(),
+				kaleoTask.getKaleoTaskId(), kaleoTask.getName(),
+				kaleoTaskAssignments, null, workflowContext, serviceContext);
+
+		workflowContext.put(WorkflowConstants.CONTEXT_TASK_COMMENTS, comment);
+
+		ExecutionContext executionContext = new ExecutionContext(
+			kaleoTaskInstanceToken.getKaleoInstanceToken(),
+			kaleoTaskInstanceToken, workflowContext, serviceContext);
+
+		kaleoActionExecutor.executeKaleoActions(
+			KaleoNode.class.getName(), kaleoTask.getKaleoNodeId(),
+			ExecutionType.ON_ASSIGNMENT, executionContext);
+
+		NotificationUtil.sendKaleoNotifications(
+			KaleoNode.class.getName(), kaleoTask.getKaleoNodeId(),
+			ExecutionType.ON_ASSIGNMENT, executionContext);
+
+		kaleoLogLocalService.addTaskAssignmentKaleoLog(
+			previousTaskAssignmentInstances, kaleoTaskInstanceToken, comment,
+			workflowContext, serviceContext);
+
+		return WorkflowModelUtil.toWorkflowTask(
+			kaleoTaskInstanceToken, workflowContext);
+	}
+
+	protected Collection<KaleoTaskAssignment>
+		getOrganizationKaleoTaskAssignments(
+			Collection<KaleoTaskAssignment> kaleoTaskAssignments, long userId)
+		throws PortalException {
+
+		User user = UserLocalServiceUtil.getUser(userId);
+
+		List<Organization> organizations = user.getOrganizations();
+
+		Collection<KaleoTaskAssignment> organizationKaleoTaskAssignments =
+			new HashSet<>();
+
+		for (KaleoTaskAssignment kaleoTaskAssignment : kaleoTaskAssignments) {
+			String assigneeClassName =
+				kaleoTaskAssignment.getAssigneeClassName();
+
+			if (!assigneeClassName.equals(Role.class.getName())) {
+				continue;
+			}
+
+			long roleId = kaleoTaskAssignment.getAssigneeClassPK();
+
+			Role role = RoleLocalServiceUtil.getRole(roleId);
+
+			if (role.getType() != RoleConstants.TYPE_ORGANIZATION) {
+				continue;
+			}
+
+			for (Organization organization : organizations) {
+				KaleoTaskAssignment organizationKaleoTaskAssignment =
+					new KaleoTaskAssignmentImpl();
+
+				organizationKaleoTaskAssignment.setGroupId(
+					organization.getGroup().getGroupId());
+				organizationKaleoTaskAssignment.setCompanyId(
+					kaleoTaskAssignment.getCompanyId());
+				organizationKaleoTaskAssignment.setAssigneeClassName(
+					kaleoTaskAssignment.getAssigneeClassName());
+				organizationKaleoTaskAssignment.setAssigneeClassPK(
+					kaleoTaskAssignment.getAssigneeClassPK());
+
+				organizationKaleoTaskAssignments.add(
+					organizationKaleoTaskAssignment);
+			}
+		}
+
+		return organizationKaleoTaskAssignments;
 	}
 
 	protected Map<String, Serializable> updateWorkflowContext(
