@@ -15,8 +15,13 @@
 package com.liferay.dynamic.data.mapping.type.checkbox;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRenderer;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
-import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.Locale;
 
@@ -32,15 +37,38 @@ public class CheckboxDDMFormFieldValueRenderer
 
 	@Override
 	public String render(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
-		Boolean valueBoolean = _checkboxDDMFormFieldValueAccessor.getValue(
-			ddmFormFieldValue, locale);
+		JSONArray optionsValuesJSONArray =
+			_checkboxDDMFormFieldValueAccessor.getValue(
+				ddmFormFieldValue, locale);
 
-		if (valueBoolean == Boolean.TRUE) {
-			return LanguageUtil.get(locale, "yes");
+		DDMFormFieldOptions ddmFormFieldOptions = getDDMFormFieldOptions(
+			ddmFormFieldValue);
+
+		StringBundler sb = new StringBundler(
+			optionsValuesJSONArray.length() * 2);
+
+		for (int i = 0; i < optionsValuesJSONArray.length(); i++) {
+			if (i > 0) {
+				sb.append(StringPool.COMMA_AND_SPACE);
+			}
+
+			String optionValue = optionsValuesJSONArray.getString(i);
+
+			LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
+				optionValue);
+
+			sb.append(optionLabel.getString(locale));
 		}
-		else {
-			return LanguageUtil.get(locale, "no");
-		}
+
+		return sb.toString();
+	}
+
+	protected DDMFormFieldOptions getDDMFormFieldOptions(
+		DDMFormFieldValue ddmFormFieldValue) {
+
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+		return ddmFormField.getDDMFormFieldOptions();
 	}
 
 	@Reference(unbind = "-")
