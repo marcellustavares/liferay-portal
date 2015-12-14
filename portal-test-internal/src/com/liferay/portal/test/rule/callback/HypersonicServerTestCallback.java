@@ -114,20 +114,13 @@ public class HypersonicServerTestCallback
 
 		};
 
-		Path hsqlHomePath = Paths.get(_HSQL_HOME);
+		try (Connection connection = DriverManager.getConnection(
+				PropsValues.JDBC_DEFAULT_URL, "sa", "");
+			Statement statement = connection.createStatement()) {
 
-		Files.createDirectories(hsqlHomePath);
-
-		Path hsqlHomeTempPath = Paths.get(_HSQL_TEMP);
-
-		deleteFolder(hsqlHomeTempPath);
-
-		copyFile(_databaseName.concat(".log"), hsqlHomePath, hsqlHomeTempPath);
-		copyFile(
-			_databaseName.concat(".properties"), hsqlHomePath,
-			hsqlHomeTempPath);
-		copyFile(
-			_databaseName.concat(".script"), hsqlHomePath, hsqlHomeTempPath);
+			statement.execute(
+				"BACKUP DATABASE TO '" + _HSQL_TEMP + "' BLOCKING AS FILES");
+		}
 
 		server.setErrWriter(
 			new UnsyncPrintWriter(
