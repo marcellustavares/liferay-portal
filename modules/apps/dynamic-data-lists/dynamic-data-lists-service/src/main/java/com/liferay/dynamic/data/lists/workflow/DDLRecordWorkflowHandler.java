@@ -85,6 +85,21 @@ public class DDLRecordWorkflowHandler extends BaseWorkflowHandler<DDLRecord> {
 	}
 
 	@Override
+	public String getType(long classPK, Locale locale) throws PortalException {
+		DDLRecordVersion recordVersion =
+			_ddlRecordVersionLocalService.getRecordVersion(classPK);
+
+		DDLRecordSet recordSet = recordVersion.getRecordSet();
+
+		if (recordSet.getScope() == DDLRecordSetConstants.SCOPE_FORMS) {
+			return ResourceActionsUtil.getModelResource(locale, "Form");
+		}
+		else {
+			return getType(locale);
+		}
+	}
+
+	@Override
 	public WorkflowDefinitionLink getWorkflowDefinitionLink(
 			long companyId, long groupId, long classPK)
 		throws PortalException {

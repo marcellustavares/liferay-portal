@@ -68,6 +68,8 @@ public interface WorkflowHandler<T> {
 
 	public String getType(Locale locale);
 
+	public String getType(long classPK, Locale locale) throws PortalException;
+
 	public PortletURL getURLEdit(
 		long classPK, LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse);

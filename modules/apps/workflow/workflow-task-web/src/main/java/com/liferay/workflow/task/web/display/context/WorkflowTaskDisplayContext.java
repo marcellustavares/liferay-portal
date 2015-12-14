@@ -171,9 +171,12 @@ public class WorkflowTaskDisplayContext {
 	public String getAssetType(WorkflowTask workflowTask)
 		throws PortalException {
 
+		long classPK = getWorkflowContextEntryClassPK(workflowTask);
+
 		WorkflowHandler<?> workflowHandler = getWorkflowHandler(workflowTask);
 
-		return workflowHandler.getType(_workflowTaskRequestHelper.getLocale());
+		return workflowHandler.getType(
+			classPK, _workflowTaskRequestHelper.getLocale());
 	}
 
 	public String getAssignedTheTaskMessageKey(WorkflowLog workflowLog)
