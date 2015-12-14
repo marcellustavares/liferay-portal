@@ -3,6 +3,11 @@
 		<execute function="Click" locator1="WCD#EDIT_WEB_CONTENT" />
 
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Structure and Template" />
+		</execute>
+
 		<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_STRUCTURE" value1="${structureName}" />
 		<execute function="AssertClick" locator1="WCEditWebContent#SELECT_TEMPLATE" value1="Select" />
 
@@ -16,6 +21,11 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 		<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Structure and Template" />
+		</execute>
+
 		<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_TEMPLATE" value1="${templateName}" />
 		<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -27,7 +37,9 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
-		<execute function="AssertClick" locator1="NavBar#PERMISSIONS" value1="Permissions" />
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Permissions" />
+		</execute>
 	</command>
 
 	<command name="configureScopePG">
@@ -42,10 +54,13 @@
 		<var name="key_scopeSelection" value="${scopeSelection}" />
 
 		<execute function="Click#pauseClickAt" locator1="WCDConfigurationScope#SCOPE_MENULIST" />
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="WCDConfigurationScope#SCOPE_MENULIST_SELECTION" value1="${scopeSelection}" />
+
+		<execute function="Click" locator1="WCDConfigurationScope#SCOPE_MENULIST_SELECTION" value1="${scopeSelection}" />
+
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
 		<execute function="AssertTextEquals" locator1="Message#SUCCESS" value1="You have successfully updated the setup." />
-		<execute function="AssertTextEquals" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
 	</command>
 
 	<command name="configureSetupPG">
@@ -130,6 +145,11 @@
 				<execute function="Click" locator1="WCD#EDIT_WEB_CONTENT" />
 
 				<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+				<execute macro="Panel#expandPanel">
+					<var name="panelHeading" value="Structure and Template" />
+				</execute>
+
 				<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_STRUCTURE" value1="${structureName}" />
 				<execute function="ClickNoError" locator1="WCEditWebContent#EDIT_TEMPLATE" />
 				<execute function="Confirm" value1="Editing the current template deletes all unsaved content." />
@@ -160,6 +180,11 @@
 
 				<execute function="SelectFrame" value1="relative=top" />
 				<execute function="SelectFrame" locator1="IFrame#EDIT_ASSET" />
+
+				<execute macro="Panel#expandPanel">
+					<var name="panelHeading" value="Structure and Template" />
+				</execute>
+
 				<execute function="AssertTextEquals" locator1="WCEditWebContent#SELECTED_TEMPLATE" value1="${templateName}" />
 				<execute function="AssertClick#pauseAssertTextClickAt" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -320,7 +345,7 @@
 
 		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 		<execute function="AssertClick" locator1="NavPill#SCOPE" value1="Scope" />
-		<execute function="AssertTextEquals" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="WCDConfigurationScope#SCOPE_MENULIST" value1="${scopeSelection}" />
 	</command>
 
 	<command name="viewContentPageBreak">

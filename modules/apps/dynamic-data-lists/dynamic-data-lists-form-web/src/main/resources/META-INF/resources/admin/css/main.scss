@@ -21,11 +21,13 @@
 	.ddl-form-name {
 		font-size: 32px;
 		line-height: 32px;
+		word-break: break-all;
 	}
 
 	.ddl-form-description {
 		font-size: 14px;
 		line-height: 24px;
+		word-break: break-all;
 	}
 
 	.form-builder-page-header {
@@ -164,6 +166,13 @@
 	.ddl-form-builder-app {
 		margin-top: -120px;
 
+		.ddl-loader {
+			display: block;
+			font-size: 60px;
+			margin-top: 150px;
+			text-align: center;
+		}
+
 		.form-builder-content,
 		.lfr-ddm-form-content {
 			background: #FFF;
@@ -189,13 +198,6 @@
 			.form-builder-field-toolbar-items {
 				float: right;
 			}
-		}
-
-		.icon-refresh {
-			display: block;
-			font-size: 60px;
-			margin-top: 150px;
-			text-align: center;
 		}
 
 		.liferay-ddm-form-field-text textarea {

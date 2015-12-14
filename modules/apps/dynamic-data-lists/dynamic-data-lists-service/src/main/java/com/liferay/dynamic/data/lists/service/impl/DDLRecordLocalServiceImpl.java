@@ -494,15 +494,17 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			visible = false;
 		}
 
-		DDMStructure ddmStructure = recordSet.getDDMStructure();
+		String title = recordSet.getName(locale);
 
-		String ddmStructureName = ddmStructure.getName(locale);
+		if (scope == DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS) {
+			DDMStructure ddmStructure = recordSet.getDDMStructure();
 
-		String recordSetName = recordSet.getName(locale);
+			String ddmStructureName = ddmStructure.getName(locale);
 
-		String title = LanguageUtil.format(
-			locale, "new-x-for-list-x",
-			new Object[] {ddmStructureName, recordSetName}, false);
+			title = LanguageUtil.format(
+				locale, "new-x-for-list-x",
+				new Object[] {ddmStructureName, title}, false);
+		}
 
 		if (addDraftAssetEntry) {
 			assetEntryLocalService.updateEntry(

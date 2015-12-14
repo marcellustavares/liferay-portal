@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.lists.workflow;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalService;
@@ -29,6 +30,7 @@ import com.liferay.portal.security.permission.ResourceActionsUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 
@@ -50,15 +52,23 @@ public class DDLRecordWorkflowHandler extends BaseWorkflowHandler<DDLRecord> {
 	public AssetRenderer<DDLRecord> getAssetRenderer(long classPK)
 		throws PortalException {
 
+		DDLRecordVersion recordVersion =
+			_ddlRecordVersionLocalService.getRecordVersion(classPK);
+
+		DDLRecordSet recordSet = recordVersion.getRecordSet();
+
+		String type = "record";
+
+		if (recordSet.getScope() == DDLRecordSetConstants.SCOPE_FORMS) {
+			type = "form";
+		}
+
 		AssetRendererFactory<DDLRecord> assetRendererFactory =
-			getAssetRendererFactory();
+			getAssetRendererFactory(type);
 
 		if (assetRendererFactory == null) {
 			return null;
 		}
-
-		DDLRecordVersion recordVersion =
-			_ddlRecordVersionLocalService.getRecordVersion(classPK);
 
 		return assetRendererFactory.getAssetRenderer(
 			recordVersion.getRecordId(), AssetRendererFactory.TYPE_LATEST);
@@ -72,6 +82,21 @@ public class DDLRecordWorkflowHandler extends BaseWorkflowHandler<DDLRecord> {
 	@Override
 	public String getType(Locale locale) {
 		return ResourceActionsUtil.getModelResource(locale, getClassName());
+	}
+
+	@Override
+	public String getType(long classPK, Locale locale) throws PortalException {
+		DDLRecordVersion recordVersion =
+			_ddlRecordVersionLocalService.getRecordVersion(classPK);
+
+		DDLRecordSet recordSet = recordVersion.getRecordSet();
+
+		if (recordSet.getScope() == DDLRecordSetConstants.SCOPE_FORMS) {
+			return ResourceActionsUtil.getModelResource(locale, "Form");
+		}
+		else {
+			return getType(locale);
+		}
 	}
 
 	@Override
@@ -110,6 +135,14 @@ public class DDLRecordWorkflowHandler extends BaseWorkflowHandler<DDLRecord> {
 
 		return _ddlRecordLocalService.updateStatus(
 			userId, classPK, status, serviceContext);
+	}
+
+	protected AssetRendererFactory<DDLRecord> getAssetRendererFactory(
+		String type) {
+
+		return (AssetRendererFactory<DDLRecord>)
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByType(
+				type);
 	}
 
 	@Override

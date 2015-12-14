@@ -14,20 +14,8 @@
  */
 --%>
 
-<%@ include file="/init.jsp" %>
+<%@ include file="/admin/init.jsp" %>
 
-<%
-RuleGroupSearch searchContainer = (RuleGroupSearch)request.getAttribute("liferay-ui:search:searchContainer");
-
-RuleGroupDisplayTerms displayTerms = (RuleGroupDisplayTerms)searchContainer.getDisplayTerms();
-%>
-
-<liferay-ui:search-toggle
-	buttonLabel="search"
-	displayTerms="<%= displayTerms %>"
-	id="toggle_id_mobile_device_rules_rule_group_search"
->
-	<aui:fieldset>
-		<aui:input label="name" name="<%= RuleGroupDisplayTerms.NAME %>" size="20" type="text" value="<%= displayTerms.getName() %>" />
-	</aui:fieldset>
-</liferay-ui:search-toggle>
+<div class="container-fluid-1280">
+	<%= ddlFormAdminDisplayContext.getDDMFormHTML() %>
+</div>
