@@ -6,6 +6,7 @@
  * @param childElementsHTML
  * @param label
  * @param name
+ * @param options
  * @param readOnly
  * @param required
  * @param showAsSwitcher
@@ -36,17 +37,18 @@
 		{else}
 			<div class="checkbox checkbox-default">
 				{if $showLabel}
-					<label class="control-label" for="{$name}">
+					<div>{$label} {if $required}<b>*</b>{/if}</div>
 				{/if}
 
-				<input {if $readOnly}disabled{/if} id="{$name}" name="{$name}" type="checkbox" {$status} value="true" />{if $showLabel} {$label}{/if}
+				{foreach $option in $options}
+					<div>
+						<label class="checkbox-inline" for="{$option.value}">
+							<input {if $readOnly}disabled{/if} id="{$option.name}" name="{$option.name}" type="checkbox" {$option.status} value="{$option.value}" />
 
-				{if $showLabel}
-						{if $required}
-							<b>*</b>
-						{/if}
-					</label>
-				{/if}
+							{$option.label}
+						</label>
+					</div>
+				{/foreach}
 			</div>
 		{/if}
 

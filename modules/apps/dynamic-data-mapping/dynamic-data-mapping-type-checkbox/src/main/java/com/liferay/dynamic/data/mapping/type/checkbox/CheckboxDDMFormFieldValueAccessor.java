@@ -17,10 +17,17 @@ package com.liferay.dynamic.data.mapping.type.checkbox;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Renato Rego
@@ -32,15 +39,32 @@ import org.osgi.service.component.annotations.Component;
 	}
 )
 public class CheckboxDDMFormFieldValueAccessor
-	implements DDMFormFieldValueAccessor<Boolean> {
+	implements DDMFormFieldValueAccessor<JSONArray> {
 
 	@Override
-	public Boolean getValue(
+	public JSONArray getValue(
 		DDMFormFieldValue ddmFormFieldValue, Locale locale) {
 
-		Value value = ddmFormFieldValue.getValue();
+		try {
+			Value value = ddmFormFieldValue.getValue();
 
-		return Boolean.valueOf(value.getString(locale));
+			return JSONFactoryUtil.createJSONArray(value.getString(locale));
+		}
+		catch (JSONException jsone) {
+			_log.error("Unable to parse JSON array", jsone);
+
+			return _jsonFactory.createJSONArray();
+		}
 	}
+
+	@Reference(unbind = "-")
+	protected void setJSONFactory(JSONFactory jsonFactory) {
+		_jsonFactory = jsonFactory;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		CheckboxDDMFormFieldValueAccessor.class);
+
+	private volatile JSONFactory _jsonFactory;
 
 }
