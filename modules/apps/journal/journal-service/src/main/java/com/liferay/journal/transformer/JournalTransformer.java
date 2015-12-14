@@ -14,6 +14,12 @@
 
 package com.liferay.journal.transformer;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.kernel.configuration.Filter;
@@ -179,6 +185,21 @@ public class JournalTransformer {
 			portletRequestModel, script, langType, propagateException);
 	}
 
+	protected void addOption(
+		Map<String, String> optionMap, String optionValue,
+		DDMFormField ddmFormField, Locale locale) {
+
+		DDMFormFieldOptions ddmFormFieldOptions =
+			ddmFormField.getDDMFormFieldOptions();
+
+		LocalizedValue localizedLabel = ddmFormFieldOptions.getOptionLabels(
+			optionValue);
+
+		String optionLabel = localizedLabel.getString(locale);
+
+		optionMap.put(optionValue, optionLabel);
+	}
+
 	protected String doTransform(
 			ThemeDisplay themeDisplay, Map<String, Object> contextObjects,
 			Map<String, String> tokens, String viewMode, String languageId,
@@ -290,11 +311,16 @@ public class JournalTransformer {
 			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
 
 			try {
+				Map<String, Map<String, String>> fieldOptionMap =
+					new HashMap<>();
+
 				if (document != null) {
 					Element rootElement = document.getRootElement();
 
 					List<TemplateNode> templateNodes = getTemplateNodes(
-						themeDisplay, rootElement);
+						themeDisplay, rootElement,
+						Long.valueOf(tokens.get("ddm_structure_id")),
+						fieldOptionMap);
 
 					if (templateNodes != null) {
 						for (TemplateNode templateNode : templateNodes) {
@@ -331,6 +357,7 @@ public class JournalTransformer {
 				template.put("company", getCompany(themeDisplay, companyId));
 				template.put("companyId", companyId);
 				template.put("device", getDevice(themeDisplay));
+				template.put("fieldOptionMap", fieldOptionMap);
 
 				String templatesPath = getTemplatesPath(
 					companyId, articleGroupId, classNameId);
@@ -509,8 +536,17 @@ public class JournalTransformer {
 	}
 
 	protected List<TemplateNode> getTemplateNodes(
-			ThemeDisplay themeDisplay, Element element)
+			ThemeDisplay themeDisplay, Element element, long ddmStructureId,
+			Map<String, Map<String, String>> fieldOptionMap)
 		throws Exception {
+
+		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
+			ddmStructureId);
+
+		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(true);
 
 		List<TemplateNode> templateNodes = new ArrayList<>();
 
@@ -522,6 +558,8 @@ public class JournalTransformer {
 		for (Element dynamicElementElement : dynamicElementElements) {
 			Element dynamicContentElement = dynamicElementElement.element(
 				"dynamic-content");
+
+			Map<String, String> optionMap = new HashMap<>();
 
 			String data = StringPool.BLANK;
 
@@ -537,8 +575,19 @@ public class JournalTransformer {
 					"Element missing \"name\" attribute");
 			}
 
+			DDMFormField ddmFormField = ddmFormFieldsMap.get(name);
+
 			String type = dynamicElementElement.attributeValue(
 				"type", StringPool.BLANK);
+
+			if (type.equals("list") &&
+				((dynamicContentElement == null) ||
+				 (dynamicContentElement.element("option") == null))) {
+
+				addOption(
+					optionMap, StringUtil.stripCDATA(data), ddmFormField,
+					themeDisplay.getLocale());
+			}
 
 			Map<String, String> attributes = new HashMap<>();
 
@@ -554,7 +603,9 @@ public class JournalTransformer {
 
 			if (dynamicElementElement.element("dynamic-element") != null) {
 				templateNode.appendChildren(
-					getTemplateNodes(themeDisplay, dynamicElementElement));
+					getTemplateNodes(
+						themeDisplay, dynamicElementElement, ddmStructureId,
+						fieldOptionMap));
 			}
 			else if ((dynamicContentElement != null) &&
 					 (dynamicContentElement.element("option") != null)) {
@@ -563,6 +614,11 @@ public class JournalTransformer {
 					"option");
 
 				for (Element optionElement : optionElements) {
+					addOption(
+						optionMap,
+						StringUtil.stripCDATA(optionElement.getText()),
+						ddmFormField, themeDisplay.getLocale());
+
 					templateNode.appendOption(
 						StringUtil.stripCDATA(optionElement.getText()));
 				}
@@ -580,6 +636,8 @@ public class JournalTransformer {
 			}
 
 			prototypeTemplateNode.appendSibling(templateNode);
+
+			fieldOptionMap.put(name, optionMap);
 		}
 
 		return templateNodes;
