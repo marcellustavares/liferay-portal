@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
@@ -22,12 +23,17 @@ import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -120,12 +126,23 @@ public class AddRecordSetMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		String settingsDDMFormValuesJSON = ParamUtil.getString(
+			actionRequest, "settingsDDMFormValuesJSON");
+
+		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
+
+		DDMFormValues ddmFormValues =
+			DDMFormValuesJSONDeserializerUtil.deserialize(
+				ddmForm, settingsDDMFormValuesJSON);
+
 		DDMStructure ddmStructure = addDDMStructure(actionRequest);
 
 		DDLRecordSet recordSet = addRecordSet(
 			actionRequest, ddmStructure.getStructureId());
 
 		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
+
+		typeSettingsProperties.fastLoad(getSettingsFromJSON(ddmFormValues));
 
 		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
 
@@ -169,6 +186,22 @@ public class AddRecordSetMVCActionCommand
 		localizedMap.put(locale, value);
 
 		return localizedMap;
+	}
+
+	protected String getSettingsFromJSON(DDMFormValues ddmFormValues) {
+		UnicodeProperties properties = new UnicodeProperties();
+
+		for (DDMFormFieldValue ddmFormFieldValue :
+				ddmFormValues.getDDMFormFieldValues()) {
+
+			Value value = ddmFormFieldValue.getValue();
+
+			properties.put(
+				ddmFormFieldValue.getName(),
+				value.getString(ddmFormValues.getDefaultLocale()));
+		}
+
+		return properties.toString();
 	}
 
 	@Reference(unbind = "-")
