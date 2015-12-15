@@ -103,6 +103,11 @@ public class TestWorkflowHandler implements WorkflowHandler<Object> {
 	}
 
 	@Override
+	public String getType(long classPK, Locale locale) {
+		return null;
+	}
+
+	@Override
 	public PortletURL getURLEdit(
 		long classPK, LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {

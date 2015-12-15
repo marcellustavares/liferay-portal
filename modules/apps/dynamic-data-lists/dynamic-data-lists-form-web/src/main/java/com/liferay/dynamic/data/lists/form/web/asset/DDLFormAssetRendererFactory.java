@@ -12,10 +12,10 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.web.asset;
+package com.liferay.dynamic.data.lists.form.web.asset;
 
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
-import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
@@ -40,22 +40,24 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 @Component(
 	immediate = true,
-	property = {"javax.portlet.name=" + DDLPortletKeys.DYNAMIC_DATA_LISTS},
+	property = {
+		"javax.portlet.name=" + DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM
+	},
 	service = AssetRendererFactory.class
 )
-public class DDLRecordAssetRendererFactory
+public class DDLFormAssetRendererFactory
 	extends BaseAssetRendererFactory<DDLRecord> {
 
-	public static final String TYPE = "record";
+	public static final String TYPE = "form";
 
-	public DDLRecordAssetRendererFactory() {
+	public DDLFormAssetRendererFactory() {
 		setCategorizable(false);
 		setClassName(DDLRecord.class.getName());
-		setPortletId(DDLPortletKeys.DYNAMIC_DATA_LISTS);
+		setPortletId(DDLFormPortletKeys.DYNAMIC_DATA_LISTS_FORM);
 		setSearchable(true);
 		setSelectable(true);
 	}
@@ -87,13 +89,7 @@ public class DDLRecordAssetRendererFactory
 			}
 		}
 
-		DDLRecordAssetRenderer ddlRecordAssetRenderer =
-			new DDLRecordAssetRenderer(record, recordVersion);
-
-		ddlRecordAssetRenderer.setAssetRendererType(type);
-		ddlRecordAssetRenderer.setServletContext(_servletContext);
-
-		return ddlRecordAssetRenderer;
+		return createAssetRenderer(record, recordVersion, type);
 	}
 
 	@Override
@@ -103,7 +99,7 @@ public class DDLRecordAssetRendererFactory
 
 	@Override
 	public ClassTypeReader getClassTypeReader() {
-		return new DDLRecordSetClassTypeReader();
+		return new DDLFormClassTypeReader();
 	}
 
 	@Override
@@ -147,11 +143,24 @@ public class DDLRecordAssetRendererFactory
 	}
 
 	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.dynamic.data.lists.web)",
+		target =
+			"(osgi.web.symbolicname=com.liferay.dynamic.data.lists.form.web)",
 		unbind = "-"
 	)
 	public void setServletContext(ServletContext servletContext) {
 		_servletContext = servletContext;
+	}
+
+	protected AssetRenderer<DDLRecord> createAssetRenderer(
+		DDLRecord record, DDLRecordVersion recordVersion, int type) {
+
+		DDLFormAssetRenderer ddlFormAssetRenderer = new DDLFormAssetRenderer(
+			record, recordVersion);
+
+		ddlFormAssetRenderer.setAssetRendererType(type);
+		ddlFormAssetRenderer.setServletContext(_servletContext);
+
+		return ddlFormAssetRenderer;
 	}
 
 	@Override

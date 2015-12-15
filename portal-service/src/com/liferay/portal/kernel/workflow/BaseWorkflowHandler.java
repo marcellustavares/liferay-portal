@@ -148,6 +148,11 @@ public abstract class BaseWorkflowHandler<T> implements WorkflowHandler<T> {
 	}
 
 	@Override
+	public String getType(long classPK, Locale locale) throws PortalException {
+		return getType(locale);
+	}
+
+	@Override
 	public PortletURL getURLEdit(
 		long classPK, LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
