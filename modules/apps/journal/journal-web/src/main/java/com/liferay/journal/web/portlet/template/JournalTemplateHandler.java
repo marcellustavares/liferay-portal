@@ -109,6 +109,15 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 
 		String[] restrictedVariables = getRestrictedVariables(language);
 
+		TemplateVariableGroup fieldUtilTemplateVariableGroup =
+			new TemplateVariableGroup("fields-util", restrictedVariables);
+
+		fieldUtilTemplateVariableGroup.addVariable(
+			"field-option-map", HashMap.class, "fieldOptionMap");
+
+		templateVariableGroups.put(
+			"fields-util", fieldUtilTemplateVariableGroup);
+
 		TemplateVariableGroup journalUtilTemplateVariableGroup =
 			new TemplateVariableGroup("journal-util", restrictedVariables);
 
