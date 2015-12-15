@@ -4,8 +4,9 @@ AUI.add(
 		var CheckboxField = A.Component.create(
 			{
 				ATTRS: {
-					dataType: {
-						value: 'boolean'
+					options: {
+						validator: Array.isArray,
+						value: []
 					},
 
 					showAsSwitcher: {
@@ -14,10 +15,6 @@ AUI.add(
 
 					type: {
 						value: 'checkbox'
-					},
-
-					value: {
-						setter: '_setValue'
 					}
 				},
 
@@ -26,6 +23,58 @@ AUI.add(
 				NAME: 'liferay-ddm-form-field-checkbox',
 
 				prototype: {
+					getContextValue: function() {
+						var instance = this;
+
+						var value = CheckboxField.superclass.getContextValue.apply(instance, arguments);
+
+						if (!Array.isArray(value)) {
+							try {
+								value = JSON.parse(value);
+							}
+							catch (e) {
+								value = [value];
+							}
+						}
+
+						return value[0];
+					},
+
+					getInputNode: function() {
+						var instance = this;
+
+						var container = instance.get('container');
+
+						var checkboxesNodeList = container.all(instance.getInputSelector());
+
+						var inputNode = checkboxesNodeList.item(0);
+
+						var checkedNodeList = checkboxesNodeList.filter(':checked');
+
+						if (checkedNodeList.size()) {
+							inputNode = checkedNodeList.item(0);
+						}
+
+						return inputNode;
+					},
+
+					getOptions: function() {
+						var instance = this;
+
+						var value = instance.getContextValue();
+
+						return A.map(
+							instance.get('options'),
+							function(item) {
+								return {
+									label: item.label[instance.get('locale')],
+									status: value === item.value ? 'checked' : '',
+									value: item.value
+								};
+							}
+						);
+					},
+
 					getTemplateContext: function() {
 						var instance = this;
 
@@ -34,8 +83,8 @@ AUI.add(
 						return A.merge(
 							CheckboxField.superclass.getTemplateContext.apply(instance, arguments),
 							{
-								showAsSwitcher: instance.get('showAsSwitcher'),
-								status: value ? 'checked' : ''
+								options: instance.getOptions(),
+								showAsSwitcher: instance.get('showAsSwitcher')
 							}
 						);
 					},
@@ -43,17 +92,37 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						var inputNode = instance.getInputNode();
+						var container = instance.get('container');
 
-						return inputNode.attr('checked');
+						var checkboxesNodeList = container.all(instance.getInputSelector());
+
+						var checkedNodeList = checkboxesNodeList.filter(':checked');
+
+						var value = '';
+
+						if (checkedNodeList.size()) {
+							value = checkedNodeList.item(0).val();
+						}
+
+						return value;
 					},
 
 					setValue: function(value) {
 						var instance = this;
 
-						var inputNode = instance.getInputNode();
+						var container = instance.get('container');
 
-						inputNode.attr('checked', !!value);
+						var checkboxesNodeList = container.all(instance.getInputSelector());
+
+						checkboxesNodeList.attr('checked', false);
+
+						var checkboxesToCheck = checkboxesNodeList.filter(
+							function(node) {
+								return node.val() === value;
+							}
+						);
+
+						checkboxesToCheck.attr('checked', true);
 					},
 
 					_renderErrorMessage: function() {
@@ -64,21 +133,6 @@ AUI.add(
 						CheckboxField.superclass._renderErrorMessage.apply(instance, arguments);
 
 						container.all('.help-block').appendTo(container);
-					},
-
-					_setValue: function(value) {
-						var instance = this;
-
-						if (instance.get('localizable')) {
-							for (var locale in value) {
-								value[locale] = A.DataType.Boolean.parse(value[locale]);
-							}
-						}
-						else {
-							value = A.DataType.Boolean.parse(value);
-						}
-
-						return value;
 					},
 
 					_showFeedback: function() {
