@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,6 +68,21 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
+	protected List<Object> getOptions(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		CheckboxDDMFormFieldContextHelper checkboxDDMFormFieldContextHelper =
+			new CheckboxDDMFormFieldContextHelper(
+				ddmFormField.getDDMFormFieldOptions(),
+				ddmFormFieldRenderingContext.getName(),
+				ddmFormFieldRenderingContext.getValue(),
+				ddmFormField.getPredefinedValue(),
+				ddmFormFieldRenderingContext.getLocale());
+
+		return checkboxDDMFormFieldContextHelper.getOptions();
+	}
+
 	protected String getStatus(String value, String predefinedValue) {
 		String status = StringPool.BLANK;
 
@@ -97,6 +113,18 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			predefinedValue.getString(locale));
 
 		template.put("status", status);
+	}
+
+	@Override
+	protected void populateRequiredContext(
+		Template template, DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		super.populateRequiredContext(
+			template, ddmFormField, ddmFormFieldRenderingContext);
+
+		template.put(
+			"options", getOptions(ddmFormField, ddmFormFieldRenderingContext));
 	}
 
 	private TemplateResource _templateResource;

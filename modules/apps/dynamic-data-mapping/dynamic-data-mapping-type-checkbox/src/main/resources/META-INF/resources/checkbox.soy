@@ -6,50 +6,59 @@
  * @param childElementsHTML
  * @param label
  * @param name
+ * @param options
  * @param readOnly
  * @param required
  * @param showAsSwitcher
  * @param showLabel
- * @param status
  * @param visible
  */
 {template .checkbox}
 	<div class="form-group form-inline{$visible ? '' : ' hide'} liferay-ddm-form-field-checkbox" data-fieldname="{$name}">
-		{if $showAsSwitcher}
-			<div class="checkbox">
-				<label class="control-label" for="{$name}">
-					<input class="hide toggle-switch" {if $readOnly}disabled{/if} id="{$name}" name="{$name}" type="checkbox" {$status} value="true" />
+		{if $showLabel}
+			<label class="control-label">{$label} {if $required}<b>*</b>{/if}</label>
+		{/if}
 
-					<span aria-hidden="true" class="toggle-switch-bar">
-						<span class="toggle-switch-handle">
-							<span class="toggle-switch-text">
-								{$label}
+		{foreach $option in $options}
+			{if $showAsSwitcher}
+				<div class="checkbox">
+					<label class="control-label" for="{$name}">
+						<input class="hide toggle-switch" {if $readOnly}disabled{/if} id="{$option.name}" name="{$option.name}" type="checkbox" {$option.status} value="{$option.value}" />
 
-								{if $required}
-									<b>*</b>
-								{/if}
+						<span aria-hidden="true" class="toggle-switch-bar">
+							<span class="toggle-switch-handle">
+								<span class="toggle-switch-text">
+									{call .checkbox_option_label data="all" /}
+								</span>
 							</span>
 						</span>
-					</span>
-				</label>
-			</div>
-		{else}
-			<div class="checkbox checkbox-default">
-				{if $showLabel}
-					<label class="control-label" for="{$name}">
-				{/if}
-
-				<input {if $readOnly}disabled{/if} id="{$name}" name="{$name}" type="checkbox" {$status} value="true" />{if $showLabel} {$label}{/if}
-
-				{if $showLabel}
-						{if $required}
-							<b>*</b>
-						{/if}
 					</label>
-				{/if}
-			</div>
-		{/if}
+				</div>
+			{else}
+				<div class="checkbox checkbox-default">
+					<label class="checkbox-inline" for="{$option.value}">
+						<input {if $readOnly}disabled{/if} id="{$option.name}" name="{$option.name}" type="checkbox" {$option.status} value="{$option.value}" />
+
+						{call .checkbox_option_label data="all" /}
+					</label>
+				</div>
+			{/if}
+		{/foreach}
 
 		{$childElementsHTML|noAutoescape}
 	</div>
+{/template}
+
+/**
+ * Prints the option label
+ *
+ * @param option
+ * @param required
+ */
+{template .checkbox_option_label}
+	{$option.label}
+
+	{if $required}
+		<b>*</b>
+	{/if}
 {/template}
