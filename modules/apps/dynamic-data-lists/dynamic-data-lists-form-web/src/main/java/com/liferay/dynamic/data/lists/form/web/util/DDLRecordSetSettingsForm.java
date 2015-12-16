@@ -16,6 +16,10 @@ package com.liferay.dynamic.data.lists.form.web.util;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+
+/**
+ * @author Bruno Basto
+ */
 @DDMForm(localization = "content/Language")
 public interface DDLRecordSetSettingsForm {
 

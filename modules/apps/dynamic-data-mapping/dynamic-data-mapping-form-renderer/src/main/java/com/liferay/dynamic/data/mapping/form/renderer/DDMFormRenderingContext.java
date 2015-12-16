@@ -26,6 +26,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class DDMFormRenderingContext {
 
+	public String getContainerId() {
+		return _containerId;
+	}
+
 	public DDMFormValues getDDMFormValues() {
 		return _ddmFormValues;
 	}
@@ -48,6 +52,10 @@ public class DDMFormRenderingContext {
 
 	public boolean isReadOnly() {
 		return _readOnly;
+	}
+
+	public void setContainerId(String containerId) {
+		_containerId = containerId;
 	}
 
 	public void setDDMFormValues(DDMFormValues ddmFormValues) {
@@ -83,13 +91,5 @@ public class DDMFormRenderingContext {
 	private Locale _locale;
 	private String _portletNamespace;
 	private boolean _readOnly;
-
-	public String getContainerId() {
-		return _containerId;
-	}
-	
-	public void setContainerId(String containerId) {
-		_containerId = containerId;
-	}
 
 }

@@ -23,7 +23,7 @@ import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -131,9 +131,8 @@ public class AddRecordSetMVCActionCommand
 
 		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
 
-		DDMFormValues ddmFormValues =
-			DDMFormValuesJSONDeserializerUtil.deserialize(
-				ddmForm, settingsDDMFormValuesJSON);
+		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
+			ddmForm, settingsDDMFormValuesJSON);
 
 		DDMStructure ddmStructure = addDDMStructure(actionRequest);
 
@@ -226,6 +225,13 @@ public class AddRecordSetMVCActionCommand
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		this.ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureService(
 		DDMStructureService ddmStructureService) {
 
@@ -235,6 +241,7 @@ public class AddRecordSetMVCActionCommand
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
+	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
 	protected DDMStructureService ddmStructureService;
 
 }
