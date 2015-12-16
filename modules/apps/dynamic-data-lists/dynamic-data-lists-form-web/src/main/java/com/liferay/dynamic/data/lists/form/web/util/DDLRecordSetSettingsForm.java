@@ -50,7 +50,10 @@ public interface DDLRecordSetSettingsForm {
 	)
 	public boolean sendEmailNotification();
 
-	@DDMFormField(label = "%workflow", type = "select")
+	@DDMFormField(
+		label = "%workflow", properties = {"dataSourceType=manual"},
+		type = "select"
+	)
 	public String workflowDefinition();
 
 }

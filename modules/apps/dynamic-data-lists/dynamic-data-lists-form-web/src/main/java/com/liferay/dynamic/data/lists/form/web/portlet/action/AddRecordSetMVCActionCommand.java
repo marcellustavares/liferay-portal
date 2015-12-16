@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil;
 import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
@@ -28,9 +29,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
-import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
@@ -126,30 +125,12 @@ public class AddRecordSetMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		String settingsDDMFormValuesJSON = ParamUtil.getString(
-			actionRequest, "settingsDDMFormValuesJSON");
-
-		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
-
-		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
-			ddmForm, settingsDDMFormValuesJSON);
-
 		DDMStructure ddmStructure = addDDMStructure(actionRequest);
 
 		DDLRecordSet recordSet = addRecordSet(
 			actionRequest, ddmStructure.getStructureId());
 
-		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
-
-		typeSettingsProperties.fastLoad(getSettingsFromJSON(ddmFormValues));
-
-		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
-
-		typeSettingsProperties.setProperty(
-			"published", String.valueOf(publish));
-
-		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), typeSettingsProperties.toString());
+		updateRecordSetSettings(actionRequest, recordSet);
 	}
 
 	protected DDMForm getDDMForm(ActionRequest actionRequest)
@@ -187,22 +168,6 @@ public class AddRecordSetMVCActionCommand
 		return localizedMap;
 	}
 
-	protected String getSettingsFromJSON(DDMFormValues ddmFormValues) {
-		UnicodeProperties properties = new UnicodeProperties();
-
-		for (DDMFormFieldValue ddmFormFieldValue :
-				ddmFormValues.getDDMFormFieldValues()) {
-
-			Value value = ddmFormFieldValue.getValue();
-
-			properties.put(
-				ddmFormFieldValue.getName(),
-				value.getString(ddmFormValues.getDefaultLocale()));
-		}
-
-		return properties.toString();
-	}
-
 	@Reference(unbind = "-")
 	protected void setDDLRecordSetService(
 		DDLRecordSetService ddlRecordSetService) {
@@ -236,6 +201,29 @@ public class AddRecordSetMVCActionCommand
 		DDMStructureService ddmStructureService) {
 
 		this.ddmStructureService = ddmStructureService;
+	}
+
+	protected void updateRecordSetSettings(
+			ActionRequest actionRequest, DDLRecordSet recordSet)
+		throws PortalException {
+
+		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
+
+		String serializedDDMFormValues = ParamUtil.getString(
+			actionRequest, "serializedDDMFormValues");
+
+		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
+
+		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
+			ddmForm, serializedDDMFormValues);
+
+		UnicodeProperties settingsProperties =
+			DDLFormAdminPortletUtil.createSettingsProperties(ddmFormValues);
+
+		settingsProperties.setProperty("published", String.valueOf(publish));
+
+		ddlRecordSetService.updateRecordSet(
+			recordSet.getRecordSetId(), settingsProperties.toString());
 	}
 
 	protected DDLRecordSetService ddlRecordSetService;

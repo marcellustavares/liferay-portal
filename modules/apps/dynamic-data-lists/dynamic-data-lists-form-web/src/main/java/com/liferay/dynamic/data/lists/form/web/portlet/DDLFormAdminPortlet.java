@@ -15,20 +15,14 @@
 package com.liferay.dynamic.data.lists.form.web.portlet;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
-import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
+import com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
-import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
-import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -36,17 +30,11 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowDefinition;
-import com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.IOException;
-
-import java.util.List;
-import java.util.Locale;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -123,6 +111,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 			PortalUtil.getHttpServletRequest(renderRequest));
 		ddmFormRenderingContext.setHttpServletResponse(
 			PortalUtil.getHttpServletResponse(renderResponse));
+		ddmFormRenderingContext.setContainerId("settings");
 		ddmFormRenderingContext.setLocale(
 			LocaleUtil.fromLanguageId(languageId));
 		ddmFormRenderingContext.setPortletNamespace(
@@ -131,86 +120,52 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		return ddmFormRenderingContext;
 	}
 
+	protected void setDDLRecordSetLocalService(
+		DDLRecordSetLocalService ddlRecordSetLocalService) {
+
+		_ddlRecordSetLocalService = ddlRecordSetLocalService;
+	}
+
 	@Reference(unbind = "-")
 	protected void setDDMFormRenderer(DDMFormRenderer ddmFormRenderer) {
 		_ddmFormRenderer = ddmFormRenderer;
+	}
+
+	protected void setDDMFormRenderingContextDDMFormValues(
+		DDMFormRenderingContext ddmFormRenderingContext, DDMForm ddmForm,
+		long recordSetId) {
+
+		DDLRecordSet recordSet = _ddlRecordSetLocalService.fetchRecordSet(
+			recordSetId);
+
+		if (recordSet == null) {
+			return;
+		}
+
+		DDMFormValues ddmFormValues =
+			DDLFormAdminPortletUtil.createSettingsDDMFormValues(
+				ddmForm, recordSet.getSettingsProperties());
+
+		ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 	}
 
 	protected void setRenderRequestAttributes(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws PortalException {
 
-		String languageId = ParamUtil.getString(renderRequest, "languageId");
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
-		Locale locale = LocaleUtil.fromLanguageId(languageId);
+		long recordSetId = ParamUtil.getLong(renderRequest, "recordSetId");
 
-		long companyId = PortalUtil.getCompanyId(renderRequest);
-
-		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
-
-		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
-			if (Validator.equals(
-					ddmFormField.getName(), "workflowDefinition")) {
-
-				ddmFormField.setProperty("dataSourceType", "manual");
-
-				DDMFormFieldOptions ddmFormFieldOptions =
-					new DDMFormFieldOptions();
-
-				ddmFormFieldOptions.addOptionLabel(
-					StringPool.BLANK, locale, "no-workflow");
-
-				List<WorkflowDefinition> workflowDefinitions =
-					WorkflowDefinitionManagerUtil.getActiveWorkflowDefinitions(
-						companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-
-				for (WorkflowDefinition workflowDefinition :
-						workflowDefinitions) {
-
-					ddmFormFieldOptions.addOptionLabel(
-						workflowDefinition.getName(), locale,
-						workflowDefinition.getName());
-				}
-
-				ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
-
-				break;
-			}
-		}
+		DDMForm ddmForm = DDLFormAdminPortletUtil.createSettingsDDMForm(
+			themeDisplay);
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext(renderRequest, renderResponse);
 
-		ddmFormRenderingContext.setContainerId("settings");
-
-		long recordSetId = ParamUtil.getLong(renderRequest, "recordSetId");
-
-		DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.fetchDDLRecordSet(
-			recordSetId);
-
-		if (recordSet != null) {
-			UnicodeProperties properties = new UnicodeProperties();
-
-			properties.fastLoad(recordSet.getSettings());
-
-			DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
-
-			for (String key : properties.keySet()) {
-				if (Validator.equals(key, "published")) {
-					continue;
-				}
-
-				DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
-
-				ddmFormFieldValue.setName(key);
-				ddmFormFieldValue.setValue(
-					new UnlocalizedValue(properties.get(key)));
-
-				ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
-			}
-
-			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
-		}
+		setDDMFormRenderingContextDDMFormValues(
+			ddmFormRenderingContext, ddmForm, recordSetId);
 
 		String ddmFormHTML = _ddmFormRenderer.render(
 			ddmForm, ddmFormRenderingContext);
@@ -222,6 +177,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDLFormAdminPortlet.class);
 
+	private DDLRecordSetLocalService _ddlRecordSetLocalService;
 	private volatile DDMFormRenderer _ddmFormRenderer;
 
 }
