@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -59,7 +60,10 @@ public class UpdateRecordSetMVCActionCommand
 
 		DDMStructure ddmStructure = updateDDMStructure(actionRequest);
 
-		updateRecordSet(actionRequest, ddmStructure.getStructureId());
+		DDLRecordSet recordSet = updateRecordSet(
+			actionRequest, ddmStructure.getStructureId());
+
+		updateRecordSetSettings(actionRequest, recordSet);
 	}
 
 	@Reference(unbind = "-")
@@ -81,6 +85,13 @@ public class UpdateRecordSetMVCActionCommand
 		DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer) {
 
 		this.ddmFormLayoutJSONDeserializer = ddmFormLayoutJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		this.ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
 	}
 
 	@Reference(unbind = "-")
