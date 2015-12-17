@@ -117,6 +117,12 @@ AUI.add(
 						var name = window[instance.ns('nameEditor')].getHTML();
 
 						instance.one('#name').val(name);
+
+						var settingsInput = instance.one('#serializedDDMFormValues');
+
+						var settings = Liferay.component('settingsDDMForm').toJSON();
+
+						settingsInput.val(JSON.stringify(settings));
 					},
 
 					submitForm: function() {

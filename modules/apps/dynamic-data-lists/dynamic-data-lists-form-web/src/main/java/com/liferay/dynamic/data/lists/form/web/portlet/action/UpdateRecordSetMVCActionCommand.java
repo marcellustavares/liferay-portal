@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -27,7 +28,6 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -63,15 +63,7 @@ public class UpdateRecordSetMVCActionCommand
 		DDLRecordSet recordSet = updateRecordSet(
 			actionRequest, ddmStructure.getStructureId());
 
-		UnicodeProperties settingsProperties =
-			recordSet.getSettingsProperties();
-
-		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
-
-		settingsProperties.setProperty("published", String.valueOf(publish));
-
-		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), settingsProperties.toString());
+		updateRecordSetSettings(actionRequest, recordSet);
 	}
 
 	@Reference(unbind = "-")
@@ -93,6 +85,13 @@ public class UpdateRecordSetMVCActionCommand
 		DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer) {
 
 		this.ddmFormLayoutJSONDeserializer = ddmFormLayoutJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		this.ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
 	}
 
 	@Reference(unbind = "-")

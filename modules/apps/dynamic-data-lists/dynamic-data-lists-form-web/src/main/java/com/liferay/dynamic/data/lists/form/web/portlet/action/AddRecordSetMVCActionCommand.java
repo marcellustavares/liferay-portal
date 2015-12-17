@@ -15,6 +15,8 @@
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil;
+import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
@@ -22,12 +24,15 @@ import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -125,15 +130,7 @@ public class AddRecordSetMVCActionCommand
 		DDLRecordSet recordSet = addRecordSet(
 			actionRequest, ddmStructure.getStructureId());
 
-		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
-
-		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
-
-		typeSettingsProperties.setProperty(
-			"published", String.valueOf(publish));
-
-		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), typeSettingsProperties.toString());
+		updateRecordSetSettings(actionRequest, recordSet);
 	}
 
 	protected DDMForm getDDMForm(ActionRequest actionRequest)
@@ -193,15 +190,46 @@ public class AddRecordSetMVCActionCommand
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		this.ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureService(
 		DDMStructureService ddmStructureService) {
 
 		this.ddmStructureService = ddmStructureService;
 	}
 
+	protected void updateRecordSetSettings(
+			ActionRequest actionRequest, DDLRecordSet recordSet)
+		throws PortalException {
+
+		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
+
+		String serializedDDMFormValues = ParamUtil.getString(
+			actionRequest, "serializedDDMFormValues");
+
+		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
+
+		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
+			ddmForm, serializedDDMFormValues);
+
+		UnicodeProperties settingsProperties =
+			DDLFormAdminPortletUtil.createSettingsProperties(ddmFormValues);
+
+		settingsProperties.setProperty("published", String.valueOf(publish));
+
+		ddlRecordSetService.updateRecordSet(
+			recordSet.getRecordSetId(), settingsProperties.toString());
+	}
+
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
+	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
 	protected DDMStructureService ddmStructureService;
 
 }

@@ -48,6 +48,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
 		<aui:input name="publish" type="hidden" />
+		<aui:input name="serializedDDMFormValues" type="hidden" value="" />
 
 		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
 
@@ -157,6 +158,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
+
 		<aui:script>
 			var initHandler = Liferay.after(
 				'form:registered',
@@ -199,6 +201,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
 					initHandler.detach();
 
+					Liferay.Util.getWindow('<portlet:namespace />settingsModal').destroy();
+
 					Liferay.detach('destroyPortlet', clearPortletHandlers);
 				}
 			};
@@ -206,4 +210,61 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 			Liferay.on('destroyPortlet', clearPortletHandlers);
 		</aui:script>
 	</aui:form>
+
+	<div class="ddl-record-set-settings hide" id="<portlet:namespace />settings">
+		<%@ include file="/admin/record_set_settings.jspf" %>
+	</div>
+
+	<aui:script use="aui-base">
+		Liferay.namespace('DDL').openSettings = function() {
+			Liferay.Util.openWindow(
+				{
+					dialog: {
+						height: 620,
+						resizable: false,
+						'toolbars.footer': [
+							{
+								cssClass: 'btn-lg btn-primary',
+								label: '<liferay-ui:message key="done" />',
+								on: {
+									click: function() {
+										var ddmForm = Liferay.component('settingsDDMForm');
+
+										ddmForm.validate(
+											function(hasErrors) {
+												if (!hasErrors) {
+													Liferay.Util.getWindow('<portlet:namespace />settingsModal').hide();
+												}
+											}
+										);
+									}
+								}
+							},
+							{
+								cssClass: 'btn-lg btn-link',
+								label: '<liferay-ui:message key="cancel" />',
+								on: {
+									click: function() {
+										Liferay.Util.getWindow('<portlet:namespace />settingsModal').hide();
+									}
+								}
+							}
+						],
+						width: 720
+					},
+					id: '<portlet:namespace />settingsModal',
+					title: '<liferay-ui:message key="settings" />'
+				},
+				function(dialogWindow) {
+					var bodyNode = dialogWindow.bodyNode;
+
+					var settingsNode = A.one('#<portlet:namespace />settings');
+
+					settingsNode.show();
+
+					bodyNode.append(settingsNode);
+				}
+			);
+		};
+	</aui:script>
 </div>
