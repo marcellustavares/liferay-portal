@@ -9,6 +9,10 @@ AUI.add(
 		};
 
 		FormTemplateSupport.ATTRS = {
+			isAssignedToWorkflow: {
+				value: false
+			},
+
 			layout: {
 				valueFn: '_valueLayout'
 			},
@@ -43,6 +47,7 @@ AUI.add(
 				var normalizedLayout = instance._normalizeLayout(layout);
 
 				return {
+					isAssignedToWorkflow: instance.get('isAssignedToWorkflow'),
 					pages: normalizedLayout.pages,
 					readOnly: instance.get('readOnly'),
 					strings: instance.get('strings')

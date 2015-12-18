@@ -233,6 +233,8 @@ public class DDLFormPortlet extends MVCPortlet {
 			createDDMFormRenderingContext(
 				renderRequest, renderResponse, ddmForm);
 
+		ddmFormRenderingContext.setRecordSetId(recordSet.getRecordSetId());
+
 		return _ddmFormRenderer.render(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 	}

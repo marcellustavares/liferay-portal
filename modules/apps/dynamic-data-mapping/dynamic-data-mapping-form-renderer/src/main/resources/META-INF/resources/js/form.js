@@ -27,7 +27,8 @@ AUI.add(
 							next: Liferay.Language.get('next'),
 							previous: Liferay.Language.get('previous'),
 							requestErrorMessage: Liferay.Language.get('there-was-an-error-when-trying-to-validate-your-form'),
-							submit: Liferay.Language.get('submit')
+							submit: Liferay.Language.get('submit'),
+							submitForPublication: Liferay.Language.get('submit-for-publication')
 						}
 					}
 				},

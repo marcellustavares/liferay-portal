@@ -46,6 +46,10 @@ public class DDMFormRenderingContext {
 		return _portletNamespace;
 	}
 
+	public long getRecordSetId() {
+		return _recordSetId;
+	}
+
 	public boolean isReadOnly() {
 		return _readOnly;
 	}
@@ -76,11 +80,16 @@ public class DDMFormRenderingContext {
 		_readOnly = readOnly;
 	}
 
+	public void setRecordSetId(long recordSetId) {
+		_recordSetId = recordSetId;
+	}
+
 	private DDMFormValues _ddmFormValues;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
 	private String _portletNamespace;
 	private boolean _readOnly;
+	private long _recordSetId;
 
 }

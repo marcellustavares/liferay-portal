@@ -30,6 +30,7 @@
  * @param containerId
  * @param definition
  * @param evaluation
+ * @param isAssignedToWorkflow  
  * @param fieldTypes
  * @param layout
  * @param portletNamespace
@@ -52,7 +53,8 @@
 						container: '#{$containerId}',
 						definition: {$definition|noAutoescape},
 						evaluation: {$evaluation|noAutoescape},
-
+						isAssignedToWorkflow: {$isAssignedToWorkflow},
+						
 						{if $layout}
 							layout: {$layout|noAutoescape},
 						{/if}
@@ -113,6 +115,7 @@
  * Prints a form with pagination.
  *
  * @param containerId
+ * @param isAssignedToWorkflow
  * @param pages
  * @param readOnly
  * @param strings
@@ -165,7 +168,7 @@
 			</button>
 
 			{if not $readOnly}
-				<button class="btn btn-lg btn-primary{if length($pages) > 1} hide{/if} lfr-ddm-form-submit pull-right" type="submit">{$strings.submit}</button>
+				<button class="btn btn-lg btn-primary{if length($pages) > 1} hide{/if} lfr-ddm-form-submit pull-right" type="submit">{if $isAssignedToWorkflow}{$strings.submitForPublication}{else}{$strings.submit}{/if}</button>
 			{/if}
 		</div>
 	</div>

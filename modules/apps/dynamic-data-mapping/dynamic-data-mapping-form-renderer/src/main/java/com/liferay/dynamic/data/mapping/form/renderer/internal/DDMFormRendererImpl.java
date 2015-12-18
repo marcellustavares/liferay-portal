@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
+import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
@@ -21,10 +22,10 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServices
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
-import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializerUtil;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
-import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
@@ -49,6 +50,9 @@ import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.theme.ThemeDisplay;
 
 import java.io.Writer;
 
@@ -60,6 +64,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -148,6 +154,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		stringsMap.put(
 			"previous", LanguageUtil.get(resourceBundle, "previous"));
 		stringsMap.put("submit", LanguageUtil.get(resourceBundle, "submit"));
+		stringsMap.put(
+			"submitForPublication",
+			LanguageUtil.get(resourceBundle, "submit-for-publication"));
 
 		return stringsMap;
 	}
@@ -205,14 +214,25 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return new URLTemplateResource(templateURL.getPath(), templateURL);
 	}
 
+	protected boolean isAssignedToWorkflow(
+		long recordSetId, HttpServletRequest httpServletRequest) {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return _workflowDefinitionLinkLocalService.hasWorkflowDefinitionLink(
+			themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
+			DDLRecordSet.class.getName(), recordSetId);
+	}
+
 	protected void populateCommonContext(
 			Template template, DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 			DDMFormRenderingContext ddmFormRenderingContext)
 		throws PortalException {
 
 		template.put("containerId", StringUtil.randomId());
-		template.put(
-			"definition", DDMFormJSONSerializerUtil.serialize(ddmForm));
+		template.put("definition", _ddmFormJSONSerializer.serialize(ddmForm));
 
 		DDMFormValues ddmFormValues =
 			ddmFormRenderingContext.getDDMFormValues();
@@ -240,9 +260,16 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 		template.put(
 			"fieldTypes",
-			DDMFormFieldTypesJSONSerializerUtil.serialize(ddmFormFieldTypes));
+			_ddmFormFieldTypesJSONSerializer.serialize(ddmFormFieldTypes));
+
 		template.put(
-			"layout", DDMFormLayoutJSONSerializerUtil.serialize(ddmFormLayout));
+			"isAssignedToWorkflow",
+			isAssignedToWorkflow(
+				ddmFormRenderingContext.getRecordSetId(),
+				ddmFormRenderingContext.getHttpServletRequest()));
+
+		template.put(
+			"layout", _ddmFormLayoutJSONSerializer.serialize(ddmFormLayout));
 
 		List<Object> pages = getPages(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
@@ -258,7 +285,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		if (ddmFormValues != null) {
 			template.put(
 				"values",
-				DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues));
+				_ddmFormValuesJSONSerializer.serialize(ddmFormValues));
 		}
 		else {
 			template.put("values", JSONFactoryUtil.getNullJSON());
@@ -314,15 +341,58 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormFieldTypesJSONSerializer(
+		DDMFormFieldTypesJSONSerializer ddmFormFieldTypesJSONSerializer) {
+
+		_ddmFormFieldTypesJSONSerializer = ddmFormFieldTypesJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormJSONSerializer(
+		DDMFormJSONSerializer ddmFormJSONSerializer) {
+
+		_ddmFormJSONSerializer = ddmFormJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormLayoutJSONSerializer(
+		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer) {
+
+		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONSerializer(
+		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
+
+		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setJSONFactory(JSONFactory jsonFactory) {
 		_jsonFactory = jsonFactory;
+	}
+
+	@Reference(unbind = "-")
+	protected void setWorkflowDefinitionLinkLocalService(
+		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
+
+		_workflowDefinitionLinkLocalService =
+			workflowDefinitionLinkLocalService;
 	}
 
 	private volatile DDM _ddm;
 	private volatile DDMFormEvaluator _ddmFormEvaluator;
 	private volatile DDMFormFieldTypeServicesTracker
 		_ddmFormFieldTypeServicesTracker;
+	private volatile DDMFormFieldTypesJSONSerializer
+		_ddmFormFieldTypesJSONSerializer;
+	private volatile DDMFormJSONSerializer _ddmFormJSONSerializer;
+	private volatile DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
+	private volatile DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
 	private volatile JSONFactory _jsonFactory;
 	private TemplateResource _templateResource;
+	private volatile WorkflowDefinitionLinkLocalService
+		_workflowDefinitionLinkLocalService;
 
 }
