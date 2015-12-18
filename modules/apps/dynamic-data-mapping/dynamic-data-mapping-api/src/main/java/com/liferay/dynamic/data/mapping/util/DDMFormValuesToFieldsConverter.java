@@ -19,6 +19,8 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
 
+import java.util.Locale;
+
 /**
  * @author Marcellus Tavares
  */
@@ -26,6 +28,11 @@ public interface DDMFormValuesToFieldsConverter {
 
 	public Fields convert(
 			DDMStructure ddmStructure, DDMFormValues ddmFormValues)
+		throws PortalException;
+
+	public Fields convert(
+			DDMStructure ddmStructure, DDMFormValues ddmFormValues,
+			Locale locale)
 		throws PortalException;
 
 }

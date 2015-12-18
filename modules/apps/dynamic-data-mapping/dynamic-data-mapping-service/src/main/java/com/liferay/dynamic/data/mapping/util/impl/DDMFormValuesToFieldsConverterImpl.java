@@ -43,15 +43,23 @@ public class DDMFormValuesToFieldsConverterImpl
 			DDMStructure ddmStructure, DDMFormValues ddmFormValues)
 		throws PortalException {
 
-		Fields ddmFields = createDDMFields(ddmStructure);
-
 		Locale defaultLocale = ddmFormValues.getDefaultLocale();
+
+		return convert(ddmStructure, ddmFormValues, defaultLocale);
+	}
+
+	@Override
+	public Fields convert(
+			DDMStructure ddmStructure, DDMFormValues ddmFormValues,
+			Locale locale)
+		throws PortalException {
+
+		Fields ddmFields = createDDMFields(ddmStructure);
 
 		for (DDMFormFieldValue ddmFormFieldValue :
 				ddmFormValues.getDDMFormFieldValues()) {
 
-			addDDMFields(
-				ddmStructure, ddmFormFieldValue, ddmFields, defaultLocale);
+			addDDMFields(ddmStructure, ddmFormFieldValue, ddmFields, locale);
 		}
 
 		return ddmFields;
