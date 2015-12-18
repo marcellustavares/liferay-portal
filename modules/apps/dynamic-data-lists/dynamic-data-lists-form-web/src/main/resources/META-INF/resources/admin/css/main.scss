@@ -720,6 +720,20 @@ $horizontal-spacing: 35px;
 	}
 }
 
+.ddl-publish-modal {
+	.alert-info {
+		text-align: center;
+	}
+
+	.ddl-publish-checkbox {
+		width: 100%;
+
+		small {
+			display: block;
+		}
+	}
+}
+
 .form-builder-page-manager-popover-header.popover.left > .arrow {
 	margin-left: 19px;
 }

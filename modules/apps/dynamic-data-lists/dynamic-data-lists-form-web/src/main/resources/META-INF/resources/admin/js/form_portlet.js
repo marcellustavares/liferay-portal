@@ -23,6 +23,12 @@ AUI.add(
 					},
 
 					layout: {
+					},
+
+					publishRecordSetURL: {
+					},
+
+					recordSetId: {
 					}
 				},
 
@@ -69,6 +75,7 @@ AUI.add(
 						var rootNode = instance.get('rootNode');
 
 						instance._eventHandlers = [
+							instance.one('#publishCheckbox').on('change', A.bind('_onChangePublishCheckbox', instance)),
 							rootNode.delegate('click', A.bind('_onClickButtons', instance), '.ddl-form-builder-buttons .ddl-button'),
 							rootNode.delegate('click', A.bind('_onClickCloseAlert', instance), '.ddl-form-alert .close'),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
@@ -89,6 +96,31 @@ AUI.add(
 						var buttons = instance.all('.ddl-button');
 
 						Liferay.Util.toggleDisabled(buttons, false);
+					},
+
+					openPublishModal: function() {
+						var instance = this;
+
+						Liferay.Util.openWindow(
+							{
+								dialog: {
+									height: 325,
+									resizable: false,
+									width: 720
+								},
+								id: instance.ns('publishModal'),
+								title: Liferay.Language.get('publish')
+							},
+							function(dialogWindow) {
+								var bodyNode = dialogWindow.bodyNode;
+
+								var publishNode = instance.one('#publishModal');
+
+								publishNode.show();
+
+								bodyNode.append(publishNode);
+							}
+						);
 					},
 
 					serializeFormBuilder: function() {
@@ -133,6 +165,24 @@ AUI.add(
 						var editForm = instance.get('editForm');
 
 						submitForm(editForm.form);
+					},
+
+					_onChangePublishCheckbox: function(event) {
+						var instance = this;
+
+						var publishCheckbox = event.target;
+
+						A.io.request(
+							instance.get('publishRecordSetURL'),
+							{
+								data: {
+									recordSetId: instance.get('recordSetId'),
+									published: publishCheckbox.attr('checked')
+								},
+								dataType: 'JSON',
+								method: 'GET'
+							}
+						);
 					},
 
 					_onClickButtons: function(event) {
