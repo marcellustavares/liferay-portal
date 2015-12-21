@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.storage;
 
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -89,7 +90,14 @@ public class DDMFormValues implements Serializable {
 			new LinkedHashMap<>();
 
 		for (DDMFormFieldValue ddmFormFieldValue : _ddmFormFieldValues) {
-			loadDDMFormFieldValuesMap(ddmFormFieldValue, ddmFormFieldValuesMap);
+			DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+			if (Validator.isNotNull(ddmFormField) &&
+				!ddmFormField.isTransient()) {
+
+				loadDDMFormFieldValuesMap(
+					ddmFormFieldValue, ddmFormFieldValuesMap);
+			}
 		}
 
 		return ddmFormFieldValuesMap;
