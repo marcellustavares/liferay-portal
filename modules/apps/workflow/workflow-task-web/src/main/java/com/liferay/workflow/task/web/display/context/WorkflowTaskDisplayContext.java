@@ -504,7 +504,8 @@ public class WorkflowTaskDisplayContext {
 	}
 
 	public String getTabs1() {
-		return ParamUtil.getString(_renderRequest, "tabs1", "pending");
+		return ParamUtil.getString(
+			_liferayPortletRequest, "tabs1", "assigned-to-me");
 	}
 
 	public String getTaglibEditURL(WorkflowTask workflowTask)
@@ -609,6 +610,16 @@ public class WorkflowTaskDisplayContext {
 
 	public String getTaskName(WorkflowTask workflowTask) {
 		return HtmlUtil.escape(workflowTask.getName());
+	}
+
+	public WorkflowTaskSearch getTasksAssignedToMe() throws PortalException {
+		return searchTasks(false);
+	}
+
+	public WorkflowTaskSearch getTasksAssignedToMyRoles()
+		throws PortalException {
+
+		return searchTasks(true);
 	}
 
 	public Object getTaskUpdateMessageArguments(WorkflowLog workflowLog)
@@ -869,6 +880,26 @@ public class WorkflowTaskDisplayContext {
 		return false;
 	}
 
+	public boolean isAssignedToMeTabSelected() {
+		String tabs1 = getTabs1();
+
+		if (tabs1.equals("assigned-to-me")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isAssignedToMyRolesTabSelected() {
+		String tabs1 = getTabs1();
+
+		if (tabs1.equals("assigned-to-my-roles")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isAssignedToUser(WorkflowTask workflowTask) {
 		if (workflowTask.getAssigneeUserId() ==
 				_workflowTaskRequestHelper.getUserId()) {
@@ -999,20 +1030,44 @@ public class WorkflowTaskDisplayContext {
 		return getWorkflowInstance(workflowTask).getWorkflowContext();
 	}
 
-	protected WorkflowTaskSearch searchTasksAssignedToMe(boolean completedTasks)
+	protected WorkflowTaskSearch searchTasks(boolean searchByUserRoles)
 		throws PortalException {
+
+		Boolean completedTasks = true;
+
+		if (getStatus() == WorkflowConstants.STATUS_ANY) {
+			completedTasks = null;
+		}
+		else if (getStatus() == WorkflowConstants.STATUS_PENDING) {
+			completedTasks = false;
+		}
 
 		List<WorkflowTask> results = null;
 		int total = 0;
 
-		String curParam = SearchContainer.DEFAULT_CUR_PARAM;
+		String curParam;
 
-		if (!completedTasks) {
+		if (!searchByUserRoles && (completedTasks == null)) {
+			curParam = SearchContainer.DEFAULT_CUR_PARAM;
+		}
+		else if (!searchByUserRoles && completedTasks) {
 			curParam = "cur1";
+		}
+		else if (!searchByUserRoles && !completedTasks) {
+			curParam = "cur2";
+		}
+		else if (searchByUserRoles && (completedTasks == null)) {
+			curParam = "cur3";
+		}
+		else if (searchByUserRoles && completedTasks) {
+			curParam = "cur4";
+		}
+		else {
+			curParam = "cur5";
 		}
 
 		WorkflowTaskSearch searchContainer = new WorkflowTaskSearch(
-			_renderRequest, curParam, getPortletURL());
+			_liferayPortletRequest, curParam, getPortletURL());
 
 		WorkflowTaskDisplayTerms searchTerms =
 			(WorkflowTaskDisplayTerms)searchContainer.getDisplayTerms();
@@ -1021,7 +1076,8 @@ public class WorkflowTaskDisplayContext {
 			total = WorkflowTaskManagerUtil.searchCount(
 				_workflowTaskRequestHelper.getCompanyId(),
 				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
-				searchTerms.getType(), null, null, null, false, false,
+				searchTerms.getKeywords(), searchTerms.getType(), null, null,
+				null, completedTasks, searchByUserRoles,
 				searchTerms.isAndOperator());
 
 			searchContainer.setTotal(total);
@@ -1029,7 +1085,8 @@ public class WorkflowTaskDisplayContext {
 			results = WorkflowTaskManagerUtil.search(
 				_workflowTaskRequestHelper.getCompanyId(),
 				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
-				searchTerms.getType(), null, null, null, completedTasks, false,
+				searchTerms.getKeywords(), searchTerms.getType(), null, null,
+				null, completedTasks, searchByUserRoles,
 				searchTerms.isAndOperator(), searchContainer.getStart(),
 				searchContainer.getEnd(),
 				searchContainer.getOrderByComparator());
@@ -1037,28 +1094,67 @@ public class WorkflowTaskDisplayContext {
 		else {
 			total = WorkflowTaskManagerUtil.searchCount(
 				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(),
+				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
 				searchTerms.getKeywords(),
 				WorkflowHandlerUtil.getSearchableAssetTypes(), completedTasks,
-				false);
+				searchByUserRoles);
 
 			searchContainer.setTotal(total);
 
 			results = WorkflowTaskManagerUtil.search(
 				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(),
+				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
 				searchTerms.getKeywords(),
 				WorkflowHandlerUtil.getSearchableAssetTypes(), completedTasks,
-				false, searchContainer.getStart(), searchContainer.getEnd(),
+				searchByUserRoles, searchContainer.getStart(),
+				searchContainer.getEnd(),
 				searchContainer.getOrderByComparator());
 		}
 
 		searchContainer.setResults(results);
 
-		setUserSearchContainerEmptyResultsMessage(
-			searchContainer, completedTasks);
+		setSearchContainerEmptyResultsMessage(
+			searchContainer, searchByUserRoles, completedTasks);
 
 		return searchContainer;
+	}
+
+	protected void setSearchContainerEmptyResultsMessage(
+		WorkflowTaskSearch searchContainer, boolean searchByUserRoles,
+		Boolean completedTasks) {
+
+		WorkflowTaskDisplayTerms searchTerms =
+			(WorkflowTaskDisplayTerms)searchContainer.getDisplayTerms();
+
+		if (!searchByUserRoles && (completedTasks == null)) {
+			searchContainer.setEmptyResultsMessage(
+				"there-are-no-tasks-assigned-to-you");
+		}
+		else if (!searchByUserRoles && !completedTasks) {
+			searchContainer.setEmptyResultsMessage(
+				"there-are-no-pending-tasks-assigned-to-you");
+		}
+		else if (searchByUserRoles && (completedTasks == null)) {
+			searchContainer.setEmptyResultsMessage(
+				"there-are-no-tasks-assigned-to-your-roles");
+		}
+		else if (searchByUserRoles && !completedTasks) {
+			searchContainer.setEmptyResultsMessage(
+				"there-are-no-pending-tasks-assigned-to-your-roles");
+		}
+		else {
+			searchContainer.setEmptyResultsMessage(
+				"there-are-no-completed-tasks");
+		}
+
+		if (Validator.isNotNull(searchTerms.getKeywords()) ||
+			Validator.isNotNull(searchTerms.getName()) ||
+			Validator.isNotNull(searchTerms.getType())) {
+
+			searchContainer.setEmptyResultsMessage(
+				searchContainer.getEmptyResultsMessage() +
+				"-with-the-specified-search-criteria");
+		}
 	}
 
 	private final Format _dateFormatDateTime;
