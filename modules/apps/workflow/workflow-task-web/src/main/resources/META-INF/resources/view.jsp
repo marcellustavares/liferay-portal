@@ -20,6 +20,10 @@
 String tabs1 = ParamUtil.getString(renderRequest, "tabs1", "assigned-to-me");
 
 PortletURL portletURL = workflowTaskDisplayContext.getPortletURL();
+
+String displayStyle = workflowTaskDisplayContext.getDisplayStyle();
+
+DateSearchEntry dateSearchEntry = new DateSearchEntry();
 %>
 
 <div class="container-fluid-1280">
