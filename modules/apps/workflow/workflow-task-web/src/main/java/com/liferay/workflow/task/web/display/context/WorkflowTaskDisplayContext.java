@@ -212,12 +212,6 @@ public class WorkflowTaskDisplayContext {
 		};
 	}
 
-	public WorkflowTaskSearch getCompletedTasksAssignedToMe()
-		throws PortalException {
-
-		return searchTasksAssignedToMe(true);
-	}
-
 	public String getCreateDate(WorkflowLog workflowLog) {
 		return _dateFormatDateTime.format(workflowLog.getCreateDate());
 	}
@@ -298,66 +292,6 @@ public class WorkflowTaskDisplayContext {
 
 	public String[] getMetadataFields() {
 		return new String[] {"author", "categories", "tags"};
-	}
-
-	public WorkflowTaskSearch getPendingTasksAssignedToMe()
-		throws PortalException {
-
-		return searchTasksAssignedToMe(false);
-	}
-
-	public WorkflowTaskSearch getPendingTasksAssignedToMyRoles()
-		throws PortalException {
-
-		List<WorkflowTask> results = null;
-		int total = 0;
-
-		WorkflowTaskSearch searchContainer = new WorkflowTaskSearch(
-			_renderRequest, "cur2", getPortletURL());
-
-		WorkflowTaskDisplayTerms searchTerms =
-			(WorkflowTaskDisplayTerms)searchContainer.getDisplayTerms();
-
-		if (searchTerms.isAdvancedSearch()) {
-			total = WorkflowTaskManagerUtil.searchCount(
-				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
-				searchTerms.getType(), null, null, null, false, true,
-				searchTerms.isAndOperator());
-
-			searchContainer.setTotal(total);
-
-			results = WorkflowTaskManagerUtil.search(
-				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(), searchTerms.getName(),
-				searchTerms.getType(), null, null, null, false, true,
-				searchTerms.isAndOperator(), searchContainer.getStart(),
-				searchContainer.getEnd(),
-				searchContainer.getOrderByComparator());
-		}
-		else {
-			total = WorkflowTaskManagerUtil.searchCount(
-				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(),
-				searchTerms.getKeywords(),
-				WorkflowHandlerUtil.getSearchableAssetTypes(), false, true);
-
-			searchContainer.setTotal(total);
-
-			results = WorkflowTaskManagerUtil.search(
-				_workflowTaskRequestHelper.getCompanyId(),
-				_workflowTaskRequestHelper.getUserId(),
-				searchTerms.getKeywords(),
-				WorkflowHandlerUtil.getSearchableAssetTypes(), false, true,
-				searchContainer.getStart(), searchContainer.getEnd(),
-				searchContainer.getOrderByComparator());
-		}
-
-		searchContainer.setResults(results);
-
-		setRolesSearchContainerEmptyResultsMessage(searchContainer);
-
-		return searchContainer;
 	}
 
 	public long[] getPooledActorsIds(WorkflowTask workflowTask)
@@ -816,26 +750,6 @@ public class WorkflowTaskDisplayContext {
 		return false;
 	}
 
-	public boolean isCompletedTabSelected() {
-		String tabs1 = getTabs1();
-
-		if (tabs1.equals("completed")) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public boolean isPendingTabSelected() {
-		String tabs1 = getTabs1();
-
-		if (tabs1.equals("pending")) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public boolean isShowEditURL(WorkflowTask workflowTask) {
 		boolean showEditURL = false;
 
@@ -957,50 +871,6 @@ public class WorkflowTaskDisplayContext {
 			searchContainer, completedTasks);
 
 		return searchContainer;
-	}
-
-	protected void setRolesSearchContainerEmptyResultsMessage(
-		WorkflowTaskSearch searchContainer) {
-
-		WorkflowTaskDisplayTerms searchTerms =
-			(WorkflowTaskDisplayTerms)searchContainer.getDisplayTerms();
-
-		searchContainer.setEmptyResultsMessage(
-			"there-are-no-pending-tasks-assigned-to-your-roles");
-
-		if (Validator.isNotNull(searchTerms.getKeywords()) ||
-			Validator.isNotNull(searchTerms.getName()) ||
-			Validator.isNotNull(searchTerms.getType())) {
-
-			searchContainer.setEmptyResultsMessage(
-				searchContainer.getEmptyResultsMessage() +
-				"-with-the-specified-search-criteria");
-		}
-	}
-
-	protected void setUserSearchContainerEmptyResultsMessage(
-		WorkflowTaskSearch searchContainer, boolean completedTasks) {
-
-		WorkflowTaskDisplayTerms searchTerms =
-			(WorkflowTaskDisplayTerms)searchContainer.getDisplayTerms();
-
-		if (completedTasks) {
-			searchContainer.setEmptyResultsMessage(
-				"there-are-no-completed-tasks");
-		}
-		else {
-			searchContainer.setEmptyResultsMessage(
-				"there-are-no-pending-tasks-assigned-to-you");
-		}
-
-		if (Validator.isNotNull(searchTerms.getKeywords()) ||
-			Validator.isNotNull(searchTerms.getName()) ||
-			Validator.isNotNull(searchTerms.getType())) {
-
-			searchContainer.setEmptyResultsMessage(
-				searchContainer.getEmptyResultsMessage() +
-				"-with-the-specified-search-criteria");
-		}
 	}
 
 	private final Format _dateFormatDateTime;
