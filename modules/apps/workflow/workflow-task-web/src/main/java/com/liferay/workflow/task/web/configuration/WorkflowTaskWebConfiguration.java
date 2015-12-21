@@ -12,19 +12,25 @@
  * details.
  */
 
-package com.liferay.workflow.task.web.display.context.util;
+package com.liferay.workflow.task.web.configuration;
 
-import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
+import aQute.bnd.annotation.metatype.Meta;
 
-import javax.servlet.http.HttpServletRequest;
+import com.liferay.configuration.admin.ConfigurationAdmin;
 
 /**
- * @author Leonardo Barros
+ * @author Inácio Nery
  */
-public class WorkflowTaskRequestHelper extends BaseRequestHelper {
+@ConfigurationAdmin(category = "web-experience-management")
+@Meta.OCD(
+	id = "com.liferay.workflow.task.web.configuration.WorkflowTaskWebConfiguration"
+)
+public interface WorkflowTaskWebConfiguration {
 
-	public WorkflowTaskRequestHelper(HttpServletRequest request) {
-		super(request);
-	}
+	@Meta.AD(deflt = "list", required = false)
+	public String defaultDisplayView();
+
+	@Meta.AD(deflt = "descriptive|list", required = false)
+	public String[] displayViews();
 
 }
