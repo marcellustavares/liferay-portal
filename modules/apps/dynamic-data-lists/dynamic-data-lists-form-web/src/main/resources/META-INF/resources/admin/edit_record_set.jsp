@@ -157,6 +157,39 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<aui:button cssClass="btn-lg" href="<%= redirect %>" name="cancelButton" type="cancel" />
 			</aui:button-row>
 		</div>
+
+		<div class="container-fluid-1280 ddl-publish-modal hide" id="<portlet:namespace />publishModal">
+			<div class="alert alert-info">
+				<a href="<%= ddlFormAdminDisplayContext.getPublishedFormURL() %>" target="_blank">Click here to preview on new window</a>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label ddl-publish-checkbox" for="<portlet:namespace />publishCheckbox">
+					<span class="pull-left">Publish form <small>Make this form public</small></span>
+
+					<input class="enable-validation toggle-switch" id="<portlet:namespace />publishCheckbox" type="checkbox" value="true" />
+
+					<span aria-hidden="true" class="pull-right toggle-switch-bar">
+						<span class="toggle-switch-handle"></span>
+					</span>
+				</label>
+			</div>
+
+			<div class="form-group">
+				<label>Copy this URL to share privately.</label>
+
+				<div class="input-group">
+					<input class="form-control" type="text" readOnly value="<%= ddlFormAdminDisplayContext.getPublishedFormURL() %>" />
+
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button"><liferay-ui:message key="copy-url" /></button>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<portlet:resourceURL id="publishRecordSet" var="publishRecordSetURL" />
+
 		<aui:script>
 			var initHandler = Liferay.after(
 				'form:registered',
@@ -177,14 +210,19 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							function() {
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
 
-								new Liferay.DDL.Portlet(
-									{
-										dataProviders: <%= ddlFormAdminDisplayContext.getSerializedDDMDataProviders() %>,
-										definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
-										editForm: event.form,
-										layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
-										namespace: '<portlet:namespace />'
-									}
+								Liferay.component(
+									'formPortlet',
+									new Liferay.DDL.Portlet(
+										{
+											dataProviders: <%= ddlFormAdminDisplayContext.getSerializedDDMDataProviders() %>,
+											definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
+											editForm: event.form,
+											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
+											namespace: '<portlet:namespace />',
+											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
+											recordSetId: <%= recordSetId %>
+										}
+									)
 								);
 							},
 							['liferay-ddl-portlet'].concat(fieldModules)

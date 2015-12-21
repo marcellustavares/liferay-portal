@@ -128,12 +128,13 @@ public class AddRecordSetMVCActionCommand
 		UnicodeProperties typeSettingsProperties = new UnicodeProperties(true);
 
 		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
+		long recordSetId = ParamUtil.getLong(actionRequest, "recordSetId");
 
 		typeSettingsProperties.setProperty(
 			"published", String.valueOf(publish));
 
 		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), typeSettingsProperties.toString());
+			recordSetId, typeSettingsProperties.toString());
 	}
 
 	protected DDMForm getDDMForm(ActionRequest actionRequest)
