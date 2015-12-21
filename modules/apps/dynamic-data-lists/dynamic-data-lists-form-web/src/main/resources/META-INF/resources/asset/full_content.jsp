@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,23 +12,10 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.portal.servlet.jsp.compiler.internal;
+<%@ include file="/admin/init.jsp" %>
 
-import java.net.URL;
-
-import java.util.Collection;
-
-import org.osgi.framework.wiring.BundleWiring;
-
-/**
- * @author Raymond Augé
- */
-public interface ClassResolver {
-
-	public URL getClassURL(BundleWiring bundleWiring, String name);
-
-	public Collection<String> resolveClasses(
-		BundleWiring bundleWiring, String path, int options);
-
-}
+<div class="container-fluid-1280">
+	<%= ddlFormAdminDisplayContext.getDDMFormHTML() %>
+</div>

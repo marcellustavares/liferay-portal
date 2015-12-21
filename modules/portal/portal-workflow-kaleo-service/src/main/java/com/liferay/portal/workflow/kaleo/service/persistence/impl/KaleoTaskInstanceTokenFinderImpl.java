@@ -163,6 +163,10 @@ public class KaleoTaskInstanceTokenFinderImpl
 			return true;
 		}
 
+		if (Validator.isNotNull(kaleoTaskInstanceTokenQuery.getAssetTitle())) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -248,27 +252,45 @@ public class KaleoTaskInstanceTokenFinderImpl
 						 kaleoTaskInstanceTokenQuery.getAssetTypes()) &&
 					 (kaleoTaskInstanceTokenQuery.getDueDateGT() == null) &&
 					 (kaleoTaskInstanceTokenQuery.getDueDateLT() == null))));
+			sql = CustomSQLUtil.appendCriteria(
+				sql,
+				getAssetTitle(
+					kaleoTaskInstanceTokenQuery,
+					(Validator.isNull(
+						kaleoTaskInstanceTokenQuery.getAssetPrimaryKeys()) &&
+					Validator.isNull(
+						kaleoTaskInstanceTokenQuery.getAssetTypes()) &&
+					(kaleoTaskInstanceTokenQuery.getDueDateGT() == null) &&
+					(kaleoTaskInstanceTokenQuery.getDueDateLT() == null) &&
+					(kaleoTaskInstanceTokenQuery.getTaskName() == null))));
+
 			sql = CustomSQLUtil.appendCriteria(sql, ")");
 
 			sql = CustomSQLUtil.replaceAndOperator(
 				sql, kaleoTaskInstanceTokenQuery.isAndOperator());
 		}
 
-		if (kaleoTaskInstanceTokenQuery.getOrderByComparator() != null) {
+		OrderByComparator<KaleoTaskInstanceToken> obc =
+			kaleoTaskInstanceTokenQuery.getOrderByComparator();
+
+		if (obc != null) {
 			StringBundler sb = new StringBundler(sql);
 
-			appendOrderByComparator(
-				sb, _ORDER_BY_ENTITY_ALIAS,
-				kaleoTaskInstanceTokenQuery.getOrderByComparator());
+			appendOrderByComparator(sb, _ORDER_BY_ENTITY_ALIAS, obc);
+
+			String sort = "DESC";
+
+			if (obc.isAscending()) {
+				sort = "ASC";
+			}
+
+			sb.append(", AssetEntry.title "+ sort);
 
 			sql = sb.toString();
 
-			OrderByComparator<KaleoTaskInstanceToken> obc =
-				kaleoTaskInstanceTokenQuery.getOrderByComparator();
-
 			String[] orderByFields = obc.getOrderByFields();
 
-			sb = new StringBundler(orderByFields.length * 3 + 1);
+			sb = new StringBundler(orderByFields.length * 3 + 2);
 
 			sb.append(
 				"DISTINCT KaleoTaskInstanceToken.kaleoTaskInstanceTokenId");
@@ -278,6 +300,8 @@ public class KaleoTaskInstanceTokenFinderImpl
 				sb.append(_ORDER_BY_ENTITY_ALIAS);
 				sb.append(orderByField);
 			}
+
+			sb.append(", AssetEntry.title ");
 
 			sql = sql.replace(
 				"DISTINCT KaleoTaskInstanceToken.kaleoTaskInstanceTokenId",
@@ -309,6 +333,7 @@ public class KaleoTaskInstanceTokenFinderImpl
 		setDueDateGT(qPos, kaleoTaskInstanceTokenQuery);
 		setDueDateLT(qPos, kaleoTaskInstanceTokenQuery);
 		setTaskName(qPos, kaleoTaskInstanceTokenQuery);
+		setAssetTitle(qPos, kaleoTaskInstanceTokenQuery);
 
 		return q;
 	}
@@ -331,6 +356,45 @@ public class KaleoTaskInstanceTokenFinderImpl
 			sb.append("(KaleoTaskInstanceToken.classPK = ?)");
 
 			if ((i + 1) < assetPrimaryKeys.length) {
+				sb.append(" OR ");
+			}
+			else {
+				sb.append(")");
+			}
+		}
+
+		return sb.toString();
+	}
+
+	protected String getAssetTitle(
+		KaleoTaskInstanceTokenQuery kaleoTaskInstanceTokenQuery,
+		boolean firstCriteria) {
+
+		String assetTitle = kaleoTaskInstanceTokenQuery.getAssetTitle();
+
+		if (Validator.isNull(assetTitle)) {
+			return StringPool.BLANK;
+		}
+
+		String[] assetTitles = CustomSQLUtil.keywords(assetTitle, false);
+
+		if (ArrayUtil.isEmpty(assetTitles)) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(assetTitles.length * 2 + 1);
+
+		if (!firstCriteria) {
+			sb.append("[$AND_OR_CONNECTOR$] (");
+		}
+		else {
+			sb.append("(");
+		}
+
+		for (int i = 0; i < assetTitles.length; i++) {
+			sb.append("(lower(AssetEntry.title) LIKE lower(?))");
+
+			if ((i + 1) < assetTitles.length) {
 				sb.append(" OR ");
 			}
 			else {
@@ -684,6 +748,21 @@ public class KaleoTaskInstanceTokenFinderImpl
 		}
 
 		qPos.add(assetPrimaryKeys);
+	}
+
+	protected void setAssetTitle(
+		QueryPos qPos,
+		KaleoTaskInstanceTokenQuery kaleoTaskInstanceTokenQuery) {
+
+		String assetTitle = kaleoTaskInstanceTokenQuery.getAssetTitle();
+
+		if (Validator.isNull(assetTitle)) {
+			return;
+		}
+
+		String[] assetTitles = CustomSQLUtil.keywords(assetTitle, false);
+
+		qPos.add(assetTitles);
 	}
 
 	protected void setAssetType(
