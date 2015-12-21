@@ -56,6 +56,8 @@ PortletURL portletURL = workflowTaskDisplayContext.getPortletURL();
 			</aui:nav-bar-search>
 		</aui:nav-bar>
 
+		<liferay-util:include page="/toolbar.jsp" servletContext="<%= application %>" />
+
 		<c:choose>
 			<c:when test="<%= workflowTaskDisplayContext.isAssignedToMeTabSelected() %>">
 				<liferay-ui:panel-container extended="<%= false %>" id="workflowTasksPanelContainer" persistState="<%= true %>">

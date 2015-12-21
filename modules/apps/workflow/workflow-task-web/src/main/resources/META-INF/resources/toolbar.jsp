@@ -16,17 +16,32 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-String toolbarItem = ParamUtil.getString(request, "toolbarItem", "assigned-to-me");
-%>
+<liferay-frontend:management-bar
+	includeCheckBox="<%= false %>"
+>
+	<liferay-frontend:management-bar-buttons>
+		<c:if test="<%= !workflowTaskDisplayContext.isSearch() %>">
+			<liferay-frontend:management-bar-display-buttons
+				displayViews="<%= workflowTaskDisplayContext.getDisplayViews() %>"
+				portletURL="<%= workflowTaskDisplayContext.getPortletURL() %>"
+				selectedDisplayStyle="<%= workflowTaskDisplayContext.getDisplayStyle() %>"
+			/>
+		</c:if>
+	</liferay-frontend:management-bar-buttons>
 
-<aui:nav-bar>
-	<aui:nav cssClass="navbar-nav">
-		<portlet:renderURL var="completedURL">
-			<portlet:param name="mvcPath" value="/view.jsp" />
-			<portlet:param name="toolbarItem" value="my-completed-tasks" />
-		</portlet:renderURL>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-filter
+			label="status"
+			managementBarFilterItems="<%= workflowTaskDisplayContext.getManagementBarStatusFilterItems() %>"
+			value="<%= workflowTaskDisplayContext.getManagementBarStatusFilterValue() %>"
+		/>
 
-		<aui:nav-item href="<%= completedURL %>" label="my-completed-tasks" selected='<%= toolbarItem.equals("my-completed-tasks") %>' />
-	</aui:nav>
-</aui:nav-bar>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= workflowTaskDisplayContext.getOrderByCol() %>"
+			orderByType="<%= workflowTaskDisplayContext.getOrderByType() %>"
+			orderColumns='<%= new String[] {"asset-title", "last-activity-date", "due-date"} %>'
+			portletURL="<%= workflowTaskDisplayContext.getPortletURL() %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+
+</liferay-frontend:management-bar>
