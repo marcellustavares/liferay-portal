@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.util;
+package com.liferay.dynamic.data.lists.model;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
@@ -26,57 +26,24 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
  */
 @DDMForm
 @DDMFormLayout( {
-	@DDMFormLayoutPage( {
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(size = 12, value = { "requireCaptcha" }
-		)
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(
-					size = 12, value = { "sendEmailNotification" }
-				)
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(size = 12, value = { "emailFromName" })
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(size = 6, value = { "emailFromAddress" }),
-				@DDMFormLayoutColumn(size = 6, value = { "emailToAddress" })
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(size = 12, value = { "emailSubject" })
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(size = 12, value = { "redirectURL" })
-			}
-		),
-
-		@DDMFormLayoutRow(
-			{
-				@DDMFormLayoutColumn(
-					size = 12, value = { "workflowDefinition" }
-				)
-			}
-		)
-	})
+	@DDMFormLayoutPage(
+		title = "%basic-options", value = {
+			@DDMFormLayoutRow(
+				{
+					@DDMFormLayoutColumn(
+						size = 12, value = {
+							"requireCaptcha", "redirectURL",
+							"workflowDefinition", "sendEmailNotification",
+							"emailFromName", "emailFromAddress",
+							"emailToAddress", "emailSubject", "published"
+						}
+					)
+				}
+			)
+		}
+	)
 })
-public interface DDLRecordSetSettingsForm {
+public interface DDLRecordSetSettings {
 
 	@DDMFormField(
 		label = "%from-address",
@@ -106,20 +73,25 @@ public interface DDLRecordSetSettingsForm {
 	)
 	public String emailToAddress();
 
+	@DDMFormField(visibilityExpression = "false")
+	public boolean published();
+
 	@DDMFormField(
+		properties = {"placeholder=%enter-a-valid-url"},
 		validationErrorMessage = "%please-enter-a-valid-url",
 		validationExpression = "isURL(redirectURL)"
 	)
 	public String redirectURL();
 
 	@DDMFormField(
-		label = "%require-captcha", properties = {"showAsSwitcher=true"},
+		label = "%require-captcha-to-submit-the-form",
+		properties = {"showAsSwitcher=true"},
 		type = "checkbox"
 	)
 	public boolean requireCaptcha();
 
 	@DDMFormField(
-		label = "%send-email-notification",
+		label = "%send-email-notification-for-each-entry",
 		properties = {"showAsSwitcher=true"}, type = "checkbox"
 	)
 	public boolean sendEmailNotification();

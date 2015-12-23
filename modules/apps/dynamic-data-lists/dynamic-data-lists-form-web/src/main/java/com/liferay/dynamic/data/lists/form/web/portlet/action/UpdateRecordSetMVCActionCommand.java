@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
+import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
@@ -31,6 +32,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
 
 import javax.portlet.ActionRequest;
@@ -95,10 +97,25 @@ public class UpdateRecordSetMVCActionCommand
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesQueryFactory(
+		DDMFormValuesQueryFactory ddmFormValuesQueryFactory) {
+
+		this.ddmFormValuesQueryFactory = ddmFormValuesQueryFactory;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureService(
 		DDMStructureService ddmStructureService) {
 
 		this.ddmStructureService = ddmStructureService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setWorkflowDefinitionLinkLocalService(
+		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
+
+		this.workflowDefinitionLinkLocalService =
+			workflowDefinitionLinkLocalService;
 	}
 
 	protected DDMStructure updateDDMStructure(ActionRequest actionRequest)
