@@ -10,33 +10,28 @@
 <tbody>
 <!--RESOURCE_TABLE-->
 <tr>
-	<td>RESOURCE_TABLE_CALENDAR_EVENT_SELECT</td>
-	<td>//select[contains(@id,'Calendar')]</td>
-	<td></td>
+    <td>RESOURCE_TABLE_RESOURCE</td>
+    <td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'${workflowResourceValue}')]/td[1]</td>
+    <td></td>
 </tr>
 <tr>
-	<td>RESOURCE_TABLE_PAGE_REVISION</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Page Revision')]/td[1]</td>
-	<td></td>
+    <td>RESOURCE_TABLE_WORKFLOW</td>
+    <td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'${workflowResourceValue}')]/td[2]</td>
+    <td></td>
 </tr>
 <tr>
-	<td>RESOURCE_TABLE_PAGE_REVISION_SELECT</td>
-	<td>//select[contains(@id,'LayoutRevision')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>RESOURCE_TABLE_USER</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'User')]/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>RESOURCE_TABLE_USER_SELECT</td>
-	<td>//select[contains(@id,'User')]</td>
-	<td></td>
+    <td>RESOURCE_TABLE_SELECT</td>
+    <td>//select[contains(@id,'${workflowResourceValue}')]</td>
+    <td></td>
 </tr>
 <tr>
 	<td>RESOURCE_TABLE_BLOGS_ENTRY</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Blogs Entry')]/td[1]</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Blogs Entry')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_BLOGS_ENTRY_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Blogs Entry')]/td[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -45,18 +40,28 @@
 	<td></td>
 </tr>
 <tr>
-	<td>RESOURCE_TABLE_WEB_CONTENT</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Web Content')]/td[1]</td>
+	<td>RESOURCE_TABLE_CALENDAR_EVENT</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Calendar')]/td[1]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>RESOURCE_TABLE_WEB_CONTENT_SELECT</td>
-	<td>//select[contains(@id,'JournalArticle')]</td>
+	<td>RESOURCE_TABLE_CALENDAR_EVENT_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Calendar')]/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_CALENDAR_EVENT_SELECT</td>
+	<td>//select[contains(@id,'Calendar')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>RESOURCE_TABLE_COMMENTS</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Comments')]/td[1]</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Comments')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_COMMENTS_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Comments')]/td[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -66,7 +71,12 @@
 </tr>
 <tr>
 	<td>RESOURCE_TABLE_KNOWLEDGE_BASE_ARTICLE</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Knowledge Base Article')]</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Knowledge Base Article')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_KNOWLEDGE_BASE_ARTICLE_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Knowledge Base Article')]/td[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -76,7 +86,12 @@
 </tr>
 <tr>
 	<td>RESOURCE_TABLE_MESSAGE_BOARDS_MESSAGE</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Message Boards Message')]/td[1]</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Message Boards Message')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_MESSAGE_BOARDS_MESSAGE_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Message Boards Message')]/td[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -85,8 +100,58 @@
 	<td></td>
 </tr>
 <tr>
+	<td>RESOURCE_TABLE_PAGE_REVISION</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Page Revision')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_PAGE_REVISION</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Page Revision')]/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_PAGE_REVISION_SELECT</td>
+	<td>//select[contains(@id,'LayoutRevision')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_USER</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'User')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_USER_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'User')]/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_USER_SELECT</td>
+	<td>//select[contains(@id,'User')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_WEB_CONTENT</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Web Content')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_WEB_CONTENT_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Web Content')]/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_WEB_CONTENT_SELECT</td>
+	<td>//select[contains(@id,'JournalArticle')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RESOURCE_TABLE_WIKI_PAGE</td>
-	<td>//div[contains(@id,'workflowHandlersSearchContainer')]//tr[contains(.,'Wiki Page')]/td[1]</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Wiki Page')]/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RESOURCE_TABLE_WIKI_PAGE_WORKFLOW</td>
+	<td>//div[contains(@id,'WorkflowDefinitionLinkPortlet_searchContainer')]//tr[contains(.,'Wiki Page')]/td[2]</td>
 	<td></td>
 </tr>
 <tr>
