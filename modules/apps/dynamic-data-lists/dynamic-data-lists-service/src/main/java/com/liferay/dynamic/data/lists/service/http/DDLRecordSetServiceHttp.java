@@ -404,14 +404,15 @@ public class DDLRecordSetServiceHttp {
 	}
 
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		HttpPrincipal httpPrincipal, long recordSetId, java.lang.String settings)
+		HttpPrincipal httpPrincipal, long recordSetId,
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"updateRecordSet", _updateRecordSetParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					recordSetId, settings);
+					recordSetId, settingsDDMFormValues);
 
 			Object returnObj = null;
 
@@ -480,6 +481,7 @@ public class DDLRecordSetServiceHttp {
 			com.liferay.portal.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateRecordSetParameterTypes11 = new Class[] {
-			long.class, java.lang.String.class
+			long.class,
+			com.liferay.dynamic.data.mapping.storage.DDMFormValues.class
 		};
 }

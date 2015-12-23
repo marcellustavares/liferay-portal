@@ -18,8 +18,8 @@ import com.liferay.dynamic.data.lists.form.web.constants.DDLFormWebKeys;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
+import com.liferay.dynamic.data.lists.util.DDLRecordSetSettings;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -82,9 +82,21 @@ public class DDLFormDisplayContext {
 		return _recordSetId;
 	}
 
+	public String getRedirectURL() {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet == null) {
+			return null;
+		}
+
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsObj();
+
+		return recordSetSettings.redirectURL();
+	}
+
 	public boolean isFormAvailable() {
 		if (isSharedURL()) {
-			return isPublished() && isFormShared();
+			return isFormPublished() && isFormShared();
 		}
 
 		return getRecordSet() != null;
@@ -153,19 +165,20 @@ public class DDLFormDisplayContext {
 		return _hasViewPermission;
 	}
 
-	protected boolean isFormShared() {
-		return ParamUtil.getBoolean(_renderRequest, "shared");
-	}
+	protected boolean isFormPublished() {
+		DDLRecordSet recordSet = getRecordSet();
 
-	protected boolean isPublished() {
-		DDLRecordSet ddlRecordSet = getRecordSet();
-
-		if (ddlRecordSet == null) {
+		if (recordSet == null) {
 			return false;
 		}
 
-		return GetterUtil.getBoolean(
-			ddlRecordSet.getSettingsProperty("published"));
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsObj();
+
+		return recordSetSettings.published();
+	}
+
+	protected boolean isFormShared() {
+		return ParamUtil.getBoolean(_renderRequest, "shared");
 	}
 
 	protected boolean isSharedURL() {
