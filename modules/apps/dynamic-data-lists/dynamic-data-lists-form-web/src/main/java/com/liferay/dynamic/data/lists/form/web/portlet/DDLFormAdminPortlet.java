@@ -16,9 +16,9 @@ package com.liferay.dynamic.data.lists.form.web.portlet;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
 import com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil;
-import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
+import com.liferay.dynamic.data.lists.util.DDLRecordSetSettings;
 import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
@@ -146,9 +146,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 			return;
 		}
 
-		DDMFormValues ddmFormValues =
-			DDLFormAdminPortletUtil.createSettingsDDMFormValues(
-				ddmForm, recordSet.getSettingsProperties());
+		DDMFormValues ddmFormValues = recordSet.getSettingsDDMFormValues();
 
 		ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 	}
@@ -168,13 +166,11 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext(renderRequest, renderResponse);
 
-		ddmFormRenderingContext.setContainerId("settings");
-
 		setDDMFormRenderingContextDDMFormValues(
 			ddmFormRenderingContext, ddmForm, recordSetId);
 
 		DDMFormLayout ddmFormLayout = DDMFormLayoutFactory.create(
-			DDLRecordSetSettingsForm.class);
+			DDLRecordSetSettings.class);
 
 		ddmFormLayout.setPaginationMode(DDMFormLayout.SINGLE_PAGE_MODE);
 

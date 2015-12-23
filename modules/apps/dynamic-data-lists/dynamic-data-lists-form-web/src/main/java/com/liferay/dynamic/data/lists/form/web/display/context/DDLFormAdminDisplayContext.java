@@ -30,6 +30,7 @@ import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLPermission;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
+import com.liferay.dynamic.data.lists.util.DDLRecordSetSettings;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTrackerUtil;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
@@ -50,7 +51,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -337,15 +337,16 @@ public class DDLFormAdminDisplayContext {
 		return false;
 	}
 
-	public boolean isRecordSetPublished() throws PortalException {
+	public boolean isFormPublished() throws PortalException {
 		DDLRecordSet recordSet = getRecordSet();
 
 		if (recordSet == null) {
 			return false;
 		}
 
-		return GetterUtil.getBoolean(
-			recordSet.getSettingsProperty("published", "false"));
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsObj();
+
+		return recordSetSettings.published();
 	}
 
 	public boolean isShowAddRecordSetButton() {

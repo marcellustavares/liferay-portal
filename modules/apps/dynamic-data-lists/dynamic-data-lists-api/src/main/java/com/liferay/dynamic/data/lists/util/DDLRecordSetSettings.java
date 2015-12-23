@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.util;
+package com.liferay.dynamic.data.lists.util;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
@@ -70,13 +70,13 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 		@DDMFormLayoutRow(
 			{
 				@DDMFormLayoutColumn(
-					size = 12, value = { "workflowDefinition" }
+					size = 12, value = { "workflowDefinition", "published" }
 				)
 			}
 		)
 	})
 })
-public interface DDLRecordSetSettingsForm {
+public interface DDLRecordSetSettings {
 
 	@DDMFormField(
 		label = "%from-address",
@@ -105,6 +105,9 @@ public interface DDLRecordSetSettingsForm {
 		visibilityExpression = "sendEmailNotification == true"
 	)
 	public String emailToAddress();
+
+	@DDMFormField(visibilityExpression = "false")
+	public boolean published();
 
 	@DDMFormField(
 		validationErrorMessage = "%please-enter-a-valid-url",

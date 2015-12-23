@@ -15,13 +15,14 @@
 package com.liferay.dynamic.data.lists.form.web.portlet.action;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
-import com.liferay.dynamic.data.lists.form.web.util.DDLFormAdminPortletUtil;
-import com.liferay.dynamic.data.lists.form.web.util.DDLRecordSetSettingsForm;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
+import com.liferay.dynamic.data.lists.util.DDLRecordSetSettings;
 import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
+import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQuery;
+import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
@@ -29,7 +30,9 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
@@ -40,6 +43,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.portal.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
@@ -167,6 +171,21 @@ public class AddRecordSetMVCActionCommand
 		return localizedMap;
 	}
 
+	protected String getWorkflowDefinition(DDMFormValues ddmFormValues)
+		throws PortalException {
+
+		DDMFormValuesQuery ddmFormValuesQuery =
+			ddmFormValuesQueryFactory.create(
+				ddmFormValues, "/workflowDefinition");
+
+		DDMFormFieldValue ddmFormFieldValue =
+			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
+
+		Value value = ddmFormFieldValue.getValue();
+
+		return value.getString(ddmFormValues.getDefaultLocale());
+	}
+
 	@Reference(unbind = "-")
 	protected void setDDLRecordSetService(
 		DDLRecordSetService ddlRecordSetService) {
@@ -196,39 +215,72 @@ public class AddRecordSetMVCActionCommand
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormValuesQueryFactory(
+		DDMFormValuesQueryFactory ddmFormValuesQueryFactory) {
+
+		this.ddmFormValuesQueryFactory = ddmFormValuesQueryFactory;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureService(
 		DDMStructureService ddmStructureService) {
 
 		this.ddmStructureService = ddmStructureService;
 	}
 
+	@Reference(unbind = "-")
+	protected void setWorkflowDefinitionLinkLocalService(
+		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
+
+		this.workflowDefinitionLinkLocalService =
+			workflowDefinitionLinkLocalService;
+	}
+
 	protected void updateRecordSetSettings(
 			ActionRequest actionRequest, DDLRecordSet recordSet)
 		throws PortalException {
 
-		boolean publish = ParamUtil.getBoolean(actionRequest, "publish");
+		String serializedSettingsDDMFormValues = ParamUtil.getString(
+			actionRequest, "serializedSettingsDDMFormValues");
 
-		String serializedDDMFormValues = ParamUtil.getString(
-			actionRequest, "serializedDDMFormValues");
+		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettings.class);
 
-		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettingsForm.class);
-
-		DDMFormValues ddmFormValues = ddmFormValuesJSONDeserializer.deserialize(
-			ddmForm, serializedDDMFormValues);
-
-		UnicodeProperties settingsProperties =
-			DDLFormAdminPortletUtil.createSettingsProperties(ddmFormValues);
-
-		settingsProperties.setProperty("published", String.valueOf(publish));
+		DDMFormValues settingsDDMFormValues =
+			ddmFormValuesJSONDeserializer.deserialize(
+				ddmForm, serializedSettingsDDMFormValues);
 
 		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), settingsProperties.toString());
+			recordSet.getRecordSetId(), settingsDDMFormValues);
+
+		updateWorkflowDefinitionLink(
+			actionRequest, recordSet, settingsDDMFormValues);
+	}
+
+	protected void updateWorkflowDefinitionLink(
+			ActionRequest actionRequest, DDLRecordSet recordSet,
+			DDMFormValues ddmFormValues)
+		throws PortalException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		long groupId = ParamUtil.getLong(actionRequest, "groupId");
+
+		String workflowDefinition = getWorkflowDefinition(ddmFormValues);
+
+		workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
+			themeDisplay.getUserId(), themeDisplay.getCompanyId(), groupId,
+			DDLRecordSet.class.getName(), recordSet.getRecordSetId(), 0,
+			workflowDefinition);
 	}
 
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
 	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
+	protected DDMFormValuesQueryFactory ddmFormValuesQueryFactory;
 	protected DDMStructureService ddmStructureService;
+	protected volatile WorkflowDefinitionLinkLocalService
+		workflowDefinitionLinkLocalService;
 
 }

@@ -150,7 +150,7 @@ AUI.add(
 
 						instance.one('#name').val(name);
 
-						var settingsInput = instance.one('#serializedDDMFormValues');
+						var settingsInput = instance.one('#serializedSettingsDDMFormValues');
 
 						var settings = Liferay.component('settingsDDMForm').toJSON();
 
