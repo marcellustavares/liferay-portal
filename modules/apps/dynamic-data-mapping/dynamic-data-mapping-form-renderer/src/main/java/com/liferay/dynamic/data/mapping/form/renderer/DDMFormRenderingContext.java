@@ -46,6 +46,10 @@ public class DDMFormRenderingContext {
 		return _portletNamespace;
 	}
 
+	public String getSubmitLabel() {
+		return _submitLabel;
+	}
+
 	public boolean isReadOnly() {
 		return _readOnly;
 	}
@@ -76,11 +80,16 @@ public class DDMFormRenderingContext {
 		_readOnly = readOnly;
 	}
 
+	public void setSubmitLabel(String submitLabel) {
+		_submitLabel = submitLabel;
+	}
+
 	private DDMFormValues _ddmFormValues;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
 	private String _portletNamespace;
 	private boolean _readOnly;
+	private String _submitLabel;
 
 }
