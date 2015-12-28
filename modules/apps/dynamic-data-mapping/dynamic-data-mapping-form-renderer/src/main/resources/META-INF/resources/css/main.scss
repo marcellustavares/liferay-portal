@@ -1,14 +1,5 @@
 @import "bourbon";
 
-.ddl-form-builder-app {
-	&.container-fluid-1280 {
-		.row {
-			margin-left: 20px;
-			margin-right: 20px;
-		}
-	}
-}
-
 .lfr-ddm-form-container {
 	.lfr-ddm-form-page-title + .row {
 		margin-top: 40px;
@@ -35,12 +26,12 @@
 			}
 		}
 
-		.icon-spinner {
-			@include animation(spin 1000ms infinite linear);
+		.icon-asterisk {
+			margin-left: 4px;
 		}
 
-		.liferay-ddm-form-field-checkbox .toggle-switch-handle .toggle-switch-text {
-			margin-left: 6px;
+		.icon-spinner {
+			@include animation(spin 1000ms infinite linear);
 		}
 
 		.lfr-ddm-form-field-repeatable-add-button {
@@ -79,11 +70,6 @@
 
 	.lfr-ddm-form-pagination-controls {
 		padding-top: 20px;
-	}
-
-	.help-block {
-		font-size: 14px;
-		margin-top: -45px;
 	}
 }
 

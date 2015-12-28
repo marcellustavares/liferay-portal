@@ -56,6 +56,11 @@ $horizontal-spacing: 35px;
 			margin-bottom: 50px;
 		}
 	}
+
+	.help-block {
+		font-size: 14px;
+		margin-top: -45px;
+	}
 }
 
 .lfr-ddl-field-settings-modal, .portlet-forms {
@@ -65,13 +70,29 @@ $horizontal-spacing: 35px;
 		}
 	}
 
-	.icon-spinner {
-		@include animation(spin 1000ms infinite linear);
-	}
-
 	.form-builder-field-settings-save .icon-spinner {
 		display: inline-block;
 		margin: -2px 0 0 4px;
+	}
+
+	.form-control {
+		font-size: 14px;
+		height: 40px;
+	}
+
+	@include sm {
+		.form-control {
+			font-size: 16px;
+		}
+	}
+
+	.help-block {
+		font-size: 14px;
+		position: absolute;
+	}
+
+	.icon-spinner {
+		@include animation(spin 1000ms infinite linear);
 	}
 
 	label.radio-inline {
@@ -81,16 +102,6 @@ $horizontal-spacing: 35px;
 		& + .radio-inline {
 			margin-left: 0;
 		}
-	}
-
-	.help-block {
-		font-size: 14px;
-		position: absolute;
-	}
-
-	.liferay-ddm-form-field-checkbox .toggle-switch-handle .toggle-switch-text {
-		margin-left: 6px;
-		text-transform: none;
 	}
 }
 
@@ -240,6 +251,7 @@ $horizontal-spacing: 35px;
 		height: 100%;
 		padding-bottom: 85px;
 		padding-top: 62px;
+		z-index: 1;
 	}
 
 	.modal-footer {
@@ -752,5 +764,13 @@ $horizontal-spacing: 35px;
 		line-height: 16px;
 		list-style-type: none;
 		padding: 11px 0 11px 0;
+	}
+}
+
+.dynamic-data-mapping-data-providers-modal {
+	max-width: 720px;
+
+	.modal-content {
+		z-index: 1;
 	}
 }
