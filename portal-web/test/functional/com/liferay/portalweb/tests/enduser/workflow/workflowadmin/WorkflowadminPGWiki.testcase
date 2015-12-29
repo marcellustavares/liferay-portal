@@ -22,8 +22,8 @@
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
+			<var name="workflowResourceValue" value="Wiki Page" />
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_WIKI_PAGE_SELECT" />
 		</execute>
 
 		<execute macro="Page#addPG">

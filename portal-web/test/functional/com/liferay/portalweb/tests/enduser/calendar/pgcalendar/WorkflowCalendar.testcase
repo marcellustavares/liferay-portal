@@ -31,8 +31,8 @@
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
+			<var name="workflowResourceValue" value="Calendar Event" />
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_CALENDAR_EVENT_SELECT" />
 		</execute>
 	</set-up>
 

@@ -383,8 +383,8 @@
 		</execute>
 
 		<execute macro="Workflow#configureWorkflow">
+			<var name="workflowResourceValue" value="Blogs Entry" />
 			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceKey" value="RESOURCE_TABLE_BLOGS_ENTRY_SELECT" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
