@@ -312,6 +312,50 @@ public class KaleoInstanceLocalServiceImpl
 	}
 
 	@Override
+	public List<KaleoInstance> search(
+		Long userId, String assetType, String nodeName,
+		String kaleoDefinitionName, Boolean completed, int start, int end,
+		OrderByComparator<KaleoInstance> orderByComparator,
+		ServiceContext serviceContext) {
+
+		KaleoInstanceQuery kaleoInstanceQuery = new KaleoInstanceQuery(
+			serviceContext);
+		kaleoInstanceQuery.setAssetTypes(getAssetTypes(assetType));
+		kaleoInstanceQuery.setCompleted(completed);
+		kaleoInstanceQuery.setEnd(end);
+		kaleoInstanceQuery.setNodeName(nodeName);
+		kaleoInstanceQuery.setOrderByComparator(orderByComparator);
+		kaleoInstanceQuery.setStart(start);
+		kaleoInstanceQuery.setKaleoDefinitionName(kaleoDefinitionName);
+
+		if (Validator.isNotNull(userId)) {
+			kaleoInstanceQuery.setUserId(userId);
+		}
+
+		return kaleoInstanceFinder.findKaleoInstances(kaleoInstanceQuery);
+	}
+
+	@Override
+	public int searchCount(
+		Long userId, String assetType, String nodeName,
+		String kaleoDefinitionName, Boolean completed,
+		ServiceContext serviceContext) {
+
+		KaleoInstanceQuery kaleoInstanceQuery = new KaleoInstanceQuery(
+			serviceContext);
+		kaleoInstanceQuery.setAssetTypes(getAssetTypes(assetType));
+		kaleoInstanceQuery.setNodeName(nodeName);
+		kaleoInstanceQuery.setCompleted(completed);
+		kaleoInstanceQuery.setKaleoDefinitionName(kaleoDefinitionName);
+
+		if (Validator.isNotNull(userId)) {
+			kaleoInstanceQuery.setUserId(userId);
+		}
+
+		return kaleoInstanceFinder.countKaleoInstances(kaleoInstanceQuery);
+	}
+
+	@Override
 	public KaleoInstance updateKaleoInstance(
 			long kaleoInstanceId, Map<String, Serializable> workflowContext,
 			ServiceContext serviceContext)
@@ -326,6 +370,14 @@ public class KaleoInstanceLocalServiceImpl
 		kaleoInstancePersistence.update(kaleoInstance);
 
 		return kaleoInstance;
+	}
+
+	protected String[] getAssetTypes(String assetType) {
+		if (Validator.isNull(assetType)) {
+			return null;
+		}
+
+		return new String[] {assetType};
 	}
 
 }
