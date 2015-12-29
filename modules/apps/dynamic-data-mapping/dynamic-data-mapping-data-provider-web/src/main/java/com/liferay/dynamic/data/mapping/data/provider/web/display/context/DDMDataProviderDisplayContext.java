@@ -32,6 +32,7 @@ import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -39,6 +40,7 @@ import com.liferay.portal.service.UserLocalService;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.portlet.PortletURL;
@@ -222,14 +224,17 @@ public class DDMDataProviderDisplayContext {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
 
+		Locale locale = _ddmDataProviderRequestHelper.getLocale();
+
 		ddmFormRenderingContext.setHttpServletRequest(
 			PortalUtil.getHttpServletRequest(_renderRequest));
 		ddmFormRenderingContext.setHttpServletResponse(
 			PortalUtil.getHttpServletResponse(_renderResponse));
-		ddmFormRenderingContext.setLocale(
-			_ddmDataProviderRequestHelper.getLocale());
+		ddmFormRenderingContext.setLocale(locale);
 		ddmFormRenderingContext.setPortletNamespace(
 			_renderResponse.getNamespace());
+		ddmFormRenderingContext.setSubmitLabel(
+			LanguageUtil.get(locale, "submit"));
 
 		return ddmFormRenderingContext;
 	}

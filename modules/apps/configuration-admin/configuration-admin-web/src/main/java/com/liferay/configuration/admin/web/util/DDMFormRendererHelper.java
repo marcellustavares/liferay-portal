@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -68,14 +69,18 @@ public class DDMFormRendererHelper {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
 
+		Locale locale = getLocale();
+
 		ddmFormRenderingContext.setDDMFormValues(getDDMFormValues(ddmForm));
 		ddmFormRenderingContext.setHttpServletRequest(
 			PortalUtil.getHttpServletRequest(_portletRequest));
 		ddmFormRenderingContext.setHttpServletResponse(
 			PortalUtil.getHttpServletResponse(_portletResponse));
-		ddmFormRenderingContext.setLocale(getLocale());
+		ddmFormRenderingContext.setLocale(locale);
 		ddmFormRenderingContext.setPortletNamespace(
 			_portletResponse.getNamespace());
+		ddmFormRenderingContext.setSubmitLabel(
+			LanguageUtil.get(locale, "submit"));
 
 		return ddmFormRenderingContext;
 	}

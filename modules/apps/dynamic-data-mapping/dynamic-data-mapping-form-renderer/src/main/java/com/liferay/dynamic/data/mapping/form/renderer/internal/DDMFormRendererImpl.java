@@ -147,7 +147,6 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		stringsMap.put("next", LanguageUtil.get(resourceBundle, "next"));
 		stringsMap.put(
 			"previous", LanguageUtil.get(resourceBundle, "previous"));
-		stringsMap.put("submit", LanguageUtil.get(resourceBundle, "submit"));
 
 		return stringsMap;
 	}
@@ -260,6 +259,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
 		template.put("readOnly", ddmFormRenderingContext.isReadOnly());
 		template.put("strings", getLanguageStringsMap(locale));
+		template.put("submitLabel", ddmFormRenderingContext.getSubmitLabel());
 		template.put("templateNamespace", getTemplateNamespace(ddmFormLayout));
 
 		if (ddmFormValues != null) {

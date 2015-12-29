@@ -291,6 +291,7 @@ public class DDMFormRendererHelperTest extends PowerMockito {
 
 		ddmFormRenderingContext.setLocale(_LOCALE);
 		ddmFormRenderingContext.setPortletNamespace(_PORTLET_NAMESPACE);
+		ddmFormRenderingContext.setSubmitLabel("submit");
 
 		return ddmFormRenderingContext;
 	}
