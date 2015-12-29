@@ -311,7 +311,10 @@
 	</command>
 
 	<command name="gotoViewCompletedAssetViaMySubmissions">
-		<execute function="Click" locator1="MenuItem#COMPLETED" value1="Completed" />
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Completed" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Completed" />
 
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
@@ -605,7 +608,10 @@
 	</command>
 
 	<command name="viewCannotWithdrawTaskByActions">
-		<execute function="AssertClick"  locator1="MenuItem#COMPLETED" value1="Completed" />
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Completed" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Completed" />
 
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
@@ -653,8 +659,17 @@
 	</command>
 
 	<command name="viewDefaultMySubmissionsCP">
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Pending" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Pending" />
+
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no pending publications requested by me." />
-		<execute function="AssertClick" locator1="MenuItem#COMPLETED" value1="Completed" />
+
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Completed" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Completed" />
 
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no completed publications requested by me." />
 	</command>
@@ -693,6 +708,11 @@
 	</command>
 
 	<command name="viewMySubmissions">
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Pending" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Pending" />
+
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
 		<execute function="AssertTextEquals" locator1="WorkflowSubmissions#PENDING_TABLE_DEFINITION" value1="${workflowDefinition}" />
@@ -711,6 +731,11 @@
 	</command>
 
 	<command name="viewPendingTasks">
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Pending" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Pending" />
+
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
 		<execute function="AssertTextEquals" locator1="WorkflowSubmissions#PENDING_TABLE_DEFINITION" value1="${workflowDefinition}" />
@@ -751,6 +776,11 @@
 	</command>
 
 	<command name="viewSubmissionNotPresent">
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Pending" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Pending" />
+
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
 		<execute function="AssertElementNotPresent" locator1="WorkflowSubmissions#PENDING_TABLE_ASSET_TITLE" value1="${workflowAssetTitle}" />
@@ -834,6 +864,11 @@
 			<var name="workflowTask" value="${workflowTask}" />
 		</execute>
 
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Pending" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Pending" />
+
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
 		<execute function="AssertClick" locator1="WorkflowSubmissions#PENDING_TABLE_ASSET_TITLE" value1="${workflowAssetTitle}" />
@@ -853,7 +888,10 @@
 	</command>
 
 	<command name="withdrawTaskCompletedNoByDetails">
-		<execute function="AssertClick"  locator1="MenuItem#COMPLETED" value1="Completed" />
+		<execute function="Click" locator1="Dropdown#FILTER" />
+
+		<var name="key_filterValue" value="Completed" />
+		<execute function="AssertClick" locator1="Dropdown#FILTER_VALUES" value1="Completed" />
 
 		<var name="key_workflowAssetTitle" value="${workflowAssetTitle}" />
 
