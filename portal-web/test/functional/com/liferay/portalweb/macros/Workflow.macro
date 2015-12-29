@@ -451,9 +451,9 @@
 			<var name="portlet" value="Workflow Configuration" />
 		</execute>
 
-		<var name="noWorkflow" value="Default: No Workflow" />
+		<var name="noWorkflow" value="No Workflow" />
 
-		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_CALENDAR_EVENT_SELECT" value1="${defaultWorkflow}" />
+		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_CALENDAR_EVENT_SELECT" value1="${noWorkflow}" />
 		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_PAGE_REVISION_SELECT" value1="${noWorkflow}" />
 		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_USER_SELECT" value1="${noWorkflow}" />
 		<execute function="Select" locator1="WorkflowConfiguration#RESOURCE_TABLE_BLOGS_ENTRY_SELECT" value1="${noWorkflow}" />
