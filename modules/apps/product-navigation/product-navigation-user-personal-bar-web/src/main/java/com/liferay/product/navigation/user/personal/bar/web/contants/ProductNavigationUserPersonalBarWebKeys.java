@@ -12,19 +12,13 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.configuration;
-
-import com.liferay.portal.kernel.util.GetterUtil;
+package com.liferay.product.navigation.user.personal.bar.web.contants;
 
 /**
- * @author Rafael Praxedes
+ * @author Julio Camarero
  */
-public class DDLFormWebConfigurationValues {
+public class ProductNavigationUserPersonalBarWebKeys {
 
-	public static final String DEFAULT_DISPLAY_VIEW = GetterUtil.getString(
-		DDLFormWebConfigurationUtil.get("default.display.view"));
-
-	public static String[] DISPLAY_VIEWS = DDLFormWebConfigurationUtil.getArray(
-		"display.views");
+	public static final String NOTIFICATIONS_COUNT = "NOTIFICATIONS_COUNT";
 
 }

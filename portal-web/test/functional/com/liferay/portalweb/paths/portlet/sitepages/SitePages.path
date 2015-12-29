@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 	<td>SITE_NAME</td>
-	<td>//div[contains(@class,'toolbar-group-content') and contains(.,'${key_siteName}')]</td>
+	<td>//span[contains(@class,'site-name') and contains(@title,'${key_siteName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -36,12 +36,12 @@
 </tr>
 <tr>
 	<td>NAVIGATION_MY_PROFILE</td>
-	<td>//a[contains(@title,'My Profile')]/span[contains(@class,'icon-cog')]</td>
+	<td>//a[contains(@title,'Profile')]/span[contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NAVIGATION_MY_DASHBOARD</td>
-	<td>//a[contains(@title,'My Dashboard')]/span[contains(@class,'icon-cog')]</td>
+	<td>//a[contains(@title,'Dashboard')]/span[contains(@class,'icon-cog')]</td>
 	<td></td>
 </tr>
 <tr>
