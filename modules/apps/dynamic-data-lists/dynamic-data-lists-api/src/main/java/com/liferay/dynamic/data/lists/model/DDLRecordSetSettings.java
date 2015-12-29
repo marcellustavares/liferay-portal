@@ -27,7 +27,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 @DDMForm
 @DDMFormLayout( {
 	@DDMFormLayoutPage(
-		title = "%basic-options", value = {
+		title = "%form-options", value = {
 			@DDMFormLayoutRow(
 				{
 					@DDMFormLayoutColumn(
@@ -111,7 +111,7 @@ public interface DDLRecordSetSettings {
 	public boolean sendEmailNotification();
 
 	@DDMFormField(
-		label = "%workflow", properties = {"dataSourceType=manual"},
+		label = "%select-a-workflow", properties = {"dataSourceType=manual"},
 		type = "select"
 	)
 	public String workflowDefinition();
