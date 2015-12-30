@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.lists.web.display.context;
 
-import com.liferay.dynamic.data.lists.configuration.DDLServiceConfiguration;
 import com.liferay.dynamic.data.lists.constants.DDLActionKeys;
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.dynamic.data.lists.constants.DDLWebKeys;
@@ -22,6 +21,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.permission.DDLPermission;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
+import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.util.DDLRequestHelper;
 import com.liferay.dynamic.data.lists.web.portlet.DDLPortletUtil;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Layout;
@@ -56,6 +55,9 @@ public class DDLDisplayContext {
 
 	public DDLDisplayContext(HttpServletRequest request) {
 		_ddlRequestHelper = new DDLRequestHelper(request);
+
+		_ddlWebConfiguration = (DDLWebConfiguration)request.getAttribute(
+					DDLWebConfiguration.class.getName());
 
 		if (Validator.isNotNull(getPortletResource())) {
 			return;
@@ -89,18 +91,6 @@ public class DDLDisplayContext {
 	}
 
 	public String[] getDDLRecordSetDisplayViews() {
-		if (_ddlRecordDisplayViews == null) {
-			DDLServiceConfiguration ddlServiceConfiguration =
-				_ddlRequestHelper.getDDLServiceConfiguration();
-
-			_ddlRecordDisplayViews = StringUtil.split(
-				PrefsParamUtil.getString(
-					_ddlRequestHelper.getPortletPreferences(),
-					_ddlRequestHelper.getRenderRequest(), "displayViews",
-					StringUtil.merge(
-						ddlServiceConfiguration.supportedDisplayView())));
-		}
-
 		return _ddlRecordDisplayViews;
 	}
 
@@ -389,8 +379,9 @@ public class DDLDisplayContext {
 	}
 
 	private String _ddlRecordDisplayStyle;
-	private String[] _ddlRecordDisplayViews;
+	private final String[] _ddlRecordDisplayViews = {"list", "descriptive"};
 	private final DDLRequestHelper _ddlRequestHelper;
+	private final DDLWebConfiguration _ddlWebConfiguration;
 	private DDMTemplate _displayDDMTemplate;
 	private DDMTemplate _formDDMTemplate;
 	private Boolean _hasAddDDMTemplatePermission;
