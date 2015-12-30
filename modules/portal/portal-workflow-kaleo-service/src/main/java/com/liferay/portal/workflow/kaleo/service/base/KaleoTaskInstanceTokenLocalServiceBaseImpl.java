@@ -45,6 +45,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServ
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoActionPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoConditionPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoDefinitionPersistence;
+import com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstanceFinder;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstancePersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstanceTokenPersistence;
 import com.liferay.portal.workflow.kaleo.service.persistence.KaleoLogPersistence;
@@ -487,6 +488,24 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	public void setKaleoInstancePersistence(
 		KaleoInstancePersistence kaleoInstancePersistence) {
 		this.kaleoInstancePersistence = kaleoInstancePersistence;
+	}
+
+	/**
+	 * Returns the kaleo instance finder.
+	 *
+	 * @return the kaleo instance finder
+	 */
+	public KaleoInstanceFinder getKaleoInstanceFinder() {
+		return kaleoInstanceFinder;
+	}
+
+	/**
+	 * Sets the kaleo instance finder.
+	 *
+	 * @param kaleoInstanceFinder the kaleo instance finder
+	 */
+	public void setKaleoInstanceFinder(KaleoInstanceFinder kaleoInstanceFinder) {
+		this.kaleoInstanceFinder = kaleoInstanceFinder;
 	}
 
 	/**
@@ -1144,6 +1163,8 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	protected com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService kaleoInstanceLocalService;
 	@BeanReference(type = KaleoInstancePersistence.class)
 	protected KaleoInstancePersistence kaleoInstancePersistence;
+	@BeanReference(type = KaleoInstanceFinder.class)
+	protected KaleoInstanceFinder kaleoInstanceFinder;
 	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoInstanceTokenLocalService.class)
 	protected com.liferay.portal.workflow.kaleo.service.KaleoInstanceTokenLocalService kaleoInstanceTokenLocalService;
 	@BeanReference(type = KaleoInstanceTokenPersistence.class)
