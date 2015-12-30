@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.lists.form.web.configuration;
 
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
-import com.liferay.portal.kernel.configuration.Filter;
 
 /**
  * @author Rafael Praxedes
@@ -25,14 +24,6 @@ public class DDLFormWebConfigurationUtil {
 
 	public static String get(String key) {
 		return _configuration.get(key);
-	}
-
-	public static String get(String key, Filter filter) {
-		return _configuration.get(key, filter);
-	}
-
-	public static String[] getArray(String key) {
-		return _configuration.getArray(key);
 	}
 
 	private static final Configuration _configuration =

@@ -21,12 +21,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
  */
 public class DDLFormWebConfigurationValues {
 
-	public static final String DEFAULT_DISPLAY_VIEW = GetterUtil.getString(
-		DDLFormWebConfigurationUtil.get("default.display.view"));
-
-	public static String[] DISPLAY_VIEWS = DDLFormWebConfigurationUtil.getArray(
-		"display.views");
-
 	public static final String EMAIL_FORM_ENTRY_NOTIFICATION_BODY =
 		GetterUtil.getString(
 			DDLFormWebConfigurationUtil.get(
