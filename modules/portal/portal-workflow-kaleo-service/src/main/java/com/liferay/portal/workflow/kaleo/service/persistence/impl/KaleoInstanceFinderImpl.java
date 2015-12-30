@@ -228,7 +228,7 @@ public class KaleoInstanceFinderImpl
 				sb.append(orderByField);
 			}
 
-			sb.append(", AssetEntry.className ");
+			sb.append(", KaleoInstance.className ");
 
 			sql = sql.replace(
 				"DISTINCT KaleoInstance.kaleoInstanceId", sb.toString());
