@@ -73,7 +73,7 @@ for (AssetRendererFactory<?> assetRendererFactory : assetEntriesSearchFacet.getA
 
 			form.fm('<%= assetEntriesSearchFacet.getClassName() + "assetTypes" %>').val(Liferay.Util.listSelect(form.fm('currentAssetTypes')));
 
-			submitForm(form);
+			<portlet:namespace />submitForm(form);
 		}
 	);
 </aui:script>

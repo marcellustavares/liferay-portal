@@ -215,7 +215,7 @@ if (fieldParamSelection.equals("0")) {
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>').val('');
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>selection').val(selection);
 
-		submitForm(form);
+		<portlet:namespace />submitForm(form);
 	}
 
 	function <portlet:namespace /><%= HtmlUtil.escapeJS(facet.getFieldId()) %>searchCustomRange(selection) {
@@ -238,7 +238,7 @@ if (fieldParamSelection.equals("0")) {
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>').val(range);
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>selection').val(selection);
 
-		submitForm(form);
+		<portlet:namespace />submitForm(form);
 	}
 
 	function <portlet:namespace /><%= HtmlUtil.escapeJS(facet.getFieldId()) %>setRange(selection, range) {
@@ -247,7 +247,7 @@ if (fieldParamSelection.equals("0")) {
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>').val(range);
 		form.fm('<%= HtmlUtil.escapeJS(facet.getFieldId()) %>selection').val(selection);
 
-		submitForm(form);
+		<portlet:namespace />submitForm(form);
 	}
 </aui:script>
 
