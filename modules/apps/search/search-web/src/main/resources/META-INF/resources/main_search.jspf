@@ -114,7 +114,7 @@ Hits hits = indexer.search(searchContext);
 
 								form.fm('<%= SearchContainer.DEFAULT_CUR_PARAM %>').val(1);
 
-								submitForm(form);
+								<portlet:namespace />submitForm(form);
 							}
 						}
 					}

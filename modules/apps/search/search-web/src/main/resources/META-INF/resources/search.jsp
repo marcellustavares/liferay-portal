@@ -90,7 +90,7 @@ request.setAttribute("search.jsp-returnToFullPageURL", portletDisplay.getURLBack
 						clearFields.remove();
 
 						if (fieldValues.length || clearFields.size()) {
-							submitForm(document.<portlet:namespace />fm);
+							<portlet:namespace />submitForm(document.<portlet:namespace />fm);
 						}
 					}
 				},
@@ -170,8 +170,19 @@ request.setAttribute("search.jsp-returnToFullPageURL", portletDisplay.getURLBack
 		keywords = keywords.replace(/^\s+|\s+$/, '');
 
 		if (keywords != '') {
-			submitForm(form);
+			<portlet:namespace />submitForm(form);
 		}
+	}
+
+	function <portlet:namespace />submitForm(form) {
+		if (!form.<portlet:namespace />groupId) {
+				var groupIdInput = document.createElement("input");
+				groupIdInput.type = "hidden";
+				groupIdInput.name = "<portlet:namespace />groupId";
+				groupIdInput.value = <%= groupId %>;
+				document.<portlet:namespace />fm.appendChild(groupIdInput);
+		}
+		submitForm(document.<portlet:namespace />fm);
 	}
 </aui:script>
 

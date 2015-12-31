@@ -98,6 +98,6 @@
 
 		form.fm('keywords').val(newKeywords);
 
-		submitForm(form);
+		<portlet:namespace />submitForm(form);
 	}
 </aui:script>
