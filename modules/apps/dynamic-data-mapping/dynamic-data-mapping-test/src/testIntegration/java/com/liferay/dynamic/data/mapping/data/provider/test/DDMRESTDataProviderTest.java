@@ -104,6 +104,51 @@ public class DDMRESTDataProviderTest {
 		}
 	}
 
+	@DDMForm
+	public interface DDMRESTDataProviderSettings {
+
+		@DDMFormField(
+				label = "%cache-data-on-the-first-request",
+				properties = "showAsSwitcher=true"
+			)
+			public boolean cacheable();
+
+			@DDMFormField(
+				label = "%displayed-json-attribute",
+				properties = { "placeholder=%enter-the-attribute-to-be-displayed" },
+				required = true,
+				tip = "%the-attribute-whose-value-is-displayed-to-the-end-user-for-selection"
+			)
+			public String key();
+
+			@DDMFormField(
+				label = "%password", properties = { "placeholder=%enter-a-password" },
+				tip = "%provide-the-password-for-authenticating-to-the-rest-provider"
+			)
+			public String password();
+
+			@DDMFormField(
+				label = "%url",
+				properties = { "placeholder=%enter-the-rest-service-url" },
+				required = true
+			)
+			public String url();
+
+			@DDMFormField(
+				label = "%user-name", properties = { "placeholder=%enter-a-user-name" },
+				tip = "%provide-the-user-name-for-authenticating-to-the-rest-provider"
+			)
+			public String username();
+
+			@DDMFormField(
+				label = "%stored-json-attribute",
+				properties = {"placeholder=%enter-the-attribute-to-be-stored"},
+				required = true,
+				tip = "%the-attribute-whose-value-is-stored-in-the-database-when-selected-by-a-user"
+			)
+			public String value();
+	}
+
 	protected List<KeyValuePair> createExpectedKeyValuePairs() {
 		List<KeyValuePair> expectedKeyValuePairs = new ArrayList<>();
 
@@ -116,28 +161,5 @@ public class DDMRESTDataProviderTest {
 	}
 
 	private DDMDataProvider _ddmDataProvider;
-
-	@DDMForm
-	private interface DDMRESTDataProviderSettings {
-
-		@DDMFormField
-		public boolean cacheable();
-
-		@DDMFormField
-		public String key();
-
-		@DDMFormField
-		public String password();
-
-		@DDMFormField
-		public String url();
-
-		@DDMFormField
-		public String username();
-
-		@DDMFormField
-		public String value();
-
-	}
 
 }
