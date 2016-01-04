@@ -122,17 +122,19 @@ public class TranslationManagerTag extends com.liferay.taglib.util.IncludeTag {
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
 		setNamespacedAttribute(request, "availableLocales", _availableLocales);
-		setNamespacedAttribute(request, "defaultLanguageId", _defaultLanguageId);
-		setNamespacedAttribute(request, "editingLanguageId", _editingLanguageId);
+		setNamespacedAttribute(
+			request, "defaultLanguageId", _defaultLanguageId);
+		setNamespacedAttribute(
+			request, "editingLanguageId", _editingLanguageId);
 		setNamespacedAttribute(request, "id", _id);
 		setNamespacedAttribute(request, "initialize", _initialize);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 	}
 
-	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-ddm:translation-manager:";
+	private static final String _ATTRIBUTE_NAMESPACE =
+		"liferay-ddm:translation-manager:";
 
-	private static final String _PAGE =
-		"/translation_manager/page.jsp";
+	private static final String _PAGE = "/translation_manager/page.jsp";
 
 	private java.util.Locale[] _availableLocales = null;
 	private java.lang.String _defaultLanguageId = null;
