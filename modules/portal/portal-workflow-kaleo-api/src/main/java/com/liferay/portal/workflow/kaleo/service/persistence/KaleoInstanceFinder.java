@@ -12,19 +12,19 @@
  * details.
  */
 
-package com.liferay.workflow.instance.web.display.context.util;
+package com.liferay.portal.workflow.kaleo.service.persistence;
 
-import com.liferay.portal.kernel.display.context.util.BaseRequestHelper;
-
-import javax.servlet.http.HttpServletRequest;
+import aQute.bnd.annotation.ProviderType;
 
 /**
- * @author Marcellus Tavares
+ * @author Brian Wing Shun Chan
+ * @generated
  */
-public class WorkflowInstanceRequestHelper extends BaseRequestHelper {
+@ProviderType
+public interface KaleoInstanceFinder {
+	public int countKaleoInstances(
+		com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstanceQuery kaleoInstanceQuery);
 
-	public WorkflowInstanceRequestHelper(HttpServletRequest request) {
-		super(request);
-	}
-
+	public java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstance> findKaleoInstances(
+		com.liferay.portal.workflow.kaleo.service.persistence.KaleoInstanceQuery kaleoInstanceQuery);
 }
