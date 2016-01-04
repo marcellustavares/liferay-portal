@@ -53,7 +53,6 @@ import com.liferay.calendar.util.CalendarUtil;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.util.RSSUtil;
 import com.liferay.calendar.util.RecurrenceUtil;
-import com.liferay.calendar.web.upgrade.CalendarWebUpgrade;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -1347,11 +1346,6 @@ public class CalendarPortlet extends MVCPortlet {
 	@Reference(unbind = "-")
 	protected void setCalendarService(CalendarService calendarService) {
 		_calendarService = calendarService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setCalendarWebUpgrade(
-		CalendarWebUpgrade calendarWebUpgrade) {
 	}
 
 	@Reference(unbind = "-")
