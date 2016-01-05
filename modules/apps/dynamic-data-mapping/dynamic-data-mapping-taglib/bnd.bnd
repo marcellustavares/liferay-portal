@@ -7,7 +7,7 @@ Export-Package:\
 Include-Resource:\
 	classes,\
 	META-INF/resources=src/main/resources/META-INF/resources
-JS-Config: /META-INF/resources/translation_manager/js/translation_manager.js
+JS-Config: /META-INF/resources/config.js
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Dynamic Data Mapping
 Provide-Capability:\
