@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.calendar.web.upgrade.v1_1_0;
+package com.liferay.calendar.upgrade.v1_0_3;
 
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.util.StringBundler;
