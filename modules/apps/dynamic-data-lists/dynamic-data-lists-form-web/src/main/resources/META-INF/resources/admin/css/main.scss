@@ -793,3 +793,7 @@ $horizontal-spacing: 35px;
 		display: none;
 	}
 }
+
+select.form-control[multiple] {
+	height: auto !important;
+}
