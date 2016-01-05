@@ -1,0 +1,7 @@
+dependencies {
+	compile project(":apps:dynamic-data-mapping:dynamic-data-mapping-taglib")
+}
+
+liferay {
+	deployDir = file("${liferayHome}/osgi/modules")
+}
