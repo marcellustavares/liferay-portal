@@ -201,7 +201,7 @@ request.setAttribute("edit_article.jsp-changeStructure", changeStructure);
 	}
 	%>
 
-	<aui:translation-manager
+	<liferay-ddm:translation-manager
 		availableLocales="<%= availableLocales %>"
 		defaultLanguageId="<%= defaultLanguageId %>"
 		id="translationManager"

@@ -45,7 +45,7 @@ if (Validator.isNotNull(script)) {
 	<liferay-ui:section>
 		<div id="<portlet:namespace />formBuilderTab">
 
-			<aui:translation-manager
+			<liferay-ddm:translation-manager
 				availableLocales="<%= availableLocales %>"
 				defaultLanguageId="<%= defaultLanguageId %>"
 				id="translationManager"

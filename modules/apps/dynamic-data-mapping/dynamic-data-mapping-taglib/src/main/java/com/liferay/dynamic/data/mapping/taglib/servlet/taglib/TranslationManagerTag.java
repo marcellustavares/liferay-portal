@@ -12,19 +12,21 @@
  * details.
  */
 
-package com.liferay.taglib.aui.base;
+package com.liferay.dynamic.data.mapping.taglib.servlet.taglib;
+
+import com.liferay.dynamic.data.mapping.taglib.servlet.ServletContextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Eduardo Lundgren
  * @author Bruno Basto
  * @author Nathan Cavanaugh
  * @author Julio Camarero
- * @generated
  */
-public abstract class BaseTranslationManagerTag extends com.liferay.taglib.util.IncludeTag {
+public class TranslationManagerTag extends com.liferay.taglib.util.IncludeTag {
 
 	@Override
 	public int doStartTag() throws JspException {
@@ -87,6 +89,13 @@ public abstract class BaseTranslationManagerTag extends com.liferay.taglib.util.
 		setScopedAttribute("initialize", initialize);
 	}
 
+	@Override
+	public void setPageContext(PageContext pageContext) {
+		super.setPageContext(pageContext);
+
+		setServletContext(ServletContextUtil.getServletContext());
+	}
+
 	public void setReadOnly(boolean readOnly) {
 		_readOnly = readOnly;
 
@@ -113,17 +122,19 @@ public abstract class BaseTranslationManagerTag extends com.liferay.taglib.util.
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
 		setNamespacedAttribute(request, "availableLocales", _availableLocales);
-		setNamespacedAttribute(request, "defaultLanguageId", _defaultLanguageId);
-		setNamespacedAttribute(request, "editingLanguageId", _editingLanguageId);
+		setNamespacedAttribute(
+			request, "defaultLanguageId", _defaultLanguageId);
+		setNamespacedAttribute(
+			request, "editingLanguageId", _editingLanguageId);
 		setNamespacedAttribute(request, "id", _id);
 		setNamespacedAttribute(request, "initialize", _initialize);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 	}
 
-	protected static final String _ATTRIBUTE_NAMESPACE = "aui:translation-manager:";
+	private static final String _ATTRIBUTE_NAMESPACE =
+		"liferay-ddm:translation-manager:";
 
-	private static final String _PAGE =
-		"/html/taglib/aui/translation_manager/page.jsp";
+	private static final String _PAGE = "/translation_manager/page.jsp";
 
 	private java.util.Locale[] _availableLocales = null;
 	private java.lang.String _defaultLanguageId = null;

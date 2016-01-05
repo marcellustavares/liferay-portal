@@ -771,12 +771,6 @@
 							'aui-template-deprecated'
 						]
 					},
-					'liferay-translation-manager': {
-						path: 'translation_manager.js',
-						requires: [
-							'aui-base'
-						]
-					},
 					'liferay-undo-manager': {
 						path: 'undo_manager.js',
 						requires: [
