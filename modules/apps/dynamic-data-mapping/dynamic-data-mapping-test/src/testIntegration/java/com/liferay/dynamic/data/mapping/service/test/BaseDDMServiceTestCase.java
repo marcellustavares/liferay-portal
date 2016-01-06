@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.service.test;
 
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -145,7 +146,7 @@ public class BaseDDMServiceTestCase {
 			String storageType, int type, int status)
 		throws Exception {
 
-		DDMForm ddmForm = ddmStructureTestHelper.toDDMForm(definition);
+		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
 
 		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
 
@@ -174,7 +175,7 @@ public class BaseDDMServiceTestCase {
 			String definition, String storageType, int type)
 		throws Exception {
 
-		DDMForm ddmForm = ddmStructureTestHelper.toDDMForm(definition);
+		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(definition);
 
 		return ddmStructureTestHelper.addStructure(
 			classNameId, structureKey, name, ddmForm, storageType, type);
