@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.taglib.aui;
+package com.liferay.dynamic.data.mapping.taglib.servlet.taglib;
 
-import com.liferay.taglib.aui.base.BaseTranslationManagerTag;
+import com.liferay.dynamic.data.mapping.taglib.servlet.taglib.base.BaseTranslationManagerTag;
 
 /**
  * @author Eduardo Lundgren

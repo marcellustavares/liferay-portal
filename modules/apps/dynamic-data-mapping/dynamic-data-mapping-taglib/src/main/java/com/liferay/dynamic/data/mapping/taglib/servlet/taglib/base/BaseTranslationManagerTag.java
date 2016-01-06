@@ -12,10 +12,13 @@
  * details.
  */
 
-package com.liferay.taglib.aui.base;
+package com.liferay.dynamic.data.mapping.taglib.servlet.taglib.base;
+
+import com.liferay.dynamic.data.mapping.taglib.servlet.ServletContextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Eduardo Lundgren
@@ -87,6 +90,13 @@ public abstract class BaseTranslationManagerTag extends com.liferay.taglib.util.
 		setScopedAttribute("initialize", initialize);
 	}
 
+	@Override
+	public void setPageContext(PageContext pageContext) {
+		super.setPageContext(pageContext);
+
+		setServletContext(ServletContextUtil.getServletContext());
+	}
+
 	public void setReadOnly(boolean readOnly) {
 		_readOnly = readOnly;
 
@@ -120,10 +130,10 @@ public abstract class BaseTranslationManagerTag extends com.liferay.taglib.util.
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 	}
 
-	protected static final String _ATTRIBUTE_NAMESPACE = "aui:translation-manager:";
+	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-ddm:translation-manager:";
 
 	private static final String _PAGE =
-		"/html/taglib/aui/translation_manager/page.jsp";
+		"/translation_manager/page.jsp";
 
 	private java.util.Locale[] _availableLocales = null;
 	private java.lang.String _defaultLanguageId = null;

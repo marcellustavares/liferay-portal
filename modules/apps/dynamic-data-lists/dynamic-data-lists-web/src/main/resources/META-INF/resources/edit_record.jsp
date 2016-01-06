@@ -129,7 +129,7 @@ else {
 
 	<aui:fieldset>
 		<c:if test="<%= !translating %>">
-			<aui:translation-manager
+			<liferay-ddm:translation-manager
 				availableLocales="<%= availableLocales %>"
 				defaultLanguageId="<%= defaultLanguageId %>"
 				id="translationManager"
