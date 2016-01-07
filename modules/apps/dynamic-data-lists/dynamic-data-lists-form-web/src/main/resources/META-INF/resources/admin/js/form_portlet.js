@@ -87,7 +87,6 @@ AUI.add(
 						editForm.set('onSubmit', A.bind('_onSubmitEditForm', instance));
 
 						instance._eventHandlers = [
-							instance.one('#publishCheckbox').on('change', A.bind('_onChangePublishCheckbox', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
 					},
@@ -111,28 +110,20 @@ AUI.add(
 					openPublishModal: function() {
 						var instance = this;
 
-						Liferay.Util.openWindow(
-							{
-								dialog: {
-									height: 325,
-									resizable: false,
-									width: 720
-								},
-								id: instance.ns('publishModal'),
-								title: Liferay.Language.get('publish')
-							},
-							function(dialogWindow) {
-								var bodyNode = dialogWindow.bodyNode;
+						var publishCheckbox = instance.one('#publishCheckbox');
 
-								var publishNode = instance.one('#publishModal');
+						var publishModalID = instance.ns('publishModalContainer');
 
-								if (publishNode) {
-									publishNode.show();
+						var publishModalNode = instance.one('#' + publishModalID);
 
-									bodyNode.append(publishNode);
-								}
-							}
-						);
+						publishCheckbox.setData('previousValue', publishCheckbox.attr('checked'));
+
+						if (publishModalNode) {
+							Liferay.Util.getWindow(publishModalID).show();
+						}
+						else {
+							instance._createPublishModal();
+						}
 					},
 
 					serializeFormBuilder: function() {
@@ -185,10 +176,137 @@ AUI.add(
 						submitForm(editForm.form);
 					},
 
-					_onChangePublishCheckbox: function(event) {
+					_afterCopyToClipBoardButtonClick: function() {
 						var instance = this;
 
-						var publishCheckbox = event.currentTarget;
+						var message;
+
+						if (!instance._copyPublishURL()) {
+							message = Liferay.Language.get('unable-to-copy-to-clipboard') + ' ' + Liferay.Language.get('copy-directly');
+						}
+						else {
+							message = Liferay.Language.get('copied-to-clipboard');
+						}
+
+						instance._showCopyToClipboardMessage(message);
+					},
+
+					_afterOpenPublishModal: function(dialogWindow) {
+						var instance = this;
+
+						var bodyNode = dialogWindow.bodyNode;
+
+						var publishNodeID = instance.ns('publishModal');
+
+						var publishNode = instance.one('#' + publishNodeID);
+
+						if (publishNode) {
+							publishNode.show();
+
+							bodyNode.append(publishNode);
+
+							instance._bindPublishModal();
+						}
+					},
+
+					_bindPublishModal: function() {
+						var instance = this;
+
+						A.one('.button-to-copy').on('click', A.bind('_afterCopyToClipBoardButtonClick', instance));
+
+						Liferay.Util.getWindow(instance.ns('publishModalContainer')).after('visibleChange', function() {
+							var popover = A.Widget.getByNode(A.one('#copyToClipboardMessage'));
+
+							if (popover) {
+								popover.destroy();
+							}
+						});
+					},
+
+					_copyPublishURL: function() {
+						var instance = this;
+
+						var message;
+
+						var textElement = A.one('.text-to-copy');
+
+						textElement.getDOMNode().select();
+
+						return document.execCommand('copy');
+					},
+
+					_createPublishModal: function() {
+						var instance = this;
+
+						Liferay.Util.openWindow(
+							{
+								dialog: {
+									cssClass: 'publish-modal-container',
+									height: 400,
+									resizable: false,
+									width: 720,
+									'toolbars.footer': [
+										{
+											cssClass: 'btn-lg btn-primary',
+											label: Liferay.Language.get('confirm'),
+											on: {
+												click: A.bind('_onConfirmPublishModal', instance)
+											}
+										},
+										{
+											cssClass: 'btn-lg btn-link',
+											label: Liferay.Language.get('cancel'),
+											on: {
+												click: A.bind('_onCancelPublishModal', instance)
+											}
+										}
+									]
+								},
+								id: instance.ns('publishModalContainer'),
+								title: Liferay.Language.get('publish')
+							},
+							A.bind('_afterOpenPublishModal', instance)
+						);
+					},
+
+					_onCancelPublishModal: function() {
+						var instance = this;
+
+						var publishCheckbox = instance.one('#publishCheckbox');
+
+						publishCheckbox.attr('checked', publishCheckbox.getData('previousValue'));
+
+						Liferay.Util.getWindow(instance.ns('publishModalContainer')).hide();
+					},
+
+					_onConfirmPublishModal: function() {
+						var instance = this;
+
+						instance._setFormAsPublish();
+
+						Liferay.Util.getWindow(instance.ns('publishModalContainer')).hide();
+					},
+
+					_onDestroyPortlet: function(event) {
+						var instance = this;
+
+						instance.destroy();
+					},
+
+					_onSubmitEditForm: function(event) {
+						var instance = this;
+
+						event.preventDefault();
+
+						instance.serializeFormBuilder();
+
+						instance.submitForm();
+					},
+
+					_setFormAsPublish: function() {
+						var instance = this;
+
+						var publishCheckbox = instance.one('#publishCheckbox');
 
 						var payload = instance.ns(
 							{
@@ -207,20 +325,44 @@ AUI.add(
 						);
 					},
 
-					_onDestroyPortlet: function(event) {
+					_showCopyToClipboardMessage: function(message) {
 						var instance = this;
 
-						instance.destroy();
-					},
+						var popover = A.Widget.getByNode(A.one('#copyToClipboardMessage'));
 
-					_onSubmitEditForm: function(event) {
-						var instance = this;
+						if (!popover) {
+							popover = new A.Popover(
+								{
+									align: {
+										node: A.one('.text-to-copy'),
+										points:[A.WidgetPositionAlign.BC, A.WidgetPositionAlign.TC]
+									},
+									position: 'top',
+									plugins: [A.Plugin.WidgetAnim],
+									id: 'copyToClipboardMessage',
+									visible: false,
+									zIndex: 90000
+								}
+							);
+						}
 
-						event.preventDefault();
+						popover.set('bodyContent', message);
 
-						instance.serializeFormBuilder();
+						if (!popover.get('visible')) {
+							setTimeout(function() {
+								if (popover) {
+									popover.hide();
+								}
+							}, 3000);
+						}
 
-						instance.submitForm();
+						popover.set('visible', true);
+
+						popover.render();
+
+						popover.hide();
+
+						popover.show();
 					},
 
 					_valueFormBuilder: function() {
@@ -245,6 +387,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddl-form-builder', 'liferay-ddl-form-builder-definition-serializer', 'liferay-ddl-form-builder-layout-serializer', 'liferay-portlet-base']
+		requires: ['liferay-ddl-form-builder', 'liferay-ddl-form-builder-definition-serializer', 'liferay-ddl-form-builder-layout-serializer', 'liferay-portlet-base', 'aui-popover', 'widget-anim']
 	}
 );

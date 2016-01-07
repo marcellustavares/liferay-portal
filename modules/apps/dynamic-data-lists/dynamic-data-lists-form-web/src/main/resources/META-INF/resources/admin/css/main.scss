@@ -781,15 +781,30 @@ $horizontal-spacing: 35px;
 			margin: 0;
 		}
 	}
+}
 
-	.form-builder-tabview {
-		padding-right: 70px;
+.ddl-publish-modal {
+	.alert-info {
+		text-align: center;
 	}
 
-	.lfr-ddm-repeatable-add-button {
-		position: absolute;
-		right: 0;
-		top: 0;
+	.ddl-publish-checkbox {
+		margin-bottom: 0;
+		width: 100%;
+
+		small {
+			display: block;
+		}
+
+		> span {
+			margin-bottom: 0.4em;
+			margin-top: 0.4em;
+		}
+	}
+
+	.input-checkbox-wrapper {
+		float: right;
+		margin-bottom: 0;
 	}
 
 	.lfr-ddm-repeatable-delete-button {
@@ -802,6 +817,10 @@ $horizontal-spacing: 35px;
 		> li {
 			cursor: pointer;
 		}
+	}
+
+	.text-to-copy {
+		background-color: transparent;
 	}
 
 	.toggle-switch {
