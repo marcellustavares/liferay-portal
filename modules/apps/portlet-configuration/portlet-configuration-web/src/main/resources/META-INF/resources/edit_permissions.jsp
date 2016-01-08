@@ -280,6 +280,7 @@ definePermissionsURL.setWindowState(LiferayWindowState.POP_UP);
 				keyProperty="roleId"
 				modelVar="role"
 			>
+			<aui:input name="rolePrimaryKey" type="hidden" value="<%= role.getPrimaryKey() %>" />
 
 				<%
 				String definePermissionsHREF = null;
