@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -72,6 +73,27 @@ public class FileUtil {
 				}
 			}
 		}
+	}
+
+	public static void copy(File source, File destination) throws IOException {
+		FileInputStream fileInputStream = new FileInputStream(source);
+		FileOutputStream fileOutputStream = new FileOutputStream(destination);
+
+		FileChannel inputFileChannel = fileInputStream.getChannel();
+		FileChannel outputFileChannel = fileOutputStream.getChannel();
+
+		long length = inputFileChannel.size() - inputFileChannel.position();
+
+		long count = 0;
+
+		while (count < length) {
+			count += inputFileChannel.transferTo(
+				inputFileChannel.position() + count, length - count,
+				outputFileChannel);
+		}
+
+		fileInputStream.close();
+		fileOutputStream.close();
 	}
 
 	public static String createTempFileName(String prefix, String extension) {
@@ -397,6 +419,16 @@ public class FileUtil {
 					printWriter.print(line);
 				}
 			}
+		}
+	}
+
+	public static void write(File file, String s, boolean append)
+		throws IOException {
+
+		try (Writer writer = new OutputStreamWriter(
+				new FileOutputStream(file, append), StandardCharsets.UTF_8)) {
+
+			writer.write(s);
 		}
 	}
 
