@@ -67,12 +67,14 @@ public class PollsVoteLocalServiceImpl extends PollsVoteLocalServiceBaseImpl {
 		pollsQuestionPersistence.update(question);
 
 		// Vote
-		
+
 		PollsVote vote = null;
-		if(serviceContext.getThemeDisplay().isSignedIn()){
-			vote = pollsVotePersistence.fetchByQ_U_First(questionId, userId, null);
+
+		if (serviceContext.getThemeDisplay().isSignedIn()) {
+			vote = pollsVotePersistence.fetchByQ_U_First(
+				questionId, userId, null);
 		}
-		
+
 		if (vote != null) {
 			StringBundler sb = new StringBundler(5);
 
@@ -92,8 +94,8 @@ public class PollsVoteLocalServiceImpl extends PollsVoteLocalServiceBaseImpl {
 		if (Validator.isNotNull(user)) {
 			userName = user.getFullName();
 		}
-		
-		if(Validator.isNull(userName)) {
+
+		if (Validator.isNull(userName)) {
 			userName = serviceContext.translate("anonymous");
 		}
 
