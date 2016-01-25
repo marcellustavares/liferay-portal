@@ -23,8 +23,10 @@ import com.liferay.polls.model.PollsVote;
 import com.liferay.polls.service.base.PollsVoteLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.theme.ThemeDisplay;
 
 import java.util.Date;
 import java.util.List;
@@ -67,7 +69,14 @@ public class PollsVoteLocalServiceImpl extends PollsVoteLocalServiceBaseImpl {
 
 		// Vote
 
-		PollsVote vote = pollsVotePersistence.fetchByQ_U(questionId, userId);
+		PollsVote vote = null;
+
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+		
+		if (Validator.isNotNull(themeDisplay) && themeDisplay.isSignedIn()) {
+			vote = pollsVotePersistence.fetchByQ_U_First(
+				questionId, userId, null);
+		}
 
 		if (vote != null) {
 			StringBundler sb = new StringBundler(5);
@@ -85,10 +94,11 @@ public class PollsVoteLocalServiceImpl extends PollsVoteLocalServiceBaseImpl {
 
 		User user = userPersistence.fetchByPrimaryKey(userId);
 
-		if (user != null) {
+		if (Validator.isNotNull(user)) {
 			userName = user.getFullName();
 		}
-		else {
+
+		if (Validator.isNull(userName)) {
 			userName = serviceContext.translate("anonymous");
 		}
 
@@ -136,7 +146,7 @@ public class PollsVoteLocalServiceImpl extends PollsVoteLocalServiceBaseImpl {
 	public PollsVote getVote(long questionId, long userId)
 		throws PortalException {
 
-		return pollsVotePersistence.findByQ_U(questionId, userId);
+		return pollsVotePersistence.findByQ_U_First(questionId, userId, null);
 	}
 
 }
