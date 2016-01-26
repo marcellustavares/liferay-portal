@@ -349,8 +349,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 			ddmFormValues);
 
 		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+			DDMFormValuesJSONDeserializerUtil.deserialize(
+				ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);
@@ -472,8 +472,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 			ddmFormValues);
 
 		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+			DDMFormValuesJSONDeserializerUtil.deserialize(
+				ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);
@@ -556,8 +556,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 			ddmFormValues);
 
 		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+			DDMFormValuesJSONDeserializerUtil.deserialize(
+				ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);

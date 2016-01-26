@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.upgrade.v1_0_0;
 
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMContent;
@@ -367,16 +368,6 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 	}
 
-	protected DDMFormValues getDDMFormValues(
-			long companyId, DDMForm ddmForm, String xml)
-		throws Exception {
-
-		DDMFormValuesXSDDeserializer ddmFormValuesXSDDeserializer =
-			new DDMFormValuesXSDDeserializer(companyId);
-
-		return ddmFormValuesXSDDeserializer.deserialize(ddmForm, xml);
-	}
-
 	protected String getDefaultDDMFormLayoutDefinition(DDMForm ddmForm) {
 		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
 
@@ -532,8 +523,11 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				long companyId = rs.getLong("companyId");
 				String xml = rs.getString("data_");
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, xml);
+				DDMFormValuesXSDDeserializer ddmFormValuesXSDDeserializer =
+					new DDMFormValuesXSDDeserializer(companyId);
+
+				DDMFormValues ddmFormValues =
+					ddmFormValuesXSDDeserializer.deserialize(ddmForm, xml);
 
 				String content = toJSON(ddmFormValues);
 
@@ -670,8 +664,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				DDMForm ddmForm = getDDMForm(ddmStructureId);
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, data_);
+				DDMFormValues ddmFormValues =
+					DDMFormValuesJSONDeserializerUtil.deserialize(
+						ddmForm, data_);
 
 				transformFieldTypeDDMFormFields(
 					groupId, companyId, userId, userName, createDate, entryId,
@@ -721,8 +716,9 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				DDMForm ddmForm = getDDMForm(ddmStructureId);
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, data_);
+				DDMFormValues ddmFormValues =
+					DDMFormValuesJSONDeserializerUtil.deserialize(
+						ddmForm, data_);
 
 				transformFieldTypeDDMFormFields(
 					groupId, companyId, userId, userName, createDate, entryId,
