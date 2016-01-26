@@ -368,16 +368,6 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 	}
 
-	protected DDMFormValues getDDMFormValues(
-			long companyId, DDMForm ddmForm, String xml)
-		throws Exception {
-
-		DDMFormValuesXSDDeserializer ddmFormValuesXSDDeserializer =
-			new DDMFormValuesXSDDeserializer(companyId);
-
-		return ddmFormValuesXSDDeserializer.deserialize(ddmForm, xml);
-	}
-
 	protected String getDefaultDDMFormLayoutDefinition(DDMForm ddmForm) {
 		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
 
@@ -533,8 +523,11 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				long companyId = rs.getLong("companyId");
 				String xml = rs.getString("data_");
 
-				DDMFormValues ddmFormValues = getDDMFormValues(
-					companyId, ddmForm, xml);
+				DDMFormValuesXSDDeserializer ddmFormValuesXSDDeserializer =
+					new DDMFormValuesXSDDeserializer(companyId);
+
+				DDMFormValues ddmFormValues =
+					ddmFormValuesXSDDeserializer.deserialize(ddmForm, xml);
 
 				String content = toJSON(ddmFormValues);
 
