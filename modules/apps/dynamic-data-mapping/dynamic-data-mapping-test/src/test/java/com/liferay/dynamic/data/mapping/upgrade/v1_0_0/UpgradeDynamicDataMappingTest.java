@@ -48,6 +48,9 @@ import com.liferay.portal.security.xml.SecureXMLFactoryProviderImpl;
 import com.liferay.portal.util.LocalizationImpl;
 import com.liferay.portal.xml.SAXReaderImpl;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -348,9 +351,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 		String expectedJSON = DDMFormValuesJSONSerializerUtil.serialize(
 			ddmFormValues);
 
-		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+		DDMFormValues actualDDMFormValues = getDDMFormValues(
+			1L, ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);
@@ -471,9 +473,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 		String expectedJSON = DDMFormValuesJSONSerializerUtil.serialize(
 			ddmFormValues);
 
-		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+		DDMFormValues actualDDMFormValues = getDDMFormValues(
+			1L, ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);
@@ -555,9 +556,8 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 		String expectedJSON = DDMFormValuesJSONSerializerUtil.serialize(
 			ddmFormValues);
 
-		DDMFormValues actualDDMFormValues =
-			_upgradeDynamicDataMapping.getDDMFormValues(
-				1L, ddmForm, document.asXML());
+		DDMFormValues actualDDMFormValues = getDDMFormValues(
+			1L, ddmForm, document.asXML());
 
 		String actualJSON = _upgradeDynamicDataMapping.toJSON(
 			actualDDMFormValues);
@@ -648,6 +648,44 @@ public class UpgradeDynamicDataMappingTest extends PowerMockito {
 		value.addString(LocaleUtil.US, enValue);
 
 		return value;
+	}
+
+	protected DDMFormValues getDDMFormValues(
+			long companyId, DDMForm ddmForm, String xml)
+		throws Exception {
+
+		Class<? extends UpgradeDynamicDataMapping>
+			upgradeDynamicDataMappingCLass =
+				_upgradeDynamicDataMapping.getClass();
+
+		Class<?> ddmFormValuesXSDDeserializerClass = null;
+
+		for (Class<?> declaredClass :
+				upgradeDynamicDataMappingCLass.getDeclaredClasses()) {
+
+			String declaredClassName = declaredClass.getCanonicalName();
+
+			if ((declaredClassName != null) &&
+				declaredClassName.contains(
+					"DDMFormValuesXSDDeserializer")) {
+
+				ddmFormValuesXSDDeserializerClass = declaredClass;
+
+				break;
+			}
+		}
+
+		Constructor<?> constructor =
+			ddmFormValuesXSDDeserializerClass.getDeclaredConstructors()[0];
+
+		Object ddmFormValuesXSDDeserializer = constructor.newInstance(
+			_upgradeDynamicDataMapping, companyId);
+
+		Method method = ddmFormValuesXSDDeserializerClass.getMethod(
+			"deserialize", DDMForm.class, String.class);
+
+		return(DDMFormValues)method.invoke(
+			ddmFormValuesXSDDeserializer, ddmForm, xml);
 	}
 
 	protected void setUpDDMFormValuesJSONDeserializerUtil() {

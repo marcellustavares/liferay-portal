@@ -219,8 +219,11 @@ public class JournalArticleAssetRendererFactory
 			return false;
 		}
 
+		DDMStructure structure = _ddmStructureLocalService.getStructure(
+			classTypeId);
+
 		if (!DDMStructurePermission.contains(
-				permissionChecker, classTypeId, ActionKeys.VIEW)) {
+				permissionChecker, structure, ActionKeys.VIEW)) {
 
 			return false;
 		}

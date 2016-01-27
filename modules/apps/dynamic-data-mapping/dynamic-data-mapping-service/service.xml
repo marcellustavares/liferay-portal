@@ -297,6 +297,10 @@
 			<finder-column name="structureId" />
 			<finder-column name="status" />
 		</finder>
+
+		<!-- References -->
+
+		<reference package-path="com.liferay.dynamic.data.mapping" entity="DDMStructure" />
 	</entity>
 	<entity name="DDMTemplate" uuid="true" local-service="true" remote-service="true">
 

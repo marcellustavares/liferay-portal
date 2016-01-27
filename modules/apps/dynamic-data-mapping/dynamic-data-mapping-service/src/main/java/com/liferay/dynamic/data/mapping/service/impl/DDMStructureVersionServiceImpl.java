@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMStructureVersionServiceBaseImpl;
 import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
@@ -36,8 +37,11 @@ public class DDMStructureVersionServiceImpl
 	public DDMStructureVersion getLatestStructureVersion(long structureId)
 		throws PortalException {
 
+		DDMStructure structure = ddmStructureLocalService.getStructure(
+			structureId);
+
 		DDMStructurePermission.check(
-			getPermissionChecker(), structureId, ActionKeys.VIEW);
+			getPermissionChecker(), structure, ActionKeys.VIEW);
 
 		return ddmStructureVersionLocalService.getLatestStructureVersion(
 			structureId);
@@ -51,9 +55,11 @@ public class DDMStructureVersionServiceImpl
 			ddmStructureVersionLocalService.getStructureVersion(
 				structureVersionId);
 
+		DDMStructure structure = ddmStructureLocalService.getStructure(
+			structureVersion.getStructureId());
+
 		DDMStructurePermission.check(
-			getPermissionChecker(), structureVersion.getStructureId(),
-			ActionKeys.VIEW);
+			getPermissionChecker(), structure, ActionKeys.VIEW);
 
 		return structureVersion;
 	}
@@ -64,8 +70,11 @@ public class DDMStructureVersionServiceImpl
 			OrderByComparator<DDMStructureVersion> orderByComparator)
 		throws PortalException {
 
+		DDMStructure structure = ddmStructureLocalService.getStructure(
+			structureId);
+
 		DDMStructurePermission.check(
-			getPermissionChecker(), structureId, ActionKeys.VIEW);
+			getPermissionChecker(), structure, ActionKeys.VIEW);
 
 		return ddmStructureVersionLocalService.getStructureVersions(
 			structureId, start, end, orderByComparator);
@@ -75,8 +84,11 @@ public class DDMStructureVersionServiceImpl
 	public int getStructureVersionsCount(long structureId)
 		throws PortalException {
 
+		DDMStructure structure = ddmStructureLocalService.getStructure(
+			structureId);
+
 		DDMStructurePermission.check(
-			getPermissionChecker(), structureId, ActionKeys.VIEW);
+			getPermissionChecker(), structure, ActionKeys.VIEW);
 
 		return ddmStructureVersionLocalService.getStructureVersionsCount(
 			structureId);
