@@ -15,7 +15,9 @@
 package com.liferay.journal.verify;
 
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
-import com.liferay.dynamic.data.mapping.util.impl.DDMFieldsCounter;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
@@ -28,6 +30,7 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
 import com.liferay.journal.service.JournalContentSearchLocalService;
 import com.liferay.journal.service.JournalFolderLocalService;
+import com.liferay.journal.util.JournalConverter;
 import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -50,6 +53,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -57,6 +61,7 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.service.ResourceLocalService;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.verify.VerifyLayout;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
@@ -102,6 +107,7 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		verifyArticleExpirationDate();
 		verifyArticleLayouts();
 		verifyArticleStructures();
+		verifyArticleImages();
 		verifyContentSearch();
 		verifyFolderAssets();
 		verifyOracleNewLine();
@@ -115,6 +121,13 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		AssetEntryLocalService assetEntryLocalService) {
 
 		_assetEntryLocalService = assetEntryLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMStructureLocalService(
+		DDMStructureLocalService ddmStructureLocalService) {
+
+		_ddmStructureLocalService = ddmStructureLocalService;
 	}
 
 	@Reference(unbind = "-")
@@ -149,6 +162,11 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		JournalContentSearchLocalService journalContentSearchLocalService) {
 
 		_journalContentSearchLocalService = journalContentSearchLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setJournalConverter(JournalConverter journalConverter) {
+		_journalConverter = journalConverter;
 	}
 
 	@Reference(unbind = "-")
@@ -301,38 +319,20 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 	protected void updateDynamicElements(JournalArticle article)
 		throws Exception {
 
-		Document document = SAXReaderUtil.read(article.getContent());
+		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
+			article.getGroupId(),
+			PortalUtil.getClassNameId(JournalArticle.class),
+			article.getDDMStructureKey(), true);
 
-		Element rootElement = document.getRootElement();
+		Fields ddmFields = _journalConverter.getDDMFields(
+			ddmStructure, article.getDocument());
 
-		updateDynamicElements(rootElement.elements("dynamic-element"));
+		String content = _journalConverter.getContent(ddmStructure, ddmFields);
 
-		article.setContent(document.asXML());
+		if (!content.equals(article.getContent())) {
+			article.setContent(content);
 
-		_journalArticleLocalService.updateJournalArticle(article);
-	}
-
-	protected void updateDynamicElements(List<Element> dynamicElements)
-		throws PortalException {
-
-		DDMFieldsCounter ddmFieldsCounter = new DDMFieldsCounter();
-
-		for (Element dynamicElement : dynamicElements) {
-			updateDynamicElements(dynamicElement.elements("dynamic-element"));
-
-			String name = dynamicElement.attributeValue("name");
-
-			int index = ddmFieldsCounter.get(name);
-
-			dynamicElement.addAttribute("index", String.valueOf(index));
-
-			String type = dynamicElement.attributeValue("type");
-
-			if (type.equals("image")) {
-				updateImageElement(dynamicElement, name, index);
-			}
-
-			ddmFieldsCounter.incrementKey(name);
+			_journalArticleLocalService.updateJournalArticle(article);
 		}
 	}
 
@@ -380,24 +380,43 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		}
 	}
 
-	protected void updateImageElement(Element element, String name, int index) {
-		Element dynamicContentElement = element.element("dynamic-content");
+	protected void updateImageElement(Element element) {
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
 
-		long articleImageId = GetterUtil.getLong(
-			dynamicContentElement.attributeValue("id"));
-
-		JournalArticleImage articleImage =
-			_journalArticleImageLocalService.fetchJournalArticleImage(
-				articleImageId);
-
-		if (articleImage == null) {
-			return;
+		for (Element dynamicElementElement : dynamicElementElements) {
+			updateImageElement(dynamicElementElement);
 		}
 
-		articleImage.setElName(name + StringPool.UNDERLINE + index);
+		String type = element.attributeValue("type");
 
-		_journalArticleImageLocalService.updateJournalArticleImage(
-			articleImage);
+		if (type.equals("image")) {
+			String index = element.attributeValue("index");
+
+			String name = element.attributeValue("name");
+
+			Element dynamicContentElement = element.element("dynamic-content");
+
+			long articleImageId = GetterUtil.getLong(
+				dynamicContentElement.attributeValue("id"));
+
+			JournalArticleImage articleImage =
+				_journalArticleImageLocalService.fetchJournalArticleImage(
+					articleImageId);
+
+			if (articleImage == null) {
+				return;
+			}
+
+			String elName = name + StringPool.UNDERLINE + index;
+
+			if (!elName.equals(articleImage.getElName())) {
+				articleImage.setElName(elName);
+
+				_journalArticleImageLocalService.updateJournalArticleImage(
+					articleImage);
+			}
+		}
 	}
 
 	protected void updateLinkToLayoutElements(long groupId, Element element) {
@@ -704,6 +723,49 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		}
 	}
 
+	protected void verifyArticleImages() throws Exception {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select id_ from JournalArticle where (content like " +
+					"'%type=\"image\"%') and DDMStructureKey != ''");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				long id = rs.getLong("id_");
+
+				JournalArticle article = _journalArticleLocalService.getArticle(
+					id);
+
+				try {
+					Document document = SAXReaderUtil.read(
+						article.getContent());
+
+					Element rootElement = document.getRootElement();
+
+					for (Element element : rootElement.elements()) {
+						updateImageElement(element);
+					}
+				}
+				catch (Exception e) {
+					_log.error(
+						"Unable to update images for article " +
+							article.getId(),
+						e);
+				}
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+	}
+
 	protected void verifyArticleLayouts() throws Exception {
 		verifyUuid("JournalArticle");
 	}
@@ -751,7 +813,9 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 					}
 
 					try {
-						updateDynamicElements(article);
+						if (Validator.isNotNull(article.getDDMStructureKey())) {
+							updateDynamicElements(article);
+						}
 					}
 					catch (Exception e) {
 						_log.error(
@@ -930,12 +994,14 @@ public class JournalServiceVerifyProcess extends VerifyLayout {
 		"[^a-z0-9_-]");
 
 	private AssetEntryLocalService _assetEntryLocalService;
+	private DDMStructureLocalService _ddmStructureLocalService;
 	private DLAppLocalService _dlAppLocalService;
 	private JournalArticleImageLocalService _journalArticleImageLocalService;
 	private JournalArticleLocalService _journalArticleLocalService;
 	private JournalArticleResourceLocalService
 		_journalArticleResourceLocalService;
 	private JournalContentSearchLocalService _journalContentSearchLocalService;
+	private JournalConverter _journalConverter;
 	private JournalFolderLocalService _journalFolderLocalService;
 	private ResourceLocalService _resourceLocalService;
 
