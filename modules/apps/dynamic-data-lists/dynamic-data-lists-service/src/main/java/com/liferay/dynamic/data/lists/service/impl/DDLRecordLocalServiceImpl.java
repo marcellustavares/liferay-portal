@@ -594,6 +594,12 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			return record;
 		}
 
+		// Record
+
+		record.setVersion(recordVersion.getVersion());
+
+		ddlRecordPersistence.update(record);
+
 		// Workflow
 
 		WorkflowHandlerRegistryUtil.startWorkflowInstance(
