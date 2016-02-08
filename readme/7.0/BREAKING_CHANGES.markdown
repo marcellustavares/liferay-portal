@@ -3647,3 +3647,71 @@ icon instead.
 
 In order to display the `documents-and-media` Lexicon icon in Documents and
 Media, this change was necessary.
+
+---------------------------------------
+
+### The aui:button-item taglib has been removed and replaced with aui:button taglib
+- **Date:** 2016-Feb-4
+- **JIRA Ticket:** LPS-62922
+
+#### What changed?
+
+The `aui:button-item` taglib has been removed and replaced with
+`aui:button` taglib.
+
+#### Who is affected?
+
+Plugins or templates that are using the `aui:button-item` tag need
+to update their usage of the tag.
+
+#### How should I update my code?
+
+You should import the `aui` tag library if it isn't already and
+update the tag namespace from `aui:button-item` to `aui:button`.
+
+#### Why was this change made?
+
+This change was made as a part of the ongoing strategy to remove deprecated code.
+
+---------------------------------------
+
+### The wap functionality has been removed
+- **Date:** 2016-Feb-05
+- **JIRA Ticket:** LPS-62920
+
+#### What changed?
+
+The functionality was removed.
+
+#### Who is affected?
+
+Everyone that uses this functionality.
+
+#### How should I update my code?
+
+If you are using any of this methods(updateLookAndFeel) of
+LayoutLocalServiceUtil you need to removed the parameters related with wap
+
+If you are using any of this methods(addLayoutRevision, updateLayoutRevision) of
+LayoutRevisionLocalServiceUtil you need to removed the parameters related with
+wap
+
+If you are using any of this methods(addLayoutRevision) of
+LayoutRevisionServiceUtil you need to removed the parameters related with wap
+
+If you are using any of this methods(updateLookAndFeel) of
+LayoutServiceUtil you need to removed the parameters related with wap
+
+If you are using any of this methods(updateLookAndFeel) of
+LayoutSetLocalServiceUtil you need to removed the parameters related with wap
+
+If you are using any of this methods(updateLookAndFeel) of
+LayoutSetServiceUtil you need to removed the parameters related with wap
+
+If you are using any of this methods(getColorScheme, getControlPanelThemes,
+getPageThemes, getTheme) of ThemeLocalServiceUtil you need to removed the
+parameters related with wap
+
+#### Why was this change made?
+
+This change was made because WAP is an obsolete functionality.

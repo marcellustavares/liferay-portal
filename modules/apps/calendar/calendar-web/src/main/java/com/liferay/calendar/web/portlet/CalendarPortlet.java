@@ -84,6 +84,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -100,7 +101,6 @@ import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserLocalService;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.io.File;
@@ -653,10 +653,11 @@ public class CalendarPortlet extends MVCPortlet {
 
 			firstDayJCalendar.set(java.util.Calendar.DAY_OF_WEEK, 7);
 
-			calendarBooking.setStartTime(firstDayJCalendar.getTimeInMillis());
-			calendarBooking.setEndTime(
-				firstDayJCalendar.getTimeInMillis() +
-					calendarBooking.getDuration());
+			long startTime = firstDayJCalendar.getTimeInMillis();
+			long endTime = startTime + calendarBooking.getDuration();
+
+			calendarBooking.setStartTime(startTime);
+			calendarBooking.setEndTime(endTime);
 
 			calendarBooking.setRecurrence(
 				RecurrenceSerializer.serialize(recurrenceObj));
