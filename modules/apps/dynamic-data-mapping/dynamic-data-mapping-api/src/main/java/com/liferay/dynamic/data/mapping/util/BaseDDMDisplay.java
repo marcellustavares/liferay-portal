@@ -223,6 +223,17 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 	}
 
 	@Override
+	public String getViewStructuresBackURL(
+		LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse) throws Exception {
+
+		String backURL = ParamUtil.getString(
+			liferayPortletRequest, "backURL");
+
+		return backURL;
+	}
+
+	@Override
 	public String getViewTemplatesBackURL(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse, long classPK)
