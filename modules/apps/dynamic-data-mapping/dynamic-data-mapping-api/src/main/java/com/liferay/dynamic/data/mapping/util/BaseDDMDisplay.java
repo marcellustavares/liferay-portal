@@ -22,7 +22,6 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -223,6 +222,17 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 	}
 
 	@Override
+	public String getViewStructuresBackURL(
+		LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse) throws Exception {
+
+		String backURL = ParamUtil.getString(
+			liferayPortletRequest, "backURL");
+
+		return backURL;
+	}
+
+	@Override
 	public String getViewTemplatesBackURL(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse, long classPK)
@@ -235,7 +245,6 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 			liferayPortletRequest, portletId, PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("mvcPath", "/view.jsp");
-		portletURL.setWindowState(LiferayWindowState.POP_UP);
 
 		return portletURL.toString();
 	}
@@ -329,7 +338,6 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 		portletURL.setParameter("classPK", String.valueOf(classPK));
 		portletURL.setParameter(
 			"resourceClassNameId", String.valueOf(resourceClassNameId));
-		portletURL.setWindowState(LiferayWindowState.POP_UP);
 
 		return portletURL.toString();
 	}
