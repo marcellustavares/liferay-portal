@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
-import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Hits;
@@ -32,20 +31,21 @@ import javax.portlet.PortletPreferences;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eduardo Lundgren
  * @author Marcellus Tavares
  */
+@Component(immediate = true)
 @ProviderType
 public class DDLUtil {
 
 	public static DDL getDDL() {
 		PortalRuntimePermission.checkGetBeanProperty(DDLUtil.class);
 
-		return _serviceTracker.getService();
+		return _ddl;
 	}
 
 	public static JSONObject getRecordJSONObject(DDLRecord record)
@@ -128,8 +128,11 @@ public class DDLUtil {
 			recordId, recordSetId, mergeFields, serviceContext);
 	}
 
-	private static final ServiceTracker<DDL, DDL> _serviceTracker =
-		ServiceTrackerFactory.open(
-			FrameworkUtil.getBundle(DDLUtil.class), DDL.class);
+	@Reference(unbind = "-")
+	protected void setDDL(DDL ddl) {
+		_ddl = ddl;
+	}
+
+	private static DDL _ddl;
 
 }
