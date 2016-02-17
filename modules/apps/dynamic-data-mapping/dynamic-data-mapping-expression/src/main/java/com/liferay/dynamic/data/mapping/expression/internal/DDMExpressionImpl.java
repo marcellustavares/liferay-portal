@@ -68,7 +68,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 			_variables.put(variableName, variable);
 		}
 
-		_expressionString = expressionString;
+		_expressionString = adjustExpression(expressionString);
 		_expressionClass = expressionClass;
 	}
 
@@ -164,6 +164,25 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, encode(variableValue));
 	}
 
+	protected String adjustExpression(String expressionString) {
+		if (hasFunction(expressionString) &&
+			expressionString.contains(StringPool.PERIOD) &&
+			expressionString.contains(StringPool.OPEN_PARENTHESIS)) {
+
+			String leftOperand = StringUtil.extractFirst(
+				expressionString, StringPool.PERIOD);
+
+			String rightOperand = StringUtil.extractLast(
+				expressionString, StringPool.PERIOD);
+
+			return StringUtil.replace(
+				rightOperand, StringPool.OPEN_PARENTHESIS,
+				StringPool.OPEN_PARENTHESIS + leftOperand + StringPool.COMMA);
+		}
+
+		return expressionString;
+	}
+
 	protected Boolean decodeBoolean(BigDecimal bigDecimal) {
 		if (bigDecimal.equals(BigDecimal.ONE)) {
 			return Boolean.TRUE;
@@ -257,6 +276,16 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_variableValues.put(variable.getName(), variableValue);
 
 		return variableValue;
+	}
+
+	protected boolean hasFunction(String expressionString) {
+		return StringUtil.indexOfAny(
+			expressionString,
+			new String[] {
+				"between", "concat", "contains", "equals", "isEmailAddress",
+				"isURL", "sum"
+			}
+		) >= 0;
 	}
 
 	protected boolean isStringBlank(BigDecimal... bigDecimals) {
