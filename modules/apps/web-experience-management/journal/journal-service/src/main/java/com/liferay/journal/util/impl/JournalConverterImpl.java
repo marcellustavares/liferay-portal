@@ -16,10 +16,12 @@ package com.liferay.journal.util.impl;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMFieldsCounter;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.journal.util.JournalConverter;
@@ -116,6 +118,12 @@ public class JournalConverterImpl implements JournalConverter {
 		_journalTypesToDDMTypes.put("text", "text");
 		_journalTypesToDDMTypes.put("text_area", "ddm-text-html");
 		_journalTypesToDDMTypes.put("text_box", "textarea");
+	}
+
+	public DDMFormValues convert(DDMStructure ddmStructure, Fields fields)
+		throws PortalException {
+
+		return _fieldsToDDMFormValuesConverter.convert(ddmStructure, fields);
 	}
 
 	@Override
@@ -247,6 +255,13 @@ public class JournalConverterImpl implements JournalConverter {
 		}
 
 		return XMLUtil.formatXML(document);
+	}
+
+	@Reference(unbind = "-")
+	public void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
 	}
 
 	protected void addDDMFields(
@@ -1108,6 +1123,7 @@ public class JournalConverterImpl implements JournalConverter {
 	private final Map<String, String> _ddmMetadataAttributes;
 	private final Map<String, String> _ddmTypesToJournalTypes;
 	private DLAppLocalService _dlAppLocalService;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private GroupLocalService _groupLocalService;
 	private final Map<String, String> _journalTypesToDDMTypes;
 	private final Pattern _oldDocumentLibraryURLPattern = Pattern.compile(

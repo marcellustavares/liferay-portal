@@ -40,7 +40,7 @@ import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
-import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureIdComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.TemplateIdComparator;
@@ -233,7 +233,7 @@ public class DDMImpl implements DDM {
 		Fields fields = getFields(
 			ddmStructure.getStructureId(), fieldNamespace, serviceContext);
 
-		return FieldsToDDMFormValuesConverterUtil.convert(ddmStructure, fields);
+		return _fieldsToDDMFormValuesConverter.convert(ddmStructure, fields);
 	}
 
 	@Override
@@ -1269,6 +1269,13 @@ public class DDMImpl implements DDM {
 	}
 
 	@Reference(unbind = "-")
+	protected void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
+	}
+
+	@Reference(unbind = "-")
 	protected void setImageLocalService(ImageLocalService imageLocalService) {
 		_imageLocalService = imageLocalService;
 	}
@@ -1348,6 +1355,7 @@ public class DDMImpl implements DDM {
 	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
 	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 	private DLAppLocalService _dlAppLocalService;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private ImageLocalService _imageLocalService;
 	private LayoutLocalService _layoutLocalService;
 
