@@ -18,6 +18,12 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormXSDDeserializer;
 import com.liferay.dynamic.data.mapping.upgrade.v1_0_0.UpgradeClassNames;
 import com.liferay.dynamic.data.mapping.upgrade.v1_0_0.UpgradeCompanyId;
 import com.liferay.dynamic.data.mapping.upgrade.v1_0_0.UpgradeDynamicDataMapping;
@@ -90,10 +96,14 @@ public class DDMServiceUpgrade implements UpgradeStepRegistrator {
 				new UpgradeSchema(), new UpgradeClassNames(),
 				new UpgradeCompanyId(),
 				new UpgradeDynamicDataMapping(
-					_assetEntryLocalService, _dlFileEntryLocalService,
-					_dlFileVersionLocalService, _dlFolderLocalService,
-					_expandoRowLocalService, _expandoTableLocalService,
-					_expandoValueLocalService, _resourceActionLocalService,
+					_assetEntryLocalService, _ddmFormJSONDeserializer,
+					_ddmFormJSONSerializer, _ddmFormLayoutJSONSerializer,
+					_ddmFormValuesJSONDeserializer,
+					_ddmFormValuesJSONSerializer, _ddmFormXSDDeserializer,
+					_dlFileEntryLocalService, _dlFileVersionLocalService,
+					_dlFolderLocalService, _expandoRowLocalService,
+					_expandoTableLocalService, _expandoValueLocalService,
+					_resourceActionLocalService,
 					_resourcePermissionLocalService),
 				new UpgradeLastPublishDate()
 			});
@@ -104,6 +114,48 @@ public class DDMServiceUpgrade implements UpgradeStepRegistrator {
 		AssetEntryLocalService assetEntryLocalService) {
 
 		_assetEntryLocalService = assetEntryLocalService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormJSONDeserializer(
+		DDMFormJSONDeserializer ddmFormJSONDeserializer) {
+
+		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormJSONSerializer(
+		DDMFormJSONSerializer ddmFormJSONSerializer) {
+
+		_ddmFormJSONSerializer = ddmFormJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormLayoutJSONSerializer(
+		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer) {
+
+		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONSerializer(
+		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
+
+		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormXSDDeserializer(
+		DDMFormXSDDeserializer ddmFormXSDDeserializer) {
+
+		_ddmFormXSDDeserializer = ddmFormXSDDeserializer;
 	}
 
 	@Reference(unbind = "-")
@@ -147,6 +199,12 @@ public class DDMServiceUpgrade implements UpgradeStepRegistrator {
 	}
 
 	private AssetEntryLocalService _assetEntryLocalService;
+	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private DDMFormJSONSerializer _ddmFormJSONSerializer;
+	private DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
+	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 	private DLFileVersionLocalService _dlFileVersionLocalService;
 	private DLFolderLocalService _dlFolderLocalService;
