@@ -27,21 +27,6 @@ portletURL.setParameter("tabs1", tabs1);
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="my-workflow-tasks" selected="<%= true %>" />
-	</aui:nav>
-
-	<aui:nav-bar-search>
-		<aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
-			<liferay-ui:search-form
-				page="/search.jsp"
-				servletContext="<%= application %>"
-			/>
-		</aui:form>
-	</aui:nav-bar-search>
-</aui:nav-bar>
-
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<aui:nav cssClass="navbar-nav">
 		<portlet:renderURL var="viewAssignedToMeURL">
 			<portlet:param name="mvcPath" value="/view.jsp" />
 			<portlet:param name="tabs1" value="assigned-to-me" />
@@ -64,6 +49,15 @@ portletURL.setParameter("tabs1", tabs1);
 			selected='<%= tabs1.equals("assigned-to-my-roles") %>'
 		/>
 	</aui:nav>
+
+	<aui:nav-bar-search>
+		<aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
+			<liferay-ui:search-form
+				page="/search.jsp"
+				servletContext="<%= application %>"
+			/>
+		</aui:form>
+	</aui:nav-bar-search>
 </aui:nav-bar>
 
 <liferay-frontend:management-bar
