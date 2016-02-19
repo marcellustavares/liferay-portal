@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
@@ -70,6 +71,7 @@ public class GoogleDocsConfigurator {
 							_dlFileEntryTypeLocalService,
 							_dlFileEntryLocalService,
 							_dlFileEntryMetadataLocalService,
+							_fieldsToDDMFormValuesConverter,
 							googleDocsDLFileEntryTypeHelper, _storageEngine);
 
 					if (legacyGoogleDocsMigration.isMigrationNeeded()) {
@@ -85,6 +87,13 @@ public class GoogleDocsConfigurator {
 		);
 
 		actionableDynamicQuery.performActions();
+	}
+
+	@Reference(unbind = "-")
+	public void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
 	}
 
 	@Reference(unbind = "-")
@@ -177,6 +186,7 @@ public class GoogleDocsConfigurator {
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
 	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private StorageEngine _storageEngine;
 	private UserLocalService _userLocalService;
 
