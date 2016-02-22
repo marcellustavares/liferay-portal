@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -50,10 +51,12 @@ import javax.servlet.http.HttpServletResponse;
 public class DDLRecordAssetRenderer extends BaseJSPAssetRenderer<DDLRecord> {
 
 	public DDLRecordAssetRenderer(
-		DDLRecord record, DDLRecordVersion recordVersion) {
+		DDLRecord record, DDLRecordVersion recordVersion,
+		DDMBeanTranslator ddmBeanTranslator) {
 
 		_record = record;
 		_recordVersion = recordVersion;
+		_ddmBeanTranslator = ddmBeanTranslator;
 
 		DDMStructure ddmStructure = null;
 		DDLRecordSet recordSet = null;
@@ -95,7 +98,7 @@ public class DDLRecordAssetRenderer extends BaseJSPAssetRenderer<DDLRecord> {
 
 	@Override
 	public DDMFormValuesReader getDDMFormValuesReader() {
-		return new DDLRecordDDMFormValuesReader(_record);
+		return new DDLRecordDDMFormValuesReader(_record, _ddmBeanTranslator);
 	}
 
 	@Override
@@ -209,6 +212,7 @@ public class DDLRecordAssetRenderer extends BaseJSPAssetRenderer<DDLRecord> {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDLRecordAssetRenderer.class);
 
+	private final DDMBeanTranslator _ddmBeanTranslator;
 	private final DDMStructure _ddmStructure;
 	private final DDLRecord _record;
 	private final DDLRecordSet _recordSet;
