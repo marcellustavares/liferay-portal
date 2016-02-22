@@ -34,7 +34,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -186,6 +186,11 @@ public class FileEntryStagedModelDataHandler
 		catch (Exception e) {
 			throw new PortletDataException(e);
 		}
+	}
+
+	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
 	}
 
 	@Override
@@ -671,7 +676,7 @@ public class FileEntryStagedModelDataHandler
 
 		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				DDMBeanTranslatorUtil.translate(ddmStructure.getDDMForm()),
+				_ddmBeanTranslator.translate(ddmStructure.getDDMForm()),
 				serializedDDMFormValues);
 
 		ddmFormValues =
@@ -679,7 +684,7 @@ public class FileEntryStagedModelDataHandler
 				replaceImportContentReferences(
 					portletDataContext, ddmStructure, ddmFormValues);
 
-		return DDMBeanTranslatorUtil.translate(ddmFormValues);
+		return _ddmBeanTranslator.translate(ddmFormValues);
 	}
 
 	protected void importMetaData(
@@ -872,6 +877,7 @@ public class FileEntryStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		FileEntryStagedModelDataHandler.class);
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormValuesExportImportContentProcessor
 		_ddmFormValuesExportImportContentProcessor;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
