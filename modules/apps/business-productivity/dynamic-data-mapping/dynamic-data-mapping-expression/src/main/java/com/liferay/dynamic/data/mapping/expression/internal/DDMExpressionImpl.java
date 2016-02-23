@@ -467,50 +467,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 			});
 
-		expression.addFunction(
-			expression.new Function("SQRT", 1) {
-
-				@Override
-				public BigDecimal eval(List<BigDecimal> parameters) {
-					BigDecimal parameter = parameters.get(0);
-
-					double sqrt = Math.sqrt(parameter.doubleValue());
-
-					return new BigDecimal(sqrt);
-				}
-
-			});
-
-		expression.addFunction(
-			expression.new Function("CEILING", 1) {
-
-				@Override
-				public BigDecimal eval(List<BigDecimal> parameters) {
-					throw new UnsupportedOperationException();
-				}
-
-			});
-
-		expression.addFunction(
-			expression.new Function("FLOOR", 1) {
-
-				@Override
-				public BigDecimal eval(List<BigDecimal> parameters) {
-					throw new UnsupportedOperationException();
-				}
-
-			});
-
-		expression.addFunction(
-			expression.new Function("ROUND", 2) {
-
-				@Override
-				public BigDecimal eval(List<BigDecimal> parameters) {
-					throw new UnsupportedOperationException();
-				}
-
-			});
-
 		expression.addOperator(
 			expression.new Operator("^", 40, false) {
 

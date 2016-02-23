@@ -61,6 +61,15 @@ public class TokenExtractor {
 			while (tokenIterator.hasNext()) {
 				String token = tokenIterator.next();
 
+				if (ArrayUtil.contains(
+						_FUNCTIONS, StringUtil.toLowerCase(token)) &&
+					!ArrayUtil.contains(
+						_ALLOWED_FUNCTIONS, StringUtil.toLowerCase(token))) {
+
+					throw new DDMExpressionEvaluationException(
+						"Function not allowed.");
+				}
+
 				Matcher tokenMatcher = _operatorsPattern.matcher(token);
 
 				if (!tokenMatcher.matches() &&
@@ -83,6 +92,9 @@ public class TokenExtractor {
 			}
 
 			return _variableMap;
+		}
+		catch (DDMExpressionEvaluationException ddmeee) {
+			throw ddmeee;
 		}
 		catch (ExpressionException ee) {
 			throw new DDMExpressionEvaluationException(ee);
@@ -110,6 +122,11 @@ public class TokenExtractor {
 			_expression = StringUtil.replace(_expression, token, variableName);
 		}
 	}
+
+	private static final String[] _ALLOWED_FUNCTIONS = new String[] {
+		"not", "if", "min", "max", "between", "concat", "contains", "equals",
+		"isemailaddress", "isurl", "sum"
+	};
 
 	private static final String[] _BOOLEAN_CONSTANTS = {"false", "true"};
 

@@ -80,8 +80,7 @@ public class TokenExtractorTest {
 	public void testExpressionWithFunctionCallVariablesAndConstants()
 		throws Exception {
 
-		String expressionString =
-			"round((a + b) * 3456.12) > 10000 && isURL(field)";
+		String expressionString = "(a + b) * 3456.12 > 10000 && isURL(field)";
 
 		Map<String, String> variableMap = _tokenExtractor.extract(
 			expressionString);
@@ -110,6 +109,13 @@ public class TokenExtractorTest {
 		Assert.assertEquals("a", variableMap.get("a"));
 		Assert.assertEquals("b", variableMap.get("b"));
 		Assert.assertEquals("c", variableMap.get("c"));
+	}
+
+	@Test(expected = DDMExpressionEvaluationException.class)
+	public void testExpressionWithNotSupportedFunction() throws Exception {
+		String expressionString = "round(a / b) && sqrt(99999)";
+
+		_tokenExtractor.extract(expressionString);
 	}
 
 	@Test
