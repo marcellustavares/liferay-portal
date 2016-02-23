@@ -46,6 +46,7 @@ public interface DDMExpression<T> {
 	public void setMathContext(MathContext mathContext);
 
 	public void setStringVariableValue(
-		String variableName, String variableValue);
+			String variableName, String variableValue)
+		throws DDMExpressionEvaluationException;
 
 }

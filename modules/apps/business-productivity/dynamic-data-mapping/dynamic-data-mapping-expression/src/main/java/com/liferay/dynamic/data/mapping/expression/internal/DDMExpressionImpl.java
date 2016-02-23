@@ -145,9 +145,23 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 	@Override
 	public void setStringVariableValue(
-		String variableName, String variableValue) {
+			String variableName, String variableValue)
+		throws DDMExpressionEvaluationException {
 
-		setVariableValue(variableName, encode(variableValue));
+		Double doubleValue = doubleValue(variableValue);
+
+		if (doubleValue != null) {
+			if (doubleValue.isNaN() || doubleValue.isInfinite()) {
+				throw new DDMExpressionEvaluationException(
+					"The value entered exceeds the supported range.");
+			}
+			else {
+				setDoubleVariableValue(variableName, doubleValue);
+			}
+		}
+		else {
+			setVariableValue(variableName, encode(variableValue));
+		}
 	}
 
 	protected Boolean decodeBoolean(BigDecimal bigDecimal) {
@@ -167,6 +181,15 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		BigInteger bigInteger = new BigInteger(bigDecimal.toString());
 
 		return new String(bigInteger.toByteArray());
+	}
+
+	protected Double doubleValue(String value) {
+		try {
+			return Double.parseDouble(value);
+		}
+		catch (NumberFormatException nfe) {
+			return null;
+		}
 	}
 
 	protected BigDecimal encode(Boolean variableValue) {
