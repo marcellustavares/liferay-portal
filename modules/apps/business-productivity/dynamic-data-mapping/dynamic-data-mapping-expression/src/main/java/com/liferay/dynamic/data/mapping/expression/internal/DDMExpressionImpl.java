@@ -178,7 +178,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 			return StringPool.BLANK;
 		}
 
-		BigInteger bigInteger = new BigInteger(bigDecimal.toPlainString());
+		BigInteger bigInteger = new BigInteger(bigDecimal.toString());
 
 		return new String(bigInteger.toByteArray());
 	}
@@ -448,6 +448,65 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 				}
 
 			});
+
+		expression.addFunction(
+			expression.new Function("SQRT", 1) {
+
+				@Override
+				public BigDecimal eval(List<BigDecimal> parameters) {
+					BigDecimal parameter = parameters.get(0);
+
+					double sqrt = Math.sqrt(parameter.doubleValue());
+
+					return new BigDecimal(sqrt);
+				}
+
+			});
+
+		expression.addFunction(
+			expression.new Function("CEILING", 1) {
+
+				@Override
+				public BigDecimal eval(List<BigDecimal> parameters) {
+					throw new UnsupportedOperationException();
+				}
+
+			});
+
+		expression.addFunction(
+			expression.new Function("FLOOR", 1) {
+
+				@Override
+				public BigDecimal eval(List<BigDecimal> parameters) {
+					throw new UnsupportedOperationException();
+				}
+
+			});
+
+		expression.addFunction(
+			expression.new Function("ROUND", 2) {
+
+				@Override
+				public BigDecimal eval(List<BigDecimal> parameters) {
+					throw new UnsupportedOperationException();
+				}
+
+			});
+
+		expression.addOperator(
+			expression.new Operator("^", 40, false) {
+
+				@Override
+				public BigDecimal eval(
+					BigDecimal parameter1, BigDecimal parameter2) {
+
+					double pow = Math.pow(
+						parameter1.doubleValue(), parameter2.doubleValue());
+
+					return new BigDecimal(pow);
+				}
+
+			});
 	}
 
 	protected void setExpressionMathContext(
@@ -492,7 +551,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 	private final Class<?> _expressionClass;
 	private final String _expressionString;
-	private MathContext _mathContext = MathContext.UNLIMITED;
+	private MathContext _mathContext = MathContext.DECIMAL32;
 	private final StringConstantsExtractor _stringConstantsExtractor =
 		new StringConstantsExtractor();
 	private final VariableNamesExtractor _variableNamesExtractor =
