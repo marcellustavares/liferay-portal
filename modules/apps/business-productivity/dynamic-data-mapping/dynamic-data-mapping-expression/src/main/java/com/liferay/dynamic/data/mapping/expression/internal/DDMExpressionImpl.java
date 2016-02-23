@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.expression.internal;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionEvaluationException;
 import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -80,11 +81,15 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	@Override
-	public Map<String, VariableDependencies> getVariableDependenciesMap() {
+	public Map<String, VariableDependencies> getVariableDependenciesMap()
+		throws DDMExpressionEvaluationException {
+
 		Map<String, VariableDependencies> variableDependenciesMap =
 			new HashMap<>();
 
-		for (Variable variable : _variables.values()) {
+		List<Variable> variables = ListUtil.fromCollection(_variables.values());
+
+		for (Variable variable : variables) {
 			populateVariableDependenciesMap(variable, variableDependenciesMap);
 		}
 
@@ -287,8 +292,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	protected VariableDependencies populateVariableDependenciesMap(
-		Variable variable,
-		Map<String, VariableDependencies> variableDependenciesMap) {
+			Variable variable,
+			Map<String, VariableDependencies> variableDependenciesMap)
+		throws DDMExpressionEvaluationException {
 
 		VariableDependencies variableDependencies = variableDependenciesMap.get(
 			variable.getName());
@@ -300,11 +306,25 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variableDependencies = new VariableDependencies(variable.getName());
 
 		if (variable.getExpressionString() != null) {
-			Map<String, String> variableMap = _tokensExtractor.getVariableMap();
+			TokenExtractor tokensExtractor = new TokenExtractor();
+
+			Map<String, String> variableMap = tokensExtractor.extract(
+				variable.getExpressionString());
 
 			Set<String> variableNames = variableMap.keySet();
 
 			for (String variableName : variableNames) {
+				if (!_variables.containsKey(variableName)) {
+					Variable newVariable = new Variable(variableName);
+					_variables.put(variableName, newVariable);
+
+					String token = variableMap.get(variableName);
+
+					if (token != null) {
+						setStringVariableValue(variableName, token);
+					}
+				}
+
 				VariableDependencies variableVariableDependencies =
 					populateVariableDependenciesMap(
 						_variables.get(variableName), variableDependenciesMap);
