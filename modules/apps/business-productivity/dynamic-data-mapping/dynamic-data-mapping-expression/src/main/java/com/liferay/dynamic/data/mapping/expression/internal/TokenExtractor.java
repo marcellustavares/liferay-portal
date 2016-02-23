@@ -15,11 +15,12 @@
 package com.liferay.dynamic.data.mapping.expression.internal;
 
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,18 +30,23 @@ import java.util.regex.Pattern;
  */
 public class TokenExtractor {
 
-	public void extract(String expressionString) {
-		if (expressionString == null) {
-			_variables = Collections.emptyList();
-			_constants = Collections.emptyList();
-			return;
+	public Map<String, String> extract(String expressionString) {
+		if (Validator.isNull(expressionString)) {
+			return Collections.emptyMap();
 		}
 
-		_variables = new ArrayList<>();
-		_constants = new ArrayList<>();
+		_expression = expressionString;
+
+		_variableMap = new HashMap<>();
+
+		Matcher matcher = _stringPattern.matcher(_expression);
+
+		while (matcher.find()) {
+			createVariable(matcher.group(1));
+		}
 
 		com.udojava.evalex.Expression expression =
-			new com.udojava.evalex.Expression(expressionString);
+			new com.udojava.evalex.Expression(_expression);
 
 		Iterator<String> tokenIterator = expression.getExpressionTokenizer();
 
@@ -53,21 +59,34 @@ public class TokenExtractor {
 				Matcher variableMatcher = _variablePattern.matcher(token);
 
 				if (variableMatcher.matches()) {
-					_variables.add(token);
+					if (!_variableMap.containsKey(token)) {
+						_variableMap.put(token, token);
+					}
 				}
 				else {
-					_constants.add(token);
+					createVariable(token);
 				}
 			}
 		}
+
+		return _variableMap;
 	}
 
-	public List<String> getConstants() {
-		return _constants;
+	public String getExpression() {
+		return _expression;
 	}
 
-	public List<String> getVariables() {
-		return _variables;
+	public Map<String, String> getVariableMap() {
+		return _variableMap;
+	}
+
+	protected void createVariable(String token) {
+		String variableName = StringUtil.randomId();
+
+		_variableMap.put(variableName, token);
+
+		_expression = StringUtil.replace(
+			_expression, "\"" + token + "\"", variableName);
 	}
 
 	protected boolean isFunction(String token) {
@@ -89,10 +108,12 @@ public class TokenExtractor {
 
 	private static final Pattern _operatorsPattern = Pattern.compile(
 		"[+-/\\*%\\^\\(\\)]|[<>=!]=?|&&|\\|\\|");
+	private static final Pattern _stringPattern = Pattern.compile(
+		"\"([^\"]*)\"");
 	private static final Pattern _variablePattern = Pattern.compile(
-		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b", Pattern.MULTILINE);
+		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b");
 
-	private List<String> _constants;
-	private List<String> _variables;
+	private String _expression;
+	private Map<String, String> _variableMap;
 
 }
