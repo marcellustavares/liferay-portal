@@ -29,6 +29,7 @@ import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -42,26 +43,26 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		List<String> stringConstants = _stringConstantsExtractor.extract(
 			expressionString);
 
-		Map<String, String> stringConstantsMap = new HashMap<>();
+		expressionString = createVariable(expressionString, stringConstants);
 
-		for (String stringConstant : stringConstants) {
-			String variableName = StringUtil.randomId();
+		_tokensExtractor.extract(expressionString);
 
-			stringConstantsMap.put(variableName, stringConstant);
+		List<String> constants = _tokensExtractor.getConstants();
 
-			expressionString = StringUtil.replace(
-				expressionString, "\"" + stringConstant + "\"", variableName);
-		}
+		expressionString = createVariable(expressionString, constants);
 
-		List<String> variableNames = _tokensExtractor.extract(expressionString);
+		List<String> variableNames = _tokensExtractor.getVariables();
 
 		for (String variableName : variableNames) {
 			Variable variable = new Variable(variableName);
 
-			String stringConstant = stringConstantsMap.get(variableName);
+			String token = _variableMap.get(variableName);
 
-			if (stringConstant != null) {
-				variable.setValue(encode(stringConstant));
+			if (token != null) {
+				variable.setValue(encode(token));
+			}
+			else {
+				_variableMap.put(variableName, variableName);
 			}
 
 			_variables.put(variableName, variable);
@@ -163,6 +164,21 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, encode(variableValue));
 	}
 
+	protected String createVariable(
+		String expressionString, List<String> tokens) {
+
+		for (String stringConstant : tokens) {
+			String variableName = StringUtil.randomId();
+
+			_variableMap.put(variableName, stringConstant);
+
+			expressionString = StringUtil.replace(
+				expressionString, "\"" + stringConstant + "\"", variableName);
+		}
+
+		return expressionString;
+	}
+
 	protected Boolean decodeBoolean(BigDecimal bigDecimal) {
 		if (bigDecimal.equals(BigDecimal.ONE)) {
 			return Boolean.TRUE;
@@ -213,14 +229,14 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		com.udojava.evalex.Expression expression =
 			new com.udojava.evalex.Expression(expressionString);
 
-		List<String> variableNames = _tokensExtractor.extract(expressionString);
+		for (String key : _variableMap.keySet()) {
+			Variable variable = _variables.get(key);
 
-		for (String variableName : variableNames) {
-			Variable variable = _variables.get(variableName);
+			if (variable != null) {
+				BigDecimal variableValue = getVariableValue(variable);
 
-			BigDecimal variableValue = getVariableValue(variable);
-
-			expression.setVariable(variableName, variableValue);
+				expression.setVariable(key, variableValue);
+			}
 		}
 
 		return expression;
@@ -281,8 +297,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variableDependencies = new VariableDependencies(variable.getName());
 
 		if (variable.getExpressionString() != null) {
-			List<String> variableNames = _tokensExtractor.extract(
-				variable.getExpressionString());
+			Set<String> variableNames = _variableMap.keySet();
 
 			for (String variableName : variableNames) {
 				VariableDependencies variableVariableDependencies =
@@ -553,6 +568,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	private final StringConstantsExtractor _stringConstantsExtractor =
 		new StringConstantsExtractor();
 	private final TokenExtractor _tokensExtractor = new TokenExtractor();
+	private final Map<String, String> _variableMap = new HashMap<>();
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, BigDecimal> _variableValues = new HashMap<>();
 
