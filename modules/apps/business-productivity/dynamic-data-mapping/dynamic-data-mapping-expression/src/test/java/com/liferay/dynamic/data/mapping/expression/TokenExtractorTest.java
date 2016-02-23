@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.expression;
 
-import com.liferay.dynamic.data.mapping.expression.internal.VariableNamesExtractor;
+import com.liferay.dynamic.data.mapping.expression.internal.TokenExtractor;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import org.junit.Test;
 /**
  * @author Marcellus Tavares
  */
-public class VariableNamesExtractorTest {
+public class TokenExtractorTest {
 
 	@Test
 	public void testExpressionWithMultipleVariables() {
@@ -62,7 +62,6 @@ public class VariableNamesExtractorTest {
 		Assert.assertEquals("variable", variableNames.get(0));
 	}
 
-	private final VariableNamesExtractor _variableNamesExtractor =
-		new VariableNamesExtractor();
+	private final TokenExtractor _variableNamesExtractor = new TokenExtractor();
 
 }

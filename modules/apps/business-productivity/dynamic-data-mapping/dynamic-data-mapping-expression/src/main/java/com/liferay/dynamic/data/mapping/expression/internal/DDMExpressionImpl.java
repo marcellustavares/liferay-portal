@@ -53,8 +53,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 				expressionString, "\"" + stringConstant + "\"", variableName);
 		}
 
-		List<String> variableNames = _variableNamesExtractor.extract(
-			expressionString);
+		List<String> variableNames = _tokensExtractor.extract(expressionString);
 
 		for (String variableName : variableNames) {
 			Variable variable = new Variable(variableName);
@@ -214,8 +213,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		com.udojava.evalex.Expression expression =
 			new com.udojava.evalex.Expression(expressionString);
 
-		List<String> variableNames = _variableNamesExtractor.extract(
-			expressionString);
+		List<String> variableNames = _tokensExtractor.extract(expressionString);
 
 		for (String variableName : variableNames) {
 			Variable variable = _variables.get(variableName);
@@ -283,7 +281,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variableDependencies = new VariableDependencies(variable.getName());
 
 		if (variable.getExpressionString() != null) {
-			List<String> variableNames = _variableNamesExtractor.extract(
+			List<String> variableNames = _tokensExtractor.extract(
 				variable.getExpressionString());
 
 			for (String variableName : variableNames) {
@@ -554,8 +552,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	private MathContext _mathContext = MathContext.DECIMAL32;
 	private final StringConstantsExtractor _stringConstantsExtractor =
 		new StringConstantsExtractor();
-	private final VariableNamesExtractor _variableNamesExtractor =
-		new VariableNamesExtractor();
+	private final TokenExtractor _tokensExtractor = new TokenExtractor();
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, BigDecimal> _variableValues = new HashMap<>();
 

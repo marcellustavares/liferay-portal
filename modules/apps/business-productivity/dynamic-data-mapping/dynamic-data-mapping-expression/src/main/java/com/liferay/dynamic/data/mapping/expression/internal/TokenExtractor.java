@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * @author Marcellus Tavares
  * @author Leonardo Barros
  */
-public class VariableNamesExtractor {
+public class TokenExtractor {
 
 	public void extract(String expressionString) {
 		if (expressionString == null) {
