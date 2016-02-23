@@ -51,6 +51,52 @@ public class TokenExtractorTest {
 	}
 
 	@Test
+	public void testExpressionWithEmptyExpression() {
+		Map<String, String> variableMap = _tokenExtractor.extract(
+			StringPool.BLANK);
+		Assert.assertNull(_tokenExtractor.getExpression());
+		Assert.assertEquals(variableMap.size(), 0);
+	}
+
+	@Test
+	public void testExpressionWithFunctionCall() {
+		String expressionString =
+			"equals(name,\"joe\") && isEmailAddress(email)";
+
+		Map<String, String> variableMap = _tokenExtractor.extract(
+			expressionString);
+
+		Assert.assertEquals(variableMap.size(), 3);
+
+		Assert.assertEquals("name", variableMap.get("name"));
+		Assert.assertEquals("email", variableMap.get("email"));
+
+		Collection<String> values = variableMap.values();
+
+		Assert.assertTrue(values.contains("joe"));
+	}
+
+	@Test
+	public void testExpressionWithFunctionCallVariablesAndConstants() {
+		String expressionString =
+			"round((a + b) * 3456.12) > 10000 && isURL(field)";
+
+		Map<String, String> variableMap = _tokenExtractor.extract(
+			expressionString);
+
+		Assert.assertEquals(variableMap.size(), 5);
+
+		Assert.assertEquals("a", variableMap.get("a"));
+		Assert.assertEquals("b", variableMap.get("b"));
+		Assert.assertEquals("field", variableMap.get("field"));
+
+		Collection<String> values = variableMap.values();
+
+		Assert.assertTrue(values.contains("3456.12"));
+		Assert.assertTrue(values.contains("10000"));
+	}
+
+	@Test
 	public void testExpressionWithNoConstants() {
 		String expressionString = "(a / b) >= c";
 
@@ -75,6 +121,35 @@ public class TokenExtractorTest {
 	}
 
 	@Test
+	public void testExpressionWithNullExpression() {
+		Map<String, String> variableMap = _tokenExtractor.extract(null);
+		Assert.assertNull(_tokenExtractor.getExpression());
+		Assert.assertEquals(variableMap.size(), 0);
+	}
+
+	@Test
+	public void testExpressionWithoutCallingExtractMethod() {
+		Assert.assertNull(_tokenExtractor.getExpression());
+		Assert.assertNull(_tokenExtractor.getVariableMap());
+	}
+
+	@Test
+	public void testExpressionWithStringConstants() {
+		String expressionString = "name != \"joe\"";
+
+		Map<String, String> variableMap = _tokenExtractor.extract(
+			expressionString);
+
+		Assert.assertEquals(variableMap.size(), 2);
+
+		Assert.assertEquals("name", variableMap.get("name"));
+
+		Collection<String> values = variableMap.values();
+
+		Assert.assertTrue(values.contains("joe"));
+	}
+
+	@Test
 	public void testExpressionWithVariablesAndConstants() {
 		String expressionString = "((a + b) * variable_3) / var4  > 5";
 
@@ -90,27 +165,6 @@ public class TokenExtractorTest {
 		Collection<String> values = variableMap.values();
 
 		Assert.assertTrue(values.contains("5"));
-	}
-
-	@Test
-	public void testWithEmptyExpression() {
-		Map<String, String> variableMap = _tokenExtractor.extract(
-			StringPool.BLANK);
-		Assert.assertNull(_tokenExtractor.getExpression());
-		Assert.assertEquals(variableMap.size(), 0);
-	}
-
-	@Test
-	public void testWithNullExpression() {
-		Map<String, String> variableMap = _tokenExtractor.extract(null);
-		Assert.assertNull(_tokenExtractor.getExpression());
-		Assert.assertEquals(variableMap.size(), 0);
-	}
-
-	@Test
-	public void testWithoutCallingExtractMethod() {
-		Assert.assertNull(_tokenExtractor.getExpression());
-		Assert.assertNull(_tokenExtractor.getVariableMap());
 	}
 
 	private TokenExtractor _tokenExtractor;
