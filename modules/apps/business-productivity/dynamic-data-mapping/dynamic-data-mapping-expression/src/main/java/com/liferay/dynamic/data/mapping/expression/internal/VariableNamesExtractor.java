@@ -14,41 +14,85 @@
 
 package com.liferay.dynamic.data.mapping.expression.internal;
 
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
 public class VariableNamesExtractor {
 
-	public List<String> extract(String ddmExpressionString) {
-		if (ddmExpressionString == null) {
-			return Collections.emptyList();
+	public void extract(String expressionString) {
+		if (expressionString == null) {
+			_variables = Collections.emptyList();
+			_constants = Collections.emptyList();
+			return;
 		}
 
-		List<String> variableNames = new ArrayList<>();
+		_variables = new ArrayList<>();
+		_constants = new ArrayList<>();
 
-		Matcher matcher = _pattern.matcher(ddmExpressionString);
+		com.udojava.evalex.Expression expression =
+			new com.udojava.evalex.Expression(expressionString);
 
-		while (matcher.find()) {
-			String match = matcher.group(1);
+		Iterator<String> tokenIterator = expression.getExpressionTokenizer();
 
-			if (!ArrayUtil.contains(_reservedWords, match)) {
-				variableNames.add(matcher.group(1));
+		while (tokenIterator.hasNext()) {
+			String token = tokenIterator.next();
+
+			Matcher tokenMatcher = _operatorsPattern.matcher(token);
+
+			if (!tokenMatcher.matches() && !isFunction(token)) {
+				Matcher variableMatcher = _variablePattern.matcher(token);
+
+				if (variableMatcher.matches()) {
+					_variables.add(token);
+				}
+				else {
+					_constants.add(token);
+				}
+			}
+		}
+	}
+
+	public List<String> getConstants() {
+		return _constants;
+	}
+
+	public List<String> getVariables() {
+		return _variables;
+	}
+
+	protected boolean isFunction(String token) {
+		for (String function : _FUNCTIONS) {
+			if (StringUtil.equalsIgnoreCase(function, token)) {
+				return true;
 			}
 		}
 
-		return variableNames;
+		return false;
 	}
 
-	private static final Pattern _pattern = Pattern.compile(
+	private static final String[] _FUNCTIONS = new String[] {
+		"not", "if", "random", "min", "max", "abs", "round", "floor", "ceiling",
+		"log", "log10", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan",
+		"sinh", "cosh", "tanh", "rad", "deg", "between", "concat", "contains",
+		"equals", "isEmailAddress", "isURL", "sum"
+	};
+
+	private static final Pattern _operatorsPattern = Pattern.compile(
+		"[+-/\\*%\\^\\(\\)]|[<>=!]=?|&&|\\|\\|");
+	private static final Pattern _variablePattern = Pattern.compile(
 		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b", Pattern.MULTILINE);
-	private static final String[] _reservedWords = {"FALSE", "TRUE"};
+
+	private List<String> _constants;
+	private List<String> _variables;
 
 }
