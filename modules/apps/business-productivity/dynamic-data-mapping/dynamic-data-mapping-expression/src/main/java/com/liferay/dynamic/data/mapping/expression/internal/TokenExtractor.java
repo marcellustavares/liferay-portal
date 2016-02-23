@@ -14,8 +14,12 @@
 
 package com.liferay.dynamic.data.mapping.expression.internal;
 
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionEvaluationException;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import com.udojava.evalex.Expression.ExpressionException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,46 +34,59 @@ import java.util.regex.Pattern;
  */
 public class TokenExtractor {
 
-	public Map<String, String> extract(String expressionString) {
+	public Map<String, String> extract(String expressionString)
+		throws DDMExpressionEvaluationException {
+
 		if (Validator.isNull(expressionString)) {
 			return Collections.emptyMap();
 		}
 
-		_expression = expressionString;
+		try {
+			_expression = expressionString;
 
-		_variableMap = new HashMap<>();
+			_variableMap = new HashMap<>();
 
-		Matcher matcher = _stringPattern.matcher(_expression);
+			Matcher matcher = _stringPattern.matcher(_expression);
 
-		while (matcher.find()) {
-			createVariable(matcher.group(1));
-		}
+			while (matcher.find()) {
+				createVariable(matcher.group(1), true);
+			}
 
-		com.udojava.evalex.Expression expression =
-			new com.udojava.evalex.Expression(_expression);
+			com.udojava.evalex.Expression expression =
+				new com.udojava.evalex.Expression(_expression);
 
-		Iterator<String> tokenIterator = expression.getExpressionTokenizer();
+			Iterator<String> tokenIterator =
+				expression.getExpressionTokenizer();
 
-		while (tokenIterator.hasNext()) {
-			String token = tokenIterator.next();
+			while (tokenIterator.hasNext()) {
+				String token = tokenIterator.next();
 
-			Matcher tokenMatcher = _operatorsPattern.matcher(token);
+				Matcher tokenMatcher = _operatorsPattern.matcher(token);
 
-			if (!tokenMatcher.matches() && !isFunction(token)) {
-				Matcher variableMatcher = _variablePattern.matcher(token);
+				if (!tokenMatcher.matches() &&
+					!ArrayUtil.contains(
+						_FUNCTIONS, StringUtil.toLowerCase(token)) &&
+					!ArrayUtil.contains(
+						_BOOLEAN_CONSTANTS, StringUtil.toLowerCase(token))) {
 
-				if (variableMatcher.matches()) {
-					if (!_variableMap.containsKey(token)) {
-						_variableMap.put(token, token);
+					Matcher variableMatcher = _variablePattern.matcher(token);
+
+					if (variableMatcher.matches()) {
+						if (!_variableMap.containsKey(token)) {
+							_variableMap.put(token, token);
+						}
+					}
+					else {
+						createVariable(token, false);
 					}
 				}
-				else {
-					createVariable(token);
-				}
 			}
-		}
 
-		return _variableMap;
+			return _variableMap;
+		}
+		catch (ExpressionException ee) {
+			throw new DDMExpressionEvaluationException(ee);
+		}
 	}
 
 	public String getExpression() {
@@ -80,30 +97,27 @@ public class TokenExtractor {
 		return _variableMap;
 	}
 
-	protected void createVariable(String token) {
+	protected void createVariable(String token, boolean stringConstant) {
 		String variableName = StringUtil.randomId();
 
 		_variableMap.put(variableName, token);
 
-		_expression = StringUtil.replace(
-			_expression, "\"" + token + "\"", variableName);
-	}
-
-	protected boolean isFunction(String token) {
-		for (String function : _FUNCTIONS) {
-			if (StringUtil.equalsIgnoreCase(function, token)) {
-				return true;
-			}
+		if (stringConstant) {
+			_expression = StringUtil.replace(
+				_expression, "\"" + token + "\"", variableName);
 		}
-
-		return false;
+		else {
+			_expression = StringUtil.replace(_expression, token, variableName);
+		}
 	}
+
+	private static final String[] _BOOLEAN_CONSTANTS = {"false", "true"};
 
 	private static final String[] _FUNCTIONS = new String[] {
 		"not", "if", "random", "min", "max", "abs", "round", "floor", "ceiling",
 		"log", "log10", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan",
 		"sinh", "cosh", "tanh", "rad", "deg", "between", "concat", "contains",
-		"equals", "isEmailAddress", "isURL", "sum"
+		"equals", "isemailaddress", "isurl", "sum"
 	};
 
 	private static final Pattern _operatorsPattern = Pattern.compile(

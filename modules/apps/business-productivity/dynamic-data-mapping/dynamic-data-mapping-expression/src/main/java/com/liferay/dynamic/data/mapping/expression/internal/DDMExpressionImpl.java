@@ -36,22 +36,21 @@ import java.util.TreeMap;
  */
 public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
-	public DDMExpressionImpl(
-		String expressionString, Class<T> expressionClass) {
+	public DDMExpressionImpl(String expressionString, Class<T> expressionClass)
+		throws DDMExpressionEvaluationException {
 
 		Map<String, String> variableMap = _tokensExtractor.extract(
 			expressionString);
 
 		for (String variableName : variableMap.keySet()) {
 			Variable variable = new Variable(variableName);
+			_variables.put(variableName, variable);
 
 			String token = variableMap.get(variableName);
 
 			if (token != null) {
-				variable.setValue(encode(token));
+				setStringVariableValue(variableName, token);
 			}
-
-			_variables.put(variableName, variable);
 		}
 
 		_expressionString = _tokensExtractor.getExpression();
@@ -156,7 +155,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 					"The value entered exceeds the supported range.");
 			}
 			else {
-				setDoubleVariableValue(variableName, doubleValue);
+				setVariableValue(variableName, new BigDecimal(variableValue));
 			}
 		}
 		else {
@@ -218,12 +217,16 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	protected com.udojava.evalex.Expression getExpression(
-		String expressionString) {
+			String expressionString)
+		throws DDMExpressionEvaluationException {
 
 		com.udojava.evalex.Expression expression =
 			new com.udojava.evalex.Expression(expressionString);
 
-		Map<String, String> variableMap = _tokensExtractor.getVariableMap();
+		TokenExtractor tokenExtractor = new TokenExtractor();
+
+		Map<String, String> variableMap = tokenExtractor.extract(
+			expressionString);
 
 		for (String key : variableMap.keySet()) {
 			Variable variable = _variables.get(key);
@@ -238,7 +241,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return expression;
 	}
 
-	protected com.udojava.evalex.Expression getExpression(Variable variable) {
+	protected com.udojava.evalex.Expression getExpression(Variable variable)
+		throws DDMExpressionEvaluationException {
+
 		if (variable.getExpressionString() == null) {
 			return null;
 		}
@@ -249,7 +254,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return expression;
 	}
 
-	protected BigDecimal getVariableValue(Variable variable) {
+	protected BigDecimal getVariableValue(Variable variable)
+		throws DDMExpressionEvaluationException {
+
 		BigDecimal variableValue = _variableValues.get(variable.getName());
 
 		if (variableValue != null) {
@@ -562,7 +569,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 	private final Class<?> _expressionClass;
 	private final String _expressionString;
-	private MathContext _mathContext = MathContext.DECIMAL32;
+	private MathContext _mathContext = MathContext.UNLIMITED;
 	private final TokenExtractor _tokensExtractor = new TokenExtractor();
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, BigDecimal> _variableValues = new HashMap<>();
