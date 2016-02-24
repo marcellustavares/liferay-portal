@@ -17,9 +17,9 @@ package com.liferay.dynamic.data.mapping.expression.internal;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionEvaluationException;
 import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.math.BigDecimal;
@@ -29,6 +29,7 @@ import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -36,39 +37,24 @@ import java.util.TreeMap;
  */
 public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
-	public DDMExpressionImpl(
-		String expressionString, Class<T> expressionClass) {
+	public DDMExpressionImpl(String expressionString, Class<T> expressionClass)
+		throws DDMExpressionEvaluationException {
 
-		List<String> stringConstants = _stringConstantsExtractor.extract(
+		Map<String, String> variableMap = _tokensExtractor.extract(
 			expressionString);
 
-		Map<String, String> stringConstantsMap = new HashMap<>();
-
-		for (String stringConstant : stringConstants) {
-			String variableName = StringUtil.randomId();
-
-			stringConstantsMap.put(variableName, stringConstant);
-
-			expressionString = StringUtil.replace(
-				expressionString, "\"" + stringConstant + "\"", variableName);
-		}
-
-		List<String> variableNames = _variableNamesExtractor.extract(
-			expressionString);
-
-		for (String variableName : variableNames) {
+		for (String variableName : variableMap.keySet()) {
 			Variable variable = new Variable(variableName);
-
-			String stringConstant = stringConstantsMap.get(variableName);
-
-			if (stringConstant != null) {
-				variable.setValue(encode(stringConstant));
-			}
-
 			_variables.put(variableName, variable);
+
+			String token = variableMap.get(variableName);
+
+			if (token != null) {
+				setStringVariableValue(variableName, token);
+			}
 		}
 
-		_expressionString = expressionString;
+		_expressionString = _tokensExtractor.getExpression();
 		_expressionClass = expressionClass;
 	}
 
@@ -95,11 +81,15 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	@Override
-	public Map<String, VariableDependencies> getVariableDependenciesMap() {
+	public Map<String, VariableDependencies> getVariableDependenciesMap()
+		throws DDMExpressionEvaluationException {
+
 		Map<String, VariableDependencies> variableDependenciesMap =
 			new HashMap<>();
 
-		for (Variable variable : _variables.values()) {
+		List<Variable> variables = ListUtil.fromCollection(_variables.values());
+
+		for (Variable variable : variables) {
 			populateVariableDependenciesMap(variable, variableDependenciesMap);
 		}
 
@@ -159,9 +149,23 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 	@Override
 	public void setStringVariableValue(
-		String variableName, String variableValue) {
+			String variableName, String variableValue)
+		throws DDMExpressionEvaluationException {
 
-		setVariableValue(variableName, encode(variableValue));
+		Double doubleValue = doubleValue(variableValue);
+
+		if (doubleValue != null) {
+			if (doubleValue.isNaN() || doubleValue.isInfinite()) {
+				throw new DDMExpressionEvaluationException(
+					"The value entered exceeds the supported range.");
+			}
+			else {
+				setVariableValue(variableName, new BigDecimal(variableValue));
+			}
+		}
+		else {
+			setVariableValue(variableName, encode(variableValue));
+		}
 	}
 
 	protected Boolean decodeBoolean(BigDecimal bigDecimal) {
@@ -178,9 +182,18 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 			return StringPool.BLANK;
 		}
 
-		BigInteger bigInteger = new BigInteger(bigDecimal.toPlainString());
+		BigInteger bigInteger = new BigInteger(bigDecimal.toString());
 
 		return new String(bigInteger.toByteArray());
+	}
+
+	protected Double doubleValue(String value) {
+		try {
+			return Double.parseDouble(value);
+		}
+		catch (NumberFormatException nfe) {
+			return null;
+		}
 	}
 
 	protected BigDecimal encode(Boolean variableValue) {
@@ -209,26 +222,33 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	protected com.udojava.evalex.Expression getExpression(
-		String expressionString) {
+			String expressionString)
+		throws DDMExpressionEvaluationException {
 
 		com.udojava.evalex.Expression expression =
 			new com.udojava.evalex.Expression(expressionString);
 
-		List<String> variableNames = _variableNamesExtractor.extract(
+		TokenExtractor tokenExtractor = new TokenExtractor();
+
+		Map<String, String> variableMap = tokenExtractor.extract(
 			expressionString);
 
-		for (String variableName : variableNames) {
-			Variable variable = _variables.get(variableName);
+		for (String key : variableMap.keySet()) {
+			Variable variable = _variables.get(key);
 
-			BigDecimal variableValue = getVariableValue(variable);
+			if (variable != null) {
+				BigDecimal variableValue = getVariableValue(variable);
 
-			expression.setVariable(variableName, variableValue);
+				expression.setVariable(key, variableValue);
+			}
 		}
 
 		return expression;
 	}
 
-	protected com.udojava.evalex.Expression getExpression(Variable variable) {
+	protected com.udojava.evalex.Expression getExpression(Variable variable)
+		throws DDMExpressionEvaluationException {
+
 		if (variable.getExpressionString() == null) {
 			return null;
 		}
@@ -239,7 +259,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return expression;
 	}
 
-	protected BigDecimal getVariableValue(Variable variable) {
+	protected BigDecimal getVariableValue(Variable variable)
+		throws DDMExpressionEvaluationException {
+
 		BigDecimal variableValue = _variableValues.get(variable.getName());
 
 		if (variableValue != null) {
@@ -270,8 +292,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	}
 
 	protected VariableDependencies populateVariableDependenciesMap(
-		Variable variable,
-		Map<String, VariableDependencies> variableDependenciesMap) {
+			Variable variable,
+			Map<String, VariableDependencies> variableDependenciesMap)
+		throws DDMExpressionEvaluationException {
 
 		VariableDependencies variableDependencies = variableDependenciesMap.get(
 			variable.getName());
@@ -283,10 +306,25 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variableDependencies = new VariableDependencies(variable.getName());
 
 		if (variable.getExpressionString() != null) {
-			List<String> variableNames = _variableNamesExtractor.extract(
+			TokenExtractor tokensExtractor = new TokenExtractor();
+
+			Map<String, String> variableMap = tokensExtractor.extract(
 				variable.getExpressionString());
 
+			Set<String> variableNames = variableMap.keySet();
+
 			for (String variableName : variableNames) {
+				if (!_variables.containsKey(variableName)) {
+					Variable newVariable = new Variable(variableName);
+					_variables.put(variableName, newVariable);
+
+					String token = variableMap.get(variableName);
+
+					if (token != null) {
+						setStringVariableValue(variableName, token);
+					}
+				}
+
 				VariableDependencies variableVariableDependencies =
 					populateVariableDependenciesMap(
 						_variables.get(variableName), variableDependenciesMap);
@@ -448,6 +486,21 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 				}
 
 			});
+
+		expression.addOperator(
+			expression.new Operator("^", 40, false) {
+
+				@Override
+				public BigDecimal eval(
+					BigDecimal parameter1, BigDecimal parameter2) {
+
+					double pow = Math.pow(
+						parameter1.doubleValue(), parameter2.doubleValue());
+
+					return new BigDecimal(pow);
+				}
+
+			});
 	}
 
 	protected void setExpressionMathContext(
@@ -493,10 +546,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	private final Class<?> _expressionClass;
 	private final String _expressionString;
 	private MathContext _mathContext = MathContext.UNLIMITED;
-	private final StringConstantsExtractor _stringConstantsExtractor =
-		new StringConstantsExtractor();
-	private final VariableNamesExtractor _variableNamesExtractor =
-		new VariableNamesExtractor();
+	private final TokenExtractor _tokensExtractor = new TokenExtractor();
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, BigDecimal> _variableValues = new HashMap<>();
 

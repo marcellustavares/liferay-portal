@@ -100,8 +100,9 @@ public class DDMFormEvaluatorHelper {
 	}
 
 	protected boolean evaluateBooleanExpression(
-		String expressionString,
-		Set<DDMFormFieldValue> ancestorDDMFormFieldValues) {
+			String expressionString,
+			Set<DDMFormFieldValue> ancestorDDMFormFieldValues)
+		throws PortalException {
 
 		if (Validator.isNull(expressionString)) {
 			return true;
@@ -263,9 +264,10 @@ public class DDMFormEvaluatorHelper {
 	}
 
 	protected void setDDMExpressionVariables(
-		DDMExpression<Boolean> ddmExpression,
-		List<DDMFormFieldValue> ddmFormFieldValues,
-		Set<DDMFormFieldValue> ancestorDDMFormFieldValues) {
+			DDMExpression<Boolean> ddmExpression,
+			List<DDMFormFieldValue> ddmFormFieldValues,
+			Set<DDMFormFieldValue> ancestorDDMFormFieldValues)
+		throws PortalException {
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
 			String name = ddmFormFieldValue.getName();
@@ -294,7 +296,7 @@ public class DDMFormEvaluatorHelper {
 
 	protected void setExpressionVariableValue(
 		DDMExpression<Boolean> ddmExpression, String variableName,
-		String variableType, String variableValue) {
+		String variableType, String variableValue) throws PortalException {
 
 		if (variableType.equals("boolean")) {
 			ddmExpression.setBooleanVariableValue(
