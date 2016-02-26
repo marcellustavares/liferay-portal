@@ -15,8 +15,6 @@
 package com.liferay.dynamic.data.mapping.model.impl;
 
 import com.liferay.dynamic.data.mapping.exception.StructureFieldException;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializerUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
@@ -102,11 +100,12 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public DDMForm getDDMForm() {
 		if (_ddmForm == null) {
 			try {
-				_ddmForm = DDMFormJSONDeserializerUtil.deserialize(
+				_ddmForm = DDMStructureLocalServiceUtil.deserialize(
 					getDefinition());
 			}
 			catch (Exception e) {
 				_log.error(e, e);
+				return new DDMForm();
 			}
 		}
 
@@ -436,7 +435,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public void updateDDMForm(DDMForm ddmForm) {
-		setDefinition(DDMFormJSONSerializerUtil.serialize(ddmForm));
+		setDefinition(DDMStructureLocalServiceUtil.serialize(ddmForm));
 	}
 
 	protected List<DDMFormField> filterTransientDDMFormFields(

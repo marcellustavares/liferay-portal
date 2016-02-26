@@ -17,8 +17,9 @@ package com.liferay.dynamic.data.mapping.util.impl;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializerUtil;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializerUtil;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -127,6 +128,14 @@ public class DDMImpl implements DDM {
 
 	public static final String TYPE_SELECT = "select";
 
+	public DDMFormValues deserialize(
+			DDMForm ddmForm, String serializedDDMFormValues)
+		throws PortalException {
+
+		return _ddmFormValuesJSONDeserializer.deserialize(
+			ddmForm, serializedDDMFormValues);
+	}
+
 	@Override
 	public DDMForm getDDMForm(long classNameId, long classPK)
 		throws PortalException {
@@ -152,8 +161,7 @@ public class DDMImpl implements DDM {
 			DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(
 				classPK);
 
-			return DDMFormJSONDeserializerUtil.deserialize(
-				template.getScript());
+			return _ddmFormJSONDeserializer.deserialize(template.getScript());
 		}
 
 		return null;
@@ -167,7 +175,7 @@ public class DDMImpl implements DDM {
 			String definition = ParamUtil.getString(
 				portletRequest, "definition");
 
-			return DDMFormJSONDeserializerUtil.deserialize(definition);
+			return _ddmFormJSONDeserializer.deserialize(definition);
 		}
 		catch (PortalException pe) {
 			throw new StructureDefinitionException(pe);
@@ -547,6 +555,11 @@ public class DDMImpl implements DDM {
 		return existingFields;
 	}
 
+	@Override
+	public String serialize(DDMFormValues ddmFormValues) {
+		return _ddmFormValuesJSONSerializer.serialize(ddmFormValues);
+	}
+
 	protected void addDDMFormFieldLocalizedProperties(
 		JSONObject jsonObject, DDMFormField ddmFormField, Locale locale,
 		Locale defaultLocale) {
@@ -715,7 +728,7 @@ public class DDMImpl implements DDM {
 		}
 
 		try {
-			DDMForm scriptDDMForm = DDMFormJSONDeserializerUtil.deserialize(
+			DDMForm scriptDDMForm = _ddmFormJSONDeserializer.deserialize(
 				script);
 
 			return getDDMFormFieldsJSONArray(
@@ -896,10 +909,8 @@ public class DDMImpl implements DDM {
 		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(
 			ddmStructureId);
 
-		DDMFormValues ddmFormValues =
-			DDMFormValuesJSONDeserializerUtil.deserialize(
-				ddmStructure.getFullHierarchyDDMForm(),
-				serializedDDMFormValues);
+		DDMFormValues ddmFormValues = deserialize(
+			ddmStructure.getFullHierarchyDDMForm(), serializedDDMFormValues);
 
 		return DDMFormValuesToFieldsConverterUtil.convert(
 			ddmStructure, ddmFormValues);
@@ -1173,6 +1184,27 @@ public class DDMImpl implements DDM {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormJSONDeserializer(
+		DDMFormJSONDeserializer ddmFormJSONDeserializer) {
+
+		_ddmFormJSONDeserializer = ddmFormJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONSerializer(
+		DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer) {
+
+		_ddmFormValuesJSONSerializer = ddmFormValuesJSONSerializer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
 		_dlAppLocalService = dlAppLocalService;
 	}
@@ -1197,6 +1229,9 @@ public class DDMImpl implements DDM {
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMImpl.class);
 
+	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private DDMFormValuesJSONSerializer _ddmFormValuesJSONSerializer;
 	private DLAppLocalService _dlAppLocalService;
 	private ImageLocalService _imageLocalService;
 	private LayoutLocalService _layoutLocalService;

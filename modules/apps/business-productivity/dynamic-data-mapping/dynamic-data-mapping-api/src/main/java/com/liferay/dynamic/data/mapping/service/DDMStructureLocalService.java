@@ -336,6 +336,9 @@ public interface DDMStructureLocalService extends BaseLocalService,
 	public void deleteStructures(long groupId, long classNameId)
 		throws PortalException;
 
+	public DDMForm deserialize(java.lang.String serializedDDMForm)
+		throws PortalException;
+
 	public DynamicQuery dynamicQuery();
 
 	/**
@@ -965,6 +968,8 @@ public interface DDMStructureLocalService extends BaseLocalService,
 	public int searchCount(long companyId, long[] groupIds, long classNameId,
 		java.lang.String name, java.lang.String description,
 		java.lang.String storageType, int type, int status, boolean andOperator);
+
+	public java.lang.String serialize(DDMForm ddmForm);
 
 	/**
 	* Updates the d d m structure in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

@@ -395,6 +395,12 @@ public class DDMStructureLocalServiceUtil {
 		getService().deleteStructures(groupId, classNameId);
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMForm deserialize(
+		java.lang.String serializedDDMForm)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deserialize(serializedDDMForm);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return getService().dynamicQuery();
 	}
@@ -1126,6 +1132,11 @@ public class DDMStructureLocalServiceUtil {
 		return getService()
 				   .searchCount(companyId, groupIds, classNameId, name,
 			description, storageType, type, status, andOperator);
+	}
+
+	public static java.lang.String serialize(
+		com.liferay.dynamic.data.mapping.model.DDMForm ddmForm) {
+		return getService().serialize(ddmForm);
 	}
 
 	/**

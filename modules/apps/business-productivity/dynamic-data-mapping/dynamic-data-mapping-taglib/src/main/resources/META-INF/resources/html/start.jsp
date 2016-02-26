@@ -44,7 +44,7 @@
 				{
 					container: '#<%= randomNamespace %>',
 					ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
-					definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
+					definition: <%= DDMStructureLocalServiceUtil.serialize(ddmForm) %>,
 					doAsGroupId: <%= scopeGroupId %>,
 					fieldsNamespace: '<%= fieldsNamespace %>',
 					mode: '<%= mode %>',
@@ -53,7 +53,7 @@
 					repeatable: <%= repeatable %>
 
 					<c:if test="<%= ddmFormValues != null %>">
-						, values: <%= DDMFormValuesJSONSerializerUtil.serialize(ddmFormValues) %>
+						, values: <%= DDMUtil.serialize(ddmFormValues) %>
 					</c:if>
 				}
 			);
