@@ -30,7 +30,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
-import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
@@ -87,8 +87,17 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
+}
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
 
-		_jsonStorageAdapter = StorageAdapterRegistryUtil.getStorageAdapter(
+		setUpDDMFormValuesToFieldsConverter();
+		setUpFieldsToDDMFormValuesConverter();
+		setUpStorageAdapterRegistry();
+
+		_jsonStorageAdapter = _storageAdapterRegistry.getStorageAdapter(
 			StorageType.JSON.toString());
 	}
 
@@ -679,9 +688,30 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		sb.append("\"}");
 
 		return sb.toString();
+}
+
+	protected void setUpDDMFormValuesToFieldsConverter() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmFormValuesToFieldsConverter = registry.getService(
+			DDMFormValuesToFieldsConverter.class);
 	}
 
-	protected void validate(long ddmStructureId, Fields fields)
+	protected void setUpFieldsToDDMFormValuesConverter() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_fieldsToDDMFormValuesConverter = registry.getService(
+			FieldsToDDMFormValuesConverter.class);
+	}
+
+	protected void setUpStorageAdapterRegistry() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_storageAdapterRegistry = registry.getService(
+			StorageAdapterRegistry.class);
+	}
+
+    protected void validate(long ddmStructureId, Fields fields)
 		throws Exception {
 
 		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
@@ -706,7 +736,11 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 	private static long _CLASS_NAME_ID;
 
 	private static Locale _enLocale;
-	private static StorageAdapter _jsonStorageAdapter;
 	private static Locale _ptLocale;
+
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
+	private StorageAdapter _jsonStorageAdapter;
+	private StorageAdapterRegistry _storageAdapterRegistry;
 
 }

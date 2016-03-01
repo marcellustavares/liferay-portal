@@ -210,12 +210,18 @@ public class DDMPortlet extends MVCPortlet {
 			DDMWebConfiguration.class, properties);
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
 	protected void setDDMDisplayContextRequestAttribute(
 			RenderRequest renderRequest)
 		throws PortalException {
 
 		DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-			renderRequest, ddmWebConfiguration);
+			renderRequest, _ddm, _ddmDisplayRegistry, _ddmTemplateHelper,
+			ddmWebConfiguration, _storageAdapterRegistry);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
@@ -268,6 +274,13 @@ public class DDMPortlet extends MVCPortlet {
 			renderRequest.setAttribute(
 				DDMWebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE, template);
 		}
+	}
+
+	@Reference(unbind = "-")
+	protected void setStorageAdapterRegistry(
+		StorageAdapterRegistry storageAdapterRegistry) {
+
+		_storageAdapterRegistry = storageAdapterRegistry;
 	}
 
 	protected volatile DDMStructureLocalService ddmStructureLocalService;

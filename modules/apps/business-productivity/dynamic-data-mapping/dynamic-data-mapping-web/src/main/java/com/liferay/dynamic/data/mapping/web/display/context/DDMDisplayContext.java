@@ -25,6 +25,8 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Set;
+
 import javax.portlet.RenderRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +38,13 @@ public class DDMDisplayContext {
 
 	public DDMDisplayContext(
 			RenderRequest renderRequest,
-			DDMWebConfiguration ddmWebConfiguration)
+			DDMWebConfiguration ddmWebConfiguration,
+			StorageAdapterRegistry storageAdapterRegistry)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
 		_ddmWebConfiguration = ddmWebConfiguration;
+		_storageAdapterRegistry = storageAdapterRegistry;
 
 		HttpServletRequest httpServletRequest =
 			PortalUtil.getHttpServletRequest(renderRequest);
@@ -60,7 +64,7 @@ public class DDMDisplayContext {
 		return _ddmWebConfiguration.changeableDefaultLanguage();
 	}
 
-	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
+public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
 		return _ddmWebRequestHelper.getDDMGroupServiceConfiguration();
 	}
 
@@ -104,6 +108,27 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+
+	public Set<String> getStorageTypes() {
+		return _storageAdapterRegistry.getStorageTypes();
+	}
+
+	public OrderByComparator<DDMStructure> getStructureOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		return _ddm.getStructureOrderByComparator(orderByCol, orderByType);
+	}
+
+	public OrderByComparator<DDMTemplate> getTemplateOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		return _ddm.getTemplateOrderByComparator(orderByCol, orderByType);
+	}
+
+	public boolean isAutocompleteEnabled(String language) {
+		return _ddmTemplateHelper.isAutocompleteEnabled(language);
+	}
+
 	public String[] smallImageExtensions() {
 		DDMGroupServiceConfiguration ddmGroupServiceConfiguration =
 			_ddmWebRequestHelper.getDDMGroupServiceConfiguration();
@@ -121,5 +146,6 @@ public class DDMDisplayContext {
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
+	private final StorageAdapterRegistry _storageAdapterRegistry;
 
 }
