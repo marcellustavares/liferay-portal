@@ -20,6 +20,7 @@ import com.liferay.document.library.display.context.DLFilePicker;
 import com.liferay.document.library.google.docs.util.GoogleDocsConstants;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -40,21 +41,21 @@ public class GoogleDocsDLEditFileEntryDisplayContext
 	public GoogleDocsDLEditFileEntryDisplayContext(
 		DLEditFileEntryDisplayContext parentDLEditFileEntryDisplayContext,
 		HttpServletRequest request, HttpServletResponse response,
-		DLFileEntryType dlFileEntryType) {
+		DLFileEntryType dlFileEntryType, StorageEngine storageEngine) {
 
 		super(
 			_UUID, parentDLEditFileEntryDisplayContext, request, response,
-			dlFileEntryType);
+			dlFileEntryType, storageEngine);
 	}
 
 	public GoogleDocsDLEditFileEntryDisplayContext(
 		DLEditFileEntryDisplayContext parentDLEditFileEntryDisplayContext,
 		HttpServletRequest request, HttpServletResponse response,
-		FileEntry fileEntry) {
+		FileEntry fileEntry, StorageEngine storageEngine) {
 
 		super(
 			_UUID, parentDLEditFileEntryDisplayContext, request, response,
-			fileEntry);
+			fileEntry, storageEngine);
 	}
 
 	@Override

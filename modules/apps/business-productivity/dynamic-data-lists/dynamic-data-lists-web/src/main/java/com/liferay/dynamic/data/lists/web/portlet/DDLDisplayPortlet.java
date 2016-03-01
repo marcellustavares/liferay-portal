@@ -108,7 +108,7 @@ public class DDLDisplayPortlet extends MVCPortlet {
 
 			DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(
 				request, _ddl, _ddlRecordSetLocalService, _ddlWebConfiguration,
-				_ddmTemplateLocalService);
+				_ddmTemplateLocalService, _storageEngine);
 
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT, ddlDisplayContext);
@@ -153,6 +153,11 @@ public class DDLDisplayPortlet extends MVCPortlet {
 		DDMTemplateLocalService ddmTemplateLocalService) {
 
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+	}
+
+	@Reference(unbind = "-")
+	public void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
 	}
 
 	@Activate
@@ -241,5 +246,6 @@ public class DDLDisplayPortlet extends MVCPortlet {
 	private DDLRecordSetService _ddlRecordSetService;
 	private volatile DDLWebConfiguration _ddlWebConfiguration;
 	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private StorageEngine _storageEngine;
 
 }

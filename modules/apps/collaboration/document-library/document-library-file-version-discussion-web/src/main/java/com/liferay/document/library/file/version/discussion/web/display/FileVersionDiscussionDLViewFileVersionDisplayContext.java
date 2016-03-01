@@ -18,6 +18,7 @@ import com.liferay.document.library.display.context.BaseDLViewFileVersionDisplay
 import com.liferay.document.library.display.context.DLViewFileVersionDisplayContext;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
@@ -38,11 +39,12 @@ public class FileVersionDiscussionDLViewFileVersionDisplayContext
 	public FileVersionDiscussionDLViewFileVersionDisplayContext(
 		DLViewFileVersionDisplayContext dlViewFileVersionDisplayContext,
 		HttpServletRequest request, HttpServletResponse response,
-		FileVersion fileVersion, ResourceBundleLoader resourceBundleLoader) {
+		FileVersion fileVersion, ResourceBundleLoader resourceBundleLoader,
+		StorageEngine storageEngine) {
 
 		super(
 			_UUID, dlViewFileVersionDisplayContext, request, response,
-			fileVersion);
+			fileVersion, storageEngine);
 
 		_resourceBundleLoader = resourceBundleLoader;
 	}

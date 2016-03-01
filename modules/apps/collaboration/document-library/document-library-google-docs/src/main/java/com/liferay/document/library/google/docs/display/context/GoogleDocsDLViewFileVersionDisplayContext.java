@@ -20,6 +20,7 @@ import com.liferay.document.library.google.docs.util.GoogleDocsConstants;
 import com.liferay.document.library.google.docs.util.GoogleDocsMetadataHelper;
 import com.liferay.document.library.google.docs.util.ResourceUtil;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
@@ -48,9 +49,12 @@ public class GoogleDocsDLViewFileVersionDisplayContext
 		DLViewFileVersionDisplayContext parentDLDisplayContext,
 		HttpServletRequest request, HttpServletResponse response,
 		FileVersion fileVersion,
-		GoogleDocsMetadataHelper googleDocsMetadataHelper) {
+		GoogleDocsMetadataHelper googleDocsMetadataHelper,
+		StorageEngine storageEngine) {
 
-		super(_UUID, parentDLDisplayContext, request, response, fileVersion);
+		super(
+			_UUID, parentDLDisplayContext, request, response, fileVersion,
+			storageEngine);
 
 		_googleDocsMetadataHelper = googleDocsMetadataHelper;
 

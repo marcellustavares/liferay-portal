@@ -17,6 +17,7 @@ package com.liferay.document.library.file.version.discussion.web.display;
 import com.liferay.document.library.display.context.BaseDLDisplayContextFactory;
 import com.liferay.document.library.display.context.DLDisplayContextFactory;
 import com.liferay.document.library.display.context.DLViewFileVersionDisplayContext;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 
@@ -41,7 +42,7 @@ public class FileVersionDiscussionDLViewFileVersionDisplayContextFactory
 
 		return new FileVersionDiscussionDLViewFileVersionDisplayContext(
 			parentDLViewFileVersionDisplayContext, request, response,
-			fileVersion, _resourceBundleLoader);
+			fileVersion, _resourceBundleLoader, _storageEngine);
 	}
 
 	@Reference(
@@ -54,6 +55,12 @@ public class FileVersionDiscussionDLViewFileVersionDisplayContextFactory
 		_resourceBundleLoader = resourceBundleLoader;
 	}
 
+	@Reference(unbind = "-")
+	protected void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
+	}
+
 	private ResourceBundleLoader _resourceBundleLoader;
+	private StorageEngine _storageEngine;
 
 }

@@ -26,6 +26,7 @@ import com.liferay.document.library.web.display.context.logic.FileVersionDisplay
 import com.liferay.document.library.web.display.context.logic.UIItemsBuilder;
 import com.liferay.document.library.web.display.context.util.DLRequestHelper;
 import com.liferay.document.library.web.display.context.util.JSPRenderer;
+import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
@@ -64,23 +65,26 @@ public class DefaultDLViewFileVersionDisplayContext
 			HttpServletRequest request, HttpServletResponse response,
 			FileShortcut fileShortcut,
 			DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
-			ResourceBundleLoader resourceBundleLoader)
+			ResourceBundleLoader resourceBundleLoader,
+			StorageEngine storageEngine)
 		throws PortalException {
 
 		this(
 			request, response, fileShortcut.getFileVersion(), fileShortcut,
-			dlMimeTypeDisplayContext, resourceBundleLoader);
+           dlMimeTypeDisplayContext, resourceBundleLoader,
+			storageEngine);
 	}
 
 	public DefaultDLViewFileVersionDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
 		FileVersion fileVersion,
 		DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
-		ResourceBundleLoader resourceBundleLoader) {
+		ResourceBundleLoader resourceBundleLoader,
+		StorageEngine storageEngine) {
 
 		this(
-			request, response, fileVersion, null, dlMimeTypeDisplayContext,
-			resourceBundleLoader);
+			request, response, fileVersion, null,
+	dlMimeTypeDisplayContext, resourceBundleLoader, storageEngine);
 	}
 
 	@Override
@@ -103,6 +107,13 @@ public class DefaultDLViewFileVersionDisplayContext
 
 		return StorageEngineManagerUtil.getDDMFormValues(
 			dlFileEntryMetadata.getDDMStorageId());
+	}
+
+	@Override
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
+		getDDMFormValues(long classPK) throws StorageException {
+
+		return _storageEngine.getDDMFormValues(classPK);
 	}
 
 	@Override
@@ -223,13 +234,14 @@ public class DefaultDLViewFileVersionDisplayContext
 		HttpServletRequest request, HttpServletResponse response,
 		FileVersion fileVersion, FileShortcut fileShortcut,
 		DLMimeTypeDisplayContext dlMimeTypeDisplayContext,
-		ResourceBundleLoader resourceBundleLoader) {
+		ResourceBundleLoader resourceBundleLoader,
+		StorageEngine storageEngine) {
 
 		try {
 			_fileVersion = fileVersion;
 			_dlMimeTypeDisplayContext = dlMimeTypeDisplayContext;
 			_resourceBundleLoader = resourceBundleLoader;
-
+			_storageEngine = storageEngine;
 			DLRequestHelper dlRequestHelper = new DLRequestHelper(request);
 
 			_dlPortletInstanceSettingsHelper =
@@ -307,6 +319,7 @@ public class DefaultDLViewFileVersionDisplayContext
 	private final FileVersionDisplayContextHelper
 		_fileVersionDisplayContextHelper;
 	private final ResourceBundleLoader _resourceBundleLoader;
+	private final StorageEngine _storageEngine;
 	private final UIItemsBuilder _uiItemsBuilder;
 
 }

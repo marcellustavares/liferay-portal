@@ -70,12 +70,14 @@ public class DDLDisplayContext {
 		HttpServletRequest request, DDL ddl,
 		DDLRecordSetLocalService ddlRecordSetLocalService,
 		DDLWebConfiguration ddlWebConfiguration,
-		DDMTemplateLocalService ddmTemplateLocalService) {
+		DDMTemplateLocalService ddmTemplateLocalService,
+		StorageEngine storageEngine) {
 
 		_ddl = ddl;
 		_ddlRecordSetLocalService = ddlRecordSetLocalService;
 		_ddlWebConfiguration = ddlWebConfiguration;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+		_storageEngine = storageEngine;
 
 		_ddlRequestHelper = new DDLRequestHelper(request);
 
@@ -582,5 +584,6 @@ public class DDLDisplayContext {
 	private Boolean _hasViewPermission;
 	private DDLRecordSet _recordSet;
 	private Boolean _showConfigurationIcon;
+	private final StorageEngine _storageEngine;
 
 }
