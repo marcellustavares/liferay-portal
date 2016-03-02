@@ -177,7 +177,7 @@ public class DDMStructurePermission {
 
 		return permissionChecker.hasPermission(
 			groupId, getResourceName(structurePermissionSupportServiceWrapper),
-			groupId,
+			getResourceName(structurePermissionSupportServiceWrapper),
 			getAddStructureActionId(structurePermissionSupportServiceWrapper));
 	}
 

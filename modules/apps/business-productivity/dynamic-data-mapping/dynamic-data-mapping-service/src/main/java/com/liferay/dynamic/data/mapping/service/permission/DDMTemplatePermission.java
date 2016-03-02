@@ -237,7 +237,7 @@ public class DDMTemplatePermission {
 		}
 
 		return permissionChecker.hasPermission(
-			groupId, resourceName, groupId,
+			groupId, resourceName, resourceName,
 			getAddTemplateActionId(templatePermissionSupportServiceWrapper));
 	}
 
