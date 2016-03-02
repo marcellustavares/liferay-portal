@@ -16,6 +16,8 @@ package com.liferay.asset.publisher.web.upgrade.v1_0_0;
 
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -29,6 +31,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -51,12 +54,15 @@ import javax.portlet.PortletPreferences;
 public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 
 	public UpgradePortletPreferences(
-		DateFormatFactoryUtil dateFormatFactoryUtil) {
+		DateFormatFactoryUtil dateFormatFactoryUtil,
+		DDMStructureLocalService ddmStructureLocalService) {
 
 		_newDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd");
 		_oldDateFormat = dateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyyMMddHHmmss");
+
+		_ddmStructureLocalService = ddmStructureLocalService;
 	}
 
 	protected JSONObject getDDMStructureJSONObject(long structureId)
@@ -69,35 +75,22 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			return ddmStructureJSONObject;
 		}
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		DDMStructure ddmStructure = _ddmStructureLocalService.fetchDDMStructure(
+			structureId);
 
-		try {
-			ps = connection.prepareStatement(
-				"select definition from DDMStructure where structureId = ?");
+		if (Validator.isNotNull(ddmStructure)) {
+			String definition = ddmStructure.getDefinition();
 
-			ps.setLong(1, structureId);
+			ddmStructureJSONObject = JSONFactoryUtil.createJSONObject(
+				definition);
 
-			rs = ps.executeQuery();
+			_ddmSructureJSONObjects.put(structureId, ddmStructureJSONObject);
 
-			if (rs.next()) {
-				String definition = rs.getString("definition");
-
-				ddmStructureJSONObject = JSONFactoryUtil.createJSONObject(
-					definition);
-
-				_ddmSructureJSONObjects.put(
-					structureId, ddmStructureJSONObject);
-
-				return ddmStructureJSONObject;
-			}
-
-			throw new UpgradeException(
-				"Unable to find dynamic data mapping structure " + structureId);
+			return ddmStructureJSONObject;
 		}
-		finally {
-			DataAccess.cleanUp(ps, rs);
-		}
+
+		throw new UpgradeException(
+			"Unable to find dynamic data mapping structure " + structureId);
 	}
 
 	protected JSONObject getFieldJSONObject(
@@ -280,6 +273,72 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 		}
 	}
 
+	protected void upgradeOrderByColumn(
+			PortletPreferences portletPreferences, String column)
+		throws Exception {
+
+		String value = GetterUtil.getString(
+			portletPreferences.getValue(column, null));
+
+		if (Validator.isNotNull(value) &&
+			(value.startsWith(DDM_FIELD_OLD_PREFIX) ||
+			 value.startsWith(DDM_FIELD_PREFIX))) {
+
+			String[] values = new String[0];
+
+			boolean isOldFormat = false;
+
+			if (value.startsWith(DDM_FIELD_OLD_PREFIX)) {
+				isOldFormat = true;
+				values = StringUtil.split(value, DDM_FIELD_OLD_SEPARATOR);
+			} else {
+				values = StringUtil.split(value, DDM_FIELD_SEPARATOR);
+			}
+
+			if (values.length == 4 && isOldFormat) {
+				value = StringUtil.replace(
+					value, DDM_FIELD_OLD_SEPARATOR, DDM_FIELD_SEPARATOR);
+			} else if (values.length == 3) {
+				long structureId = GetterUtil.getLong(values[1]);
+
+				JSONObject ddmStructureJSONObject = getDDMStructureJSONObject(
+					structureId);
+
+				JSONArray fieldsJSONArray = ddmStructureJSONObject.getJSONArray(
+					"fields");
+
+				JSONObject fieldJSONObject = getFieldJSONObject(
+					fieldsJSONArray, values[2]);
+
+				if (fieldJSONObject != null &&
+					Validator.isNotNull(
+						fieldJSONObject.getString("indexType"))) {
+
+					StringBundler sb = new StringBundler(7);
+					sb.append(values[0]);
+					sb.append(DDM_FIELD_SEPARATOR);
+					sb.append(fieldJSONObject.getString("indexType"));
+					sb.append(DDM_FIELD_SEPARATOR);
+					sb.append(values[1]);
+					sb.append(DDM_FIELD_SEPARATOR);
+					sb.append(values[2]);
+
+					value = sb.toString();
+				}
+			}
+
+			portletPreferences.setValue(column, value);
+		}
+	}
+
+	protected void upgradeOrderByColumns(PortletPreferences portletPreferences)
+		throws Exception {
+
+		upgradeOrderByColumn(portletPreferences, _ORDER_BY_COLUMN_1);
+
+		upgradeOrderByColumn(portletPreferences, _ORDER_BY_COLUMN_2);
+	}
+
 	@Override
 	protected String upgradePreferences(
 			long companyId, long ownerId, int ownerType, long plid,
@@ -315,6 +374,8 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 			else if (journalFilterByFieldEnable) {
 				upgradeJournalDateFieldValue(portletPreferences);
 			}
+
+			upgradeOrderByColumns(portletPreferences);
 		}
 
 		return PortletPreferencesFactoryUtil.toXML(portletPreferences);
@@ -350,6 +411,20 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 		}
 	}
 
+	private static final String DDM_FIELD_NAMESPACE = "ddm";
+
+	private static final String DDM_FIELD_OLD_PREFIX =
+		DDM_FIELD_NAMESPACE + StringPool.FORWARD_SLASH;
+
+	private static final String DDM_FIELD_OLD_SEPARATOR =
+		StringPool.FORWARD_SLASH;
+
+	private static final String DDM_FIELD_PREFIX =
+		DDM_FIELD_NAMESPACE + StringPool.DOUBLE_UNDERLINE;
+
+	private static final String DDM_FIELD_SEPARATOR =
+		StringPool.DOUBLE_UNDERLINE;
+
 	private static final String _DDM_STRUCTURE_FIELD_NAME =
 		"ddmStructureFieldName";
 
@@ -368,9 +443,14 @@ public class UpgradePortletPreferences extends BaseUpgradePortletPreferences {
 	private static final String _JOURNAL_FILTER_BY_FIELD_ENABLED_KEY =
 		"subtypeFieldsFilterEnabledJournalArticleAssetRendererFactory";
 
+	private static final String _ORDER_BY_COLUMN_1 = "orderByColumn1";
+
+	private static final String _ORDER_BY_COLUMN_2 = "orderByColumn2";
+
 	private static final Map<Long, JSONObject> _ddmSructureJSONObjects =
 		new HashMap<>();
 
+	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DateFormat _newDateFormat;
 	private final DateFormat _oldDateFormat;
 
