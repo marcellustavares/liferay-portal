@@ -35,9 +35,12 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.service.base.DDMStructureLocalServiceBaseImpl;
 import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDM;
-import com.liferay.dynamic.data.mapping.util.DDMXMLUtil;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
+import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.dynamic.data.mapping.util.impl.DDMFormTemplateSynchonizer;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
@@ -45,6 +48,7 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -221,7 +225,7 @@ public class DDMStructureLocalServiceImpl
 			String storageType, int type, ServiceContext serviceContext)
 		throws PortalException {
 
-		DDMXMLUtil.validateXML(definition);
+		ddmXML.validateXML(definition);
 
 		DDMForm ddmForm = ddmFormXSDDeserializer.deserialize(definition);
 
@@ -344,7 +348,7 @@ public class DDMStructureLocalServiceImpl
 			String storageType, int type, ServiceContext serviceContext)
 		throws PortalException {
 
-		DDMXMLUtil.validateXML(definition);
+		ddmXML.validateXML(definition);
 
 		DDMForm ddmForm = ddmFormXSDDeserializer.deserialize(definition);
 
@@ -398,6 +402,15 @@ public class DDMStructureLocalServiceImpl
 			structure.getCompanyId(), structure.getGroupId(),
 			structure.getUserId(), resourceName, structure.getStructureId(),
 			modelPermissions);
+	}
+
+	@Override
+	public Fields convert(
+			DDMStructure ddmStructure, DDMFormValues ddmFormValues)
+		throws PortalException {
+
+		return ddmFormValuesToFieldsConverter.convert(
+			ddmStructure, ddmFormValues);
 	}
 
 	/**
@@ -762,6 +775,12 @@ public class DDMStructureLocalServiceImpl
 		return ddmStructurePersistence.findByC_C(
 			companyId, classNameId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			orderByComparator);
+	}
+
+	public JSONArray getDDMFormFieldsJSONArray(
+		DDMStructure ddmStructure, String script) {
+
+		return ddm.getDDMFormFieldsJSONArray(ddmStructure, script);
 	}
 
 	/**
@@ -1337,7 +1356,7 @@ public class DDMStructureLocalServiceImpl
 		long userId = PortalUtil.getValidUserId(
 			structure.getCompanyId(), serviceContext.getUserId());
 
-		DDMXMLUtil.validateXML(definition);
+		ddmXML.validateXML(definition);
 
 		DDMForm ddmForm = ddmFormXSDDeserializer.deserialize(definition);
 
@@ -1380,7 +1399,7 @@ public class DDMStructureLocalServiceImpl
 		long userId = PortalUtil.getValidUserId(
 			structure.getCompanyId(), serviceContext.getUserId());
 
-		DDMXMLUtil.validateXML(definition);
+		ddmXML.validateXML(definition);
 
 		DDMForm ddmForm = ddmFormXSDDeserializer.deserialize(definition);
 
@@ -1389,6 +1408,16 @@ public class DDMStructureLocalServiceImpl
 		return doUpdateStructure(
 			userId, parentStructureId, nameMap, descriptionMap, ddmForm,
 			ddmFormLayout, serviceContext, structure);
+	}
+
+	@Override
+	public String updateXMLDefaultLocale(
+		DDMStructure structure, Locale contentDefaultLocale,
+		Locale contentNewDefaultLocale) {
+
+		return ddmXML.updateXMLDefaultLocale(
+			structure.getDefinition(), contentDefaultLocale,
+			contentNewDefaultLocale);
 	}
 
 	/**
@@ -1415,7 +1444,7 @@ public class DDMStructureLocalServiceImpl
 		long userId = PortalUtil.getValidUserId(
 			structure.getCompanyId(), serviceContext.getUserId());
 
-		DDMXMLUtil.validateXML(definition);
+		ddmXML.validateXML(definition);
 
 		DDMForm ddmForm = ddmFormXSDDeserializer.deserialize(definition);
 
@@ -1781,7 +1810,13 @@ public class DDMStructureLocalServiceImpl
 	@ServiceReference(type = DDMFormValidator.class)
 	protected DDMFormValidator ddmFormValidator;
 
+	@ServiceReference(type = DDMFormValuesToFieldsConverter.class)
+	protected DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter;
+
 	@ServiceReference(type = DDMFormXSDDeserializer.class)
 	protected DDMFormXSDDeserializer ddmFormXSDDeserializer;
+
+	@ServiceReference(type = DDMXML.class)
+	protected DDMXML ddmXML;
 
 }

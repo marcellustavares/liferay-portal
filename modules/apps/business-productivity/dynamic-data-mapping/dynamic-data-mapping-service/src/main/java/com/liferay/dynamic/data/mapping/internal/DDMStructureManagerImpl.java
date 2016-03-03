@@ -23,11 +23,12 @@ import com.liferay.dynamic.data.mapping.kernel.DDMStructureManager;
 import com.liferay.dynamic.data.mapping.kernel.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.kernel.RequiredStructureException;
 import com.liferay.dynamic.data.mapping.kernel.StructureDefinitionException;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
-import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureIdComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureStructureKeyComparator;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -60,7 +61,7 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 			_ddmStructureLocalService.getStructure(structureId);
 
-		DDMIndexerUtil.addAttributes(
+		_ddmIndexer.addAttributes(
 			document, ddmStructure,
 			_ddmBeanTranslator.translate(ddmFormValues));
 	}
@@ -109,7 +110,7 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
 			_ddmStructureLocalService.getStructure(structureId);
 
-		return DDMIndexerUtil.extractAttributes(
+		return _ddmIndexer.extractIndexableAttributes(
 			ddmStructure, _ddmBeanTranslator.translate(ddmFormValues), locale);
 	}
 
@@ -210,6 +211,56 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 	}
 
 	@Override
+	public com.liferay.dynamic.data.mapping.kernel.DDMForm getDDMForm(
+		long structureId) {
+
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.fetchDDMStructure(structureId);
+
+		if (ddmStructure == null) {
+			return null;
+		}
+
+		return _ddmBeanTranslator.translate(ddmStructure.getDDMForm());
+	}
+
+	@Override
+	public com.liferay.dynamic.data.mapping.kernel.DDMFormField getDDMFormField(
+			long structureId, String fieldName)
+		throws PortalException {
+
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.fetchDDMStructure(structureId);
+
+		if (ddmStructure == null) {
+			return null;
+		}
+
+		return _ddmBeanTranslator.translate(
+			ddmStructure.getDDMFormField(fieldName));
+	}
+
+	@Override
+	public List<com.liferay.dynamic.data.mapping.kernel.DDMFormField>
+			getDDMFormFields(long structureId, boolean includeTransientFields)
+		throws PortalException {
+
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getStructure(structureId);
+
+		List<com.liferay.dynamic.data.mapping.kernel.DDMFormField>
+			ddmFormFields = new ArrayList<>();
+
+		for (com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField :
+				ddmStructure.getDDMFormFields(includeTransientFields)) {
+
+			ddmFormFields.add(_ddmBeanTranslator.translate(ddmFormField));
+		}
+
+		return ddmFormFields;
+	}
+
+	@Override
 	public JSONArray getDDMFormFieldsJSONArray(long structureId, String script)
 		throws PortalException {
 
@@ -222,6 +273,16 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 	@Override
 	public Class<?> getDDMStructureModelClass() {
 		return com.liferay.dynamic.data.mapping.model.DDMStructure.class;
+	}
+
+	@Override
+	public DDMForm getFullHierarchyDDMForm(long structureId)
+		throws PortalException {
+
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure =
+			_ddmStructureLocalService.getStructure(structureId);
+		return _ddmBeanTranslator.translate(
+			ddmStructure.getFullHierarchyDDMForm());
 	}
 
 	@Override
@@ -376,6 +437,11 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStorageLinkLocalService(
 		DDMStorageLinkLocalService ddmStorageLinkLocalService) {
 
@@ -431,6 +497,7 @@ public class DDMStructureManagerImpl implements DDMStructureManager {
 
 	private DDM _ddm;
 	private DDMBeanTranslator _ddmBeanTranslator;
+	private DDMIndexer _ddmIndexer;
 	private DDMStorageLinkLocalService _ddmStorageLinkLocalService;
 	private DDMStructureLocalService _ddmStructureLocalService;
 

@@ -92,7 +92,9 @@ public class DDMStructureClassType implements ClassType {
 		DDMStructure ddmStructure = DDMStructureManagerUtil.getStructure(
 			ddmStructureId);
 
-		List<DDMFormField> ddmFormFields = ddmStructure.getDDMFormFields(false);
+		List<DDMFormField> ddmFormFields =
+			DDMStructureManagerUtil.getDDMFormFields(
+				ddmStructure.getStructureId(), false);
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			String indexType = ddmFormField.getIndexType();

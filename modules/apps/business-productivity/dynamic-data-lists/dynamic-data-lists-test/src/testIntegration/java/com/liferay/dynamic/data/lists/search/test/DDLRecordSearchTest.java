@@ -28,6 +28,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -50,6 +51,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.permission.SimplePermissionChecker;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +83,7 @@ public class DDLRecordSearchTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDM();
 		setUpPermissionThreadLocal();
 		setUpPrincipalThreadLocal();
 
@@ -260,7 +264,7 @@ public class DDLRecordSearchTest {
 
 		DDMStructureTestHelper ddmStructureTestHelper =
 			new DDMStructureTestHelper(
-				PortalUtil.getClassNameId(DDLRecordSet.class), _group);
+				PortalUtil.getClassNameId(DDLRecordSet.class), _ddm, _group);
 
 		DDMStructure ddmStructure = ddmStructureTestHelper.addStructure(
 			createDDMForm(), StorageType.JSON.toString());
@@ -344,6 +348,12 @@ public class DDLRecordSearchTest {
 		return true;
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected void setUpPermissionThreadLocal() throws Exception {
 		_originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -370,6 +380,8 @@ public class DDLRecordSearchTest {
 
 		PrincipalThreadLocal.setName(TestPropsValues.getUserId());
 	}
+
+	private DDM _ddm;
 
 	@DeleteAfterTestRun
 	private Group _group;

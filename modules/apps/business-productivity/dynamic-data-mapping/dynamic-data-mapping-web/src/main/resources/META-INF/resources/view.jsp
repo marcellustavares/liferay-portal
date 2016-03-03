@@ -29,7 +29,7 @@ PortletURL iteratorURL = renderResponse.createRenderURL();
 
 StructureSearch structureSearch = new StructureSearch(renderRequest, iteratorURL);
 
-OrderByComparator<DDMStructure> orderByComparator = DDMUtil.getStructureOrderByComparator(ddmDisplayContext.getOrderByCol(), ddmDisplayContext.getOrderByType());
+OrderByComparator<DDMStructure> orderByComparator = ddmDisplayContext.getStructureOrderByComparator(ddmDisplayContext.getOrderByCol(), ddmDisplayContext.getOrderByType());
 
 structureSearch.setOrderByCol(ddmDisplayContext.getOrderByCol());
 structureSearch.setOrderByComparator(orderByComparator);

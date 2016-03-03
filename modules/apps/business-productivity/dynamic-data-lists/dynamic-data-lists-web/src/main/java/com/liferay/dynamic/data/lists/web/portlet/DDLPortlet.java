@@ -29,6 +29,9 @@ import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.DDLDisplayContext;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.log.Log;
@@ -109,7 +112,8 @@ public class DDLPortlet extends MVCPortlet {
 
 			DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(
 				request, _ddl, _ddlRecordSetLocalService, _ddlWebConfiguration,
-				_ddmTemplateLocalService);
+				_ddm, _ddmDisplayRegistry, _ddmTemplateLocalService,
+				_storageEngine);
 
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT, ddlDisplayContext);
@@ -155,10 +159,25 @@ public class DDLPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	public void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
+	public void setDDMDisplayRegistry(DDMDisplayRegistry ddmDisplayRegistry) {
+		_ddmDisplayRegistry = ddmDisplayRegistry;
+	}
+
+	@Reference(unbind = "-")
 	public void setDDMTemplateLocalService(
 		DDMTemplateLocalService ddmTemplateLocalService) {
 
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+	}
+
+	@Reference(unbind = "-")
+	public void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
 	}
 
 	@Activate
@@ -234,6 +253,9 @@ public class DDLPortlet extends MVCPortlet {
 	private DDLRecordSetLocalService _ddlRecordSetLocalService;
 	private DDLRecordSetService _ddlRecordSetService;
 	private volatile DDLWebConfiguration _ddlWebConfiguration;
+	private DDM _ddm;
+	private DDMDisplayRegistry _ddmDisplayRegistry;
 	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private StorageEngine _storageEngine;
 
 }

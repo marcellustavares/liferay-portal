@@ -31,6 +31,9 @@ import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfigurat
 import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.display.context.AssetEntryResult;
 import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
+import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -60,6 +63,7 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.SubscriptionLocalService;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -326,6 +330,12 @@ public class AssetPublisherUtil {
 			});
 
 		actionableDynamicQuery.performActions();
+	}
+
+	public static String encodeName(
+		long ddmStructureId, String fieldName, Locale locale) {
+
+		return _ddmIndexer.encodeName(ddmStructureId, fieldName, locale);
 	}
 
 	public static String filterAssetTagNames(
@@ -929,6 +939,13 @@ public class AssetPublisherUtil {
 		}
 	}
 
+	public static Serializable getDisplayFieldValue(
+			ThemeDisplay themeDisplay, Serializable fieldValue, String type)
+		throws Exception {
+
+		return _ddm.getDisplayFieldValue(themeDisplay, fieldValue, type);
+	}
+
 	public static Map<Locale, String> getEmailAssetEntryAddedBodyMap(
 		PortletPreferences portletPreferences) {
 
@@ -1046,6 +1063,14 @@ public class AssetPublisherUtil {
 		return PortalUtil.getEmailFromName(
 			portletPreferences, companyId,
 			AssetPublisherWebConfigurationValues.EMAIL_FROM_NAME);
+	}
+
+	public static Fields getFields(
+			long ddmStructureId, String fieldNamespace,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return _ddm.getFields(ddmStructureId, fieldNamespace, serviceContext);
 	}
 
 	public static long getGroupIdFromScopeId(
@@ -1688,6 +1713,16 @@ public class AssetPublisherUtil {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMIndexer(DDMIndexer ddmIndexer) {
+		_ddmIndexer = ddmIndexer;
+	}
+
+	@Reference(unbind = "-")
 	protected void setGroupLocalService(GroupLocalService groupLocalService) {
 		_groupLocalService = groupLocalService;
 	}
@@ -1889,6 +1924,8 @@ public class AssetPublisherUtil {
 	private static AssetEntryLocalService _assetEntryLocalService;
 	private static AssetEntryService _assetEntryService;
 	private static AssetTagLocalService _assetTagLocalService;
+	private static DDM _ddm;
+	private static DDMIndexer _ddmIndexer;
 	private static GroupLocalService _groupLocalService;
 	private static LayoutLocalService _layoutLocalService;
 	private static PortletPreferencesLocalService

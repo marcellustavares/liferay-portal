@@ -247,6 +247,13 @@ public class DDMStructureLocalServiceUtil {
 		getService().addStructureResources(structure, modelPermissions);
 	}
 
+	public static com.liferay.dynamic.data.mapping.storage.Fields convert(
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure,
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().convert(ddmStructure, ddmFormValues);
+	}
+
 	/**
 	* Copies a structure, creating a new structure with all the values
 	* extracted from the original one. The new structure supports a new name
@@ -613,6 +620,12 @@ public class DDMStructureLocalServiceUtil {
 		long companyId, long classNameId, int start, int end) {
 		return getService()
 				   .getClassStructures(companyId, classNameId, start, end);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONArray getDDMFormFieldsJSONArray(
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure,
+		java.lang.String script) {
+		return getService().getDDMFormFieldsJSONArray(ddmStructure, script);
 	}
 
 	/**
@@ -1246,6 +1259,15 @@ public class DDMStructureLocalServiceUtil {
 		return getService()
 				   .updateStructure(userId, structureId, parentStructureId,
 			nameMap, descriptionMap, ddmForm, ddmFormLayout, serviceContext);
+	}
+
+	public static java.lang.String updateXMLDefaultLocale(
+		com.liferay.dynamic.data.mapping.model.DDMStructure structure,
+		java.util.Locale contentDefaultLocale,
+		java.util.Locale contentNewDefaultLocale) {
+		return getService()
+				   .updateXMLDefaultLocale(structure, contentDefaultLocale,
+			contentNewDefaultLocale);
 	}
 
 	/**

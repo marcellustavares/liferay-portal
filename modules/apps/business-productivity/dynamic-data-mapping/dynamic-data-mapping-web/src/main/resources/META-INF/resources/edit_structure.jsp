@@ -59,10 +59,10 @@ else {
 JSONArray fieldsJSONArray = null;
 
 if (structure != null) {
-	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structureVersion, script);
+	fieldsJSONArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structureVersion, script);
 }
 else {
-	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+	fieldsJSONArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structure, script);
 }
 
 String fieldsJSONArrayString = StringPool.BLANK;
@@ -259,7 +259,7 @@ if (Validator.isNotNull(requestUpdateStructureURL)) {
 											<aui:select disabled="<%= structure != null %>" name="storageType">
 
 											<%
-											for (String storageType : StorageType.getTypes()) {
+											for (String storageType : ddmDisplayContext.getStorageTypes()) {
 											%>
 
 												<aui:option label="<%= storageType %>" value="<%= storageType %>" />

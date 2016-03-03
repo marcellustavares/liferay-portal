@@ -22,6 +22,8 @@ import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleResource;
@@ -238,6 +240,18 @@ public class JournalArticleAssetRendererFactory
 			permissionChecker, classPK, actionId);
 	}
 
+	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
+	}
+
+	@Reference(unbind = "-")
+	public void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
+	}
+
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.journal.web)", unbind = "-"
 	)
@@ -251,6 +265,9 @@ public class JournalArticleAssetRendererFactory
 		JournalArticleAssetRenderer journalArticleAssetRenderer =
 			new JournalArticleAssetRenderer(article);
 
+		journalArticleAssetRenderer.setDDMBeanTranslator(_ddmBeanTranslator);
+		journalArticleAssetRenderer.setFieldsToDDMFormValuesConverter(
+			_fieldsToDDMFormValuesConverter);
 		journalArticleAssetRenderer.setJournalContent(_journalContent);
 		journalArticleAssetRenderer.setJournalConverter(_journalConverter);
 
@@ -296,7 +313,9 @@ public class JournalArticleAssetRendererFactory
 		_journalConverter = journalConverter;
 	}
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMStructureLocalService _ddmStructureLocalService;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private JournalArticleLocalService _journalArticleLocalService;
 	private JournalArticleResourceLocalService
 		_journalArticleResourceLocalService;

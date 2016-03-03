@@ -19,8 +19,8 @@ import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.Fields;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
-import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverterUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -47,9 +47,8 @@ final class JournalArticleDDMFormValuesReader extends BaseDDMFormValuesReader {
 			Fields fields = _journalConverter.getDDMFields(
 				ddmStructure, _article.getContent());
 
-			return DDMBeanTranslatorUtil.translate(
-				FieldsToDDMFormValuesConverterUtil.convert(
-					ddmStructure, fields));
+			return _ddmBeanTranslator.translate(
+				_fieldsToDDMFormValuesConverter.convert(ddmStructure, fields));
 		}
 		catch (Exception e) {
 			throw new PortalException(
@@ -61,6 +60,18 @@ final class JournalArticleDDMFormValuesReader extends BaseDDMFormValuesReader {
 		_journalConverter = journalConverter;
 	}
 
+	public void setFieldsToDDMFormValuesConverter(
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
+
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
+	}
+
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
+	}
+
 	private final JournalArticle _article;
+	private DDMBeanTranslator _ddmBeanTranslator;
+	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private JournalConverter _journalConverter;
 }

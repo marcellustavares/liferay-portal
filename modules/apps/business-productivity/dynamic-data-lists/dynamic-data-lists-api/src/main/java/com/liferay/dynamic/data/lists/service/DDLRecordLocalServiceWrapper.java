@@ -369,6 +369,13 @@ public class DDLRecordLocalServiceWrapper implements DDLRecordLocalService,
 	}
 
 	@Override
+	public com.liferay.dynamic.data.mapping.storage.DDMFormValues getDDMFormValues(
+		long classPK)
+		throws com.liferay.dynamic.data.mapping.exception.StorageException {
+		return _ddlRecordLocalService.getDDMFormValues(classPK);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
 		return _ddlRecordLocalService.getExportActionableDynamicQuery(portletDataContext);
