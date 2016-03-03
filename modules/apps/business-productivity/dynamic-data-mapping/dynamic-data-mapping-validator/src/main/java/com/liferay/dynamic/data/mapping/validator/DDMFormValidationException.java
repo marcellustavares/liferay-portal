@@ -268,19 +268,19 @@ public class DDMFormValidationException extends PortalException {
 					fieldName, expression));
 
 			_fieldName = fieldName;
-			_expression = expression;
-		}
-
-		public String getExpression() {
-			return _expression;
+			_visibilityExpression = expression;
 		}
 
 		public String getFieldName() {
 			return _fieldName;
 		}
 
-		private final String _expression;
+		public String getVisibilityExpression() {
+			return _visibilityExpression;
+		}
+
 		private String _fieldName;
+		private final String _visibilityExpression;
 
 	}
 
