@@ -443,29 +443,6 @@ public class DDMImpl implements DDM {
 	}
 
 	@Override
-	public String[] getFieldsDisplayValues(Field fieldsDisplayField)
-		throws Exception {
-
-		DDMStructure ddmStructure = fieldsDisplayField.getDDMStructure();
-
-		List<String> fieldsDisplayValues = new ArrayList<>();
-
-		String[] values = splitFieldsDisplayValue(fieldsDisplayField);
-
-		for (String value : values) {
-			String fieldName = StringUtil.extractFirst(
-				value, DDMImpl.INSTANCE_SEPARATOR);
-
-			if (ddmStructure.hasField(fieldName)) {
-				fieldsDisplayValues.add(fieldName);
-			}
-		}
-
-		return fieldsDisplayValues.toArray(
-			new String[fieldsDisplayValues.size()]);
-	}
-
-	@Override
 	public Serializable getIndexedFieldValue(
 			Serializable fieldValue, String type)
 		throws Exception {

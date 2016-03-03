@@ -346,8 +346,9 @@ public class JournalConverterImpl implements JournalConverter {
 
 		Field fieldsDisplayField = ddmFields.get(DDMImpl.FIELDS_DISPLAY_NAME);
 
-		String[] fieldsDisplayValues = _ddm.getFieldsDisplayValues(
-			fieldsDisplayField);
+		String[] fieldsDisplayValues =
+			_fieldsToDDMFormValuesConverter.getDDMFieldsDisplayValues(
+				fieldsDisplayField);
 
 		int offset = -1;
 
