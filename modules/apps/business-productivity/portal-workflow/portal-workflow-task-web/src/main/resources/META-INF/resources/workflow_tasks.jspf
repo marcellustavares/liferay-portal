@@ -46,7 +46,7 @@
 				/>
 
 				<liferay-ui:search-container-column-text
-					colspan="<%= 2 %>"
+					colspan="<%= 2 %>".
 				>
 					<h5 class="text-default">
 
