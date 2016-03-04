@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.util;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
 
@@ -25,6 +26,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 public interface FieldsToDDMFormValuesConverter {
 
 	public DDMFormValues convert(DDMStructure ddmStructure, Fields fields)
+		throws PortalException;
+
+	public String[] getDDMFieldsDisplayValues(Field ddmFieldsDisplayField)
 		throws PortalException;
 
 }

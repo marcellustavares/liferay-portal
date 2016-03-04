@@ -25,6 +25,7 @@ import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalService;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -41,6 +42,7 @@ public class LegacyGoogleDocsMigration {
 		DLFileEntryTypeLocalService dlFileEntryTypeLocalService,
 		DLFileEntryLocalService dlFileEntryLocalService,
 		DLFileEntryMetadataLocalService dlFileEntryMetadataLocalService,
+		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter,
 		GoogleDocsDLFileEntryTypeHelper googleDocsDLFileEntryTypeHelper,
 		StorageEngine storageEngine) {
 
@@ -49,6 +51,7 @@ public class LegacyGoogleDocsMigration {
 		_dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
 		_dlFileEntryLocalService = dlFileEntryLocalService;
 		_dlFileEntryMetadataLocalService = dlFileEntryMetadataLocalService;
+		_fieldsToDDMFormValuesConverter = fieldsToDDMFormValuesConverter;
 		_googleDocsDLFileEntryTypeHelper = googleDocsDLFileEntryTypeHelper;
 		_storageEngine = storageEngine;
 
@@ -122,7 +125,8 @@ public class LegacyGoogleDocsMigration {
 					GoogleDocsMetadataHelper googleDocsMetadataHelper =
 						new GoogleDocsMetadataHelper(
 							_ddmStructureLocalService, dlFileEntry,
-							_dlFileEntryMetadataLocalService, _storageEngine);
+							_dlFileEntryMetadataLocalService,
+							_fieldsToDDMFormValuesConverter, _storageEngine);
 
 					LegacyGoogleDocsMetadataHelper
 						legacyGoogleDocsMetadataHelper =
@@ -168,6 +172,8 @@ public class LegacyGoogleDocsMigration {
 		_dlFileEntryMetadataLocalService;
 	private DLFileEntryType _dlFileEntryType;
 	private final DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
+	private final FieldsToDDMFormValuesConverter
+		_fieldsToDDMFormValuesConverter;
 	private final GoogleDocsDLFileEntryTypeHelper
 		_googleDocsDLFileEntryTypeHelper;
 	private final StorageEngine _storageEngine;

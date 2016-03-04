@@ -15,6 +15,7 @@
 package com.liferay.journal.util;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.xml.Document;
@@ -26,6 +27,9 @@ import java.util.Locale;
  * @author Bruno Basto
  */
 public interface JournalConverter {
+
+	public DDMFormValues convert(DDMStructure ddmStructure, Fields fields)
+		throws PortalException;
 
 	public String getContent(DDMStructure ddmStructure, Fields ddmFields)
 		throws Exception;
