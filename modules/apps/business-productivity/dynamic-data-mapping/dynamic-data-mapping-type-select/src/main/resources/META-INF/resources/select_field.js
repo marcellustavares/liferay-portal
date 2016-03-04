@@ -17,7 +17,7 @@ AUI.add(
 					},
 
 					dataSourceURL: {
-						value: '/o/dynamic-data-mapping-data-provider/'
+						valueFn: '_valueDataSourceURL'
 					},
 
 					ddmDataProviderInstanceId: {
@@ -207,6 +207,20 @@ AUI.add(
 
 					_setValue: function(val) {
 						return val || [];
+					},
+
+					_valueDataSourceURL: function() {
+						var instance = this;
+
+						var dataSourceURL;
+
+						var form = instance.getRoot();
+
+						if (form) {
+							dataSourceURL = form.get('dataSourceURL');
+						}
+
+						return dataSourceURL;
 					}
 				}
 			}

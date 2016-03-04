@@ -83,6 +83,8 @@ AUI.add(
 						var fieldDefinition = RendererUtil.getFieldByKey(definition, fieldName);
 
 						fieldDefinition.dataProviders = builder.get('dataProviders');
+						fieldDefinition.dataSourceURL = builder.get('dataSourceURL');
+						fieldDefinition.evaluationURL = builder.get('evaluationURL');
 						fieldDefinition.parent = builder;
 						fieldDefinition.portletNamespace = builder.get('portletNamespace');
 						fieldDefinition.readOnly = true;

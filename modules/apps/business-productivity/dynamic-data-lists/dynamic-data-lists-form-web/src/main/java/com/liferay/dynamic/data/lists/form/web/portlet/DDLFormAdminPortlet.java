@@ -71,6 +71,8 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import javax.servlet.ServletContext;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -393,6 +395,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				_ddlFormWebConfigurationActivator.getDDLFormWebConfiguration(),
 				_ddlRecordLocalService, _ddlRecordSetService,
 				_ddmDataProviderInstanceLocalService,
+				_ddmDataProviderServletContext, _ddmFormEvaluatorServletContext,
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
@@ -431,6 +434,13 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDLRecordSetService _ddlRecordSetService;
 	private DDMDataProviderInstanceLocalService
 		_ddmDataProviderInstanceLocalService;
+
+	@Reference(target = "(osgi.web.symbolicname=com.liferay.dynamic.data.mapping.data.provider)")
+	private ServletContext _ddmDataProviderServletContext;
+
+	@Reference(target = "(osgi.web.symbolicname=com.liferay.dynamic.data.mapping.form.evaluator)")
+	private ServletContext _ddmFormEvaluatorServletContext;
+
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;

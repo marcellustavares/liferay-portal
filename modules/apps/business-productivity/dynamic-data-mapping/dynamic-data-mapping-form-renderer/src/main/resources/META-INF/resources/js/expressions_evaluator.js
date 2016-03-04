@@ -9,7 +9,7 @@ AUI.add(
 					},
 
 					evaluationURL: {
-						value: '/o/dynamic-data-mapping-form-evaluator/'
+						valueFn: '_valueEvaluationURL'
 					},
 
 					form: {
@@ -98,6 +98,20 @@ AUI.add(
 								}
 							}
 						);
+					},
+
+					_valueEvaluationURL: function() {
+						var instance = this;
+
+						var evaluationURL;
+
+						var form = instance.get('form');
+
+						if (form) {
+							evaluationURL = form.get('evaluationURL');
+						}
+
+						return evaluationURL;
 					}
 				}
 			}
