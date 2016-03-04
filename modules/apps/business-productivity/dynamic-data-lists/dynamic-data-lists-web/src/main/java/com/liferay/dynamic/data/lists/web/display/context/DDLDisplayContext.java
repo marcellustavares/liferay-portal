@@ -29,9 +29,11 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.util.DDLRequestHelper;
 import com.liferay.dynamic.data.lists.web.search.RecordSetSearch;
+import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil;
@@ -168,6 +170,12 @@ public class DDLDisplayContext {
 		}
 
 		return orderByComparator;
+	}
+
+	public DDMFormValues getDDMFormValues(long classPK)
+		throws StorageException {
+
+		return _storageEngine.getDDMFormValues(classPK);
 	}
 
 	public long getDisplayDDMTemplateId() {

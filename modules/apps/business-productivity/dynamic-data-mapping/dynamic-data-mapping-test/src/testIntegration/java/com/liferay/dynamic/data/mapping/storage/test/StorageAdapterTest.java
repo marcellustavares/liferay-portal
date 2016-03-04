@@ -65,6 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -89,14 +90,14 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
+	}
 
-		Registry registry = RegistryUtil.getRegistry();
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
 
-		StorageAdapterRegistry storageAdapterRegistry = registry.getService(
-			StorageAdapterRegistry.class);
-
-		_jsonStorageAdapter = storageAdapterRegistry.getStorageAdapter(
-			StorageType.JSON.toString());
+		setUpJsonStorageAdapter();
 	}
 
 	@Test
@@ -686,6 +687,16 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		sb.append("\"}");
 
 		return sb.toString();
+	}
+
+	protected void setUpJsonStorageAdapter() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		StorageAdapterRegistry storageAdapterRegistry = registry.getService(
+			StorageAdapterRegistry.class);
+
+		_jsonStorageAdapter = storageAdapterRegistry.getStorageAdapter(
+			StorageType.JSON.toString());
 	}
 
 	protected void validate(long ddmStructureId, Fields fields)
