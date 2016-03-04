@@ -27,9 +27,9 @@ import com.liferay.document.library.web.display.context.logic.UIItemsBuilder;
 import com.liferay.document.library.web.display.context.util.DLRequestHelper;
 import com.liferay.document.library.web.display.context.util.JSPRenderer;
 import com.liferay.dynamic.data.mapping.exception.StorageException;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
-import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -71,8 +71,7 @@ public class DefaultDLViewFileVersionDisplayContext
 
 		this(
 			request, response, fileShortcut.getFileVersion(), fileShortcut,
-           dlMimeTypeDisplayContext, resourceBundleLoader,
-			storageEngine);
+			dlMimeTypeDisplayContext, resourceBundleLoader, storageEngine);
 	}
 
 	public DefaultDLViewFileVersionDisplayContext(
@@ -83,8 +82,8 @@ public class DefaultDLViewFileVersionDisplayContext
 		StorageEngine storageEngine) {
 
 		this(
-			request, response, fileVersion, null,
-	dlMimeTypeDisplayContext, resourceBundleLoader, storageEngine);
+			request, response, fileVersion, null, dlMimeTypeDisplayContext,
+			resourceBundleLoader, storageEngine);
 	}
 
 	@Override
@@ -105,7 +104,7 @@ public class DefaultDLViewFileVersionDisplayContext
 			DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(
 				ddmStructure.getStructureId(), _fileVersion.getFileVersionId());
 
-		return StorageEngineManagerUtil.getDDMFormValues(
+		return _storageEngine.getDDMFormValues(
 			dlFileEntryMetadata.getDDMStorageId());
 	}
 

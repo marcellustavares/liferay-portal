@@ -14,9 +14,8 @@
 
 package com.liferay.document.library.display.context;
 
-import com.liferay.dynamic.data.mapping.exception.StorageException;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
 import com.liferay.portal.kernel.servlet.taglib.ui.ToolbarItem;
@@ -40,8 +39,8 @@ public interface DLViewFileVersionDisplayContext extends DLDisplayContext {
 	public DDMFormValues getDDMFormValues(DDMStructure ddmStructure)
 		throws PortalException;
 
-	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
-		getDDMFormValues(long classPK) throws StorageException;
+	public DDMFormValues getDDMFormValues(long ddmStorageId)
+		throws PortalException;
 
 	public List<DDMStructure> getDDMStructures() throws PortalException;
 

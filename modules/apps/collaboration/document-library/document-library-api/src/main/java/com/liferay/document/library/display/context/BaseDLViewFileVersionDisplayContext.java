@@ -14,9 +14,8 @@
 
 package com.liferay.document.library.display.context;
 
-import com.liferay.dynamic.data.mapping.exception.StorageException;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileVersion;
@@ -64,10 +63,10 @@ public class BaseDLViewFileVersionDisplayContext
 	}
 
 	@Override
-	public com.liferay.dynamic.data.mapping.storage.DDMFormValues
-		getDDMFormValues(long classPK) throws StorageException {
+	public DDMFormValues getDDMFormValues(long ddmStorageId)
+		throws PortalException {
 
-		return storageEngine.getDDMFormValues(classPK);
+		return storageEngine.getDDMFormValues(ddmStorageId);
 	}
 
 	@Override

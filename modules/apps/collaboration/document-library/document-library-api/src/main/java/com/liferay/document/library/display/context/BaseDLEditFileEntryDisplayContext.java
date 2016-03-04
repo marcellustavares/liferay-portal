@@ -45,7 +45,7 @@ public class BaseDLEditFileEntryDisplayContext
 		super(uuid, parentDLEditFileEntryDisplayContext, request, response);
 
 		this.dlFileEntryType = dlFileEntryType;
-		_storageEngine = storageEngine;
+		this.storageEngine = storageEngine;
 	}
 
 	public BaseDLEditFileEntryDisplayContext(
@@ -57,7 +57,7 @@ public class BaseDLEditFileEntryDisplayContext
 		super(uuid, parentDLEditFileEntryDisplayContext, request, response);
 
 		this.fileEntry = fileEntry;
-		_storageEngine = storageEngine;
+		this.storageEngine = storageEngine;
 
 		if (fileEntry.getModel() instanceof DLFileEntry) {
 			DLFileEntry dlFileEntry = (DLFileEntry)fileEntry.getModel();
@@ -75,7 +75,7 @@ public class BaseDLEditFileEntryDisplayContext
 	public DDMFormValues getDDMFormValues(long classPK)
 		throws StorageException {
 
-		return _storageEngine.getDDMFormValues(classPK);
+		return storageEngine.getDDMFormValues(classPK);
 	}
 
 	@Override
@@ -178,7 +178,6 @@ public class BaseDLEditFileEntryDisplayContext
 
 	protected DLFileEntryType dlFileEntryType;
 	protected FileEntry fileEntry;
-
-	private final StorageEngine _storageEngine;
+	protected StorageEngine storageEngine;
 
 }
