@@ -29,6 +29,7 @@ import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.DDLDisplayContext;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.log.Log;

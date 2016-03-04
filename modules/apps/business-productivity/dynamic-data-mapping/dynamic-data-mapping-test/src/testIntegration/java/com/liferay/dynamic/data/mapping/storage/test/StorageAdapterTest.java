@@ -53,6 +53,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
@@ -87,17 +89,13 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
-}
-	@Before
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
 
-		setUpDDMFormValuesToFieldsConverter();
-		setUpFieldsToDDMFormValuesConverter();
-		setUpStorageAdapterRegistry();
+		Registry registry = RegistryUtil.getRegistry();
 
-		_jsonStorageAdapter = _storageAdapterRegistry.getStorageAdapter(
+		StorageAdapterRegistry storageAdapterRegistry = registry.getService(
+			StorageAdapterRegistry.class);
+
+		_jsonStorageAdapter = storageAdapterRegistry.getStorageAdapter(
 			StorageType.JSON.toString());
 	}
 
@@ -688,30 +686,9 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		sb.append("\"}");
 
 		return sb.toString();
-}
-
-	protected void setUpDDMFormValuesToFieldsConverter() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_ddmFormValuesToFieldsConverter = registry.getService(
-			DDMFormValuesToFieldsConverter.class);
 	}
 
-	protected void setUpFieldsToDDMFormValuesConverter() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_fieldsToDDMFormValuesConverter = registry.getService(
-			FieldsToDDMFormValuesConverter.class);
-	}
-
-	protected void setUpStorageAdapterRegistry() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_storageAdapterRegistry = registry.getService(
-			StorageAdapterRegistry.class);
-	}
-
-    protected void validate(long ddmStructureId, Fields fields)
+	protected void validate(long ddmStructureId, Fields fields)
 		throws Exception {
 
 		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
@@ -736,11 +713,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 	private static long _CLASS_NAME_ID;
 
 	private static Locale _enLocale;
+	private static StorageAdapter _jsonStorageAdapter;
 	private static Locale _ptLocale;
-
-	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
-	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
-	private StorageAdapter _jsonStorageAdapter;
-	private StorageAdapterRegistry _storageAdapterRegistry;
 
 }

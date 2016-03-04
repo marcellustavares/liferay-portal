@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.web.display.context;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -64,7 +65,7 @@ public class DDMDisplayContext {
 		return _ddmWebConfiguration.changeableDefaultLanguage();
 	}
 
-public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
+	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
 		return _ddmWebRequestHelper.getDDMGroupServiceConfiguration();
 	}
 
@@ -108,25 +109,8 @@ public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
 		return orderByType;
 	}
 
-
 	public Set<String> getStorageTypes() {
 		return _storageAdapterRegistry.getStorageTypes();
-	}
-
-	public OrderByComparator<DDMStructure> getStructureOrderByComparator(
-		String orderByCol, String orderByType) {
-
-		return _ddm.getStructureOrderByComparator(orderByCol, orderByType);
-	}
-
-	public OrderByComparator<DDMTemplate> getTemplateOrderByComparator(
-		String orderByCol, String orderByType) {
-
-		return _ddm.getTemplateOrderByComparator(orderByCol, orderByType);
-	}
-
-	public boolean isAutocompleteEnabled(String language) {
-		return _ddmTemplateHelper.isAutocompleteEnabled(language);
 	}
 
 	public String[] smallImageExtensions() {
