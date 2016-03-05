@@ -16,6 +16,8 @@ package com.liferay.dynamic.data.mapping.web.display.context;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
+import com.liferay.dynamic.data.mapping.util.DDMDisplay;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.context.util.DDMWebRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -35,11 +37,12 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMDisplayContext {
 
 	public DDMDisplayContext(
-			RenderRequest renderRequest,
+			RenderRequest renderRequest, DDMDisplayRegistry ddmDisplayRegistry,
 			DDMWebConfiguration ddmWebConfiguration)
 		throws PortalException {
 
 		_renderRequest = renderRequest;
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmWebConfiguration = ddmWebConfiguration;
 
 		HttpServletRequest httpServletRequest =
@@ -58,6 +61,10 @@ public class DDMDisplayContext {
 
 	public boolean changeableDefaultLanguage() {
 		return _ddmWebConfiguration.changeableDefaultLanguage();
+	}
+
+	public DDMDisplay getDDMDisplay(String portletId) {
+		return _ddmDisplayRegistry.getDDMDisplay(portletId);
 	}
 
 	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
@@ -118,6 +125,7 @@ public class DDMDisplayContext {
 		return ddmGroupServiceConfiguration.smallImageMaxSize();
 	}
 
+	private final DDMDisplayRegistry _ddmDisplayRegistry;
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;

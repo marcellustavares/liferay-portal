@@ -33,6 +33,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
@@ -215,10 +216,17 @@ public class DDMPortlet extends MVCPortlet {
 		throws PortalException {
 
 		DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-			renderRequest, ddmWebConfiguration);
+			renderRequest, _ddmDisplayRegistry, ddmWebConfiguration);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMDisplayRegistry(
+		DDMDisplayRegistry ddmDisplayRegistry) {
+
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -275,5 +283,7 @@ public class DDMPortlet extends MVCPortlet {
 	protected volatile DDMWebConfiguration ddmWebConfiguration;
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
+
+	private DDMDisplayRegistry _ddmDisplayRegistry;
 
 }
