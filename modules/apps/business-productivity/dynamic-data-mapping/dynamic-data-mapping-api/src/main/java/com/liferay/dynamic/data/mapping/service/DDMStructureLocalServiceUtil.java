@@ -247,6 +247,13 @@ public class DDMStructureLocalServiceUtil {
 		getService().addStructureResources(structure, modelPermissions);
 	}
 
+	public static com.liferay.dynamic.data.mapping.storage.Fields convert(
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure,
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().convert(ddmStructure, ddmFormValues);
+	}
+
 	/**
 	* Copies a structure, creating a new structure with all the values
 	* extracted from the original one. The new structure supports a new name

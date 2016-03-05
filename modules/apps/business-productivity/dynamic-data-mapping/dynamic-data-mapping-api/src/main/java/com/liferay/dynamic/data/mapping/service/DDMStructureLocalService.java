@@ -19,6 +19,8 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.Fields;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 
@@ -219,6 +221,9 @@ public interface DDMStructureLocalService extends BaseLocalService,
 	*/
 	public void addStructureResources(DDMStructure structure,
 		ModelPermissions modelPermissions) throws PortalException;
+
+	public Fields convert(DDMStructure ddmStructure, DDMFormValues ddmFormValues)
+		throws PortalException;
 
 	/**
 	* Copies a structure, creating a new structure with all the values
