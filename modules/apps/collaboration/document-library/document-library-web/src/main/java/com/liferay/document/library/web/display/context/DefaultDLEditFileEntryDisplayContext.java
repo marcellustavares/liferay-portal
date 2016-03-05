@@ -22,7 +22,10 @@ import com.liferay.document.library.web.display.context.logic.FileEntryDisplayCo
 import com.liferay.document.library.web.display.context.logic.FileVersionDisplayContextHelper;
 import com.liferay.document.library.web.display.context.util.DLRequestHelper;
 import com.liferay.document.library.web.settings.internal.DLPortletInstanceSettings;
+import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -47,16 +50,23 @@ public class DefaultDLEditFileEntryDisplayContext
 
 	public DefaultDLEditFileEntryDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
-		DLFileEntryType dlFileEntryType) {
+		DLFileEntryType dlFileEntryType, StorageEngine storageEngine) {
 
-		this(request, dlFileEntryType, null);
+		this(request, dlFileEntryType, null, storageEngine);
 	}
 
 	public DefaultDLEditFileEntryDisplayContext(
 		HttpServletRequest request, HttpServletResponse response,
-		FileEntry fileEntry) {
+		FileEntry fileEntry, StorageEngine storageEngine) {
 
-		this(request, (DLFileEntryType)null, fileEntry);
+		this(request, (DLFileEntryType)null, fileEntry, storageEngine);
+	}
+
+	@Override
+	public DDMFormValues getDDMFormValues(long classPK)
+		throws StorageException {
+
+		return _storageEngine.getDDMFormValues(classPK);
 	}
 
 	@Override
@@ -204,7 +214,7 @@ public class DefaultDLEditFileEntryDisplayContext
 
 	private DefaultDLEditFileEntryDisplayContext(
 		HttpServletRequest request, DLFileEntryType dlFileEntryType,
-		FileEntry fileEntry) {
+		FileEntry fileEntry, StorageEngine storageEngine) {
 
 		try {
 			_dlRequestHelper = new DLRequestHelper(request);
@@ -236,6 +246,8 @@ public class DefaultDLEditFileEntryDisplayContext
 
 			_showSelectFolder = ParamUtil.getBoolean(
 				request, "showSelectFolder");
+
+			_storageEngine = storageEngine;
 		}
 		catch (PortalException pe) {
 			throw new SystemException(
@@ -276,5 +288,6 @@ public class DefaultDLEditFileEntryDisplayContext
 	private final FileVersionDisplayContextHelper
 		_fileVersionDisplayContextHelper;
 	private final boolean _showSelectFolder;
+	private final StorageEngine _storageEngine;
 
 }

@@ -33,6 +33,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
@@ -215,7 +216,7 @@ public class DDMPortlet extends MVCPortlet {
 		throws PortalException {
 
 		DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-			renderRequest, ddmWebConfiguration);
+			renderRequest, ddmWebConfiguration, _storageAdapterRegistry);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
@@ -270,10 +271,19 @@ public class DDMPortlet extends MVCPortlet {
 		}
 	}
 
+	@Reference(unbind = "-")
+	protected void setStorageAdapterRegistry(
+		StorageAdapterRegistry storageAdapterRegistry) {
+
+		_storageAdapterRegistry = storageAdapterRegistry;
+	}
+
 	protected volatile DDMStructureLocalService ddmStructureLocalService;
 	protected volatile DDMTemplateLocalService ddmTemplateLocalService;
 	protected volatile DDMWebConfiguration ddmWebConfiguration;
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
+
+	private StorageAdapterRegistry _storageAdapterRegistry;
 
 }

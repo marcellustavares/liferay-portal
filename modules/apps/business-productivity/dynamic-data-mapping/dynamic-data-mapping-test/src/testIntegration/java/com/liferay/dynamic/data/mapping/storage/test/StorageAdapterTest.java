@@ -30,7 +30,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
-import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistryUtil;
+import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
@@ -53,6 +53,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.io.Serializable;
 
@@ -63,6 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -87,9 +90,14 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
+	}
 
-		_jsonStorageAdapter = StorageAdapterRegistryUtil.getStorageAdapter(
-			StorageType.JSON.toString());
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		setUpJsonStorageAdapter();
 	}
 
 	@Test
@@ -679,6 +687,16 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		sb.append("\"}");
 
 		return sb.toString();
+	}
+
+	protected void setUpJsonStorageAdapter() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		StorageAdapterRegistry storageAdapterRegistry = registry.getService(
+			StorageAdapterRegistry.class);
+
+		_jsonStorageAdapter = storageAdapterRegistry.getStorageAdapter(
+			StorageType.JSON.toString());
 	}
 
 	protected void validate(long ddmStructureId, Fields fields)
