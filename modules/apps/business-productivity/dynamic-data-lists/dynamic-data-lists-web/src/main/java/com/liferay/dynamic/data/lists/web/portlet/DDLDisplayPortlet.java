@@ -28,6 +28,7 @@ import com.liferay.dynamic.data.lists.util.DDL;
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.DDLDisplayContext;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PortletPreferencesException;
 import com.liferay.portal.kernel.log.Log;
@@ -108,7 +109,7 @@ public class DDLDisplayPortlet extends MVCPortlet {
 
 			DDLDisplayContext ddlDisplayContext = new DDLDisplayContext(
 				request, _ddl, _ddlRecordSetLocalService, _ddlWebConfiguration,
-				_ddmTemplateLocalService);
+				_ddmTemplateLocalService, _storageEngine);
 
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT, ddlDisplayContext);
@@ -153,6 +154,11 @@ public class DDLDisplayPortlet extends MVCPortlet {
 		DDMTemplateLocalService ddmTemplateLocalService) {
 
 		_ddmTemplateLocalService = ddmTemplateLocalService;
+	}
+
+	@Reference(unbind = "-")
+	public void setStorageEngine(StorageEngine storageEngine) {
+		_storageEngine = storageEngine;
 	}
 
 	@Activate
@@ -241,5 +247,6 @@ public class DDLDisplayPortlet extends MVCPortlet {
 	private DDLRecordSetService _ddlRecordSetService;
 	private volatile DDLWebConfiguration _ddlWebConfiguration;
 	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private StorageEngine _storageEngine;
 
 }
