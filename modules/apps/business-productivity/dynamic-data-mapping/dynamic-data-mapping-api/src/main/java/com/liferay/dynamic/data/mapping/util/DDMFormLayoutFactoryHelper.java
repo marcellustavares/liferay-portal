@@ -85,7 +85,8 @@ public class DDMFormLayoutFactoryHelper {
 
 		com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn
 			ddmFormLayoutColumn =
-				new com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn();
+				new com.liferay.dynamic.data.mapping.model.
+					DDMFormLayoutColumn();
 
 		ddmFormLayoutColumn.setDDMFormFieldNames(
 			ListUtil.fromArray(ddmFormLayoutColumnAnnotation.value()));
