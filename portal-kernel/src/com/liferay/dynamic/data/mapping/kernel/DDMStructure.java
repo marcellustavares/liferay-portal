@@ -33,13 +33,6 @@ public interface DDMStructure extends StagedGroupedModel {
 
 	public long getClassNameId();
 
-	public DDMForm getDDMForm();
-
-	public DDMFormField getDDMFormField(String fieldName)
-		throws PortalException;
-
-	public List<DDMFormField> getDDMFormFields(boolean includeTransientFields);
-
 	public String getDefinition();
 
 	public String getDescription();
@@ -56,8 +49,6 @@ public interface DDMStructure extends StagedGroupedModel {
 		throws PortalException;
 
 	public String getFieldType(String fieldName) throws PortalException;
-
-	public DDMForm getFullHierarchyDDMForm();
 
 	@Override
 	public long getGroupId();
