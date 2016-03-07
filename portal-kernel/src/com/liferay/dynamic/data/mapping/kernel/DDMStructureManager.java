@@ -84,10 +84,22 @@ public interface DDMStructureManager {
 	public List<DDMStructure> getClassStructures(
 		long companyId, long classNameId, int start, int end);
 
+	public DDMForm getDDMForm(long structureId);
+
+	public DDMFormField getDDMFormField(long structureId, String fieldName)
+		throws PortalException;
+
+	public List<DDMFormField> getDDMFormFields(
+			long structureId, boolean includeTransientFields)
+		throws PortalException;
+
 	public JSONArray getDDMFormFieldsJSONArray(long structureId, String script)
 		throws PortalException;
 
 	public Class<?> getDDMStructureModelClass();
+
+	public DDMForm getFullHierarchyDDMForm(long structureId)
+		throws PortalException;
 
 	public Serializable getIndexedFieldValue(
 			Serializable fieldValue, String fieldType)
