@@ -33,7 +33,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -147,7 +147,10 @@ public abstract class TestOrderHelper {
 		return jsonArrays;
 	}
 
-	protected TestOrderHelper(Group group) throws Exception {
+	protected TestOrderHelper(DDMBeanTranslator ddmBeanTranslator, Group group)
+		throws Exception {
+
+		_ddmBeanTranslator = ddmBeanTranslator;
 		_group = group;
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
@@ -256,7 +259,7 @@ public abstract class TestOrderHelper {
 		DDMFormValuesReader ddmFormValuesReader =
 			assetRenderer.getDDMFormValuesReader();
 
-		DDMFormValues ddmFormValues = DDMBeanTranslatorUtil.translate(
+		DDMFormValues ddmFormValues = _ddmBeanTranslator.translate(
 			ddmFormValuesReader.getDDMFormValues());
 
 		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
@@ -420,6 +423,7 @@ public abstract class TestOrderHelper {
 	}
 
 	private String _dataType;
+	private final DDMBeanTranslator _ddmBeanTranslator;
 	private final Group _group;
 	private String _indexType;
 	private String[] _optionValues;
