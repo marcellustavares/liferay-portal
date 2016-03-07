@@ -73,6 +73,7 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -86,6 +87,8 @@ public class DDLFormAdminDisplayContext {
 		DDLRecordLocalService ddlRecordLocalService,
 		DDLRecordSetService ddlRecordSetService,
 		DDMDataProviderInstanceLocalService ddmDataProviderInstanceLocalService,
+		ServletContext ddmDataProviderServletContext,
+		ServletContext ddmFormEvaluatorServletContext,
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
 		DDMFormFieldTypesJSONSerializer ddmFormFieldTypesJSONSerializer,
 		DDMFormJSONSerializer ddmFormJSONSerializer,
@@ -102,6 +105,8 @@ public class DDLFormAdminDisplayContext {
 		_ddlRecordSetService = ddlRecordSetService;
 		_ddmDataProviderInstanceLocalService =
 			ddmDataProviderInstanceLocalService;
+		_ddmDataProviderServletContext = ddmDataProviderServletContext;
+		_ddmFormEvaluatorServletContext = ddmFormEvaluatorServletContext;
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 		_ddmFormFieldTypesJSONSerializer = ddmFormFieldTypesJSONSerializer;
 		_ddmFormJSONSerializer = ddmFormJSONSerializer;
@@ -114,6 +119,11 @@ public class DDLFormAdminDisplayContext {
 
 		_ddlFormAdminRequestHelper = new DDLFormAdminRequestHelper(
 			renderRequest);
+	}
+
+	public String getDataSourceURL() {
+		return _ddmDataProviderServletContext.getContextPath().concat(
+			StringPool.SLASH);
 	}
 
 	public DDLFormViewRecordDisplayContext
@@ -181,6 +191,11 @@ public class DDLFormAdminDisplayContext {
 
 	public String[] getDisplayViews() {
 		return _DISPLAY_VIEWS;
+	}
+
+	public String getEvaluationURL() {
+		return _ddmFormEvaluatorServletContext.getContextPath().concat(
+			StringPool.SLASH);
 	}
 
 	public String getOrderByCol() {
@@ -577,6 +592,8 @@ public class DDLFormAdminDisplayContext {
 	private final DDLRecordSetService _ddlRecordSetService;
 	private final DDMDataProviderInstanceLocalService
 		_ddmDataProviderInstanceLocalService;
+	private final ServletContext _ddmDataProviderServletContext;
+	private final ServletContext _ddmFormEvaluatorServletContext;
 	private final DDMFormFieldTypeServicesTracker
 		_ddmFormFieldTypeServicesTracker;
 	private final DDMFormFieldTypesJSONSerializer

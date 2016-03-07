@@ -9,6 +9,14 @@ AUI.add(
 		};
 
 		FormValidationSupport.ATTRS = {
+			evaluation: {
+				value: null
+			},
+
+			evaluationURL: {
+				value: ''
+			},
+
 			evaluator: {
 				valueFn: '_valueEvaluator'
 			}

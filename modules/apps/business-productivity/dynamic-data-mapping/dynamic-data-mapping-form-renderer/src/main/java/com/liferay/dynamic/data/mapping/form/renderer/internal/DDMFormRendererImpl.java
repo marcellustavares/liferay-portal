@@ -65,6 +65,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.servlet.ServletContext;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -276,6 +278,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 		template.put("containerId", containerId);
 
+		template.put(
+			"dataSourceURL", _ddmDataProviderServletContext.getContextPath());
+
 		template.put("definition", _ddmFormJSONSerializer.serialize(ddmForm));
 
 		DDMFormValues ddmFormValues =
@@ -298,6 +303,9 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		template.put(
 			"evaluation",
 			jsonSerializer.serializeDeep(ddmFormEvaluationResult));
+
+		template.put(
+			"evaluationURL", _ddmFormEvaluatorServletContext.getContextPath());
 
 		List<DDMFormFieldType> ddmFormFieldTypes =
 			_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes();
@@ -440,7 +448,15 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 	}
 
 	private DDM _ddm;
+
+	@Reference(target = "(osgi.web.symbolicname=com.liferay.dynamic.data.mapping.data.provider)")
+	private ServletContext _ddmDataProviderServletContext;
+
 	private DDMFormEvaluator _ddmFormEvaluator;
+
+	@Reference(target = "(osgi.web.symbolicname=com.liferay.dynamic.data.mapping.form.evaluator)")
+	private ServletContext _ddmFormEvaluatorServletContext;
+
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;

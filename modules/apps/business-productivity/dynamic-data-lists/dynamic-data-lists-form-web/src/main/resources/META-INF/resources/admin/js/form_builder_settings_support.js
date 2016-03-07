@@ -31,6 +31,9 @@ AUI.add(
 				value: null
 			},
 
+			evaluationURL: {
+			},
+
 			content: {
 				getter: function() {
 					var instance = this;
@@ -40,6 +43,9 @@ AUI.add(
 			},
 
 			dataProviders: {
+			},
+
+			dataSourceURL: {
 			},
 
 			footerToolbar: {
@@ -332,7 +338,9 @@ AUI.add(
 				return new Liferay.DDL.FormBuilderSettingsForm(
 					{
 						dataProviders: instance.get('dataProviders'),
+						dataSourceURL: instance.get('dataSourceURL'),
 						definition: fieldType.get('settings'),
+						evaluationURL: instance.get('evaluationURL'),
 						field: instance,
 						layout: fieldType.get('settingsLayout'),
 						portletNamespace: instance.get('portletNamespace'),
