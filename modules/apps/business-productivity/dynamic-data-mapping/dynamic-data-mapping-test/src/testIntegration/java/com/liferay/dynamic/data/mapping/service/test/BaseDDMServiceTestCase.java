@@ -25,7 +25,7 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureLayoutTestHelper;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -62,13 +62,14 @@ public class BaseDDMServiceTestCase {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDM();
 		setUpDDMFormXSDDeserializer();
 		setUpDDMXML();
 
 		group = GroupTestUtil.addGroup();
 
 		ddmStructureTestHelper = new DDMStructureTestHelper(
-			PortalUtil.getClassNameId(DDL_RECORD_SET_CLASS_NAME), group);
+			PortalUtil.getClassNameId(DDL_RECORD_SET_CLASS_NAME), ddm, group);
 		ddmStructureLayoutTestHelper = new DDMStructureLayoutTestHelper(group);
 	}
 
@@ -154,7 +155,7 @@ public class BaseDDMServiceTestCase {
 
 		DDMForm ddmForm = toDDMForm(definition);
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = ddm.getDefaultDDMFormLayout(ddmForm);
 
 		return ddmStructureTestHelper.addStructure(
 			parentStructureId, classNameId, structureKey, name, description,
@@ -273,6 +274,12 @@ public class BaseDDMServiceTestCase {
 			clazz.getClassLoader(), getBasePath() + fileName);
 	}
 
+	protected void setUpDDM() throws Exception {
+		Registry registry = RegistryUtil.getRegistry();
+
+		ddm = registry.getService(DDM.class);
+	}
+
 	protected void setUpDDMFormXSDDeserializer() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -298,6 +305,7 @@ public class BaseDDMServiceTestCase {
 	protected static final String DDL_RECORD_SET_CLASS_NAME =
 		"com.liferay.dynamic.data.lists.model.DDLRecordSet";
 
+	protected DDM ddm;
 	protected DDMStructureLayoutTestHelper ddmStructureLayoutTestHelper;
 	protected DDMStructureTestHelper ddmStructureTestHelper;
 	protected DDMXML ddmXML;

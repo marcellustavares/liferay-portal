@@ -33,6 +33,8 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
 import com.liferay.dynamic.data.mapping.validator.DDMFormLayoutValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
@@ -211,15 +213,28 @@ public class DDMPortlet extends MVCPortlet {
 			DDMWebConfiguration.class, properties);
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
 	protected void setDDMDisplayContextRequestAttribute(
 			RenderRequest renderRequest)
 		throws PortalException {
 
 		DDMDisplayContext ddmDisplayContext = new DDMDisplayContext(
-			renderRequest, _ddmTemplateHelper, ddmWebConfiguration);
+			renderRequest, _ddm, _ddmDisplayRegistry, _ddmTemplateHelper,
+			ddmWebConfiguration);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddmDisplayContext);
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMDisplayRegistry(
+		DDMDisplayRegistry ddmDisplayRegistry) {
+
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -282,6 +297,8 @@ public class DDMPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(DDMPortlet.class);
 
+	private DDM _ddm;
+	private DDMDisplayRegistry _ddmDisplayRegistry;
 	private DDMTemplateHelper _ddmTemplateHelper;
 
 }

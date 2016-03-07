@@ -30,6 +30,7 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CacheField;
@@ -142,6 +143,12 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 
 		return filterTransientDDMFormFields(ddmFormFields);
+	}
+
+	@Override
+	public JSONArray getDDMFormFieldsJSONArray(String script) {
+		return DDMStructureLocalServiceUtil.getDDMFormFieldsJSONArray(
+			this, script);
 	}
 
 	@Override

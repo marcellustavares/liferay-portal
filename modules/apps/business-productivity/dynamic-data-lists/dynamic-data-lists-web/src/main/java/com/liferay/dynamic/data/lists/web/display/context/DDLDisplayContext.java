@@ -29,11 +29,13 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.lists.web.configuration.DDLWebConfiguration;
 import com.liferay.dynamic.data.lists.web.display.context.util.DDLRequestHelper;
 import com.liferay.dynamic.data.lists.web.search.RecordSetSearch;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMTemplatePermission;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
-import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistryUtil;
+import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -69,12 +71,15 @@ public class DDLDisplayContext {
 	public DDLDisplayContext(
 		HttpServletRequest request, DDL ddl,
 		DDLRecordSetLocalService ddlRecordSetLocalService,
-		DDLWebConfiguration ddlWebConfiguration,
+		DDLWebConfiguration ddlWebConfiguration, DDM ddm,
+		DDMDisplayRegistry ddmDisplayRegistry,
 		DDMTemplateLocalService ddmTemplateLocalService) {
 
 		_ddl = ddl;
 		_ddlRecordSetLocalService = ddlRecordSetLocalService;
 		_ddlWebConfiguration = ddlWebConfiguration;
+		_ddm = ddm;
+		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 
 		_ddlRequestHelper = new DDLRequestHelper(request);
@@ -165,6 +170,12 @@ public class DDLDisplayContext {
 		}
 
 		return orderByComparator;
+	}
+
+	public JSONArray getDDMFormFieldsJSONArray(
+		DDMStructure ddmStructure, String script) {
+
+		return _ddm.getDDMFormFieldsJSONArray(ddmStructure, script);
 	}
 
 	public long getDisplayDDMTemplateId() {
@@ -470,7 +481,7 @@ public class DDLDisplayContext {
 	}
 
 	protected DDMDisplay getDDMDisplay() {
-		return DDMDisplayRegistryUtil.getDDMDisplay(
+		return _ddmDisplayRegistry.getDDMDisplay(
 			DDLPortletKeys.DYNAMIC_DATA_LISTS);
 	}
 
@@ -570,6 +581,8 @@ public class DDLDisplayContext {
 	private final DDLRecordSetLocalService _ddlRecordSetLocalService;
 	private final DDLRequestHelper _ddlRequestHelper;
 	private final DDLWebConfiguration _ddlWebConfiguration;
+	private final DDM _ddm;
+	private final DDMDisplayRegistry _ddmDisplayRegistry;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
 	private DDMTemplate _displayDDMTemplate;
 	private DDMTemplate _formDDMTemplate;

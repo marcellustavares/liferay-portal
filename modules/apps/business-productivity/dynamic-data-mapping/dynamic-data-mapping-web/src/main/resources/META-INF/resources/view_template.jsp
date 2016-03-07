@@ -51,7 +51,7 @@ PortletURL iteratorURL = renderResponse.createRenderURL();
 
 TemplateSearch templateSearch = new TemplateSearch(renderRequest, iteratorURL);
 
-OrderByComparator<DDMTemplate> orderByComparator = DDMUtil.getTemplateOrderByComparator(ddmDisplayContext.getOrderByCol(), ddmDisplayContext.getOrderByType());
+OrderByComparator<DDMTemplate> orderByComparator = ddmDisplayContext.getTemplateOrderByComparator(ddmDisplayContext.getOrderByCol(), ddmDisplayContext.getOrderByType());
 
 templateSearch.setOrderByCol(ddmDisplayContext.getOrderByCol());
 templateSearch.setOrderByComparator(orderByComparator);
