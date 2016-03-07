@@ -744,7 +744,8 @@ public class DLFileEntryTypeLocalServiceImpl
 			ddmStructureKey);
 
 		if ((ddmStructure != null) && (ddmForm == null)) {
-			ddmForm = ddmStructure.getDDMForm();
+			ddmForm = DDMStructureManagerUtil.getDDMForm(
+				ddmStructure.getStructureId());
 		}
 
 		if (ddmForm == null) {
