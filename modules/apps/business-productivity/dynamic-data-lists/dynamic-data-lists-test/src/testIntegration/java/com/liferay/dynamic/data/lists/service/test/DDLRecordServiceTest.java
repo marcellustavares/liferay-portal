@@ -37,6 +37,7 @@ import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
 import com.liferay.dynamic.data.mapping.test.util.storage.FailStorageAdapter;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -98,13 +99,14 @@ public class DDLRecordServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDM();
 		_availableLocales = DDMFormTestUtil.createAvailableLocales(Locale.US);
 		_defaultLocale = Locale.US;
 
 		_group = GroupTestUtil.addGroup();
 
 		_ddmStructureTestHelper = new DDMStructureTestHelper(
-			PortalUtil.getClassNameId(DDLRecordSet.class), _group);
+			PortalUtil.getClassNameId(DDLRecordSet.class), _ddm, _group);
 		_recordSetTestHelper = new DDLRecordSetTestHelper(_group);
 	}
 
@@ -388,6 +390,12 @@ public class DDLRecordServiceTest {
 			name, value);
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected DDLRecord updateRecord(
 			long recordId, DDMFormValues ddmFormValues, int workflowAction)
 		throws Exception {
@@ -404,6 +412,7 @@ public class DDLRecordServiceTest {
 	private static ServiceRegistration<StorageAdapter> _serviceRegistration;
 
 	private Set<Locale> _availableLocales;
+	private DDM _ddm;
 	private DDMStructureTestHelper _ddmStructureTestHelper;
 	private Locale _defaultLocale;
 

@@ -29,6 +29,7 @@ import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.dynamic.data.mapping.util.impl.DDMImpl;
 import com.liferay.dynamic.data.mapping.util.impl.DDMXMLImpl;
@@ -111,13 +112,14 @@ public class JournalConverterUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDM();
 		setUpDDMFormXSDDeserializer();
 		setUpDDMXML();
 
 		_group = GroupTestUtil.addGroup();
 
 		_ddmStructureTestHelper = new DDMStructureTestHelper(
-			PortalUtil.getClassNameId(JournalArticle.class), _group);
+			PortalUtil.getClassNameId(JournalArticle.class), _ddm, _group);
 
 		long classNameId = PortalUtil.getClassNameId(JournalArticle.class);
 
@@ -963,6 +965,12 @@ public class JournalConverterUtilTest {
 			});
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected void setUpDDMFormXSDDeserializer() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -1048,6 +1056,7 @@ public class JournalConverterUtilTest {
 	private static Locale _enLocale;
 	private static Locale _ptLocale;
 
+	private DDM _ddm;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructure _ddmStructure;
 	private DDMStructureTestHelper _ddmStructureTestHelper;

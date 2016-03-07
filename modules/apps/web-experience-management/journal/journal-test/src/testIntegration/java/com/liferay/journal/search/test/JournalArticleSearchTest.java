@@ -23,8 +23,8 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMIndexerUtil;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleConstants;
@@ -58,6 +58,8 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.test.BaseSearchTestCase;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,6 +97,8 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		ServiceTestUtil.setUser(TestPropsValues.getUser());
 
 		super.setUp();
+
+		setUpDDM();
 	}
 
 	@Test
@@ -450,6 +454,12 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		return hits.getLength();
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	@Override
 	protected BaseModel<?> updateBaseModel(
 			BaseModel<?> baseModel, String keywords,
@@ -469,7 +479,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm("title");
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 
 		DDMStructureLocalServiceUtil.updateStructure(
 			_ddmStructure.getUserId(), _ddmStructure.getStructureId(),
@@ -553,6 +563,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 	}
 
+	private DDM _ddm;
 	private DDMStructure _ddmStructure;
 
 }

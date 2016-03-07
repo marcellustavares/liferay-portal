@@ -643,6 +643,14 @@ public class DDMStructureLocalServiceWrapper implements DDMStructureLocalService
 			classNameId, start, end);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONArray getDDMFormFieldsJSONArray(
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure,
+		java.lang.String script) {
+		return _ddmStructureLocalService.getDDMFormFieldsJSONArray(ddmStructure,
+			script);
+	}
+
 	/**
 	* Returns the d d m structure with the primary key.
 	*
