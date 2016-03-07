@@ -14,10 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.internal;
 
-import com.liferay.dynamic.data.mapping.kernel.DDMForm;
-import com.liferay.dynamic.data.mapping.kernel.DDMFormField;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.exception.LocaleException;
@@ -25,7 +22,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -76,32 +72,6 @@ public class DDMStructureImpl implements DDMStructure {
 	}
 
 	@Override
-	public DDMForm getDDMForm() {
-		return DDMBeanTranslatorUtil.translate(_ddmStructure.getDDMForm());
-	}
-
-	@Override
-	public DDMFormField getDDMFormField(String fieldName)
-		throws PortalException {
-
-		return DDMBeanTranslatorUtil.translate(
-			_ddmStructure.getDDMFormField(fieldName));
-	}
-
-	@Override
-	public List<DDMFormField> getDDMFormFields(boolean includeTransientFields) {
-		List<DDMFormField> ddmFormFields = new ArrayList<>();
-
-		for (com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField :
-				_ddmStructure.getDDMFormFields(includeTransientFields)) {
-
-			ddmFormFields.add(DDMBeanTranslatorUtil.translate(ddmFormField));
-		}
-
-		return ddmFormFields;
-	}
-
-	@Override
 	public String getDefinition() {
 		return _ddmStructure.getDefinition();
 	}
@@ -146,12 +116,6 @@ public class DDMStructureImpl implements DDMStructure {
 	@Override
 	public String getFieldType(String fieldName) throws PortalException {
 		return _ddmStructure.getFieldType(fieldName);
-	}
-
-	@Override
-	public DDMForm getFullHierarchyDDMForm() {
-		return DDMBeanTranslatorUtil.translate(
-			_ddmStructure.getFullHierarchyDDMForm());
 	}
 
 	@Override
