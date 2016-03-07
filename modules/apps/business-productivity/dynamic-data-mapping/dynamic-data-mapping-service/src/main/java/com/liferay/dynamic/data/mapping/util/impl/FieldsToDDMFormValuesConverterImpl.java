@@ -73,34 +73,6 @@ public class FieldsToDDMFormValuesConverterImpl
 		return ddmFormValues;
 	}
 
-	@Override
-	public String[] getDDMFieldsDisplayValues(Field ddmFieldsDisplayField)
-		throws PortalException {
-
-		try {
-			DDMStructure ddmStructure = ddmFieldsDisplayField.getDDMStructure();
-
-			List<String> fieldsDisplayValues = new ArrayList<>();
-
-			String[] values = splitFieldsDisplayValue(ddmFieldsDisplayField);
-
-			for (String value : values) {
-				String fieldName = StringUtil.extractFirst(
-					value, DDMImpl.INSTANCE_SEPARATOR);
-
-				if (ddmStructure.hasField(fieldName)) {
-					fieldsDisplayValues.add(fieldName);
-				}
-			}
-
-			return fieldsDisplayValues.toArray(
-				new String[fieldsDisplayValues.size()]);
-		}
-		catch (Exception e) {
-			throw new PortalException(e);
-		}
-	}
-
 	protected int countDDMFieldRepetitions(
 			Fields ddmFields, String fieldName, String parentFieldName,
 			int parentOffset)
@@ -191,6 +163,33 @@ public class FieldsToDDMFormValuesConverterImpl
 		}
 
 		return null;
+	}
+
+	protected String[] getDDMFieldsDisplayValues(Field ddmFieldsDisplayField)
+		throws PortalException {
+
+		try {
+			DDMStructure ddmStructure = ddmFieldsDisplayField.getDDMStructure();
+
+			List<String> fieldsDisplayValues = new ArrayList<>();
+
+			String[] values = splitFieldsDisplayValue(ddmFieldsDisplayField);
+
+			for (String value : values) {
+				String fieldName = StringUtil.extractFirst(
+					value, DDMImpl.INSTANCE_SEPARATOR);
+
+				if (ddmStructure.hasField(fieldName)) {
+					fieldsDisplayValues.add(fieldName);
+				}
+			}
+
+			return fieldsDisplayValues.toArray(
+				new String[fieldsDisplayValues.size()]);
+		}
+		catch (Exception e) {
+			throw new PortalException(e);
+		}
 	}
 
 	protected String getDDMFieldValueString(

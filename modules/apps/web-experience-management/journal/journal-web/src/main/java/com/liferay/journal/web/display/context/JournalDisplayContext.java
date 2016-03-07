@@ -194,7 +194,8 @@ public class JournalDisplayContext {
 			return _ddmFormValues;
 		}
 
-		_ddmFormValues = journalConverter.convert(ddmStructure, fields);
+		_ddmFormValues = journalConverter.getDDMFormValues(
+			ddmStructure, fields);
 
 		return _ddmFormValues;
 	}

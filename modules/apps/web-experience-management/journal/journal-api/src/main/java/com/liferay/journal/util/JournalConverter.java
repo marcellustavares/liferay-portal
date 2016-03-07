@@ -28,9 +28,6 @@ import java.util.Locale;
  */
 public interface JournalConverter {
 
-	public DDMFormValues convert(DDMStructure ddmStructure, Fields fields)
-		throws PortalException;
-
 	public String getContent(DDMStructure ddmStructure, Fields ddmFields)
 		throws Exception;
 
@@ -38,6 +35,10 @@ public interface JournalConverter {
 		throws PortalException;
 
 	public Fields getDDMFields(DDMStructure ddmStructure, String content)
+		throws PortalException;
+
+	public DDMFormValues getDDMFormValues(
+			DDMStructure ddmStructure, Fields fields)
 		throws PortalException;
 
 	public String getDDMXSD(String journalXSD) throws Exception;
