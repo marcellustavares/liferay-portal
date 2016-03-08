@@ -17,7 +17,7 @@ package com.liferay.dynamic.data.lists.web.asset;
 import com.liferay.asset.kernel.model.BaseDDMFormValuesReader;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.exception.PortalException;
 
 /**
@@ -25,15 +25,19 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class DDLRecordDDMFormValuesReader extends BaseDDMFormValuesReader {
 
-	public DDLRecordDDMFormValuesReader(DDLRecord ddlRecord) {
+	public DDLRecordDDMFormValuesReader(
+		DDLRecord ddlRecord, DDMBeanTranslator ddmBeanTranslator) {
+
 		_ddlRecord = ddlRecord;
+		_ddmBeanTranslator = ddmBeanTranslator;
 	}
 
 	@Override
 	public DDMFormValues getDDMFormValues() throws PortalException {
-		return DDMBeanTranslatorUtil.translate(_ddlRecord.getDDMFormValues());
+		return _ddmBeanTranslator.translate(_ddlRecord.getDDMFormValues());
 	}
 
 	private final DDLRecord _ddlRecord;
+	private final DDMBeanTranslator _ddmBeanTranslator;
 
 }

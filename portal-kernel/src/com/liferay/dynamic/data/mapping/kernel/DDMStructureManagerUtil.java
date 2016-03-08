@@ -104,6 +104,25 @@ public class DDMStructureManagerUtil {
 			companyId, classNameId, start, end);
 	}
 
+	public static DDMForm getDDMForm(long structureId) {
+		return _ddmStructureManager.getDDMForm(structureId);
+	}
+
+	public static DDMFormField getDDMFormField(
+			long structureId, String fieldName)
+		throws PortalException {
+
+		return _ddmStructureManager.getDDMFormField(structureId, fieldName);
+	}
+
+	public static List<DDMFormField> getDDMFormFields(
+			long structureId, boolean includeTransientFields)
+		throws PortalException {
+
+		return _ddmStructureManager.getDDMFormFields(
+			structureId, includeTransientFields);
+	}
+
 	public static JSONArray getDDMFormFieldsJSONArray(
 			long structureId, String script)
 		throws PortalException {
@@ -114,6 +133,12 @@ public class DDMStructureManagerUtil {
 
 	public static Class<?> getDDMStructureModelClass() {
 		return _ddmStructureManager.getDDMStructureModelClass();
+	}
+
+	public static DDMForm getFullHierarchyDDMForm(long structureId)
+		throws PortalException {
+
+		return _ddmStructureManager.getFullHierarchyDDMForm(structureId);
 	}
 
 	public static Serializable getIndexedFieldValue(
