@@ -4,6 +4,7 @@ dependencies {
 	provided group: "com.liferay", name: "com.liferay.dynamic.data.mapping.api", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.exportimport.api", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.portal.instance.lifecycle", version: "1.0.0"
+	provided group: "com.liferay", name: "com.liferay.portal.search", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.xstream.configurator.api", version: "1.0.0"
 	provided group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "1.0.1"
 	provided group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "1.0.3"
@@ -15,7 +16,6 @@ dependencies {
 	provided project(":apps:collaboration:document-library:document-library-api")
 	provided project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-io")
 	provided project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-service")
-	provided project(":apps:foundation:portal-search:portal-search")
 	provided project(":apps:foundation:portal:portal-upgrade")
 	provided project(":apps:web-experience:export-import:export-import-service")
 }

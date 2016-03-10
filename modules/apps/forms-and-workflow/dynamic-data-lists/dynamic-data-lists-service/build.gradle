@@ -12,6 +12,7 @@ dependencies {
 	provided group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "1.0.1"
 	provided group: "com.liferay", name: "com.liferay.portal.instance.lifecycle", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.portal.spring.extender", version: "1.0.4"
+	provided group: "com.liferay", name: "com.liferay.registry.api", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.xstream.configurator.api", version: "1.0.0"
 	provided group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "1.0.1"
 	provided group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "1.0.3"
@@ -25,7 +26,6 @@ dependencies {
 	provided project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-validator")
 	provided project(":apps:foundation:portal:portal-upgrade")
 	provided project(":apps:web-experience:export-import:export-import-service")
-	provided project(":core:registry-api")
 }
 
 liferay {
