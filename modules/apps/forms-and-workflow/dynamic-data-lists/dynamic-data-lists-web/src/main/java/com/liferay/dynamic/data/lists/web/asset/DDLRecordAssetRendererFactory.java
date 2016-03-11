@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalService;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordPermission;
 import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -89,7 +90,8 @@ public class DDLRecordAssetRendererFactory
 		}
 
 		DDLRecordAssetRenderer ddlRecordAssetRenderer =
-			new DDLRecordAssetRenderer(record, recordVersion);
+			new DDLRecordAssetRenderer(
+				record, recordVersion, _ddmBeanTranslator);
 
 		ddlRecordAssetRenderer.setAssetRendererType(type);
 		ddlRecordAssetRenderer.setServletContext(_servletContext);
@@ -157,6 +159,11 @@ public class DDLRecordAssetRendererFactory
 			permissionChecker, classPK, actionId);
 	}
 
+	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
+	}
+
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.dynamic.data.lists.web)",
 		unbind = "-"
@@ -181,6 +188,7 @@ public class DDLRecordAssetRendererFactory
 
 	private DDLRecordLocalService _ddlRecordLocalService;
 	private DDLRecordVersionLocalService _ddlRecordVersionLocalService;
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private ServletContext _servletContext;
 
 }

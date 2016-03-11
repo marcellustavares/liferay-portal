@@ -29,6 +29,7 @@ import com.liferay.dynamic.data.mapping.kernel.DDMForm;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.dynamic.data.mapping.kernel.LocalizedValue;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -327,7 +328,8 @@ public class DLFileVersionTest {
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			DDMFormValues ddmFormValues = createDDMFormValues(
-				ddmStructure.getDDMForm());
+				DDMStructureManagerUtil.getDDMForm(
+					ddmStructure.getStructureId()));
 
 			for (String fieldName : ddmStructure.getFieldNames()) {
 				DDMFormFieldValue ddmFormFieldValue = createDDMFormFieldValue(

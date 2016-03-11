@@ -31,10 +31,12 @@ import com.liferay.document.library.kernel.util.DLProcessorThreadLocal;
 import com.liferay.dynamic.data.mapping.exportimport.content.processor.DDMFormValuesExportImportContentProcessor;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
+import com.liferay.dynamic.data.mapping.kernel.DDMForm;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -186,6 +188,11 @@ public class FileEntryStagedModelDataHandler
 		catch (Exception e) {
 			throw new PortletDataException(e);
 		}
+	}
+
+	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
 	}
 
 	@Override
@@ -669,17 +676,19 @@ public class FileEntryStagedModelDataHandler
 		String serializedDDMFormValues = portletDataContext.getZipEntryAsString(
 			ddmFormValuesPath);
 
+		DDMForm ddmForm = DDMStructureManagerUtil.getDDMForm(
+			ddmStructure.getStructureId());
+
 		com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				DDMBeanTranslatorUtil.translate(ddmStructure.getDDMForm()),
-				serializedDDMFormValues);
+				_ddmBeanTranslator.translate(ddmForm), serializedDDMFormValues);
 
 		ddmFormValues =
 			_ddmFormValuesExportImportContentProcessor.
 				replaceImportContentReferences(
 					portletDataContext, ddmStructure, ddmFormValues);
 
-		return DDMBeanTranslatorUtil.translate(ddmFormValues);
+		return _ddmBeanTranslator.translate(ddmFormValues);
 	}
 
 	protected void importMetaData(
@@ -872,6 +881,7 @@ public class FileEntryStagedModelDataHandler
 	private static final Log _log = LogFactoryUtil.getLog(
 		FileEntryStagedModelDataHandler.class);
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormValuesExportImportContentProcessor
 		_ddmFormValuesExportImportContentProcessor;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;

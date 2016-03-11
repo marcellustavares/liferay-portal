@@ -22,6 +22,7 @@ import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
@@ -240,6 +241,11 @@ public class JournalArticleAssetRendererFactory
 	}
 
 	@Reference(unbind = "-")
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
+	}
+
+	@Reference(unbind = "-")
 	public void setFieldsToDDMFormValuesConverter(
 		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
 
@@ -259,6 +265,7 @@ public class JournalArticleAssetRendererFactory
 		JournalArticleAssetRenderer journalArticleAssetRenderer =
 			new JournalArticleAssetRenderer(article);
 
+		journalArticleAssetRenderer.setDDMBeanTranslator(_ddmBeanTranslator);
 		journalArticleAssetRenderer.setFieldsToDDMFormValuesConverter(
 			_fieldsToDDMFormValuesConverter);
 		journalArticleAssetRenderer.setJournalContent(_journalContent);
@@ -306,6 +313,7 @@ public class JournalArticleAssetRendererFactory
 		_journalConverter = journalConverter;
 	}
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMStructureLocalService _ddmStructureLocalService;
 	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private JournalArticleLocalService _journalArticleLocalService;
