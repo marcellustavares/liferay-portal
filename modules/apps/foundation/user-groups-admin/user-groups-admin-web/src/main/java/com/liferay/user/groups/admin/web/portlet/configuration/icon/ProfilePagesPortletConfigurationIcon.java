@@ -91,7 +91,7 @@ public class ProfilePagesPortletConfigurationIcon
 			Group group = userGroup.getGroup();
 
 			if (GroupPermissionUtil.contains(
-					themeDisplay.getPermissionChecker(), userGroupGroup,
+					themeDisplay.getPermissionChecker(), group,
 					ActionKeys.VIEW) &&
 				(group.getPublicLayoutsPageCount() > 0)) {
 

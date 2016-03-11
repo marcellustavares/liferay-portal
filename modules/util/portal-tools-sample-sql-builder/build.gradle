@@ -3,6 +3,7 @@ dependencies {
 	compile group: "com.liferay", name: "com.liferay.document.library.api", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.dynamic.data.lists.api", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.api", version: "1.0.0"
+	compile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.service", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.journal.api", version: "1.0.0"
 	compile group: "com.liferay", name: "com.liferay.message.boards.api", version: "1.0.1"
 	compile group: "com.liferay", name: "com.liferay.wiki.api", version: "1.0.0"
@@ -14,7 +15,6 @@ dependencies {
 	compile project(":apps:collaboration:wiki:wiki-service")
 	compile project(":apps:forms-and-workflow:dynamic-data-lists:dynamic-data-lists-service")
 	compile project(":apps:forms-and-workflow:dynamic-data-lists:dynamic-data-lists-web")
-	compile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-service")
 	compile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-web")
 	compile project(":apps:foundation:login:login-web")
 	compile project(":apps:web-experience:journal:journal-service")
