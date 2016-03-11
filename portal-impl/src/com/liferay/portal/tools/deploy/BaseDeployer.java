@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.servlet.filters.invoker.InvokerFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -1069,30 +1068,6 @@ public class BaseDeployer implements AutoDeployer, Deployer {
 		DeleteTask.deleteDirectory(tempDir);
 
 		return true;
-	}
-
-	public String downloadJar(String jar) throws Exception {
-		String tmpDir = SystemProperties.get(SystemProperties.TMP_DIR);
-
-		File file = new File(
-			tmpDir + "/liferay/com/liferay/portal/deploy/dependencies/" + jar);
-
-		if (!file.exists()) {
-			synchronized (this) {
-				String url = PropsUtil.get(
-					PropsKeys.LIBRARY_DOWNLOAD_URL + jar);
-
-				if (_log.isInfoEnabled()) {
-					_log.info("Downloading library from " + url);
-				}
-
-				byte[] bytes = HttpUtil.URLtoByteArray(url);
-
-				FileUtil.write(file, bytes);
-			}
-		}
-
-		return FileUtil.getAbsolutePath(file);
 	}
 
 	public String fixPortalDependencyJar(String portalJar) {

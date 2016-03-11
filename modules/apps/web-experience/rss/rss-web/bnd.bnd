@@ -1,6 +1,6 @@
 Bundle-Name: Liferay RSS Web
 Bundle-SymbolicName: com.liferay.rss.web
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Include-Resource: @../../../../../util-java/util-java.jar!/com/liferay/util/RSSUtil.class
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Publication Tools
