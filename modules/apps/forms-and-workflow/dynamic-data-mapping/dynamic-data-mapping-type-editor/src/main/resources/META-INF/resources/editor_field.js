@@ -56,11 +56,11 @@ AUI.add(
 					render: function() {
 						var instance = this;
 
+						var editorNode = instance.getEditorNode();
+
 						EditorField.superclass.render.apply(instance, arguments);
 
-						if (!instance.get('readOnly')) {
-							var editorNode = instance.getEditorNode();
-
+						if (!instance.get('readOnly') && editorNode.inDoc()) {
 							var name = instance.getQualifiedName();
 
 							var value = instance.getContextValue();
