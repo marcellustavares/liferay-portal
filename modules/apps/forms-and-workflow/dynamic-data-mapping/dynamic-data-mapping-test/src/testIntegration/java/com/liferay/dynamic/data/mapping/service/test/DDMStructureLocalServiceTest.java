@@ -28,7 +28,6 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureIdComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -270,7 +269,7 @@ public class DDMStructureLocalServiceTest extends BaseDDMServiceTestCase {
 		DDMStructure childStructure = ddmStructureTestHelper.addStructure(
 			parentStructure.getStructureId(), parentStructure.getClassNameId(),
 			null, "Child Structure", StringPool.BLANK, childDDMForm,
-			DDMUtil.getDefaultDDMFormLayout(childDDMForm),
+			ddm.getDefaultDDMFormLayout(childDDMForm),
 			StorageType.JSON.toString(), DDMStructureConstants.TYPE_DEFAULT);
 
 		Map<String, DDMFormField> childFullHierarchyDDMFormFieldsMap =

@@ -16,6 +16,9 @@ package com.liferay.document.library.web.util;
 
 import com.liferay.document.library.web.display.context.DLDisplayContextProvider;
 import com.liferay.document.library.web.display.context.IGDisplayContextProvider;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.portal.kernel.json.JSONArray;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -30,6 +33,12 @@ public class DLWebComponentProvider {
 
 	public static DLWebComponentProvider getDLWebComponentProvider() {
 		return _dlWebComponentProvider;
+	}
+
+	public JSONArray getDDMFormFieldsJSONArray(
+		DDMStructure ddmStructure, String script) {
+
+		return _ddm.getDDMFormFieldsJSONArray(ddmStructure, script);
 	}
 
 	public DLDisplayContextProvider getDLDisplayContextProvider() {
@@ -51,6 +60,11 @@ public class DLWebComponentProvider {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDM(DDM ddm) {
+		_ddm = ddm;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDLDisplayContextProvider(
 		DLDisplayContextProvider dlDisplayContextProvider) {
 
@@ -66,6 +80,7 @@ public class DLWebComponentProvider {
 
 	private static DLWebComponentProvider _dlWebComponentProvider;
 
+	private DDM _ddm;
 	private DLDisplayContextProvider _dlDisplayContextProvider;
 	private IGDisplayContextProvider _igDisplayContextProvider;
 

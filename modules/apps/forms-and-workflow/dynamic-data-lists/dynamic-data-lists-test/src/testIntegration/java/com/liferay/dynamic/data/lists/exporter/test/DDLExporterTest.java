@@ -33,6 +33,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -102,6 +103,7 @@ public class DDLExporterTest {
 			PermissionThreadLocal.getPermissionChecker();
 
 		setUpDDLExporterFactory();
+		setUpDDM();
 		setUpDDMFormFieldDataTypes();
 		setUpDDMFormFieldValues();
 		setUpPermissionChecker();
@@ -186,7 +188,7 @@ public class DDLExporterTest {
 	protected DDLRecordSet addRecordSet(DDMForm ddmForm) throws Exception {
 		DDMStructureTestHelper ddmStructureTestHelper =
 			new DDMStructureTestHelper(
-				PortalUtil.getClassNameId(DDLRecordSet.class), _group);
+				PortalUtil.getClassNameId(DDLRecordSet.class), _ddm, _group);
 
 		DDMStructure ddmStructure = ddmStructureTestHelper.addStructure(
 			ddmForm, StorageType.JSON.toString());
@@ -321,6 +323,12 @@ public class DDLExporterTest {
 		_ddlExporterFactory = registry.getService(DDLExporterFactory.class);
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected Map<DDMFormFieldType, String> setUpDDMFormFieldDataTypes() {
 		_ddmFormFieldDataTypes = new HashMap<>();
 
@@ -391,6 +399,7 @@ public class DDLExporterTest {
 
 	private Set<Locale> _availableLocales;
 	private DDLExporterFactory _ddlExporterFactory;
+	private DDM _ddm;
 	private Map<DDMFormFieldType, String> _ddmFormFieldDataTypes;
 	private Locale _defaultLocale;
 	private Map<DDMFormFieldType, String> _fieldValues;

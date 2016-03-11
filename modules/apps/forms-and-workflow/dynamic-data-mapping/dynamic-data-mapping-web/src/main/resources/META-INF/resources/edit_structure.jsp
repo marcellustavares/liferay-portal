@@ -59,10 +59,10 @@ else {
 JSONArray fieldsJSONArray = null;
 
 if (structure != null) {
-	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structureVersion, script);
+	fieldsJSONArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structureVersion, script);
 }
 else {
-	fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+	fieldsJSONArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structure, script);
 }
 
 String fieldsJSONArrayString = StringPool.BLANK;

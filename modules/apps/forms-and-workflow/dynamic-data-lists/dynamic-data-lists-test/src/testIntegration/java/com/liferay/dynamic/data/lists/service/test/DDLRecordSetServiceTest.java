@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageAdapter;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
 import com.liferay.dynamic.data.mapping.test.util.storage.FailStorageAdapter;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -71,13 +72,14 @@ public class DDLRecordSetServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDM();
 		_availableLocales = DDMFormTestUtil.createAvailableLocales(Locale.US);
 		_defaultLocale = Locale.US;
 
 		_group = GroupTestUtil.addGroup();
 
 		_ddmStructureTestHelper = new DDMStructureTestHelper(
-			PortalUtil.getClassNameId(DDLRecordSet.class), _group);
+			PortalUtil.getClassNameId(DDLRecordSet.class), _ddm, _group);
 
 		_ddlRecordSetTestHelper = new DDLRecordSetTestHelper(_group);
 	}
@@ -125,6 +127,12 @@ public class DDLRecordSetServiceTest {
 		return _ddlRecordSetTestHelper.addRecordSet(ddmStructure);
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected DDLRecordSet updateRecordSet(
 			DDLRecordSet ddlRecordSet, DDMForm ddmStructureDDMForm)
 		throws Exception {
@@ -142,6 +150,7 @@ public class DDLRecordSetServiceTest {
 
 	private Set<Locale> _availableLocales;
 	private DDLRecordSetTestHelper _ddlRecordSetTestHelper;
+	private DDM _ddm;
 	private DDMStructureTestHelper _ddmStructureTestHelper;
 	private Locale _defaultLocale;
 

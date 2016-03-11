@@ -53,7 +53,7 @@ DDMStructure ddmStructure = recordSet.getDDMStructure();
 <%@ include file="/custom_spreadsheet_editors.jspf" %>
 
 <aui:script use="liferay-portlet-dynamic-data-lists">
-	var structure = <%= DDMUtil.getDDMFormFieldsJSONArray(ddmStructure, ddmStructure.getDefinition()) %>;
+	var structure = <%= ddlDisplayContext.getDDMFormFieldsJSONArray(ddmStructure, ddmStructure.getDefinition()) %>;
 
 	var columns = Liferay.SpreadSheet.buildDataTableColumns(<%= ddlDisplayContext.getRecordSetJSONArray(recordSet, locale) %>, structure, <%= editable %>);
 

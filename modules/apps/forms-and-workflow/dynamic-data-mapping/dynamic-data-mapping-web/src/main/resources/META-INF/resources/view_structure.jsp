@@ -26,7 +26,7 @@ DDMStructureVersion structureVersion = DDMStructureVersionServiceUtil.getStructu
 
 String script = BeanParamUtil.getString(structureVersion, request, "definition");
 
-JSONArray fieldsJSONArray = DDMUtil.getDDMFormFieldsJSONArray(structureVersion, script);
+JSONArray fieldsJSONArray = ddmDisplayContext.getDDMFormFieldsJSONArray(structureVersion, script);
 
 String fieldsJSONArrayString = StringPool.BLANK;
 

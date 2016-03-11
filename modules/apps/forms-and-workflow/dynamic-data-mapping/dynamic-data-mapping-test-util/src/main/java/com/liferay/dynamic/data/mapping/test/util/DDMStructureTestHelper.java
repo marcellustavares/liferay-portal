@@ -20,7 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -48,10 +48,11 @@ public class DDMStructureTestHelper {
 		return map;
 	}
 
-	public DDMStructureTestHelper(long classNameId, Group group)
+	public DDMStructureTestHelper(long classNameId, DDM ddm, Group group)
 		throws Exception {
 
 		_classNameId = classNameId;
+		_ddm = ddm;
 		_group = group;
 	}
 
@@ -109,7 +110,7 @@ public class DDMStructureTestHelper {
 			String storageType, int type)
 		throws Exception {
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 
 		return addStructure(
 			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
@@ -128,7 +129,7 @@ public class DDMStructureTestHelper {
 			long structureId, String name, String description, DDMForm ddmForm)
 		throws Exception {
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 
 		return updateStructure(
 			structureId, name, description, ddmForm, ddmFormLayout);
@@ -150,6 +151,7 @@ public class DDMStructureTestHelper {
 	}
 
 	private final long _classNameId;
+	private final DDM _ddm;
 	private final Group _group;
 
 }

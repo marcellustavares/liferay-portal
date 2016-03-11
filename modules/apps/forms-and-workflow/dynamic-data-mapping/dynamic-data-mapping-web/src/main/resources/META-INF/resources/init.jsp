@@ -218,7 +218,7 @@ private JSONArray _getFieldReadOnlyAttributes(DDMStructure structure, String fie
 }
 
 private JSONArray _getFormTemplateFieldsJSONArray(DDMStructure structure, String script) throws Exception {
-	JSONArray jsonArray = DDMUtil.getDDMFormFieldsJSONArray(structure, script);
+	JSONArray jsonArray = structure.getDDMFormFieldsJSONArray(script);
 
 	_addFormTemplateFieldAttributes(structure, jsonArray);
 

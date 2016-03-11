@@ -615,6 +615,12 @@ public class DDMStructureLocalServiceUtil {
 				   .getClassStructures(companyId, classNameId, start, end);
 	}
 
+	public static com.liferay.portal.kernel.json.JSONArray getDDMFormFieldsJSONArray(
+		com.liferay.dynamic.data.mapping.model.DDMStructure ddmStructure,
+		java.lang.String script) {
+		return getService().getDDMFormFieldsJSONArray(ddmStructure, script);
+	}
+
 	/**
 	* Returns the d d m structure with the primary key.
 	*

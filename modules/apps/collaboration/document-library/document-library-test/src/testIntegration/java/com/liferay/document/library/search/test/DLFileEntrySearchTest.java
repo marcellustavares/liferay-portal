@@ -35,9 +35,9 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.search.TestOrderHelper;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
-import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Group;
@@ -101,6 +101,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
+		setUpDDM();
 		setUpPermissionThreadLocal();
 		setUpPrincipalThreadLocal();
 		setUpDDMIndexer();
@@ -466,6 +467,12 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 		return hits.getLength();
 	}
 
+	protected void setUpDDM() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddm = registry.getService(DDM.class);
+	}
+
 	protected void setUpDDMIndexer() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -522,7 +529,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 
 		DDMForm ddmForm = DDMStructureTestUtil.getSampleDDMForm("title");
 
-		DDMFormLayout ddmFormLayout = DDMUtil.getDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
 
 		DDMStructureLocalServiceUtil.updateStructure(
 			_ddmStructure.getUserId(), _ddmStructure.getStructureId(),
@@ -594,6 +601,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 
 	private static final int _FOLDER_NAME_MAX_LENGTH = 100;
 
+	private DDM _ddm;
 	private DDMIndexer _ddmIndexer;
 	private DDMStructure _ddmStructure;
 	private String _originalName;
