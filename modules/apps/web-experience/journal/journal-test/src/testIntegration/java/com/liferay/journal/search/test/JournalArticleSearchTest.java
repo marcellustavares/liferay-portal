@@ -156,7 +156,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	public void testOrderByDDMBooleanField() throws Exception {
 		TestOrderHelper testOrderHelper =
 			new JournalArticleSearchTestOrderHelper(
-				_ddmBeanTranslator, _ddmBeanTranslator, _ddmIndexer, group);
+				_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMBooleanField();
 	}
@@ -165,7 +165,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	public void testOrderByDDMBooleanFieldRepeatable() throws Exception {
 		TestOrderHelper testOrderHelper =
 			new JournalArticleSearchTestOrderHelper(
-				_ddmBeanTranslator, _ddmBeanTranslator, _ddmIndexer, group);
+				_ddmBeanTranslator, _ddmIndexer, group);
 
 		testOrderHelper.testOrderByDDMBooleanFieldRepeatable();
 	}
