@@ -32,7 +32,7 @@ import com.liferay.dynamic.data.mapping.kernel.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -78,6 +78,7 @@ public class DLFileEntryMetadataLocalServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDMBeanTranslator();
 		setUpDDMFormXSDDeserializer();
 
 		_group = GroupTestUtil.addGroup();
@@ -93,7 +94,7 @@ public class DLFileEntryMetadataLocalServiceTest {
 			_ddmFormXSDDeserializer.deserialize(new String(testFileBytes));
 
 		serviceContext.setAttribute(
-			"ddmForm", DDMBeanTranslatorUtil.translate(ddmForm));
+			"ddmForm", _ddmBeanTranslator.translate(ddmForm));
 
 		User user = TestPropsValues.getUser();
 
@@ -185,6 +186,12 @@ public class DLFileEntryMetadataLocalServiceTest {
 		}
 	}
 
+	protected void setUpDDMBeanTranslator() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmBeanTranslator = registry.getService(DDMBeanTranslator.class);
+	}
+
 	protected Map<String, DDMFormValues> setUpDDMFormValuesMap(
 		String ddmStructureKey, Locale currentLocale) {
 
@@ -228,6 +235,7 @@ public class DLFileEntryMetadataLocalServiceTest {
 			DDMFormXSDDeserializer.class);
 	}
 
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructure _ddmStructure;
 	private DLFileEntry _dlFileEntry;

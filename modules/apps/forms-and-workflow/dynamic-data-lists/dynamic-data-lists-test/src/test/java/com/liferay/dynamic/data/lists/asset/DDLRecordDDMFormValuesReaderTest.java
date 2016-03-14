@@ -130,7 +130,7 @@ public class DDLRecordDDMFormValuesReaderTest {
 		extends DDLRecordDDMFormValuesReader {
 
 		public MockDDLRecordDDMFormValuesReader(DDMFormValues ddmFormValues) {
-			super(null);
+			super(null, null);
 
 			_ddmFormValues = ddmFormValues;
 		}

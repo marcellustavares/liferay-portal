@@ -16,6 +16,7 @@ package com.liferay.journal.web.asset;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.asset.kernel.model.DDMFormValuesReader;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.constants.JournalPortletKeys;
@@ -121,6 +122,8 @@ public class JournalArticleAssetRenderer
 		JournalArticleDDMFormValuesReader journalArticleDDMFormValuesReader =
 			new JournalArticleDDMFormValuesReader(_article);
 
+		journalArticleDDMFormValuesReader.setDDMBeanTranslator(
+			_ddmBeanTranslator);
 		journalArticleDDMFormValuesReader.setFieldsToDDMFormValuesConverter(
 			_fieldsToDDMFormValuesConverter);
 		journalArticleDDMFormValuesReader.setJournalConverter(
@@ -465,6 +468,10 @@ public class JournalArticleAssetRenderer
 		return true;
 	}
 
+	public void setDDMBeanTranslator(DDMBeanTranslator ddmBeanTranslator) {
+		_ddmBeanTranslator = ddmBeanTranslator;
+	}
+
 	public void setFieldsToDDMFormValuesConverter(
 		FieldsToDDMFormValuesConverter fieldsToDDMFormValuesConverter) {
 
@@ -523,6 +530,7 @@ public class JournalArticleAssetRenderer
 	}
 
 	private final JournalArticle _article;
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 	private JournalContent _journalContent;
 	private JournalConverter _journalConverter;

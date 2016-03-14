@@ -260,10 +260,12 @@ public class DDMStructureManagerUtilTest {
 
 		descriptionMap.put(LocaleUtil.US, "Structure Description Modified");
 
+		DDMForm ddmForm = DDMStructureManagerUtil.getDDMForm(
+			expectedStructure.getStructureId());
+
 		DDMStructure actualStructure = DDMStructureManagerUtil.updateStructure(
 			TestPropsValues.getUserId(), expectedStructure.getStructureId(), 0,
-			nameMap, descriptionMap, expectedStructure.getDDMForm(),
-			_serviceContext);
+			nameMap, descriptionMap, ddmForm, _serviceContext);
 
 		Assert.assertEquals(nameMap, actualStructure.getNameMap());
 		Assert.assertEquals(
