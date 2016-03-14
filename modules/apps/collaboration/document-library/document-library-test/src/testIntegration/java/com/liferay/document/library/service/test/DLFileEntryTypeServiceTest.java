@@ -28,7 +28,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
-import com.liferay.dynamic.data.mapping.util.DDMBeanTranslatorUtil;
+import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -85,6 +85,7 @@ public class DLFileEntryTypeServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		setUpDDMBeanTranslator();
 		setUpDDMFormXSDDeserializer();
 		setUpPermissionThreadLocal();
 		setUpPrincipalThreadLocal();
@@ -143,7 +144,7 @@ public class DLFileEntryTypeServiceTest {
 			new String(testFileBytes));
 
 		serviceContext.setAttribute(
-			"ddmForm", DDMBeanTranslatorUtil.translate(ddmForm));
+			"ddmForm", _ddmBeanTranslator.translate(ddmForm));
 
 		User user = TestPropsValues.getUser();
 
@@ -333,6 +334,12 @@ public class DLFileEntryTypeServiceTest {
 			dlFileEntryType.getPrimaryKey(), dlFileEntry.getFileEntryTypeId());
 	}
 
+	protected void setUpDDMBeanTranslator() {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_ddmBeanTranslator = registry.getService(DDMBeanTranslator.class);
+	}
+
 	protected void setUpDDMFormXSDDeserializer() {
 		Registry registry = RegistryUtil.getRegistry();
 
@@ -395,6 +402,7 @@ public class DLFileEntryTypeServiceTest {
 
 	private DLFileEntryType _basicDocumentDLFileEntryType;
 	private DLFileEntryType _contractDLFileEntryType;
+	private DDMBeanTranslator _ddmBeanTranslator;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private List<DLFileEntryType> _dlFileEntryTypes;
 	private Folder _folder;
