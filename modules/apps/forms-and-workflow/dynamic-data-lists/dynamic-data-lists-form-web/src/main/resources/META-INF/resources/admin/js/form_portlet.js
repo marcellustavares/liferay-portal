@@ -16,6 +16,9 @@ AUI.add(
 					dataProviders: {
 					},
 
+					dataProviderURL: {
+					},
+
 					definition: {
 					},
 
@@ -25,6 +28,9 @@ AUI.add(
 					},
 
 					editForm: {
+					},
+
+					evaluatorURL: {
 					},
 
 					formBuilder: {
@@ -413,7 +419,9 @@ AUI.add(
 						return new Liferay.DDL.FormBuilder(
 							{
 								dataProviders: instance.get('dataProviders'),
+								dataProviderURL: instance.get('dataProviderURL'),
 								definition: instance.get('definition'),
+								evaluatorURL: instance.get('evaluatorURL'),
 								pagesJSON: layout.pages,
 								portletNamespace: instance.get('namespace')
 							}
