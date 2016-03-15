@@ -16,8 +16,8 @@ AUI.add(
 						value: 'manual'
 					},
 
-					dataSourceURL: {
-						value: '/o/dynamic-data-mapping-data-provider/'
+					dataProviderURL: {
+						valueFn: '_valueDataProviderURL'
 					},
 
 					ddmDataProviderInstanceId: {
@@ -159,7 +159,7 @@ AUI.add(
 						var form = instance.getRoot();
 
 						A.io.request(
-							instance.get('dataSourceURL'),
+							instance.get('dataProviderURL'),
 							{
 								data: {
 									ddmDataProviderInstanceId: instance.get('ddmDataProviderInstanceId')
@@ -206,6 +206,20 @@ AUI.add(
 
 					_setValue: function(val) {
 						return val || [];
+					},
+
+					_valueDataProviderURL: function() {
+						var instance = this;
+
+						var dataProviderURL;
+
+						var form = instance.getRoot();
+
+						if (form) {
+							dataProviderURL = form.get('dataProviderURL');
+						}
+
+						return dataProviderURL;
 					}
 				}
 			}
