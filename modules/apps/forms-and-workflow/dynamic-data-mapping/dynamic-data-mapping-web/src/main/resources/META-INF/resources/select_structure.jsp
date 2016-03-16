@@ -90,7 +90,7 @@ SearchContainer structureSearch = new StructureSearch(renderRequest, portletURL,
 						<%
 						Map<String, Object> data = new HashMap<String, Object>();
 
-						data.put("confirm-selection", Boolean.TRUE);
+						data.put("confirm-selection", ddmDisplay.isShowConfirmSelectStructure());
 						data.put("confirm-selection-message", LanguageUtil.get(request, "selecting-a-new-structure-changes-the-available-input-fields-and-available-templates"));
 						data.put("ddmstructureid", structure.getStructureId());
 						data.put("ddmstructurekey", structure.getStructureKey());
