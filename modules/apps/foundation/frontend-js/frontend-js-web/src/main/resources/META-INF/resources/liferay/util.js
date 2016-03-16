@@ -1326,10 +1326,6 @@
 				ddmURL.setParameter('showManageTemplates', config.showManageTemplates);
 			}
 
-			if ('showToolbar' in config) {
-				ddmURL.setParameter('showToolbar', config.showToolbar);
-			}
-
 			ddmURL.setParameter('structureAvailableFields', config.structureAvailableFields);
 			ddmURL.setParameter('templateId', config.templateId);
 
