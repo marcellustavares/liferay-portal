@@ -74,6 +74,9 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -87,6 +90,7 @@ public class DDLFormAdminDisplayContext {
 		DDLRecordLocalService ddlRecordLocalService,
 		DDLRecordSetService ddlRecordSetService,
 		DDMDataProviderInstanceLocalService ddmDataProviderInstanceLocalService,
+		Servlet ddmDataProviderServlet, Servlet ddmFormEvaluatorServlet,
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
 		DDMFormFieldTypesJSONSerializer ddmFormFieldTypesJSONSerializer,
 		DDMFormJSONSerializer ddmFormJSONSerializer,
@@ -103,6 +107,8 @@ public class DDLFormAdminDisplayContext {
 		_ddlRecordSetService = ddlRecordSetService;
 		_ddmDataProviderInstanceLocalService =
 			ddmDataProviderInstanceLocalService;
+		_ddmDataProviderServlet = ddmDataProviderServlet;
+		_ddmFormEvaluatorServlet = ddmFormEvaluatorServlet;
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 		_ddmFormFieldTypesJSONSerializer = ddmFormFieldTypesJSONSerializer;
 		_ddmFormJSONSerializer = ddmFormJSONSerializer;
@@ -135,6 +141,22 @@ public class DDLFormAdminDisplayContext {
 			_renderRequest, _renderResponse, getRecordSet(),
 			_ddlRecordLocalService, _ddmFormFieldTypeServicesTracker,
 			_storageEngine);
+	}
+
+	public String getDDMDataProviderServletURL() {
+		String servletContextPath = getServletContextPath(
+			_ddmDataProviderServlet);
+
+		return servletContextPath.concat(
+			"/dynamic-data-mapping-data-provider/");
+	}
+
+	public String getDDMFormEvaluatorServletURL() {
+		String servletContextPath = getServletContextPath(
+			_ddmFormEvaluatorServlet);
+
+		return servletContextPath.concat(
+			"/dynamic-data-mapping-form-evaluator/");
 	}
 
 	public JSONArray getDDMFormFieldTypesJSONArray() throws PortalException {
@@ -506,6 +528,14 @@ public class DDLFormAdminDisplayContext {
 		}
 	}
 
+	protected String getServletContextPath(Servlet servlet) {
+		ServletConfig servletConfig = servlet.getServletConfig();
+
+		ServletContext servletContext = servletConfig.getServletContext();
+
+		return servletContext.getContextPath();
+	}
+
 	protected int getTotal() throws PortalException {
 		RecordSetSearch recordSetSearch = getRecordSetSearch();
 
@@ -584,6 +614,8 @@ public class DDLFormAdminDisplayContext {
 	private final DDLRecordSetService _ddlRecordSetService;
 	private final DDMDataProviderInstanceLocalService
 		_ddmDataProviderInstanceLocalService;
+	private final Servlet _ddmDataProviderServlet;
+	private final Servlet _ddmFormEvaluatorServlet;
 	private final DDMFormFieldTypeServicesTracker
 		_ddmFormFieldTypeServicesTracker;
 	private final DDMFormFieldTypesJSONSerializer

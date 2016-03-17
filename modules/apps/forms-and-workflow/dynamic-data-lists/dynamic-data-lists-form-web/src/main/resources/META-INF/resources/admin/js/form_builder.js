@@ -33,12 +33,18 @@ AUI.add(
 					dataProviders: {
 					},
 
+					dataProviderURL: {
+					},
+
 					definition: {
 						validator: Lang.isObject
 					},
 
 					deserializer: {
 						valueFn: '_valueDeserializer'
+					},
+
+					evaluatorURL: {
 					},
 
 					fieldTypes: {
@@ -154,6 +160,8 @@ AUI.add(
 								{
 									builder: instance,
 									dataProviders: instance.get('dataProviders'),
+									dataProviderURL: instance.get('dataProviderURL'),
+									evaluatorURL: instance.get('evaluatorURL'),
 									portletNamespace: instance.get('portletNamespace'),
 									readOnly: true
 								}
