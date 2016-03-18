@@ -105,14 +105,23 @@ public class SoyTemplateResourcesCollector {
 	}
 
 	protected List<URL> getSoyResourceURLs(Bundle bundle, String templatePath) {
+		List<URL> allURs = new ArrayList<>();
+
 		Enumeration<URL> urls = bundle.findEntries(
 			"META-INF/resources" + templatePath, _SOY_FILE_EXTENSION, true);
 
-		if (urls == null) {
-			return Collections.emptyList();
+		if (urls != null) {
+			allURs.addAll(Collections.list(urls));
 		}
 
-		return Collections.list(urls);
+		Enumeration<URL> urls2 = bundle.findEntries(
+			"META-INF/resources" + templatePath, "*.soy.es", true);
+
+		if (urls2 != null) {
+			allURs.addAll(Collections.list(urls2));
+		}
+
+		return allURs;
 	}
 
 	protected String getTemplateId(String capabilityPrefix, URL url) {

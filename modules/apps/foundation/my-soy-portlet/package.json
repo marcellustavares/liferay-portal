@@ -1,0 +1,8 @@
+{
+	"name": "my-soy-portlet",
+	"version": "1.0.0",
+	"dependencies": {
+		"metal-component": "^1.0.0-rc",
+		"metal-soy": "^1.0.0-rc"
+	}
+}
