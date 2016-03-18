@@ -1,0 +1,9 @@
+Bundle-Name: My Soy Portlet
+Bundle-SymbolicName: com.liferay.test.mysoy
+Bundle-Version: 1.0.0
+Include-Resource:\
+	classes,\
+	META-INF/resources=src/main/resources/META-INF/resources
+Require-Capability: soy;filter:="(type=metal)"
+Web-ContextPath: /my-soy-portlet-web
+-includeresource: package.json
