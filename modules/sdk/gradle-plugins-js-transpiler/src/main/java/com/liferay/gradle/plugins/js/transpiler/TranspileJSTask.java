@@ -22,8 +22,8 @@ import groovy.lang.Closure;
 
 import java.io.File;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -339,7 +339,7 @@ public class TranspileJSTask
 	private Object _sourceDir;
 	private SourceMaps _sourceMaps = SourceMaps.ENABLED;
 	private boolean _soySkipMetalGeneration;
-	private final List<Object> _soySrcIncludes = new ArrayList<>();
-	private final List<Object> _srcIncludes = new ArrayList<>();
+	private final Set<Object> _soySrcIncludes = new LinkedHashSet<>();
+	private final Set<Object> _srcIncludes = new LinkedHashSet<>();
 
 }
