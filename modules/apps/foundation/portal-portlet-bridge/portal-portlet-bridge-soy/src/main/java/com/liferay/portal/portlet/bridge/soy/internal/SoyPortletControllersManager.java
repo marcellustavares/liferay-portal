@@ -36,7 +36,7 @@ public class SoyPortletControllersManager {
 			controller = path.concat(".es");
 		}
 		else {
-			controller = path.concat(".soy");
+			controller = path.concat(".soy.es");
 		}
 
 		return controller;

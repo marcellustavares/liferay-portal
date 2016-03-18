@@ -1,5 +1,5 @@
-import Modal from 'metal-dropdown/src/Dropdown';
-import ViewBase from './View.soy';
+import Modal from 'metal-popover/src/Popover';
+import ViewBase from './View.soy.es';
 
 class View extends ViewBase {
 	attached() {

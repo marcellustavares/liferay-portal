@@ -156,7 +156,7 @@ public class SoyTemplate extends AbstractMultiResourceTemplate {
 
 			renderer.setData(getSoyMapData());
 
-			writer.write(renderer.render());
+			writer.write(renderer.renderStrict().stringValue());
 		}
 		catch (PrivilegedActionException pae) {
 			throw pae.getException();
