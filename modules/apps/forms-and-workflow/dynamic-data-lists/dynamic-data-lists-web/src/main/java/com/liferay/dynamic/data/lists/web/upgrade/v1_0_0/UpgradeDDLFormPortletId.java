@@ -17,11 +17,13 @@ package com.liferay.dynamic.data.lists.web.upgrade.v1_0_0;
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author Marcellus Tavares
@@ -29,20 +31,38 @@ import java.sql.ResultSet;
 public class UpgradeDDLFormPortletId
 	extends com.liferay.portal.upgrade.util.UpgradePortletId {
 
-	public UpgradeDDLFormPortletId(
-		PortletPreferencesLocalService portletPreferencesLocalService,
-		ResourcePermissionLocalService resourcePermissionLocalService) {
+	protected void deleteResourcePermissions(
+		String oldRootPortletId, String newRootPortletId) {
 
-		_portletPreferencesLocalService = portletPreferencesLocalService;
-		_resourcePermissionLocalService = resourcePermissionLocalService;
-	}
+		try (PreparedStatement ps1 = connection.prepareStatement(
+				"select rp1.resourcePermissionId from ResourcePermission rp1 " +
+					"inner join ResourcePermission rp2 " +
+					"on rp1.companyId = rp2.companyId " +
+					"and rp1.scope = rp2.scope " +
+					"and rp1.roleId = rp2.roleId " +
+					"where rp1.name = '" + oldRootPortletId + "' " +
+					"and rp2.name = '" + newRootPortletId + "'");
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"delete from ResourcePermission " +
+						"where resourcePermissionId = ?");
+			ResultSet rs = ps1.executeQuery()) {
 
-	protected void deleteResourcePermission(long resourcePermissionId)
-		throws Exception {
+			while (rs.next()) {
+				long resourcePermissionId = rs.getLong("resourcePermissionId");
 
-		runSQL(
-			"delete ResourcePermission where resourcePermissionId = " +
-				resourcePermissionId);
+				ps2.setLong(1, resourcePermissionId);
+				ps2.addBatch();
+			}
+
+			ps2.executeBatch();
+		}
+		catch (SQLException sqle) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(sqle, sqle);
+			}
+		}
 	}
 
 	@Override
@@ -55,32 +75,51 @@ public class UpgradeDDLFormPortletId
 		};
 	}
 
-	protected boolean hasResourcePermission(
-			long companyId, String name, int scope, String primKey, long roleId)
+	@Override
+	protected void updateInstanceablePortletPreferences(
+			String oldRootPortletId, String newRootPortletId)
 		throws Exception {
 
-		try (PreparedStatement ps = connection.prepareStatement(
-				"select count(*) from ResourcePermission where companyId = ? " +
-					"and name = ? and scope = ? and primKey = ? and roleId " +
-						"= ?")) {
+		StringBundler sb = new StringBundler(8);
 
-			ps.setLong(1, companyId);
-			ps.setString(2, name);
-			ps.setInt(3, scope);
-			ps.setString(4, primKey);
-			ps.setLong(5, roleId);
+		sb.append("select portletPreferencesId, portletId, preferences from ");
+		sb.append("PortletPreferences where portletId = '");
+		sb.append(oldRootPortletId);
+		sb.append("' OR portletId like '");
+		sb.append(oldRootPortletId);
+		sb.append("_INSTANCE_%' OR portletId like '");
+		sb.append(oldRootPortletId);
+		sb.append("_USER_%_INSTANCE_%'");
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					int count = rs.getInt(1);
+		try (PreparedStatement ps = connection.prepareStatement(sb.toString());
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"update PortletPreferences set portletId = ?, " +
+						"preferences = ? where portletPreferencesId = ?");
+			ResultSet rs = ps.executeQuery()) {
 
-					if (count > 0) {
-						return true;
-					}
-				}
+			while (rs.next()) {
+				long portletPreferencesId = rs.getLong("portletPreferencesId");
+				String portletId = rs.getString("portletId");
+				String preferences = rs.getString("preferences");
 
-				return false;
+				String newPortletId = StringUtil.replace(
+					portletId, oldRootPortletId, newRootPortletId);
+
+				String newPreferences = StringUtil.replace(
+					preferences, "</portlet-preferences>",
+					"<preference><name>formView</name><value>true</value>" +
+						"</preference></portlet-preferences>");
+
+				ps2.setString(1, newPortletId);
+				ps2.setString(2, newPreferences);
+				ps2.setLong(3, portletPreferencesId);
+
+				ps2.addBatch();
 			}
+
+			ps2.executeBatch();
 		}
 	}
 
@@ -104,12 +143,19 @@ public class UpgradeDDLFormPortletId
 		}
 	}
 
+	@Override
+	protected void updateResourcePermission(
+			String oldRootPortletId, String newRootPortletId,
+			boolean updateName)
+		throws Exception {
+
+		deleteResourcePermissions(oldRootPortletId, newRootPortletId);
+
+		super.updateResourcePermission(
+			oldRootPortletId, newRootPortletId, updateName);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		UpgradeDDLFormPortletId.class);
-
-	private final PortletPreferencesLocalService
-		_portletPreferencesLocalService;
-	private final ResourcePermissionLocalService
-		_resourcePermissionLocalService;
 
 }

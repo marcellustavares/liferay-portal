@@ -16,13 +16,10 @@ package com.liferay.dynamic.data.lists.web.upgrade;
 
 import com.liferay.dynamic.data.lists.web.upgrade.v1_0_0.UpgradeDDLDisplayPortletId;
 import com.liferay.dynamic.data.lists.web.upgrade.v1_0_0.UpgradeDDLFormPortletId;
-import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -38,27 +35,7 @@ public class DDLDisplayWebUpgrade implements UpgradeStepRegistrator {
 
 		registry.register(
 			"com.liferay.dynamic.data.lists.web", "0.0.1", "1.0.0",
-			new UpgradeDDLDisplayPortletId(),
-			new UpgradeDDLFormPortletId(
-				_portletPreferencesLocalService,
-				_resourcePermissionLocalService));
+			new UpgradeDDLDisplayPortletId(), new UpgradeDDLFormPortletId());
 	}
-
-	@Reference(unbind = "-")
-	protected void setPortletPreferencesLocalService(
-		PortletPreferencesLocalService portletPreferencesLocalService) {
-
-		_portletPreferencesLocalService = portletPreferencesLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setResourcePermissionLocalService(
-		ResourcePermissionLocalService resourcePermissionLocalService) {
-
-		_resourcePermissionLocalService = resourcePermissionLocalService;
-	}
-
-	private PortletPreferencesLocalService _portletPreferencesLocalService;
-	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 }
