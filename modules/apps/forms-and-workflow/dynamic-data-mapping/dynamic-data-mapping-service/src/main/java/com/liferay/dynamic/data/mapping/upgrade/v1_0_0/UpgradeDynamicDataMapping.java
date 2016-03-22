@@ -75,6 +75,7 @@ import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
@@ -420,6 +421,24 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		upgradeTemplatesPermissions();
 	}
 
+	protected List<String> getDDMDateFieldNames(DDMForm ddmForm)
+		throws Exception {
+
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
+		List<String> ddmFormDateFieldNames = new ArrayList<>();
+
+		for (DDMFormField ddmFormField : ddmFormFields) {
+			String dataType = ddmFormField.getType();
+
+			if (dataType.equals("ddm-date")) {
+				ddmFormDateFieldNames.add(ddmFormField.getName());
+			}
+		}
+
+		return ddmFormDateFieldNames;
+	}
+
 	protected DDMForm getDDMForm(long structureId) throws Exception {
 		DDMForm ddmForm = _ddmForms.get(structureId);
 
@@ -497,6 +516,29 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			new DDMFormValuesXSDDeserializer(companyId);
 
 		return ddmFormValuesXSDDeserializer.deserialize(ddmForm, xml);
+	}
+
+	protected Map<Long, String> getDDMTemplateIdsToScriptMap(long structureId)
+		throws Exception {
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select * from DDMTemplate where classPK = ?")) {
+
+			ps.setLong(1, structureId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				Map<Long, String> ddmTemplateIdsToScriptMap = new HashMap<>();
+
+				while (rs.next()) {
+					Long templateId = rs.getLong("templateId");
+					String script = rs.getString("script");
+
+					ddmTemplateIdsToScriptMap.put(templateId, script);
+				}
+
+				return ddmTemplateIdsToScriptMap;
+			}
+		}
 	}
 
 	protected String getDefaultDDMFormLayoutDefinition(DDMForm ddmForm) {
@@ -820,6 +862,36 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				"storageType = 'xml'");
 	}
 
+	protected void updateTemplateDateFields(DDMForm ddmForm, long structureId)
+		throws Exception {
+
+		List<String> ddmDateFieldNames = getDDMDateFieldNames(ddmForm);
+
+		if (ListUtil.isEmpty(ddmDateFieldNames)) {
+			return;
+		}
+
+		Map<Long, String> ddmTemplateIdsToScriptMap =
+			getDDMTemplateIdsToScriptMap(structureId);
+
+		for (Long ddmTemplateId : ddmTemplateIdsToScriptMap.keySet()) {
+			String script = ddmTemplateIdsToScriptMap.get(ddmTemplateId);
+
+			for (String ddmDateFieldName : ddmDateFieldNames) {
+				script = updateTemplateScriptDateAssignStatement(
+					script, ddmDateFieldName);
+
+				script = updateTemplateScriptDateIfStatement(
+					script, ddmDateFieldName);
+
+				script = updateTemplateScriptDateParseStatement(
+					script, ddmDateFieldName);
+			}
+
+			updateTemplateScript(ddmTemplateId, script);
+		}
+	}
+
 	protected void updateTemplateScript(long templateId, String script)
 		throws Exception {
 
@@ -838,6 +910,62 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 			throw e;
 		}
+	}
+
+	protected String updateTemplateScriptDateAssignStatement(
+		String script, String dateFieldName) {
+
+		StringBundler oldTemplateScript = new StringBundler(5);
+		StringBundler newTemplateScript = new StringBundler(5);
+
+		oldTemplateScript.append("<#assign ");
+		oldTemplateScript.append(dateFieldName);
+		oldTemplateScript.append("_Data = getterUtil.getLong(");
+		oldTemplateScript.append(dateFieldName);
+		oldTemplateScript.append(".getData())>");
+
+		newTemplateScript.append("<#assign ");
+		newTemplateScript.append(dateFieldName);
+		newTemplateScript.append("_Data = getterUtil.getString(");
+		newTemplateScript.append(dateFieldName);
+		newTemplateScript.append(".getData())>");
+
+		return StringUtil.replace(
+			script, oldTemplateScript.toString(), newTemplateScript.toString());
+	}
+
+	protected String updateTemplateScriptDateIfStatement(
+		String script, String dateFieldName) {
+
+		String oldTemplateScript = "<#if (" + dateFieldName + "_Data > 0)>";
+
+		String newTemplateScript =
+			"<#if (validator.isNotNull(" + dateFieldName + "_Data))>";
+
+		return StringUtil.replace(script, oldTemplateScript, newTemplateScript);
+	}
+
+	protected String updateTemplateScriptDateParseStatement(
+		String script, String dateFieldName) {
+
+		StringBundler oldTemplateScript = new StringBundler(5);
+		StringBundler newTemplateScript = new StringBundler(5);
+
+		oldTemplateScript.append("<#assign ");
+		oldTemplateScript.append(dateFieldName);
+		oldTemplateScript.append("_DateObj = dateUtil.newDate(");
+		oldTemplateScript.append(dateFieldName);
+		oldTemplateScript.append("_Data)>");
+
+		newTemplateScript.append("<#assign ");
+		newTemplateScript.append(dateFieldName);
+		newTemplateScript.append(
+			"_DateObj = dateUtil.parseDate(\"yyyy-MM-dd\", ");
+		newTemplateScript.append(dateFieldName);
+		newTemplateScript.append("_Data, locale)>");
+
+		return StringUtil.replace(
+			script, oldTemplateScript.toString(), newTemplateScript.toString());
 	}
 
 	protected void upgradeDDLFieldTypeReferences() throws Exception {
@@ -1066,6 +1194,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 				String definition = toJSON(ddmForm);
 
 				upgradeStructureDefinition(structureId, definition);
+
+				updateTemplateDateFields(ddmForm, structureId);
 
 				// Structure version
 
