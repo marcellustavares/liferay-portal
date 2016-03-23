@@ -20,7 +20,6 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.util.BaseDDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMNavigationHelper;
-import com.liferay.journal.configuration.JournalServiceConfigurationValues;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -105,12 +104,6 @@ public class JournalDDMDisplay extends BaseDDMDisplay {
 				liferayPortletRequest)) {
 
 			return StringPool.BLANK;
-		}
-
-		if (ddmNavigationHelper.isNavigationStartsOnSelectTemplate(
-				liferayPortletRequest)) {
-
-			return ParamUtil.getString(liferayPortletRequest, "redirect");
 		}
 
 		if (ddmNavigationHelper.isNavigationStartsOnViewTemplates(

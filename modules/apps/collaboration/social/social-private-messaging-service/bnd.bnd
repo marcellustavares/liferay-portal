@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Social Private Messaging Service
 Bundle-SymbolicName: com.liferay.social.privatemessaging.service
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Export-Package:\
 	com.liferay.social.privatemessaging.hook,\
 	com.liferay.social.privatemessaging.hook.listeners,\
@@ -12,6 +12,7 @@ Export-Package:\
 	com.liferay.social.privatemessaging.util
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Social Private Messaging
+Liferay-Require-SchemaVersion: 1.0.1
 Liferay-Service: true
 -liferay-includeresource:\
 @com.liferay.util.java-*.jar!/com/liferay/util/ContentUtil.class,\

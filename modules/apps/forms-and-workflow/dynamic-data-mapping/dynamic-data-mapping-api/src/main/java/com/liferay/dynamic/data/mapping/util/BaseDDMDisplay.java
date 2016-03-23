@@ -97,6 +97,14 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 			long classPK, long resourceClassNameId, String portletResource)
 		throws Exception {
 
+		DDMNavigationHelper ddmNavigationHelper = getDDMNavigationHelper();
+
+		if (ddmNavigationHelper.isNavigationStartsOnSelectTemplate(
+				liferayPortletRequest)) {
+
+			return ParamUtil.getString(liferayPortletRequest, "redirect");
+		}
+
 		return getViewTemplatesURL(
 			liferayPortletRequest, liferayPortletResponse, classNameId, classPK,
 			resourceClassNameId);
