@@ -26,11 +26,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Provides the local service for accessing dynamic data list (DDL) record
+ * versions.
+ *
  * @author Marcellus Tavares
  */
 public class DDLRecordVersionLocalServiceImpl
 	extends DDLRecordVersionLocalServiceBaseImpl {
 
+	/**
+	 * Returns the record's latest record version.
+	 *
+	 * @param  recordId the primary key of the record
+	 * @return the latest record version for the given record
+	 * @throws PortalException
+	 */
 	@Override
 	public DDLRecordVersion getLatestRecordVersion(long recordId)
 		throws PortalException {
@@ -51,6 +61,13 @@ public class DDLRecordVersionLocalServiceImpl
 		return recordVersions.get(0);
 	}
 
+	/**
+	 * Returns the record version by its ID.
+	 *
+	 * @param  recordVersionId the primary key of the record version
+	 * @return the record version with the ID
+	 * @throws PortalException if the mathing record set is not found
+	 */
 	@Override
 	public DDLRecordVersion getRecordVersion(long recordVersionId)
 		throws PortalException {
@@ -58,6 +75,15 @@ public class DDLRecordVersionLocalServiceImpl
 		return ddlRecordVersionPersistence.findByPrimaryKey(recordVersionId);
 	}
 
+	/**
+	 * Returns the version of a record matching the record's primary key and
+	 * version.
+	 *
+	 * @param  recordId the primary key of the record
+	 * @param  version the record version
+	 * @return the record version macthing the record primary key and version
+	 * @throws PortalException if the mathing record set is not found
+	 */
 	@Override
 	public DDLRecordVersion getRecordVersion(long recordId, String version)
 		throws PortalException {
@@ -65,6 +91,25 @@ public class DDLRecordVersionLocalServiceImpl
 		return ddlRecordVersionPersistence.findByR_V(recordId, version);
 	}
 
+	/**
+	 * Returns an ordered range of record versions matching the record's ID.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end -
+	 * start</code> instances. <code>start</code> and <code>end</code> are not
+	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
+	 * refers to the first result in the set. Setting both <code>start</code>
+	 * and <code>end</code> to <code>QueryUtil.ALL_POS</code> will return the
+	 * full result set.
+	 * </p>
+	 *
+	 * @param  recordId the primary key of the record
+	 * @param  start the lower bound of the range of record versions to return
+	 * @param  end the upper bound of the range of record versions to return
+	 *         (not inclusive)
+	 * @param  orderByComparator the comparator used to order the record versions
+	 * @return the range of matching record versions ordered by the comparator
+	 */
 	@Override
 	public List<DDLRecordVersion> getRecordVersions(
 		long recordId, int start, int end,
@@ -74,6 +119,12 @@ public class DDLRecordVersionLocalServiceImpl
 			recordId, start, end, orderByComparator);
 	}
 
+	/**
+	 * Returns the number of record versions matching the record ID.
+	 *
+	 * @param  recordId the primary key of the record
+	 * @return the number of matching record versions
+	 */
 	@Override
 	public int getRecordVersionsCount(long recordId) {
 		return ddlRecordVersionPersistence.countByRecordId(recordId);
