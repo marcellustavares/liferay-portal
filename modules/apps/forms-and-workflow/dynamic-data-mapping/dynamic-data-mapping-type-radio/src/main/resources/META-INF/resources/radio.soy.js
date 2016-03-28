@@ -10,12 +10,12 @@ if (typeof ddm == 'undefined') { var ddm = {}; }
 
 
 ddm.radio = function(opt_data, opt_ignored) {
-  var output = '<div class="form-group' + soy.$$escapeHtmlAttribute(opt_data.visible ? '' : ' hide') + '" data-fieldname="' + soy.$$escapeHtmlAttribute(opt_data.name) + '">' + ((opt_data.showLabel) ? '<label class="control-label">' + soy.$$escapeHtml(opt_data.label) + ((opt_data.required) ? '<span class="icon-asterisk text-warning"></span>' : '') + '</label>' + ((opt_data.tip) ? '<p class="liferay-ddm-form-field-tip">' + soy.$$escapeHtml(opt_data.tip) + '</p>' : '') : '') + '<div class="clearfix radio-options">';
-  var optionList51 = opt_data.options;
-  var optionListLen51 = optionList51.length;
-  for (var optionIndex51 = 0; optionIndex51 < optionListLen51; optionIndex51++) {
-    var optionData51 = optionList51[optionIndex51];
-    output += ((! opt_data.inline) ? '<div class="radio">' : '') + '<label class="radio-default' + soy.$$escapeHtmlAttribute(opt_data.inline ? ' radio-inline' : '') + ' radio-option-' + soy.$$escapeHtmlAttribute(optionData51.value) + '" for="' + soy.$$escapeHtmlAttribute(optionData51.value) + '"><input class="field" dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" ' + ((opt_data.readOnly) ? 'disabled' : '') + ' id="' + soy.$$escapeHtmlAttribute(optionData51.value) + '" name="' + soy.$$escapeHtmlAttribute(opt_data.name) + '" ' + soy.$$filterHtmlAttributes(optionData51.status) + ' type="radio" value="' + soy.$$escapeHtmlAttribute(optionData51.value) + '" /> ' + soy.$$escapeHtml(optionData51.label) + '</label>' + ((! opt_data.inline) ? '</div>' : '');
+  var output = '<div class="form-group" data-fieldname="' + soy.$$escapeHtmlAttribute(opt_data.name) + '">' + ((opt_data.showLabel) ? '<label class="control-label">' + soy.$$escapeHtml(opt_data.label) + ((opt_data.required) ? '<span class="icon-asterisk text-warning"></span>' : '') + '</label>' + ((opt_data.tip) ? '<p class="liferay-ddm-form-field-tip">' + soy.$$escapeHtml(opt_data.tip) + '</p>' : '') : '') + '<div class="clearfix radio-options">';
+  var optionList49 = opt_data.options;
+  var optionListLen49 = optionList49.length;
+  for (var optionIndex49 = 0; optionIndex49 < optionListLen49; optionIndex49++) {
+    var optionData49 = optionList49[optionIndex49];
+    output += ((! opt_data.inline) ? '<div class="radio">' : '') + '<label class="radio-default' + soy.$$escapeHtmlAttribute(opt_data.inline ? ' radio-inline' : '') + ' radio-option-' + soy.$$escapeHtmlAttribute(optionData49.value) + '" for="' + soy.$$escapeHtmlAttribute(optionData49.value) + '"><input class="field" dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" ' + ((opt_data.readOnly) ? 'disabled' : '') + ' id="' + soy.$$escapeHtmlAttribute(optionData49.value) + '" name="' + soy.$$escapeHtmlAttribute(opt_data.name) + '" ' + soy.$$filterHtmlAttributes(optionData49.status) + ' type="radio" value="' + soy.$$escapeHtmlAttribute(optionData49.value) + '" /> ' + soy.$$escapeHtml(optionData49.label) + '</label>' + ((! opt_data.inline) ? '</div>' : '');
   }
   output += '</div>' + ((opt_data.childElementsHTML) ? soy.$$filterNoAutoescape(opt_data.childElementsHTML) : '') + '</div>';
   return output;
