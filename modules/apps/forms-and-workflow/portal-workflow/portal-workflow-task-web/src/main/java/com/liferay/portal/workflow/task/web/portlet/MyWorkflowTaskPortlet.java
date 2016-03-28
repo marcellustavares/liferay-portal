@@ -16,21 +16,28 @@ package com.liferay.portal.workflow.task.web.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowException;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
+import com.liferay.portal.kernel.workflow.WorkflowTaskAssignee;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManagerUtil;
 import com.liferay.portal.workflow.task.web.configuration.WorkflowTaskWebConfiguration;
 
 import java.io.IOException;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -137,6 +144,45 @@ public class MyWorkflowTaskPortlet extends MVCPortlet {
 		}
 	}
 
+	protected boolean hasPermission(
+			long groupId, PermissionChecker permissionChecker,
+			WorkflowTask workflowTask)
+		throws WorkflowException {
+
+		if (permissionChecker.isOmniadmin() ||
+			permissionChecker.isCompanyAdmin()) {
+
+			return true;
+		}
+
+		List<WorkflowTaskAssignee> assignees =
+			workflowTask.getWorkflowTaskAssignees();
+
+		long[] roleIds = permissionChecker.getRoleIds(
+			permissionChecker.getUserId(), groupId);
+
+		for (WorkflowTaskAssignee assignee : assignees) {
+			String assigneeClassName = assignee.getAssigneeClassName();
+
+			if (assigneeClassName.equals(User.class.getName())) {
+				if (assignee.getAssigneeClassPK() ==
+						permissionChecker.getUserId()) {
+
+					return true;
+				}
+			}
+			else if(assigneeClassName.equals(Role.class.getName())) {
+				if (ArrayUtil.contains(
+						roleIds, assignee.getAssigneeClassPK())) {
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	@Override
 	protected boolean isSessionErrorException(Throwable cause) {
 		if (cause instanceof WorkflowException ||
@@ -159,8 +205,19 @@ public class MyWorkflowTaskPortlet extends MVCPortlet {
 			ThemeDisplay themeDisplay =
 				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
+			PermissionChecker permissionChecker =
+				themeDisplay.getPermissionChecker();
+
 			WorkflowTask workflowTask = WorkflowTaskManagerUtil.getWorkflowTask(
 				themeDisplay.getCompanyId(), workflowTaskId);
+
+			if (!hasPermission(
+					themeDisplay.getScopeGroupId(), permissionChecker,
+					workflowTask)) {
+
+				throw new PrincipalException.MustHavePermission(
+					permissionChecker, ActionKeys.VIEW);
+			}
 
 			renderRequest.setAttribute(WebKeys.WORKFLOW_TASK, workflowTask);
 		}
