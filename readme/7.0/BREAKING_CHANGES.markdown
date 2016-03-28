@@ -4059,3 +4059,39 @@ time to remove it completely. This frees up development and support resources to
 focus on supported features.
 
 ---------------------------------------
+
+### Removed `com.liferay.dynamic.data.mapping.util.DDMXMLUtil` Class
+- **Date:** 2016-Mar-03
+- **JIRA Ticket:** LPS-63928
+
+#### What changed?
+
+- `com.liferay.dynamic.data.mapping.util.DDMXMLUtil` have been removed with no replacement.
+
+#### Who is affected?
+
+- All code that uses `com.liferay.dynamic.data.mapping.util.DDMXMLUtil` is affected.
+
+#### How should I update my code?
+
+If you are in an OSGi module, you can simply inject the DDMXML references.
+
+    @Reference
+    private DDMXML _ddmXML;
+ 
+If you are in a legacy WAR or WAB, you will need a snippet like:
+
+    Bundle bundle = FrameworkUtil.getBundle(getClass());
+
+    BundleContext bundleContext = bundle.getBundleContext();
+
+    ServiceReference<UserImporter> serviceReference =
+        bundleContext.getServiceReference(DDMXML.class);
+
+    DDMXML ddmXML = bundleContext.getService(serviceReference);
+
+#### Why was this change made?
+
+The change was made to improve modularity of the dynamic data mapping subsystem.
+
+---------------------------------------
