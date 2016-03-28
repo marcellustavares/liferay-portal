@@ -192,7 +192,26 @@ public class DDMImpl implements DDM {
 			ddmForm = ddmStructure.getDDMForm();
 		}
 
-		return getDDMFormFieldsJSONArray(ddmForm, script);
+		JSONArray ddmFormFieldsJSONArray = getDDMFormFieldsJSONArray(
+			ddmForm, script);
+
+		if ((ddmStructure != null) &&
+			(ddmStructure.getParentStructureId() > 0)) {
+
+			DDMStructure parentStructure =
+				DDMStructureLocalServiceUtil.fetchStructure(
+					ddmStructure.getParentStructureId());
+
+			JSONArray parentDDMFormFieldsJSONArray = getDDMFormFieldsJSONArray(
+				parentStructure, parentStructure.getDefinition());
+
+			for (int i = 0; i < parentDDMFormFieldsJSONArray.length(); i++) {
+				ddmFormFieldsJSONArray.put(
+					parentDDMFormFieldsJSONArray.getJSONObject(i));
+			}
+		}
+
+		return ddmFormFieldsJSONArray;
 	}
 
 	@Override
