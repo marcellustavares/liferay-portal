@@ -4,8 +4,6 @@ Bundle-Version: 2.0.1
 Import-Package:\
 	!javax.accessibility.*,\
 	\
-	!javax.swing.*,\
-	\
 	com.liferay.portal.kernel.servlet.filters.invoker,\
 	com.liferay.portlet,\
 	\
