@@ -174,7 +174,7 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 			SetUtil.fromArray(
 				new String[] {
 					"boolean", "date", "document-library", "geolocation",
-					"image", "link-to-page"
+					"image", "journal-article", "link-to-page"
 				}));
 
 }
