@@ -15,12 +15,14 @@
 package com.liferay.portal.search.internal;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.NoSuchResourceException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
@@ -356,6 +358,24 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 					groupRolesTermsFilter.addValue(
 						group.getGroupId() + StringPool.DASH +
 							role.getRoleId());
+				}
+			}
+
+			List<ResourcePermission> resourcePermissionList =
+				_resourcePermissionLocalService.getRoleResourcePermissions(
+					role.getRoleId(), new int[] {ResourceConstants.SCOPE_GROUP},
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			for (ResourcePermission resourcePermission :
+					resourcePermissionList) {
+
+				String groupId = resourcePermission.getPrimKey();
+
+				if (_resourcePermissionLocalService.hasResourcePermission(
+						companyId, className, ResourceConstants.SCOPE_GROUP,
+						groupId, role.getRoleId(), ActionKeys.VIEW)) {
+
+					groupsTermsFilter.addValue(String.valueOf(groupId));
 				}
 			}
 
