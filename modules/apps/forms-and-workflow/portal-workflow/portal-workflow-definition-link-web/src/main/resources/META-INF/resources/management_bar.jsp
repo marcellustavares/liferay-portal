@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,26 +12,17 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.portal.kernel.model;
+<%@ include file="/init.jsp" %>
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
- * @deprecated As of 7.0.0, replaced by {@link
- *             com.liferay.portal.kernel.model.cache.CacheField}
- * @author Shuyang Zhou
- */
-@Deprecated
-@Documented
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface CacheField {
-
-	public String methodName() default "";
-
-}
+<liferay-frontend:management-bar>
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= workflowDefinitionLinkDisplayContext.getOrderByCol() %>"
+			orderByType="<%= workflowDefinitionLinkDisplayContext.getOrderByType() %>"
+			orderColumns='<%= new String[] {"resource", "workflow"} %>'
+			portletURL="<%= workflowDefinitionLinkDisplayContext.getPortletURL() %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+</liferay-frontend:management-bar>
