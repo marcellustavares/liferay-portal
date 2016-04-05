@@ -23,14 +23,23 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.portlet.RenderRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,28 +54,46 @@ public class DDLFormViewRecordDisplayContext {
 		HttpServletResponse httpServletResponse,
 		DDLRecordLocalService ddlRecordLocalService,
 		DDMFormRenderer ddmFormRenderer,
+		DDMFormValuesFactory ddmFormValuesFactory,
 		DDMStructureLocalService ddmStructureLocalService) {
 
 		_httpServletResponse = httpServletResponse;
 		_ddlRecordLocalService = ddlRecordLocalService;
 		_ddmFormRenderer = ddmFormRenderer;
+		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmStructureLocalService = ddmStructureLocalService;
 
 		_ddlFormAdminRequestHelper = new DDLFormAdminRequestHelper(
 			httpServletRequest);
 	}
 
-	public String getDDMFormHTML() throws PortalException {
+	public String getDDMFormHTML(RenderRequest renderRequest)
+		throws PortalException {
+
 		DDLRecord record = getRecord();
-
-		DDMFormRenderingContext ddmFormRenderingContext =
-			createDDMFormRenderingContext();
-
-		ddmFormRenderingContext.setDDMFormValues(record.getDDMFormValues());
 
 		DDMStructure ddmStructure = getDDMStructure();
 
 		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		DDMFormValues ddmFormValues = _ddmFormValuesFactory.create(
+			renderRequest, ddmForm);
+
+		List<DDMFormFieldValue> existingDDMFormFieldValues =
+			ddmFormValues.getDDMFormFieldValues();
+
+		List<DDMFormFieldValue> newDDMFormFieldValues =
+			record.getDDMFormValues().getDDMFormFieldValues();
+
+		List<DDMFormFieldValue> formFieldValues = mergeDDMFormFieldValues(
+			newDDMFormFieldValues, existingDDMFormFieldValues);
+
+		ddmFormValues.setDDMFormFieldValues(formFieldValues);
+
+		DDMFormRenderingContext ddmFormRenderingContext =
+			createDDMFormRenderingContext();
+
+		ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 
 		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
 			setDDMFormFieldReadOnly(ddmFormField);
@@ -145,6 +172,45 @@ public class DDLFormViewRecordDisplayContext {
 		return record.getRecordSet();
 	}
 
+	protected DDMFormFieldValue matchDDMFormFieldValue(
+		DDMFormFieldValue expectedDDMFormFieldValue,
+		List<DDMFormFieldValue> actualDDMFormFieldValues) {
+
+		for (DDMFormFieldValue actualDDMFormFieldValue :
+				actualDDMFormFieldValues) {
+
+			if (Validator.equals(
+					actualDDMFormFieldValue.getName(),
+					expectedDDMFormFieldValue.getName())) {
+
+				return actualDDMFormFieldValue;
+			}
+		}
+
+		return null;
+	}
+
+	protected List<DDMFormFieldValue> mergeDDMFormFieldValues(
+		List<DDMFormFieldValue> newDDMFormFieldValues,
+		List<DDMFormFieldValue> existingDDMFormFieldValues) {
+
+		List<DDMFormFieldValue> mergedDDMFormFieldValues = new ArrayList<>(
+			existingDDMFormFieldValues);
+
+		for (DDMFormFieldValue newDDMFormFieldValue : newDDMFormFieldValues) {
+			DDMFormFieldValue actualDDMFormFieldValue = matchDDMFormFieldValue(
+				newDDMFormFieldValue, existingDDMFormFieldValues);
+
+			if (actualDDMFormFieldValue != null) {
+				mergedDDMFormFieldValues.remove(actualDDMFormFieldValue);
+			}
+
+			mergedDDMFormFieldValues.add(newDDMFormFieldValue);
+		}
+
+		return mergedDDMFormFieldValues;
+	}
+
 	protected void setDDMFormFieldReadOnly(DDMFormField ddmFormField) {
 		ddmFormField.setReadOnly(true);
 
@@ -158,6 +224,7 @@ public class DDLFormViewRecordDisplayContext {
 	private final DDLFormAdminRequestHelper _ddlFormAdminRequestHelper;
 	private final DDLRecordLocalService _ddlRecordLocalService;
 	private final DDMFormRenderer _ddmFormRenderer;
+	private final DDMFormValuesFactory _ddmFormValuesFactory;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private DDMStructure _ddmStucture;
 	private final HttpServletResponse _httpServletResponse;
