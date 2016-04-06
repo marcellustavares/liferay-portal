@@ -14,13 +14,16 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal;
 
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 
 import java.util.Locale;
 
@@ -44,6 +47,12 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 
 			ddmFormEvaluatorHelper.setDDMExpressionFactory(
 				_ddmExpressionFactory);
+			ddmFormEvaluatorHelper.setDDMDataProviderTracker(
+				_ddmDataProviderTracker);
+			ddmFormEvaluatorHelper.setDDMFormValuesJSONDeserializer(
+				_ddmFormValuesJSONDeserializer);
+			ddmFormEvaluatorHelper.setResourceBundleLoader(
+				_resourceBundleLoader);
 
 			return ddmFormEvaluatorHelper.evaluate();
 		}
@@ -53,12 +62,39 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMDataProviderTracker(
+		DDMDataProviderTracker ddmDataProviderTracker) {
+
+		_ddmDataProviderTracker = ddmDataProviderTracker;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMExpressionFactory(
 		DDMExpressionFactory ddmExpressionFactory) {
 
 		_ddmExpressionFactory = ddmExpressionFactory;
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	@Reference(
+		target = "(bundle.symbolic.name=com.liferay.dynamic.data.mapping.lang)",
+		unbind = "-"
+	)
+	protected void setResourceBundleLoader(
+		ResourceBundleLoader resourceBundleLoader) {
+
+		_resourceBundleLoader = resourceBundleLoader;
+	}
+
+	private DDMDataProviderTracker _ddmDataProviderTracker;
 	private DDMExpressionFactory _ddmExpressionFactory;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private ResourceBundleLoader _resourceBundleLoader;
 
 }

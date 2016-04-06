@@ -10,6 +10,16 @@
 }
 
 .lfr-ddm-form-container {
+	.input-group-container {
+		.field-content {
+			display: inline;
+		}
+
+		.btn-toolbar {
+			display: none;
+		}
+	}
+
 	.form-control-feedback {
 		margin-left: -20px;
 	}
