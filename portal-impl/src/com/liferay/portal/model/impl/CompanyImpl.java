@@ -87,6 +87,7 @@ public class CompanyImpl extends CompanyBaseImpl {
 		return companySecurityBag._authType;
 	}
 
+	@Override
 	public CompanySecurityBag getCompanySecurityBag() {
 		if (_companySecurityBag == null) {
 			_companySecurityBag = new CompanySecurityBag(getCompanyId());

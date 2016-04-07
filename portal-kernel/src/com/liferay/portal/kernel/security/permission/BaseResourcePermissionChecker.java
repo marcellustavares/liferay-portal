@@ -15,8 +15,6 @@
 package com.liferay.portal.kernel.security.permission;
 
 import com.liferay.exportimport.kernel.staging.permission.StagingPermissionUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 
@@ -53,8 +51,5 @@ public abstract class BaseResourcePermissionChecker
 
 		return contains(permissionChecker, name, classPK, actionId);
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BaseResourcePermissionChecker.class);
 
 }
