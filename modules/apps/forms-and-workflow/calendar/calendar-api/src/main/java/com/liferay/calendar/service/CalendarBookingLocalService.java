@@ -78,8 +78,20 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public CalendarBooking addCalendarBooking(CalendarBooking calendarBooking);
 
+	@java.lang.Deprecated
 	public CalendarBooking addCalendarBooking(long userId, long calendarId,
 		long[] childCalendarIds, long parentCalendarBookingId,
+		Map<Locale, java.lang.String> titleMap,
+		Map<Locale, java.lang.String> descriptionMap,
+		java.lang.String location, long startTime, long endTime,
+		boolean allDay, java.lang.String recurrence, long firstReminder,
+		java.lang.String firstReminderType, long secondReminder,
+		java.lang.String secondReminderType, ServiceContext serviceContext)
+		throws PortalException;
+
+	public CalendarBooking addCalendarBooking(long userId, long calendarId,
+		long[] childCalendarIds, long parentCalendarBookingId,
+		long recurringCalendarBookingId,
 		Map<Locale, java.lang.String> titleMap,
 		Map<Locale, java.lang.String> descriptionMap,
 		java.lang.String location, long startTime, long endTime,
@@ -104,9 +116,26 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.DELETE)
-	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
 	public CalendarBooking deleteCalendarBooking(
 		CalendarBooking calendarBooking) throws PortalException;
+
+	/**
+	* Deletes the calendar booking from the database. If the second argument
+	* is true, then all instances derived from this deleted booking will be
+	* deleted, too.
+	*
+	* @param calendarBooking the calendar booking to be removed.
+	* @param allRecurringInstances a boolean signaling if forked instances
+	should be deleted as well.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	@Indexable(type = IndexableType.DELETE)
+	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
+	public CalendarBooking deleteCalendarBooking(
+		CalendarBooking calendarBooking, boolean allRecurringInstances)
+		throws PortalException;
 
 	/**
 	* Deletes the calendar booking with the primary key from the database. Also notifies the appropriate model listeners.
@@ -118,6 +147,49 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public CalendarBooking deleteCalendarBooking(long calendarBookingId)
 		throws PortalException;
+
+	/**
+	* Deletes the calendar booking from the database. If the second argument
+	* is true, then all instances derived from this deleted booking will be
+	* deleted, too.
+	*
+	* @param calendarBookingId primary key of the calendar booking to be
+	removed.
+	* @param allRecurringInstances a boolean signaling if forked instances
+	should be deleted as well.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public CalendarBooking deleteCalendarBooking(long calendarBookingId,
+		boolean allRecurringInstances) throws PortalException;
+
+	/**
+	* Deletes a recurring calendar booking from the database. If some instances
+	* where edited and so removed from the series, they will be removed as
+	* well. If you do not want taht, use
+	* {@link #deleteCalendarBooking(CalendarBooking)}.
+	*
+	* @param calendarBooking the calendar booking to be removed.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public CalendarBooking deleteRecurringCalendarBooking(
+		CalendarBooking calendarBooking) throws PortalException;
+
+	/**
+	* Deletes a recurring calendar booking from the database. If some instances
+	* where edited and so removed from the series, they will be removed as
+	* well. If you do not want taht, use {@link #deleteCalendarBooking(long)}.
+	*
+	* @param calendarBooking the primary key of the booking to be removed.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public CalendarBooking deleteRecurringCalendarBooking(
+		long calendarBookingId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public CalendarBooking fetchCalendarBooking(java.lang.String uuid,
@@ -201,6 +273,48 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 		java.lang.String secondReminderType, ServiceContext serviceContext)
 		throws PortalException;
 
+	/**
+	* Updates the content of a calendar booking.It updates calendar bookings
+	* from invited calendars.
+	*
+	* It does not update content of recurring bookings deriving from it,
+	* however. For that, see {@link #updateRecurringCalendarBooking(
+	* long, long, long, long[], Map, Map, String, long, long, boolean, long,
+	* String, long, String, ServiceContext)}.
+	*
+	* @param userId the primary key of the calendar bookings's creator/owner
+	* @param calendarBookingId the primary key of the calendar booking being
+	updated
+	* @param calendarId the primary key of the calendar to which the calendar
+	booking is to be added.
+	* @param childCalendarIds primary keys of calendars to which invitations
+	are to be sent.
+	* @param titleMap the map with titles in different locales.
+	* @param descriptionMap a map with descriptions in different locales.
+	* @param location the location where the event will take place, as a
+	string.
+	* @param startTime the moment the event will start, as a timestamp
+	starting from Unix epoch.
+	* @param endTime the moment the event will end, as a timestamp starting
+	from Unix epoch.
+	* @param allDay a boolean. If true, the event will take all day.
+	* @param recurrence A string representing the recurrence of the event,
+	as defined by RFC-2445.
+	* @param firstReminder the moment the first reminder notification will be
+	sent, in number of milliseconds before the event start.
+	* @param firstReminderType the type of the first notification to be sent.
+	So far, the only type is "email".
+	* @param secondReminder the moment the second reminder notification will
+	be sent, in number of milliseconds before the event start.
+	* @param secondReminderType the type of the second notification to be
+	sent. So far, the only type is "email".
+	* @param serviceContext a service context. Can disable notifications
+	about the edit by setting the "sendNotification" attribute to
+	false.
+	* @return a new calendar booking object.
+	* @throws PortalException if a systemic error happens. In this case, the
+	portal may be corrupted.
+	*/
 	public CalendarBooking updateCalendarBooking(long userId,
 		long calendarBookingId, long calendarId, long[] childCalendarIds,
 		Map<Locale, java.lang.String> titleMap,
@@ -228,6 +342,55 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 		java.lang.String location, long startTime, long endTime,
 		boolean allDay, java.lang.String recurrence, boolean allFollowing,
 		long firstReminder, java.lang.String firstReminderType,
+		long secondReminder, java.lang.String secondReminderType,
+		ServiceContext serviceContext) throws PortalException;
+
+	/**
+	* Given a recurring calendar booking, update its content as well as the
+	* content of every other calendar booking that was edited from the
+	* recurring sequence. Only fields updated in the original instance are
+	* effectively altered. For example, if an instance had its title edited,
+	* and this method was called to change the original calendar booking's
+	* start time, the edited instance will have its start time changed, but
+	* not its title.
+	*
+	* @param userId the primary key of the calendar bookings's creator/owner
+	* @param calendarBookingId the primary key of the calendar booking being
+	updated
+	* @param calendarId the primary key of the calendar to which the calendar
+	booking is to be added.
+	* @param childCalendarIds primary keys of calendars to which invitations
+	are to be sent.
+	* @param titleMap the map with titles in different locales.
+	* @param descriptionMap a map with descriptions in different locales.
+	* @param location the location where the event will take place, as a
+	string.
+	* @param startTime the moment the event will start, as a timestamp
+	starting from Unix epoch.
+	* @param endTime the moment the event will end, as a timestamp starting
+	from Unix epoch.
+	* @param allDay a boolean. If true, the event will take all day.
+	* @param firstReminder the moment the first reminder notification will be
+	sent, in number of milliseconds before the event start.
+	* @param firstReminderType the type of the first notification to be sent.
+	So far, the only type is "email".
+	* @param secondReminder the moment the second reminder notification will
+	be sent, in number of milliseconds before the event start.
+	* @param secondReminderType the type of the second notification to be
+	sent. So far, the only type is "email".
+	* @param serviceContext a service context. Can disable notifications
+	about the edit by setting the "sendNotification" attribute to
+	false.
+	* @return a new calendar booking object.
+	* @throws PortalException if a systemic error happens. In this case, the
+	portal may be corrupted.
+	*/
+	public CalendarBooking updateRecurringCalendarBooking(long userId,
+		long calendarBookingId, long calendarId, long[] childCalendarIds,
+		Map<Locale, java.lang.String> titleMap,
+		Map<Locale, java.lang.String> descriptionMap,
+		java.lang.String location, long startTime, long endTime,
+		boolean allDay, long firstReminder, java.lang.String firstReminderType,
 		long secondReminder, java.lang.String secondReminderType,
 		ServiceContext serviceContext) throws PortalException;
 
@@ -400,6 +563,14 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 		long parentCalendarBookingId, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CalendarBooking> getRecurringCalendarBookings(
+		CalendarBooking calendarBooking);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CalendarBooking> getRecurringCalendarBookings(
+		CalendarBooking calendarBooking, long startTime);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<CalendarBooking> search(long companyId, long[] groupIds,
 		long[] calendarIds, long[] calendarResourceIds,
 		long parentCalendarBookingId, java.lang.String keywords,
@@ -439,11 +610,63 @@ public interface CalendarBookingLocalService extends BaseLocalService,
 
 	public void checkCalendarBookings() throws PortalException;
 
+	/**
+	* Removes an instance from a recurring calendar booking.
+	*
+	* If there is some instance that was removed from the series by editing,
+	* it will not be removed. If you need it to be removed, use
+	* {@link #deleteCalendarBookingInstance(CalendarBooking, int, boolean)}
+	*
+	* @param calendarBooking the calendar booking whose instnce will be
+	removed.
+	* @param instanceIndex the index of the instance
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
 	public void deleteCalendarBookingInstance(CalendarBooking calendarBooking,
 		int instanceIndex, boolean allFollowing) throws PortalException;
 
+	/**
+	* Removes an instance from a recurring calendar booking. If the last
+	* argument is true, then modified instances will be deleted as well.
+	*
+	* @param calendarBooking the calendar booking whose instance will be
+	removed.
+	* @param instanceIndex the index of the instance
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @param deleteRecurringCalendarBookings whether modified instances
+	should be deleted as well.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public void deleteCalendarBookingInstance(CalendarBooking calendarBooking,
+		int instanceIndex, boolean allFollowing,
+		boolean deleteRecurringCalendarBookings) throws PortalException;
+
 	public void deleteCalendarBookingInstance(CalendarBooking calendarBooking,
 		long startTime, boolean allFollowing) throws PortalException;
+
+	/**
+	* Removes instances form a recurring calendar booking at a specific date,
+	* or after the specified date. If the last argument is true, then modified
+	* instances will be deleted as well.
+	*
+	* @param calendarBooking the calendar booking whose instance will be
+	removed.
+	* @param startTime the time from which instances should be removed.
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @param deleteRecurringCalendarBookings whether modified instances
+	should be deleted as well.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public void deleteCalendarBookingInstance(CalendarBooking calendarBooking,
+		long startTime, boolean allFollowing,
+		boolean deleteRecurringCalendarBookings) throws PortalException;
 
 	public void deleteCalendarBookingInstance(long calendarBookingId,
 		long startTime, boolean allFollowing) throws PortalException;
