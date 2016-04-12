@@ -13,8 +13,9 @@
 							},
 							path: 'text_field.js',
 							requires: [
-								'aui-autosize-deprecated',
 								'aui-tooltip',
+								'aui-autocomplete-deprecated',
+								'autocomplete',
 								'liferay-ddm-form-renderer-field'
 							]
 						},

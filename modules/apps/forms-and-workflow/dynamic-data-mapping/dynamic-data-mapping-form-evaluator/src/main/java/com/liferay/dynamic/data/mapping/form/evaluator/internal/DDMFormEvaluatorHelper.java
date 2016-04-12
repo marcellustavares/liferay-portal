@@ -14,24 +14,35 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal;
 
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -73,6 +84,24 @@ public class DDMFormEvaluatorHelper {
 			ddmFormFieldEvaluationResults);
 
 		return ddmFormEvaluationResult;
+	}
+
+	public void setDDMDataProviderTracker(
+		DDMDataProviderTracker ddmDataProviderTracker) {
+
+		_ddmDataProviderTracker = ddmDataProviderTracker;
+	}
+
+	public void setDDMFormValuesJSONDeserializer(
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
+
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+	}
+
+	public void setResourceBundleLoader(
+		ResourceBundleLoader resourceBundleLoader) {
+
+		_resourceBundleLoader = resourceBundleLoader;
 	}
 
 	protected DDMFormValues createEmptyDDMFormValues(DDMForm ddmForm) {
@@ -183,6 +212,16 @@ public class DDMFormEvaluatorHelper {
 					ddmFormFieldValidation.getErrorMessage());
 			}
 		}
+		else if (!isValidDataProviderEntry(ddmFormField, ddmFormFieldValue)) {
+			ddmFormFieldEvaluationResult.setErrorMessage(
+				LanguageUtil.format(
+					_resourceBundleLoader.loadResourceBundle(
+						LocaleUtil.toLanguageId(_locale)),
+					"invalid-entry-for-data-provider-x", ddmFormField.getName(),
+					false));
+
+			ddmFormFieldEvaluationResult.setValid(false);
+		}
 
 		boolean visible = evaluateBooleanExpression(
 			ddmFormField.getVisibilityExpression(), ancestorDDMFormFieldValues);
@@ -217,6 +256,30 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		return ddmFormFieldEvaluationResults;
+	}
+
+	protected List<KeyValuePair> executeDataProvider(
+			long ddmDataProviderInstanceId)
+		throws PortalException {
+
+		DDMDataProviderInstance ddmDataProviderInstance =
+			DDMDataProviderInstanceServiceUtil.getDataProviderInstance(
+				ddmDataProviderInstanceId);
+
+		DDMDataProvider ddmDataProvider =
+			_ddmDataProviderTracker.getDDMDataProvider(
+				ddmDataProviderInstance.getType());
+
+		DDMForm ddmForm = DDMFormFactory.create(ddmDataProvider.getSettings());
+
+		DDMFormValues ddmFormValues =
+			_ddmFormValuesJSONDeserializer.deserialize(
+				ddmForm, ddmDataProviderInstance.getDefinition());
+
+		DDMDataProviderContext ddmDataProviderContext =
+			new DDMDataProviderContext(ddmFormValues);
+
+		return ddmDataProvider.getData(ddmDataProviderContext);
 	}
 
 	protected String getValidationExpression(
@@ -260,6 +323,45 @@ public class DDMFormEvaluatorHelper {
 			Validator.equals(valueString, "false")) {
 
 			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isValidDataProviderEntry(
+			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue)
+		throws PortalException {
+
+		if (!DDMFormFieldType.TEXT.equals(ddmFormField.getType())) {
+			return true;
+		}
+
+		boolean useDataProvider = GetterUtil.getBoolean(
+			ddmFormField.getProperty("useDataProvider"));
+
+		if (!useDataProvider) {
+			return true;
+		}
+
+		if (isDDMFormFieldValueEmpty(ddmFormFieldValue)) {
+			return false;
+		}
+
+		long ddmDataProviderInstanceId = GetterUtil.getLong(
+			ddmFormField.getProperty("ddmDataProviderInstanceId"));
+
+		List<KeyValuePair> dataProviderData = executeDataProvider(
+			ddmDataProviderInstanceId);
+
+		final String valueString = getValueString(
+			ddmFormFieldValue.getValue(), _locale);
+
+		for (KeyValuePair keyValuePair : dataProviderData) {
+			if (keyValuePair.getValue().equals(valueString) ||
+				keyValuePair.getKey().equals(valueString)) {
+
+				return true;
+			}
 		}
 
 		return false;
@@ -323,9 +425,12 @@ public class DDMFormEvaluatorHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormEvaluatorHelper.class);
 
+	private DDMDataProviderTracker _ddmDataProviderTracker;
 	private DDMExpressionFactory _ddmExpressionFactory;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
+	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private final Locale _locale;
+	private ResourceBundleLoader _resourceBundleLoader;
 	private final List<DDMFormFieldValue> _rootDDMFormFieldValues;
 
 }

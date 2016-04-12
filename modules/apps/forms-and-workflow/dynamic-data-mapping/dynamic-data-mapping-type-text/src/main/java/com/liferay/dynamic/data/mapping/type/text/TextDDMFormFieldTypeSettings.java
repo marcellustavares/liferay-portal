@@ -54,7 +54,8 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 								"visibilityExpression", "validation",
 								"fieldNamespace", "indexType", "localizable",
 								"readOnly", "dataType", "type", "name",
-								"showLabel", "repeatable", "tooltip"
+								"showLabel", "repeatable", "tooltip",
+								"useDataProvider", "ddmDataProviderInstanceId"
 							}
 						)
 					}
@@ -65,6 +66,12 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 )
 public interface TextDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
+
+	@DDMFormField(
+		label = "%choose-a-data-provider", type = "select",
+		visibilityExpression = "equals(useDataProvider, TRUE)"
+	)
+	public long ddmDataProviderInstanceId();
 
 	@DDMFormField(
 		label = "%my-text-field-has",
@@ -86,5 +93,10 @@ public interface TextDDMFormFieldTypeSettings
 
 	@DDMFormField(visibilityExpression = "FALSE")
 	public LocalizedValue tooltip();
+
+	@DDMFormField(
+		label = "%use-data-provider", properties = {"showAsSwitcher=true"}
+	)
+	public boolean useDataProvider();
 
 }

@@ -53,13 +53,15 @@ AUI.add(
 			hasValidation: function() {
 				var instance = this;
 
+				var dataProvider = instance.get('ddmDataProviderInstanceId');
+
 				var required = instance.get('required');
 
 				var validation = instance.get('validation');
 
 				var expression = validation.expression;
 
-				return required || (!!expression && expression !== 'TRUE');
+				return required || (!!expression && expression !== 'TRUE') || !!dataProvider;
 			},
 
 			processEvaluation: function(result) {

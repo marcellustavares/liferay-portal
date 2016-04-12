@@ -145,16 +145,18 @@ AUI.add(
 
 						var dataSourceTypeField = instance.getField('dataSourceType');
 
-						var dataSourceType = dataSourceTypeField.getValue();
+						if (dataSourceTypeField) {
+							var dataSourceType = dataSourceTypeField.getValue();
 
-						ddmDataProviderInstanceIdField.set('visible', dataSourceType !== 'manual');
+							ddmDataProviderInstanceIdField.set('visible', dataSourceType !== 'manual');
 
-						var optionsField = instance.getField('options');
+							var optionsField = instance.getField('options');
 
-						var manualDataSourceType = dataSourceType === 'manual';
+							var manualDataSourceType = dataSourceType === 'manual';
 
-						optionsField.set('required', manualDataSourceType);
-						optionsField.set('visible', manualDataSourceType);
+							optionsField.set('required', manualDataSourceType);
+							optionsField.set('visible', manualDataSourceType);
+						}
 					},
 
 					_afterSettingsFormRender: function() {
