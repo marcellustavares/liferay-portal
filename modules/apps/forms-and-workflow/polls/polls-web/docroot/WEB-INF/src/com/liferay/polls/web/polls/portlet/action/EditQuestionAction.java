@@ -27,7 +27,9 @@ import com.liferay.polls.model.PollsQuestion;
 import com.liferay.polls.service.PollsQuestionServiceUtil;
 import com.liferay.polls.service.persistence.PollsChoiceUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -183,8 +185,17 @@ public class EditQuestionAction extends PortletAction {
 		Layout layout = LayoutLocalServiceUtil.getLayout(
 			themeDisplay.getRefererPlid());
 
-		PortletPreferences portletPreferences = getStrictPortletSetup(
-			layout, referringPortletResource);
+		PortletPreferences portletPreferences = null;
+
+		try {
+			portletPreferences = getStrictPortletSetup(
+				layout, referringPortletResource);
+		}
+		catch (PrincipalException pe) {
+			portletPreferences = PortletPreferencesFactoryUtil.getPortletSetup(
+				layout, referringPortletResource,
+				PortletConstants.DEFAULT_PREFERENCES);
+		}
 
 		portletPreferences.setValue(
 			"questionId", String.valueOf(question.getQuestionId()));
