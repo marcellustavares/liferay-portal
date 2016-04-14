@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -29,9 +30,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Writer;
-
 import java.net.URL;
-
+import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -45,6 +45,10 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 	public abstract TemplateResource getTemplateResource();
 
+	protected abstract JSONObject createTemplateContext(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext);
+
 	@Override
 	public String render(
 			DDMFormField ddmFormField,
@@ -57,11 +61,16 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		template.put(TemplateConstants.NAMESPACE, getTemplateNamespace());
 		template.put(TemplateConstants.RENDER_STRICT, Boolean.FALSE);
 
-		populateRequiredContext(
-			template, ddmFormField, ddmFormFieldRenderingContext);
+		JSONObject templateContext = createTemplateContext(
+			ddmFormField, ddmFormFieldRenderingContext);
 
-		populateOptionalContext(
-			template, ddmFormField, ddmFormFieldRenderingContext);
+		Iterator<String> iterator = templateContext.keys();
+
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+
+			template.put(key, templateContext.get(key));
+		}
 
 		return render(template);
 	}
@@ -105,9 +114,9 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		template.put("dir", LanguageUtil.get(locale, "lang.dir"));
 		template.put("label", ddmFormFieldRenderingContext.getLabel());
 		template.put("name", ddmFormFieldRenderingContext.getName());
-		template.put(
-			"readOnly",
-			_isReadOnly(ddmFormField, ddmFormFieldRenderingContext));
+//		template.put(
+//			"readOnly", //			_isReadOnly(ddmFormField,
+//ddmFormFieldRenderingContext));
 		template.put("required", ddmFormFieldRenderingContext.isRequired());
 		template.put("showLabel", ddmFormField.isShowLabel());
 		template.put("tip", ddmFormFieldRenderingContext.getTip());
@@ -121,19 +130,6 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		template.processTemplate(writer);
 
 		return writer.toString();
-	}
-
-	private boolean _isReadOnly(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		if (ddmFormFieldRenderingContext.isReadOnly() ||
-			ddmFormField.isReadOnly()) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 }
