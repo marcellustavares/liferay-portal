@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.render;
 
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.portal.kernel.json.JSONArray;
 
 import java.util.Locale;
 
@@ -29,6 +30,10 @@ public class DDMFormFieldRenderingContext {
 
 	public String getChildElementsHTML() {
 		return _childElementsHTML;
+	}
+
+	public JSONArray getChildTemplateContext() {
+		return _childTemplateContext;
 	}
 
 	public Fields getFields() {
@@ -93,6 +98,10 @@ public class DDMFormFieldRenderingContext {
 
 	public void setChildElementsHTML(String childElementsHTML) {
 		_childElementsHTML = childElementsHTML;
+	}
+
+	public void setChildTemplateContext(JSONArray childTemplateContext) {
+		_childTemplateContext = childTemplateContext;
 	}
 
 	public void setField(Field field) {
@@ -166,6 +175,7 @@ public class DDMFormFieldRenderingContext {
 	}
 
 	private String _childElementsHTML;
+	private JSONArray _childTemplateContext;
 	private Fields _fields;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
