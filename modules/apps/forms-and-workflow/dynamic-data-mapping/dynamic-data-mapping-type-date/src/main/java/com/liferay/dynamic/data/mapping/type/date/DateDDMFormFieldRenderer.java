@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldRenderer
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
@@ -79,5 +80,12 @@ public class DateDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	protected DateDDMFormFieldValueRenderer dateDDMFormFieldValueRenderer;
 
 	private TemplateResource _templateResource;
+
+	@Override
+	protected JSONObject createTemplateContext(DDMFormField ddmFormField,
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

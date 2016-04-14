@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
@@ -29,6 +30,7 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -65,6 +67,15 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	}
 
 	@Override
+	protected JSONObject createTemplateContext(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+		return _textDDMFormFieldTemplateContextFactory.create(
+			ddmFormField, ddmFormFieldRenderingContext);
+	}
+
+	@Override
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
@@ -85,5 +96,9 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	}
 
 	private TemplateResource _templateResource;
+
+	@Reference
+	private TextDDMFormFieldTemplateContextFactory
+		_textDDMFormFieldTemplateContextFactory;
 
 }
