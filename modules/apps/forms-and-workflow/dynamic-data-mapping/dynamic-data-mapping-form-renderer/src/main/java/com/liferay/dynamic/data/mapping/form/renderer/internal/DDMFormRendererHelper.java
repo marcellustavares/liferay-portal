@@ -18,7 +18,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationExceptio
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
-import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRendererConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
@@ -31,7 +31,9 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -68,10 +70,11 @@ public class DDMFormRendererHelper {
 		}
 	}
 
-	public Map<String, String> getRenderedDDMFormFieldsMap()
+	public Map<String, JSONArray> getTemplateContextDDMFormFieldsMap()
 		throws DDMFormRenderingException {
 
-		Map<String, String> renderedDDMFormFieldValuesMap = new HashMap<>();
+		Map<String, JSONArray> templateContextDDMFormFieldsValuesMap =
+			new HashMap<>();
 
 		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
 			_ddmFormValues.getDDMFormFieldValuesMap();
@@ -79,12 +82,13 @@ public class DDMFormRendererHelper {
 		for (Map.Entry<String, List<DDMFormFieldValue>> entry :
 				ddmFormFieldValuesMap.entrySet()) {
 
-			renderedDDMFormFieldValuesMap.put(
+			templateContextDDMFormFieldsValuesMap.put(
 				entry.getKey(),
-				renderDDMFormFieldValues(entry.getValue(), StringPool.BLANK));
+				createDDMFormFieldValuesTemplateContext(
+					entry.getValue(), StringPool.BLANK));
 		}
 
-		return renderedDDMFormFieldValuesMap;
+		return templateContextDDMFormFieldsValuesMap;
 	}
 
 	protected DDMFormFieldRenderingContext
@@ -109,6 +113,104 @@ public class DDMFormRendererHelper {
 		ddmFormFieldRenderingContext.setValue(StringPool.BLANK);
 
 		return ddmFormFieldRenderingContext;
+	}
+
+	protected JSONObject createDDMFormFieldTemplateContext(
+			DDMFormField ddmFormField,
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext)
+		throws DDMFormRenderingException {
+
+		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
+			_ddmFormFieldTypeServicesTracker.
+				getDDMFormFieldTemplateContextFactory(ddmFormField.getType());
+
+		if (ddmFormFieldTemplateContextFactory == null) {
+			throw new DDMFormRenderingException(
+				"No DDM form field template context factory registered for " +
+					ddmFormField.getType());
+		}
+
+		return ddmFormFieldTemplateContextFactory.create(
+			ddmFormField, ddmFormFieldRenderingContext);
+	}
+
+	protected JSONArray createDDMFormFieldValuesTemplateContext(
+			List<DDMFormFieldValue> ddmFormFieldValues,
+			String parentDDMFormFieldParameterName)
+		throws DDMFormRenderingException {
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		int index = 0;
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			jsonArray.put(
+				createDDMFormFieldValueTemplateContext(
+					ddmFormFieldValue, index++,
+					parentDDMFormFieldParameterName));
+		}
+
+		return jsonArray;
+	}
+
+	protected JSONObject createDDMFormFieldValueTemplateContext(
+			DDMFormFieldValue ddmFormFieldValue,
+			DDMFormFieldRenderingContext ddmFormFieldRenderingContext)
+		throws DDMFormRenderingException {
+
+		DDMFormField ddmFormField = _ddmFormFieldsMap.get(
+			ddmFormFieldValue.getName());
+
+		setDDMFormFieldRenderingContextLabel(
+			ddmFormField.getLabel(), ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextRequired(
+			ddmFormField.isRequired(), ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextRequired(
+			ddmFormField.isRequired(), ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextTip(
+			ddmFormField.getTip(), ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextValue(
+			ddmFormFieldValue.getValue(), ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextVisible(
+			ddmFormField.getVisibilityExpression(), ddmFormFieldValue.getName(),
+			ddmFormFieldRenderingContext);
+
+		return createDDMFormFieldTemplateContext(
+			ddmFormField, ddmFormFieldRenderingContext);
+	}
+
+	protected JSONObject createDDMFormFieldValueTemplateContext(
+			DDMFormFieldValue ddmFormFieldValue, int index,
+			String parentDDMFormFieldParameterName)
+		throws DDMFormRenderingException {
+
+		String ddmFormFieldParameterName = getDDMFormFieldParameterName(
+			ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId(),
+			index, parentDDMFormFieldParameterName);
+
+		Map<String, List<DDMFormFieldValue>> nestedDDMFormFieldValuesMap =
+			ddmFormFieldValue.getNestedDDMFormFieldValuesMap();
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		for (List<DDMFormFieldValue> nestedDDMFormFieldValues :
+				nestedDDMFormFieldValuesMap.values()) {
+
+			jsonArray.put(
+				createDDMFormFieldValuesTemplateContext(
+					nestedDDMFormFieldValues, ddmFormFieldParameterName));
+		}
+
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
+			createDDMFormFieldRenderingContext();
+
+		setDDMFormFieldRenderingContextChildTemplateContext(
+			jsonArray, ddmFormFieldRenderingContext);
+		setDDMFormFieldRenderingContextName(
+			ddmFormFieldParameterName, ddmFormFieldRenderingContext);
+
+		return createDDMFormFieldValueTemplateContext(
+			ddmFormFieldValue, ddmFormFieldRenderingContext);
 	}
 
 	protected DDMFormFieldValue createDefaultDDMFormFieldValue(
@@ -256,125 +358,16 @@ public class DDMFormRendererHelper {
 		return true;
 	}
 
-	protected String renderDDMFormField(
-			DDMFormField ddmFormField,
-			DDMFormFieldRenderingContext ddmFormFieldRenderingContext)
-		throws DDMFormRenderingException {
-
-		DDMFormFieldRenderer ddmFormFieldRenderer =
-			_ddmFormFieldTypeServicesTracker.getDDMFormFieldRenderer(
-				ddmFormField.getType());
-
-		if (ddmFormFieldRenderer == null) {
-			throw new DDMFormRenderingException(
-				"No DDM form field renderer registered for " +
-					ddmFormField.getType());
-		}
-
-		try {
-			String ddmFormFieldHTML = ddmFormFieldRenderer.render(
-				ddmFormField, ddmFormFieldRenderingContext);
-
-			return wrapDDMFormFieldHTML(
-				ddmFormFieldHTML, ddmFormFieldRenderingContext.isVisible());
-		}
-		catch (PortalException pe) {
-			throw new DDMFormRenderingException(pe);
-		}
-	}
-
-	protected String renderDDMFormFieldValue(
-			DDMFormFieldValue ddmFormFieldValue,
-			DDMFormFieldRenderingContext ddmFormFieldRenderingContext)
-		throws DDMFormRenderingException {
-
-		DDMFormField ddmFormField = _ddmFormFieldsMap.get(
-			ddmFormFieldValue.getName());
-
-		setDDMFormFieldRenderingContextLabel(
-			ddmFormField.getLabel(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextRequired(
-			ddmFormField.isRequired(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextRequired(
-			ddmFormField.isRequired(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextTip(
-			ddmFormField.getTip(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextValue(
-			ddmFormFieldValue.getValue(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextVisible(
-			ddmFormField.getVisibilityExpression(), ddmFormFieldValue.getName(),
-			ddmFormFieldRenderingContext);
-
-		return renderDDMFormField(ddmFormField, ddmFormFieldRenderingContext);
-	}
-
-	protected String renderDDMFormFieldValue(
-			DDMFormFieldValue ddmFormFieldValue, int index,
-			String parentDDMFormFieldParameterName)
-		throws DDMFormRenderingException {
-
-		String ddmFormFieldParameterName = getDDMFormFieldParameterName(
-			ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId(),
-			index, parentDDMFormFieldParameterName);
-
-		Map<String, List<DDMFormFieldValue>> nestedDDMFormFieldValuesMap =
-			ddmFormFieldValue.getNestedDDMFormFieldValuesMap();
-
-		StringBundler sb = new StringBundler(
-			nestedDDMFormFieldValuesMap.size());
-
-		for (DDMFormFieldValue nestedDDMFormFieldValue :
-				ddmFormFieldValue.getNestedDDMFormFieldValues()) {
-
-			List<DDMFormFieldValue> nestedDDMFormFieldValues =
-				nestedDDMFormFieldValuesMap.get(
-					nestedDDMFormFieldValue.getName());
-
-			sb.append(
-				renderDDMFormFieldValues(
-					nestedDDMFormFieldValues, ddmFormFieldParameterName));
-		}
-
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
-			createDDMFormFieldRenderingContext();
-
-		setDDMFormFieldRenderingContextChildElementsHTML(
-			sb.toString(), ddmFormFieldRenderingContext);
-		setDDMFormFieldRenderingContextName(
-			ddmFormFieldParameterName, ddmFormFieldRenderingContext);
-
-		return renderDDMFormFieldValue(
-			ddmFormFieldValue, ddmFormFieldRenderingContext);
-	}
-
-	protected String renderDDMFormFieldValues(
-			List<DDMFormFieldValue> ddmFormFieldValues,
-			String parentDDMFormFieldParameterName)
-		throws DDMFormRenderingException {
-
-		StringBundler sb = new StringBundler(ddmFormFieldValues.size());
-
-		int index = 0;
-
-		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
-			sb.append(
-				renderDDMFormFieldValue(
-					ddmFormFieldValue, index++,
-					parentDDMFormFieldParameterName));
-		}
-
-		return sb.toString();
-	}
-
 	protected void setDDMFormEvaluator(DDMFormEvaluator ddmFormEvaluator) {
 		_ddmFormEvaluator = ddmFormEvaluator;
 	}
 
-	protected void setDDMFormFieldRenderingContextChildElementsHTML(
-		String childElementsHTML,
+	protected void setDDMFormFieldRenderingContextChildTemplateContext(
+		JSONArray childTemplateContext,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
-		ddmFormFieldRenderingContext.setChildElementsHTML(childElementsHTML);
+		ddmFormFieldRenderingContext.setChildTemplateContext(
+			childTemplateContext);
 	}
 
 	protected void setDDMFormFieldRenderingContextLabel(
@@ -461,22 +454,8 @@ public class DDMFormRendererHelper {
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 	}
 
-	protected String wrapDDMFormFieldHTML(
-		String ddmFormFieldHTML, boolean visible) {
-
-		StringBundler sb = new StringBundler(5);
-
-		sb.append("<div class=\"");
-
-		if (!visible) {
-			sb.append("hide ");
-		}
-
-		sb.append("lfr-ddm-form-field-container\">");
-		sb.append(ddmFormFieldHTML);
-		sb.append("</div>");
-
-		return sb.toString();
+	protected void setJSONFactory(JSONFactory jsonFactory) {
+		_jsonFactory = jsonFactory;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -490,5 +469,6 @@ public class DDMFormRendererHelper {
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private final DDMFormRenderingContext _ddmFormRenderingContext;
 	private final DDMFormValues _ddmFormValues;
+	private JSONFactory _jsonFactory;
 
 }

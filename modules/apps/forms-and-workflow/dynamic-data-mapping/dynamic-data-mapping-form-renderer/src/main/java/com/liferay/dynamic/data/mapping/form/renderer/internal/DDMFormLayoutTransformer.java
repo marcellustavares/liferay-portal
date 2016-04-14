@@ -21,9 +21,13 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,18 +39,20 @@ public class DDMFormLayoutTransformer {
 
 	public DDMFormLayoutTransformer(
 		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-		Map<String, String> renderedDDMFormFieldsMap,
-		boolean showRequiredFieldsWarning, Locale locale) {
+		Map<String, JSONArray> templateContextDDMFormFieldsMap,
+		boolean showRequiredFieldsWarning, Locale locale,
+		JSONFactory jsonFactory) {
 
 		_ddmFormLayout = ddmFormLayout;
-		_renderedDDMFormFieldsMap = renderedDDMFormFieldsMap;
+		_templateContextDDMFormFieldsMap = templateContextDDMFormFieldsMap;
 		_showRequiredFieldsWarning = showRequiredFieldsWarning;
 		_locale = locale;
+		_jsonFactory = jsonFactory;
 
 		_ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 	}
 
-	public List<Object> getPages() {
+	public JSONArray getPages() {
 		return getPages(_ddmFormLayout.getDDMFormLayoutPages());
 	}
 
@@ -62,10 +68,8 @@ public class DDMFormLayoutTransformer {
 		return false;
 	}
 
-	protected Map<String, Object> getColumn(
-		DDMFormLayoutColumn ddmFormLayoutColumn) {
-
-		Map<String, Object> column = new HashMap<>();
+	protected JSONObject getColumn(DDMFormLayoutColumn ddmFormLayoutColumn) {
+		JSONObject column = _jsonFactory.createJSONObject();
 
 		column.put(
 			"fields", getFields(ddmFormLayoutColumn.getDDMFormFieldNames()));
@@ -74,64 +78,92 @@ public class DDMFormLayoutTransformer {
 		return column;
 	}
 
-	protected List<Object> getColumns(
+	protected JSONArray getColumns(
 		List<DDMFormLayoutColumn> ddmFormLayoutColumns) {
 
-		List<Object> columns = new ArrayList<>();
+		JSONArray columns = _jsonFactory.createJSONArray();
 
 		for (DDMFormLayoutColumn ddmFormLayoutColumn : ddmFormLayoutColumns) {
-			columns.add(getColumn(ddmFormLayoutColumn));
+			columns.put(getColumn(ddmFormLayoutColumn));
 		}
 
 		return columns;
 	}
 
-	protected List<String> getFields(List<String> ddmFormFieldNames) {
-		List<String> renderedDDMFormFields = new ArrayList<>();
+	protected List<Object> getField(String ddmFormFieldName) {
+		List<Object> ddmFormFieldTemplateContext = new ArrayList<>();
 
-		for (String ddmFormFieldName : ddmFormFieldNames) {
-			renderedDDMFormFields.add(
-				_renderedDDMFormFieldsMap.get(ddmFormFieldName));
+		JSONArray jsonArray = _templateContextDDMFormFieldsMap.get(
+			ddmFormFieldName);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			ddmFormFieldTemplateContext.add(
+				getFieldContext(jsonArray.getJSONObject(i)));
 		}
 
-		return renderedDDMFormFields;
+		return ddmFormFieldTemplateContext;
 	}
 
-	protected Map<String, Object> getPage(DDMFormLayoutPage ddmFormLayoutPage) {
-		Map<String, Object> page = new HashMap<>();
+	protected Map<String, Object> getFieldContext(JSONObject jsonObject) {
+		Map<String, Object> context = new HashMap<>();
+
+		System.out.println("Field context");
+
+		Iterator<String> keys = jsonObject.keys();
+
+		while (keys.hasNext()) {
+			String key = keys.next();
+
+			context.put(key, jsonObject.get(key));
+		}
+
+		return context;
+	}
+
+	protected JSONArray getFields(List<String> ddmFormFieldNames) {
+		JSONArray fields = _jsonFactory.createJSONArray();
+
+		for (String ddmFormFieldName : ddmFormFieldNames) {
+			fields.put(_templateContextDDMFormFieldsMap.get(ddmFormFieldName));
+		}
+
+		return fields;
+	}
+
+	protected JSONObject getPage(DDMFormLayoutPage ddmFormLayoutPage) {
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		LocalizedValue description = ddmFormLayoutPage.getDescription();
 
-		page.put("description", description.getString(_locale));
+		jsonObject.put("description", description.getString(_locale));
 
-		page.put("rows", getRows(ddmFormLayoutPage.getDDMFormLayoutRows()));
+		jsonObject.put(
+			"rows", getRows(ddmFormLayoutPage.getDDMFormLayoutRows()));
 
 		boolean showRequiredFieldsWarning = isShowRequiredFieldsWarning(
 			ddmFormLayoutPage.getDDMFormLayoutRows());
 
-		page.put("showRequiredFieldsWarning", showRequiredFieldsWarning);
+		jsonObject.put("showRequiredFieldsWarning", showRequiredFieldsWarning);
 
 		LocalizedValue title = ddmFormLayoutPage.getTitle();
 
-		page.put("title", title.getString(_locale));
+		jsonObject.put("title", title.getString(_locale));
 
-		return page;
+		return jsonObject;
 	}
 
-	protected List<Object> getPages(
-		List<DDMFormLayoutPage> ddmFormLayoutPages) {
-
-		List<Object> pages = new ArrayList<>();
+	protected JSONArray getPages(List<DDMFormLayoutPage> ddmFormLayoutPages) {
+		JSONArray pages = _jsonFactory.createJSONArray();
 
 		for (DDMFormLayoutPage ddmFormLayoutPage : ddmFormLayoutPages) {
-			pages.add(getPage(ddmFormLayoutPage));
+			pages.put(getPage(ddmFormLayoutPage));
 		}
 
 		return pages;
 	}
 
-	protected Map<String, Object> getRow(DDMFormLayoutRow ddFormLayoutRow) {
-		Map<String, Object> row = new HashMap<>();
+	protected JSONObject getRow(DDMFormLayoutRow ddFormLayoutRow) {
+		JSONObject row = _jsonFactory.createJSONObject();
 
 		row.put(
 			"columns", getColumns(ddFormLayoutRow.getDDMFormLayoutColumns()));
@@ -139,11 +171,11 @@ public class DDMFormLayoutTransformer {
 		return row;
 	}
 
-	protected List<Object> getRows(List<DDMFormLayoutRow> ddmFormLayoutRows) {
-		List<Object> rows = new ArrayList<>();
+	protected JSONArray getRows(List<DDMFormLayoutRow> ddmFormLayoutRows) {
+		JSONArray rows = _jsonFactory.createJSONArray();
 
 		for (DDMFormLayoutRow ddmFormLayoutRow : ddmFormLayoutRows) {
-			rows.add(getRow(ddmFormLayoutRow));
+			rows.put(getRow(ddmFormLayoutRow));
 		}
 
 		return rows;
@@ -173,8 +205,9 @@ public class DDMFormLayoutTransformer {
 
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private final DDMFormLayout _ddmFormLayout;
+	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
-	private final Map<String, String> _renderedDDMFormFieldsMap;
 	private final boolean _showRequiredFieldsWarning;
+	private final Map<String, JSONArray> _templateContextDDMFormFieldsMap;
 
 }

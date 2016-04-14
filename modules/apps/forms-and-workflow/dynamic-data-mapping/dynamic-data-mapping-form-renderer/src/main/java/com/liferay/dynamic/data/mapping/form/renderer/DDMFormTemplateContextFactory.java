@@ -17,21 +17,15 @@ package com.liferay.dynamic.data.mapping.form.renderer;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.portal.kernel.json.JSONObject;
 
 /**
  * @author Marcellus Tavares
  */
 @ProviderType
-public interface DDMFormRenderer {
+public interface DDMFormTemplateContextFactory {
 
-	public String render(
-			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-			DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException;
-
-	public String render(
-			DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException;
+	public JSONObject create(
+		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext);
 
 }
