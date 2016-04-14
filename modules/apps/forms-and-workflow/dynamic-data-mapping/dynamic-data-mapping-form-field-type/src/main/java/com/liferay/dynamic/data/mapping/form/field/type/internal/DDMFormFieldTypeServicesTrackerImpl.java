@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.form.field.type.internal;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
@@ -51,6 +52,14 @@ public class DDMFormFieldTypeServicesTrackerImpl
 	@Override
 	public DDMFormFieldRenderer getDDMFormFieldRenderer(String name) {
 		return _ddmFormFieldRendererServiceTrackerMap.getService(name);
+	}
+
+	@Override
+	public DDMFormFieldTemplateContextFactory
+		getDDMFormFieldTemplateContextFactory(String name) {
+
+		return _ddmFormFieldTemplateContextFactoryServiceTrackerMap.getService(
+			name);
 	}
 
 	@Override
@@ -139,6 +148,11 @@ public class DDMFormFieldTypeServicesTrackerImpl
 				bundleContext, DDMFormFieldRenderer.class,
 				"ddm.form.field.type.name");
 
+		_ddmFormFieldTemplateContextFactoryServiceTrackerMap =
+			ServiceTrackerMapFactory.openSingleValueMap(
+				bundleContext, DDMFormFieldTemplateContextFactory.class,
+				"ddm.form.field.type.name");
+
 		_ddmFormFieldTypeServiceTrackerMap =
 			ServiceTrackerMapFactory.openSingleValueMap(
 				bundleContext, DDMFormFieldType.class,
@@ -161,6 +175,8 @@ public class DDMFormFieldTypeServicesTrackerImpl
 	protected void deactivate() {
 		_ddmFormFieldRendererServiceTrackerMap.close();
 
+		_ddmFormFieldTemplateContextFactoryServiceTrackerMap.close();
+
 		_ddmFormFieldTypeServiceTrackerMap.close();
 
 		_ddmFormFieldValueAccessorServiceTrackerMap.close();
@@ -173,6 +189,8 @@ public class DDMFormFieldTypeServicesTrackerImpl
 
 	private ServiceTrackerMap<String, DDMFormFieldRenderer>
 		_ddmFormFieldRendererServiceTrackerMap;
+	private ServiceTrackerMap<String, DDMFormFieldTemplateContextFactory>
+		_ddmFormFieldTemplateContextFactoryServiceTrackerMap;
 	private ServiceTrackerMap<String, ServiceWrapper<DDMFormFieldType>>
 		_ddmFormFieldTypeServiceTrackerMap;
 	private final Comparator<ServiceWrapper<DDMFormFieldType>>
