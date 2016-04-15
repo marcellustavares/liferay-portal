@@ -16,6 +16,8 @@ package com.liferay.dynamic.data.mapping.form.evaluator;
 
 import com.liferay.portal.kernel.json.JSON;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ import java.util.Map;
 /**
  * @author Marcellus Tavares
  */
-public class DDMFormEvaluationResult {
+public class DDMFormEvaluationResult implements Serializable {
 
 	@JSON(name = "fields")
 	public List<DDMFormFieldEvaluationResult>

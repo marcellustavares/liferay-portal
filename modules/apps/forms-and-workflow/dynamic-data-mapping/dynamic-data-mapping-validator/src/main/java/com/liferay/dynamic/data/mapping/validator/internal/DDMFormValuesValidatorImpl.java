@@ -32,7 +32,6 @@ import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationExcepti
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.MustSetValidValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.MustSetValidValues;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.MustSetValidValuesSize;
-import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.RequiredValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -267,12 +266,6 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			}
 		}
 		else {
-			if ((value == null) ||
-				(ddmFormField.isRequired() && isNull(value))) {
-
-				throw new RequiredValue(ddmFormField.getName());
-			}
-
 			if ((ddmFormField.isLocalizable() && !value.isLocalized()) ||
 				(!ddmFormField.isLocalizable() && value.isLocalized())) {
 
@@ -308,10 +301,6 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			DDMFormField ddmFormField,
 			List<DDMFormFieldValue> ddmFormFieldValues)
 		throws DDMFormValuesValidationException {
-
-		if (ddmFormField.isRequired() && (ddmFormFieldValues.size() == 0)) {
-			throw new RequiredValue(ddmFormField.getName());
-		}
 
 		if (!ddmFormField.isRepeatable() && (ddmFormFieldValues.size() > 1)) {
 			throw new MustSetValidValuesSize(ddmFormField.getName());

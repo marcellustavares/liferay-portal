@@ -17,13 +17,18 @@ package com.liferay.dynamic.data.mapping.form.evaluator;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.util.StringPool;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Marcellus Tavares
  */
-public class DDMFormFieldEvaluationResult {
+public class DDMFormFieldEvaluationResult implements Serializable {
+
+	public DDMFormFieldEvaluationResult() {
+	}
 
 	public DDMFormFieldEvaluationResult(String name, String instanceId) {
 		_name = name;
@@ -61,6 +66,14 @@ public class DDMFormFieldEvaluationResult {
 		_errorMessage = errorMessage;
 	}
 
+	public void setInstanceId(String instanceId) {
+		_instanceId = instanceId;
+	}
+
+	public void setName(String name) {
+		_name = name;
+	}
+
 	public void setNestedDDMFormFieldEvaluationResults(
 		List<DDMFormFieldEvaluationResult>
 			nestedDDMFormFieldEvaluationResults) {
@@ -78,8 +91,8 @@ public class DDMFormFieldEvaluationResult {
 	}
 
 	private String _errorMessage = StringPool.BLANK;
-	private final String _instanceId;
-	private final String _name;
+	private String _instanceId;
+	private String _name;
 	private List<DDMFormFieldEvaluationResult>
 		_nestedDDMFormFieldEvaluationResults = new ArrayList<>();
 	private boolean _valid = true;

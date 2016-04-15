@@ -79,15 +79,6 @@ DDLRecordSet recordSet = ddlFormDisplayContext.getRecordSet();
 
 						</liferay-ui:error>
 
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.RequiredValue.class %>">
-
-							<%
-							DDMFormValuesValidationException.RequiredValue rv = (DDMFormValuesValidationException.RequiredValue)errorException;
-							%>
-
-							<liferay-ui:message arguments="<%= rv.getFieldName() %>" key="no-value-defined-for-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
-
 						<liferay-ui:error exception="<%= NoSuchRecordSetException.class %>" message="the-selected-form-no-longer-exists" />
 						<liferay-ui:error exception="<%= NoSuchStructureException.class %>" message="unable-to-retrieve-the-definition-of-the-selected-form" />
 						<liferay-ui:error exception="<%= NoSuchStructureLayoutException.class %>" message="unable-to-retrieve-the-layout-of-the-selected-form" />

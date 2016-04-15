@@ -193,7 +193,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		}
 	}
 
-	@Test(expected = DDMFormValuesValidationException.RequiredValue.class)
+	@Test(expected = DDMFormValuesValidationException.MustSetValidValues.class)
 	public void testCreateWithInvalidDDMFormValues() throws Exception {
 		DDMStructure structure = addStructure(
 			_CLASS_NAME_ID, "Default Structure");
@@ -607,7 +607,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		validate(structure.getStructureId(), fields);
 	}
 
-	@Test(expected = DDMFormValuesValidationException.RequiredValue.class)
+	@Test(expected = DDMFormValuesValidationException.MustSetValidValues.class)
 	public void testUpdateWithInvalidDDMFormValues() throws Exception {
 		DDMStructure structure = addStructure(
 			_CLASS_NAME_ID, "Default Structure");

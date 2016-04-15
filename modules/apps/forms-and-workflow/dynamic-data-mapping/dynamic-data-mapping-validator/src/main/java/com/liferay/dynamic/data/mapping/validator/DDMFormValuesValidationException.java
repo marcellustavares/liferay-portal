@@ -181,21 +181,4 @@ public class DDMFormValuesValidationException extends StorageException {
 
 	}
 
-	public static class RequiredValue extends DDMFormValuesValidationException {
-
-		public RequiredValue(String fieldName) {
-			super(
-				String.format("No value defined for field name %s", fieldName));
-
-			_fieldName = fieldName;
-		}
-
-		public String getFieldName() {
-			return _fieldName;
-		}
-
-		private final String _fieldName;
-
-	}
-
 }
