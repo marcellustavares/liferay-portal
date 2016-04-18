@@ -12,26 +12,19 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.renderer;
+package com.liferay.dynamic.data.mapping.form.field.type;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portal.kernel.json.JSONObject;
 
 /**
  * @author Marcellus Tavares
  */
-@ProviderType
-public interface DDMFormRenderer {
+public interface DDMFormFieldTemplateContextFactory {
 
-	public String render(
-			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-			DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException;
-
-	public String render(
-			DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext)
-		throws DDMFormRenderingException;
+	public JSONObject create(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext);
 
 }

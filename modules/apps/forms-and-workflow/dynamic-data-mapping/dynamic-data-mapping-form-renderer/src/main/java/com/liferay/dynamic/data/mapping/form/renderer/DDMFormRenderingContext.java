@@ -118,7 +118,7 @@ public class DDMFormRenderingContext {
 	private String _portletNamespace;
 	private boolean _readOnly;
 	private boolean _showRequiredFieldsWarning = true;
-	private boolean _showSubmitButton;
+	private boolean _showSubmitButton = true;
 	private String _submitLabel;
 
 }
