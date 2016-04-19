@@ -16,14 +16,13 @@ package com.liferay.dynamic.data.mapping.form.field.type;
 
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.json.JSONObject;
 
 /**
  * @author Marcellus Tavares
  */
-public interface DDMFormFieldTemplateContextFactory {
+public interface DDMFormFieldRenderingContextContributor {
 
-	public JSONObject create(
+	public void addAttributes(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext);
 

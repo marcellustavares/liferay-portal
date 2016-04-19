@@ -18,7 +18,10 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -54,11 +57,25 @@ public class DDMFormTemplateContextFactoryTest {
 	}
 
 	@Test
-	public void testSimpleForm() throws Exception {
+	public void testSingleTextFieldForm() throws Exception {
+
+		// DDM form
+
 		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
 
 		ddmForm.addDDMFormField(
 			DDMFormTestUtil.createTextDDMFormField("Name", false, false, true));
+
+		// DDM form values
+
+		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
+			ddmForm);
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createDDMFormFieldValue(
+				"yanu7", "Name", new UnlocalizedValue("Joe Bloggs")));
+
+		// DDM form rendering context
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
@@ -68,21 +85,22 @@ public class DDMFormTemplateContextFactoryTest {
 		ddmFormRenderingContext.setHttpServletResponse(
 			new MockHttpServletResponse());
 		ddmFormRenderingContext.setContainerId("_CONTAINER_ID_");
+		ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 		ddmFormRenderingContext.setLocale(LocaleUtil.US);
 		ddmFormRenderingContext.setPortletNamespace("_PORTLET_NAMESPACE_");
 
-		String expectedDDMFormTemplateContext = read(
-			"ddm-form-template-context-simple-form.json");
+		// Assert
 
-		JSONObject actualDDMFormTemplateContextJSONObject =
+		String expectedDDMFormTemplateContext = read(
+			"ddm-form-template-context-single-text-field.json");
+
+		JSONObject actualTemplateContextJSONObject =
 			_ddmFormTemplateContextFactory.create(
 				ddmForm, ddmFormRenderingContext);
 
-		System.out.println(actualDDMFormTemplateContextJSONObject.toString());
-
 		JSONAssert.assertEquals(
 			expectedDDMFormTemplateContext,
-			actualDDMFormTemplateContextJSONObject.toString(), false);
+			actualTemplateContextJSONObject.toString(), false);
 	}
 
 	protected String read(String fileName) throws Exception {
