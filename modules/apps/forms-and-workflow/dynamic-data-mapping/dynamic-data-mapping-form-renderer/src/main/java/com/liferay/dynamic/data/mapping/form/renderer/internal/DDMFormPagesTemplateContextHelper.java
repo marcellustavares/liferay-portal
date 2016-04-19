@@ -35,16 +35,16 @@ import java.util.Map;
 /**
  * @author Marcellus Tavares
  */
-public class DDMFormLayoutTransformer {
+public class DDMFormPagesTemplateContextHelper {
 
-	public DDMFormLayoutTransformer(
+	public DDMFormPagesTemplateContextHelper(
 		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-		Map<String, JSONArray> templateContextDDMFormFieldsMap,
+		Map<String, JSONArray> ddmFormFieldsTemplateContextMap,
 		boolean showRequiredFieldsWarning, Locale locale,
 		JSONFactory jsonFactory) {
 
 		_ddmFormLayout = ddmFormLayout;
-		_templateContextDDMFormFieldsMap = templateContextDDMFormFieldsMap;
+		_ddmFormFieldsTemplateContextMap = ddmFormFieldsTemplateContextMap;
 		_showRequiredFieldsWarning = showRequiredFieldsWarning;
 		_locale = locale;
 		_jsonFactory = jsonFactory;
@@ -52,7 +52,7 @@ public class DDMFormLayoutTransformer {
 		_ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 	}
 
-	public JSONArray getPages() {
+	public JSONArray getPagesTemplateContext() {
 		return getPages(_ddmFormLayout.getDDMFormLayoutPages());
 	}
 
@@ -93,7 +93,7 @@ public class DDMFormLayoutTransformer {
 	protected List<Object> getField(String ddmFormFieldName) {
 		List<Object> ddmFormFieldTemplateContext = new ArrayList<>();
 
-		JSONArray jsonArray = _templateContextDDMFormFieldsMap.get(
+		JSONArray jsonArray = _ddmFormFieldsTemplateContextMap.get(
 			ddmFormFieldName);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
@@ -106,8 +106,6 @@ public class DDMFormLayoutTransformer {
 
 	protected Map<String, Object> getFieldContext(JSONObject jsonObject) {
 		Map<String, Object> context = new HashMap<>();
-
-		System.out.println("Field context");
 
 		Iterator<String> keys = jsonObject.keys();
 
@@ -124,7 +122,7 @@ public class DDMFormLayoutTransformer {
 		JSONArray fields = _jsonFactory.createJSONArray();
 
 		for (String ddmFormFieldName : ddmFormFieldNames) {
-			fields.put(_templateContextDDMFormFieldsMap.get(ddmFormFieldName));
+			fields.put(_ddmFormFieldsTemplateContextMap.get(ddmFormFieldName));
 		}
 
 		return fields;
@@ -204,10 +202,10 @@ public class DDMFormLayoutTransformer {
 	}
 
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
+	private final Map<String, JSONArray> _ddmFormFieldsTemplateContextMap;
 	private final DDMFormLayout _ddmFormLayout;
 	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
 	private final boolean _showRequiredFieldsWarning;
-	private final Map<String, JSONArray> _templateContextDDMFormFieldsMap;
 
 }

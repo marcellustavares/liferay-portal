@@ -1,0 +1,47 @@
+{
+	"containerId": "_CONTAINER_ID_",
+	"evaluatorURL": "/o/dynamic-data-mapping-form-evaluator/",
+	"pages": [
+		{
+			"rows": [
+				{
+					"columns": [
+						{
+							"fields": [
+								[
+									{
+										"displayValue": "10/21/15",
+										"label": "Date",
+										"name": "_PORTLET_NAMESPACE_ddm$$Date$yanu7$0$$en_US",
+										"readOnly": false,
+										"repeatable": false,
+										"required": true,
+										"templateNamespace": "ddm.date",
+										"valid" : true,
+										"validationErrorMessage": "",
+										"value": "2015-10-21",
+										"visible": true
+									}
+								]
+							],
+							"size": 12
+						}
+					]
+				}
+			],
+			"showRequiredFieldsWarning": true,
+			"title": ""
+		}
+	],
+	"portletNamespace": "_PORTLET_NAMESPACE_",
+	"readOnly": false,
+	"requiredFieldsWarningMessageHTML": "<label class=\"required-warning\">All fields marked with <i class=\"icon-asterisk text-warning\"><\/i> are required.<\/label>",
+	"showSubmitButton": true,
+	"showRequiredFieldsWarning": true,
+	"strings": {
+		"previous": "Previous",
+		"next": "Next"
+	},
+	"submitLabel": "Submit",
+	"templateNamespace": "ddm.simple_form"
+}

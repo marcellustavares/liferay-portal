@@ -12,60 +12,41 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.type.text;
+package com.liferay.dynamic.data.mapping.type.editor;
 
-import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextFactory;
-import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTemplateContextFactory;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderingContextContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
  */
-@Component(
-	immediate = true, property = "ddm.form.field.type.name=text",
-	service = {
-		TextDDMFormFieldTemplateContextFactory.class,
-		DDMFormFieldTemplateContextFactory.class
-	}
-)
-public class TextDDMFormFieldTemplateContextFactory
-	implements DDMFormFieldTemplateContextFactory {
+@Component(immediate = true, property = "ddm.form.field.type.name=editor")
+public class EditorDDMFormFieldRenderingContextContributor
+	implements DDMFormFieldRenderingContextContributor {
 
 	@Override
-	public JSONObject create(
+	public void addAttributes(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
-		JSONObject jsonObject =
-			_defaultDDMFormFieldTemplateContextFactory.create(
-				ddmFormField, ddmFormFieldRenderingContext);
-
-		jsonObject.put(
-			"displayStyle", ddmFormField.getProperty("displayStyle"));
+		Map<String, Object> attributes =
+			ddmFormFieldRenderingContext.getAttributes();
 
 		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
 			"placeholder");
 
 		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
-		jsonObject.put("placeholder", getValueString(placeholder, locale));
-
-		LocalizedValue tooltip = (LocalizedValue)ddmFormField.getProperty(
-			"tooltip");
-
-		jsonObject.put("tooltip", getValueString(tooltip, locale));
-
-		return jsonObject;
+		attributes.put("placeholder", getValueString(placeholder, locale));
 	}
 
 	protected String getValueString(Value value, Locale locale) {
@@ -75,9 +56,5 @@ public class TextDDMFormFieldTemplateContextFactory
 
 		return StringPool.BLANK;
 	}
-
-	@Reference
-	private DefaultDDMFormFieldTemplateContextFactory
-		_defaultDDMFormFieldTemplateContextFactory;
 
 }

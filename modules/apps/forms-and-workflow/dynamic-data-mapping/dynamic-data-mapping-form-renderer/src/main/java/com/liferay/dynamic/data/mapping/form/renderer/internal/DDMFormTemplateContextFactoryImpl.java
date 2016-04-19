@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFact
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -33,13 +34,16 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javax.servlet.Servlet;
@@ -58,15 +62,19 @@ public class DDMFormTemplateContextFactoryImpl
 
 	@Override
 	public JSONObject create(
-		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext) {
+		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
+		DDMFormRenderingContext ddmFormRenderingContext) {
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-		jsonObject.put("containerId", ddmFormRenderingContext.getContainerId());
-		//jsonObject.put("dataProviderURL", getDDMDataProviderServletURL());
-		jsonObject.put("evaluatorURL", getDDMFormEvaluatorServletURL());
+		String containerId = ddmFormRenderingContext.getContainerId();
 
-		DDMFormLayout ddmFormLayout = _ddm.getDefaultDDMFormLayout(ddmForm);
+		if (Validator.isNull(containerId)) {
+			containerId = StringUtil.randomId();
+		}
+
+		jsonObject.put("containerId", containerId);
+		jsonObject.put("evaluatorURL", getDDMFormEvaluatorServletURL());
 
 		JSONArray pages = getPages(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
@@ -79,6 +87,15 @@ public class DDMFormTemplateContextFactoryImpl
 //		JSONArray readOnlyFieldsJSONArray = getReadOnlyFieldsJSONArray(ddmForm);
 //
 //		jsonObject.put("readOnlyFields", readOnlyFieldsJSONArray);
+
+//		DDMFormValues ddmFormValues =
+//			ddmFormRenderingContext.getDDMFormValues();
+//
+//		if (ddmFormValues != null) {
+//			removeStaleDDMFormFieldValues(
+//				ddmForm.getDDMFormFieldsMap(true),
+//				ddmFormValues.getDDMFormFieldValues());
+//		}
 
 		Locale locale = ddmFormRenderingContext.getLocale();
 
@@ -111,6 +128,15 @@ public class DDMFormTemplateContextFactoryImpl
 		return jsonObject;
 	}
 
+	@Override
+	public JSONObject create(
+		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext) {
+
+		return create(
+			ddmForm, _ddm.getDefaultDDMFormLayout(ddmForm),
+			ddmFormRenderingContext);
+	}
+
 	protected void collectResourceBundles(
 		Class<?> clazz, List<ResourceBundle> resourceBundles, Locale locale) {
 
@@ -124,14 +150,6 @@ public class DDMFormTemplateContextFactoryImpl
 		if (resourceBundle != null) {
 			resourceBundles.add(resourceBundle);
 		}
-	}
-
-	protected String getDDMDataProviderServletURL() {
-		String servletContextPath = getServletContextPath(
-			_ddmDataProviderServlet);
-
-		return servletContextPath.concat(
-			"/dynamic-data-mapping-data-provider/");
 	}
 
 	protected String getDDMFormEvaluatorServletURL() {
@@ -160,16 +178,16 @@ public class DDMFormTemplateContextFactoryImpl
 
 		try {
 			Map<String, JSONArray> templateContextDDMFormFieldsMap =
-				getTemplateContextDDMFormFieldsMap(
+				getDDMFormFieldsTemplateContextMap(
 					ddmForm, ddmFormRenderingContext);
 
-			DDMFormLayoutTransformer ddmFormLayoutTransformer =
-				new DDMFormLayoutTransformer(
+			DDMFormPagesTemplateContextHelper ddmFormPagesTemplateContextHelper =
+				new DDMFormPagesTemplateContextHelper(
 					ddmForm, ddmFormLayout, templateContextDDMFormFieldsMap,
 					ddmFormRenderingContext.isShowRequiredFieldsWarning(),
 					ddmFormRenderingContext.getLocale(), _jsonFactory);
 
-			return ddmFormLayoutTransformer.getPages();
+			return ddmFormPagesTemplateContextHelper.getPagesTemplateContext();
 		}
 		catch (DDMFormRenderingException ddmfre) {
 			ddmfre.printStackTrace();
@@ -191,6 +209,28 @@ public class DDMFormTemplateContextFactoryImpl
 
 		return jsonArray;
 	}
+
+	protected void removeStaleDDMFormFieldValues(
+			Map<String, DDMFormField> ddmFormFieldsMap,
+			List<DDMFormFieldValue> ddmFormFieldValues) {
+
+			Iterator<DDMFormFieldValue> iterator =
+				ddmFormFieldValues.iterator();
+
+			while (iterator.hasNext()) {
+				DDMFormFieldValue ddmFormFieldValue = iterator.next();
+
+				if (!ddmFormFieldsMap.containsKey(
+						ddmFormFieldValue.getName())) {
+
+					iterator.remove();
+				}
+
+				removeStaleDDMFormFieldValues(
+					ddmFormFieldsMap,
+					ddmFormFieldValue.getNestedDDMFormFieldValues());
+			}
+		}
 
 	protected String getRequiredFieldsWarningMessageHTML(
 		ResourceBundle resourceBundle) {
@@ -231,28 +271,31 @@ public class DDMFormTemplateContextFactoryImpl
 		return servletContext.getContextPath();
 	}
 
-	protected Map<String, JSONArray> getTemplateContextDDMFormFieldsMap(
+	protected Map<String, JSONArray> getDDMFormFieldsTemplateContextMap(
 			DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext)
 		throws DDMFormRenderingException {
 
-		DDMFormRendererHelper ddmFormRendererHelper = new DDMFormRendererHelper(
-			ddmForm, ddmFormRenderingContext);
+		DDMFormFieldsTemplateContextHelper ddmFormFieldsTemplateContextHelper =
+			new DDMFormFieldsTemplateContextHelper(
+				ddmForm, ddmFormRenderingContext);
 
-		ddmFormRendererHelper.setDDMFormFieldTypeServicesTracker(
+		ddmFormFieldsTemplateContextHelper.setDDMFormFieldTypeServicesTracker(
 			_ddmFormFieldTypeServicesTracker);
-		ddmFormRendererHelper.setDDMFormEvaluator(_ddmFormEvaluator);
-		ddmFormRendererHelper.setJSONFactory(_jsonFactory);
+		ddmFormFieldsTemplateContextHelper.setDDMFormEvaluator(
+			_ddmFormEvaluator);
+		ddmFormFieldsTemplateContextHelper.setJSONFactory(_jsonFactory);
 
-		return ddmFormRendererHelper.getTemplateContextDDMFormFieldsMap();
+		return ddmFormFieldsTemplateContextHelper.
+			getDDMFormFieldsTemplateContextMap();
 	}
 
 	protected String getTemplateNamespace(DDMFormLayout ddmFormLayout) {
 		String paginationMode = ddmFormLayout.getPaginationMode();
 
-		if (Validator.equals(paginationMode, DDMFormLayout.SINGLE_PAGE_MODE)) {
+		if (Objects.equals(paginationMode, DDMFormLayout.SINGLE_PAGE_MODE)) {
 			return "ddm.simple_form";
 		}
-		else if (Validator.equals(paginationMode, DDMFormLayout.TABBED_MODE)) {
+		else if (Objects.equals(paginationMode, DDMFormLayout.TABBED_MODE)) {
 			return "ddm.tabbed_form";
 		}
 
@@ -262,16 +305,11 @@ public class DDMFormTemplateContextFactoryImpl
 	@Reference
 	private DDM _ddm;
 
-	@Reference(
-		target = "(osgi.http.whiteboard.servlet.name=DDMDataProviderServlet)"
-	)
-	private Servlet _ddmDataProviderServlet;
-
 	@Reference
 	private DDMFormEvaluator _ddmFormEvaluator;
 
 	@Reference(
-		target = "(osgi.http.whiteboard.servlet.name=DDMFormEvaluatorServlet)"
+		target = "(osgi.http.whiteboard.servlet.name=com.liferay.dynamic.data.mapping.form.evaluator.internal.servlet.DDMFormEvaluatorServlet)"
 	)
 	private Servlet _ddmFormEvaluatorServlet;
 

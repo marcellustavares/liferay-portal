@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.renderer;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.portal.kernel.json.JSONObject;
 
 /**
@@ -24,6 +25,10 @@ import com.liferay.portal.kernel.json.JSONObject;
  */
 @ProviderType
 public interface DDMFormTemplateContextFactory {
+
+	public JSONObject create(
+		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
+		DDMFormRenderingContext ddmFormRenderingContext);
 
 	public JSONObject create(
 		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext);

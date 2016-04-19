@@ -28,8 +28,8 @@ public interface DDMFormFieldTypeServicesTracker {
 
 	public DDMFormFieldRenderer getDDMFormFieldRenderer(String name);
 
-	public DDMFormFieldTemplateContextFactory
-		getDDMFormFieldTemplateContextFactory(String name);
+	public DDMFormFieldRenderingContextContributor
+		getDDMFormFieldRenderingContextContributor(String name);
 
 	public DDMFormFieldType getDDMFormFieldType(String name);
 

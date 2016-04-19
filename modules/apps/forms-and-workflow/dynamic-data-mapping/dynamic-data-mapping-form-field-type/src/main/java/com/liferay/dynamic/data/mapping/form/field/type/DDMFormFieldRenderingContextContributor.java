@@ -12,17 +12,18 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.type.validation;
+package com.liferay.dynamic.data.mapping.form.field.type;
+
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 
 /**
- * @author Bruno Basto
+ * @author Marcellus Tavares
  */
-public class ValidationDDMFormFieldContextHelper {
+public interface DDMFormFieldRenderingContextContributor {
 
-	public ValidationDDMFormFieldContextHelper(String value) {
-		_value = value;
-	}
-
-	private final String _value;
+	public void addAttributes(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext);
 
 }
