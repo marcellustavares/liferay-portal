@@ -22,7 +22,10 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
@@ -83,22 +86,28 @@ public class DDMFormLayoutTransformerTest {
 
 		ddmFormLayout.addDDMFormLayoutPage(ddmFormLayoutPage);
 
-		// Rendered fields map
+		// Template context fields map
 
-		Map<String, String> renderedDDMFormFieldsMap = new HashMap<>();
+		Map<String, JSONArray> templateContextDDMFormFieldsMap =
+			new HashMap<>();
 
-		renderedDDMFormFieldsMap.put("Field_1", "Rendered Field 1");
-		renderedDDMFormFieldsMap.put("Field_2", "Rendered Field 2");
-		renderedDDMFormFieldsMap.put("Field_3", "Rendered Field 3");
-		renderedDDMFormFieldsMap.put("Field_4", "Rendered Field 4");
-		renderedDDMFormFieldsMap.put("Field_5", "Rendered Field 5");
+		templateContextDDMFormFieldsMap.put(
+			"Field_1", createDDMFormFieldTemplateContext("Field_1"));
+		templateContextDDMFormFieldsMap.put(
+			"Field_2", createDDMFormFieldTemplateContext("Field_2"));
+		templateContextDDMFormFieldsMap.put(
+			"Field_3", createDDMFormFieldTemplateContext("Field_3"));
+		templateContextDDMFormFieldsMap.put(
+			"Field_4", createDDMFormFieldTemplateContext("Field_4"));
+		templateContextDDMFormFieldsMap.put(
+			"Field_5", createDDMFormFieldTemplateContext("Field_5"));
 
 		DDMFormLayoutTransformer ddmFormLayoutTransformer =
 			new DDMFormLayoutTransformer(
-				ddmForm, ddmFormLayout, renderedDDMFormFieldsMap, false,
-				_LOCALE);
+				ddmForm, ddmFormLayout, templateContextDDMFormFieldsMap, false,
+				_LOCALE, _jsonFactory);
 
-		List<Object> pages = ddmFormLayoutTransformer.getPages();
+		List<Object> pages = null;//ddmFormLayoutTransformer.getPages();
 
 		Assert.assertEquals(1, pages.size());
 
@@ -117,10 +126,10 @@ public class DDMFormLayoutTransformerTest {
 		Assert.assertEquals(2, columnsRow1.size());
 
 		assertColumnEquals(
-			new String[] {"Rendered Field 1"}, 6,
+			"[[{\"name\":\"Field_1\"}]]", 6,
 			(Map<String, Object>)columnsRow1.get(0));
 		assertColumnEquals(
-			new String[] {"Rendered Field 2"}, 6,
+			"[[{\"name\":\"Field_2\"}]]", 6,
 			(Map<String, Object>)columnsRow1.get(1));
 
 		Map<String, Object> row2 = (Map<String, Object>)rows.get(1);
@@ -130,7 +139,7 @@ public class DDMFormLayoutTransformerTest {
 		Assert.assertEquals(1, columnsRow2.size());
 
 		assertColumnEquals(
-			new String[] {"Rendered Field 3"}, 12,
+			"[[{\"name\":\"Field_3\"}]]", 12,
 			(Map<String, Object>)columnsRow2.get(0));
 
 		Map<String, Object> row3 = (Map<String, Object>)rows.get(2);
@@ -140,7 +149,7 @@ public class DDMFormLayoutTransformerTest {
 		Assert.assertEquals(1, columnsRow3.size());
 
 		assertColumnEquals(
-			new String[] {"Rendered Field 4", "Rendered Field 5"}, 12,
+			"[[{\"name\":\"Field_4\"}], [{\"name\":\"Field_5\"}]]", 12,
 			(Map<String, Object>)columnsRow3.get(0));
 	}
 
@@ -174,19 +183,22 @@ public class DDMFormLayoutTransformerTest {
 		ddmFormLayout.addDDMFormLayoutPage(
 			createDDMFormLayoutPage("Page 2", "Field_2"));
 
-		// Rendered fields map
+		// Template context fields map
 
-		Map<String, String> renderedDDMFormFieldsMap = new HashMap<>();
+		Map<String, JSONArray> templateContextDDMFormFieldsMap =
+			new HashMap<>();
 
-		renderedDDMFormFieldsMap.put("Field_1", "Rendered Field 1");
-		renderedDDMFormFieldsMap.put("Field_2", "Rendered Field 2");
+		templateContextDDMFormFieldsMap.put(
+			"Field_1", createDDMFormFieldTemplateContext("Field_1"));
+		templateContextDDMFormFieldsMap.put(
+			"Field_2", createDDMFormFieldTemplateContext("Field_2"));
 
 		DDMFormLayoutTransformer ddmFormLayoutTransformer =
 			new DDMFormLayoutTransformer(
-				ddmForm, ddmFormLayout, renderedDDMFormFieldsMap, true,
-				_LOCALE);
+				ddmForm, ddmFormLayout, templateContextDDMFormFieldsMap, true,
+				_LOCALE, _jsonFactory);
 
-		List<Object> pages = ddmFormLayoutTransformer.getPages();
+		List<Object> pages = null;//ddmFormLayoutTransformer.getPages();
 
 		Assert.assertEquals(2, pages.size());
 
@@ -200,16 +212,45 @@ public class DDMFormLayoutTransformerTest {
 	}
 
 	protected void assertColumnEquals(
-		String[] expectedRenderedDDMFormFields, int expectedSize,
+		String expectedDDMFormFieldTemplateContextsJSONString, int expectedSize,
 		Map<String, Object> actualColumn) {
 
-		List<String> actualRenderedDDMFormFields =
-			(List<String>)actualColumn.get("fields");
+		List<JSONArray> actualDDMFormFieldTemplateContexts =
+			(List<JSONArray>)actualColumn.get("fields");
 
-		Assert.assertArrayEquals(
-			expectedRenderedDDMFormFields,
-			ArrayUtil.toStringArray(actualRenderedDDMFormFields));
+		Assert.assertEquals(
+			expectedDDMFormFieldTemplateContextsJSONString,
+			actualDDMFormFieldTemplateContexts.toString());
 		Assert.assertEquals(expectedSize, actualColumn.get("size"));
+	}
+
+	protected JSONArray createDDMFormFieldTemplateContext(String name) {
+		JSONObject jsonObject = createDDMFormFieldTemplateContextJSONObject(
+			name);
+
+		return createDDMFormFieldTemplateContextJSONArray(jsonObject);
+	}
+
+	protected JSONArray createDDMFormFieldTemplateContextJSONArray(
+		JSONObject... jsonObjects) {
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		for (JSONObject jsonObject : jsonObjects) {
+			jsonArray.put(jsonObject);
+		}
+
+		return jsonArray;
+	}
+
+	protected JSONObject createDDMFormFieldTemplateContextJSONObject(
+		String name) {
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		jsonObject.put("name", name);
+
+		return jsonObject;
 	}
 
 	protected DDMFormLayoutColumn createDDMFormLayoutColumn(
@@ -257,5 +298,7 @@ public class DDMFormLayoutTransformerTest {
 	}
 
 	private static final Locale _LOCALE = LocaleUtil.US;
+
+	private final JSONFactory _jsonFactory = new JSONFactoryImpl();
 
 }

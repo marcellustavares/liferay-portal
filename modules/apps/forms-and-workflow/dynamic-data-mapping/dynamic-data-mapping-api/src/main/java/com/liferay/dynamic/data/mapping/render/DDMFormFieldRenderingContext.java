@@ -16,8 +16,13 @@ package com.liferay.dynamic.data.mapping.render;
 
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringPool;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +32,24 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class DDMFormFieldRenderingContext {
 
+	public Object getAttribute(String key) {
+		return _attributes.get(key);
+	}
+
+	public Map<String, Object> getAttributes() {
+		return _attributes;
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getNestedDDMFormFieldsTemplateContext()}
+	 */
+	@Deprecated
 	public String getChildElementsHTML() {
-		return _childElementsHTML;
+		return StringPool.BLANK;
 	}
 
 	public Fields getFields() {
-		return _fields;
+		return (Fields)_attributes.get("fields");
 	}
 
 	public HttpServletRequest getHttpServletRequest() {
@@ -44,55 +61,70 @@ public class DDMFormFieldRenderingContext {
 	}
 
 	public String getLabel() {
-		return _label;
+		return MapUtil.getString(_attributes, "label");
 	}
 
 	public Locale getLocale() {
-		return _locale;
+		return (Locale)_attributes.get("locale");
 	}
 
 	public String getMode() {
-		return _mode;
+		return MapUtil.getString(_attributes, "mode");
 	}
 
 	public String getName() {
-		return _name;
+		return MapUtil.getString(_attributes, "name");
 	}
 
 	public String getNamespace() {
-		return _namespace;
+		return MapUtil.getString(_attributes, "namespace");
+	}
+
+	public JSONArray getNestedDDMFormFieldsTemplateContext() {
+		return (JSONArray)_attributes.get("nestedDDMFormFieldsTemplateContext");
 	}
 
 	public String getPortletNamespace() {
-		return _portletNamespace;
+		return MapUtil.getString(_attributes, "portletNamespace");
+	}
+
+	public String getTemplateNamespace() {
+		return MapUtil.getString(_attributes, "templateNamespace");
 	}
 
 	public String getTip() {
-		return _tip;
+		return MapUtil.getString(_attributes, "tip");
 	}
 
 	public String getValue() {
-		return _value;
+		return MapUtil.getString(_attributes, "value");
 	}
 
 	public boolean isReadOnly() {
-		return _readOnly;
+		return MapUtil.getBoolean(_attributes, "readOnly");
 	}
 
 	public boolean isRequired() {
-		return _required;
+		return MapUtil.getBoolean(_attributes, "required");
 	}
 
 	public boolean isShowEmptyFieldLabel() {
-		return _showEmptyFieldLabel;
+		return MapUtil.getBoolean(_attributes, "showEmptyFieldLabel");
 	}
 
 	public boolean isVisible() {
-		return _visible;
+		return MapUtil.getBoolean(_attributes, "visible");
 	}
 
+	public void setAttribute(String key, Object value) {
+		_attributes.put(key, value);
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #setNestedDDMFormFieldsTemplateContext(JSONArray)}
+	 */
+	@Deprecated
 	public void setChildElementsHTML(String childElementsHTML) {
-		_childElementsHTML = childElementsHTML;
 	}
 
 	public void setField(Field field) {
@@ -100,11 +132,11 @@ public class DDMFormFieldRenderingContext {
 
 		fields.put(field);
 
-		_fields = fields;
+		_attributes.put("fields", fields);
 	}
 
 	public void setFields(Fields fields) {
-		_fields = fields;
+		_attributes.put("fields", fields);
 	}
 
 	public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
@@ -118,68 +150,67 @@ public class DDMFormFieldRenderingContext {
 	}
 
 	public void setLabel(String label) {
-		_label = label;
+		_attributes.put("label", label);
 	}
 
 	public void setLocale(Locale locale) {
-		_locale = locale;
+		_attributes.put("locale", locale);
 	}
 
 	public void setMode(String mode) {
-		_mode = mode;
+		_attributes.put("mode", mode);
 	}
 
 	public void setName(String name) {
-		_name = name;
+		_attributes.put("name", name);
 	}
 
 	public void setNamespace(String namespace) {
-		_namespace = namespace;
+		_attributes.put("namespace", namespace);
+	}
+
+	public void setNestedDDMFormFieldsTemplateContext(
+		JSONArray nestedDDMFormFieldsTemplateContext) {
+
+		_attributes.put(
+			"nestedDDMFormFieldsTemplateContext",
+			nestedDDMFormFieldsTemplateContext);
 	}
 
 	public void setPortletNamespace(String portletNamespace) {
-		_portletNamespace = portletNamespace;
+		_attributes.put("portletNamespace", portletNamespace);
 	}
 
 	public void setReadOnly(boolean readOnly) {
-		_readOnly = readOnly;
+		_attributes.put("readOnly", readOnly);
 	}
 
 	public void setRequired(boolean required) {
-		_required = required;
+		_attributes.put("required", required);
 	}
 
 	public void setShowEmptyFieldLabel(boolean showEmptyFieldLabel) {
-		_showEmptyFieldLabel = showEmptyFieldLabel;
+		_attributes.put("showEmptyFieldLabel", showEmptyFieldLabel);
+	}
+
+	public void setTemplateNamespace(String templateNamespace) {
+		_attributes.put("templateNamespace", templateNamespace);
 	}
 
 	public void setTip(String tip) {
-		_tip = tip;
+		_attributes.put("tip", tip);
 	}
 
 	public void setValue(String value) {
-		_value = value;
+		_attributes.put("value", value);
 	}
 
 	public void setVisible(boolean visible) {
-		_visible = visible;
+		_attributes.put("visible", visible);
 	}
 
-	private String _childElementsHTML;
-	private Fields _fields;
+	private final Map<String, Object> _attributes = new HashMap<>();
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
-	private String _label;
-	private Locale _locale;
-	private String _mode;
-	private String _name;
-	private String _namespace;
-	private String _portletNamespace;
-	private boolean _readOnly;
-	private boolean _required;
-	private boolean _showEmptyFieldLabel;
-	private String _tip;
-	private String _value;
-	private boolean _visible;
 
 }
