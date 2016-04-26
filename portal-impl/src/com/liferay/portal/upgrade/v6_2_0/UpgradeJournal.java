@@ -256,7 +256,7 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 
 	protected long getDDMStructureClassNameId() {
 		return PortalUtil.getClassNameId(
-			"com.liferay.portlet.dynamicdatamapping.DDMStructure");
+			"com.liferay.portlet.dynamicdatamapping.model.DDMStructure");
 	}
 
 	protected long getDDMStructureId(
