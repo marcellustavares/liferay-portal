@@ -259,7 +259,14 @@ public class DefaultDDMStructureHelperImpl
 		_ddmFormXSDDeserializer = ddmFormXSDDeserializer;
 	}
 
-	@Reference(unbind = "-")
+	@Reference(
+		target =
+			"(&(bundle.symbolic.name=" +
+				"com.liferay.dynamic.data.mapping.service)" +
+					"(bundle.symbolic.name=" +
+						"com.liferay.dynamic.data.mapping.api))",
+		unbind = "-"
+	)
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 

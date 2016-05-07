@@ -136,7 +136,14 @@ public class GoogleDocsConfigurator {
 		DDMStructureLinkManager ddmStructureLinkManager) {
 	}
 
-	@Reference(unbind = "-")
+	@Reference(
+		target =
+			"(&(bundle.symbolic.name=" +
+				"com.liferay.dynamic.data.mapping.service)" +
+					"(bundle.symbolic.name=" +
+						"com.liferay.dynamic.data.mapping.api))",
+		unbind = "-"
+	)
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 
@@ -146,8 +153,6 @@ public class GoogleDocsConfigurator {
 	@Reference(unbind = "-")
 	protected void setDDMStructureVersionLocalService(
 		DDMStructureVersionLocalService ddmStructureVersionLocalService) {
-
-		_ddmStructureVersionLocalService = ddmStructureVersionLocalService;
 	}
 
 	@Reference(unbind = "-")
@@ -198,7 +203,6 @@ public class GoogleDocsConfigurator {
 	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 	private DDMFormXSDDeserializer _ddmFormXSDDeserializer;
 	private DDMStructureLocalService _ddmStructureLocalService;
-	private DDMStructureVersionLocalService _ddmStructureVersionLocalService;
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 	private DLFileEntryMetadataLocalService _dlFileEntryMetadataLocalService;
 	private DLFileEntryTypeLocalService _dlFileEntryTypeLocalService;
