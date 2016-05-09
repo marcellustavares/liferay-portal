@@ -17,6 +17,7 @@ package com.liferay.journal.upgrade;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMStorageLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLinkLocalService;
 import com.liferay.journal.upgrade.v0_0_2.UpgradeClassNames;
@@ -71,7 +72,8 @@ public class JournalServiceUpgrade implements UpgradeStepRegistrator {
 			"com.liferay.journal.service", "0.0.3", "1.0.0",
 			new UpgradeSchema(), new UpgradeCompanyId(),
 			new UpgradeJournal(
-				_companyLocalService, _ddmTemplateLinkLocalService),
+				_companyLocalService, _ddmStorageLinkLocalService,
+				_ddmTemplateLinkLocalService),
 			new UpgradeJournalArticles(
 				_assetCategoryLocalService, _ddmStructureLocalService,
 				_groupLocalService, _layoutLocalService),
@@ -141,6 +143,13 @@ public class JournalServiceUpgrade implements UpgradeStepRegistrator {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMStorageLinkLocalService(
+		DDMStorageLinkLocalService ddmStorageLinkLocalService) {
+
+		_ddmStorageLinkLocalService = ddmStorageLinkLocalService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMStructureLocalService(
 		DDMStructureLocalService ddmStructureLocalService) {
 
@@ -183,6 +192,7 @@ public class JournalServiceUpgrade implements UpgradeStepRegistrator {
 	private AssetEntryLocalService _assetEntryLocalService;
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
 	private CompanyLocalService _companyLocalService;
+	private DDMStorageLinkLocalService _ddmStorageLinkLocalService;
 	private DDMStructureLocalService _ddmStructureLocalService;
 	private DDMTemplateLinkLocalService _ddmTemplateLinkLocalService;
 	private GroupLocalService _groupLocalService;
