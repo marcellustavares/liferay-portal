@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.lists.search;
 
+import com.liferay.dynamic.data.lists.model.DDLFormRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
@@ -161,6 +162,13 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		DDLRecordVersion recordVersion = ddlRecord.getRecordVersion();
 
 		DDLRecordSet recordSet = recordVersion.getRecordSet();
+
+		int scope = recordSet.getScope();
+
+		if (scope == DDLRecordSetConstants.SCOPE_FORMS) {
+			document.addKeyword(
+				Field.ENTRY_CLASS_NAME, DDLFormRecord.class.getName());
+		}
 
 		document.addKeyword(
 			Field.CLASS_NAME_ID,
