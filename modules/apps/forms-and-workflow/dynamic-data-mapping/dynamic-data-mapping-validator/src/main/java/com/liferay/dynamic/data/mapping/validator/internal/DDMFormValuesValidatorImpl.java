@@ -217,7 +217,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 		DDMFormFieldOptions ddmFormFieldOptions =
 			ddmFormField.getDDMFormFieldOptions();
 
-		if (ddmFormFieldOptions == null) {
+		if ((ddmFormFieldOptions == null) || !ddmFormField.isRequired()) {
 			return;
 		}
 
