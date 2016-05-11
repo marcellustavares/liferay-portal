@@ -275,7 +275,7 @@ public class DDLFormViewRecordsDisplayContext {
 			searchContext.setStart(_recordSearchContainer.getStart());
 
 			BaseModelSearchResult<DDLRecord> baseModelSearchResult =
-				_ddlRecordLocalService.searchDDLRecords(searchContext);
+				_ddlRecordLocalService.searchDDLFormRecords(searchContext);
 
 			results = baseModelSearchResult.getBaseModels();
 			total = baseModelSearchResult.getLength();
