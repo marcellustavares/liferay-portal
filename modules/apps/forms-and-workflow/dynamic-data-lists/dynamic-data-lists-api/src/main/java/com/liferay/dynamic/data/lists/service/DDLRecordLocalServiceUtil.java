@@ -477,6 +477,11 @@ public class DDLRecordLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.liferay.portal.kernel.search.BaseModelSearchResult<com.liferay.dynamic.data.lists.model.DDLRecord> searchDDLFormRecords(
+		com.liferay.portal.kernel.search.SearchContext searchContext) {
+		return getService().searchDDLFormRecords(searchContext);
+	}
+
 	/**
 	* Searches for records documents indexed by the search engine.
 	*

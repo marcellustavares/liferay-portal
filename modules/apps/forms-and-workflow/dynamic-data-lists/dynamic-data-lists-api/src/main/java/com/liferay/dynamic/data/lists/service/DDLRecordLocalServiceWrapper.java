@@ -494,6 +494,12 @@ public class DDLRecordLocalServiceWrapper implements DDLRecordLocalService,
 		return _ddlRecordLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.search.BaseModelSearchResult<com.liferay.dynamic.data.lists.model.DDLRecord> searchDDLFormRecords(
+		com.liferay.portal.kernel.search.SearchContext searchContext) {
+		return _ddlRecordLocalService.searchDDLFormRecords(searchContext);
+	}
+
 	/**
 	* Searches for records documents indexed by the search engine.
 	*

@@ -424,6 +424,10 @@ public interface DDLRecordLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public BaseModelSearchResult<DDLRecord> searchDDLFormRecords(
+		SearchContext searchContext);
+
 	/**
 	* Searches for records documents indexed by the search engine.
 	*
