@@ -12,25 +12,25 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
+package com.liferay.dynamic.data.mapping.form.rule.internal.functions;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
 
 import java.util.List;
 
 /**
- * @author Luca Comin
+ * @author Leonardo Barros
  */
-public interface DDMDataProvider {
+public interface Function {
 
-	public JSONArray doGet(DDMDataProviderContext ddmDataProviderContext)
+	public static final String VARIABLE_PATTERN =
+		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b";
+
+	public String execute(
+			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
+			List<String> parameters)
 		throws Exception;
 
-	public List<KeyValuePair> getData(
-			DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
-
-	public Class<?> getSettings();
+	public String getPattern();
 
 }

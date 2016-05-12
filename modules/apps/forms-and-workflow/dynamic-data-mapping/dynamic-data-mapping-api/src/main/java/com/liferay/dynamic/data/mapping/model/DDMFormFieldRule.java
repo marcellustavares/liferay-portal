@@ -12,25 +12,38 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
-
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.util.KeyValuePair;
-
-import java.util.List;
+package com.liferay.dynamic.data.mapping.model;
 
 /**
- * @author Luca Comin
+ * @author Leonardo Barros
  */
-public interface DDMDataProvider {
+public class DDMFormFieldRule {
 
-	public JSONArray doGet(DDMDataProviderContext ddmDataProviderContext)
-		throws Exception;
+	public DDMFormFieldRule() {
+	}
 
-	public List<KeyValuePair> getData(
-			DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
+	public DDMFormFieldRule(String expression, DDMFormFieldRuleType type) {
+		_expression = expression;
+		_type = type;
+	}
 
-	public Class<?> getSettings();
+	public String getExpression() {
+		return _expression;
+	}
+
+	public DDMFormFieldRuleType getType() {
+		return _type;
+	}
+
+	public void setExpression(String expression) {
+		_expression = expression;
+	}
+
+	public void setType(DDMFormFieldRuleType type) {
+		_type = type;
+	}
+
+	private String _expression;
+	private DDMFormFieldRuleType _type;
 
 }
