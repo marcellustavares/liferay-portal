@@ -12,25 +12,21 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
+package com.liferay.dynamic.data.mapping.form.rule;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
- * @author Luca Comin
+ * @author Leonardo Barros
  */
-public interface DDMDataProvider {
+public interface DDMFormRuleEvaluator {
 
-	public JSONArray doGet(DDMDataProviderContext ddmDataProviderContext)
-		throws Exception;
-
-	public List<KeyValuePair> getData(
-			DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
-
-	public Class<?> getSettings();
+	public List<DDMFormFieldRuleEvaluationResult> evaluate(
+			DDMForm ddmForm, DDMFormValues ddmFormValues, Locale locale)
+		throws DDMFormRuleEvaluationException;
 
 }
