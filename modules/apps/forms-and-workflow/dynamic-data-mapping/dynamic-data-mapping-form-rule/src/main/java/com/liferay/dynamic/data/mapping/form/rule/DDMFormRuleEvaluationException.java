@@ -12,25 +12,30 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
+package com.liferay.dynamic.data.mapping.form.rule;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.util.KeyValuePair;
-
-import java.util.List;
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
- * @author Luca Comin
+ * @author Leonardo Barros
  */
-public interface DDMDataProvider {
+public class DDMFormRuleEvaluationException extends PortalException {
 
-	public JSONArray doGet(DDMDataProviderContext ddmDataProviderContext)
-		throws Exception;
+	public DDMFormRuleEvaluationException() {
+	}
 
-	public List<KeyValuePair> getData(
-			DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
+	public DDMFormRuleEvaluationException(String msg) {
+		super(msg);
+	}
 
-	public Class<?> getSettings();
+	public DDMFormRuleEvaluationException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public DDMFormRuleEvaluationException(Throwable cause) {
+		super(cause);
+	}
+
+	private static final long serialVersionUID = 1L;
 
 }
