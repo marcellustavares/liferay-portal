@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
@@ -38,7 +39,8 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 						@DDMFormLayoutColumn(
 							size = 12,
 							value = {
-								"label", "tip", "required", "showAsSwitcher"
+								"label", "tip", "required", "showAsSwitcher",
+								"options"
 							}
 						)
 					}
@@ -56,7 +58,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 								"visibilityExpression", "predefinedValue",
 								"validation", "fieldNamespace", "indexType",
 								"localizable", "readOnly", "dataType", "type",
-								"name", "showLabel", "repeatable"
+								"name", "showLabel", "repeatable", "inline"
 							}
 						)
 					}
@@ -84,6 +86,15 @@ public interface CheckboxDDMFormFieldTypeSettings
 		properties = {"showAsSwitcher=true"}, type = "checkbox"
 	)
 	public boolean showAsSwitcher();
+
+	@DDMFormField(label = "%inline", properties = {"showAsSwitcher=true"})
+	public boolean inline();
+
+	@DDMFormField(
+		dataType = "ddm-options", label = "%options", required = true,
+		type = "options"
+	)
+	public DDMFormFieldOptions options();
 
 	@DDMFormField(visibilityExpression = "FALSE")
 	@Override
