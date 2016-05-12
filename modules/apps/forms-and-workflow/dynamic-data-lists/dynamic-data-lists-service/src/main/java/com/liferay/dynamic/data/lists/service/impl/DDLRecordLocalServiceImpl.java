@@ -673,6 +673,24 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		}
 	}
 
+	@Override
+	public BaseModelSearchResult<DDLRecord> searchDDLFormRecords(
+		SearchContext searchContext) {
+
+		try {
+			Indexer<DDLFormRecord> indexer = getDDLFormRecordIndexer();
+
+			Hits hits = indexer.search(searchContext, DDL.SELECTED_FIELD_NAMES);
+
+			List<DDLRecord> records = getRecords(hits, indexer);
+
+			return new BaseModelSearchResult<>(records, hits.getLength());
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+	}
+
 	/**
 	 * Searches for records documents indexed by the search engine.
 	 *
@@ -691,7 +709,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 
 			Hits hits = indexer.search(searchContext, DDL.SELECTED_FIELD_NAMES);
 
-			List<DDLRecord> records = getRecords(hits);
+			List<DDLRecord> records = getRecords(hits, indexer);
 
 			return new BaseModelSearchResult<>(records, hits.getLength());
 		}
@@ -1110,6 +1128,13 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 			companyId, groupId, DDLRecord.class.getName(), recordVersionId);
 	}
 
+	protected Indexer<DDLFormRecord> getDDLFormRecordIndexer() {
+		Indexer<DDLFormRecord> indexer = indexerRegistry.nullSafeGetIndexer(
+			DDLFormRecord.class);
+
+		return indexer;
+	}
+
 	protected Indexer<DDLRecord> getDDLRecordIndexer() {
 		Indexer<DDLRecord> indexer = indexerRegistry.nullSafeGetIndexer(
 			DDLRecord.class);
@@ -1137,7 +1162,9 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		return versionParts[0] + StringPool.PERIOD + versionParts[1];
 	}
 
-	protected List<DDLRecord> getRecords(Hits hits) throws PortalException {
+	protected List<DDLRecord> getRecords(Hits hits, Indexer indexer)
+		throws PortalException {
+
 		List<DDLRecord> records = new ArrayList<>();
 
 		for (Document document : hits.toList()) {
@@ -1161,8 +1188,6 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 				long companyId = GetterUtil.getLong(
 					document.get(
 						com.liferay.portal.kernel.search.Field.COMPANY_ID));
-
-				Indexer<DDLRecord> indexer = getDDLRecordIndexer();
 
 				indexer.delete(companyId, document.getUID());
 			}
