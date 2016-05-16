@@ -6,6 +6,9 @@ AUI.add(
 		var CheckboxField = A.Component.create(
 			{
 				ATTRS: {
+					dataType: {
+						value: 'boolean'
+					},
 
 					showAsSwitcher: {
 						value: false
@@ -15,15 +18,9 @@ AUI.add(
 						value: 'checkbox'
 					},
 
-					inline: {
-						value: true
-					},
-
-					options: {
-						validator: Array.isArray,
-						value: []
+					value: {
+						setter: '_setValue'
 					}
-
 				},
 
 				EXTENDS: Liferay.DDM.Renderer.Field,
@@ -40,30 +37,11 @@ AUI.add(
 							CheckboxField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								showAsSwitcher: instance.get('showAsSwitcher'),
-								status: DataTypeBoolean.parse(value) ? 'checked' : '',
-								inline: instance.get('inline'),
-								options: instance.getOptions()
+								status: DataTypeBoolean.parse(value) ? 'checked' : ''
 							}
 						);
 					},
 
-					getOptions: function() {
-						var instance = this;
-
-						var value = instance.getContextValue();
-
-						return A.map(
-							instance.get('options'),
-							function(item) {
-								return {
-									label: item.label[instance.get('locale')],
-									status: value === item.value ? 'checked' : '',
-									value: item.value
-								};
-							}
-						);
-					},
-					
 					getValue: function() {
 						var instance = this;
 

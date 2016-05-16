@@ -15,17 +15,14 @@
 package com.liferay.dynamic.data.mapping.type.checkbox;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Dylan Rebelak
+ * @author Marcellus Tavares
  */
 @Component(immediate = true, property = "ddm.form.field.type.name=checkbox")
 public class CheckboxDDMFormFieldValueRequestParameterRetriever
@@ -36,14 +33,10 @@ public class CheckboxDDMFormFieldValueRequestParameterRetriever
 		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,
 		String defaultDDMFormFieldParameterValue) {
 
-		String[] parameterValues = ParamUtil.getParameterValues(
-			httpServletRequest, ddmFormFieldParameterName,
-			new String[]{defaultDDMFormFieldParameterValue});
+		boolean parameterValue = ParamUtil.getBoolean(
+			httpServletRequest, ddmFormFieldParameterName);
 
-		return jsonFactory.serialize(parameterValues);
+		return String.valueOf(parameterValue);
 	}
-
-	@Reference
-	protected JSONFactory jsonFactory;
 
 }

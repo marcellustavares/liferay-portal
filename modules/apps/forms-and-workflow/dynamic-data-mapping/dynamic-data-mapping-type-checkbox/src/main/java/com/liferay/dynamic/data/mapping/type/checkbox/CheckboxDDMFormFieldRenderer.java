@@ -19,13 +19,11 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.StringPool;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +31,6 @@ import java.util.Objects;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Renato Rego
@@ -70,20 +67,6 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 		_templateResource = null;
 	}
 
-	protected List<Object> getOptions(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		CheckboxDDMFormFieldContextHelper checkboxDDMFormFieldContextHelper =
-			new CheckboxDDMFormFieldContextHelper(
-				jsonFactory, ddmFormField.getDDMFormFieldOptions(),
-				ddmFormFieldRenderingContext.getValue(),
-				ddmFormField.getPredefinedValue(),
-				ddmFormFieldRenderingContext.getLocale());
-
-		return checkboxDDMFormFieldContextHelper.getOptions();
-	}
-
 	protected String getStatus(String value, String predefinedValue) {
 		String status = StringPool.BLANK;
 
@@ -114,24 +97,7 @@ public class CheckboxDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 			predefinedValue.getString(locale));
 
 		template.put("status", status);
-
-		template.put("inline", ddmFormField.getProperty("inline"));
 	}
-
-	@Override
-	protected void populateRequiredContext(
-		Template template, DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		super.populateRequiredContext(
-			template, ddmFormField, ddmFormFieldRenderingContext);
-
-		template.put(
-			"options", getOptions(ddmFormField, ddmFormFieldRenderingContext));
-	}
-
-	@Reference
-	protected JSONFactory jsonFactory;
 
 	private TemplateResource _templateResource;
 
