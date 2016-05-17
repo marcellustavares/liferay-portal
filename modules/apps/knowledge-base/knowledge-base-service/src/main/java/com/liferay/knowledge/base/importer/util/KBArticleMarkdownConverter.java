@@ -22,6 +22,7 @@ import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -69,6 +70,11 @@ public class KBArticleMarkdownConverter {
 		}
 
 		_urlTitle = getUrlTitle(heading);
+
+		if (Validator.isNull(_urlTitle)) {
+			throw new KBArticleImportException(
+				"Missing title heading ID in file: " + fileEntryName);
+		}
 
 		_title = HtmlUtil.unescape(stripIds(heading));
 
@@ -243,6 +249,10 @@ public class KBArticleMarkdownConverter {
 		int x = heading.indexOf("[](id=");
 		int y = heading.indexOf(StringPool.CLOSE_PARENTHESIS, x);
 
+		if (x == -1) {
+			return null;
+		}
+
 		if (y > (x + 1)) {
 			int equalsSign = heading.indexOf(StringPool.EQUAL, x);
 
@@ -254,8 +264,21 @@ public class KBArticleMarkdownConverter {
 			urlTitle = StringUtil.toLowerCase(urlTitle);
 		}
 
+		if (urlTitle == null) {
+			return null;
+		}
+
 		if (!urlTitle.startsWith(StringPool.SLASH)) {
 			urlTitle = StringPool.SLASH + urlTitle;
+		}
+
+		int urlTitleMaxLength = ModelHintsUtil.getMaxLength(
+			KBArticle.class.getName(), "urlTitle");
+
+		if (urlTitle.length() > urlTitleMaxLength) {
+			int pos = urlTitle.lastIndexOf(StringPool.DASH);
+
+			urlTitle = urlTitle.substring(0, pos);
 		}
 
 		return urlTitle;
