@@ -37,6 +37,8 @@ import com.liferay.portal.workflow.task.web.configuration.WorkflowTaskWebConfigu
 
 import java.io.IOException;
 
+import java.lang.reflect.UndeclaredThrowableException;
+
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -86,13 +88,49 @@ public class MyWorkflowTaskPortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws IOException, PortletException {
 
-		super.processAction(actionRequest, actionResponse);
+		try {
+			super.processAction(actionRequest, actionResponse);
 
-		String actionName = ParamUtil.getString(
-			actionRequest, ActionRequest.ACTION_NAME);
+			String actionName = ParamUtil.getString(
+				actionRequest, ActionRequest.ACTION_NAME);
 
-		if (StringUtil.equalsIgnoreCase(actionName, "invokeTaglibDiscussion")) {
-			hideDefaultSuccessMessage(actionRequest);
+			if (StringUtil.equalsIgnoreCase(
+					actionName, "invokeTaglibDiscussion")) {
+
+				hideDefaultSuccessMessage(actionRequest);
+			}
+		}
+		catch (PortletException pe) {
+			Throwable cause = pe.getCause();
+
+			if (cause instanceof UndeclaredThrowableException) {
+				Throwable undeclaredThrowable =
+					((UndeclaredThrowableException)cause).
+						getUndeclaredThrowable();
+
+				if (isSessionErrorException(undeclaredThrowable)) {
+					hideDefaultErrorMessage(actionRequest);
+
+					SessionErrors.add(
+						actionRequest, undeclaredThrowable.getClass());
+				}
+				else {
+					throw new PortletException(undeclaredThrowable);
+				}
+			}
+			else {
+				throw pe;
+			}
+		}
+		catch (Exception e) {
+			if (isSessionErrorException(e)) {
+				hideDefaultErrorMessage(actionRequest);
+
+				SessionErrors.add(actionRequest, e.getClass());
+			}
+			else {
+				throw new PortletException(e);
+			}
 		}
 	}
 

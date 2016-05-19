@@ -36,7 +36,7 @@ public class WorkflowPermissionAdvice {
 		Object[] arguments = proceedingJoinPoint.getArgs();
 
 		if (methodName.equals(_ASSIGN_WORKFLOW_TASK_TO_USER_METHOD_NAME)) {
-			long userId = (Long)arguments[1];
+			long userId = (Long)arguments[3];
 
 			PermissionChecker permissionChecker =
 				PermissionThreadLocal.getPermissionChecker();
