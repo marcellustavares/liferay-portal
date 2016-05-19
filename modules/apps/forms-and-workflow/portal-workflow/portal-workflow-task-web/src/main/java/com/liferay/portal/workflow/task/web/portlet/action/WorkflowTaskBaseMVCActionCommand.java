@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.lang.reflect.UndeclaredThrowableException;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
@@ -47,6 +49,9 @@ public abstract class WorkflowTaskBaseMVCActionCommand
 		}
 		catch (PortletException pe) {
 			throw pe;
+		}
+		catch (UndeclaredThrowableException ute) {
+			throw new PortletException(ute.getUndeclaredThrowable());
 		}
 		catch (Exception e) {
 			throw new PortletException(e);
