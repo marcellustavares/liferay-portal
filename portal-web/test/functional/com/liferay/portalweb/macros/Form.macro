@@ -159,6 +159,14 @@
 		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
+	<command name="viewFirstRecordSearchResult">
+		<var name="key_fieldName" value="${fieldName}" />
+
+		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="${formName}" />
+		<execute function="AssertTextEquals" locator1="Form#FIELD_LABEL" value1="${fieldLabel}" />
+		<execute function="AssertTextEquals" locator1="Form#FIELD_VALUE" value1="${fieldValue}" />
+	</command>
+
 	<command name="viewFormName">
 		<execute function="AssertTextEquals" locator1="Form#NAME_FIELD" value1="${formName}" />
 	</command>
