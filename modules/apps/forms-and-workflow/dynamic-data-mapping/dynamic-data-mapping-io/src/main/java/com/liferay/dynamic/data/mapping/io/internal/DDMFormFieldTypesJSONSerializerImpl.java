@@ -25,9 +25,11 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.MapUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -82,6 +84,8 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	protected JSONObject toJSONObject(DDMFormFieldType ddmFormFieldType)
 		throws PortalException {
 
+		Locale locale = LocaleThreadLocal.getThemeDisplayLocale();
+
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		Map<String, Object> ddmFormFieldTypeProperties =
@@ -104,6 +108,8 @@ public class DDMFormFieldTypesJSONSerializerImpl
 				ddmFormFieldTypeProperties, "ddm.form.field.type.js.module",
 				"liferay-ddm-form-renderer-field"));
 		jsonObject.put("name", ddmFormFieldType.getName());
+
+		jsonObject.put("label", ddmFormFieldType.getLabel(locale));
 
 		DDMFormFieldTypeSettingsSerializerHelper
 			ddmFormFieldTypeSettingsSerializerHelper =
