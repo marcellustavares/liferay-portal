@@ -84,6 +84,8 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	protected JSONObject toJSONObject(DDMFormFieldType ddmFormFieldType)
 		throws PortalException {
 
+		Locale locale = LocaleThreadLocal.getThemeDisplayLocale();
+
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		Map<String, Object> ddmFormFieldTypeProperties =
@@ -106,8 +108,6 @@ public class DDMFormFieldTypesJSONSerializerImpl
 				ddmFormFieldTypeProperties, "ddm.form.field.type.js.module",
 				"liferay-ddm-form-renderer-field"));
 		jsonObject.put("name", ddmFormFieldType.getName());
-
-		Locale locale = LocaleThreadLocal.getThemeDisplayLocale();
 
 		jsonObject.put("label", ddmFormFieldType.getLabel(locale));
 

@@ -14,9 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type;
 
-import java.util.Locale;
-
 import com.liferay.portal.kernel.language.LanguageUtil;
+
+import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
