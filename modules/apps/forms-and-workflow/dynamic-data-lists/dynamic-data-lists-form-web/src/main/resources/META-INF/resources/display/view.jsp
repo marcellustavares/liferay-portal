@@ -16,6 +16,8 @@
 
 <%@ include file="/display/init.jsp" %>
 
+<liferay-util:dynamic-include key="com.liferay.dynamic.data.lists.form.web#/display/view.jsp#pre" />
+
 <%
 String redirect = ParamUtil.getString(request, "redirect", currentURL);
 
@@ -34,7 +36,7 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 				<portlet:actionURL name="addRecord" var="addRecordActionURL" />
 
 				<div class="portlet-forms">
-					<aui:form action="<%= addRecordActionURL %>" method="post" name="fm">
+					<aui:form action="<%= addRecordActionURL %>" data-DDLRecordSetId="<%= recordSetId %>" method="post" name="fm">
 
 						<%
 						String redirectURL = ddlFormDisplayContext.getRedirectURL();
@@ -141,3 +143,5 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 		</div>
 	</div>
 </c:if>
+
+<liferay-util:dynamic-include key="com.liferay.dynamic.data.lists.form.web#/display/view.jsp#post" />
