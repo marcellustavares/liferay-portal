@@ -19,12 +19,10 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.lpkg.deployer.LPKGWARBundleRegistry;
 import com.liferay.portal.lpkg.deployer.internal.wrapper.bundle.URLStreamHandlerServiceServiceTrackerCustomizer;
 import com.liferay.portal.lpkg.deployer.internal.wrapper.bundle.WARBundleWrapperBundleActivator;
@@ -32,7 +30,6 @@ import com.liferay.portal.util.PropsValues;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
 
 import java.net.URL;
 
@@ -45,8 +42,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-
-import org.apache.felix.fileinstall.ArtifactInstaller;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -67,11 +62,9 @@ public class LPKGBundleTrackerCustomizer
 	implements BundleTrackerCustomizer<List<Bundle>> {
 
 	public LPKGBundleTrackerCustomizer(
-		BundleContext bundleContext, Map<String, URL> urls,
-		ArtifactInstaller licenseArtifactInstaller) {
+		BundleContext bundleContext, Map<String, URL> urls) {
 
 		_bundleContext = bundleContext;
-		_licenseArtifactInstaller = licenseArtifactInstaller;
 		_urls = urls;
 	}
 
@@ -109,62 +102,29 @@ public class LPKGBundleTrackerCustomizer
 
 			enumeration = bundle.findEntries("/", "*.war", false);
 
-			if (enumeration != null) {
-				while (enumeration.hasMoreElements()) {
-					url = enumeration.nextElement();
-
-					// Install a wrapper bundle for this WAR bundle. The wrapper
-					// bundle defers the WAR bundle installation until the WAB
-					// protocol handler is ready. The installed WAR bundle is
-					// always tied its wrapper bundle. When the wrapper bundle
-					// is uninstalled, its wrapped WAR bundle will also be
-					// unintalled.
-
-					Bundle newBundle = _bundleContext.installBundle(
-						url.getPath(), _toWARWrapperBundle(bundle, url));
-
-					BundleStartLevel bundleStartLevel = newBundle.adapt(
-						BundleStartLevel.class);
-
-					bundleStartLevel.setStartLevel(
-						PropsValues.
-							MODULE_FRAMEWORK_DYNAMIC_INSTALL_START_LEVEL);
-
-					bundles.add(newBundle);
-				}
+			if (enumeration == null) {
+				return bundles;
 			}
 
-			enumeration = bundle.findEntries("/", "*.xml", false);
+			while (enumeration.hasMoreElements()) {
+				url = enumeration.nextElement();
 
-			if (enumeration != null) {
-				while (enumeration.hasMoreElements()) {
-					url = enumeration.nextElement();
+				// Install a wrapper bundle for this WAR bundle. The wrapper
+				// bundle defers the WAR bundle installation until the WAB
+				// protocol handler is ready. The installed WAR bundle is always
+				// tied its wrapper bundle. When the wrapper bundle is
+				// uninstalled, its wrapped WAR bundle will also be unintalled.
 
-					File file = null;
+				Bundle newBundle = _bundleContext.installBundle(
+					url.getPath(), _toWARWrapperBundle(bundle, url));
 
-					try {
-						String tmpDir = SystemProperties.get(
-							SystemProperties.TMP_DIR);
+				BundleStartLevel bundleStartLevel = newBundle.adapt(
+					BundleStartLevel.class);
 
-						file = new File(tmpDir + "/license.xml");
+				bundleStartLevel.setStartLevel(
+					PropsValues.MODULE_FRAMEWORK_DYNAMIC_INSTALL_START_LEVEL);
 
-						FileUtil.write(file, url.openStream());
-
-						if (_licenseArtifactInstaller.canHandle(file)) {
-							_licenseArtifactInstaller.install(file);
-						}
-					}
-					catch (Exception e) {
-						_log.error("Unable to register license");
-
-						throw e;
-					}
-					finally {
-						if ((file != null) && file.exists()) {
-							FileUtil.delete(file);
-						}
-					}
-				}
+				bundles.add(newBundle);
 			}
 		}
 		catch (Exception e) {
@@ -350,7 +310,6 @@ public class LPKGBundleTrackerCustomizer
 		LPKGBundleTrackerCustomizer.class);
 
 	private final BundleContext _bundleContext;
-	private final ArtifactInstaller _licenseArtifactInstaller;
 	private final Map<String, URL> _urls;
 
 }
