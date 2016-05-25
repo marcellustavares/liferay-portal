@@ -29,6 +29,8 @@ String eventName = ParamUtil.getString(request, "eventName", "selectStructure");
 </liferay-portlet:renderURL>
 
 <%
+boolean searchRestriction = ParamUtil.getBoolean(request, "searchRestriction");
+
 SearchContainer structureSearch = new StructureSearch(renderRequest, portletURL, WorkflowConstants.STATUS_APPROVED);
 
 request.setAttribute(WebKeys.SEARCH_CONTAINER, structureSearch);
@@ -95,7 +97,7 @@ request.setAttribute(WebKeys.SEARCH_CONTAINER, structureSearch);
 		</liferay-ui:search-container>
 	</div>
 
-	<c:if test="<%= ddmDisplay.isShowAddStructureButton() && DDMStructurePermission.containsAddStruturePermission(permissionChecker, groupId, scopeClassNameId) %>">
+	<c:if test="<%= ddmDisplay.isShowAddStructureButton() && DDMStructurePermission.containsAddStruturePermission(permissionChecker, groupId, scopeClassNameId) && !searchRestriction %>">
 		<portlet:renderURL var="viewStructureURL">
 			<portlet:param name="mvcPath" value="/select_structure.jsp" />
 			<portlet:param name="classPK" value="<%= String.valueOf(classPK) %>" />

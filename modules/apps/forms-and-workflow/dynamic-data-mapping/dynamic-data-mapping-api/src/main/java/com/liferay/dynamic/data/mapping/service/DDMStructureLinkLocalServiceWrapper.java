@@ -178,6 +178,11 @@ public class DDMStructureLinkLocalServiceWrapper
 		return _ddmStructureLinkLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public int countByC_C(long classNameId, long classPK) {
+		return _ddmStructureLinkLocalService.countByC_C(classNameId, classPK);
+	}
+
 	/**
 	* Returns the number of d d m structure links.
 	*
@@ -284,10 +289,25 @@ public class DDMStructureLinkLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> getStructureLinkStructures(
+		long classNameId, long classPK, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmStructureLinkLocalService.getStructureLinkStructures(classNameId,
+			classPK, start, end);
+	}
+
+	@Override
 	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructureLink> getStructureLinks(
 		long classNameId, long classPK) {
 		return _ddmStructureLinkLocalService.getStructureLinks(classNameId,
 			classPK);
+	}
+
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructureLink> getStructureLinks(
+		long classNameId, long classPK, int start, int end) {
+		return _ddmStructureLinkLocalService.getStructureLinks(classNameId,
+			classPK, start, end);
 	}
 
 	@Override

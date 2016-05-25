@@ -160,6 +160,8 @@ public interface DDMStructureLinkLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public int countByC_C(long classNameId, long classPK);
+
 	/**
 	* Returns the number of d d m structure links.
 	*
@@ -236,8 +238,16 @@ public interface DDMStructureLinkLocalService extends BaseLocalService,
 		long classPK) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMStructure> getStructureLinkStructures(long classNameId,
+		long classPK, int start, int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMStructureLink> getStructureLinks(long classNameId,
 		long classPK);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMStructureLink> getStructureLinks(long classNameId,
+		long classPK, int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMStructureLink> getStructureLinks(long structureId);
