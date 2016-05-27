@@ -237,14 +237,7 @@ public class DDMStructureStagedModelDataHandler
 
 		String uuid = referenceElement.attributeValue("uuid");
 
-		Map<Long, Long> groupIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				Group.class);
-
-		long groupId = GetterUtil.getLong(
-			referenceElement.attributeValue("group-id"));
-
-		groupId = MapUtil.getLong(groupIds, groupId);
+		long groupId = portletDataContext.getScopeGroupId();
 
 		long classNameId = PortalUtil.getClassNameId(
 			referenceElement.attributeValue("referenced-class-name"));
@@ -256,6 +249,20 @@ public class DDMStructureStagedModelDataHandler
 
 		existingStructure = fetchExistingStructure(
 			uuid, groupId, classNameId, structureKey, preloaded);
+
+		if (existingStructure == null) {
+			Map<Long, Long> groupIds =
+				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+					Group.class);
+
+			groupId = GetterUtil.getLong(
+				referenceElement.attributeValue("group-id"));
+
+			groupId = MapUtil.getLong(groupIds, groupId);
+
+			existingStructure = fetchExistingStructure(
+				uuid, groupId, classNameId, structureKey, preloaded);
+		}
 
 		Map<Long, Long> structureIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
