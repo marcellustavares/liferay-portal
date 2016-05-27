@@ -119,6 +119,11 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		if (recordSetId > 0) {
 			contextBooleanFilter.addRequiredTerm("recordSetId", recordSetId);
 		}
+		else {
+			contextBooleanFilter.addRequiredTerm(
+				"recordSetScope",
+				DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS);
+		}
 
 		addSearchClassTypeIds(contextBooleanFilter, searchContext);
 
@@ -175,7 +180,8 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		document.addText(
 			"ddmContent",
 			extractDDMContent(recordVersion, LocaleUtil.getSiteDefault()));
-		document.addKeyword("recordSetId", recordVersion.getRecordSetId());
+		document.addKeyword("recordSetId", recordSet.getRecordSetId());
+		document.addKeyword("recordSetScope", recordSet.getScope());
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
