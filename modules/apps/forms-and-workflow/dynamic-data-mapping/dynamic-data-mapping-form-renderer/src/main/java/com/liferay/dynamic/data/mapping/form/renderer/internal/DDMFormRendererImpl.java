@@ -23,6 +23,8 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
+import com.liferay.portal.kernel.json.JSONDeserializer;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -37,7 +39,6 @@ import java.io.Writer;
 
 import java.net.URL;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -124,7 +125,7 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 
 	protected String render(Template template) throws TemplateException {
 		String namespace = GetterUtil.getString(
-			template.get("templateNamesapce"), "ddm.paginated_form");
+			template.get("templateNamespace"), "ddm.paginated_form");
 
 		return render(template, namespace);
 	}
@@ -142,37 +143,32 @@ public class DDMFormRendererImpl implements DDMFormRenderer {
 		return writer.toString();
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDM(DDM ddm) {
-		_ddm = ddm;
-	}
-
-	@Reference(unbind = "-")
-	protected void setDDMFormTemplateContextFactory(
-		DDMFormTemplateContextFactory ddmFormTemplateContextFactory) {
-
-		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
-	}
-
 	protected void setTemplateContext(
 			Template template, DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 			DDMFormRenderingContext ddmFormRenderingContext)
 		throws PortalException {
 
 		JSONObject jsonObject = _ddmFormTemplateContextFactory.create(
-			ddmForm, ddmFormRenderingContext);
+			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
-		Iterator<String> iterator = jsonObject.keys();
+		JSONDeserializer<Map<String, ?>> jsonDeserializer =
+			_jsonFactory.createJSONDeserializer();
 
-		while (iterator.hasNext()) {
-			String key = iterator.next();
+		Map<String, ?> templateContext = jsonDeserializer.deserialize(
+			jsonObject.toString());
 
-			template.put(key, jsonObject.get(key));
-		}
+		template.putAll(templateContext);
 	}
 
+	@Reference
 	private DDM _ddm;
+
+	@Reference
 	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
+
+	@Reference
+	private JSONFactory _jsonFactory;
+
 	private TemplateResource _templateResource;
 
 }
