@@ -28,56 +28,30 @@
  * Prints the JavaScript form renderer.
  *
  * @param containerId
- * @param dataProviderURL
- * @param definition
- * @param evaluation
  * @param evaluatorURL
- * @param fieldTypes
- * @param layout
+ * @param pages
  * @param portletNamespace
  * @param readOnly
- * @param readOnlyFields
+ * @param requiredFieldsWarningMessageHTML
  * @param showRequiredFieldsWarning
  * @param showSubmitButton
+ * @param strings
  * @param submitLabel
  * @param templateNamespace
- * @param values
  */
 {template .form_renderer_js autoescape="deprecated-contextual"}
 	<script type="text/javascript">
-		AUI().use(
-			'liferay-ddm-form-renderer',
-			'liferay-ddm-form-renderer-field',
-			function(A) {lb}
-				Liferay.DDM.Renderer.FieldTypes.register({$fieldTypes|noAutoescape});
-
-				Liferay.component(
-					'{$containerId}DDMForm',
-					new Liferay.DDM.Renderer.Form(
-						{lb}
-							container: '#{$containerId}',
-							dataProviderURL: '{$dataProviderURL|noAutoescape}',
-							definition: {$definition|noAutoescape},
-							evaluation: {$evaluation|noAutoescape},
-							evaluatorURL: '{$evaluatorURL|noAutoescape}',
-
-							{if $layout}
-								layout: {$layout|noAutoescape},
-							{/if}
-
-							portletNamespace: '{$portletNamespace}',
-							readOnly: {$readOnly},
-							readOnlyFields : {$readOnlyFields|noAutoescape},
-							showRequiredFieldsWarning: {$showRequiredFieldsWarning},
-							showSubmitButton: {$showSubmitButton},
-							submitLabel: '{$submitLabel}',
-							templateNamespace: '{$templateNamespace}',
-							values: {$values|noAutoescape}
-						{rb}
-					).render()
-				);
-			{rb}
-		);
+		console.log({$containerId});
+		console.log({$evaluatorURL});
+		console.log({$pages});
+		console.log({$portletNamespace});
+		console.log({$readOnly});
+		console.log({$requiredFieldsWarningMessageHTML});
+		console.log({$showRequiredFieldsWarning});
+		console.log({$showSubmitButton});
+		console.log({$strings});
+		console.log({$submitLabel});
+		console.log({$templateNamespace});
 	</script>
 {/template}
 
