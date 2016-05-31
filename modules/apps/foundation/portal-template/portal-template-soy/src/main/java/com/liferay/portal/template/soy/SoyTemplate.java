@@ -60,6 +60,18 @@ public class SoyTemplate extends AbstractMultiResourceTemplate {
 		_privileged = privileged;
 	}
 
+	@Override
+	public Object put(String key, Object value) {
+
+		if (value == null || _isSupportedType(value)) {
+			return super.put(key, value);
+		}
+		else {
+			throw new IllegalArgumentException(
+				"Provided value with key " + key + " is not supported");
+		}
+	}
+
 	protected SoyFileSet getSoyFileSet(List<TemplateResource> templateResources)
 		throws Exception {
 
@@ -175,6 +187,12 @@ public class SoyTemplate extends AbstractMultiResourceTemplate {
 	}
 
 	private final boolean _privileged;
+
+	private boolean _isSupportedType(Object value) {
+		return value instanceof Boolean || value instanceof Integer ||
+			   value instanceof Float || value instanceof String ||
+			   value instanceof List || value instanceof Map;
+	}
 
 	private class TemplatePrivilegedExceptionAction
 		implements PrivilegedExceptionAction<SoyFileSet> {

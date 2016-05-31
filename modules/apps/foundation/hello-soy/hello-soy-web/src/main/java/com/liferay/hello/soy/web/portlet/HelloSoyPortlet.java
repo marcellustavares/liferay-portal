@@ -63,17 +63,17 @@ import org.osgi.service.component.annotations.Component;
 public class HelloSoyPortlet extends SoyPortlet {
 
 	@Override
-	public void render(
-			RenderRequest renderRequest, RenderResponse renderResponse)
-		throws IOException, PortletException {
+	public void doRender(
+			RenderRequest request, RenderResponse response)
+		throws PortletException {
 
-		PortletURL portletURL = renderResponse.createRenderURL();
+		PortletURL portletURL = response.createRenderURL();
 
 		portletURL.setParameter("mvcPath", "hello_soy_description");
 
-		template.put("descriptionURL", portletURL.toString());
+		addRenderAttribute(request, "descriptionURL", portletURL.toString());
 
-		String path = getPath(renderRequest, renderResponse);
+		String path = getPath(request, response);
 
 		if (Objects.equals(path, "hello_soy_edit")) {
 			portletURL.setParameter("mvcPath", "hello_soy_view");
@@ -82,16 +82,14 @@ public class HelloSoyPortlet extends SoyPortlet {
 			portletURL.setParameter("mvcPath", "hello_soy_edit");
 		}
 
-		template.put("portletURL", portletURL.toString());
+		addRenderAttribute(request, "portletURL", portletURL.toString());
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
 		User user = themeDisplay.getUser();
 
-		template.put("userName", user.getFirstName());
-
-		super.render(renderRequest, renderResponse);
+		addRenderAttribute(request, "userName", user.getFirstName());
 	}
 
 }
