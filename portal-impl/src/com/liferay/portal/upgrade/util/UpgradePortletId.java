@@ -58,7 +58,7 @@ public class UpgradePortletId extends UpgradeProcess {
 		boolean exactMatch) {
 
 		throw new UnsupportedOperationException(
-			"This class is deprecated in favor of " +
+			"This class is deprecated and replaced by " +
 				"com.liferay.portal.kernel.upgrade.BaseUpgradePortletId");
 	}
 

@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -313,29 +314,35 @@ public class DDMStructureFinderImpl
 		try {
 			session = openSession();
 
-			String sql = CustomSQLUtil.get(
-				getClass(), COUNT_BY_C_G_C_N_D_S_T_S);
+			String sql = null;
 
-			if (inlineSQLHelper) {
-				sql = InlineSQLHelperUtil.replacePermissionCheck(
-					sql,
-					DDMStructurePermission.getStructureModelResourceName(
-						classNameId),
-					"DDMStructure.structureId", groupIds);
+			if (ArrayUtil.isEmpty(groupIds)) {
+				sql = getSQLQueryByC_G_C_N_D_S_T_S(
+					COUNT_BY_C_G_C_N_D_S_T_S, 0, classNameId, names,
+					descriptions, status, andOperator, inlineSQLHelper);
 			}
+			else {
+				StringBundler sb = new StringBundler(4 * groupIds.length);
 
-			sql = StringUtil.replace(
-				sql, "[$GROUP_ID$]", getGroupIds(groupIds));
-			sql = StringUtil.replace(sql, "[$STATUS$]", getStatus(status));
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(CAST_TEXT(DDMStructure.name))", StringPool.LIKE,
-				false, names);
+				for (int i = 0; i < groupIds.length; i++) {
+					if (i > 0) {
+						sb.append(" UNION ");
+					}
 
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "DDMStructure.description", StringPool.LIKE, true,
-				descriptions);
+					sb.append(StringPool.OPEN_PARENTHESIS);
 
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+					sql = getSQLQueryByC_G_C_N_D_S_T_S(
+						COUNT_BY_C_G_C_N_D_S_T_S, groupIds[i], classNameId,
+						names, descriptions, status, andOperator,
+						inlineSQLHelper);
+
+					sb.append(sql);
+
+					sb.append(StringPool.CLOSE_PARENTHESIS);
+				}
+
+				sql = sb.toString();
+			}
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
@@ -343,21 +350,17 @@ public class DDMStructureFinderImpl
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(companyId);
-
-			if (groupIds != null) {
-				qPos.add(groupIds);
+			if (ArrayUtil.isEmpty(groupIds)) {
+				getQueryPosByC_G_C_N_D_S_T_S(
+					qPos, companyId, null, classNameId, names, descriptions,
+					storageType, type, status);
 			}
-
-			qPos.add(classNameId);
-			qPos.add(names, 2);
-			qPos.add(descriptions, 2);
-			qPos.add(storageType);
-			qPos.add(storageType);
-			qPos.add(type);
-
-			if (status != WorkflowConstants.STATUS_ANY) {
-				qPos.add(status);
+			else {
+				for (int i = 0; i < groupIds.length; i++) {
+					getQueryPosByC_G_C_N_D_S_T_S(
+						qPos, companyId, groupIds[i], classNameId, names,
+						descriptions, storageType, type, status);
+				}
 			}
 
 			Iterator<Long> itr = q.iterate();
@@ -395,26 +398,39 @@ public class DDMStructureFinderImpl
 		try {
 			session = openSession();
 
-			String sql = CustomSQLUtil.get(getClass(), FIND_BY_C_G_C_N_D_S_T_R);
+			String sql = null;
 
-			if (inlineSQLHelper) {
-				sql = InlineSQLHelperUtil.replacePermissionCheck(
-					sql,
-					DDMStructurePermission.getStructureModelResourceName(
-						classNameId),
-					"DDMStructure.structureId", groupIds);
+			if (ArrayUtil.isEmpty(groupIds)) {
+				sql = getSQLQueryByC_G_C_N_D_S_T_S(
+					FIND_BY_C_G_C_N_D_S_T_R, 0, classNameId, names,
+					descriptions, status, andOperator, inlineSQLHelper);
 			}
+			else {
+				StringBundler sb = new StringBundler(4 * groupIds.length + 1);
 
-			sql = StringUtil.replace(
-				sql, "[$GROUP_ID$]", getGroupIds(groupIds));
-			sql = StringUtil.replace(sql, "[$STATUS$]", getStatus(status));
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "lower(CAST_TEXT(DDMStructure.name))", StringPool.LIKE,
-				false, names);
-			sql = CustomSQLUtil.replaceKeywords(
-				sql, "DDMStructure.description", StringPool.LIKE, true,
-				descriptions);
-			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+				sb.append("SELECT {DDMStructure.*} FROM (");
+
+				for (int i = 0; i < groupIds.length; i++) {
+					if (i > 0) {
+						sb.append(" UNION ");
+					}
+
+					sb.append(StringPool.OPEN_PARENTHESIS);
+
+					sql = getSQLQueryByC_G_C_N_D_S_T_S(
+						FIND_BY_C_G_C_N_D_S_T_R, groupIds[i], classNameId,
+						names, descriptions, status, andOperator,
+						inlineSQLHelper);
+
+					sb.append(sql);
+
+					sb.append(StringPool.CLOSE_PARENTHESIS);
+				}
+
+				sb.append(") DDMStructure");
+
+				sql = sb.toString();
+			}
 
 			if (orderByComparator != null) {
 				sql = CustomSQLUtil.replaceOrderBy(sql, orderByComparator);
@@ -426,21 +442,17 @@ public class DDMStructureFinderImpl
 
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(companyId);
-
-			if (groupIds != null) {
-				qPos.add(groupIds);
+			if (ArrayUtil.isEmpty(groupIds)) {
+				getQueryPosByC_G_C_N_D_S_T_S(
+					qPos, companyId, null, classNameId, names, descriptions,
+					storageType, type, status);
 			}
-
-			qPos.add(classNameId);
-			qPos.add(names, 2);
-			qPos.add(descriptions, 2);
-			qPos.add(storageType);
-			qPos.add(storageType);
-			qPos.add(type);
-
-			if (status != WorkflowConstants.STATUS_ANY) {
-				qPos.add(status);
+			else {
+				for (int i = 0; i < groupIds.length; i++) {
+					getQueryPosByC_G_C_N_D_S_T_S(
+						qPos, companyId, groupIds[i], classNameId, names,
+						descriptions, storageType, type, status);
+				}
 			}
 
 			return (List<DDMStructure>)QueryUtil.list(
@@ -454,22 +466,64 @@ public class DDMStructureFinderImpl
 		}
 	}
 
-	protected String getGroupIds(long[] groupIds) {
-		if (ArrayUtil.isEmpty(groupIds)) {
+	protected String getGroupId(long groupId) {
+		if (Validator.isNull(groupId)) {
 			return StringPool.BLANK;
 		}
 
-		StringBundler sb = new StringBundler(groupIds.length + 1);
+		return "DDMStructure.groupId = ? AND";
+	}
 
-		sb.append(StringPool.OPEN_PARENTHESIS);
+	protected void getQueryPosByC_G_C_N_D_S_T_S(
+		QueryPos qPos, long companyId, Long groupId, long classNameId,
+		String[] names, String[] descriptions, String storageType, int type,
+		int status) {
 
-		for (int i = 0; i < groupIds.length - 1; i++) {
-			sb.append("DDMStructure.groupId = ? OR ");
+		qPos.add(companyId);
+
+		if (groupId != null) {
+			qPos.add(groupId);
 		}
 
-		sb.append("DDMStructure.groupId = ?) AND");
+		qPos.add(classNameId);
+		qPos.add(names, 2);
+		qPos.add(descriptions, 2);
+		qPos.add(storageType);
+		qPos.add(storageType);
+		qPos.add(type);
 
-		return sb.toString();
+		if (status != WorkflowConstants.STATUS_ANY) {
+			qPos.add(status);
+		}
+	}
+
+	protected String getSQLQueryByC_G_C_N_D_S_T_S(
+			String id, long groupId, long classNameId, String[] names,
+			String[] descriptions, int status, boolean andOperator,
+			boolean inlineSQLHelper)
+		throws PortalException {
+
+		String sql = CustomSQLUtil.get(getClass(), id);
+
+		if (inlineSQLHelper) {
+			sql = InlineSQLHelperUtil.replacePermissionCheck(
+				sql,
+				DDMStructurePermission.getStructureModelResourceName(
+					classNameId),
+				"DDMStructure.structureId", groupId);
+		}
+
+		sql = StringUtil.replace(sql, "[$GROUP_ID$]", getGroupId(groupId));
+		sql = StringUtil.replace(sql, "[$STATUS$]", getStatus(status));
+		sql = CustomSQLUtil.replaceKeywords(
+			sql, "lower(CAST_TEXT(DDMStructure.name))", StringPool.LIKE, false,
+			names);
+		sql = CustomSQLUtil.replaceKeywords(
+			sql, "DDMStructure.description", StringPool.LIKE, true,
+			descriptions);
+		sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+
+		return sql;
 	}
 
 	protected String getStatus(int status) {
