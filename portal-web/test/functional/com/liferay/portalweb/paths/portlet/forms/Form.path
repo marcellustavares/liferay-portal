@@ -153,6 +153,11 @@
 	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//div[contains(@class,'toolbar')]//button[contains(@class,'item')][1]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>FIELD_VALUE</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//div//input</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

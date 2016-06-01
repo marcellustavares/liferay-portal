@@ -125,6 +125,19 @@ public class DDLRecordSetLocalServiceUtil {
 		return getService().deleteDDLRecordSet(recordSetId);
 	}
 
+	/**
+	* Deletes the record set and its resources.
+	*
+	* @param recordSet the record set to be deleted
+	* @return the record set
+	* @throws PortalException if a portal exception occurred
+	*/
+	public static com.liferay.dynamic.data.lists.model.DDLRecordSet deleteRecordSet(
+		com.liferay.dynamic.data.lists.model.DDLRecordSet recordSet)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteRecordSet(recordSet);
+	}
+
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet fetchDDLRecordSet(
 		long recordSetId) {
 		return getService().fetchDDLRecordSet(recordSetId);
@@ -719,18 +732,6 @@ public class DDLRecordSetLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.addRecordSetResources(recordSet, groupPermissions, guestPermissions);
-	}
-
-	/**
-	* Deletes the record set and its resources.
-	*
-	* @param recordSet the record set to be deleted
-	* @throws PortalException if a portal exception occurred
-	*/
-	public static void deleteRecordSet(
-		com.liferay.dynamic.data.lists.model.DDLRecordSet recordSet)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteRecordSet(recordSet);
 	}
 
 	/**

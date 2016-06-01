@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
+import com.liferay.dynamic.data.lists.model.impl.DDLFormRecordImpl;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalService;
@@ -67,14 +68,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Marcellus Tavares
+ * @author Inácio Nery
  */
 @Component(immediate = true, service = Indexer.class)
-public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
+public class DDLFormRecordIndexer extends BaseIndexer<DDLFormRecord> {
 
-	public static final String CLASS_NAME = DDLRecord.class.getName();
+	public static final String CLASS_NAME = DDLFormRecord.class.getName();
 
-	public DDLRecordIndexer() {
+	public DDLFormRecordIndexer() {
 		setDefaultSelectedFieldNames(
 			Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK,
 			Field.UID);
@@ -95,8 +96,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		BooleanFilter booleanFilter = super.getFacetBooleanFilter(
 			DDLRecordSet.class.getName(), searchContext);
 
-		booleanFilter.addTerm(
-			Field.ENTRY_CLASS_NAME, DDLRecord.class.getName());
+		booleanFilter.addTerm(Field.ENTRY_CLASS_NAME, CLASS_NAME);
 
 		return booleanFilter;
 	}
@@ -120,12 +120,6 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		if (recordSetId > 0) {
 			contextBooleanFilter.addRequiredTerm("recordSetId", recordSetId);
 		}
-
-		long recordSetScope = GetterUtil.getLong(
-			searchContext.getAttribute("recordSetScope"),
-			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS);
-
-		contextBooleanFilter.addRequiredTerm("recordSetScope", recordSetScope);
 
 		addSearchClassTypeIds(contextBooleanFilter, searchContext);
 
@@ -157,25 +151,24 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 	}
 
 	@Override
-	protected void doDelete(DDLRecord ddlRecord) throws Exception {
+	protected void doDelete(DDLFormRecord ddlFormRecord) throws Exception {
+		DDLRecord ddlRecord = ddlFormRecord.getDDLRecord();
+
 		deleteDocument(ddlRecord.getCompanyId(), ddlRecord.getRecordId());
 	}
 
 	@Override
-	protected Document doGetDocument(DDLRecord ddlRecord) throws Exception {
+	protected Document doGetDocument(DDLFormRecord ddlFormRecord)
+		throws Exception {
+
+		DDLRecord ddlRecord = ddlFormRecord.getDDLRecord();
 		Document document = getBaseModelDocument(CLASS_NAME, ddlRecord);
 
 		DDLRecordVersion recordVersion = ddlRecord.getRecordVersion();
 
 		DDLRecordSet recordSet = recordVersion.getRecordSet();
 
-		int scope = recordSet.getScope();
-
-		if (scope == DDLRecordSetConstants.SCOPE_FORMS) {
-			document.addKeyword(
-				Field.ENTRY_CLASS_NAME, DDLFormRecord.class.getName());
-		}
-
+		document.addKeyword(Field.ENTRY_CLASS_NAME, CLASS_NAME);
 		document.addKeyword(
 			Field.CLASS_NAME_ID,
 			_classNameLocalService.getClassNameId(DDLRecordSet.class));
@@ -189,8 +182,7 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		document.addText(
 			"ddmContent",
 			extractDDMContent(recordVersion, LocaleUtil.getSiteDefault()));
-		document.addKeyword("recordSetId", recordSet.getRecordSetId());
-		document.addKeyword("recordSetScope", recordSet.getScope());
+		document.addKeyword("recordSetId", recordVersion.getRecordSetId());
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
@@ -221,10 +213,12 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 	}
 
 	@Override
-	protected void doReindex(DDLRecord ddlRecord) throws Exception {
+	protected void doReindex(DDLFormRecord ddlFormRecord) throws Exception {
+		DDLRecord ddlRecord = ddlFormRecord.getDDLRecord();
+
 		DDLRecordVersion recordVersion = ddlRecord.getRecordVersion();
 
-		Document document = getDocument(ddlRecord);
+		Document document = getDocument(ddlFormRecord);
 
 		if (!recordVersion.isApproved()) {
 			if (Objects.equals(
@@ -248,7 +242,9 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 	protected void doReindex(String className, long classPK) throws Exception {
 		DDLRecord record = _ddlRecordLocalService.getRecord(classPK);
 
-		doReindex(record);
+		DDLFormRecord formRecord = new DDLFormRecordImpl(record);
+
+		doReindex(formRecord);
 	}
 
 	@Override
@@ -353,7 +349,10 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 					throws PortalException {
 
 					try {
-						Document document = getDocument(record);
+						DDLFormRecord formRecord = new DDLFormRecordImpl(
+							record);
+
+						Document document = getDocument(formRecord);
 
 						if (document != null) {
 							indexableActionableDynamicQuery.addDocuments(
@@ -414,13 +413,11 @@ public class DDLRecordIndexer extends BaseIndexer<DDLRecord> {
 		_storageEngine = storageEngine;
 	}
 
-	private static final int[] _REINDEX_SCOPES = new int[] {
-		DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS,
-		DDLRecordSetConstants.SCOPE_FORMS
-	};
+	private static final int[] _REINDEX_SCOPES =
+		new int[] {DDLRecordSetConstants.SCOPE_FORMS};
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		DDLRecordIndexer.class);
+		DDLFormRecordIndexer.class);
 
 	private ClassNameLocalService _classNameLocalService;
 	private DDLRecordLocalService _ddlRecordLocalService;

@@ -104,6 +104,7 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public DDLRecordSet addRecordSet(long userId, long groupId,
 		long ddmStructureId, java.lang.String recordSetKey,
 		Map<Locale, java.lang.String> nameMap,
@@ -136,6 +137,18 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.DELETE)
 	public DDLRecordSet deleteDDLRecordSet(long recordSetId)
+		throws PortalException;
+
+	/**
+	* Deletes the record set and its resources.
+	*
+	* @param recordSet the record set to be deleted
+	* @return the record set
+	* @throws PortalException if a portal exception occurred
+	*/
+	@Indexable(type = IndexableType.DELETE)
+	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
+	public DDLRecordSet deleteRecordSet(DDLRecordSet recordSet)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -241,6 +254,7 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public DDLRecordSet updateMinDisplayRows(long recordSetId,
 		int minDisplayRows, ServiceContext serviceContext)
 		throws PortalException;
@@ -277,6 +291,7 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public DDLRecordSet updateRecordSet(long recordSetId,
 		DDMFormValues settingsDDMFormValues) throws PortalException;
 
@@ -630,16 +645,6 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	*/
 	public void addRecordSetResources(DDLRecordSet recordSet,
 		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
-		throws PortalException;
-
-	/**
-	* Deletes the record set and its resources.
-	*
-	* @param recordSet the record set to be deleted
-	* @throws PortalException if a portal exception occurred
-	*/
-	@SystemEvent(action = SystemEventConstants.ACTION_SKIP, type = SystemEventConstants.TYPE_DELETE)
-	public void deleteRecordSet(DDLRecordSet recordSet)
 		throws PortalException;
 
 	/**

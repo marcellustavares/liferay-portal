@@ -289,6 +289,7 @@ public interface DDLRecordLocalService extends BaseLocalService,
 	* @return the record
 	* @throws PortalException if a portal exception occurred
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public DDLRecord updateRecord(long userId, long recordId,
 		boolean majorVersion, int displayIndex, DDMFormValues ddmFormValues,
 		ServiceContext serviceContext) throws PortalException;
@@ -423,6 +424,10 @@ public interface DDLRecordLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public BaseModelSearchResult<DDLRecord> searchDDLFormRecords(
+		SearchContext searchContext);
 
 	/**
 	* Searches for records documents indexed by the search engine.

@@ -35,6 +35,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -81,6 +83,7 @@ public class DDLRecordSetLocalServiceImpl
 	 * @return the record set
 	 * @throws PortalException if a portal exception occurred
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public DDLRecordSet addRecordSet(
 			long userId, long groupId, long ddmStructureId, String recordSetKey,
@@ -187,14 +190,17 @@ public class DDLRecordSetLocalServiceImpl
 	 * Deletes the record set and its resources.
 	 *
 	 * @param  recordSet the record set to be deleted
+	 * @return the record set
 	 * @throws PortalException if a portal exception occurred
 	 */
+	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(
 		action = SystemEventConstants.ACTION_SKIP,
 		type = SystemEventConstants.TYPE_DELETE
 	)
-	public void deleteRecordSet(DDLRecordSet recordSet) throws PortalException {
+	public DDLRecordSet deleteRecordSet(DDLRecordSet recordSet)
+		throws PortalException {
 
 		// Record set
 
@@ -221,6 +227,8 @@ public class DDLRecordSetLocalServiceImpl
 		workflowDefinitionLinkLocalService.deleteWorkflowDefinitionLink(
 			recordSet.getCompanyId(), recordSet.getGroupId(),
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId(), 0);
+
+		return recordSet;
 	}
 
 	/**
@@ -547,6 +555,7 @@ public class DDLRecordSetLocalServiceImpl
 	 * @return the record set
 	 * @throws PortalException if a portal exception occurred
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public DDLRecordSet updateMinDisplayRows(
 			long recordSetId, int minDisplayRows, ServiceContext serviceContext)
@@ -572,6 +581,7 @@ public class DDLRecordSetLocalServiceImpl
 	 * @return the record set
 	 * @throws PortalException if a portal exception occurred
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public DDLRecordSet updateRecordSet(
 			long recordSetId, DDMFormValues settingsDDMFormValues)
@@ -654,6 +664,7 @@ public class DDLRecordSetLocalServiceImpl
 			serviceContext, recordSet);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	protected DDLRecordSet doUpdateRecordSet(
 			long ddmStructureId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int minDisplayRows,

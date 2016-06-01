@@ -121,6 +121,20 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 		return _ddlRecordSetLocalService.deleteDDLRecordSet(recordSetId);
 	}
 
+	/**
+	* Deletes the record set and its resources.
+	*
+	* @param recordSet the record set to be deleted
+	* @return the record set
+	* @throws PortalException if a portal exception occurred
+	*/
+	@Override
+	public com.liferay.dynamic.data.lists.model.DDLRecordSet deleteRecordSet(
+		com.liferay.dynamic.data.lists.model.DDLRecordSet recordSet)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordSetLocalService.deleteRecordSet(recordSet);
+	}
+
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet fetchDDLRecordSet(
 		long recordSetId) {
@@ -753,19 +767,6 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_ddlRecordSetLocalService.addRecordSetResources(recordSet,
 			groupPermissions, guestPermissions);
-	}
-
-	/**
-	* Deletes the record set and its resources.
-	*
-	* @param recordSet the record set to be deleted
-	* @throws PortalException if a portal exception occurred
-	*/
-	@Override
-	public void deleteRecordSet(
-		com.liferay.dynamic.data.lists.model.DDLRecordSet recordSet)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_ddlRecordSetLocalService.deleteRecordSet(recordSet);
 	}
 
 	/**
