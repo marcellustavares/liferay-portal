@@ -110,6 +110,14 @@ public class DDMFormRenderingContext {
 		_submitLabel = submitLabel;
 	}
 
+	public void setEvaluatorURL(String evaluatorURL) {
+		_evaluatorURL = evaluatorURL;
+	}
+
+	public String getEvaluatorURL() {
+		return _evaluatorURL;
+	}
+
 	private String _containerId;
 	private DDMFormValues _ddmFormValues;
 	private HttpServletRequest _httpServletRequest;
@@ -118,7 +126,8 @@ public class DDMFormRenderingContext {
 	private String _portletNamespace;
 	private boolean _readOnly;
 	private boolean _showRequiredFieldsWarning = true;
-	private boolean _showSubmitButton;
+	private boolean _showSubmitButton = true;
 	private String _submitLabel;
+	private String _evaluatorURL;
 
 }

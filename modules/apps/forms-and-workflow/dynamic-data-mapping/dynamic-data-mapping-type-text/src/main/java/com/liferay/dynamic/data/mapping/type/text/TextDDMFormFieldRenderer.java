@@ -16,14 +16,9 @@ package com.liferay.dynamic.data.mapping.type.text;
 
 import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateResource;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -62,26 +57,6 @@ public class TextDDMFormFieldRenderer extends BaseDDMFormFieldRenderer {
 	@Deactivate
 	protected void deactivate() {
 		_templateResource = null;
-	}
-
-	@Override
-	protected void populateOptionalContext(
-		Template template, DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		template.put("displayStyle", ddmFormField.getProperty("displayStyle"));
-
-		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
-			"placeholder");
-
-		Locale locale = ddmFormFieldRenderingContext.getLocale();
-
-		template.put("placeholder", getValueString(placeholder, locale));
-
-		LocalizedValue tooltip = (LocalizedValue)ddmFormField.getProperty(
-			"tooltip");
-
-		template.put("tooltip", getValueString(tooltip, locale));
 	}
 
 	private TemplateResource _templateResource;

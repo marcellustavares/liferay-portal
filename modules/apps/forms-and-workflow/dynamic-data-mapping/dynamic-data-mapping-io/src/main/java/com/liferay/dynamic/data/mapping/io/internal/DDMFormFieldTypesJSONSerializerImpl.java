@@ -67,20 +67,6 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	}
 
 	@Reference(unbind = "-")
-	protected void setDDMFormJSONSerializer(
-		DDMFormJSONSerializer ddmFormJSONSerializer) {
-
-		_ddmFormJSONSerializer = ddmFormJSONSerializer;
-	}
-
-	@Reference(unbind = "-")
-	protected void setDDMFormLayoutJSONSerializer(
-		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer) {
-
-		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
-	}
-
-	@Reference(unbind = "-")
 	protected void setJSONFactory(JSONFactory jsonFactory) {
 		_jsonFactory = jsonFactory;
 	}
@@ -123,21 +109,6 @@ public class DDMFormFieldTypesJSONSerializerImpl
 		}
 
 		jsonObject.put("name", ddmFormFieldType.getName());
-
-		DDMFormFieldTypeSettingsSerializerHelper
-			ddmFormFieldTypeSettingsSerializerHelper =
-				new DDMFormFieldTypeSettingsSerializerHelper(
-					ddmFormFieldType.getDDMFormFieldTypeSettings(),
-					_ddmFormJSONSerializer, _ddmFormLayoutJSONSerializer,
-					_jsonFactory);
-
-		jsonObject.put(
-			"settings",
-			ddmFormFieldTypeSettingsSerializerHelper.getSettingsJSONObject());
-		jsonObject.put(
-			"settingsLayout",
-			ddmFormFieldTypeSettingsSerializerHelper.
-				getSettingsLayoutJSONObject());
 		jsonObject.put(
 			"system",
 			MapUtil.getBoolean(
@@ -160,8 +131,6 @@ public class DDMFormFieldTypesJSONSerializerImpl
 	}
 
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
-	private DDMFormJSONSerializer _ddmFormJSONSerializer;
-	private DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
 	private JSONFactory _jsonFactory;
 
 }

@@ -14,12 +14,15 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 
 /**
  * @author Marcellus Tavares
  */
+@ProviderType
 public interface DDMFormRenderer {
 
 	public String render(

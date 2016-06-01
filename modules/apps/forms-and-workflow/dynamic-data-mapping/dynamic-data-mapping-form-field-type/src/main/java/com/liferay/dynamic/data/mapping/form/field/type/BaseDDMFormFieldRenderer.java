@@ -19,21 +19,19 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
-import com.liferay.portal.kernel.language.LanguageConstants;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Writer;
 
 import java.net.URL;
 
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Marcellus Tavares
@@ -55,14 +53,15 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		Template template = TemplateManagerUtil.getTemplate(
 			getTemplateLanguage(), getTemplateResource(), false);
 
-		template.put(TemplateConstants.NAMESPACE, getTemplateNamespace());
+		template.put(
+			TemplateConstants.NAMESPACE,
+			ddmFormFieldRenderingContext.getTemplateNamespace());
 		template.put(TemplateConstants.RENDER_STRICT, Boolean.FALSE);
 
-		populateRequiredContext(
-			template, ddmFormField, ddmFormFieldRenderingContext);
+		Map<String, Object> attributes =
+			ddmFormFieldRenderingContext.getAttributes();
 
-		populateOptionalContext(
-			template, ddmFormField, ddmFormFieldRenderingContext);
+		template.putAll(attributes);
 
 		return render(template);
 	}
@@ -77,6 +76,10 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		return new URLTemplateResource(templateURL.getPath(), templateURL);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected String getValueString(Value value, Locale locale) {
 		if (value != null) {
 			return value.getString(locale);
@@ -85,36 +88,22 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		return StringPool.BLANK;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link DDMFormFieldRenderingContextContributor}
+	 */
+	@Deprecated
 	protected void populateOptionalContext(
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link DDMFormFieldRenderingContextContributor}
+	 */
+	@Deprecated
 	protected void populateRequiredContext(
 		Template template, DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		Locale locale = ddmFormFieldRenderingContext.getLocale();
-
-		String childElementsHTML =
-			ddmFormFieldRenderingContext.getChildElementsHTML();
-
-		if (Validator.isNotNull(childElementsHTML)) {
-			template.put("childElementsHTML", childElementsHTML);
-		}
-
-		template.put(
-			"dir", LanguageUtil.get(locale, LanguageConstants.KEY_DIR));
-		template.put("label", ddmFormFieldRenderingContext.getLabel());
-		template.put("name", ddmFormFieldRenderingContext.getName());
-		template.put(
-			"readOnly",
-			_isReadOnly(ddmFormField, ddmFormFieldRenderingContext));
-		template.put("required", ddmFormFieldRenderingContext.isRequired());
-		template.put("showLabel", ddmFormField.isShowLabel());
-		template.put("tip", ddmFormFieldRenderingContext.getTip());
-		template.put("value", ddmFormFieldRenderingContext.getValue());
-		template.put("visible", ddmFormFieldRenderingContext.isVisible());
 	}
 
 	protected String render(Template template) throws PortalException {
@@ -123,19 +112,6 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		template.processTemplate(writer);
 
 		return writer.toString();
-	}
-
-	private boolean _isReadOnly(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		if (ddmFormFieldRenderingContext.isReadOnly() ||
-			ddmFormField.isReadOnly()) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 }
