@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.PortletURLImpl;
 import com.liferay.portlet.StrictPortletPreferencesImpl;
 
+import java.util.Objects;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -218,14 +220,18 @@ public abstract class DDMBaseMVCActionCommand extends BaseMVCActionCommand {
 			return;
 		}
 
-		String templateType = template.getType();
+		if (Objects.equals(
+				template.getType(),
+				DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
 
-		if (templateType.equals(DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY)) {
 			portletPreferences.setValue(
 				"displayDDMTemplateId",
 				String.valueOf(template.getTemplateId()));
 		}
-		else {
+		else if (Objects.equals(
+					template.getMode(),
+					DDMTemplateConstants.TEMPLATE_MODE_CREATE)) {
+
 			portletPreferences.setValue(
 				"formDDMTemplateId", String.valueOf(template.getTemplateId()));
 		}
