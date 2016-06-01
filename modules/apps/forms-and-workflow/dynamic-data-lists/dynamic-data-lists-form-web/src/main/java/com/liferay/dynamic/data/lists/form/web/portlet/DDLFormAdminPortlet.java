@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -119,9 +120,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		}
 		catch (Exception e) {
 			if (isSessionErrorException(e)) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(e, e);
-				}
+				_log.error(e, e);
 
 				hideDefaultErrorMessage(renderRequest);
 
@@ -435,9 +434,9 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
-				_ddmFormValuesFactory, _ddmFormValuesMerger,
-				_ddmStructureLocalService, _jsonFactory, _storageEngine,
-				_workflowEngineManager);
+				_ddmFormTemplateContextFactory,  _ddmFormValuesFactory,
+				_ddmFormValuesMerger, _ddmStructureLocalService, _jsonFactory,
+				_storageEngine, _workflowEngineManager);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddlFormAdminDisplayContext);
@@ -469,6 +468,13 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		_workflowEngineManager = workflowEngineManager;
 	}
 
+	@Reference(unbind = "-")
+	protected void setDDMFormTemplateContextFactory(
+		DDMFormTemplateContextFactory ddmFormTemplateContextFactory) {
+
+		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
+	}
+
 	protected void unsetDDLFormWebConfigurationActivator(
 		DDLFormWebConfigurationActivator ddlFormWebConfigurationActivator) {
 
@@ -498,5 +504,6 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private StorageEngine _storageEngine;
 	private WorkflowDefinitionManager _workflowDefinitionManager;
 	private WorkflowEngineManager _workflowEngineManager;
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 
 }

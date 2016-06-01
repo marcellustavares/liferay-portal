@@ -31,6 +31,8 @@ public class DDMFormLayout implements Serializable {
 
 	public static final String WIZARD_MODE = "wizard";
 
+	public static final String SETTINGS_MODE = "settings";
+
 	public DDMFormLayout() {
 	}
 

@@ -36,17 +36,23 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.dynamic.data.mapping.util.DDMFormLayoutFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -68,18 +74,17 @@ import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
-import java.util.List;
-import java.util.Locale;
-
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Bruno Basto
@@ -98,6 +103,7 @@ public class DDLFormAdminDisplayContext {
 		DDMFormJSONSerializer ddmFormJSONSerializer,
 		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer,
 		DDMFormRenderer ddmFormRenderer,
+		DDMFormTemplateContextFactory ddmFormTemplateContextFactory,
 		DDMFormValuesFactory ddmFormValuesFactory,
 		DDMFormValuesMerger ddmFormValuesMerger,
 		DDMStructureLocalService ddmStructureLocalService,
@@ -117,6 +123,7 @@ public class DDLFormAdminDisplayContext {
 		_ddmFormJSONSerializer = ddmFormJSONSerializer;
 		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
 		_ddmFormRenderer = ddmFormRenderer;
+		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
 		_ddmStructureLocalService = ddmStructureLocalService;
@@ -164,6 +171,43 @@ public class DDLFormAdminDisplayContext {
 			_ddmFormFieldTypesJSONSerializer.serialize(ddmFormFieldTypes);
 
 		return _jsonFactory.createJSONArray(serializedDDMFormFieldTypes);
+	}
+
+	public JSONObject getDDMFormFieldTypesDefinitionsMap() throws PortalException {
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		for (DDMFormFieldType ddmFormFieldType :
+				_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes()) {
+
+			Class<?> clazz = ddmFormFieldType.getDDMFormFieldTypeSettings();
+
+			DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
+				clazz);
+
+			jsonObject.put(
+				ddmFormFieldType.getName(),
+				getDDMFormFieldTypePropertyNames(ddmFormFieldTypeSettingsDDMForm));
+
+		}
+
+		return jsonObject;
+	}
+
+	public JSONArray getDDMFormFieldTypePropertyNames(
+			DDMForm ddmFormFieldTypeSettingsDDMForm)
+		throws PortalException {
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		for (DDMFormField ddmFormField :
+				ddmFormFieldTypeSettingsDDMForm.getDDMFormFields()) {
+
+			jsonArray.put(ddmFormField.getName());
+
+		}
+
+		return jsonArray;
+
 	}
 
 	public String getDDMFormHTML(RenderRequest renderRequest)
@@ -632,5 +676,5 @@ public class DDLFormAdminDisplayContext {
 	private final RenderResponse _renderResponse;
 	private final StorageEngine _storageEngine;
 	private final WorkflowEngineManager _workflowEngineManager;
-
+	private final DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 }
