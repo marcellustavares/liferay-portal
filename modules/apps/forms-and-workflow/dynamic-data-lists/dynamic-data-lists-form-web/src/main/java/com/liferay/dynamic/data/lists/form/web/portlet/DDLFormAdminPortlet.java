@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -72,6 +73,7 @@ import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 import javax.servlet.Servlet;
 
@@ -119,9 +121,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 		}
 		catch (Exception e) {
 			if (isSessionErrorException(e)) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(e, e);
-				}
+				_log.error(e, e);
 
 				hideDefaultErrorMessage(renderRequest);
 
@@ -181,6 +181,12 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 			LocaleUtil.fromLanguageId(languageId));
 		ddmFormRenderingContext.setPortletNamespace(
 			renderResponse.getNamespace());
+
+		ResourceURL resourceURL = renderResponse.createResourceURL();
+
+		resourceURL.setResourceID("evaluateRecordSetSettings");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
 
 		return ddmFormRenderingContext;
 	}
@@ -373,6 +379,13 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormTemplateContextFactory(
+		DDMFormTemplateContextFactory ddmFormTemplateContextFactory) {
+
+		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMFormValuesFactory(
 		DDMFormValuesFactory ddmFormValuesFactory) {
 
@@ -435,9 +448,9 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
-				_ddmFormValuesFactory, _ddmFormValuesMerger,
-				_ddmStructureLocalService, _jsonFactory, _storageEngine,
-				_workflowEngineManager);
+				_ddmFormTemplateContextFactory, _ddmFormValuesFactory,
+				_ddmFormValuesMerger, _ddmStructureLocalService, _jsonFactory,
+				_storageEngine, _workflowEngineManager);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT, ddlFormAdminDisplayContext);
@@ -490,6 +503,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDMFormJSONSerializer _ddmFormJSONSerializer;
 	private DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
 	private DDMFormRenderer _ddmFormRenderer;
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 	private DDMFormValuesFactory _ddmFormValuesFactory;
 	private DDMFormValuesMerger _ddmFormValuesMerger;
 	private DDMStructureLocalService _ddmStructureLocalService;

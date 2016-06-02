@@ -12,17 +12,25 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.type.validation;
+package com.liferay.dynamic.data.mapping.form.renderer;
+
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.portal.kernel.json.JSONObject;
 
 /**
- * @author Bruno Basto
+ * @author Marcellus Tavares
  */
-public class ValidationDDMFormFieldContextHelper {
+@ProviderType
+public interface DDMFormTemplateContextFactory {
 
-	public ValidationDDMFormFieldContextHelper(String value) {
-		_value = value;
-	}
+	public JSONObject create(
+		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
+		DDMFormRenderingContext ddmFormRenderingContext);
 
-	private final String _value;
+	public JSONObject create(
+		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext);
 
 }

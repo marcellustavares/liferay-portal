@@ -218,6 +218,12 @@ public class DDLFormDisplayContext {
 		ddmFormRenderingContext.setPortletNamespace(
 			_renderResponse.getNamespace());
 
+		ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+		resourceURL.setResourceID("evaluateRecordSet");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
+
 		return ddmFormRenderingContext;
 	}
 

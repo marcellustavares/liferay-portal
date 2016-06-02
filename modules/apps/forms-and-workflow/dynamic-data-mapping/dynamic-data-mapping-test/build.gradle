@@ -9,9 +9,7 @@ dependencies {
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.api", version: "3.1.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.data.provider", version: "2.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.form.evaluator", version: "2.0.0"
-	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.form.field.type", version: "2.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.io", version: "2.0.0"
-	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.test.util", version: "2.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.type.checkbox", version: "2.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.type.date", version: "2.0.0"
 	testCompile group: "com.liferay", name: "com.liferay.dynamic.data.mapping.type.key.value", version: "2.0.0"
@@ -27,4 +25,8 @@ dependencies {
 	testIntegrationCompile group: "com.liferay", name: "com.liferay.registry.api", version: "1.0.0"
 	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "2.0.0"
 	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.2.0"
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-form-field-type")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-form-renderer")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-test-util")
 }
