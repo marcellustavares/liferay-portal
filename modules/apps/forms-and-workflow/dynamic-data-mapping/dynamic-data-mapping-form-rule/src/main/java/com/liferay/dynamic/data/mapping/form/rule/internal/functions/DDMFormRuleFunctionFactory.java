@@ -43,13 +43,14 @@ public class DDMFormRuleFunctionFactory {
 	}
 
 	public static String[] getFunctionPatterns() {
-		if(_ALL_FUNCTIONS_PATTERNS == null) {
+		if (_ALL_FUNCTIONS_PATTERNS == null) {
 			_ALL_FUNCTIONS_PATTERNS = new String[] {
 				_betweenFunction.getPattern(), _callFunction.getPattern(),
 				_containsFunction.getPattern(), _equalsFunction.getPattern(),
 				_readOnlyFunction.getPattern(), _visibleFunction.getPattern()
 			};
 		}
+
 		return _ALL_FUNCTIONS_PATTERNS;
 	}
 

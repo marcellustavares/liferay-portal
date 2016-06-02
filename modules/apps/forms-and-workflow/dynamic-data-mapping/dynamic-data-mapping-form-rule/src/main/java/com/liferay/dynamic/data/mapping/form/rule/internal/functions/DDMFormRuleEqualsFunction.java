@@ -24,12 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleEqualsFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleEqualsFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -53,8 +48,18 @@ class DDMFormRuleEqualsFunction extends DDMFormRuleBaseFunction {
 		String actualValue =
 			ddmFormFieldRuleEvaluationResult.getValue().toString();
 
-		return actualValue.equals(value) ? "TRUE": "FALSE";
+		if (actualValue.equals(value)) {
+			return "TRUE";
+		}
+
+		return "FALSE";
+	}
+
+	@Override
+	public String getPattern() {
+		return _PATTERN;
 	}
 
 	private static final String _PATTERN = "((equals)\\((\\w+),\"(\\w+)\"\\))";
+
 }

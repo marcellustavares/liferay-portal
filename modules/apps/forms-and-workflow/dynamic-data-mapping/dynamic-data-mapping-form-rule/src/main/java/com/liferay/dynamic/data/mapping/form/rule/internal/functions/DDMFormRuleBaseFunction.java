@@ -17,5 +17,5 @@ package com.liferay.dynamic.data.mapping.form.rule.internal.functions;
 /**
  * @author Leonardo Barros
  */
-abstract class DDMFormRuleBaseFunction implements DDMFormRuleFunction {
+public abstract class DDMFormRuleBaseFunction implements DDMFormRuleFunction {
 }

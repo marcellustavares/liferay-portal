@@ -24,12 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleReadOnlyFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleReadOnlyFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -49,8 +44,18 @@ class DDMFormRuleReadOnlyFunction extends DDMFormRuleBaseFunction {
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
 
-		return ddmFormFieldRuleEvaluationResult.isReadOnly() ? "TRUE" : "FALSE";
+		if (ddmFormFieldRuleEvaluationResult.isReadOnly()) {
+			return "TRUE";
+		}
+
+		return "FALSE";
+	}
+
+	@Override
+	public String getPattern() {
+		return _PATTERN;
 	}
 
 	private static final String _PATTERN = "((isReadOnly)\\((\\w+)\\))";
+
 }

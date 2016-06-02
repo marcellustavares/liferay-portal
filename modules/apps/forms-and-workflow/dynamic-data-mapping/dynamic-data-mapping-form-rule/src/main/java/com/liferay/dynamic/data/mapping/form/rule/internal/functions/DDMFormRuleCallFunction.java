@@ -40,12 +40,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -84,117 +79,30 @@ class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
 		}
 	}
 
-	protected void setDDMFormFieldValue(
-		Map<String, DDMFormFieldRuleEvaluationResult>
-			ddmFormFieldRuleEvaluationMap, String ddmFormFieldName,
-			Object value) {
-
-		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
-			ddmFormFieldRuleEvaluationMap.get(ddmFormFieldName);
-
-		ddmFormFieldRuleEvaluationResult.setValue(value);
+	@Override
+	public String getPattern() {
+		return _PATTERN;
 	}
 
-	protected void setDDMFormFieldValues(
-		Map<String, DDMFormFieldRuleEvaluationResult>
-			ddmFormFieldRuleEvaluationMap,
-		JSONObject jsonObject, Map<String, String> resultMap) {
-
-		for (Map.Entry<String, String> entry : resultMap.entrySet()) {
-			setDDMFormFieldValue(
-				ddmFormFieldRuleEvaluationMap, entry.getKey(),
-				jsonObject.get(entry.getValue()));
-		}
-	}
-
-	protected Map<String, String> extractParameters(
+	protected void addDDMDataProviderContextParameters(
 		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-		String expression) {
+		String paramsExpression,
+		DDMDataProviderContext ddmDataProviderContext) {
 
-		Map<String, String> paramsMap = new HashMap<>();
+		Map<String, String> parameters = extractParameters(
+			ddmFormRuleEvaluatorContext, paramsExpression);
 
-		if (Validator.isNull(expression)) {
-			return paramsMap;
+		if (parameters.size() == 0) {
+			return;
 		}
 
-		String[] innerExpressions = StringUtil.split(
-			expression, CharPool.SEMICOLON);
-
-		if (innerExpressions.length == 0) {
-			extractDDMFormFieldValue(
-				ddmFormRuleEvaluatorContext, paramsMap, expression);
-		}
-		else {
-			for (String innerExpression : innerExpressions) {
-				extractDDMFormFieldValue(
-					ddmFormRuleEvaluatorContext, paramsMap, innerExpression);
-			}
-		}
-
-		return paramsMap;
-	}
-
-	protected void extractDDMFormFieldValue(
-		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-		Map<String, String> paramsMap, String expression) {
-
-		String[] tokens = StringUtil.split(expression, CharPool.COLON);
-
-		String ddmFormFieldValue = getDDMFormFieldValue(
-			ddmFormRuleEvaluatorContext, tokens[1]);
-
-		paramsMap.put(tokens[0], ddmFormFieldValue);
-	}
-
-	protected Map<String, String> extractResultMap(String expression) {
-		Map<String, String> resultMap = new HashMap<>();
-
-		if (Validator.isNull(expression)) {
-			return resultMap;
-		}
-
-		String[] innerExpressions = StringUtil.split(
-			expression, CharPool.SEMICOLON);
-
-		if (innerExpressions.length == 0) {
-			String[] tokens = StringUtil.split(expression, CharPool.COLON);
-			resultMap.put(tokens[0], tokens[1]);
-		}
-		else {
-			for (String innerExpression : innerExpressions) {
-				String[] tokens = StringUtil.split(
-					innerExpression, CharPool.COLON);
-				resultMap.put(tokens[0], tokens[1]);
-			}
-		}
-
-		return resultMap;
-	}
-
-	protected String getDDMFormFieldValue(
-		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-		String ddmFormFieldName) {
-
-		Map<String, DDMFormFieldRuleEvaluationResult>
-			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
-
-		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
-			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
-
-		Object value = ddmFormFieldRuleEvaluationResult.getValue();
-
-		if (Validator.isNull(value)) {
-			return StringPool.BLANK;
-		}
-
-		return value.toString();
+		ddmDataProviderContext.addParameters(parameters);
 	}
 
 	protected JSONArray executeDataProvider(
-		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-		long ddmDataProviderInstanceId, String paramsExpression)
-			throws Exception {
+			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
+			Long ddmDataProviderInstanceId, String paramsExpression)
+		throws Exception {
 
 		DDMDataProviderInstanceService ddmDataProviderInstanceService =
 			ddmFormRuleEvaluatorContext.getDDMDataProviderInstanceService();
@@ -228,21 +136,114 @@ class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
 		return ddmDataProvider.doGet(ddmDataProviderContext);
 	}
 
-	protected void addDDMDataProviderContextParameters(
+	protected void extractDDMFormFieldValue(
 		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-		String paramsExpression,
-		DDMDataProviderContext ddmDataProviderContext) {
+		Map<String, String> paramsMap, String expression) {
 
-		Map<String, String> parameters = extractParameters(
-			ddmFormRuleEvaluatorContext, paramsExpression);
+		String[] tokens = StringUtil.split(expression, CharPool.EQUAL);
 
-		if (parameters.size() == 0) {
-			return;
+		String ddmFormFieldValue = getDDMFormFieldValue(
+			ddmFormRuleEvaluatorContext, tokens[1]);
+
+		paramsMap.put(tokens[0], ddmFormFieldValue);
+	}
+
+	protected Map<String, String> extractParameters(
+		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
+		String expression) {
+
+		Map<String, String> paramsMap = new HashMap<>();
+
+		if (Validator.isNull(expression)) {
+			return paramsMap;
 		}
 
-		ddmDataProviderContext.addParameters(parameters);
+		String[] innerExpressions = StringUtil.split(
+			expression, CharPool.SEMICOLON);
+
+		if (innerExpressions.length == 0) {
+			extractDDMFormFieldValue(
+				ddmFormRuleEvaluatorContext, paramsMap, expression);
+		}
+		else {
+			for (String innerExpression : innerExpressions) {
+				extractDDMFormFieldValue(
+					ddmFormRuleEvaluatorContext, paramsMap, innerExpression);
+			}
+		}
+
+		return paramsMap;
+	}
+
+	protected Map<String, String> extractResultMap(String expression) {
+		Map<String, String> resultMap = new HashMap<>();
+
+		if (Validator.isNull(expression)) {
+			return resultMap;
+		}
+
+		String[] innerExpressions = StringUtil.split(
+			expression, CharPool.SEMICOLON);
+
+		if (innerExpressions.length == 0) {
+			String[] tokens = StringUtil.split(expression, CharPool.EQUAL);
+			resultMap.put(tokens[0], tokens[1]);
+		}
+		else {
+			for (String innerExpression : innerExpressions) {
+				String[] tokens = StringUtil.split(
+					innerExpression, CharPool.EQUAL);
+				resultMap.put(tokens[0], tokens[1]);
+			}
+		}
+
+		return resultMap;
+	}
+
+	protected String getDDMFormFieldValue(
+		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
+		String ddmFormFieldName) {
+
+		Map<String, DDMFormFieldRuleEvaluationResult>
+			ddmFormFieldRuleEvaluationResultMap =
+				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+
+		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
+			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
+
+		Object value = ddmFormFieldRuleEvaluationResult.getValue();
+
+		if (Validator.isNull(value)) {
+			return StringPool.BLANK;
+		}
+
+		return value.toString();
+	}
+
+	protected void setDDMFormFieldValue(
+		Map<String, DDMFormFieldRuleEvaluationResult>
+			ddmFormFieldRuleEvaluationMap, String ddmFormFieldName,
+		Object value) {
+
+		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
+			ddmFormFieldRuleEvaluationMap.get(ddmFormFieldName);
+
+		ddmFormFieldRuleEvaluationResult.setValue(value);
+	}
+
+	protected void setDDMFormFieldValues(
+		Map<String, DDMFormFieldRuleEvaluationResult>
+			ddmFormFieldRuleEvaluationMap,
+		JSONObject jsonObject, Map<String, String> resultMap) {
+
+		for (Map.Entry<String, String> entry : resultMap.entrySet()) {
+			setDDMFormFieldValue(
+				ddmFormFieldRuleEvaluationMap, entry.getKey(),
+				jsonObject.get(entry.getValue()));
+		}
 	}
 
 	private static final String _PATTERN =
 		"((call)\\((\\d+),\"(.+)\",\"(.+)\"\\))";
+
 }

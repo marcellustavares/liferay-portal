@@ -67,13 +67,6 @@ public class DDMFormRuleEvaluatorImpl implements DDMFormRuleEvaluator {
 			getDDMFormFieldRuleEvaluationResults();
 	}
 
-	@Reference(unbind = "-")
-	public void setDDMExpressionFactory(
-		DDMExpressionFactory ddmExpressionFactory) {
-
-		_ddmExpressionFactory = ddmExpressionFactory;
-	}
-
 	protected void executeRules(Set<DDMFormFieldBaseRule> rules)
 		throws DDMFormRuleEvaluationException {
 
@@ -102,6 +95,13 @@ public class DDMFormRuleEvaluatorImpl implements DDMFormRuleEvaluator {
 		DDMDataProviderTracker ddmDataProviderTracker) {
 
 		_ddmDataProviderTracker = ddmDataProviderTracker;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMExpressionFactory(
+		DDMExpressionFactory ddmExpressionFactory) {
+
+		_ddmExpressionFactory = ddmExpressionFactory;
 	}
 
 	@Reference(unbind = "-")

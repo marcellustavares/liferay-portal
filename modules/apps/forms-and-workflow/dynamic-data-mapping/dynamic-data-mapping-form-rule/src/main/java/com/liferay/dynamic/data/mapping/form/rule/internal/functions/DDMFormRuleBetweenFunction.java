@@ -26,12 +26,7 @@ import java.util.regex.Pattern;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleBetweenFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleBetweenFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -101,14 +96,23 @@ class DDMFormRuleBetweenFunction extends DDMFormRuleBaseFunction {
 				}
 			}
 
-			return actualValue >= value1 && actualValue <= value2 ?
-				"TRUE" : "FALSE";
+			if (actualValue >= value1 && actualValue <= value2) {
+				return "TRUE";
+			}
+
+			return "FALSE";
 		}
 		catch (Exception e) {
 			return "FALSE";
 		}
 	}
 
+	@Override
+	public String getPattern() {
+		return _PATTERN;
+	}
+
 	private static final String _PATTERN =
 		"((between)\\((\\w+),(\\w+),(\\w+)\\))";
+
 }

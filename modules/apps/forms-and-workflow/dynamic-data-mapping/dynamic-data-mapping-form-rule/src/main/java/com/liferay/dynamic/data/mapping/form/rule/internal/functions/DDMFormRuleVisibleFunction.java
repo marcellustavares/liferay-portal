@@ -24,12 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -49,7 +44,16 @@ class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
 
-		return ddmFormFieldRuleEvaluationResult.isVisible() ? "TRUE" : "FALSE";
+		if (ddmFormFieldRuleEvaluationResult.isVisible()) {
+			return "TRUE";
+		}
+
+		return "FALSE";
+	}
+
+	@Override
+	public String getPattern() {
+		return _PATTERN;
 	}
 
 	private static final String _PATTERN = "((isVisible)\\((\\w+)\\))";

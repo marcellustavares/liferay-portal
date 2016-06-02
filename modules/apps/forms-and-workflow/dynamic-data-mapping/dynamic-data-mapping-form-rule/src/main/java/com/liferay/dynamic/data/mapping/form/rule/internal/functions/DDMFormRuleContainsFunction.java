@@ -24,12 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
-
-	@Override
-	public String getPattern() {
-		return _PATTERN;
-	}
+public class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
 
 	@Override
 	public String execute(
@@ -52,9 +47,19 @@ class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
 		String actualValue =
 			ddmFormFieldRuleEvaluationResult.getValue().toString();
 
-		return actualValue.contains(value) ? "TRUE": "FALSE";
+		if (actualValue.contains(value)) {
+			return "TRUE";
+		}
+
+		return "FALSE";
+	}
+
+	@Override
+	public String getPattern() {
+		return _PATTERN;
 	}
 
 	private static final String _PATTERN =
 		"((contains)\\((\\w+),\"(\\w+)\"\\))";
+
 }
