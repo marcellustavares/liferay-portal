@@ -24,27 +24,32 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleReadOnlyFunction extends DDMFormRuleBaseFunction {
+public class ContainsFunction extends BaseFunction {
 
 	@Override
 	public String execute(
 		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
 		List<String> parameters) throws DDMFormRuleEvaluationException {
 
-		if (parameters.size() < 3) {
+		if (parameters.size() < 4) {
 			throw new DDMFormRuleEvaluationException("Invalid function call");
 		}
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		String ddmFormFieldName = parameters.get(2);
+		String value = parameters.get(3);
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
 
-		if (ddmFormFieldRuleEvaluationResult.isReadOnly()) {
+		String actualValue =
+			ddmFormFieldRuleEvaluationResult.getValue().toString();
+
+		if (actualValue.contains(value)) {
 			return "TRUE";
 		}
 
@@ -56,6 +61,7 @@ public class DDMFormRuleReadOnlyFunction extends DDMFormRuleBaseFunction {
 		return _PATTERN;
 	}
 
-	private static final String _PATTERN = "((isReadOnly)\\((\\w+)\\))";
+	private static final String _PATTERN =
+		"((contains)\\((\\w+),\"(\\w+)\"\\))";
 
 }

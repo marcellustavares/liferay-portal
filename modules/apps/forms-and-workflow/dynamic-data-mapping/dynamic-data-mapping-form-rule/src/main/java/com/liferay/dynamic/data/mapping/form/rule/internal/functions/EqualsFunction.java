@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
+public class EqualsFunction extends BaseFunction {
 
 	@Override
 	public String execute(
@@ -35,11 +35,13 @@ public class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
 			throw new DDMFormRuleEvaluationException("Invalid function call");
 		}
 
-		Map<String, DDMFormFieldRuleEvaluationResult>
-			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
 		String ddmFormFieldName = parameters.get(2);
 		String value = parameters.get(3);
+
+		Map<String, DDMFormFieldRuleEvaluationResult>
+			ddmFormFieldRuleEvaluationResultMap =
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
@@ -47,7 +49,7 @@ public class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
 		String actualValue =
 			ddmFormFieldRuleEvaluationResult.getValue().toString();
 
-		if (actualValue.contains(value)) {
+		if (actualValue.equals(value)) {
 			return "TRUE";
 		}
 
@@ -59,7 +61,6 @@ public class DDMFormRuleContainsFunction extends DDMFormRuleBaseFunction {
 		return _PATTERN;
 	}
 
-	private static final String _PATTERN =
-		"((contains)\\((\\w+),\"(\\w+)\"\\))";
+	private static final String _PATTERN = "((equals)\\((\\w+),\"(\\w+)\"\\))";
 
 }

@@ -15,42 +15,41 @@
 package com.liferay.dynamic.data.mapping.form.rule.internal.rules;
 
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormFieldRuleEvaluationResult;
-import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormFieldRuleHelper;
+import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldRuleType;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.Map;
 
 /**
  * @author Leonardo Barros
  */
-public class DDMFormFieldValidationRule extends DDMFormFieldBaseRule {
+public class DataProviderRule extends BaseRule {
 
-	public DDMFormFieldValidationRule(
-		String ddmFormFieldName, String expression,
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper) {
+	public DataProviderRule(
+		String ddmFormFieldName, String instanceId, String expression,
+		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext) {
 
 		super(
-			ddmFormFieldName + StringPool.UNDERLINE + "validation",
-			ddmFormFieldName, expression, DDMFormFieldRuleType.VALIDATION,
-			ddmFormFieldRuleHelper);
+			ddmFormFieldName, instanceId, DDMFormFieldRuleType.VISIBILITY,
+			expression, ddmFormRuleEvaluatorContext);
 	}
 
 	@Override
 	public void execute() {
-		boolean expressionResult = executeExpression();
-
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper =
-			getDDMFormFieldRuleHelper();
-
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormFieldRuleHelper.getDDMFormFieldRuleEvaluationResultMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(getDDMFormFieldName());
 
-		ddmFormFieldRuleEvaluationResult.setValid(expressionResult);
+		try {
+			executeFunctions();
+		}
+		catch (Exception e) {
+			ddmFormFieldRuleEvaluationResult.setValid(false);
+		}
 	}
 
 }

@@ -15,49 +15,43 @@
 package com.liferay.dynamic.data.mapping.form.rule.internal.rules;
 
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormFieldRuleEvaluationResult;
-import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormFieldRuleHelper;
+import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldRuleType;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Map;
 
 /**
  * @author Leonardo Barros
  */
-public class DDMFormFieldVisibilityRule extends DDMFormFieldBaseRule {
+public class ReadOnlyRule extends BaseRule {
 
-	public DDMFormFieldVisibilityRule(
-		String ddmFormFieldName, String expression,
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper) {
+	public ReadOnlyRule(
+		String ddmFormFieldName, String instanceId, String expression,
+		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext) {
 
 		super(
-			ddmFormFieldName + StringPool.UNDERLINE + "visibility",
-			ddmFormFieldName, expression, DDMFormFieldRuleType.VISIBILITY,
-			ddmFormFieldRuleHelper);
+			ddmFormFieldName, instanceId, DDMFormFieldRuleType.READ_ONLY,
+			expression, ddmFormRuleEvaluatorContext);
 	}
 
 	@Override
-	public void execute() {
-		boolean expressionResult = executeExpression();
-
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper =
-			getDDMFormFieldRuleHelper();
+	public void execute() throws Exception {
+		if(Validator.isNull(expression)) {
+			return;
+		}
+		
+		boolean expressionResult = executeExpression(Boolean.class);
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormFieldRuleHelper.getDDMFormFieldRuleEvaluationResultMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(getDDMFormFieldName());
 
-		ddmFormFieldRuleEvaluationResult.setVisible(expressionResult);
-	}
-
-	@Override
-	public boolean isAffectedBy(String expression) {
-		String dddFormFieldName = getDDMFormFieldName();
-		return expression.contains(
-			String.format("isVisible(%s)", dddFormFieldName));
+		ddmFormFieldRuleEvaluationResult.setReadOnly(expressionResult);
 	}
 
 }

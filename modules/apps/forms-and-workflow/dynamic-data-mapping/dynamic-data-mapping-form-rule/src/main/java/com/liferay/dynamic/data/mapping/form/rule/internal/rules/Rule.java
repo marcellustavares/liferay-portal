@@ -12,26 +12,21 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.rule.internal.functions;
+package com.liferay.dynamic.data.mapping.form.rule.internal.rules;
 
-import com.liferay.dynamic.data.mapping.form.rule.DDMFormRuleEvaluationException;
-import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
-
-import java.util.List;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldRuleType;
 
 /**
  * @author Leonardo Barros
  */
-public interface DDMFormRuleFunction {
+public interface Rule {
 
-	public static final String VARIABLE_PATTERN =
-		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b";
+	public void execute() throws Exception;
 
-	public String execute(
-			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
-			List<String> parameters)
-		throws DDMFormRuleEvaluationException;
+	public String getDDMFormFieldName();
 
-	public String getPattern();
+	public DDMFormFieldRuleType getDDMFormFieldRuleType();
+
+	public String getInstanceId();
 
 }

@@ -19,20 +19,13 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormFieldRuleEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormRuleEvaluationException;
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormRuleEvaluator;
-import com.liferay.dynamic.data.mapping.form.rule.internal.rules.DDMFormFieldBaseRule;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
-import org.easyrules.api.RulesEngine;
-import org.easyrules.core.BasicRule;
-import org.easyrules.core.RulesEngineBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,32 +48,15 @@ public class DDMFormRuleEvaluatorImpl implements DDMFormRuleEvaluator {
 				_ddmFormValuesJSONDeserializer);
 
 		try {
-			Set<DDMFormFieldBaseRule> rules =
-				ddmFormRuleEvaluatorHelper.createRules();
+			DDMFormRuleEvaluatorGraph ddmFormRuleEvaluatorGraph =
+				ddmFormRuleEvaluatorHelper.createDDMFormRuleEvaluatorGraph();
 
-			executeRules(rules);
+			return ddmFormRuleEvaluatorGraph.execute();
 		}
-		catch (PortalException pe) {
+		catch (Exception e) {
+			throw new DDMFormRuleEvaluationException(
+				"An error occured during the execution of form's rules", e);
 		}
-
-		return ddmFormRuleEvaluatorHelper.
-			getDDMFormFieldRuleEvaluationResults();
-	}
-
-	protected void executeRules(Set<DDMFormFieldBaseRule> rules)
-		throws DDMFormRuleEvaluationException {
-
-		RulesEngine rulesEngine =
-			RulesEngineBuilder.aNewRulesEngine()
-				.named("form rules engine")
-				.withSilentMode(true)
-				.build();
-
-		for (BasicRule rule : rules) {
-			rulesEngine.registerRule(rule);
-		}
-
-		rulesEngine.fireRules();
 	}
 
 	@Reference(unbind = "-")

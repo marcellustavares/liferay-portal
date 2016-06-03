@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleBetweenFunction extends DDMFormRuleBaseFunction {
+public class BetweenFunction extends BaseFunction {
 
 	@Override
 	public String execute(
@@ -39,7 +39,9 @@ public class DDMFormRuleBetweenFunction extends DDMFormRuleBaseFunction {
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
+
 		String ddmFormFieldName = parameters.get(2);
 		String expression1 = parameters.get(3);
 		String expression2 = parameters.get(4);

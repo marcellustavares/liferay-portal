@@ -14,8 +14,23 @@
 
 package com.liferay.dynamic.data.mapping.form.rule.internal.functions;
 
+import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
+
+import java.util.List;
+
 /**
  * @author Leonardo Barros
  */
-public abstract class DDMFormRuleBaseFunction implements DDMFormRuleFunction {
+public interface Function {
+
+	public static final String VARIABLE_PATTERN =
+		"\\b([a-zA-Z]+[\\w_]*)(?!\\()\\b";
+
+	public String execute(
+			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
+			List<String> parameters)
+		throws Exception;
+
+	public String getPattern();
+
 }

@@ -15,47 +15,43 @@
 package com.liferay.dynamic.data.mapping.form.rule.internal.rules;
 
 import com.liferay.dynamic.data.mapping.form.rule.DDMFormFieldRuleEvaluationResult;
-import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormFieldRuleHelper;
+import com.liferay.dynamic.data.mapping.form.rule.internal.DDMFormRuleEvaluatorContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldRuleType;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Map;
 
 /**
  * @author Leonardo Barros
  */
-public class DDMFormFieldDataProviderRule extends DDMFormFieldBaseRule {
+public class VisibilityRule extends BaseRule {
 
-	public DDMFormFieldDataProviderRule(
-		String ddmFormFieldName, String expression,
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper) {
+	public VisibilityRule(
+		String ddmFormFieldName, String instanceId, String expression,
+		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext) {
 
 		super(
-			ddmFormFieldName + StringPool.UNDERLINE + "dataprovider",
-			ddmFormFieldName, expression, DDMFormFieldRuleType.DATA_PROVIDER,
-			ddmFormFieldRuleHelper);
+			ddmFormFieldName, instanceId, DDMFormFieldRuleType.VISIBILITY,
+			expression, ddmFormRuleEvaluatorContext);
 	}
 
 	@Override
-	public void execute() {
-		String expression = getExpression();
-
-		DDMFormFieldRuleHelper ddmFormFieldRuleHelper =
-			getDDMFormFieldRuleHelper();
+	public void execute() throws Exception {
+		if(Validator.isNull(expression)) {
+			return;
+		}
+		
+		boolean expressionResult = executeExpression(Boolean.class);
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormFieldRuleHelper.getDDMFormFieldRuleEvaluationResultMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(getDDMFormFieldName());
 
-		try {
-			ddmFormFieldRuleHelper.executeFunctions(expression);
-		}
-		catch (Exception e) {
-			ddmFormFieldRuleEvaluationResult.setValid(false);
-		}
+		ddmFormFieldRuleEvaluationResult.setVisible(expressionResult);
 	}
 
 }

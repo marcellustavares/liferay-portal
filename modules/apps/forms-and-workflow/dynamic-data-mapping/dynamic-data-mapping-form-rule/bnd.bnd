@@ -2,6 +2,5 @@ Bundle-Name: Liferay Dynamic Data Mapping Form Rule
 Bundle-SymbolicName: com.liferay.dynamic.data.mapping.form.rule
 Bundle-Version: 1.0.0
 Export-Package: com.liferay.dynamic.data.mapping.form.rule
-Include-Resource: @lib/easyrules-core.jar
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Dynamic Data Mapping

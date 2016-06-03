@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,23 +30,68 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public interface DDMFormRuleEvaluatorContext {
+public class DDMFormRuleEvaluatorContext {
 
-	public DDMDataProviderInstanceService getDDMDataProviderInstanceService();
+	public DDMFormRuleEvaluatorContext(
+		DDMDataProviderInstanceService ddmDataProviderInstanceService,
+		DDMDataProviderTracker ddmDataProviderTracker,
+		DDMExpressionFactory ddmExpressionFactory,
+		List<DDMFormField> ddmFormFields, DDMFormValues ddmFormValues,
+		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer,
+		Locale locale) {
 
-	public DDMDataProviderTracker getDDMDataProviderTracker();
+		_ddmDataProviderInstanceService = ddmDataProviderInstanceService;
+		_ddmDataProviderTracker = ddmDataProviderTracker;
+		_ddmExpressionFactory = ddmExpressionFactory;
+		_ddmFormFields = ddmFormFields;
+		_ddmFormValues = ddmFormValues;
+		_ddmFormValuesJSONDeserializer = ddmFormValuesJSONDeserializer;
+		_locale = locale;
+	}
 
-	public DDMExpressionFactory getDDMExpressionFactory();
+	public DDMDataProviderInstanceService getDDMDataProviderInstanceService() {
+		return _ddmDataProviderInstanceService;
+	}
+
+	public DDMDataProviderTracker getDDMDataProviderTracker() {
+		return _ddmDataProviderTracker;
+	}
+
+	public DDMExpressionFactory getDDMExpressionFactory() {
+		return _ddmExpressionFactory;
+	}
 
 	public Map<String, DDMFormFieldRuleEvaluationResult>
-		getDDMFormFieldRuleEvaluationMap();
+		getDDMFormFieldRuleEvaluationResults() {
 
-	public List<DDMFormField> getDDMFormFields();
+		return _ddmFormFieldRuleEvaluationResults;
+	}
 
-	public DDMFormValues getDDMFormValues();
+	public List<DDMFormField> getDDMFormFields() {
+		return _ddmFormFields;
+	}
 
-	public DDMFormValuesJSONDeserializer getDDMFormValuesJSONDeserializer();
+	public DDMFormValues getDDMFormValues() {
+		return _ddmFormValues;
+	}
 
-	public Locale getLocale();
+	public DDMFormValuesJSONDeserializer getDDMFormValuesJSONDeserializer() {
+		return _ddmFormValuesJSONDeserializer;
+	}
+
+	public Locale getLocale() {
+		return _locale;
+	}
+
+	private final DDMDataProviderInstanceService
+		_ddmDataProviderInstanceService;
+	private final DDMDataProviderTracker _ddmDataProviderTracker;
+	private final DDMExpressionFactory _ddmExpressionFactory;
+	private final Map<String, DDMFormFieldRuleEvaluationResult>
+		_ddmFormFieldRuleEvaluationResults = new HashMap<>();
+	private final List<DDMFormField> _ddmFormFields;
+	private final DDMFormValues _ddmFormValues;
+	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private final Locale _locale;
 
 }

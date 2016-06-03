@@ -17,9 +17,9 @@ package com.liferay.dynamic.data.mapping.form.rule.internal.functions;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleFunctionFactory {
+public class FunctionFactory {
 
-	public static DDMFormRuleFunction getFunction(String name) {
+	public static Function getFunction(String name) {
 		if (name.equals(_BETWEEN)) {
 			return _betweenFunction;
 		}
@@ -54,6 +54,21 @@ public class DDMFormRuleFunctionFactory {
 		return _ALL_FUNCTIONS_PATTERNS;
 	}
 
+	public static String getReadOnlyFunctionPattern() {
+		return _readOnlyFunction.getPattern();
+	}
+
+	public static String[] getValueFunctionPatterns() {
+		return new String[] {
+			_betweenFunction.getPattern(), _containsFunction.getPattern(),
+			_equalsFunction.getPattern(), Function.VARIABLE_PATTERN
+		};
+	}
+
+	public static String getVisibilityFunctionPattern() {
+		return _visibleFunction.getPattern();
+	}
+
 	private static String[] _ALL_FUNCTIONS_PATTERNS;
 
 	private static final String _BETWEEN = "between";
@@ -68,17 +83,11 @@ public class DDMFormRuleFunctionFactory {
 
 	private static final String _IS_VISIBLE = "isVisible";
 
-	private static final DDMFormRuleFunction _betweenFunction =
-		new DDMFormRuleBetweenFunction();
-	private static final DDMFormRuleFunction _callFunction =
-		new DDMFormRuleCallFunction();
-	private static final DDMFormRuleFunction _containsFunction =
-		new DDMFormRuleContainsFunction();
-	private static final DDMFormRuleFunction _equalsFunction =
-		new DDMFormRuleEqualsFunction();
-	private static final DDMFormRuleFunction _readOnlyFunction =
-		new DDMFormRuleReadOnlyFunction();
-	private static final DDMFormRuleFunction _visibleFunction =
-		new DDMFormRuleVisibleFunction();
+	private static final Function _betweenFunction = new BetweenFunction();
+	private static final Function _callFunction = new CallFunction();
+	private static final Function _containsFunction = new ContainsFunction();
+	private static final Function _equalsFunction = new EqualsFunction();
+	private static final Function _readOnlyFunction = new ReadOnlyFunction();
+	private static final Function _visibleFunction = new VisibleFunction();
 
 }

@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
+public class ReadOnlyFunction extends BaseFunction {
 
 	@Override
 	public String execute(
@@ -37,14 +37,15 @@ public class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		String ddmFormFieldName = parameters.get(2);
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
 
-		if (ddmFormFieldRuleEvaluationResult.isVisible()) {
+		if (ddmFormFieldRuleEvaluationResult.isReadOnly()) {
 			return "TRUE";
 		}
 
@@ -56,6 +57,6 @@ public class DDMFormRuleVisibleFunction extends DDMFormRuleBaseFunction {
 		return _PATTERN;
 	}
 
-	private static final String _PATTERN = "((isVisible)\\((\\w+)\\))";
+	private static final String _PATTERN = "((isReadOnly)\\((\\w+)\\))";
 
 }

@@ -21,8 +21,9 @@ import com.liferay.portal.kernel.util.StringPool;
  */
 public class DDMFormFieldRuleEvaluationResult {
 
-	public DDMFormFieldRuleEvaluationResult(String name) {
+	public DDMFormFieldRuleEvaluationResult(String name, String instanceId) {
 		_name = name;
+		_instanceId = instanceId;
 	}
 
 	@Override
@@ -30,23 +31,33 @@ public class DDMFormFieldRuleEvaluationResult {
 		if (this == obj) {
 			return true;
 		}
-		else if (obj == null) {
+
+		if (obj == null) {
 			return false;
 		}
-		else if (getClass() != obj.getClass()) {
+
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 
 		DDMFormFieldRuleEvaluationResult other =
 			(DDMFormFieldRuleEvaluationResult)obj;
 
+		if (_instanceId == null) {
+			if (other._instanceId != null) {
+				return false;
+			}
+		}
+		else if (!_instanceId.equals(other._instanceId)) {
+			return false;
+		}
+
 		if (_name == null) {
 			if (other._name != null) {
 				return false;
 			}
 		}
-
-		if (!_name.equals(other._name)) {
+		else if (!_name.equals(other._name)) {
 			return false;
 		}
 
@@ -55,6 +66,10 @@ public class DDMFormFieldRuleEvaluationResult {
 
 	public String getErrorMessage() {
 		return _errorMessage;
+	}
+
+	public String getInstanceId() {
+		return _instanceId;
 	}
 
 	public String getName() {
@@ -69,6 +84,8 @@ public class DDMFormFieldRuleEvaluationResult {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result +
+			((_instanceId == null) ? 0 : _instanceId.hashCode());
 		result = prime * result + ((_name == null) ? 0 : _name.hashCode());
 		return result;
 	}
@@ -106,6 +123,7 @@ public class DDMFormFieldRuleEvaluationResult {
 	}
 
 	private String _errorMessage = StringPool.BLANK;
+	private final String _instanceId;
 	private final String _name;
 	private boolean _readOnly;
 	private boolean _valid = true;

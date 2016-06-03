@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
+public class CallFunction extends BaseFunction {
 
 	@Override
 	public String execute(
@@ -53,7 +53,9 @@ public class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
+
 		long ddmDataProviderInstanceId = Long.parseLong(parameters.get(2));
 		String paramsExpression = parameters.get(3);
 		String resultMapExpression = parameters.get(4);
@@ -206,7 +208,8 @@ public class DDMFormRuleCallFunction extends DDMFormRuleBaseFunction {
 
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);

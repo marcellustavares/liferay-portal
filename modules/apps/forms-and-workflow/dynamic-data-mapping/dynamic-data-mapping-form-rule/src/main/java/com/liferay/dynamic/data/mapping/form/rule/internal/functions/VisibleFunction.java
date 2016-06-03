@@ -24,31 +24,28 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class DDMFormRuleEqualsFunction extends DDMFormRuleBaseFunction {
+public class VisibleFunction extends BaseFunction {
 
 	@Override
 	public String execute(
 		DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
 		List<String> parameters) throws DDMFormRuleEvaluationException {
 
-		if (parameters.size() < 4) {
+		if (parameters.size() < 3) {
 			throw new DDMFormRuleEvaluationException("Invalid function call");
 		}
 
-		String ddmFormFieldName = parameters.get(2);
-		String value = parameters.get(3);
-
 		Map<String, DDMFormFieldRuleEvaluationResult>
 			ddmFormFieldRuleEvaluationResultMap =
-				ddmFormRuleEvaluatorContext.getDDMFormFieldRuleEvaluationMap();
+				ddmFormRuleEvaluatorContext.
+					getDDMFormFieldRuleEvaluationResults();
+
+		String ddmFormFieldName = parameters.get(2);
 
 		DDMFormFieldRuleEvaluationResult ddmFormFieldRuleEvaluationResult =
 			ddmFormFieldRuleEvaluationResultMap.get(ddmFormFieldName);
 
-		String actualValue =
-			ddmFormFieldRuleEvaluationResult.getValue().toString();
-
-		if (actualValue.equals(value)) {
+		if (ddmFormFieldRuleEvaluationResult.isVisible()) {
 			return "TRUE";
 		}
 
@@ -60,6 +57,6 @@ public class DDMFormRuleEqualsFunction extends DDMFormRuleBaseFunction {
 		return _PATTERN;
 	}
 
-	private static final String _PATTERN = "((equals)\\((\\w+),\"(\\w+)\"\\))";
+	private static final String _PATTERN = "((isVisible)\\((\\w+)\\))";
 
 }
