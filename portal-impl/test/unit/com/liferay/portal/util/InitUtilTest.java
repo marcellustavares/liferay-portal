@@ -22,8 +22,6 @@ import com.liferay.portal.test.log.CaptureAppender;
 import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 import com.liferay.portal.test.rule.LogAssertionTestRule;
 
-import java.io.IOException;
-
 import java.nio.file.Paths;
 
 import java.util.Arrays;
@@ -42,7 +40,7 @@ import org.junit.Test;
 public class InitUtilTest {
 
 	@Test
-	public void testBaseSeleniumTestCaseSpringConfigs() throws IOException {
+	public void testBaseSeleniumTestCaseSpringConfigs() {
 		String log4jConfigureOnStartup = SystemProperties.get(
 			_LOG4J_CONFIGURE_ON_STARTUP);
 

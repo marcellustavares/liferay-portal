@@ -576,6 +576,12 @@ public class KBArticleLocalServiceWrapper implements KBArticleLocalService,
 	}
 
 	@Override
+	public java.util.List<com.liferay.knowledge.base.model.KBArticle> getKBFolderKBArticles(
+		long groupId, long kbFolderId) {
+		return _kbArticleLocalService.getKBFolderKBArticles(groupId, kbFolderId);
+	}
+
+	@Override
 	public java.util.List<com.liferay.knowledge.base.model.KBArticle> getSectionsKBArticles(
 		long groupId, java.lang.String[] sections, int status, int start,
 		int end,

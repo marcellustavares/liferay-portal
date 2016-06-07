@@ -535,6 +535,11 @@ public class KBArticleLocalServiceUtil {
 			end, orderByComparator);
 	}
 
+	public static java.util.List<com.liferay.knowledge.base.model.KBArticle> getKBFolderKBArticles(
+		long groupId, long kbFolderId) {
+		return getService().getKBFolderKBArticles(groupId, kbFolderId);
+	}
+
 	public static java.util.List<com.liferay.knowledge.base.model.KBArticle> getSectionsKBArticles(
 		long groupId, java.lang.String[] sections, int status, int start,
 		int end,

@@ -17,6 +17,8 @@
 <%@ include file="/html/taglib/init.jsp" %>
 
 <%
+String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
+
 String formName = namespace + request.getAttribute("liferay-ui:page-iterator:formName");
 int cur = GetterUtil.getInteger((String)request.getAttribute("liferay-ui:page-iterator:cur"));
 String curParam = (String)request.getAttribute("liferay-ui:page-iterator:curParam");
@@ -65,7 +67,8 @@ if (forcePost && (portletURL != null)) {
 	url = url.split(namespace)[0];
 %>
 
-	<form action="<%= url %>" id="<%= namespace %>pageIteratorFm" method="post" name="<%= namespace %>pageIteratorFm">
+	<form action="<%= url %>" id="<%= randomNamespace + namespace %>pageIteratorFm" method="post" name="<%= randomNamespace + namespace %>pageIteratorFm">
+		<aui:input name="<%= curParam %>" type="hidden" />
 		<liferay-portlet:renderURLParams portletURL="<%= portletURL %>" />
 	</form>
 
@@ -291,7 +294,7 @@ if (forcePost && (portletURL != null)) {
 
 <aui:script>
 	function <portlet:namespace />submitForm(curParam, cur) {
-		var form = AUI.$(document.<portlet:namespace />pageIteratorFm);
+		var form = AUI.$(document.<%= randomNamespace + namespace %>pageIteratorFm);
 
 		form.fm(curParam).val(cur);
 

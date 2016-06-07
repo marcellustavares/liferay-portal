@@ -420,6 +420,9 @@ public interface KBArticleLocalService extends BaseLocalService,
 		OrderByComparator<KBArticle> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<KBArticle> getKBFolderKBArticles(long groupId, long kbFolderId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<KBArticle> getSectionsKBArticles(long groupId,
 		java.lang.String[] sections, int status, int start, int end,
 		OrderByComparator<KBArticle> orderByComparator);
