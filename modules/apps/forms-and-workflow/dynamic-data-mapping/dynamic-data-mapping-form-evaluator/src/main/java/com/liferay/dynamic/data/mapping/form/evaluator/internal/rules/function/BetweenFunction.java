@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.function;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.DDMFormRuleEvaluatorContext;
+import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class BetweenFunction extends BaseFunction {
 	public String execute(
 			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
 			List<String> parameters)
-		throws Exception {
+		throws PortalException {
 
 		if (parameters.size() < 5) {
 			throw new DDMFormEvaluationException("Invalid function call");

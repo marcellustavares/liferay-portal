@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.function;
 
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.DDMFormRuleEvaluatorContext;
+import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface Function {
 	public String execute(
 			DDMFormRuleEvaluatorContext ddmFormRuleEvaluatorContext,
 			List<String> parameters)
-		throws Exception;
+		throws PortalException;
 
 	public String getPattern();
 
