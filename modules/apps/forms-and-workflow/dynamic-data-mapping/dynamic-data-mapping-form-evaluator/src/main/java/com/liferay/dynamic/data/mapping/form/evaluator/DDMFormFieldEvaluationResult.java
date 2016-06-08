@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.form.evaluator;
 
 import com.liferay.portal.kernel.json.JSON;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.ArrayList;
@@ -28,6 +29,43 @@ public class DDMFormFieldEvaluationResult {
 	public DDMFormFieldEvaluationResult(String name, String instanceId) {
 		_name = name;
 		_instanceId = instanceId;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+
+		DDMFormFieldEvaluationResult other = (DDMFormFieldEvaluationResult)obj;
+
+		if (_instanceId == null) {
+			if (other._instanceId != null) {
+				return false;
+			}
+		}
+		else if (!_instanceId.equals(other._instanceId)) {
+			return false;
+		}
+
+		if (_name == null) {
+			if (other._name != null) {
+				return false;
+			}
+		}
+		else if (!_name.equals(other._name)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public String getErrorMessage() {
@@ -47,6 +85,20 @@ public class DDMFormFieldEvaluationResult {
 		getNestedDDMFormFieldEvaluationResults() {
 
 		return _nestedDDMFormFieldEvaluationResults;
+	}
+
+	public Object getValue() {
+		return _value;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = HashUtil.hash(0, _name);
+		return HashUtil.hash(hash, _instanceId);
+	}
+
+	public boolean isReadOnly() {
+		return _readOnly;
 	}
 
 	public boolean isValid() {
@@ -69,8 +121,16 @@ public class DDMFormFieldEvaluationResult {
 			nestedDDMFormFieldEvaluationResults;
 	}
 
+	public void setReadOnly(boolean readOnly) {
+		_readOnly = readOnly;
+	}
+
 	public void setValid(boolean valid) {
 		_valid = valid;
+	}
+
+	public void setValue(Object value) {
+		_value = value;
 	}
 
 	public void setVisible(boolean visible) {
@@ -82,7 +142,9 @@ public class DDMFormFieldEvaluationResult {
 	private final String _name;
 	private List<DDMFormFieldEvaluationResult>
 		_nestedDDMFormFieldEvaluationResults = new ArrayList<>();
+	private boolean _readOnly;
 	private boolean _valid = true;
+	private Object _value;
 	private boolean _visible = true;
 
 }
