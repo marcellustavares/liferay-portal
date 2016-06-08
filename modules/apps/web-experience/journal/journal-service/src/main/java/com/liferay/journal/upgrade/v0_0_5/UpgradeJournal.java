@@ -121,7 +121,7 @@ public class UpgradeJournal extends UpgradeProcess {
 			long journalArticleClassNameId = PortalUtil.getClassNameId(
 				JournalArticle.class.getName());
 
-			StringBundler sb = new StringBundler(8);
+			StringBundler sb = new StringBundler(10);
 
 			sb.append("select DDMStructure.structureId, JournalArticle.id_ ");
 			sb.append("from JournalArticle inner join DDMStructure on (");
@@ -130,7 +130,9 @@ public class UpgradeJournal extends UpgradeProcess {
 			sb.append("JournalArticle.groupId) or (Group_.companyId = ");
 			sb.append("JournalArticle.companyId and Group_.friendlyURL = ?)) ");
 			sb.append("and DDMStructure.structureKey = JournalArticle.");
-			sb.append("DDMStructureKey and JournalArticle.classNameId != ?)");
+			sb.append("DDMStructureKey and JournalArticle.groupId = ");
+			sb.append("DDMStructure.groupId and ");
+			sb.append("JournalArticle.classNameId != ?)");
 
 			try (PreparedStatement ps = connection.prepareStatement(
 					sb.toString())) {
