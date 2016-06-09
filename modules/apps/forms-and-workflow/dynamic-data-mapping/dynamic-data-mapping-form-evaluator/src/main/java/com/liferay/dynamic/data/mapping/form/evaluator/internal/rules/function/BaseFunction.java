@@ -12,17 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.lpkg.deployer;
-
-import org.osgi.framework.Bundle;
+package com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.function;
 
 /**
- * @author Shuyang Zhou
+ * @author Leonardo Barros
  */
-public interface LPKGWARBundleRegistry {
-
-	public Bundle register(Bundle warWrapperBundle, Bundle warBundle);
-
-	public Bundle unregister(Bundle warWrapperBundle);
-
+public abstract class BaseFunction implements Function {
 }
