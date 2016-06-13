@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Writer;
 
@@ -77,6 +76,10 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		return new URLTemplateResource(templateURL.getPath(), templateURL);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	protected String getValueString(Value value, Locale locale) {
 		if (value != null) {
 			return value.getString(locale);
@@ -96,20 +99,11 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 
 		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
-		String childElementsHTML =
-			ddmFormFieldRenderingContext.getChildElementsHTML();
-
-		if (Validator.isNotNull(childElementsHTML)) {
-			template.put("childElementsHTML", childElementsHTML);
-		}
-
 		template.put(
 			"dir", LanguageUtil.get(locale, LanguageConstants.KEY_DIR));
 		template.put("label", ddmFormFieldRenderingContext.getLabel());
 		template.put("name", ddmFormFieldRenderingContext.getName());
-		template.put(
-			"readOnly",
-			_isReadOnly(ddmFormField, ddmFormFieldRenderingContext));
+		template.put("readOnly", ddmFormFieldRenderingContext.isReadOnly());
 		template.put("required", ddmFormFieldRenderingContext.isRequired());
 		template.put("showLabel", ddmFormField.isShowLabel());
 		template.put("tip", ddmFormFieldRenderingContext.getTip());
@@ -123,19 +117,6 @@ public abstract class BaseDDMFormFieldRenderer implements DDMFormFieldRenderer {
 		template.processTemplate(writer);
 
 		return writer.toString();
-	}
-
-	private boolean _isReadOnly(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		if (ddmFormFieldRenderingContext.isReadOnly() ||
-			ddmFormField.isReadOnly()) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 }
