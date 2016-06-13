@@ -42,11 +42,13 @@ import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -154,6 +156,28 @@ public class DDLFormAdminDisplayContext {
 
 		return servletContextPath.concat(
 			"/dynamic-data-mapping-form-evaluator/");
+	}
+
+	public JSONObject getDDMFormFieldTypesDefinitionsMap()
+		throws PortalException {
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		for (DDMFormFieldType ddmFormFieldType :
+				_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes()) {
+
+			Class<?> clazz = ddmFormFieldType.getDDMFormFieldTypeSettings();
+
+			DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
+				clazz);
+
+			jsonObject.put(
+				ddmFormFieldType.getName(),
+				getDDMFormFieldTypePropertyNames(
+					ddmFormFieldTypeSettingsDDMForm));
+		}
+
+		return jsonObject;
 	}
 
 	public JSONArray getDDMFormFieldTypesJSONArray() throws PortalException {
@@ -469,6 +493,21 @@ public class DDLFormAdminDisplayContext {
 		}
 
 		return orderByComparator;
+	}
+
+	protected JSONArray getDDMFormFieldTypePropertyNames(
+			DDMForm ddmFormFieldTypeSettingsDDMForm)
+		throws PortalException {
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
+		for (DDMFormField ddmFormField :
+				ddmFormFieldTypeSettingsDDMForm.getDDMFormFields()) {
+
+			jsonArray.put(ddmFormField.getName());
+		}
+
+		return jsonArray;
 	}
 
 	protected String getDisplayStyle(
