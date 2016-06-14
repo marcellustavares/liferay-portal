@@ -9,7 +9,13 @@ AUI.add(
 		var DDLPortlet = A.Component.create(
 			{
 				ATTRS: {
+					availableLanguageIds: {
+					},
+
 					dataProviders: {
+					},
+
+					defaultLanguageId: {
 					},
 
 					definition: {
@@ -70,7 +76,12 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						instance.definitionSerializer = new DefinitionSerializer();
+						instance.definitionSerializer = new DefinitionSerializer(
+							{
+								availableLanguageIds: instance.get('availableLanguageIds'),
+								defaultLanguageId: instance.get('defaultLanguageId')
+							}
+						);
 
 						instance.layoutSerializer = new LayoutSerializer(
 							{
