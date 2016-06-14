@@ -12,25 +12,10 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
-
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.util.KeyValuePair;
-
-import java.util.List;
+package com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.function;
 
 /**
- * @author Luca Comin
+ * @author Leonardo Barros
  */
-public interface DDMDataProvider {
-
-	public JSONArray doGet(DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
-
-	public List<KeyValuePair> getData(
-			DDMDataProviderContext ddmDataProviderContext)
-		throws DDMDataProviderException;
-
-	public Class<?> getSettings();
-
+public abstract class BaseFunction implements Function {
 }
