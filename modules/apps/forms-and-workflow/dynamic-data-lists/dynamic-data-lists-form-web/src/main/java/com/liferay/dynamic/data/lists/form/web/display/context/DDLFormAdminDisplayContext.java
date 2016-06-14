@@ -128,6 +128,27 @@ public class DDLFormAdminDisplayContext {
 			renderRequest);
 	}
 
+	public JSONArray getAvailableLanguageIdsJSONArray() throws PortalException {
+		JSONArray availableLanguageIdsJSONArray =
+			_jsonFactory.createJSONArray();
+
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet != null) {
+			for (String languageId : recordSet.getAvailableLanguageIds()) {
+				availableLanguageIdsJSONArray.put(languageId);
+			}
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				_ddlFormAdminRequestHelper.getThemeDisplay();
+
+			availableLanguageIdsJSONArray.put(themeDisplay.getLanguageId());
+		}
+
+		return availableLanguageIdsJSONArray;
+	}
+
 	public DDLFormViewRecordDisplayContext
 		getDDLFormViewRecordDisplayContext() {
 
@@ -190,6 +211,22 @@ public class DDLFormAdminDisplayContext {
 			recordSet.getDDMStructureId());
 
 		return _ddmStucture;
+	}
+
+	public String getDefaultLanguageId() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet != null) {
+			DDMStructure structure = recordSet.getDDMStructure();
+
+			return structure.getDefaultLanguageId();
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				_ddlFormAdminRequestHelper.getThemeDisplay();
+
+			return themeDisplay.getLanguageId();
+		}
 	}
 
 	public String getDisplayStyle() {
