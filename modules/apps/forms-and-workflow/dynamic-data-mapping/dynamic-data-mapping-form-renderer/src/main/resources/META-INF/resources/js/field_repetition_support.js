@@ -3,8 +3,6 @@ AUI.add(
 	function(A) {
 		var Renderer = Liferay.DDM.Renderer;
 
-		var FieldTypes = Renderer.FieldTypes;
-
 		var Util = Renderer.Util;
 
 		var SELECTOR_REPEAT_BUTTONS = '.lfr-ddm-form-field-repeatable-add-button, .lfr-ddm-form-field-repeatable-delete-button';
@@ -91,37 +89,15 @@ AUI.add(
 			repeat: function() {
 				var instance = this;
 
-				var repetitions = instance.get('repetitions');
+				var config = instance._copyConfiguration();
+
 				var type = instance.get('type');
 
-				var fieldType = FieldTypes.get(type);
-				var settings = fieldType.get('settings');
+				var fieldClass = Util.getFieldClass(type, config.context);
 
-				var config = settings.fields.reduce(
-					function(prev, item) {
-						prev[item.name] = instance.get(item.name);
+				var field = new fieldClass(config).render();
 
-						return prev;
-					},
-					{}
-				);
-
-				var fieldClass = Util.getFieldClass(type);
-
-				var field = new fieldClass(
-					A.merge(
-						config,
-						{
-							enableEvaluations: instance.get('enableEvaluations'),
-							parent: instance.get('parent'),
-							portletNamespace: instance.get('portletNamespace'),
-							repeatedIndex: instance.getRepeatedSiblings().length,
-							repetitions: repetitions,
-							type: type,
-							visible: instance.get('visible')
-						}
-					)
-				).render();
+				var repetitions = instance.get('repetitions');
 
 				var index = repetitions.indexOf(instance) + 1;
 
@@ -166,6 +142,35 @@ AUI.add(
 				var instance = this;
 
 				instance.render();
+			},
+
+			_copyConfiguration: function() {
+				var instance = this;
+
+				var context = instance.get('context');
+
+				var repetitions = instance.get('repetitions');
+
+				var config = A.merge(
+					context,
+					{
+						enableEvaluations: instance.get('enableEvaluations'),
+						fieldName: instance.get('fieldName'),
+						parent: instance.get('parent'),
+						portletNamespace: instance.get('portletNamespace'),
+						repeatedIndex: repetitions.length,
+						repetitions: repetitions,
+						type: instance.get('type'),
+						visible: instance.get('visible')
+					}
+				);
+
+				config.context = A.clone(context);
+
+				delete config.context.name;
+				delete config.name;
+
+				return config;
 			},
 
 			_handleToolbarClick: function(event) {

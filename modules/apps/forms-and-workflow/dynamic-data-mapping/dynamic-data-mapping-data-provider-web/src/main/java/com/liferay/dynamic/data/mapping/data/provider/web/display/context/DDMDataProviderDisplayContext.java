@@ -47,6 +47,7 @@ import java.util.Set;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 /**
  * @author Leonardo Barros
@@ -107,6 +108,13 @@ public class DDMDataProviderDisplayContext {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext();
 
+		ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+		resourceURL.setParameter("type", type);
+		resourceURL.setResourceID("evaluateDataProviderSettings");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
+		
 		if (_ddmDataProviderInstance != null) {
 			DDMFormValues ddmFormValues =
 				_ddmFormValuesJSONDeserializer.deserialize(
@@ -267,6 +275,7 @@ public class DDMDataProviderDisplayContext {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
 
+		ddmFormRenderingContext.setContainerId("dataProvider");
 		ddmFormRenderingContext.setHttpServletRequest(
 			PortalUtil.getHttpServletRequest(_renderRequest));
 		ddmFormRenderingContext.setHttpServletResponse(
@@ -276,6 +285,7 @@ public class DDMDataProviderDisplayContext {
 		ddmFormRenderingContext.setPortletNamespace(
 			_renderResponse.getNamespace());
 		ddmFormRenderingContext.setShowRequiredFieldsWarning(false);
+		ddmFormRenderingContext.setShowSubmitButton(false);
 
 		return ddmFormRenderingContext;
 	}

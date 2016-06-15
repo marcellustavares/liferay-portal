@@ -297,13 +297,13 @@ public class DDMDataProviderInstanceLocalServiceImpl
 				"Name is null for locale " + locale.getDisplayName());
 		}
 
-		ddmFormValuesValidator.validate(ddmFormValues);
+		//ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
 	@ServiceReference(type = DDMFormValuesJSONSerializer.class)
 	protected DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer;
 
-	@ServiceReference(type = DDMFormValuesValidator.class)
-	protected DDMFormValuesValidator ddmFormValuesValidator;
+//	@ServiceReference(type = DDMFormValuesValidator.class)
+//	protected DDMFormValuesValidator ddmFormValuesValidator;
 
 }

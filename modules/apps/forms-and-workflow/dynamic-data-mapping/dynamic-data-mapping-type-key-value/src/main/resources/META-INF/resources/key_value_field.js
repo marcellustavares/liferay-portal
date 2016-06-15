@@ -23,7 +23,7 @@ AUI.add(
 					},
 
 					type: {
-						value: 'key-value'
+						value: 'key_value'
 					}
 				},
 
@@ -56,7 +56,7 @@ AUI.add(
 								editing: instance.get('editing'),
 								key: instance.get('key'),
 								strings: instance.get('strings'),
-								tooltip: instance.getLocalizedValue(instance.get('tooltip'))
+								tooltip: instance.get('tooltip')
 							}
 						);
 					},
@@ -245,7 +245,7 @@ AUI.add(
 					_valueKey: function() {
 						var instance = this;
 
-						var value = instance.getLocalizedValue(instance.get('value'));
+						var value = instance.get('value');
 
 						return instance.normalizeKey(value);
 					}

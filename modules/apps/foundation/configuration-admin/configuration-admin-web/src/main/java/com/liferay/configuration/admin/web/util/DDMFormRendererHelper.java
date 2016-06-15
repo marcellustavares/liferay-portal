@@ -32,8 +32,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletException;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 /**
  * @author Marcellus Tavares
@@ -41,12 +42,12 @@ import javax.portlet.PortletResponse;
 public class DDMFormRendererHelper {
 
 	public DDMFormRendererHelper(
-		PortletRequest portletRequest, PortletResponse portletResponse,
+		RenderRequest renderRequest, RenderResponse renderResponse,
 		ConfigurationModel configurationModel, DDMFormRenderer ddmFormRenderer,
 		ResourceBundleLoaderProvider resourceBundleLoaderProvider) {
 
-		_portletRequest = portletRequest;
-		_portletResponse = portletResponse;
+		_renderRequest = renderRequest;
+		_renderResponse = renderResponse;
 		_configurationModel = configurationModel;
 		_ddmFormRenderer = ddmFormRenderer;
 		_resourceBundleLoaderProvider = resourceBundleLoaderProvider;
@@ -71,15 +72,22 @@ public class DDMFormRendererHelper {
 
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
+		
+		ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+		resourceURL.setParameter("pid", _configurationModel.getID());
+		resourceURL.setResourceID("evaluateConfigurationModelDDMForm");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
 
 		ddmFormRenderingContext.setDDMFormValues(getDDMFormValues(ddmForm));
 		ddmFormRenderingContext.setHttpServletRequest(
-			PortalUtil.getHttpServletRequest(_portletRequest));
+			PortalUtil.getHttpServletRequest(_renderRequest));
 		ddmFormRenderingContext.setHttpServletResponse(
-			PortalUtil.getHttpServletResponse(_portletResponse));
+			PortalUtil.getHttpServletResponse(_renderResponse));
 		ddmFormRenderingContext.setLocale(getLocale());
 		ddmFormRenderingContext.setPortletNamespace(
-			_portletResponse.getNamespace());
+			_renderResponse.getNamespace());
 
 		return ddmFormRenderingContext;
 	}
@@ -121,7 +129,7 @@ public class DDMFormRendererHelper {
 	}
 
 	protected Locale getLocale() {
-		ThemeDisplay themeDisplay = (ThemeDisplay)_portletRequest.getAttribute(
+		ThemeDisplay themeDisplay = (ThemeDisplay)_renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
 		return themeDisplay.getLocale();
@@ -132,8 +140,8 @@ public class DDMFormRendererHelper {
 
 	private final ConfigurationModel _configurationModel;
 	private final DDMFormRenderer _ddmFormRenderer;
-	private final PortletRequest _portletRequest;
-	private final PortletResponse _portletResponse;
+	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
 	private final ResourceBundleLoaderProvider _resourceBundleLoaderProvider;
 
 }

@@ -54,23 +54,6 @@ AUI.add(
 						return inputNode;
 					},
 
-					getOptions: function() {
-						var instance = this;
-
-						var value = instance.getContextValue();
-
-						return A.map(
-							instance.get('options'),
-							function(item) {
-								return {
-									label: item.label[instance.get('locale')],
-									status: value === item.value ? 'checked' : '',
-									value: item.value
-								};
-							}
-						);
-					},
-
 					getTemplateContext: function() {
 						var instance = this;
 
@@ -78,7 +61,7 @@ AUI.add(
 							RadioField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								inline: instance.get('inline'),
-								options: instance.getOptions()
+								options: instance.get('options')
 							}
 						);
 					},

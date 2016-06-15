@@ -102,7 +102,7 @@ renderResponse.setTitle((ddmDataProviderInstance == null) ? LanguageUtil.get(req
 						label: '<liferay-ui:message key="save" />',
 						on: {
 							click: function() {
-								document.<portlet:namespace />fm.submit();
+								Liferay.component('dataProviderDDMForm').submit();
 							}
 						}
 					},

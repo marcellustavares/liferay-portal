@@ -13,8 +13,6 @@ AUI.add(
 				);
 
 				instance._domEvents = [];
-
-				instance._bindEvents();
 			},
 
 			bindContainerEvent: function(eventName, callback, selector) {
@@ -64,13 +62,37 @@ AUI.add(
 
 					instance.bindContainerEvent(event.name, event.callback, event.selector);
 				}
+
+				instance._bindDefaultEvents();
 			},
 
-			_bindEvents: function() {
+			_bindDefaultEvents: function() {
 				var instance = this;
 
 				instance.bindInputEvent('blur', instance._onInputBlur);
-				instance.bindInputEvent(['input', 'change'], instance._onValueChange);
+
+				if (instance._isTextType()) {
+					instance.bindInputEvent('input', A.debounce(instance._onValueChange, 150, instance));
+				}
+				else {
+					instance.bindInputEvent('change', instance._onValueChange);
+				}
+			},
+
+			_isTextType: function() {
+				var instance = this;
+
+				var inputNode = instance.getInputNode();
+
+				var textType = false;
+
+				if (inputNode) {
+					var tagName = inputNode.get('tagName');
+
+					textType = inputNode.get('type') === 'text' || tagName.toLowerCase() === 'textarea';
+				}
+
+				return textType;
 			},
 
 			_onInputBlur: function(event) {
@@ -88,14 +110,16 @@ AUI.add(
 			_onValueChange: function(event) {
 				var instance = this;
 
-				instance.fire(
-					'valueChanged',
-					{
-						domEvent: event,
-						field: instance,
-						value: instance.getValue()
-					}
-				);
+				if (instance.get('rendered')) {
+					instance.fire(
+						'valueChanged',
+						{
+							domEvent: event,
+							field: instance,
+							value: instance.getValue()
+						}
+					);
+				}
 			}
 		};
 

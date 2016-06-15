@@ -125,14 +125,59 @@ AUI.add(
 				return instance.searchFieldsByKey(haystack, needle, searchKey)[0];
 			},
 
-			getFieldClass: function(type) {
+			getFieldClass: function(type, context) {
 				var instance = this;
 
 				var fieldType = FieldTypes.get(type);
 
 				var fieldClassName = fieldType.get('className');
 
-				return A.Object.getValue(window, fieldClassName.split('.'));
+				var fieldClass = A.Object.getValue(window, fieldClassName.split('.'));
+
+				var classAttributes = {};
+
+				A.each(
+					fieldClass.ATTRS,
+					function(value, name) {
+						classAttributes[name] = A.merge({}, value);
+					}
+				);
+
+				A.each(
+					context,
+					function(value, name) {
+						if (classAttributes[name]) {
+							classAttributes[name].value = value;
+						}
+						else {
+							classAttributes[name] = {
+								value: value
+							};
+						}
+
+						classAttributes[name].setter = function(value) {
+							var ctx = this.get('context');
+
+							if (ctx && ctx[name] !== value) {
+								var newContext = {};
+
+								newContext[name] = value;
+
+								this.set('context', A.merge(ctx, newContext));
+							}
+						};
+					}
+				);
+
+				return A.Component.create(
+					{
+						ATTRS: classAttributes,
+
+						EXTENDS: fieldClass,
+
+						NAME: fieldClass.NAME
+					}
+				);
 			},
 
 			getFieldNameFromQualifiedName: function(qualifiedName) {

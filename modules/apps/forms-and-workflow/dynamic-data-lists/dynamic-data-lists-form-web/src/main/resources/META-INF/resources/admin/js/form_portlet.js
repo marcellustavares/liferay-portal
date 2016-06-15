@@ -26,8 +26,16 @@ AUI.add(
 					evaluatorURL: {
 					},
 
+					fieldTypesDefinitions: {
+						value: {}
+					},
+
 					formBuilder: {
 						valueFn: '_valueFormBuilder'
+					},
+
+					getFieldTypeSettingFormContextURL: {
+						value: ''
 					},
 
 					layout: {
@@ -70,7 +78,11 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						instance.definitionSerializer = new DefinitionSerializer();
+						instance.definitionSerializer = new DefinitionSerializer(
+							{
+								fieldTypesDefinitions: instance.get('fieldTypesDefinitions')
+							}
+						);
 
 						instance.layoutSerializer = new LayoutSerializer(
 							{
@@ -463,6 +475,7 @@ AUI.add(
 								dataProviders: instance.get('dataProviders'),
 								definition: instance.get('definition'),
 								evaluatorURL: instance.get('evaluatorURL'),
+								getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
 								pagesJSON: layout.pages,
 								portletNamespace: instance.get('namespace')
 							}

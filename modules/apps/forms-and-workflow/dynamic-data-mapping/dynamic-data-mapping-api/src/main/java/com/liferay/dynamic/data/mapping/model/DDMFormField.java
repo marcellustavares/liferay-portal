@@ -231,7 +231,7 @@ public class DDMFormField implements Serializable {
 	}
 
 	public boolean isShowLabel() {
-		return MapUtil.getBoolean(_properties, "showLabel");
+		return MapUtil.getBoolean(_properties, "showLabel", true);
 	}
 
 	public boolean isTransient() {
