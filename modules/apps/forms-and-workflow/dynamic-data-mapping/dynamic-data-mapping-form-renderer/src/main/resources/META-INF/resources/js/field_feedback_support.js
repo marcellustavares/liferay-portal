@@ -80,12 +80,9 @@ AUI.add(
 			showValidationStatus: function() {
 				var instance = this;
 
-				if (instance.hasValidation()) {
-					var container = instance.get('container');
-					var hasErrors = instance.hasErrors();
+				var container = instance.get('container');
 
-					container.toggleClass('has-error', hasErrors);
-				}
+				container.toggleClass('has-error', instance.hasErrors());
 			},
 
 			_afterErrorMessageChange: function() {

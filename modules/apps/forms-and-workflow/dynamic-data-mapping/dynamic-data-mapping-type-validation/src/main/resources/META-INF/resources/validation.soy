@@ -1,6 +1,13 @@
 {namespace ddm}
 
 /**
+ * Defines the delegated template for the validation field.
+ */
+{deltemplate ddm.field autoescape="deprecated-contextual" variant="'validation'"}
+	{call .validation data="all" /}
+{/deltemplate}
+
+/**
  * Prints an option.
  *
  * @param option

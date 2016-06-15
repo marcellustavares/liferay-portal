@@ -14,7 +14,7 @@
 							requires: [
 								'aui-component',
 								'aui-tabview',
-								'liferay-ddm-form-renderer-definition',
+								'liferay-ddm-form-renderer-context',
 								'liferay-ddm-form-renderer-feedback',
 								'liferay-ddm-form-renderer-nested-fields',
 								'liferay-ddm-form-renderer-pagination',
@@ -27,9 +27,10 @@
 								'liferay-ddm-form-soy'
 							]
 						},
-						'liferay-ddm-form-renderer-definition': {
-							path: 'form_definition_support.js',
+						'liferay-ddm-form-renderer-context': {
+							path: 'form_context_support.js',
 							requires: [
+								'liferay-ddm-form-renderer-layout-visitor',
 								'liferay-ddm-form-renderer-types',
 								'liferay-ddm-form-renderer-util'
 							]
@@ -38,7 +39,8 @@
 							path: 'expressions_evaluator.js',
 							requires: [
 								'aui-component',
-								'aui-io-request'
+								'aui-io-request',
+								'queue'
 							]
 						},
 						'liferay-ddm-form-renderer-feedback': {
@@ -92,6 +94,10 @@
 								'liferay-ddm-form-renderer-expressions-evaluator',
 								'liferay-ddm-form-renderer-util'
 							]
+						},
+						'liferay-ddm-form-renderer-layout-visitor': {
+							path: 'layout_visitor.js',
+							requires: ['aui-base']
 						},
 						'liferay-ddm-form-renderer-nested-fields': {
 							path: 'nested_fields_support.js',

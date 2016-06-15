@@ -5,6 +5,7 @@ AUI.add(
 			{
 				ATTRS: {
 					enabled: {
+						getter: '_getEnabled',
 						value: true
 					},
 
@@ -22,10 +23,12 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
+						instance._queue = new A.Queue();
+
 						instance.after('evaluationEnded', instance._afterEvaluationEnded);
 					},
 
-					evaluate: function(callback) {
+					evaluate: function(trigger, callback) {
 						var instance = this;
 
 						var enabled = instance.get('enabled');
@@ -37,7 +40,14 @@ AUI.add(
 						}
 
 						if (enabled && form) {
-							instance.fire('evaluationStarted');
+							instance._queue.add(trigger);
+
+							instance.fire(
+								'evaluationStarted',
+								{
+									trigger: trigger
+								}
+							);
 
 							form.disableSubmitButton();
 
@@ -45,12 +55,17 @@ AUI.add(
 								function(result) {
 									form.enableSubmitButton();
 
-									instance.fire(
-										'evaluationEnded',
-										{
-											result: result
-										}
-									);
+									while (instance._queue.size() > 0) {
+										var next = instance._queue.next();
+
+										instance.fire(
+											'evaluationEnded',
+											{
+												result: result,
+												trigger: next
+											}
+										);
+									}
 
 									if (callback) {
 										callback.apply(instance, arguments);
@@ -69,9 +84,11 @@ AUI.add(
 					stop: function() {
 						var instance = this;
 
-						instance._request.destroy();
+						if (instance._request) {
+							instance._request.destroy();
 
-						delete instance._request;
+							delete instance._request;
+						}
 					},
 
 					_afterEvaluationEnded: function() {
@@ -85,14 +102,14 @@ AUI.add(
 
 						var form = instance.get('form');
 
+						var payload = form.getEvaluationPayload();
+
+						var portletNamespace = form.get('portletNamespace');
+
 						instance._request = A.io.request(
 							instance.get('evaluatorURL'),
 							{
-								data: {
-									languageId: form.get('locale'),
-									serializedDDMForm: JSON.stringify(form.get('definition')),
-									serializedDDMFormValues: JSON.stringify(form.toJSON())
-								},
+								data: Liferay.Util.ns(portletNamespace, payload),
 								dataType: 'JSON',
 								method: 'POST',
 								on: {
@@ -111,6 +128,12 @@ AUI.add(
 								}
 							}
 						);
+					},
+
+					_getEnabled: function(enabled) {
+						var instance = this;
+
+						return enabled && !!instance.get('evaluatorURL');
 					},
 
 					_valueEvaluatorURL: function() {
@@ -134,6 +157,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-component', 'aui-io-request']
+		requires: ['aui-component', 'aui-io-request', 'queue']
 	}
 );

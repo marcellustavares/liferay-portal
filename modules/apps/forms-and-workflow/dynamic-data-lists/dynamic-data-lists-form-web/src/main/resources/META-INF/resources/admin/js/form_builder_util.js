@@ -4,8 +4,8 @@ AUI.add(
 		var RendererUtil = Liferay.DDM.Renderer.Util;
 
 		var FormBuilderUtil = {
-			getFieldClass: function(type) {
-				var fieldClass = RendererUtil.getFieldClass(type);
+			getFieldClass: function(type, context) {
+				var fieldClass = RendererUtil.getFieldClass(type, context);
 
 				return A.Component.create(
 					{

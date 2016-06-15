@@ -1,8 +1,6 @@
 AUI.add(
 	'liferay-ddl-form-builder-field-support',
 	function(A) {
-		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
-
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
 		var CSS_FIELD_CONTENT_TOOLBAR = A.getClassName('form', 'builder', 'field', 'content', 'toolbar');
@@ -35,8 +33,12 @@ AUI.add(
 			dataProviders: {
 			},
 
-			settingsForm: {
-				valueFn: '_valueSettingsForm'
+			getFieldTypeSettingFormContextURL: {
+				value: ''
+			},
+
+			settingsRetriever: {
+				valueFn: '_valueSettingsRetriever'
 			}
 		};
 
@@ -49,28 +51,29 @@ AUI.add(
 				);
 			},
 
-			destructor: function() {
-				var instance = this;
-
-				instance.get('settingsForm').destroy();
-			},
-
-			getSettings: function() {
+			getSettings: function(settingsForm) {
 				var instance = this;
 
 				var settings = {};
-
-				var settingsForm = instance.get('settingsForm');
 
 				var fieldSettingsJSON = settingsForm.toJSON();
 
 				fieldSettingsJSON.fieldValues.forEach(
 					function(item) {
-						settings[item.name] = item.value;
+						var name = item.name;
+
+						if (name === 'name') {
+							name = 'fieldName';
+						}
+
+						settings[name] = item.value;
 					}
 				);
 
 				settings.type = instance.get('type');
+				settings.visible = true;
+
+				settings.context = A.clone(settings);
 
 				return settings;
 			},
@@ -85,14 +88,6 @@ AUI.add(
 				return settingsModal;
 			},
 
-			hideSettingsModal: function() {
-				var instance = this;
-
-				var settingsModal = instance.getSettingsModal();
-
-				settingsModal.hide();
-			},
-
 			isNew: function() {
 				var instance = this;
 
@@ -101,21 +96,50 @@ AUI.add(
 				return !builder.contains(instance);
 			},
 
-			renderSettingsPanel: function() {
+			loadSettingsForm: function() {
 				var instance = this;
 
-				instance._updateSettingsFormValues();
+				var settingsRetriever = instance.get('settingsRetriever');
+
+				return settingsRetriever
+					.getSettingsContext(instance.get('type'))
+					.then(
+						function(context) {
+							var settingsForm = instance._createSettingsForm(context);
+
+							instance._updateSettingsFormValues(settingsForm);
+
+							return settingsForm;
+						}
+					);
 			},
 
-			saveSettings: function() {
+			saveSettings: function(settingsForm) {
 				var instance = this;
 
-				instance.setAttrs(instance.getSettings());
+				instance.setAttrs(instance.getSettings(settingsForm));
+
+				instance.render();
 
 				instance.fire(
 					'field:saveSettings',
 					{
 						field: instance
+					}
+				);
+			},
+
+			_createSettingsForm: function(context) {
+				var instance = this;
+
+				return new Liferay.DDL.FormBuilderSettingsForm(
+					{
+						context: context,
+						dataProviders: instance.get('dataProviders'),
+						evaluatorURL: instance.get('evaluatorURL'),
+						field: instance,
+						portletNamespace: instance.get('portletNamespace'),
+						templateNamespace: 'ddm.settings_form'
 					}
 				);
 			},
@@ -144,32 +168,29 @@ AUI.add(
 				}
 			},
 
-			_updateSettingsFormValues: function() {
+			_updateSettingsFormValues: function(settingsForm) {
 				var instance = this;
-
-				var settingsForm = instance.get('settingsForm');
 
 				settingsForm.get('fields').forEach(
 					function(item, index) {
-						item.set('value', instance.get(item.get('name')));
+						var name = item.get('fieldName');
+
+						if (name === 'name') {
+							name = 'fieldName';
+						}
+
+						item.set('value', instance.get(name));
 					}
 				);
 			},
 
-			_valueSettingsForm: function() {
+			_valueSettingsRetriever: function() {
 				var instance = this;
 
-				var fieldType = FieldTypes.get(instance.get('type'));
-
-				return new Liferay.DDL.FormBuilderSettingsForm(
+				return new Liferay.DDL.FormBuilderSettingsRetriever(
 					{
-						dataProviders: instance.get('dataProviders'),
-						definition: fieldType.get('settings'),
-						evaluatorURL: instance.get('evaluatorURL'),
-						field: instance,
-						layout: fieldType.get('settingsLayout'),
-						portletNamespace: instance.get('portletNamespace'),
-						templateNamespace: 'ddm.settings_form'
+						getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
+						portletNamespace: instance.get('portletNamespace')
 					}
 				);
 			}
@@ -179,6 +200,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddl-form-builder-settings-form', 'liferay-ddl-form-builder-util']
+		requires: ['liferay-ddl-form-builder-settings-form', 'liferay-ddl-form-builder-settings-retriever', 'liferay-ddl-form-builder-util']
 	}
 );

@@ -2,6 +2,8 @@
 	<property name="portal.release" value="true" />
 	<property name="testray.main.component.name" value="Forms" />
 
+	<property name="pr.tester.dev.run" value="true" />
+
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
 

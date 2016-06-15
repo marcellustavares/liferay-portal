@@ -21,17 +21,17 @@ AUI.add(
 						valueFn: '_valueContainer'
 					},
 
+					context: {
+						validator: Lang.isObject
+					},
+
 					dataType: {
 						getter: '_getDataType',
 						value: 'string'
 					},
 
-					fieldNamespace: {
+					fieldName: {
 						value: ''
-					},
-
-					indexType: {
-						value: 'keyword'
 					},
 
 					instanceId: {
@@ -39,21 +39,11 @@ AUI.add(
 					},
 
 					label: {
-						getter: '_getLabel',
 						value: ''
 					},
 
 					locale: {
 						value: themeDisplay.getLanguageId()
-					},
-
-					localizable: {
-						setter: A.DataType.Boolean.parse,
-						value: true
-					},
-
-					name: {
-						value: ''
 					},
 
 					parent: {
@@ -68,23 +58,12 @@ AUI.add(
 						valueFn: '_getDefaultValue'
 					},
 
-					readOnly: {
-						getter: '_getReadOnly',
-						value: false
-					},
-
-					required: {
-						setter: A.DataType.Boolean.parse,
+					rendered: {
 						value: false
 					},
 
 					showLabel: {
-						setter: A.DataType.Boolean.parse,
 						value: true
-					},
-
-					tip: {
-						value: ''
 					},
 
 					type: {
@@ -114,8 +93,7 @@ AUI.add(
 						var instance = this;
 
 						instance._eventHandlers = [
-							instance.after('localizableChange', instance._afterLocalizableChange),
-							instance.after('valueChange', instance._afterValueChange)
+							instance.after('contextChange', instance._afterContextChange)
 						];
 					},
 
@@ -135,6 +113,8 @@ AUI.add(
 						}
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
+
+						instance.set('rendered', false);
 					},
 
 					fetchContainer: function() {
@@ -145,7 +125,7 @@ AUI.add(
 						var container = instance._getContainerByInstanceId(instanceId);
 
 						if (!container) {
-							var name = instance.get('name');
+							var name = instance.get('fieldName');
 
 							var repeatedIndex = instance.get('repeatedIndex');
 
@@ -186,10 +166,10 @@ AUI.add(
 
 						var predefinedValue = instance.get('predefinedValue');
 
-						var value = instance.getLocalizedValue(instance.get('value'));
+						var value = instance.get('value');
 
 						if (!value && predefinedValue && !instance.get('readOnly')) {
-							value = instance.getLocalizedValue(predefinedValue);
+							value = predefinedValue;
 						}
 
 						return value;
@@ -212,30 +192,9 @@ AUI.add(
 					getLabel: function() {
 						var instance = this;
 
-						var label = instance.get('label');
-						var locale = instance.get('locale');
+						var label = instance.get('context.label');
 
-						if (Lang.isObject(label) && locale in label) {
-							label = label[locale];
-						}
-
-						return label || instance.get('name');
-					},
-
-					getLabelNode: function() {
-						var instance = this;
-
-						return instance.get('container').one('label');
-					},
-
-					getLocalizedValue: function(localizedValue) {
-						var instance = this;
-
-						if (Lang.isObject(localizedValue) && !Array.isArray(localizedValue)) {
-							localizedValue = localizedValue[instance.get('locale')];
-						}
-
-						return localizedValue;
+						return label || instance.get('fieldName');
 					},
 
 					getQualifiedName: function() {
@@ -244,7 +203,7 @@ AUI.add(
 						return [
 							instance.get('portletNamespace'),
 							'ddm$$',
-							instance.get('name'),
+							instance.get('fieldName'),
 							'$',
 							instance.get('instanceId'),
 							'$',
@@ -252,23 +211,6 @@ AUI.add(
 							'$$',
 							instance.get('locale')
 						].join('');
-					},
-
-					getSerializedValue: function() {
-						var instance = this;
-
-						var serializedValue;
-
-						if (instance.get('localizable')) {
-							serializedValue = {};
-
-							serializedValue[instance.get('locale')] = instance.getValue();
-						}
-						else {
-							serializedValue = instance.getValue();
-						}
-
-						return serializedValue;
 					},
 
 					getTemplate: function() {
@@ -282,25 +224,11 @@ AUI.add(
 					getTemplateContext: function() {
 						var instance = this;
 
-						var context = {};
-
-						var fieldType = FieldTypes.get(instance.get('type'));
-
-						A.each(
-							fieldType.get('settings').fields,
-							function(item, index) {
-								context[item.name] = instance.get(item.name);
-							}
-						);
-
 						return A.merge(
-							context,
+							instance.get('context'),
 							{
-								childElementsHTML: instance.getChildElementsHTML(),
 								label: instance.getLabel(),
 								name: instance.getQualifiedName(),
-								readOnly: instance.get('readOnly'),
-								tip: instance.getLocalizedValue(instance.get('tip')),
 								value: instance.getContextValue() || ''
 							}
 						);
@@ -351,6 +279,8 @@ AUI.add(
 
 						instance.fire('render');
 
+						instance.set('rendered', true);
+
 						return instance;
 					},
 
@@ -365,8 +295,8 @@ AUI.add(
 
 						var fieldJSON = {
 							instanceId: instance.get('instanceId'),
-							name: instance.get('name'),
-							value: instance.getSerializedValue()
+							name: instance.get('fieldName'),
+							value: instance.getValue()
 						};
 
 						var fields = instance.getImmediateFields();
@@ -384,16 +314,28 @@ AUI.add(
 						instance.set('container', instance._valueContainer());
 					},
 
-					_afterLocalizableChange: function() {
+					_afterContextChange: function(event) {
 						var instance = this;
 
-						instance.set('value', instance._getDefaultValue());
-					},
+						if (instance.get('rendered')) {
+							var changed = false;
 
-					_afterValueChange: function() {
-						var instance = this;
+							var newContext = event.newVal;
+							var oldContext = event.prevVal;
 
-						instance.setValue(instance.getContextValue());
+							A.each(
+								newContext,
+								function(value, name) {
+									if (value !== oldContext[name]) {
+										changed = true;
+									}
+								}
+							);
+
+							if (changed) {
+								A.later(0, instance, instance.render);
+							}
+						}
 					},
 
 					_createContainer: function() {
@@ -401,7 +343,7 @@ AUI.add(
 
 						var visible = instance.get('visible');
 
-						var container = A.Node.create(
+						return A.Node.create(
 							Lang.sub(
 								TPL_FORM_FIELD_CONTAINER,
 								{
@@ -409,10 +351,6 @@ AUI.add(
 								}
 							)
 						);
-
-						container.html(instance.getTemplate());
-
-						return container;
 					},
 
 					_getContainerByInstanceId: function(instanceId) {
@@ -470,47 +408,13 @@ AUI.add(
 					_getDefaultValue: function() {
 						var instance = this;
 
-						var value = '';
+						var value = instance.get('predefinedValue');
 
-						if (instance.get('localizable')) {
-							value = instance.get('predefinedValue');
-
-							if (!Lang.isObject(value)) {
-								value = {};
-
-								value[instance.get('locale')] = '';
-							}
-						}
-
-						return value;
-					},
-
-					_getReadOnly: function(readOnly) {
-						var instance = this;
-
-						var form = instance.getRoot();
-
-						if (form && !readOnly) {
-							var readOnlyFields = form.get('readOnlyFields');
-
-							var name = instance.get('name');
-
-							readOnly = readOnlyFields.indexOf(name) > -1;
-						}
-
-						return readOnly;
+						return value || '';
 					},
 
 					_setParent: function(val) {
 						var instance = this;
-
-						var fields = val.get('fields');
-
-						var name = instance.get('name');
-
-						if (fields && !val.getField(name)) {
-							fields.push(instance);
-						}
 
 						instance.addTarget(val);
 					},
@@ -530,7 +434,18 @@ AUI.add(
 					_valueInstanceId: function() {
 						var instance = this;
 
-						return Util.generateInstanceId(8);
+						var instanceId;
+
+						var name = instance.get('name');
+
+						if (name) {
+							instanceId = Util.getInstanceIdFromQualifiedName(name);
+						}
+						else {
+							instanceId = Util.generateInstanceId(8);
+						}
+
+						return instanceId;
 					}
 				}
 			}

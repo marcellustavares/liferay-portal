@@ -15,14 +15,6 @@ AUI.add(
 		};
 
 		NestedFieldsSupport.prototype = {
-			initializer: function() {
-				var instance = this;
-
-				instance._eventHandlers.push(
-					instance.after('fieldsChange', instance._afterNestedFieldsChange)
-				);
-			},
-
 			destructor: function() {
 				var instance = this;
 
@@ -96,7 +88,7 @@ AUI.add(
 
 				instance.eachField(
 					function(item) {
-						if (item.get('name') === name) {
+						if (item.get('fieldName') === name) {
 							field = item;
 						}
 

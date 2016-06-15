@@ -11,12 +11,8 @@ AUI.add(
 		};
 
 		FieldVisibilitySupport.ATTRS = {
-			visibilityExpression: {
-				value: ''
-			},
-
 			visible: {
-				valueFn: '_valueVisible'
+				value: true
 			}
 		};
 
@@ -24,12 +20,10 @@ AUI.add(
 			initializer: function() {
 				var instance = this;
 
-				var evaluator = instance.get('evaluator');
+				instance._bindEvaluatorEvents();
 
 				instance._eventHandlers.push(
-					evaluator.after('evaluationEnded', A.bind('_afterVisibilityEvaluationEnded', instance)),
-					evaluator.after('evaluationStarted', A.bind('_afterVisibilityEvaluationStarted', instance)),
-					instance.after('valueChanged', A.debounce(instance._afterValueChanged, 200, instance)),
+					instance.after('valueChanged', instance._afterValueChanged),
 					instance.after('visibleChange', instance._afterVisibleChange)
 				);
 			},
@@ -40,7 +34,7 @@ AUI.add(
 				var visibility;
 
 				if (result && Lang.isObject(result)) {
-					var name = instance.get('name');
+					var name = instance.get('fieldName');
 
 					visibility = Util.getFieldByKey(result, name, 'name');
 				}
@@ -67,21 +61,27 @@ AUI.add(
 
 				var evaluator = instance.get('evaluator');
 
-				evaluator.evaluate();
+				if (evaluator) {
+					evaluator.evaluate(instance);
+				}
 			},
 
 			_afterVisibilityEvaluationEnded: function(event) {
 				var instance = this;
 
-				instance.hideFeedback();
+				if (event.trigger === instance) {
+					instance.hideFeedback();
 
-				instance.processVisibilityEvaluation(event.result);
+					instance.processVisibilityEvaluation(event.result);
+				}
 			},
 
-			_afterVisibilityEvaluationStarted: function() {
+			_afterVisibilityEvaluationStarted: function(event) {
 				var instance = this;
 
-				instance.showLoadingFeedback();
+				if (event.trigger === instance) {
+					instance.showLoadingFeedback();
+				}
 			},
 
 			_afterVisibleChange: function(event) {
@@ -92,29 +92,17 @@ AUI.add(
 				container.toggleClass('hide', !event.newVal);
 			},
 
-			_valueVisible: function() {
+			_bindEvaluatorEvents: function() {
 				var instance = this;
 
-				var form = instance.getRoot();
+				var evaluator = instance.get('evaluator');
 
-				var visible = true;
-
-				if (form) {
-					var evaluation = form.get('evaluation');
-
-					if (evaluation) {
-						var visibility = instance.processVisibility(evaluation);
-
-						if (visibility) {
-							visible = visibility.visible;
-						}
-					}
-					else {
-						visible = instance.get('visibilityExpression') !== 'FALSE';
-					}
+				if (evaluator) {
+					instance._eventHandlers.push(
+						evaluator.after('evaluationEnded', A.bind('_afterVisibilityEvaluationEnded', instance)),
+						evaluator.after('evaluationStarted', A.bind('_afterVisibilityEvaluationStarted', instance))
+					);
 				}
-
-				return visible;
 			}
 		};
 

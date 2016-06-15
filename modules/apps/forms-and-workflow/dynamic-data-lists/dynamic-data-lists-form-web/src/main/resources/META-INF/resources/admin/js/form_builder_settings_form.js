@@ -33,23 +33,36 @@ AUI.add(
 
 						instance._initDataProvider();
 
-						var labelField = instance.getField('label');
-
 						instance._eventHandlers.push(
 							instance.after('render', instance._afterSettingsFormRender),
-							labelField.on('keyChange', A.bind('_onLabelFieldKeyChange', instance)),
-							labelField.on(A.bind('_onLabelFieldNormalizeKey', instance), labelField, 'normalizeKey'),
 							instance.on('*:addField', instance.alignModal),
 							instance.on('*:removeField', instance.alignModal)
 						);
+
+						instance._fieldEventHandlers = [];
 					},
 
 					alignModal: function() {
 						var instance = this;
 
-						var modalSettings = instance.get('field').getSettingsModal();
+						var field = instance.get('field');
 
-						modalSettings._modal.align();
+						var settingsModal = field.getSettingsModal();
+
+						settingsModal.align();
+					},
+
+					getEvaluationPayload: function() {
+						var instance = this;
+
+						var field = instance.get('field');
+
+						return A.merge(
+							FormBuilderSettingsForm.superclass.getEvaluationPayload.apply(instance, arguments),
+							{
+								type: field.get('type')
+							}
+						);
 					},
 
 					getSubmitButton: function() {
@@ -70,7 +83,7 @@ AUI.add(
 
 									var settingsModal = field.getSettingsModal();
 
-									field.saveSettings();
+									field.saveSettings(instance);
 
 									settingsModal.fire(
 										'save',
@@ -78,10 +91,6 @@ AUI.add(
 											field: field
 										}
 									);
-
-									var builder = field.get('builder');
-
-									builder.appendChild(field);
 
 									settingsModal.hide();
 								}
@@ -105,14 +114,6 @@ AUI.add(
 								}
 							}
 						);
-					},
-
-					_afterDataSourceTypeFieldValueChanged: function(event) {
-						var instance = this;
-
-						var optionsField = instance.getField('options');
-
-						optionsField.set('required', event.target.getValue() === 'manual');
 					},
 
 					_afterDDMDataProviderInstanceIdFieldRender: function(event) {
@@ -142,19 +143,6 @@ AUI.add(
 								}
 							).join('')
 						);
-
-						var dataSourceTypeField = instance.getField('dataSourceType');
-
-						var dataSourceType = dataSourceTypeField.getValue();
-
-						ddmDataProviderInstanceIdField.set('visible', dataSourceType !== 'manual');
-
-						var optionsField = instance.getField('options');
-
-						var manualDataSourceType = dataSourceType === 'manual';
-
-						optionsField.set('required', manualDataSourceType);
-						optionsField.set('visible', manualDataSourceType);
 					},
 
 					_afterSettingsFormRender: function() {
@@ -165,7 +153,6 @@ AUI.add(
 						container.append(TPL_SUBMIT_BUTTON);
 
 						instance._createModeToggler();
-
 						instance._syncModeToggler();
 
 						var formName = A.guid();
@@ -182,7 +169,15 @@ AUI.add(
 						var labelField = instance.getField('label');
 						var nameField = instance.getField('name');
 
+						(new A.EventHandle(instance._fieldEventHandlers)).detach();
+
+						instance._fieldEventHandlers.push(
+							labelField.on('keyChange', A.bind('_onLabelFieldKeyChange', instance)),
+							labelField.on(A.bind('_onLabelFieldNormalizeKey', instance), labelField, 'normalizeKey')
+						);
+
 						labelField.set('key', nameField.getValue());
+						labelField.focus();
 					},
 
 					_createModeToggler: function() {
@@ -250,7 +245,6 @@ AUI.add(
 						if (!!sameNameField && sameNameField !== field) {
 							nameField.showErrorMessage(Liferay.Language.get('field-name-is-already-in-use'));
 							nameField.showValidationStatus();
-
 							nameField.focus();
 
 							hasErrors = true;
@@ -267,14 +261,6 @@ AUI.add(
 						if (ddmDataProviderInstanceIdField) {
 							instance._eventHandlers.push(
 								ddmDataProviderInstanceIdField.after('render', A.bind('_afterDDMDataProviderInstanceIdFieldRender', instance))
-							);
-						}
-
-						var dataSourceTypeField = instance.getField('dataSourceType');
-
-						if (dataSourceTypeField) {
-							instance._eventHandlers.push(
-								dataSourceTypeField.after('valueChanged', A.bind('_afterDataSourceTypeFieldValueChanged', instance))
 							);
 						}
 					},

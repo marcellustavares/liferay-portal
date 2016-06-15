@@ -84,34 +84,12 @@ AUI.add(
 						field.get('repetitions').forEach(fn, instance);
 					},
 
-					getContextValue: function() {
-						var instance = this;
-
-						return instance.getOptionsValues();
-					},
-
 					getLastField: function() {
 						var instance = this;
 
 						var repetitions = instance._mainField.get('repetitions');
 
 						return repetitions[repetitions.length - 1];
-					},
-
-					getOptionsValues: function() {
-						var instance = this;
-
-						return A.map(
-							instance.get('value'),
-							function(item) {
-								var label = instance.getLocalizedValue(item.label) || '';
-
-								return {
-									label: label,
-									value: item.value
-								};
-							}
-						);
 					},
 
 					getValue: function() {
@@ -123,14 +101,10 @@ AUI.add(
 							function(item) {
 								var key = item.get('key');
 
-								var label = {};
-
 								if (key) {
-									label[instance.get('locale')] = item.getValue();
-
 									values.push(
 										{
-											label: label,
+											label: item.getValue(),
 											value: key
 										}
 									);
@@ -146,13 +120,15 @@ AUI.add(
 
 						var hasErrors = false;
 
-						instance.eachRepetition(
-							function(field) {
-								if (field.hasErrors()) {
-									hasErrors = true;
+						if (instance.get('visible')) {
+							instance.eachRepetition(
+								function(field) {
+									if (field.hasErrors()) {
+										hasErrors = true;
+									}
 								}
-							}
-						);
+							);
+						}
 
 						return hasErrors;
 					},
@@ -200,8 +176,7 @@ AUI.add(
 						OptionsField.superclass.render.apply(instance, arguments);
 
 						instance._clearRepetitions();
-
-						instance._renderFields(instance.getOptionsValues());
+						instance._renderFields(instance.get('value'));
 
 						return instance;
 					},
@@ -339,15 +314,19 @@ AUI.add(
 
 						var strings = instance.get('strings');
 
-						instance._mainField = new Liferay.DDM.Field.KeyValue(
-							{
-								enableEvaluations: false,
-								placeholder: strings.addOptionMessage,
-								repeatable: true,
-								showLabel: false,
-								visibilityExpression: 'true'
-							}
-						);
+						var config = {
+							enableEvaluations: false,
+							fieldName: instance.get('fieldName') + 'Option',
+							placeholder: strings.addOptionMessage,
+							repeatable: true,
+							repeatedIndex: 0,
+							showLabel: false,
+							visible: true
+						};
+
+						config.context = A.clone(config);
+
+						instance._mainField = new Liferay.DDM.Field.KeyValue(config);
 
 						instance._bindFieldUI(instance._mainField);
 					},
@@ -442,7 +421,7 @@ AUI.add(
 
 					_restoreField: function(field, contextValue) {
 						field.set('key', contextValue.value);
-						field.set('value', contextValue.label);
+						field.setValue(contextValue.label);
 					},
 
 					_syncFieldUI: function(field) {

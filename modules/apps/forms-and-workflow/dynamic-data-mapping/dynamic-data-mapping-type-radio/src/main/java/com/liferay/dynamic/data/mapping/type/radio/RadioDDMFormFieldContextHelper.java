@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Marcellus Tavares
@@ -41,8 +40,6 @@ public class RadioDDMFormFieldContextHelper {
 
 		_jsonFactory = jsonFactory;
 		_ddmFormFieldOptions = ddmFormFieldOptions;
-		_value = toString(value);
-		_predefinedValue = toString(predefinedValue.getString(locale));
 		_locale = locale;
 	}
 
@@ -56,23 +53,12 @@ public class RadioDDMFormFieldContextHelper {
 				optionValue);
 
 			optionMap.put("label", optionLabel.getString(_locale));
-			optionMap.put(
-				"status",
-				isChecked(optionValue) ? "checked" : StringPool.BLANK);
 			optionMap.put("value", optionValue);
 
 			options.add(optionMap);
 		}
 
 		return options;
-	}
-
-	protected boolean isChecked(String optionValue) {
-		if (Validator.isNull(_value)) {
-			return Objects.equals(_predefinedValue, optionValue);
-		}
-
-		return Objects.equals(_value, optionValue);
 	}
 
 	protected String toString(String value) {
@@ -99,7 +85,5 @@ public class RadioDDMFormFieldContextHelper {
 	private final DDMFormFieldOptions _ddmFormFieldOptions;
 	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
-	private final String _predefinedValue;
-	private final String _value;
 
 }

@@ -72,6 +72,7 @@ public interface TextDDMFormFieldTypeSettings
 		label = "%my-text-field-has",
 		optionLabels = {"%a-single-line", "%multiple-lines"},
 		optionValues = {"singleline", "multiline"},
+		predefinedValue = "singleline",
 		properties = {"inline=true"}, type = "radio"
 	)
 	public String displayStyle();

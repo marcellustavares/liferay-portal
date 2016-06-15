@@ -103,6 +103,12 @@ public class DDLFormDisplayContext {
 
 		boolean showSubmitButton = isShowSubmitButton();
 
+		ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+		resourceURL.setResourceID("evaluateRecordSet");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
+		ddmFormRenderingContext.setRecordSetId(recordSet.getRecordSetId());
 		ddmFormRenderingContext.setShowSubmitButton(showSubmitButton);
 
 		String submitLabel = getSubmitLabel(recordSet);

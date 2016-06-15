@@ -72,6 +72,7 @@ import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 import javax.servlet.Servlet;
 
@@ -181,6 +182,12 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 			LocaleUtil.fromLanguageId(languageId));
 		ddmFormRenderingContext.setPortletNamespace(
 			renderResponse.getNamespace());
+
+		ResourceURL resourceURL = renderResponse.createResourceURL();
+
+		resourceURL.setResourceID("evaluateRecordSetSettings");
+
+		ddmFormRenderingContext.setEvaluatorURL(resourceURL.toString());
 
 		return ddmFormRenderingContext;
 	}

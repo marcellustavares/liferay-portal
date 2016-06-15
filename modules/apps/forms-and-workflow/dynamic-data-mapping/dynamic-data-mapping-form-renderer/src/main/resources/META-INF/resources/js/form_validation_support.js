@@ -50,22 +50,6 @@ AUI.add(
 				return hasErrors;
 			},
 
-			hasValidation: function() {
-				var instance = this;
-
-				var hasValidation = false;
-
-				instance.eachField(
-					function(field) {
-						hasValidation = field.hasValidation();
-
-						return hasValidation;
-					}
-				);
-
-				return hasValidation;
-			},
-
 			pageHasErrors: function(pageNode) {
 				var instance = this;
 
@@ -129,55 +113,47 @@ AUI.add(
 			validate: function(callback) {
 				var instance = this;
 
-				if (instance.hasValidation()) {
-					var evaluator = instance.get('evaluator');
+				var evaluator = instance.get('evaluator');
 
-					evaluator.evaluate(
-						function(result) {
-							var hasErrors = true;
+				evaluator.evaluate(
+					instance,
+					function(result) {
+						var hasErrors = true;
 
-							if (result && Lang.isObject(result)) {
-								instance.processValidation(result);
+						if (result && Lang.isObject(result)) {
+							instance.processValidation(result);
 
-								hasErrors = instance.hasErrors();
-							}
-
-							if (callback) {
-								callback.call(instance, hasErrors, result);
-							}
+							hasErrors = instance.hasErrors();
 						}
-					);
-				}
-				else if (callback) {
-					callback.call(instance, false);
-				}
+
+						if (callback) {
+							callback.call(instance, hasErrors, result);
+						}
+					}
+				);
 			},
 
 			validatePage: function(pageNode, callback) {
 				var instance = this;
 
-				if (instance.hasValidation()) {
-					var evaluator = instance.get('evaluator');
+				var evaluator = instance.get('evaluator');
 
-					evaluator.evaluate(
-						function(result) {
-							var hasErrors = true;
+				evaluator.evaluate(
+					instance,
+					function(result) {
+						var hasErrors = true;
 
-							if (result && Lang.isObject(result)) {
-								instance.processPageValidation(pageNode, result);
+						if (result && Lang.isObject(result)) {
+							instance.processPageValidation(pageNode, result);
 
-								hasErrors = instance.pageHasErrors(pageNode);
-							}
-
-							if (callback) {
-								callback.call(instance, hasErrors, result);
-							}
+							hasErrors = instance.pageHasErrors(pageNode);
 						}
-					);
-				}
-				else if (callback) {
-					callback.call(instance, false);
-				}
+
+						if (callback) {
+							callback.call(instance, hasErrors, result);
+						}
+					}
+				);
 			},
 
 			_afterEvaluationEnded: function(event) {
@@ -185,7 +161,9 @@ AUI.add(
 
 				var result = event.result;
 
-				instance.hideFeedback();
+				if (event.trigger === instance) {
+					instance.hideFeedback();
+				}
 
 				if (!result || !Lang.isObject(result)) {
 					var strings = instance.get('strings');
@@ -194,10 +172,12 @@ AUI.add(
 				}
 			},
 
-			_afterEvaluationStarted: function() {
+			_afterEvaluationStarted: function(event) {
 				var instance = this;
 
-				instance.showLoadingFeedback();
+				if (event.trigger === instance) {
+					instance.showLoadingFeedback();
+				}
 			},
 
 			_valueEvaluator: function() {

@@ -40,7 +40,7 @@ AUI.add(
 						return A.merge(
 							EditorField.superclass.getTemplateContext.apply(instance, arguments),
 							{
-								placeholder: instance.getLocalizedValue(instance.get('placeholder'))
+								placeholder: instance.get('placeholder')
 							}
 						);
 					},

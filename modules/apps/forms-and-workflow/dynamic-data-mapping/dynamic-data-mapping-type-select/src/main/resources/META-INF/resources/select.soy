@@ -1,6 +1,13 @@
 {namespace ddm}
 
 /**
+ * Defines the delegated template for the select field.
+ */
+{deltemplate ddm.field autoescape="deprecated-contextual" variant="'select'"}
+	{call .select data="all" /}
+{/deltemplate}
+
+/**
  * Prints the DDM form select field.
  *
  * @param? childElementsHTML
@@ -15,9 +22,10 @@
  * @param tip
  * @param strings
  * @param value
+ * @param visible
  */
 {template .select autoescape="deprecated-contextual"}
-	<div class="form-group" data-fieldname="{$name}">
+	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
 		<div class="input-select-wrapper">
 			{if $showLabel}
 				<label class="control-label" for="{$name}">

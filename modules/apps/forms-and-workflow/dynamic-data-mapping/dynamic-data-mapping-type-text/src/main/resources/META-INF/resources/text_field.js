@@ -36,6 +36,12 @@ AUI.add(
 				NAME: 'liferay-ddm-form-field-text',
 
 				prototype: {
+					initializer: function() {
+						var instance = this;
+
+						instance.bindInputEvent('focus', instance._onFocusInput);
+					},
+
 					getTemplateContext: function() {
 						var instance = this;
 
@@ -43,16 +49,14 @@ AUI.add(
 							TextField.superclass.getTemplateContext.apply(instance, arguments),
 							{
 								displayStyle: instance.get('displayStyle'),
-								placeholder: instance.getLocalizedValue(instance.get('placeholder')),
-								tooltip: instance.getLocalizedValue(instance.get('tooltip'))
+								placeholder: instance.get('placeholder'),
+								tooltip: instance.get('tooltip')
 							}
 						);
 					},
 
-					render: function() {
+					_onFocusInput: function() {
 						var instance = this;
-
-						TextField.superclass.render.apply(instance, arguments);
 
 						if (instance.get('displayStyle') === 'multiline') {
 							var textAreaNode = instance.getInputNode();
@@ -64,8 +68,6 @@ AUI.add(
 
 							textAreaNode.autosize._uiAutoSize();
 						}
-
-						return instance;
 					},
 
 					_renderErrorMessage: function() {
