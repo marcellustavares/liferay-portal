@@ -53,8 +53,8 @@ import com.liferay.portal.kernel.util.StringPool;
 						@DDMFormLayoutColumn(
 							size = 12,
 							value = {
-								"repeatable", "showLabel", "validation",
-								"visibilityExpression"
+								"readOnly", "repeatable", "showLabel",
+								"validation", "visibilityExpression", "visible"
 							}
 						)
 					}
@@ -66,7 +66,7 @@ import com.liferay.portal.kernel.util.StringPool;
 public interface DefaultDDMFormFieldTypeSettings
 	extends DDMFormFieldTypeSettings {
 
-	@DDMFormField(visibilityExpression = "FALSE")
+	@DDMFormField(visible = false)
 	public String fieldNamespace();
 
 	@DDMFormField(
@@ -76,7 +76,7 @@ public interface DefaultDDMFormFieldTypeSettings
 		},
 		optionValues = {StringPool.BLANK, "keyword", "text"},
 		predefinedValue = "keyword", type = "select",
-		visibilityExpression = "FALSE"
+		visible = false
 	)
 	public String indexType();
 
@@ -90,7 +90,7 @@ public interface DefaultDDMFormFieldTypeSettings
 	)
 	public LocalizedValue label();
 
-	@DDMFormField(label = "%localizable", visibilityExpression = "FALSE")
+	@DDMFormField(label = "%localizable", visible = false)
 	public boolean localizable();
 
 	@DDMFormField(
@@ -103,7 +103,7 @@ public interface DefaultDDMFormFieldTypeSettings
 	)
 	public LocalizedValue predefinedValue();
 
-	@DDMFormField(label = "%read-only", visibilityExpression = "FALSE")
+	@DDMFormField(label = "%read-only", properties = {"showAsSwitcher=true"})
 	public boolean readOnly();
 
 	@DDMFormField(label = "%repeatable", properties = {"showAsSwitcher=true"})
@@ -134,6 +134,7 @@ public interface DefaultDDMFormFieldTypeSettings
 	@DDMFormField(
 		dataType = "ddm-validation", label = "%validation", type = "validation"
 	)
+	@Deprecated
 	public DDMFormFieldValidation validation();
 
 	@DDMFormField(
@@ -143,6 +144,10 @@ public interface DefaultDDMFormFieldTypeSettings
 			"tooltip=%write-a-conditional-expression-to-control-whether-this-field-is-displayed"
 		}
 	)
+	@Deprecated
 	public String visibilityExpression();
+
+	@DDMFormField(label = "%visible", properties = {"showAsSwitcher=true"})
+	public boolean visible();
 
 }

@@ -162,8 +162,15 @@ public class DDMFormEvaluatorHelper {
 			new DDMFormFieldEvaluationResult(
 				ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId());
 
-		boolean visible = evaluateBooleanExpression(
-			ddmFormField.getVisibilityExpression(), ancestorDDMFormFieldValues);
+		boolean visible = ddmFormField.isVisible();
+
+		if (visible &&
+			Validator.isNotNull(ddmFormField.getVisibilityExpression())) {
+
+			visible = evaluateBooleanExpression(
+				ddmFormField.getVisibilityExpression(),
+				ancestorDDMFormFieldValues);
+		}
 
 		ddmFormFieldEvaluationResult.setVisible(visible);
 

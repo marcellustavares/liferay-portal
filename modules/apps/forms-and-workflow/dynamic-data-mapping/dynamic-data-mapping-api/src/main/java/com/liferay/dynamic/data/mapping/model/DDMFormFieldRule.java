@@ -22,6 +22,7 @@ import java.io.Serializable;
 public class DDMFormFieldRule implements Serializable {
 
 	public DDMFormFieldRule(DDMFormFieldRule ddmFormFieldRule) {
+		_errorMessage = ddmFormFieldRule._errorMessage;
 		_expression = ddmFormFieldRule._expression;
 		_ddmFormFieldRuleType = ddmFormFieldRule._ddmFormFieldRuleType;
 	}
@@ -33,8 +34,21 @@ public class DDMFormFieldRule implements Serializable {
 		_ddmFormFieldRuleType = ddmFormFieldRuleType;
 	}
 
+	public DDMFormFieldRule(
+		String errorMessage, String expression,
+		DDMFormFieldRuleType ddmFormFieldRuleType) {
+
+		_errorMessage = errorMessage;
+		_expression = expression;
+		_ddmFormFieldRuleType = ddmFormFieldRuleType;
+	}
+
 	public DDMFormFieldRuleType getDDMFormFieldRuleType() {
 		return _ddmFormFieldRuleType;
+	}
+
+	public String getErrorMessage() {
+		return _errorMessage;
 	}
 
 	public String getExpression() {
@@ -47,11 +61,16 @@ public class DDMFormFieldRule implements Serializable {
 		_ddmFormFieldRuleType = ddmFormFieldRuleType;
 	}
 
+	public void setErrorMessage(String errorMessage) {
+		_errorMessage = errorMessage;
+	}
+
 	public void setExpression(String expression) {
 		_expression = expression;
 	}
 
 	private DDMFormFieldRuleType _ddmFormFieldRuleType;
+	private String _errorMessage;
 	private String _expression;
 
 }
