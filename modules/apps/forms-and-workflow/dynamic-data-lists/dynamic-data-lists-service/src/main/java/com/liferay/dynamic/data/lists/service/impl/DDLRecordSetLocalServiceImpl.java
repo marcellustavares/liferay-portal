@@ -662,8 +662,12 @@ public class DDLRecordSetLocalServiceImpl
 
 		// Record set
 
-		validateDDMStructureId(ddmStructureId);
-		validateName(nameMap);
+		DDMStructure ddmStructure = getDDMStructure(ddmStructureId);
+
+		Locale locale = LocaleUtil.fromLanguageId(
+			ddmStructure.getDefaultLanguageId());
+
+		validateName(nameMap, locale);
 
 		long oldDDMStructureId = recordSet.getDDMStructureId();
 
@@ -697,12 +701,27 @@ public class DDLRecordSetLocalServiceImpl
 		return recordSet;
 	}
 
+	protected DDMStructure getDDMStructure(long ddmStructureId)
+		throws PortalException {
+
+		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
+			ddmStructureId);
+
+		if (ddmStructure == null) {
+			throw new RecordSetDDMStructureIdException(
+				"No DDM structure exists with the DDM structure ID " +
+					ddmStructureId);
+		}
+
+		return ddmStructure;
+	}
+
 	protected void validate(
 			long groupId, long ddmStructureId, String recordSetKey,
 			Map<Locale, String> nameMap)
 		throws PortalException {
 
-		validateDDMStructureId(ddmStructureId);
+		DDMStructure ddmStructure = getDDMStructure(ddmStructureId);
 
 		if (Validator.isNotNull(recordSetKey)) {
 			DDLRecordSet recordSet = ddlRecordSetPersistence.fetchByG_R(
@@ -718,26 +737,14 @@ public class DDLRecordSetLocalServiceImpl
 			}
 		}
 
-		validateName(nameMap);
+		Locale locale = LocaleUtil.fromLanguageId(
+			ddmStructure.getDefaultLanguageId());
+
+		validateName(nameMap, locale);
 	}
 
-	protected void validateDDMStructureId(long ddmStructureId)
+	protected void validateName(Map<Locale, String> nameMap, Locale locale)
 		throws PortalException {
-
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			ddmStructureId);
-
-		if (ddmStructure == null) {
-			throw new RecordSetDDMStructureIdException(
-				"No DDM structure exists with the DDM structure ID " +
-					ddmStructureId);
-		}
-	}
-
-	protected void validateName(Map<Locale, String> nameMap)
-		throws PortalException {
-
-		Locale locale = LocaleUtil.getSiteDefault();
 
 		String name = nameMap.get(locale);
 
