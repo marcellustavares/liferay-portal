@@ -138,6 +138,10 @@ public class DDMFormRuleEvaluatorHelper {
 			createDDMFormRuleEvaluatorNodeEdges(expression);
 
 		for (DDMFormRuleEvaluatorNode edge : edges) {
+			if (node.equals(edge)) {
+				continue;
+			}
+
 			if (flatNodes.contains(edge)) {
 				int indexOf = flatNodes.indexOf(edge);
 				DDMFormRuleEvaluatorNode foundNode = flatNodes.get(indexOf);

@@ -24,15 +24,16 @@ import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.DDMFormRul
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.DDMFormRuleEvaluatorHelper;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.language.LanguageUtil;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -49,20 +50,6 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 		throws DDMFormEvaluationException {
 
 		try {
-			DDMFormEvaluatorHelper ddmFormEvaluatorHelper =
-				new DDMFormEvaluatorHelper(ddmForm, ddmFormValues, locale);
-
-			ddmFormEvaluatorHelper.setDDMExpressionFactory(
-				_ddmExpressionFactory);
-			ddmFormEvaluatorHelper.setJSONFactory(_jsonFactory);
-
-			DDMFormEvaluationResult ddmFormEvaluationResult =
-				ddmFormEvaluatorHelper.evaluate();
-
-			Map<String, DDMFormFieldEvaluationResult>
-				expressionDDMFormFieldEvaluationResults =
-					ddmFormEvaluationResult.getDDMFormFieldEvaluationResultsMap();
-
 			DDMFormRuleEvaluatorHelper ddmFormRuleEvaluatorHelper =
 				new DDMFormRuleEvaluatorHelper(_ddmExpressionFactory, ddmForm);
 
@@ -78,56 +65,78 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 				ruleDDMFormFieldEvaluationResults =
 					ddmFormRuleEvaluator.evaluate();
 
-			return merge(
-				expressionDDMFormFieldEvaluationResults.values(),
+			validateRequired(
+				ddmForm, ruleDDMFormFieldEvaluationResults, locale);
+
+			DDMFormEvaluationResult ddmFormEvaluationResult =
+				new DDMFormEvaluationResult();
+
+			ddmFormEvaluationResult.setDDMFormFieldEvaluationResults(
 				ruleDDMFormFieldEvaluationResults);
+
+			return ddmFormEvaluationResult;
 		}
 		catch (Exception e) {
 			throw new DDMFormEvaluationException(e);
 		}
 	}
 
-	protected DDMFormEvaluationResult merge(
-		Collection<DDMFormFieldEvaluationResult> expressionDDMFormFieldEvaluationResults,
-		List<DDMFormFieldEvaluationResult> ruleDDMFormFieldEvaluationResults ) {
+	protected boolean isDDMFormFieldValueEmpty(
+		DDMFormField ddmFormField,
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
+		Locale locale) {
 
-		for (DDMFormFieldEvaluationResult expressionDDMFormFieldEvaluationResult :
-				expressionDDMFormFieldEvaluationResults) {
+		Object value = ddmFormFieldEvaluationResult.getValue();
 
-			int indexOf = ruleDDMFormFieldEvaluationResults.indexOf(
-					expressionDDMFormFieldEvaluationResult);
-			
-			if (indexOf < 0) {
-				continue;
-			}
-
-			DDMFormFieldEvaluationResult ruleDDMFormFieldEvaluationResult =
-				ruleDDMFormFieldEvaluationResults.get(indexOf);
-
-			if (!expressionDDMFormFieldEvaluationResult.isValid()) {
-				if (ruleDDMFormFieldEvaluationResult.isValid()) {
-					ruleDDMFormFieldEvaluationResult.setValid(false);
-					ruleDDMFormFieldEvaluationResult.setErrorMessage(
-						expressionDDMFormFieldEvaluationResult.getErrorMessage());
-				}
-			}
-
-			if (!expressionDDMFormFieldEvaluationResult.isVisible()) {
-				if (ruleDDMFormFieldEvaluationResult.isVisible()) {
-					ruleDDMFormFieldEvaluationResult.setVisible(false);
-				}
-			}
+		if (value == null) {
+			return true;
 		}
 
-		DDMFormEvaluationResult ddmFormEvaluationResult =
-			new DDMFormEvaluationResult();
+		String valueString = value.toString();
 
-		ddmFormEvaluationResult.setDDMFormFieldEvaluationResults(
-			ruleDDMFormFieldEvaluationResults);
+		if (valueString.isEmpty()) {
+			return true;
+		}
 
-		return ddmFormEvaluationResult;
+		String dataType = ddmFormField.getDataType();
+
+		if (Objects.equals(dataType, "boolean") &&
+			Objects.equals(valueString, "false")) {
+
+			return true;
+		}
+
+		return false;
 	}
 
+	protected void validateRequired(
+		DDMForm ddmForm,
+		List<DDMFormFieldEvaluationResult> ddmFormFieldEvaluationResults,
+		Locale locale) {
+
+		Map<String, DDMFormField> map = ddmForm.getDDMFormFieldsMap(true);
+
+		for (DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult :
+				ddmFormFieldEvaluationResults) {
+
+			DDMFormField ddmFormField = map.get(
+				ddmFormFieldEvaluationResult.getName());
+
+			if (ddmFormField.isRequired() &&
+				ddmFormFieldEvaluationResult.isVisible() &&
+				isDDMFormFieldValueEmpty(
+					ddmFormField, ddmFormFieldEvaluationResult, locale)) {
+
+				ddmFormFieldEvaluationResult.setErrorMessage(
+					LanguageUtil.get(locale, "this-field-is-required"));
+
+				ddmFormFieldEvaluationResult.setValid(false);
+			}
+		}
+	}
+
+	@Reference
+	private DDMFormValuesJSONDeserializer _ddFormValuesJSONDeserializer;
 
 	@Reference
 	private DDMDataProviderInstanceService _ddmDataProviderInstanceService;
@@ -137,9 +146,6 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 
 	@Reference
 	private DDMExpressionFactory _ddmExpressionFactory;
-
-	@Reference
-	private DDMFormValuesJSONDeserializer _ddFormValuesJSONDeserializer;
 
 	@Reference
 	private JSONFactory _jsonFactory;

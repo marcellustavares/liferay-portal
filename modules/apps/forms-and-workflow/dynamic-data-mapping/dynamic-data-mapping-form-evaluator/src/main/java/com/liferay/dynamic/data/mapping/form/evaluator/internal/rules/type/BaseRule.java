@@ -99,10 +99,7 @@ public abstract class BaseRule implements Rule {
 			createBooleanDDMExpression(expression);
 	}
 
-
-	protected <T> T createDefaultResult(Class<T> clazz)
-		throws Exception {
-
+	protected <T> T createDefaultResult(Class<T> clazz) throws Exception {
 		if (clazz.equals(Boolean.class)) {
 			return (T)Boolean.TRUE;
 		}
