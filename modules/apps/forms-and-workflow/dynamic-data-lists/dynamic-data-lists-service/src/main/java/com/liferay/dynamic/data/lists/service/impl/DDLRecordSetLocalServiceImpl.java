@@ -701,6 +701,21 @@ public class DDLRecordSetLocalServiceImpl
 		return recordSet;
 	}
 
+	protected DDMStructure getDDMStructure(long ddmStructureId)
+		throws PortalException {
+
+		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
+			ddmStructureId);
+
+		if (ddmStructure == null) {
+			throw new RecordSetDDMStructureIdException(
+				"No DDM structure exists with the DDM structure ID " +
+					ddmStructureId);
+		}
+
+		return ddmStructure;
+	}
+
 	protected void validate(
 			long groupId, long ddmStructureId, String recordSetKey,
 			Map<Locale, String> nameMap)
@@ -726,21 +741,6 @@ public class DDLRecordSetLocalServiceImpl
 			ddmStructure.getDefaultLanguageId());
 
 		validateName(nameMap, locale);
-	}
-
-	protected DDMStructure getDDMStructure(long ddmStructureId)
-		throws PortalException {
-
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			ddmStructureId);
-
-		if (ddmStructure == null) {
-			throw new RecordSetDDMStructureIdException(
-				"No DDM structure exists with the DDM structure ID " +
-					ddmStructureId);
-		}
-
-		return ddmStructure;
 	}
 
 	protected void validateName(Map<Locale, String> nameMap, Locale locale)
