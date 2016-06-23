@@ -20,6 +20,8 @@ import com.liferay.dynamic.data.mapping.util.DDMFormInstanceFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Marcellus Tavares
  */
@@ -33,6 +35,10 @@ public class DDMDataProviderContext {
 		_parameters.putAll(parameters);
 	}
 
+	public HttpServletRequest getHttpServletRequest() {
+		return _httpServletRequest;
+	}
+
 	public Map<String, String> getParameters() {
 		return _parameters;
 	}
@@ -41,7 +47,12 @@ public class DDMDataProviderContext {
 		return DDMFormInstanceFactory.create(clazz, _ddmFormValues);
 	}
 
+	public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
+		_httpServletRequest = httpServletRequest;
+	}
+
 	private final DDMFormValues _ddmFormValues;
+	private HttpServletRequest _httpServletRequest;
 	private final Map<String, String> _parameters = new HashMap<>();
 
 }

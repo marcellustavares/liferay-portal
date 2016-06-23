@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -107,39 +108,57 @@ public class DDMDataProviderServlet extends HttpServlet {
 
 	protected String doGetData(HttpServletRequest request) {
 		try {
-			long ddmDataProviderInstanceId = ParamUtil.getLong(
+			List<KeyValuePair> keyValuePairs = new ArrayList<>();
+
+			String ddmDataProviderInstanceId = ParamUtil.getString(
 				request, "ddmDataProviderInstanceId");
 
-			DDMDataProviderInstance ddmDataProviderInstance =
-				_ddmDataProviderInstanceService.getDataProviderInstance(
+			DDMDataProvider ddmDataProvider =
+				_ddmDataProviderTracker.getDDMDataProviderById(
 					ddmDataProviderInstanceId);
 
-			DDMDataProvider ddmDataProvider =
-				_ddmDataProviderTracker.getDDMDataProvider(
+			if (ddmDataProvider != null) {
+				DDMDataProviderContext ddmDataProviderContext =
+					new DDMDataProviderContext(null);
+
+				ddmDataProviderContext.setHttpServletRequest(request);
+
+				keyValuePairs = ddmDataProvider.getData(ddmDataProviderContext);
+			}
+			else {
+				DDMDataProviderInstance ddmDataProviderInstance =
+					_ddmDataProviderInstanceService.getDataProviderInstance(
+						Long.valueOf(ddmDataProviderInstanceId));
+
+				ddmDataProvider = _ddmDataProviderTracker.getDDMDataProvider(
 					ddmDataProviderInstance.getType());
 
-			DDMForm ddmForm = DDMFormFactory.create(
-				ddmDataProvider.getSettings());
+				DDMForm ddmForm = DDMFormFactory.create(
+					ddmDataProvider.getSettings());
 
-			DDMFormValues ddmFormValues =
-				_ddmFormValuesJSONDeserializer.deserialize(
-					ddmForm, ddmDataProviderInstance.getDefinition());
+				DDMFormValues ddmFormValues =
+					_ddmFormValuesJSONDeserializer.deserialize(
+						ddmForm, ddmDataProviderInstance.getDefinition());
 
-			DDMDataProviderContext ddmDataProviderContext =
-				new DDMDataProviderContext(ddmFormValues);
+				DDMDataProviderContext ddmDataProviderContext =
+					new DDMDataProviderContext(ddmFormValues);
 
-			List<DDMDataProviderContextContributor>
-				ddmDataProviderContextContributors =
-					_ddmDataProviderTracker.
-						getDDMDataProviderContextContributors(
-							ddmDataProviderInstance.getType());
+				ddmDataProviderContext.setHttpServletRequest(request);
 
-			addDDMDataProviderContextParameters(
-				request, ddmDataProviderContext,
-				ddmDataProviderContextContributors);
+				List<DDMDataProviderContextContributor>
+					ddmDataProviderContextContributors =
+						_ddmDataProviderTracker.
+							getDDMDataProviderContextContributors(
+								ddmDataProviderInstance.getType());
 
-			JSONArray jsonArray = toJSONArray(
-				ddmDataProvider.getData(ddmDataProviderContext));
+				addDDMDataProviderContextParameters(
+					request, ddmDataProviderContext,
+					ddmDataProviderContextContributors);
+
+				keyValuePairs = ddmDataProvider.getData(ddmDataProviderContext);
+			}
+
+			JSONArray jsonArray = toJSONArray(keyValuePairs);
 
 			return jsonArray.toString();
 		}
