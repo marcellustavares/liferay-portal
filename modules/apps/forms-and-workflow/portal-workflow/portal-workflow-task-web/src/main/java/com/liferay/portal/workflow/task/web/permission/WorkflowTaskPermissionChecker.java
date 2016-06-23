@@ -14,12 +14,22 @@
 
 package com.liferay.portal.workflow.task.web.permission;
 
+import com.liferay.asset.kernel.model.AssetRenderer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowHandler;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskAssignee;
+
+import java.io.Serializable;
+
+import java.util.Map;
 
 /**
  * @author Adam Brandizzi
@@ -36,7 +46,8 @@ public class WorkflowTaskPermissionChecker {
 			return true;
 		}
 
-		if (!permissionChecker.isContentReviewer(
+		if (!hasViewPermissionOnAsset(workflowTask, permissionChecker) &&
+			!permissionChecker.isContentReviewer(
 				permissionChecker.getCompanyId(), groupId)) {
 
 			return false;
@@ -54,6 +65,40 @@ public class WorkflowTaskPermissionChecker {
 					workflowTaskAssignee, permissionChecker.getUserId())) {
 
 				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected boolean hasViewPermissionOnAsset(
+		WorkflowTask workflowTask, PermissionChecker permissionChecker) {
+
+		Map<String, Serializable> optionalAttributes =
+			workflowTask.getOptionalAttributes();
+
+		String className = MapUtil.getString(
+			optionalAttributes, WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME);
+
+		WorkflowHandler<?> workflowHandler =
+			WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
+
+		if (workflowHandler != null) {
+			long classPK = MapUtil.getLong(
+				optionalAttributes, WorkflowConstants.CONTEXT_ENTRY_CLASS_PK);
+
+			try {
+				AssetRenderer<?> assetRenderer =
+					workflowHandler.getAssetRenderer(classPK);
+
+				if (assetRenderer.hasViewPermission(permissionChecker)) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			catch (PortalException pe) {
 			}
 		}
 
