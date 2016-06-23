@@ -17,6 +17,8 @@ package com.liferay.portal.scripting.javascript.internal;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.scripting.ScriptingException;
 import com.liferay.portal.kernel.scripting.ScriptingExecutor;
+import com.liferay.portal.kernel.util.AggregateClassLoader;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.scripting.BaseScriptingExecutor;
 import com.liferay.portal.scripting.javascript.configuration.JavaScriptExecutorConfiguration;
 
@@ -63,7 +65,13 @@ public class JavaScriptExecutor extends BaseScriptingExecutor {
 
 			Class<?> clazz = getClass();
 
-			context.setApplicationClassLoader(clazz.getClassLoader());
+			AggregateClassLoader aggregateClassLoader =
+				new AggregateClassLoader(
+					PortalClassLoaderUtil.getClassLoader());
+
+			aggregateClassLoader.addClassLoader(clazz.getClassLoader());
+
+			context.setApplicationClassLoader(aggregateClassLoader);
 
 			for (Map.Entry<String, Object> entry : inputObjects.entrySet()) {
 				String key = entry.getKey();
