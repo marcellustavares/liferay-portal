@@ -220,7 +220,7 @@ public class JournalArticleAssetRendererFactory
 		}
 
 		if (!DDMStructurePermission.contains(
-				permissionChecker, classTypeId, ActionKeys.VIEW)) {
+				permissionChecker, groupId, classTypeId, ActionKeys.VIEW)) {
 
 			return false;
 		}

@@ -42,6 +42,19 @@ public class DDMStructurePermission extends BaseResourcePermissionChecker {
 
 	public static void check(
 			PermissionChecker permissionChecker, DDMStructure structure,
+			long groupId, String actionId)
+		throws PortalException {
+
+		if (!contains(permissionChecker, structure, groupId, null, actionId)) {
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker,
+				getStructureModelResourceName(structure.getClassNameId()),
+				structure.getStructureId(), actionId);
+		}
+	}
+
+	public static void check(
+			PermissionChecker permissionChecker, DDMStructure structure,
 			String actionId)
 		throws PortalException {
 
@@ -99,15 +112,7 @@ public class DDMStructurePermission extends BaseResourcePermissionChecker {
 
 	public static boolean contains(
 			PermissionChecker permissionChecker, DDMStructure structure,
-			String actionId)
-		throws PortalException {
-
-		return contains(permissionChecker, structure, null, actionId);
-	}
-
-	public static boolean contains(
-			PermissionChecker permissionChecker, DDMStructure structure,
-			String portletId, String actionId)
+			long groupId, String portletId, String actionId)
 		throws PortalException {
 
 		String structureModelResourceName = getStructureModelResourceName(
@@ -131,9 +136,46 @@ public class DDMStructurePermission extends BaseResourcePermissionChecker {
 			return true;
 		}
 
-		return permissionChecker.hasPermission(
+		boolean hasSiteScopePermission =  permissionChecker.hasPermission(
+			groupId, structureModelResourceName, structure.getStructureId(),
+			actionId);
+
+		boolean hasStructureScopePermission = permissionChecker.hasPermission(
 			structure.getGroupId(), structureModelResourceName,
 			structure.getStructureId(), actionId);
+
+		if (hasSiteScopePermission || hasStructureScopePermission) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, DDMStructure structure,
+			String actionId)
+		throws PortalException {
+
+		return contains(permissionChecker, structure, null, actionId);
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, DDMStructure structure,
+			String portletId, String actionId)
+		throws PortalException {
+
+		return contains(permissionChecker, structure, 0, portletId, actionId);
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, long groupId, long structureId,
+			String actionId)
+		throws PortalException {
+
+		DDMStructure structure = _ddmStructureLocalService.getStructure(
+			structureId);
+
+		return contains(permissionChecker, structure, groupId, null, actionId);
 	}
 
 	public static boolean contains(

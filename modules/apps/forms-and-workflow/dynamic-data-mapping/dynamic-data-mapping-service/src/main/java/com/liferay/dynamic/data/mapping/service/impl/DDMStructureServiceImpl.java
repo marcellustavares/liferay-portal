@@ -330,7 +330,7 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 
 		if (ddmStructure != null) {
 			DDMStructurePermission.check(
-				getPermissionChecker(), ddmStructure, ActionKeys.VIEW);
+				getPermissionChecker(), ddmStructure, groupId, ActionKeys.VIEW);
 		}
 
 		return ddmStructure;
