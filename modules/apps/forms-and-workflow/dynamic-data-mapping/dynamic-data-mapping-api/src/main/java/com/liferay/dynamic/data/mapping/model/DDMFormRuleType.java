@@ -19,12 +19,12 @@ import java.io.Serializable;
 /**
  * @author Leonardo Barros
  */
-public enum DDMFormFieldRuleType implements Serializable {
+public enum DDMFormRuleType implements Serializable {
 
 	DATA_PROVIDER("DATA_PROVIDER"), READ_ONLY("READ_ONLY"), VALUE("VALUE"),
 	VALIDATION("VALIDATION"), VISIBILITY("VISIBILITY");
 
-	public static DDMFormFieldRuleType parse(String value) {
+	public static DDMFormRuleType parse(String value) {
 		if (DATA_PROVIDER.getValue().equals(value)) {
 			return DATA_PROVIDER;
 		}
@@ -54,7 +54,7 @@ public enum DDMFormFieldRuleType implements Serializable {
 		return _value;
 	}
 
-	private DDMFormFieldRuleType(String value) {
+	private DDMFormRuleType(String value) {
 		_value = value;
 	}
 
