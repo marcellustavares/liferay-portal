@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+/**
+ * @author Brian Wing Shun Chan
+ */
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class DDMExpressionParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.3", RuntimeMetaData.VERSION); }
@@ -1835,6 +1838,7 @@ public class DDMExpressionParser extends Parser {
 		return _localctx;
 	}
 
+	@Override
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 1: return logicalOrExpression_sempred((LogicalOrExpressionContext)_localctx, predIndex);

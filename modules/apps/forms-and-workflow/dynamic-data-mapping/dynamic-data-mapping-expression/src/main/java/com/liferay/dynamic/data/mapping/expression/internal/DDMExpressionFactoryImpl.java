@@ -34,6 +34,7 @@ public class DDMExpressionFactoryImpl implements DDMExpressionFactory {
 		return new DDMExpressionImpl<>(expressionString, Boolean.class);
 	}
 
+	@Deprecated
 	@Override
 	public DDMExpression<Double> createDoubleDDMExpression(
 			String expressionString)
@@ -42,6 +43,7 @@ public class DDMExpressionFactoryImpl implements DDMExpressionFactory {
 		return new DDMExpressionImpl<>(expressionString, Double.class);
 	}
 
+	@Deprecated
 	@Override
 	public DDMExpression<Float> createFloatDDMExpression(
 			String expressionString)
@@ -50,6 +52,7 @@ public class DDMExpressionFactoryImpl implements DDMExpressionFactory {
 		return new DDMExpressionImpl<>(expressionString, Float.class);
 	}
 
+	@Deprecated
 	@Override
 	public DDMExpression<Integer> createIntegerDDMExpression(
 			String expressionString)
@@ -58,11 +61,20 @@ public class DDMExpressionFactoryImpl implements DDMExpressionFactory {
 		return new DDMExpressionImpl<>(expressionString, Integer.class);
 	}
 
+	@Deprecated
 	@Override
 	public DDMExpression<Long> createLongDDMExpression(String expressionString)
 		throws DDMExpressionException {
 
 		return new DDMExpressionImpl<>(expressionString, Long.class);
+	}
+
+	@Override
+	public DDMExpression<Number> createNumberDDMExpression(
+			String expressionString)
+		throws DDMExpressionException {
+
+		return new DDMExpressionImpl<>(expressionString, Number.class);
 	}
 
 	@Override
