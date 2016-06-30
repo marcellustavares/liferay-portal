@@ -46,104 +46,156 @@ public class DDMExpressionBaseListener implements DDMExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNumericLiteral(@NotNull DDMExpressionParser.NumericLiteralContext ctx) { }
+	@Override public void enterFunctionParams(@NotNull DDMExpressionParser.FunctionParamsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNumericLiteral(@NotNull DDMExpressionParser.NumericLiteralContext ctx) { }
+	@Override public void exitFunctionParams(@NotNull DDMExpressionParser.FunctionParamsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNotEqualsExpression(@NotNull DDMExpressionParser.NotEqualsExpressionContext ctx) { }
+	@Override public void enterToUnary(@NotNull DDMExpressionParser.ToUnaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNotEqualsExpression(@NotNull DDMExpressionParser.NotEqualsExpressionContext ctx) { }
+	@Override public void exitToUnary(@NotNull DDMExpressionParser.ToUnaryContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToBooleanOperandExpression(@NotNull DDMExpressionParser.ToBooleanOperandExpressionContext ctx) { }
+	@Override public void enterMultiplication(@NotNull DDMExpressionParser.MultiplicationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToBooleanOperandExpression(@NotNull DDMExpressionParser.ToBooleanOperandExpressionContext ctx) { }
+	@Override public void exitMultiplication(@NotNull DDMExpressionParser.MultiplicationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGreaterThanExpression(@NotNull DDMExpressionParser.GreaterThanExpressionContext ctx) { }
+	@Override public void enterOr(@NotNull DDMExpressionParser.OrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGreaterThanExpression(@NotNull DDMExpressionParser.GreaterThanExpressionContext ctx) { }
+	@Override public void exitOr(@NotNull DDMExpressionParser.OrContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNotExpression(@NotNull DDMExpressionParser.NotExpressionContext ctx) { }
+	@Override public void enterString(@NotNull DDMExpressionParser.StringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNotExpression(@NotNull DDMExpressionParser.NotExpressionContext ctx) { }
+	@Override public void exitString(@NotNull DDMExpressionParser.StringContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOrExpression(@NotNull DDMExpressionParser.OrExpressionContext ctx) { }
+	@Override public void enterEq(@NotNull DDMExpressionParser.EqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOrExpression(@NotNull DDMExpressionParser.OrExpressionContext ctx) { }
+	@Override public void exitEq(@NotNull DDMExpressionParser.EqContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAndExpression(@NotNull DDMExpressionParser.AndExpressionContext ctx) { }
+	@Override public void enterToPlus(@NotNull DDMExpressionParser.ToPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAndExpression(@NotNull DDMExpressionParser.AndExpressionContext ctx) { }
+	@Override public void exitToPlus(@NotNull DDMExpressionParser.ToPlusContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToLogicalAndExpression(@NotNull DDMExpressionParser.ToLogicalAndExpressionContext ctx) { }
+	@Override public void enterFunction(@NotNull DDMExpressionParser.FunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToLogicalAndExpression(@NotNull DDMExpressionParser.ToLogicalAndExpressionContext ctx) { }
+	@Override public void exitFunction(@NotNull DDMExpressionParser.FunctionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLessThan(@NotNull DDMExpressionParser.LessThanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLessThan(@NotNull DDMExpressionParser.LessThanContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrimaryBoolean(@NotNull DDMExpressionParser.PrimaryBooleanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimaryBoolean(@NotNull DDMExpressionParser.PrimaryBooleanContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterChangeSign(@NotNull DDMExpressionParser.ChangeSignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitChangeSign(@NotNull DDMExpressionParser.ChangeSignContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterToLogicalEntity(@NotNull DDMExpressionParser.ToLogicalEntityContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitToLogicalEntity(@NotNull DDMExpressionParser.ToLogicalEntityContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -163,78 +215,52 @@ public class DDMExpressionBaseListener implements DDMExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionCallExpression(@NotNull DDMExpressionParser.FunctionCallExpressionContext ctx) { }
+	@Override public void enterGreaterThanEQ(@NotNull DDMExpressionParser.GreaterThanEQContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionCallExpression(@NotNull DDMExpressionParser.FunctionCallExpressionContext ctx) { }
+	@Override public void exitGreaterThanEQ(@NotNull DDMExpressionParser.GreaterThanEQContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDivisionExpression(@NotNull DDMExpressionParser.DivisionExpressionContext ctx) { }
+	@Override public void enterLessThanEq(@NotNull DDMExpressionParser.LessThanEqContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDivisionExpression(@NotNull DDMExpressionParser.DivisionExpressionContext ctx) { }
+	@Override public void exitLessThanEq(@NotNull DDMExpressionParser.LessThanEqContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBooleanParenthesis(@NotNull DDMExpressionParser.BooleanParenthesisContext ctx) { }
+	@Override public void enterDivision(@NotNull DDMExpressionParser.DivisionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBooleanParenthesis(@NotNull DDMExpressionParser.BooleanParenthesisContext ctx) { }
+	@Override public void exitDivision(@NotNull DDMExpressionParser.DivisionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToBooleanUnaryExpression(@NotNull DDMExpressionParser.ToBooleanUnaryExpressionContext ctx) { }
+	@Override public void enterPlus(@NotNull DDMExpressionParser.PlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToBooleanUnaryExpression(@NotNull DDMExpressionParser.ToBooleanUnaryExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctionParameters(@NotNull DDMExpressionParser.FunctionParametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctionParameters(@NotNull DDMExpressionParser.FunctionParametersContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIntegerLiteral(@NotNull DDMExpressionParser.IntegerLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIntegerLiteral(@NotNull DDMExpressionParser.IntegerLiteralContext ctx) { }
+	@Override public void exitPlus(@NotNull DDMExpressionParser.PlusContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -254,19 +280,6 @@ public class DDMExpressionBaseListener implements DDMExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAdditionExpression(@NotNull DDMExpressionParser.AdditionExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAdditionExpression(@NotNull DDMExpressionParser.AdditionExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExpression(@NotNull DDMExpressionParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -280,52 +293,39 @@ public class DDMExpressionBaseListener implements DDMExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToEqualityExpression(@NotNull DDMExpressionParser.ToEqualityExpressionContext ctx) { }
+	@Override public void enterToUnaryNot(@NotNull DDMExpressionParser.ToUnaryNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToEqualityExpression(@NotNull DDMExpressionParser.ToEqualityExpressionContext ctx) { }
+	@Override public void exitToUnaryNot(@NotNull DDMExpressionParser.ToUnaryNotContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLogicalConstant(@NotNull DDMExpressionParser.LogicalConstantContext ctx) { }
+	@Override public void enterChangeBoolean(@NotNull DDMExpressionParser.ChangeBooleanContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLogicalConstant(@NotNull DDMExpressionParser.LogicalConstantContext ctx) { }
+	@Override public void exitChangeBoolean(@NotNull DDMExpressionParser.ChangeBooleanContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToAdditionOrSubtractionEpression(@NotNull DDMExpressionParser.ToAdditionOrSubtractionEpressionContext ctx) { }
+	@Override public void enterBooleanParen(@NotNull DDMExpressionParser.BooleanParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToAdditionOrSubtractionEpression(@NotNull DDMExpressionParser.ToAdditionOrSubtractionEpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterToFunctionCallExpression(@NotNull DDMExpressionParser.ToFunctionCallExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitToFunctionCallExpression(@NotNull DDMExpressionParser.ToFunctionCallExpressionContext ctx) { }
+	@Override public void exitBooleanParen(@NotNull DDMExpressionParser.BooleanParenContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -345,182 +345,182 @@ public class DDMExpressionBaseListener implements DDMExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSubtractionExpression(@NotNull DDMExpressionParser.SubtractionExpressionContext ctx) { }
+	@Override public void enterDouble(@NotNull DDMExpressionParser.DoubleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSubtractionExpression(@NotNull DDMExpressionParser.SubtractionExpressionContext ctx) { }
+	@Override public void exitDouble(@NotNull DDMExpressionParser.DoubleContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToNumericUnaryExpression(@NotNull DDMExpressionParser.ToNumericUnaryExpressionContext ctx) { }
+	@Override public void enterAtom(@NotNull DDMExpressionParser.AtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToNumericUnaryExpression(@NotNull DDMExpressionParser.ToNumericUnaryExpressionContext ctx) { }
+	@Override public void exitAtom(@NotNull DDMExpressionParser.AtomContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGreaterThanOrEqualsExpression(@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext ctx) { }
+	@Override public void enterInteger(@NotNull DDMExpressionParser.IntegerContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGreaterThanOrEqualsExpression(@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext ctx) { }
+	@Override public void exitInteger(@NotNull DDMExpressionParser.IntegerContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToNumericTerm(@NotNull DDMExpressionParser.ToNumericTermContext ctx) { }
+	@Override public void enterToEquality(@NotNull DDMExpressionParser.ToEqualityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToNumericTerm(@NotNull DDMExpressionParser.ToNumericTermContext ctx) { }
+	@Override public void exitToEquality(@NotNull DDMExpressionParser.ToEqualityContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNumericParenthesis(@NotNull DDMExpressionParser.NumericParenthesisContext ctx) { }
+	@Override public void enterAnd(@NotNull DDMExpressionParser.AndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNumericParenthesis(@NotNull DDMExpressionParser.NumericParenthesisContext ctx) { }
+	@Override public void exitAnd(@NotNull DDMExpressionParser.AndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToLogicalTerm(@NotNull DDMExpressionParser.ToLogicalTermContext ctx) { }
+	@Override public void enterFunctionCall(@NotNull DDMExpressionParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToLogicalTerm(@NotNull DDMExpressionParser.ToLogicalTermContext ctx) { }
+	@Override public void exitFunctionCall(@NotNull DDMExpressionParser.FunctionCallContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStringLiteral(@NotNull DDMExpressionParser.StringLiteralContext ctx) { }
+	@Override public void enterTocomparison(@NotNull DDMExpressionParser.TocomparisonContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStringLiteral(@NotNull DDMExpressionParser.StringLiteralContext ctx) { }
+	@Override public void exitTocomparison(@NotNull DDMExpressionParser.TocomparisonContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMinusExpression(@NotNull DDMExpressionParser.MinusExpressionContext ctx) { }
+	@Override public void enterGreater(@NotNull DDMExpressionParser.GreaterContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMinusExpression(@NotNull DDMExpressionParser.MinusExpressionContext ctx) { }
+	@Override public void exitGreater(@NotNull DDMExpressionParser.GreaterContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFloatingPointLiteral(@NotNull DDMExpressionParser.FloatingPointLiteralContext ctx) { }
+	@Override public void enterNEQ(@NotNull DDMExpressionParser.NEQContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFloatingPointLiteral(@NotNull DDMExpressionParser.FloatingPointLiteralContext ctx) { }
+	@Override public void exitNEQ(@NotNull DDMExpressionParser.NEQContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterToComparisonExpression(@NotNull DDMExpressionParser.ToComparisonExpressionContext ctx) { }
+	@Override public void enterToLiteral(@NotNull DDMExpressionParser.ToLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitToComparisonExpression(@NotNull DDMExpressionParser.ToComparisonExpressionContext ctx) { }
+	@Override public void exitToLiteral(@NotNull DDMExpressionParser.ToLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLessThanOrEqualsExpression(@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext ctx) { }
+	@Override public void enterMinus(@NotNull DDMExpressionParser.MinusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLessThanOrEqualsExpression(@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext ctx) { }
+	@Override public void exitMinus(@NotNull DDMExpressionParser.MinusContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMultiplicationExpression(@NotNull DDMExpressionParser.MultiplicationExpressionContext ctx) { }
+	@Override public void enterToLogicAnd(@NotNull DDMExpressionParser.ToLogicAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMultiplicationExpression(@NotNull DDMExpressionParser.MultiplicationExpressionContext ctx) { }
+	@Override public void exitToLogicAnd(@NotNull DDMExpressionParser.ToLogicAndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEqualsExpression(@NotNull DDMExpressionParser.EqualsExpressionContext ctx) { }
+	@Override public void enterParen(@NotNull DDMExpressionParser.ParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEqualsExpression(@NotNull DDMExpressionParser.EqualsExpressionContext ctx) { }
+	@Override public void exitParen(@NotNull DDMExpressionParser.ParenContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLessThanExpression(@NotNull DDMExpressionParser.LessThanExpressionContext ctx) { }
+	@Override public void enterLogicalConst(@NotNull DDMExpressionParser.LogicalConstContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLessThanExpression(@NotNull DDMExpressionParser.LessThanExpressionContext ctx) { }
+	@Override public void exitLogicalConst(@NotNull DDMExpressionParser.LogicalConstContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
