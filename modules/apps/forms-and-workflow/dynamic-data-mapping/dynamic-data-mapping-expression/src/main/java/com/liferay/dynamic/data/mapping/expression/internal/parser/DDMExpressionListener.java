@@ -26,233 +26,248 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 public interface DDMExpressionListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code ToMultOrDiv}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
 	 * @param ctx the parse tree
 	 */
 	void enterToMultOrDiv(@NotNull DDMExpressionParser.ToMultOrDivContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code ToMultOrDiv}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
 	 * @param ctx the parse tree
 	 */
 	void exitToMultOrDiv(@NotNull DDMExpressionParser.ToMultOrDivContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code NumericLiteral}
-	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * Enter a parse tree produced by {@link DDMExpressionParser#functionParams}.
 	 * @param ctx the parse tree
 	 */
-	void enterNumericLiteral(@NotNull DDMExpressionParser.NumericLiteralContext ctx);
+	void enterFunctionParams(@NotNull DDMExpressionParser.FunctionParamsContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code NumericLiteral}
-	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * Exit a parse tree produced by {@link DDMExpressionParser#functionParams}.
 	 * @param ctx the parse tree
 	 */
-	void exitNumericLiteral(@NotNull DDMExpressionParser.NumericLiteralContext ctx);
+	void exitFunctionParams(@NotNull DDMExpressionParser.FunctionParamsContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code NotEqualsExpression}
+	 * Enter a parse tree produced by the {@code ToUnary}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterToUnary(@NotNull DDMExpressionParser.ToUnaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ToUnary}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitToUnary(@NotNull DDMExpressionParser.ToUnaryContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Multiplication}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiplication(@NotNull DDMExpressionParser.MultiplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Multiplication}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiplication(@NotNull DDMExpressionParser.MultiplicationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Or}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterOr(@NotNull DDMExpressionParser.OrContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Or}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitOr(@NotNull DDMExpressionParser.OrContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code String}
+	 * labeled alternative in {@link DDMExpressionParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterString(@NotNull DDMExpressionParser.StringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code String}
+	 * labeled alternative in {@link DDMExpressionParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitString(@NotNull DDMExpressionParser.StringContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Eq}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterNotEqualsExpression(@NotNull DDMExpressionParser.NotEqualsExpressionContext ctx);
+	void enterEq(@NotNull DDMExpressionParser.EqContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code NotEqualsExpression}
+	 * Exit a parse tree produced by the {@code Eq}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitNotEqualsExpression(@NotNull DDMExpressionParser.NotEqualsExpressionContext ctx);
+	void exitEq(@NotNull DDMExpressionParser.EqContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToBooleanOperandExpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * Enter a parse tree produced by the {@code ToPlus}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterToBooleanOperandExpression(@NotNull DDMExpressionParser.ToBooleanOperandExpressionContext ctx);
+	void enterToPlus(@NotNull DDMExpressionParser.ToPlusContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToBooleanOperandExpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * Exit a parse tree produced by the {@code ToPlus}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitToBooleanOperandExpression(@NotNull DDMExpressionParser.ToBooleanOperandExpressionContext ctx);
+	void exitToPlus(@NotNull DDMExpressionParser.ToPlusContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code GreaterThanExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Enter a parse tree produced by the {@code Function}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterGreaterThanExpression(@NotNull DDMExpressionParser.GreaterThanExpressionContext ctx);
+	void enterFunction(@NotNull DDMExpressionParser.FunctionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code GreaterThanExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Exit a parse tree produced by the {@code Function}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitGreaterThanExpression(@NotNull DDMExpressionParser.GreaterThanExpressionContext ctx);
+	void exitFunction(@NotNull DDMExpressionParser.FunctionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * Enter a parse tree produced by the {@code LessThan}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterNotExpression(@NotNull DDMExpressionParser.NotExpressionContext ctx);
+	void enterLessThan(@NotNull DDMExpressionParser.LessThanContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * Exit a parse tree produced by the {@code LessThan}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitNotExpression(@NotNull DDMExpressionParser.NotExpressionContext ctx);
+	void exitLessThan(@NotNull DDMExpressionParser.LessThanContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code OrExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * Enter a parse tree produced by the {@code PrimaryBoolean}
+	 * labeled alternative in {@link DDMExpressionParser#unaryNot}.
 	 * @param ctx the parse tree
 	 */
-	void enterOrExpression(@NotNull DDMExpressionParser.OrExpressionContext ctx);
+	void enterPrimaryBoolean(@NotNull DDMExpressionParser.PrimaryBooleanContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code OrExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * Exit a parse tree produced by the {@code PrimaryBoolean}
+	 * labeled alternative in {@link DDMExpressionParser#unaryNot}.
 	 * @param ctx the parse tree
 	 */
-	void exitOrExpression(@NotNull DDMExpressionParser.OrExpressionContext ctx);
+	void exitPrimaryBoolean(@NotNull DDMExpressionParser.PrimaryBooleanContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code AndExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * Enter a parse tree produced by the {@code ChangeSign}
+	 * labeled alternative in {@link DDMExpressionParser#unaryMinus}.
 	 * @param ctx the parse tree
 	 */
-	void enterAndExpression(@NotNull DDMExpressionParser.AndExpressionContext ctx);
+	void enterChangeSign(@NotNull DDMExpressionParser.ChangeSignContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code AndExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * Exit a parse tree produced by the {@code ChangeSign}
+	 * labeled alternative in {@link DDMExpressionParser#unaryMinus}.
 	 * @param ctx the parse tree
 	 */
-	void exitAndExpression(@NotNull DDMExpressionParser.AndExpressionContext ctx);
+	void exitChangeSign(@NotNull DDMExpressionParser.ChangeSignContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToLogicalAndExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * Enter a parse tree produced by the {@code ToLogicalEntity}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterToLogicalAndExpression(@NotNull DDMExpressionParser.ToLogicalAndExpressionContext ctx);
+	void enterToLogicalEntity(@NotNull DDMExpressionParser.ToLogicalEntityContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToLogicalAndExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * Exit a parse tree produced by the {@code ToLogicalEntity}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitToLogicalAndExpression(@NotNull DDMExpressionParser.ToLogicalAndExpressionContext ctx);
+	void exitToLogicalEntity(@NotNull DDMExpressionParser.ToLogicalEntityContext ctx);
 
 	/**
 	 * Enter a parse tree produced by the {@code Primary}
-	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * labeled alternative in {@link DDMExpressionParser#unaryMinus}.
 	 * @param ctx the parse tree
 	 */
 	void enterPrimary(@NotNull DDMExpressionParser.PrimaryContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code Primary}
-	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * labeled alternative in {@link DDMExpressionParser#unaryMinus}.
 	 * @param ctx the parse tree
 	 */
 	void exitPrimary(@NotNull DDMExpressionParser.PrimaryContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DDMExpressionParser#functionCallExpression}.
+	 * Enter a parse tree produced by the {@code GreaterThanEQ}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctionCallExpression(@NotNull DDMExpressionParser.FunctionCallExpressionContext ctx);
+	void enterGreaterThanEQ(@NotNull DDMExpressionParser.GreaterThanEQContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DDMExpressionParser#functionCallExpression}.
+	 * Exit a parse tree produced by the {@code GreaterThanEQ}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctionCallExpression(@NotNull DDMExpressionParser.FunctionCallExpressionContext ctx);
+	void exitGreaterThanEQ(@NotNull DDMExpressionParser.GreaterThanEQContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code DivisionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
+	 * Enter a parse tree produced by the {@code LessThanEq}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterDivisionExpression(@NotNull DDMExpressionParser.DivisionExpressionContext ctx);
+	void enterLessThanEq(@NotNull DDMExpressionParser.LessThanEqContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code DivisionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
+	 * Exit a parse tree produced by the {@code LessThanEq}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitDivisionExpression(@NotNull DDMExpressionParser.DivisionExpressionContext ctx);
+	void exitLessThanEq(@NotNull DDMExpressionParser.LessThanEqContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code BooleanParenthesis}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * Enter a parse tree produced by the {@code Division}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
 	 * @param ctx the parse tree
 	 */
-	void enterBooleanParenthesis(@NotNull DDMExpressionParser.BooleanParenthesisContext ctx);
+	void enterDivision(@NotNull DDMExpressionParser.DivisionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code BooleanParenthesis}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * Exit a parse tree produced by the {@code Division}
+	 * labeled alternative in {@link DDMExpressionParser#multOrDiv}.
 	 * @param ctx the parse tree
 	 */
-	void exitBooleanParenthesis(@NotNull DDMExpressionParser.BooleanParenthesisContext ctx);
+	void exitDivision(@NotNull DDMExpressionParser.DivisionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToBooleanUnaryExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Enter a parse tree produced by the {@code Plus}
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
 	 * @param ctx the parse tree
 	 */
-	void enterToBooleanUnaryExpression(@NotNull DDMExpressionParser.ToBooleanUnaryExpressionContext ctx);
+	void enterPlus(@NotNull DDMExpressionParser.PlusContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToBooleanUnaryExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Exit a parse tree produced by the {@code Plus}
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
 	 * @param ctx the parse tree
 	 */
-	void exitToBooleanUnaryExpression(@NotNull DDMExpressionParser.ToBooleanUnaryExpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DDMExpressionParser#functionParameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionParameters(@NotNull DDMExpressionParser.FunctionParametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DDMExpressionParser#functionParameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionParameters(@NotNull DDMExpressionParser.FunctionParametersContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code IntegerLiteral}
-	 * labeled alternative in {@link DDMExpressionParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterIntegerLiteral(@NotNull DDMExpressionParser.IntegerLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code IntegerLiteral}
-	 * labeled alternative in {@link DDMExpressionParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitIntegerLiteral(@NotNull DDMExpressionParser.IntegerLiteralContext ctx);
+	void exitPlus(@NotNull DDMExpressionParser.PlusContext ctx);
 
 	/**
 	 * Enter a parse tree produced by the {@code LogicalVariable}
-	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * labeled alternative in {@link DDMExpressionParser#logical_entity}.
 	 * @param ctx the parse tree
 	 */
 	void enterLogicalVariable(@NotNull DDMExpressionParser.LogicalVariableContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code LogicalVariable}
-	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * labeled alternative in {@link DDMExpressionParser#logical_entity}.
 	 * @param ctx the parse tree
 	 */
 	void exitLogicalVariable(@NotNull DDMExpressionParser.LogicalVariableContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code AdditionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterAdditionExpression(@NotNull DDMExpressionParser.AdditionExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code AdditionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitAdditionExpression(@NotNull DDMExpressionParser.AdditionExpressionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DDMExpressionParser#expression}.
@@ -266,249 +281,234 @@ public interface DDMExpressionListener extends ParseTreeListener {
 	void exitExpression(@NotNull DDMExpressionParser.ExpressionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToEqualityExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * Enter a parse tree produced by the {@code ToUnaryNot}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterToEqualityExpression(@NotNull DDMExpressionParser.ToEqualityExpressionContext ctx);
+	void enterToUnaryNot(@NotNull DDMExpressionParser.ToUnaryNotContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToEqualityExpression}
-	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * Exit a parse tree produced by the {@code ToUnaryNot}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitToEqualityExpression(@NotNull DDMExpressionParser.ToEqualityExpressionContext ctx);
+	void exitToUnaryNot(@NotNull DDMExpressionParser.ToUnaryNotContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code LogicalConstant}
-	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * Enter a parse tree produced by the {@code ChangeBoolean}
+	 * labeled alternative in {@link DDMExpressionParser#unaryNot}.
 	 * @param ctx the parse tree
 	 */
-	void enterLogicalConstant(@NotNull DDMExpressionParser.LogicalConstantContext ctx);
+	void enterChangeBoolean(@NotNull DDMExpressionParser.ChangeBooleanContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LogicalConstant}
-	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * Exit a parse tree produced by the {@code ChangeBoolean}
+	 * labeled alternative in {@link DDMExpressionParser#unaryNot}.
 	 * @param ctx the parse tree
 	 */
-	void exitLogicalConstant(@NotNull DDMExpressionParser.LogicalConstantContext ctx);
+	void exitChangeBoolean(@NotNull DDMExpressionParser.ChangeBooleanContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToAdditionOrSubtractionEpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * Enter a parse tree produced by the {@code BooleanParen}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterToAdditionOrSubtractionEpression(@NotNull DDMExpressionParser.ToAdditionOrSubtractionEpressionContext ctx);
+	void enterBooleanParen(@NotNull DDMExpressionParser.BooleanParenContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToAdditionOrSubtractionEpression}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * Exit a parse tree produced by the {@code BooleanParen}
+	 * labeled alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitToAdditionOrSubtractionEpression(@NotNull DDMExpressionParser.ToAdditionOrSubtractionEpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code ToFunctionCallExpression}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterToFunctionCallExpression(@NotNull DDMExpressionParser.ToFunctionCallExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ToFunctionCallExpression}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitToFunctionCallExpression(@NotNull DDMExpressionParser.ToFunctionCallExpressionContext ctx);
+	void exitBooleanParen(@NotNull DDMExpressionParser.BooleanParenContext ctx);
 
 	/**
 	 * Enter a parse tree produced by the {@code NumericVariable}
-	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * labeled alternative in {@link DDMExpressionParser#numeric_entity}.
 	 * @param ctx the parse tree
 	 */
 	void enterNumericVariable(@NotNull DDMExpressionParser.NumericVariableContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code NumericVariable}
-	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * labeled alternative in {@link DDMExpressionParser#numeric_entity}.
 	 * @param ctx the parse tree
 	 */
 	void exitNumericVariable(@NotNull DDMExpressionParser.NumericVariableContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code SubtractionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubtractionExpression(@NotNull DDMExpressionParser.SubtractionExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code SubtractionExpression}
-	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubtractionExpression(@NotNull DDMExpressionParser.SubtractionExpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code ToNumericUnaryExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterToNumericUnaryExpression(@NotNull DDMExpressionParser.ToNumericUnaryExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ToNumericUnaryExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitToNumericUnaryExpression(@NotNull DDMExpressionParser.ToNumericUnaryExpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code GreaterThanOrEqualsExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterGreaterThanOrEqualsExpression(@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code GreaterThanOrEqualsExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitGreaterThanOrEqualsExpression(@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code ToNumericTerm}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterToNumericTerm(@NotNull DDMExpressionParser.ToNumericTermContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ToNumericTerm}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitToNumericTerm(@NotNull DDMExpressionParser.ToNumericTermContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code NumericParenthesis}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterNumericParenthesis(@NotNull DDMExpressionParser.NumericParenthesisContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code NumericParenthesis}
-	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitNumericParenthesis(@NotNull DDMExpressionParser.NumericParenthesisContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code ToLogicalTerm}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterToLogicalTerm(@NotNull DDMExpressionParser.ToLogicalTermContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ToLogicalTerm}
-	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitToLogicalTerm(@NotNull DDMExpressionParser.ToLogicalTermContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code StringLiteral}
+	 * Enter a parse tree produced by the {@code Double}
 	 * labeled alternative in {@link DDMExpressionParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void enterStringLiteral(@NotNull DDMExpressionParser.StringLiteralContext ctx);
+	void enterDouble(@NotNull DDMExpressionParser.DoubleContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code StringLiteral}
+	 * Exit a parse tree produced by the {@code Double}
 	 * labeled alternative in {@link DDMExpressionParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void exitStringLiteral(@NotNull DDMExpressionParser.StringLiteralContext ctx);
+	void exitDouble(@NotNull DDMExpressionParser.DoubleContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code MinusExpression}
-	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * Enter a parse tree produced by the {@code Atom}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterMinusExpression(@NotNull DDMExpressionParser.MinusExpressionContext ctx);
+	void enterAtom(@NotNull DDMExpressionParser.AtomContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code MinusExpression}
-	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * Exit a parse tree produced by the {@code Atom}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitMinusExpression(@NotNull DDMExpressionParser.MinusExpressionContext ctx);
+	void exitAtom(@NotNull DDMExpressionParser.AtomContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code FloatingPointLiteral}
+	 * Enter a parse tree produced by the {@code Integer}
 	 * labeled alternative in {@link DDMExpressionParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void enterFloatingPointLiteral(@NotNull DDMExpressionParser.FloatingPointLiteralContext ctx);
+	void enterInteger(@NotNull DDMExpressionParser.IntegerContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code FloatingPointLiteral}
+	 * Exit a parse tree produced by the {@code Integer}
 	 * labeled alternative in {@link DDMExpressionParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void exitFloatingPointLiteral(@NotNull DDMExpressionParser.FloatingPointLiteralContext ctx);
+	void exitInteger(@NotNull DDMExpressionParser.IntegerContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code ToComparisonExpression}
+	 * Enter a parse tree produced by the {@code ToEquality}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterToEquality(@NotNull DDMExpressionParser.ToEqualityContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ToEquality}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitToEquality(@NotNull DDMExpressionParser.ToEqualityContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code And}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAnd(@NotNull DDMExpressionParser.AndContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code And}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAnd(@NotNull DDMExpressionParser.AndContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DDMExpressionParser#functionCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionCall(@NotNull DDMExpressionParser.FunctionCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DDMExpressionParser#functionCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionCall(@NotNull DDMExpressionParser.FunctionCallContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Tocomparison}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterToComparisonExpression(@NotNull DDMExpressionParser.ToComparisonExpressionContext ctx);
+	void enterTocomparison(@NotNull DDMExpressionParser.TocomparisonContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ToComparisonExpression}
+	 * Exit a parse tree produced by the {@code Tocomparison}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitToComparisonExpression(@NotNull DDMExpressionParser.ToComparisonExpressionContext ctx);
+	void exitTocomparison(@NotNull DDMExpressionParser.TocomparisonContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code LessThanOrEqualsExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Enter a parse tree produced by the {@code Greater}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterLessThanOrEqualsExpression(@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext ctx);
+	void enterGreater(@NotNull DDMExpressionParser.GreaterContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LessThanOrEqualsExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Exit a parse tree produced by the {@code Greater}
+	 * labeled alternative in {@link DDMExpressionParser#comparison_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitLessThanOrEqualsExpression(@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext ctx);
+	void exitGreater(@NotNull DDMExpressionParser.GreaterContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code MultiplicationExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiplicationExpression(@NotNull DDMExpressionParser.MultiplicationExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code MultiplicationExpression}
-	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiplicationExpression(@NotNull DDMExpressionParser.MultiplicationExpressionContext ctx);
-
-	/**
-	 * Enter a parse tree produced by the {@code EqualsExpression}
+	 * Enter a parse tree produced by the {@code NEQ}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterEqualsExpression(@NotNull DDMExpressionParser.EqualsExpressionContext ctx);
+	void enterNEQ(@NotNull DDMExpressionParser.NEQContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code EqualsExpression}
+	 * Exit a parse tree produced by the {@code NEQ}
 	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitEqualsExpression(@NotNull DDMExpressionParser.EqualsExpressionContext ctx);
+	void exitNEQ(@NotNull DDMExpressionParser.NEQContext ctx);
 
 	/**
-	 * Enter a parse tree produced by the {@code LessThanExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Enter a parse tree produced by the {@code ToLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#numeric_entity}.
 	 * @param ctx the parse tree
 	 */
-	void enterLessThanExpression(@NotNull DDMExpressionParser.LessThanExpressionContext ctx);
+	void enterToLiteral(@NotNull DDMExpressionParser.ToLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LessThanExpression}
-	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * Exit a parse tree produced by the {@code ToLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#numeric_entity}.
 	 * @param ctx the parse tree
 	 */
-	void exitLessThanExpression(@NotNull DDMExpressionParser.LessThanExpressionContext ctx);
+	void exitToLiteral(@NotNull DDMExpressionParser.ToLiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Minus}
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
+	 * @param ctx the parse tree
+	 */
+	void enterMinus(@NotNull DDMExpressionParser.MinusContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Minus}
+	 * labeled alternative in {@link DDMExpressionParser#plusOrMinus}.
+	 * @param ctx the parse tree
+	 */
+	void exitMinus(@NotNull DDMExpressionParser.MinusContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code ToLogicAnd}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterToLogicAnd(@NotNull DDMExpressionParser.ToLogicAndContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ToLogicAnd}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitToLogicAnd(@NotNull DDMExpressionParser.ToLogicAndContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code Paren}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParen(@NotNull DDMExpressionParser.ParenContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Paren}
+	 * labeled alternative in {@link DDMExpressionParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParen(@NotNull DDMExpressionParser.ParenContext ctx);
+
+	/**
+	 * Enter a parse tree produced by the {@code LogicalConst}
+	 * labeled alternative in {@link DDMExpressionParser#logical_entity}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicalConst(@NotNull DDMExpressionParser.LogicalConstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LogicalConst}
+	 * labeled alternative in {@link DDMExpressionParser#logical_entity}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicalConst(@NotNull DDMExpressionParser.LogicalConstContext ctx);
 }

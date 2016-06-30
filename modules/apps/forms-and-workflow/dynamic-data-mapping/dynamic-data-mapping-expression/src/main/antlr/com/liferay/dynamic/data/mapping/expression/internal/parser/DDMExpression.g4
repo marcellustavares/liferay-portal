@@ -22,218 +22,201 @@ options {
 package com.liferay.dynamic.data.mapping.expression.internal.parser;
 }
 
+/* Lexer */
+
+AND : '&&' ; //  substituir para and
+OR  : '||' ; //  substituir para or
+
+//TRUE  : 'true' ;
+//FALSE : 'false' ;
+
+MULT  : '*' ;
+DIV   : '/' ;
+PLUS  : '+' ;
+MINUS : '-' ;
+
+GT : '>' ;
+GE : '>=' ;
+LT : '<' ;
+LE : '<=' ;
+EQ : '==' ; //  substituir para =
+NEQ : '!=' ; //  substituir para <>
+POW : '^' ;
+
+NOT : '!' ; //  substituir para not
+COMMA : ',' ;
+
+LPAREN : '(' ;
+RPAREN : ')' ;
+
+//DECIMAL : [0-9]+('.'[0-9]+)? ;
+IDENTIFIER : [a-zA-Z_][a-zA-Z_0-9]* ;
+STRING : '"' (~[\\"])* '"';
+
+WS : [ \r\t\u000C\n]+ -> skip ;
+
+
+/* Parser */
+
 expression
 	: logicalOrExpression EOF
+	//: plusOrMinus EOF
 	;
-
 logicalOrExpression
-	: logicalOrExpression OR logicalAndExpression # OrExpression
-	| logicalAndExpression # ToLogicalAndExpression
+	: logicalOrExpression OR logicalAndExpression # Or
+	| logicalAndExpression # ToLogicAnd
 	;
 
 logicalAndExpression
-	: logicalAndExpression AND equalityExpression # AndExpression
-	| equalityExpression # ToEqualityExpression
+	: logicalAndExpression AND equalityExpression #And
+	| equalityExpression # ToEquality
 	;
 
 equalityExpression
-	: equalityExpression EQ comparisonExpression # EqualsExpression
-	| equalityExpression NEQ comparisonExpression # NotEqualsExpression
-	| comparisonExpression #ToComparisonExpression
+	: equalityExpression EQ comparison_expr # Eq
+	| equalityExpression NEQ comparison_expr # NEQ
+	| comparison_expr #Tocomparison
 	;
 
-comparisonExpression
-	: comparisonExpression GT additionOrSubtractionExpression # GreaterThanExpression
-	| comparisonExpression GE additionOrSubtractionExpression # GreaterThanOrEqualsExpression
-	| comparisonExpression LT additionOrSubtractionExpression # LessThanExpression
-	| comparisonExpression LE additionOrSubtractionExpression # LessThanOrEqualsExpression
-	| booleanUnaryExpression #ToBooleanUnaryExpression
+comparison_expr
+	: comparison_expr GT plusOrMinus # Greater
+	| comparison_expr GE plusOrMinus # GreaterThanEQ
+	| comparison_expr LT plusOrMinus # LessThan
+	| comparison_expr LE plusOrMinus # LessThanEq
+	| unaryNot #ToUnaryNot
 	;
 
-booleanUnaryExpression
-	: NOT booleanUnaryExpression # NotExpression
-	| booleanOperandExpression # ToBooleanOperandExpression
+unaryNot
+	: NOT unaryNot # ChangeBoolean
+	| primaryBooleanExpression # PrimaryBoolean
 	;
 
-booleanOperandExpression
-	: logicalTerm # ToLogicalTerm
-	| additionOrSubtractionExpression # ToAdditionOrSubtractionEpression
-	| LPAREN logicalOrExpression RPAREN # BooleanParenthesis
+primaryBooleanExpression
+	: logical_entity #ToLogicalEntity
+	| plusOrMinus #ToPlus
+	| LPAREN logicalOrExpression RPAREN #BooleanParen
 	;
 
-logicalTerm
-	: (TRUE | FALSE) # LogicalConstant
-	| IDENTIFIER # LogicalVariable
-	;
-
-additionOrSubtractionExpression
- 	: additionOrSubtractionExpression PLUS multiplicationOrDivisionExpression # AdditionExpression
-    | additionOrSubtractionExpression MINUS multiplicationOrDivisionExpression # SubtractionExpression
-    | multiplicationOrDivisionExpression         # ToMultOrDiv
+plusOrMinus
+ 	: plusOrMinus PLUS multOrDiv    # Plus
+    | plusOrMinus MINUS multOrDiv   # Minus
+    | multOrDiv         # ToMultOrDiv
     ;
 
-multiplicationOrDivisionExpression
-    : multiplicationOrDivisionExpression MULT numericUnaryEpression # MultiplicationExpression
-    | multiplicationOrDivisionExpression DIV numericUnaryEpression  # DivisionExpression
-    | numericUnaryEpression # ToNumericUnaryExpression
+multOrDiv
+    : multOrDiv MULT unaryMinus # Multiplication
+    | multOrDiv DIV unaryMinus  # Division
+    | unaryMinus  # ToUnary
     ;
 
-numericUnaryEpression
-    : MINUS numericUnaryEpression # MinusExpression
-    | numericOperandExpression # Primary
+//pow
+//    : unaryMinus (POW pow)? # Power
+//    ;
+
+unaryMinus
+    : MINUS unaryMinus # ChangeSign
+    | primaryExpression # Primary
     ;
 
-numericOperandExpression
-	: numericTerm # ToNumericTerm
-	| functionCallExpression # ToFunctionCallExpression
-	| LPAREN additionOrSubtractionExpression RPAREN # NumericParenthesis
+functionCall
+	: functionName=IDENTIFIER LPAREN functionParams? RPAREN
 	;
 
-numericTerm
-	: literal # NumericLiteral
-	| IDENTIFIER # NumericVariable
-	;
-
-functionCallExpression
-	: functionName=IDENTIFIER LPAREN functionParameters? RPAREN
-	;
-
-functionParameters
+functionParams
 	: logicalOrExpression (COMMA logicalOrExpression)*
 	;
 
+primaryExpression
+	: numeric_entity # Atom
+	| functionCall #Function
+	| LPAREN plusOrMinus RPAREN # Paren
+	;
+
+logical_entity : ('true' | 'TRUE' | 'false' | 'FALSE') # LogicalConst
+               | IDENTIFIER     # LogicalVariable
+               ;
+
+numeric_entity //: DECIMAL              # NumericConst
+			   : literal #ToLiteral
+               | IDENTIFIER           # NumericVariable
+               //| STRING				 # StringConst
+               ;
+
+
 literal
-	: FloatingPointLiteral # FloatingPointLiteral
-	| IntegerLiteral # IntegerLiteral
-	| STRING # StringLiteral
+	:FloatingPointLiteral # Double
+	| IntegerLiteral # Integer
+	| STRING # String
 	;
 
 IntegerLiteral
-    : Digits
+    :   DecimalIntegerLiteral
     ;
 
-FloatingPointLiteral
-    : DecimalFloatingPointLiteral
+fragment
+DecimalIntegerLiteral
+    :   DecimalNumeral IntegerTypeSuffix?
     ;
 
-DecimalFloatingPointLiteral
-	: Digits '.' Digits? ExponentPart?
-	| '.' Digits ExponentPart?
-	| Digits ExponentPart
-	;
+fragment
+IntegerTypeSuffix
+    :   [lL]
+    ;
 
-AND
-	: '&&'
-	| '&'
-	| 'and'
-	| 'AND'
-	;
+fragment
+DecimalNumeral
+    :   '0'
+    |   NonZeroDigit (Digits? | Underscores Digits)
+    ;
 
-COMMA
-	: ','
-	;
-
-DIV	: '/'
-	;
-
-EQ
-	: '=='
-	| '='
-	;
-
-FALSE
-	: 'false'
-	| 'FALSE'
-	;
-
-GE
-	: '>='
-	;
-
-GT
-	: '>'
-	;
-
-LE
-	: '<='
-	;
-
-LPAREN
-	: '('
-	;
-
-LT
-	: '<'
-	;
-
-MINUS
-	: '-'
-	;
-
-MULT
-	: '*'
-	;
-
-NEQ
-	: '!='
-	| '<>'
-	;
-
-NOT
-	: 'not'
-	| 'NOT'
-	;
-
-OR
-	: '||'
-	| '|'
-	| 'or'
-	| 'OR'
-	;
-
-PLUS
-	: '+'
-	;
-
-RPAREN
-	: ')'
-	;
-
-STRING
-	: '"' (~[\\"])* '"'
-	;
-
-TRUE
-	: 'true'
-	| 'TRUE'
-	;
-
-IDENTIFIER
-	: [a-zA-Z_][a-zA-Z_0-9]*
-	;
-
-WS
-	: [ \r\t\u000C\n]+ -> skip
-	;
 
 fragment
 Digits
-    : Digit+
+    :   Digit (DigitOrUnderscore* Digit)?
     ;
 
 fragment
 Digit
-	: [0-9]
-	;
+    :   '0'
+    |   NonZeroDigit
+    ;
 
 fragment
-ExponentIndicator
-    : [eE]
+NonZeroDigit
+    :   [1-9]
+    ;
+
+fragment
+DigitOrUnderscore
+    :   Digit
+    |   '_'
+    ;
+
+fragment
+Underscores
+    :   '_'+
+    ;
+
+FloatingPointLiteral
+    :   DecimalFloatingPointLiteral
+    ;
+
+fragment
+DecimalFloatingPointLiteral
+    :   Digits '.' Digits? ExponentPart? FloatTypeSuffix?
+    |   '.' Digits ExponentPart? FloatTypeSuffix?
+    |   Digits ExponentPart FloatTypeSuffix?
+    |   Digits FloatTypeSuffix
     ;
 
 fragment
 ExponentPart
     :   ExponentIndicator SignedInteger
+    ;
+
+fragment
+ExponentIndicator
+    :   [eE]
     ;
 
 fragment
@@ -244,4 +227,9 @@ SignedInteger
 fragment
 Sign
     :   [+-]
+    ;
+
+fragment
+FloatTypeSuffix
+    :   [fFdD]
     ;
