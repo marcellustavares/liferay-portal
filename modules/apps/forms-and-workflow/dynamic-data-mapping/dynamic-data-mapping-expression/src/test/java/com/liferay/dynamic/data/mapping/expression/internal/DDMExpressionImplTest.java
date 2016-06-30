@@ -18,6 +18,10 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,6 +33,44 @@ public class DDMExpressionImplTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmptyExpressionString() throws Exception {
 		new DDMExpressionImpl<>(null, Number.class);
+	}
+
+	@Test
+	public void testGetFunctionNames() throws Exception {
+		DDMExpressionImpl ddmExpressionImpl =
+			new DDMExpressionImpl<>("pow(pow(log(y))) + sum(3, 4)",
+				Number.class);
+
+		Set<String> expectedFunctionNames = new HashSet<>(
+			Arrays.asList("pow", "log", "sum"));
+
+		Assert.assertEquals(
+			expectedFunctionNames, ddmExpressionImpl.getFunctionNames());
+	}
+
+	@Test
+	public void testGetVariableNames1() throws Exception {
+		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
+			"(var1 + var2_) * __var3", Number.class);
+
+		Set<String> expectedVariableNames = new HashSet<>(
+			Arrays.asList("var1", "var2_", "__var3"));
+
+		Assert.assertEquals(
+			expectedVariableNames, ddmExpressionImpl.getVariableNames());
+	}
+
+	@Test
+	public void testGetVariableNames2() throws Exception {
+		DDMExpressionImpl ddmExpressionImpl =
+			new DDMExpressionImpl<>("(((1+2)*(1-2/x))+log(1*6-y))",
+				Number.class);
+
+		Set<String> expectedVariableNames = new HashSet<>(
+			Arrays.asList("x", "y"));
+
+		Assert.assertEquals(
+			expectedVariableNames, ddmExpressionImpl.getVariableNames());
 	}
 
 	@Test(expected = DDMExpressionException.InvalidSyntax.class)
