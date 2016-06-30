@@ -20,12 +20,13 @@ import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpression
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.NotNull;
 
 /**
  * @author Marcellus Tavares
@@ -33,128 +34,143 @@ import java.util.Map;
 public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 
 	public DDMExpressionVisitorImpl() {
-		_functions.put("between", new DDMExpressionFunction() {
+		_functions.put(
+			"between",
+			new DDMExpressionFunction() {
 
-			public Object evaluate(Object... parameters) {
-				Double parameter = (Double)parameters[0];
+				public Object evaluate(Object... parameters) {
+					Double parameter = (Double)parameters[0];
 
-				Double minParameter = (Double)parameters[1];
-				Double maxParameter = (Double)parameters[2];
+					Double minParameter = (Double)parameters[1];
+					Double maxParameter = (Double)parameters[2];
 
-				if ((parameter.compareTo(minParameter) >= 0) &&
-					(parameter.compareTo(maxParameter) <= 0)) {
+					if ((parameter.compareTo(minParameter) >= 0) &&
+						(parameter.compareTo(maxParameter) <= 0)) {
 
-					return Boolean.TRUE;
-				}
-
-				return Boolean.FALSE;
-			}
-
-		});
-
-		_functions.put("concat", new DDMExpressionFunction() {
-
-			public Object evaluate(Object... parameters) {
-				StringBundler sb = new StringBundler(parameters.length);
-
-				for (Object parameter : parameters) {
-					String string = (String)parameter;
-
-					if (Validator.isNull(string)) {
-						continue;
+						return Boolean.TRUE;
 					}
 
-					sb.append(string);
+					return Boolean.FALSE;
 				}
 
-				return sb.toString();
+			});
 
-			}
+		_functions.put(
+			"concat",
+			new DDMExpressionFunction() {
+
+				public Object evaluate(Object... parameters) {
+					StringBundler sb = new StringBundler(parameters.length);
+
+					for (Object parameter : parameters) {
+						String string = (String)parameter;
+
+						if (Validator.isNull(string)) {
+							continue;
+						}
+
+						sb.append(string);
+					}
+
+					return sb.toString();
+				}
+
+			});
+
+		_functions.put(
+			"contains",
+			new DDMExpressionFunction() {
+
+				public Object evaluate(Object... parameters) {
+					String parameter1 = (String)parameters[0];
+					String parameter2 = (String)parameters[1];
+
+					if ((parameter1 == null) || (parameter2 == null)) {
+						return false;
+					}
+
+					String string1 = StringUtil.toLowerCase(parameter1);
+					String string2 = StringUtil.toLowerCase(parameter2);
+
+					if (string1.contains(string2)) {
+						return Boolean.TRUE;
+					}
+
+					return Boolean.FALSE;
+				}
+
+			});
+
+		_functions.put(
+			"equals",
+			new DDMExpressionFunction() {
+
+				public Object evaluate(Object... parameters) {
+					String string1 = (String)parameters[0];
+					String string2 = (String)parameters[1];
+
+					if ((string1 == null) || (string2 == null)) {
+						return false;
+					}
+
+					if (string1.contains(string2)) {
+						return Boolean.TRUE;
+					}
+
+					return Boolean.FALSE;
+				}
+
+			});
+
+		_functions.put(
+			"isEmailAddress",
+			new DDMExpressionFunction() {
+
+				public Object evaluate(Object... parameters) {
+					String string = (String)parameters[0];
+
+					if (Validator.isEmailAddress(string)) {
+						return Boolean.TRUE;
+					}
+
+					return Boolean.FALSE;
+				}
+
+			});
+
+		_functions.put(
+			"isURL",
+			new DDMExpressionFunction() {
+
+				public Object evaluate(Object... parameters) {
+					String string = (String)parameters[0];
+
+					if (Validator.isUrl(string)) {
+						return Boolean.TRUE;
+					}
+
+					return Boolean.FALSE;
+				}
 
 		});
-		_functions.put("contains", new DDMExpressionFunction() {
 
-			public Object evaluate(Object... parameters) {
-				String parameter1 = (String)parameters[0];
-				String parameter2 = (String)parameters[1];
+		_functions.put(
+			"sum",
+			new DDMExpressionFunction() {
 
-				if ((parameter1 == null) || (parameter2 == null)) {
-					return false;
+				public Object evaluate(Object... parameters) {
+					double result = 0;
+
+					for (Object parameter : parameters) {
+						Double parameterDouble = (Double)parameter;
+
+						result += parameterDouble;
+					}
+
+					return result;
 				}
 
-				String string1 = StringUtil.toLowerCase(parameter1);
-				String string2 = StringUtil.toLowerCase(parameter2);
-
-				if (string1.contains(string2)) {
-					return Boolean.TRUE;
-				}
-
-				return Boolean.FALSE;
-			}
-		});
-		_functions.put("equals", new DDMExpressionFunction() {
-
-			public Object evaluate(Object... parameters) {
-
-				String string1 = (String)parameters[0];
-				String string2 = (String)parameters[1];
-
-				if ((string1 == null) || (string2 == null)) {
-					return false;
-				}
-
-				if (string1.contains(string2)) {
-					return Boolean.TRUE;
-				}
-
-				return Boolean.FALSE;
-
-			}
-
-		});
-
-		_functions.put("isEmailAddress", new DDMExpressionFunction() {
-
-			public Object evaluate(Object... parameters) {
-				String string = (String)parameters[0];
-
-				if (Validator.isEmailAddress(string)) {
-					return Boolean.TRUE;
-				}
-
-				return Boolean.FALSE;
-			}
-
-		});
-		_functions.put("isURL", new DDMExpressionFunction() {
-
-			public Object evaluate(Object... parameters) {
-				String string = (String)parameters[0];
-
-				if (Validator.isUrl(string)) {
-					return Boolean.TRUE;
-				}
-
-				return Boolean.FALSE;
-			}
-
-		});
-		_functions.put("sum", new DDMExpressionFunction() {
-
-			public Object evaluate(Object... parameters) {
-				double result = 0;
-
-				for (Object parameter : parameters) {
-					Double parameterDouble = (Double)parameter;
-
-					result += parameterDouble;
-				}
-
-				return result;
-			}
-
-		});
-
+			});
 	}
 
 	public void addFunction(String name, DDMExpressionFunction function) {
@@ -230,14 +246,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
 
 		return b1 == b2;
-	}
-
-	public Object visitNEQ(
-		@NotNull DDMExpressionParser.NEQContext ctx) {
-		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
-		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
-
-		return b1 != b2;
 	}
 
 	@Override
@@ -355,6 +363,13 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		}
 
 		return l.longValue() * r.longValue();
+	}
+
+	public Object visitNEQ(@NotNull DDMExpressionParser.NEQContext ctx) {
+		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
+		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
+
+		return b1 != b2;
 	}
 
 	@Override

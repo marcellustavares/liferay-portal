@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.mapping.expression;
 
 import com.liferay.dynamic.data.mapping.expression.internal.DDMExpressionFactoryImpl;
 import com.liferay.portal.kernel.util.MathUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -214,15 +213,6 @@ public class DDMExpressionEvaluationTest {
 			(Float)(var1 + var2 + var3), ddmExpression.evaluate());
 	}
 
-	@Test(expected = DDMExpressionException.FunctionNotDefined.class)
-	public void testEvaluateNotDefinedFunctionExpression() throws Exception {
-		DDMExpression<Double> ddmExpression =
-			_ddmExpressionFactory.createDoubleDDMExpression(
-				"FLOOR(12.34)");
-
-		ddmExpression.evaluate();
-	}
-
 	@Test
 	public void testEvaluateGreaterThan1Expression() throws Exception {
 		DDMExpression<Boolean> ddmExpression =
@@ -241,7 +231,6 @@ public class DDMExpressionEvaluationTest {
 
 		Assert.assertTrue(ddmExpression.evaluate());
 	}
-
 
 	@Test
 	public void testEvaluateIntegerExpression1() throws Exception {
@@ -330,6 +319,14 @@ public class DDMExpressionEvaluationTest {
 		long var3 = var1 + var2;
 
 		Assert.assertEquals(var1 + var2 + var3, (long)ddmExpression.evaluate());
+	}
+
+	@Test(expected = DDMExpressionException.FunctionNotDefined.class)
+	public void testEvaluateNotDefinedFunctionExpression() throws Exception {
+		DDMExpression<Double> ddmExpression =
+			_ddmExpressionFactory.createDoubleDDMExpression("FLOOR(12.34)");
+
+		ddmExpression.evaluate();
 	}
 
 	@Test(expected = IllegalArgumentException.class)

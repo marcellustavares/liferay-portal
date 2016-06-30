@@ -21,13 +21,9 @@ import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionLexer;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser;
 import com.liferay.portal.kernel.util.ListUtil;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.math.MathContext;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
  * @author Miguel Angelo Caldas Gallindo
@@ -61,55 +63,20 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		}
 	}
 
-	protected Set<String> getVariableNames() {
-		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-
-		DDMExpressionListenerImpl ddmExpressionListener =
-			new DDMExpressionListenerImpl();
-
-		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
-
-		return ddmExpressionListener.getVariableNames();
-	}
-
-	protected Set<String> getFunctionNames() {
-		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-
-		DDMExpressionListenerImpl ddmExpressionListener =
-			new DDMExpressionListenerImpl();
-
-		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
-
-		return ddmExpressionListener.getFunctionNames();
-	}
-
-	protected void parse() throws DDMExpressionException {
-		try {
-			CharStream charStream = new ANTLRInputStream(_expressionString);
-
-			DDMExpressionLexer ddmExpressionLexer = new DDMExpressionLexer(
-				charStream);
-
-			DDMExpressionParser ddmExpressionParser = new DDMExpressionParser(
-				new CommonTokenStream(ddmExpressionLexer));
-
-			ddmExpressionParser.setErrorHandler(new BailErrorStrategy());
-
-			_expressionContext = ddmExpressionParser.expression();
-		}
-		catch (Exception e) {
-			throw new DDMExpressionException.InvalidSyntax(e);
-		}
-	}
-
 	@Override
 	public T evaluate() throws DDMExpressionException {
-		Set<String> bundledFunctions = new HashSet<>(Arrays.asList("between", "concat", "contains", "equals", "isEmailAddress", "isURL", "sum"));
+		Set<String> bundledFunctions = new HashSet<>(
+			Arrays.asList(
+				"between", "concat", "contains", "equals", "isEmailAddress",
+				"isURL", "sum"));
 
 		for (String expressionFunction : getFunctionNames()) {
-			if (bundledFunctions.contains(expressionFunction) || _ddmExpressionFunctions.keySet().contains(expressionFunction)) {
+			if (bundledFunctions.contains(expressionFunction) ||
+				_ddmExpressionFunctions.keySet().contains(expressionFunction)) {
+
 				continue;
 			}
+
 			throw new DDMExpressionException.FunctionNotDefined("");
 		}
 
@@ -211,20 +178,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 			String variableName, String variableValue)
 		throws DDMExpressionException {
 
-//		Double doubleValue = parseDoubleValue(variableValue);
-//
-//		if (doubleValue == null) {
-//			setVariableValue(variableName, encode(variableValue));
-//
-//			return;
-//		}
-//
-//		if (doubleValue.isNaN() || doubleValue.isInfinite()) {
-//			throw new DDMExpressionException.NumberExceedsSupportedRange();
-//		}
-//		else {
-//		}
-
 		setVariableValue(variableName, variableValue);
 	}
 
@@ -241,43 +194,11 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_variableValues.put(variableName, variableValue);
 	}
 
-//	protected String decodeString(BigDecimal bigDecimal) {
-//		if (bigDecimal.equals(BigDecimal.ZERO)) {
-//			return StringPool.BLANK;
-//		}
-//
-//		BigInteger bigInteger = new BigInteger(bigDecimal.toString());
-
-//
-//		return new String(bigInteger.toByteArray());
-//	}
-//
-//	protected BigDecimal encode(Boolean variableValue) {
-//		if (variableValue.equals(Boolean.TRUE)) {
-//			return BigDecimal.ONE;
-//		}
-//
-//		return BigDecimal.ZERO;
-//	}
-//
-//	protected BigDecimal encode(String variableValue) {
-//		if (Validator.isNull(variableValue)) {
-//			return BigDecimal.ZERO;
-//		}
-//
-//		BigInteger bigInteger = new BigInteger(variableValue.getBytes());
-//
-//		return new BigDecimal(bigInteger);
-//	}
-
-
-	protected DDMExpression<Object> getExpression(
-			String expressionString)
+	protected DDMExpression<Object> getExpression(String expressionString)
 		throws DDMExpressionException {
 
-		DDMExpressionImpl<Object> ddmExpressionImpl =
-			new DDMExpressionImpl<Object>(expressionString, Object.class);
-
+		DDMExpressionImpl<Object> ddmExpressionImpl = new DDMExpressionImpl<>(
+			expressionString, Object.class);
 
 		for (String variableName : ddmExpressionImpl.getVariableNames()) {
 			Variable variable = _variables.get(variableName);
@@ -305,6 +226,28 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return ddmExpression;
 	}
 
+	protected Set<String> getFunctionNames() {
+		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+
+		DDMExpressionListenerImpl ddmExpressionListener =
+			new DDMExpressionListenerImpl();
+
+		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
+
+		return ddmExpressionListener.getFunctionNames();
+	}
+
+	protected Set<String> getVariableNames() {
+		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+
+		DDMExpressionListenerImpl ddmExpressionListener =
+			new DDMExpressionListenerImpl();
+
+		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
+
+		return ddmExpressionListener.getVariableNames();
+	}
+
 	protected Object getVariableValue(Variable variable)
 		throws DDMExpressionException {
 
@@ -327,27 +270,28 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableValue;
 	}
 
-//	protected boolean isStringBlank(BigDecimal... bigDecimals) {
-//		for (BigDecimal bigDecimal : bigDecimals) {
-//			if (!bigDecimal.equals(BigDecimal.ZERO)) {
-//				return false;
-//			}
-//		}
-//
-//		return true;
-//	}
+	protected void parse() throws DDMExpressionException {
+		try {
+			CharStream charStream = new ANTLRInputStream(_expressionString);
 
-//	protected Double parseDoubleValue(String value) {
-//		try {
-//			return Double.parseDouble(value);
-//		}
-//		catch (NumberFormatException nfe) {
-//			return null;
-//		}
-//	}
+			DDMExpressionLexer ddmExpressionLexer = new DDMExpressionLexer(
+				charStream);
+
+			DDMExpressionParser ddmExpressionParser = new DDMExpressionParser(
+				new CommonTokenStream(ddmExpressionLexer));
+
+			ddmExpressionParser.setErrorHandler(new BailErrorStrategy());
+
+			_expressionContext = ddmExpressionParser.expression();
+		}
+		catch (Exception e) {
+			throw new DDMExpressionException.InvalidSyntax(e);
+		}
+	}
 
 	protected VariableDependencies populateVariableDependenciesMap(
-			Variable variable, Map<String,VariableDependencies> variableDependenciesMap)
+			Variable variable,
+			Map<String, VariableDependencies> variableDependenciesMap)
 		throws DDMExpressionException {
 
 		VariableDependencies variableDependencies = variableDependenciesMap.get(
@@ -414,9 +358,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	private final Map<String, DDMExpressionFunction> _ddmExpressionFunctions =
 		new HashMap<>();
 	private final Class<?> _expressionClass;
+	private DDMExpressionParser.ExpressionContext _expressionContext;
 	private final String _expressionString;
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, Object> _variableValues = new HashMap<>();
-	private DDMExpressionParser.ExpressionContext _expressionContext;
 
 }
