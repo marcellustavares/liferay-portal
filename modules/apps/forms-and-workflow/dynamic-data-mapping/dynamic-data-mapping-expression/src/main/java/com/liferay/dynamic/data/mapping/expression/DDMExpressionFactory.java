@@ -23,18 +23,38 @@ public interface DDMExpressionFactory {
 			String ddmExpressionString)
 		throws DDMExpressionException;
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #createNumberDDMExpression(String)}
+	 */
+	@Deprecated
 	public DDMExpression<Double> createDoubleDDMExpression(
 			String ddmExpressionString)
 		throws DDMExpressionException;
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #createNumberDDMExpression(String)}
+	 */
+	@Deprecated
 	public DDMExpression<Float> createFloatDDMExpression(
 			String ddmExpressionString)
 		throws DDMExpressionException;
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #createNumberDDMExpression(String)}
+	 */
+	@Deprecated
 	public DDMExpression<Integer> createIntegerDDMExpression(
 			String ddmExpressionString)
 		throws DDMExpressionException;
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link
+	 *             #createNumberDDMExpression(String)}
+	 */
+	@Deprecated
 	public DDMExpression<Long> createLongDDMExpression(
 			String ddmExpressionString)
 		throws DDMExpressionException;
