@@ -2480,7 +2480,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  .kernel.messaging,com.liferay.portal.kernel.util",com.liferay.portal.
  kernel.cluster.messaging;version="7.0.0";uses:="com.liferay.portal.ke
  rnel.cluster,com.liferay.portal.kernel.messaging",com.liferay.portal.
- kernel.comment;version="1.0.0";uses:="com.liferay.exportimport.kernel
+ kernel.comment;version="1.1.0";uses:="com.liferay.exportimport.kernel
  .lar,com.liferay.portal.kernel.dao.orm,com.liferay.portal.kernel.exce
  ption,com.liferay.portal.kernel.model,com.liferay.portal.kernel.secur
  ity.permission,com.liferay.portal.kernel.service,com.liferay.portal.k
