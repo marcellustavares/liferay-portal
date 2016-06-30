@@ -25,11 +25,6 @@ public class Variable {
 		_name = name;
 	}
 
-	public Variable(String name, BigDecimal value) {
-		_name = name;
-		_value = value;
-	}
-
 	public String getExpressionString() {
 		return _expressionString;
 	}
@@ -38,24 +33,19 @@ public class Variable {
 		return _name;
 	}
 
-	public BigDecimal getValue() {
-		return _value;
-	}
-
 	public void setExpressionString(String expressionString) {
 		_expressionString = expressionString;
 	}
 
-	public void setName(String name) {
-		_name = name;
-	}
+	private String _expressionString;
+	private String _name;
+	private Object _value;
 
-	public void setValue(BigDecimal value) {
+	public void setValue(Object value) {
 		_value = value;
 	}
 
-	private String _expressionString;
-	private String _name;
-	private BigDecimal _value;
-
+	public Object getValue() {
+		return _value;
+	}
 }

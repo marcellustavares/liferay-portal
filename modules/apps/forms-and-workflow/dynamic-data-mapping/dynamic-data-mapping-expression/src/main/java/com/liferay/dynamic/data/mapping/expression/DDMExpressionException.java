@@ -36,6 +36,10 @@ public class DDMExpressionException extends PortalException {
 		super(cause);
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
 	public static class FunctionNotAllowed extends DDMExpressionException {
 
 		public FunctionNotAllowed(String functionName) {
@@ -51,6 +55,32 @@ public class DDMExpressionException extends PortalException {
 		}
 
 		private final String _functionName;
+
+	}
+
+	public static class FunctionNotDefined extends DDMExpressionException {
+
+		public FunctionNotDefined(String functionName) {
+			super(
+				String.format(
+					"The function name \"%s\" was not defined", functionName));
+
+			_functionName = functionName;
+		}
+
+		public String getFunctionName() {
+			return _functionName;
+		}
+
+		private final String _functionName;
+
+	}
+
+	public static class InvalidSyntax extends DDMExpressionException {
+
+		public InvalidSyntax(Throwable cause) {
+			super("The expression syntax is invalid", cause);
+		}
 
 	}
 
