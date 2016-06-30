@@ -18,10 +18,6 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,45 +29,6 @@ public class DDMExpressionImplTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmptyExpressionString() throws Exception {
 		new DDMExpressionImpl<>(null, Number.class);
-	}
-
-	@Test
-	public void testGetFunctionNames() throws Exception {
-		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
-			"pow(pow(log(y))) + sum(3, 4)", Number.class);
-
-		Set<String> expectedFunctionNames = new HashSet<>(
-			Arrays.asList("pow", "log", "sum"));
-
-		Assert.assertEquals(
-			expectedFunctionNames,
-			ddmExpressionImpl.getExpressionFunctionNames());
-	}
-
-	@Test
-	public void testGetVariableNames1() throws Exception {
-		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
-			"(var1 + var2_) * __var3", Number.class);
-
-		Set<String> expectedVariableNames = new HashSet<>(
-			Arrays.asList("var1", "var2_", "__var3"));
-
-		Assert.assertEquals(
-			expectedVariableNames,
-			ddmExpressionImpl.getExpressionVariableNames());
-	}
-
-	@Test
-	public void testGetVariableNames2() throws Exception {
-		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
-			"(((1+2)*(1-2/x))+log(1*6-y))", Number.class);
-
-		Set<String> expectedVariableNames = new HashSet<>(
-			Arrays.asList("x", "y"));
-
-		Assert.assertEquals(
-			expectedVariableNames,
-			ddmExpressionImpl.getExpressionVariableNames());
 	}
 
 	@Test(expected = DDMExpressionException.InvalidSyntax.class)
@@ -100,6 +57,32 @@ public class DDMExpressionImplTest {
 	}
 
 	@Test
+	public void testReturnLongWithNumber() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Long.class);
+
+		Number number = 1l;
+
+		Object result = ddmExpression.toRetunType(number);
+
+		Assert.assertTrue(result instanceof Long);
+		Assert.assertEquals(1l, (long)result);
+	}
+
+	@Test
+	public void testReturnNumberWithNumber() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Number.class);
+
+		Number number = 42;
+
+		Object result = ddmExpression.toRetunType(number);
+
+		Assert.assertTrue(result instanceof Number);
+		Assert.assertEquals(number, result);
+	}
+
+	@Test
 	public void testReturnTypeBooleanWithBoolean() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Boolean.class);
@@ -115,7 +98,7 @@ public class DDMExpressionImplTest {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Boolean.class);
 
-		ddmExpression.toRetunType(RandomTestUtil.randomDouble());
+		ddmExpression.toRetunType(RandomTestUtil.randomLong());
 	}
 
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
@@ -127,43 +110,42 @@ public class DDMExpressionImplTest {
 	}
 
 	@Test
-	public void testReturnTypeDoubleWithDouble() throws Exception {
+	public void testReturnTypeDoubleWithNumber() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Double.class);
 
-		double result = (double)ddmExpression.toRetunType(1.5d);
+		Number number = 1.5;
 
-		Assert.assertEquals(1.5d, result, 0.1);
+		Object result = ddmExpression.toRetunType(number);
+
+		Assert.assertTrue(result instanceof Double);
+		Assert.assertEquals(1.5, (double)result, 0.1);
 	}
 
 	@Test
-	public void testReturnTypeFloatWithDouble() throws Exception {
+	public void testReturnTypeFloatWithNumber() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Float.class);
 
-		float result = (float)ddmExpression.toRetunType(1.5d);
+		Number number = 1.5f;
 
-		Assert.assertEquals(1.5f, result, 0.1);
+		Object result = ddmExpression.toRetunType(number);
+
+		Assert.assertTrue(result instanceof Float);
+		Assert.assertEquals(1.5, (float)result, 0.1);
 	}
 
 	@Test
-	public void testReturnTypeIntegerWithDouble() throws Exception {
+	public void testReturnTypeIntegerWithNumber() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Integer.class);
 
-		int result = (int)ddmExpression.toRetunType(1.2);
+		Number number = 1;
 
-		Assert.assertEquals(1, result);
-	}
+		Object result = ddmExpression.toRetunType(number);
 
-	@Test
-	public void testReturnTypeLongWithDouble() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Long.class);
-
-		long result = (long)ddmExpression.toRetunType(1.2);
-
-		Assert.assertEquals(1l, result);
+		Assert.assertTrue(result instanceof Integer);
+		Assert.assertEquals(1, (int)result);
 	}
 
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
@@ -174,52 +156,12 @@ public class DDMExpressionImplTest {
 		ddmExpression.toRetunType(false);
 	}
 
-	@Test
-	public void testReturnTypeNumberWithDouble() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Number.class);
-
-		Object result = ddmExpression.toRetunType(1.2);
-
-		Assert.assertTrue(result instanceof Number);
-	}
-
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
 	public void testReturnTypeNumberWithString() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Number.class);
 
 		ddmExpression.toRetunType(StringUtil.randomString());
-	}
-
-	@Test
-	public void testReturnTypeObjectWithBoolean() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Object.class);
-
-		Object result = ddmExpression.toRetunType(true);
-
-		Assert.assertEquals(true, result);
-	}
-
-	@Test
-	public void testReturnTypeObjectWithDouble() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Object.class);
-
-		Object result = ddmExpression.toRetunType(1.0);
-
-		Assert.assertEquals(1.0, result);
-	}
-
-	@Test
-	public void testReturnTypeObjectWithString() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Object.class);
-
-		Object result = ddmExpression.toRetunType("Joe");
-
-		Assert.assertEquals("Joe", result);
 	}
 
 	@Test
@@ -238,10 +180,10 @@ public class DDMExpressionImplTest {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", String.class);
 
-		Object result = ddmExpression.toRetunType(42.0);
+		Object result = ddmExpression.toRetunType(42);
 
 		Assert.assertTrue(result instanceof String);
-		Assert.assertEquals("42.0", result);
+		Assert.assertEquals("42", result);
 	}
 
 	@Test

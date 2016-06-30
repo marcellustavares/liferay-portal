@@ -76,6 +76,15 @@ public class DDMExpressionException extends PortalException {
 
 	}
 
+	public static class IncompatipleReturnType extends DDMExpressionException {
+
+		public IncompatipleReturnType() {
+			super(
+				"The evaluation return type differs from DDM Expression type");
+		}
+
+	}
+
 	public static class InvalidSyntax extends DDMExpressionException {
 
 		public InvalidSyntax(Throwable cause) {
