@@ -115,6 +115,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableDependenciesMap;
 	}
 
+	@Deprecated
 	@Override
 	public void setBooleanVariableValue(
 		String variableName, Boolean variableValue) {
@@ -129,6 +130,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_ddmExpressionFunctions.put(functionName, ddmExpressionFunction);
 	}
 
+	@Deprecated
 	@Override
 	public void setDoubleVariableValue(
 		String variableName, Double variableValue) {
@@ -149,6 +151,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variable.setExpressionString(variableValue);
 	}
 
+	@Deprecated
 	@Override
 	public void setFloatVariableValue(
 		String variableName, Float variableValue) {
@@ -156,6 +159,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, variableValue);
 	}
 
+	@Deprecated
 	@Override
 	public void setIntegerVariableValue(
 		String variableName, Integer variableValue) {
@@ -163,6 +167,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, variableValue);
 	}
 
+	@Deprecated
 	@Override
 	public void setLongVariableValue(String variableName, Long variableValue) {
 		setVariableValue(variableName, variableValue);
@@ -173,6 +178,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	public void setMathContext(MathContext mathContext) {
 	}
 
+	@Deprecated
 	@Override
 	public void setStringVariableValue(
 			String variableName, String variableValue)
@@ -330,28 +336,37 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableDependencies;
 	}
 
-	protected Object toRetunType(Object result) {
-		if (_expressionClass.isAssignableFrom(Boolean.class)) {
-			return result;
-		}
-
+	protected Object toRetunType(Object result) throws DDMExpressionException {
 		if (_expressionClass.isAssignableFrom(String.class)) {
 			return String.valueOf(result);
 		}
 
+		Class<?> clazz = result.getClass();
+
+		if (!_expressionClass.isAssignableFrom(clazz)) {
+			throw new DDMExpressionException.IncompatipleReturnType();
+		}
+
+		if (clazz.isAssignableFrom(Boolean.class)) {
+			return result;
+		}
+
 		Number number = (Number)result;
 
-		if (_expressionClass.isAssignableFrom(Double.class)) {
+		if (clazz.isAssignableFrom(Double.class)) {
 			return number.doubleValue();
 		}
-		else if (_expressionClass.isAssignableFrom(Float.class)) {
+		else if (clazz.isAssignableFrom(Float.class)) {
 			return number.floatValue();
 		}
-		else if (_expressionClass.isAssignableFrom(Integer.class)) {
+		else if (clazz.isAssignableFrom(Integer.class)) {
 			return number.intValue();
 		}
-		else {
+		else if (clazz.isAssignableFrom(Long.class)) {
 			return number.longValue();
+		}
+		else {
+			return number;
 		}
 	}
 
