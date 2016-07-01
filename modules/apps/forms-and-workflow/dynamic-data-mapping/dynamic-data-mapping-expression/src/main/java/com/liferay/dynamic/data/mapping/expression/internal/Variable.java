@@ -31,9 +31,9 @@ public class Variable {
 		return _name;
 	}
 
-	public Object getValue() {
-		return _value;
-	}
+//	public Object getValue() {
+//		return _value;
+//	}
 
 	public void setExpressionString(String expressionString) {
 		_expressionString = expressionString;

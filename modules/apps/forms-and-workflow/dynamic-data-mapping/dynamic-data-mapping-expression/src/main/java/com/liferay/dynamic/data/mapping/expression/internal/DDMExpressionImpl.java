@@ -265,9 +265,9 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 		DDMExpression<Object> ddmExpression = getExpression(variable);
 
-		if (ddmExpression == null) {
-			return variable.getValue();
-		}
+//		if (ddmExpression == null) {
+//			return variable.getValue();
+//		}
 
 		variableValue = ddmExpression.evaluate();
 
