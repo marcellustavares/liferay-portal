@@ -18,7 +18,6 @@ import com.liferay.dynamic.data.mapping.expression.internal.DDMExpressionFactory
 import com.liferay.portal.kernel.util.MathUtil;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -334,17 +333,6 @@ public class DDMExpressionEvaluationTest {
 		ddmExpression.evaluate();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testEvaluateNullExpression() throws Exception {
-		DDMExpression<Boolean> ddmExpression =
-			_ddmExpressionFactory.createBooleanDDMExpression(null);
-
-		ddmExpression.setIntegerVariableValue("var1", 5);
-		ddmExpression.setIntegerVariableValue("var2", 6);
-
-		Assert.assertFalse(ddmExpression.evaluate());
-	}
-
 	@Test
 	public void testEvaluateSumWithDoubleValues() throws Exception {
 		DDMExpression<Double> ddmExpression =
@@ -362,38 +350,12 @@ public class DDMExpressionEvaluationTest {
 		double var3 = var1 + var2;
 
 		ddmExpression.setDoubleVariableValue("var3", var3);
-//
-//		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3.5");
-//		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
-//
-//		double var2 = var1 + 3.5;
-//
-//		double var3 = var1 + var2;
+
+		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3.5");
+		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
 
 		Assert.assertEquals(
 			(Double)MathUtil.sum(var1, var2, var3), ddmExpression.evaluate());
-	}
-
-	@Ignore
-	@Test
-	public void testEvaluateSumWithLongValues() throws Exception {
-		DDMExpression<Long> ddmExpression =
-			_ddmExpressionFactory.createLongDDMExpression(
-				"sum(var1, var2, var3)");
-
-		long var1 = 5;
-
-		ddmExpression.setLongVariableValue("var1", var1);
-
-		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3");
-		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
-
-		long var2 = var1 + 3;
-
-		long var3 = var1 + var2;
-
-		Assert.assertEquals(
-			MathUtil.sum(var1, var2, var3), (long)ddmExpression.evaluate());
 	}
 
 	@Test
