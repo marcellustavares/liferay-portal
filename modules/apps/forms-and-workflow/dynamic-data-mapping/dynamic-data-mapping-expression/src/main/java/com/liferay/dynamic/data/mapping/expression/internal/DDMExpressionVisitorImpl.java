@@ -39,13 +39,15 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 			new DDMExpressionFunction() {
 
 				public Object evaluate(Object... parameters) {
-					Double parameter = (Double)parameters[0];
+					Number parameter = (Number)parameters[0];
 
-					Double minParameter = (Double)parameters[1];
-					Double maxParameter = (Double)parameters[2];
+					Number minParameter = (Number)parameters[1];
+					Number maxParameter = (Number)parameters[2];
 
-					if ((parameter.compareTo(minParameter) >= 0) &&
-						(parameter.compareTo(maxParameter) <= 0)) {
+					if ((parameter.doubleValue() >=
+							minParameter.doubleValue()) &&
+						(parameter.doubleValue() <=
+							maxParameter.doubleValue())) {
 
 						return Boolean.TRUE;
 					}
@@ -162,9 +164,9 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 					double result = 0;
 
 					for (Object parameter : parameters) {
-						Double parameterDouble = (Double)parameter;
+						Number parameterDouble = (Number)parameter;
 
-						result += parameterDouble;
+						result += parameterDouble.doubleValue();
 					}
 
 					return result;
