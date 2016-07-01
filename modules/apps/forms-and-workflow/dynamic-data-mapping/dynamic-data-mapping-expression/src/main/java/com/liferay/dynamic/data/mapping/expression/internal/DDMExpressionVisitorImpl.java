@@ -183,6 +183,15 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		_variables.put(name, value);
 	}
 
+	public Object visitAdditionExpression(
+		@NotNull DDMExpressionParser.AdditionExpressionContext context) {
+
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
+
+		return l.doubleValue() + r.doubleValue();
+	}
+
 	public Object visitAndExpression(
 		@NotNull DDMExpressionParser.AndExpressionContext context) {
 
@@ -198,22 +207,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return context.getChild(1).accept(this);
 	}
 
-	public Object visitNotExpression(
-		@NotNull DDMExpressionParser.NotExpressionContext context) {
-
-		boolean b = (Boolean)context.getChild(1).accept(this);
-
-		return !b;
-	}
-
-	public Object visitMinusExpression(
-		@NotNull DDMExpressionParser.MinusExpressionContext context) {
-
-		Number n = (Number)context.getChild(1).accept(this);
-
-		return -n.doubleValue();
-	}
-
 	public Object visitDivisionExpression(
 		@NotNull DDMExpressionParser.DivisionExpressionContext context) {
 
@@ -221,12 +214,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		Number r = (Number)context.getChild(2).accept(this);
 
 		return l.doubleValue() / r.doubleValue();
-	}
-
-	public Object visitFloatingPointLiteral(
-		@NotNull DDMExpressionParser.FloatingPointLiteralContext context) {
-
-		return Double.parseDouble(context.getText());
 	}
 
 	public Object visitEqualsExpression(
@@ -238,12 +225,17 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return b1 == b2;
 	}
 
-
 	@Override
 	public Object visitExpression(
 		@NotNull DDMExpressionParser.ExpressionContext context) {
 
 		return context.logicalOrExpression().accept(this);
+	}
+
+	public Object visitFloatingPointLiteral(
+		@NotNull DDMExpressionParser.FloatingPointLiteralContext context) {
+
+		return Double.parseDouble(context.getText());
 	}
 
 	public Object visitFunctionCallExpression(
@@ -277,7 +269,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		}
 
 		return function.evaluate(params);
-
 	}
 
 	public Object visitGreaterThanExpression(
@@ -299,6 +290,12 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return l.doubleValue() >= r.doubleValue();
 	}
 
+	public Object visitIntegerLiteral(
+		@NotNull DDMExpressionParser.IntegerLiteralContext context) {
+
+		return Double.parseDouble(context.getText());
+	}
+
 	public Object visitLessThanExpression(
 		@NotNull DDMExpressionParser.LessThanExpressionContext context) {
 
@@ -316,12 +313,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		Number r = (Number)context.getChild(2).accept(this);
 
 		return l.doubleValue() <= r.doubleValue();
-	}
-
-	public Object visitIntegerLiteral(
-		@NotNull DDMExpressionParser.IntegerLiteralContext context) {
-
-		return Double.parseDouble(context.getText());
 	}
 
 	public Object visitLogicalConstant(
@@ -346,13 +337,12 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return variableValue;
 	}
 
-	public Object visitSubtractionExpression(
-		@NotNull DDMExpressionParser.SubtractionExpressionContext context) {
+	public Object visitMinusExpression(
+		@NotNull DDMExpressionParser.MinusExpressionContext context) {
 
-		Number l = (Number)context.getChild(0).accept(this);
-		Number r = (Number)context.getChild(2).accept(this);
+		Number n = (Number)context.getChild(1).accept(this);
 
-		return l.doubleValue() - r.doubleValue();
+		return -n.doubleValue();
 	}
 
 	public Object visitMultiplicationExpression(
@@ -364,7 +354,6 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return l.doubleValue() * r.doubleValue();
 	}
 
-
 	public Object visitNotEqualsExpression(
 		@NotNull DDMExpressionParser.NotEqualsExpressionContext context) {
 
@@ -372,6 +361,20 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 != b2;
+	}
+
+	public Object visitNotExpression(
+		@NotNull DDMExpressionParser.NotExpressionContext context) {
+
+		boolean b = (Boolean)context.getChild(1).accept(this);
+
+		return !b;
+	}
+
+	public Object visitNumericParenthesis(
+		@NotNull DDMExpressionParser.NumericParenthesisContext context) {
+
+		return context.getChild(1).accept(this);
 	}
 
 	@Override
@@ -397,30 +400,21 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 || b2;
-
 	}
-
-	public Object visitNumericParenthesis(
-		@NotNull DDMExpressionParser.NumericParenthesisContext context) {
-
-		return context.getChild(1).accept(this);
-	}
-
-
-	public Object visitAdditionExpression(
-		@NotNull DDMExpressionParser.AdditionExpressionContext context) {
-
-		Number l = (Number)context.getChild(0).accept(this);
-		Number r = (Number)context.getChild(2).accept(this);
-
-		return l.doubleValue() + r.doubleValue();
-	}
-
 
 	public Object visitStringLiteral(
 		@NotNull DDMExpressionParser.StringLiteralContext context) {
 
 		return context.getText().replaceAll("\"", "");
+	}
+
+	public Object visitSubtractionExpression(
+		@NotNull DDMExpressionParser.SubtractionExpressionContext context) {
+
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
+
+		return l.doubleValue() - r.doubleValue();
 	}
 
 	private final Map<String, DDMExpressionFunction> _functions =
