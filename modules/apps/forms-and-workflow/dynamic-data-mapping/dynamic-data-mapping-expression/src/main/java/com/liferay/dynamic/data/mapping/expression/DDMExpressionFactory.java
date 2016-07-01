@@ -14,9 +14,12 @@
 
 package com.liferay.dynamic.data.mapping.expression;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Marcellus Tavares
  */
+@ProviderType
 public interface DDMExpressionFactory {
 
 	public DDMExpression<Boolean> createBooleanDDMExpression(
