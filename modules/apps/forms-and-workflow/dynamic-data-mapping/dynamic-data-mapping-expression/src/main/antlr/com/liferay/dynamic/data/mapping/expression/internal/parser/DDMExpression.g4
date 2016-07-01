@@ -62,7 +62,7 @@ booleanOperandExpression
 	;
 
 logicalTerm
-	: ('true' | 'TRUE' | 'false' | 'FALSE') # LogicalConstant
+	: (TRUE | FALSE) # LogicalConstant
 	| IDENTIFIER # LogicalVariable
 	;
 
@@ -123,6 +123,9 @@ DecimalFloatingPointLiteral
 
 AND
 	: '&&'
+	| '&'
+	| 'and'
+	| 'AND'
 	;
 
 COMMA
@@ -134,6 +137,12 @@ DIV	: '/'
 
 EQ
 	: '=='
+	| '='
+	;
+
+FALSE
+	: 'false'
+	| 'FALSE'
 	;
 
 GE
@@ -170,22 +179,23 @@ MULT
 
 NEQ
 	: '!='
+	| '<>'
 	;
 
 NOT
-	: '!'
+	: 'not'
+	| 'NOT'
 	;
 
 OR
 	: '||'
+	| '|'
+	| 'or'
+	| 'OR'
 	;
 
 PLUS
 	: '+'
-	;
-
-POW
-	: '^'
 	;
 
 RPAREN
@@ -194,6 +204,11 @@ RPAREN
 
 STRING
 	: '"' (~[\\"])* '"'
+	;
+
+TRUE
+	: 'true'
+	| 'TRUE'
 	;
 
 WS
