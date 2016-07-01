@@ -99,32 +99,6 @@ public class DDMExpressionImplTest {
 	}
 
 	@Test
-	public void testReturnLongWithNumber() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Long.class);
-
-		Number number = 1l;
-
-		Object result = ddmExpression.toRetunType(number);
-
-		Assert.assertTrue(result instanceof Long);
-		Assert.assertEquals(1l, (long)result);
-	}
-
-	@Test
-	public void testReturnNumberWithNumber() throws Exception {
-		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
-			"true", Number.class);
-
-		Number number = 42;
-
-		Object result = ddmExpression.toRetunType(number);
-
-		Assert.assertTrue(result instanceof Number);
-		Assert.assertEquals(number, result);
-	}
-
-	@Test
 	public void testReturnTypeBooleanWithBoolean() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Boolean.class);
@@ -140,7 +114,7 @@ public class DDMExpressionImplTest {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Boolean.class);
 
-		ddmExpression.toRetunType(RandomTestUtil.randomLong());
+		ddmExpression.toRetunType(RandomTestUtil.randomDouble());
 	}
 
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
@@ -152,42 +126,43 @@ public class DDMExpressionImplTest {
 	}
 
 	@Test
-	public void testReturnTypeDoubleWithNumber() throws Exception {
+	public void testReturnTypeDoubleWithDouble() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Double.class);
 
-		Number number = 1.5;
+		double result = (double)ddmExpression.toRetunType(1.5d);
 
-		Object result = ddmExpression.toRetunType(number);
-
-		Assert.assertTrue(result instanceof Double);
-		Assert.assertEquals(1.5, (double)result, 0.1);
+		Assert.assertEquals(1.5d, result, 0.1);
 	}
 
 	@Test
-	public void testReturnTypeFloatWithNumber() throws Exception {
+	public void testReturnTypeFloatWithDouble() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Float.class);
 
-		Number number = 1.5f;
+		float result = (float)ddmExpression.toRetunType(1.5d);
 
-		Object result = ddmExpression.toRetunType(number);
-
-		Assert.assertTrue(result instanceof Float);
-		Assert.assertEquals(1.5, (float)result, 0.1);
+		Assert.assertEquals(1.5f, result, 0.1);
 	}
 
 	@Test
-	public void testReturnTypeIntegerWithNumber() throws Exception {
+	public void testReturnTypeIntegerWithDouble() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Integer.class);
 
-		Number number = 1;
+		int result = (int)ddmExpression.toRetunType(1.2);
 
-		Object result = ddmExpression.toRetunType(number);
+		Assert.assertEquals(1, result);
+	}
 
-		Assert.assertTrue(result instanceof Integer);
-		Assert.assertEquals(1, (int)result);
+	@Test
+	public void testReturnTypeLongWithDouble() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Long.class);
+
+		long result = (long)ddmExpression.toRetunType(1.2);
+
+		Assert.assertEquals(1l, result);
 	}
 
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
@@ -198,12 +173,52 @@ public class DDMExpressionImplTest {
 		ddmExpression.toRetunType(false);
 	}
 
+	@Test
+	public void testReturnTypeNumberWithDouble() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Number.class);
+
+		Object result = ddmExpression.toRetunType(1.2);
+
+		Assert.assertTrue(result instanceof Number);
+	}
+
 	@Test(expected = DDMExpressionException.IncompatipleReturnType.class)
 	public void testReturnTypeNumberWithString() throws Exception {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", Number.class);
 
 		ddmExpression.toRetunType(StringUtil.randomString());
+	}
+
+	@Test
+	public void testReturnTypeObjectWithBoolean() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Object.class);
+
+		Object result = ddmExpression.toRetunType(true);
+
+		Assert.assertEquals(true, result);
+	}
+
+	@Test
+	public void testReturnTypeObjectWithDouble() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Object.class);
+
+		Object result = ddmExpression.toRetunType(1.0);
+
+		Assert.assertEquals(1.0, result);
+	}
+
+	@Test
+	public void testReturnTypeObjectWithString() throws Exception {
+		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
+			"true", Object.class);
+
+		Object result = ddmExpression.toRetunType("Joe");
+
+		Assert.assertEquals("Joe", result);
 	}
 
 	@Test
@@ -222,10 +237,10 @@ public class DDMExpressionImplTest {
 		DDMExpressionImpl ddmExpression = new DDMExpressionImpl<>(
 			"true", String.class);
 
-		Object result = ddmExpression.toRetunType(42);
+		Object result = ddmExpression.toRetunType(42.0);
 
 		Assert.assertTrue(result instanceof String);
-		Assert.assertEquals("42", result);
+		Assert.assertEquals("42.0", result);
 	}
 
 	@Test

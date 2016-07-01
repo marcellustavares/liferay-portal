@@ -336,38 +336,118 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableDependencies;
 	}
 
-	protected Object toRetunType(Object result) throws DDMExpressionException {
-		if (_expressionClass.isAssignableFrom(String.class)) {
-			return String.valueOf(result);
-		}
-
+	protected double toDouble(Object result) throws DDMExpressionException {
 		Class<?> clazz = result.getClass();
 
-		if (!_expressionClass.isAssignableFrom(clazz)) {
+		if (!Number.class.isAssignableFrom(clazz)) {
 			throw new DDMExpressionException.IncompatipleReturnType();
 		}
 
-		if (clazz.isAssignableFrom(Boolean.class)) {
-			return result;
+		return (Double)result;
+	}
+
+	protected float toFloat(Object result) throws DDMExpressionException {
+		Class<?> clazz = result.getClass();
+
+		if (!Number.class.isAssignableFrom(clazz)) {
+			throw new DDMExpressionException.IncompatipleReturnType();
 		}
 
 		Number number = (Number)result;
 
-		if (clazz.isAssignableFrom(Double.class)) {
-			return number.doubleValue();
+		return number.floatValue();
+	}
+
+	protected int toInteger(Object result) throws DDMExpressionException {
+		Class<?> clazz = result.getClass();
+
+		if (!Number.class.isAssignableFrom(clazz)) {
+			throw new DDMExpressionException.IncompatipleReturnType();
 		}
-		else if (clazz.isAssignableFrom(Float.class)) {
-			return number.floatValue();
+
+		Number number = (Number)result;
+
+		return number.intValue();
+	}
+
+	protected long toLong(Object result) throws DDMExpressionException {
+		Class<?> clazz = result.getClass();
+
+		if (!Number.class.isAssignableFrom(clazz)) {
+			throw new DDMExpressionException.IncompatipleReturnType();
 		}
-		else if (clazz.isAssignableFrom(Integer.class)) {
-			return number.intValue();
+
+		Number number = (Number)result;
+
+		return number.longValue();
+	}
+
+	protected Object toRetunType(Object result) throws DDMExpressionException {
+		if (String.class.isAssignableFrom(_expressionClass)) {
+			return String.valueOf(result);
 		}
-		else if (clazz.isAssignableFrom(Long.class)) {
-			return number.longValue();
+		else if (Boolean.class.isAssignableFrom(_expressionClass)) {
+			Class<?> clazz = result.getClass();
+
+			if (!Boolean.class.isAssignableFrom(clazz)) {
+				throw new DDMExpressionException.IncompatipleReturnType();
+			}
+
+			return result;
 		}
-		else {
-			return number;
+		else if (Double.class.isAssignableFrom(_expressionClass)) {
+			return toDouble(result);
 		}
+		else if (Float.class.isAssignableFrom(_expressionClass)) {
+			return toFloat(result);
+		}
+		else if (Integer.class.isAssignableFrom(_expressionClass)) {
+			return toInteger(result);
+		}
+		else if (Long.class.isAssignableFrom(_expressionClass)) {
+			return toLong(result);
+		}
+		else if (Number.class.isAssignableFrom(_expressionClass)) {
+			Class<?> clazz = result.getClass();
+
+			if (!Number.class.isAssignableFrom(clazz)) {
+				throw new DDMExpressionException.IncompatipleReturnType();
+			}
+
+			return result;
+		}
+
+		return result;
+
+//		Class<?> clazz = result.getClass();
+//
+//		if (!_expressionClass.isAssignableFrom(clazz)) {
+//			throw new DDMExpressionException.IncompatipleReturnType();
+//		}
+//
+//
+//
+//		if (Number.class.isAssignableFrom(clazz)) {
+//			Number number = (Number)result;
+//
+//			if (clazz.isAssignableFrom(Double.class)) {
+//				return number.doubleValue();
+//			}
+//			else if (clazz.isAssignableFrom(Float.class)) {
+//				return number.floatValue();
+//			}
+//			else if (clazz.isAssignableFrom(Integer.class)) {
+//				return number.intValue();
+//			}
+//			else if (clazz.isAssignableFrom(Long.class)) {
+//				return number.longValue();
+//			}
+//			else {
+//				return number;
+//			}
+//		}
+//
+//		return result;
 	}
 
 	private final Map<String, DDMExpressionFunction> _ddmExpressionFunctions =
