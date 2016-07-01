@@ -31,7 +31,7 @@ public class DDMExpressionEvaluationTest {
 		DDMExpression<Boolean> ddmExpression =
 			_ddmExpressionFactory.createBooleanDDMExpression("var1 == TRUE");
 
-		ddmExpression.setBooleanVariableValue("var1", true);
+		ddmExpression.setVariableValue("var1", true);
 
 		Assert.assertTrue(ddmExpression.evaluate());
 	}
@@ -41,7 +41,7 @@ public class DDMExpressionEvaluationTest {
 		DDMExpression<Boolean> ddmExpression =
 			_ddmExpressionFactory.createBooleanDDMExpression("var1 != TRUE");
 
-		ddmExpression.setBooleanVariableValue("var1", true);
+		ddmExpression.setVariableValue("var1", true);
 
 		Assert.assertFalse(ddmExpression.evaluate());
 	}
@@ -200,7 +200,7 @@ public class DDMExpressionEvaluationTest {
 
 		float var1 = 5.5f;
 
-		ddmExpression.setFloatVariableValue("var1", var1);
+		ddmExpression.setVariableValue("var1", var1);
 
 		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3");
 		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
@@ -234,13 +234,13 @@ public class DDMExpressionEvaluationTest {
 
 	@Test
 	public void testEvaluateIntegerExpression1() throws Exception {
-		DDMExpression<Integer> ddmExpression =
-			_ddmExpressionFactory.createIntegerDDMExpression(
+		DDMExpression<Number> ddmExpression =
+			_ddmExpressionFactory.createNumberDDMExpression(
 				"var1 + var2 + var3");
 
 		int var1 = 5;
 
-		ddmExpression.setIntegerVariableValue("var1", var1);
+		ddmExpression.setVariableValue("var1", var1);
 
 		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3");
 		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
@@ -249,17 +249,19 @@ public class DDMExpressionEvaluationTest {
 
 		int var3 = var1 + var2;
 
-		Assert.assertEquals(var1 + var2 + var3, (int)ddmExpression.evaluate());
+		Number result = ddmExpression.evaluate();
+
+		Assert.assertEquals(var1 + var2 + var3, result.intValue());
 	}
 
 	@Test
 	public void testEvaluateIntegerExpression2() throws Exception {
-		DDMExpression<Integer> ddmExpression =
-			_ddmExpressionFactory.createIntegerDDMExpression("11 + 111");
+		DDMExpression<Number> ddmExpression =
+			_ddmExpressionFactory.createNumberDDMExpression("11 + 111");
 
-		int sumActualValue = ddmExpression.evaluate();
+		Number sumActualValue = ddmExpression.evaluate();
 
-		Assert.assertEquals(122, sumActualValue);
+		Assert.assertEquals(122, sumActualValue.intValue());
 	}
 
 	@Test(expected = DDMExpressionException.class)
@@ -304,12 +306,13 @@ public class DDMExpressionEvaluationTest {
 
 	@Test
 	public void testEvaluateLongExpression() throws Exception {
-		DDMExpression<Long> ddmExpression =
-			_ddmExpressionFactory.createLongDDMExpression("var1 + var2 + var3");
+		DDMExpression<Number> ddmExpression =
+			_ddmExpressionFactory.createNumberDDMExpression(
+				"var1 + var2 + var3");
 
 		long var1 = 5l;
 
-		ddmExpression.setLongVariableValue("var1", var1);
+		ddmExpression.setVariableValue("var1", var1);
 
 		ddmExpression.setExpressionStringVariableValue("var2", "var1 + 3");
 		ddmExpression.setExpressionStringVariableValue("var3", "var2 + var1");
@@ -318,7 +321,9 @@ public class DDMExpressionEvaluationTest {
 
 		long var3 = var1 + var2;
 
-		Assert.assertEquals(var1 + var2 + var3, (long)ddmExpression.evaluate());
+		Number result = ddmExpression.evaluate();
+
+		Assert.assertEquals(var1 + var2 + var3, result.longValue());
 	}
 
 	@Test(expected = DDMExpressionException.FunctionNotDefined.class)
