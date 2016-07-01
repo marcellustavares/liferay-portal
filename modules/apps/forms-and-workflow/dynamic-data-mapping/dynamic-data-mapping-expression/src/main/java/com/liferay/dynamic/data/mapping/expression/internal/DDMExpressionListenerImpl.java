@@ -27,25 +27,24 @@ import org.antlr.v4.runtime.misc.NotNull;
  */
 public class DDMExpressionListenerImpl extends DDMExpressionBaseListener {
 
-	@Override
-	public void enterFunctionCall(
-		@NotNull DDMExpressionParser.FunctionCallContext ctx) {
+	public void enterFunctionCallExpression(
+		@NotNull DDMExpressionParser.FunctionCallExpressionContext context) {
 
-		_functionNames.add(ctx.functionName.getText());
+		_functionNames.add(context.functionName.getText());
 	}
 
 	@Override
 	public void enterLogicalVariable(
-		@NotNull DDMExpressionParser.LogicalVariableContext ctx) {
+		@NotNull DDMExpressionParser.LogicalVariableContext context) {
 
-		_variableNames.add(ctx.getText());
+		_variableNames.add(context.getText());
 	}
 
 	@Override
 	public void enterNumericVariable(
-		@NotNull DDMExpressionParser.NumericVariableContext ctx) {
+		@NotNull DDMExpressionParser.NumericVariableContext context) {
 
-		_variableNames.add(ctx.getText());
+		_variableNames.add(context.getText());
 	}
 
 	public Set<String> getFunctionNames() {

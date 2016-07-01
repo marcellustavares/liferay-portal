@@ -183,85 +183,73 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		_variables.put(name, value);
 	}
 
-	@Override
-	public Object visitAnd(@NotNull DDMExpressionParser.AndContext ctx) {
-		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
-		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
+	public Object visitAndExpression(
+		@NotNull DDMExpressionParser.AndExpressionContext context) {
+
+		boolean b1 = (Boolean)context.getChild(0).accept(this);
+		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 && b2;
 	}
 
-	@Override
-	public Object visitBooleanParen(
-		@NotNull DDMExpressionParser.BooleanParenContext ctx) {
+	public Object visitBooleanParenthesis(
+		@NotNull DDMExpressionParser.BooleanParenthesisContext context) {
 
-		return ctx.getChild(1).accept(this);
+		return context.getChild(1).accept(this);
 	}
 
-	@Override
-	public Object visitChangeBoolean(
-		@NotNull DDMExpressionParser.ChangeBooleanContext ctx) {
+	public Object visitNotExpression(
+		@NotNull DDMExpressionParser.NotExpressionContext context) {
 
-		boolean b = (Boolean)ctx.getChild(1).accept(this);
+		boolean b = (Boolean)context.getChild(1).accept(this);
 
 		return !b;
 	}
 
-	@Override
-	public Object visitChangeSign(
-		@NotNull DDMExpressionParser.ChangeSignContext ctx) {
+	public Object visitMinusExpression(
+		@NotNull DDMExpressionParser.MinusExpressionContext context) {
 
-		Number n = (Number)ctx.getChild(1).accept(this);
+		Number n = (Number)context.getChild(1).accept(this);
 
-		if (isFloatingOperand(n)) {
-			return -n.doubleValue();
-		}
-
-		return -n.longValue();
+		return -n.doubleValue();
 	}
 
-	@Override
-	public Object visitDivision(
-		@NotNull DDMExpressionParser.DivisionContext ctx) {
+	public Object visitDivisionExpression(
+		@NotNull DDMExpressionParser.DivisionExpressionContext context) {
 
-		Number l = (Number)ctx.getChild(0).accept(this);
-		Number r = (Number)ctx.getChild(2).accept(this);
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
 
-		//System.out.println(String.format("sum %d %d", l, r));
-
-		if (isFloatingOperand(l) || isFloatingOperand(r)) {
-			return l.doubleValue() / r.doubleValue();
-		}
-
-		return l.longValue() / r.longValue();
+		return l.doubleValue() / r.doubleValue();
 	}
 
-	@Override
-	public Object visitDouble(@NotNull DDMExpressionParser.DoubleContext ctx) {
-		System.out.println("visiting double ");
-		return Double.parseDouble(ctx.getText());
+	public Object visitFloatingPointLiteral(
+		@NotNull DDMExpressionParser.FloatingPointLiteralContext context) {
+
+		return Double.parseDouble(context.getText());
 	}
 
-	@Override
-	public Object visitEq(@NotNull DDMExpressionParser.EqContext ctx) {
-		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
-		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
+	public Object visitEqualsExpression(
+		@NotNull DDMExpressionParser.EqualsExpressionContext context) {
+
+		boolean b1 = (Boolean)context.getChild(0).accept(this);
+		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 == b2;
 	}
 
+
 	@Override
 	public Object visitExpression(
-		@NotNull DDMExpressionParser.ExpressionContext ctx) {
+		@NotNull DDMExpressionParser.ExpressionContext context) {
 
-		return ctx.logicalOrExpression().accept(this);
+		return context.logicalOrExpression().accept(this);
 	}
 
-	@Override
-	public Object visitFunctionCall(
-		@NotNull DDMExpressionParser.FunctionCallContext ctx) {
+	public Object visitFunctionCallExpression(
+		@NotNull DDMExpressionParser.FunctionCallExpressionContext context) {
 
-		Token functionName = ctx.functionName;
+		Token functionName = context.functionName;
 
 		DDMExpressionFunction function = _functions.get(functionName.getText());
 
@@ -271,8 +259,8 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 					"function %s not defined", functionName.getText()));
 		}
 
-		DDMExpressionParser.FunctionParamsContext functionParamsContext =
-			ctx.functionParams();
+		DDMExpressionParser.FunctionParametersContext functionParamsContext =
+			context.functionParameters();
 
 		Object[] params = {};
 
@@ -289,36 +277,57 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		}
 
 		return function.evaluate(params);
+
 	}
 
-	@Override
-	public Object visitGreater(
-		@NotNull DDMExpressionParser.GreaterContext ctx) {
+	public Object visitGreaterThanExpression(
+		@NotNull DDMExpressionParser.GreaterThanExpressionContext context) {
 
-		Number l = (Number)ctx.getChild(0).accept(this);
-		Number r = (Number)ctx.getChild(2).accept(this);
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
 
-		if (isFloatingOperand(l) || isFloatingOperand(r)) {
-			return l.doubleValue() > r.doubleValue();
-		}
-
-		return l.longValue() > r.longValue();
+		return l.doubleValue() > r.doubleValue();
 	}
 
-	@Override
-	public Object visitInteger(
-		@NotNull DDMExpressionParser.IntegerContext ctx) {
+	public Object visitGreaterThanOrEqualsExpression(
+		@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext
+			context) {
 
-		System.out.println("visiting long ");
-		return Double.parseDouble(ctx.getText());
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
+
+		return l.doubleValue() >= r.doubleValue();
 	}
 
-	@Override
-	public Object visitLogicalConst(
-		@NotNull DDMExpressionParser.LogicalConstContext ctx) {
+	public Object visitLessThanExpression(
+		@NotNull DDMExpressionParser.LessThanExpressionContext context) {
 
-		System.out.println("visiting boolean ");
-		return Boolean.parseBoolean(ctx.getText().toLowerCase());
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
+
+		return l.doubleValue() < r.doubleValue();
+	}
+
+	public Object visitLessThanOrEqualsExpression(
+		@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext
+			context) {
+
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
+
+		return l.doubleValue() <= r.doubleValue();
+	}
+
+	public Object visitIntegerLiteral(
+		@NotNull DDMExpressionParser.IntegerLiteralContext context) {
+
+		return Double.parseDouble(context.getText());
+	}
+
+	public Object visitLogicalConstant(
+		@NotNull DDMExpressionParser.LogicalConstantContext context) {
+
+		return Boolean.parseBoolean(context.getText().toLowerCase());
 	}
 
 	@Override
@@ -337,49 +346,39 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return variableValue;
 	}
 
-	@Override
-	public Object visitMinus(@NotNull DDMExpressionParser.MinusContext ctx) {
-		Number l = (Number)ctx.getChild(0).accept(this);
-		Number r = (Number)ctx.getChild(2).accept(this);
+	public Object visitSubtractionExpression(
+		@NotNull DDMExpressionParser.SubtractionExpressionContext context) {
 
-		System.out.println(String.format("sub %d %d", l, r));
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
 
-		if (isFloatingOperand(l) || isFloatingOperand(r)) {
-			return l.doubleValue() - r.doubleValue();
-		}
-
-		return l.longValue() - r.longValue();
+		return l.doubleValue() - r.doubleValue();
 	}
 
-	@Override
-	public Object visitMultiplication(
-		@NotNull DDMExpressionParser.MultiplicationContext ctx) {
+	public Object visitMultiplicationExpression(
+		@NotNull DDMExpressionParser.MultiplicationExpressionContext context) {
 
-		Number l = (Number)ctx.getChild(0).accept(this);
-		Number r = (Number)ctx.getChild(2).accept(this);
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
 
-		//System.out.println(String.format("mult %d %d", l, r));
-
-		if (isFloatingOperand(l) || isFloatingOperand(r)) {
-			return l.doubleValue() * r.doubleValue();
-		}
-
-		return l.longValue() * r.longValue();
+		return l.doubleValue() * r.doubleValue();
 	}
 
-	@Override
-	public Object visitNEQ(@NotNull DDMExpressionParser.NEQContext ctx) {
-		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
-		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
+
+	public Object visitNotEqualsExpression(
+		@NotNull DDMExpressionParser.NotEqualsExpressionContext context) {
+
+		boolean b1 = (Boolean)context.getChild(0).accept(this);
+		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 != b2;
 	}
 
 	@Override
 	public Object visitNumericVariable(
-		@NotNull DDMExpressionParser.NumericVariableContext ctx) {
+		@NotNull DDMExpressionParser.NumericVariableContext context) {
 
-		String variable = ctx.getText();
+		String variable = context.getText();
 
 		Object variableValue = _variables.get(variable);
 
@@ -391,44 +390,37 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 		return variableValue;
 	}
 
-	@Override
-	public Object visitOr(@NotNull DDMExpressionParser.OrContext ctx) {
-		boolean b1 = (Boolean)ctx.getChild(0).accept(this);
-		boolean b2 = (Boolean)ctx.getChild(2).accept(this);
+	public Object visitOrExpression(
+		@NotNull DDMExpressionParser.OrExpressionContext context) {
+
+		boolean b1 = (Boolean)context.getChild(0).accept(this);
+		boolean b2 = (Boolean)context.getChild(2).accept(this);
 
 		return b1 || b2;
+
 	}
 
-	@Override
-	public Object visitParen(@NotNull DDMExpressionParser.ParenContext ctx) {
-		return ctx.getChild(1).accept(this);
+	public Object visitNumericParenthesis(
+		@NotNull DDMExpressionParser.NumericParenthesisContext context) {
+
+		return context.getChild(1).accept(this);
 	}
 
-	@Override
-	public Object visitPlus(@NotNull DDMExpressionParser.PlusContext ctx) {
-		Number l = (Number)ctx.getChild(0).accept(this);
-		Number r = (Number)ctx.getChild(2).accept(this);
 
-		//System.out.println(String.format("sum %d %d", l, r));
+	public Object visitAdditionExpression(
+		@NotNull DDMExpressionParser.AdditionExpressionContext context) {
 
-		if (isFloatingOperand(l) || isFloatingOperand(r)) {
-			return l.doubleValue() + r.doubleValue();
-		}
+		Number l = (Number)context.getChild(0).accept(this);
+		Number r = (Number)context.getChild(2).accept(this);
 
-		return l.longValue() + r.longValue();
+		return l.doubleValue() + r.doubleValue();
 	}
 
-	@Override
-	public Object visitString(@NotNull DDMExpressionParser.StringContext ctx) {
-		return ctx.getText().replaceAll("\"", "");
-	}
 
-	protected boolean isFloatingOperand(Number number) {
-		if (number.getClass().isAssignableFrom(Double.class)) {
-			return true;
-		}
+	public Object visitStringLiteral(
+		@NotNull DDMExpressionParser.StringLiteralContext context) {
 
-		return false;
+		return context.getText().replaceAll("\"", "");
 	}
 
 	private final Map<String, DDMExpressionFunction> _functions =
