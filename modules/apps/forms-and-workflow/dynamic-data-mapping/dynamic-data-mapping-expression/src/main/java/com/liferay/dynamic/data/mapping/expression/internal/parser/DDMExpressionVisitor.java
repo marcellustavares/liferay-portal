@@ -23,346 +23,308 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link DDMExpressionParser}.
  *
- * @author Brian Wing Shun Chan
+ * @param <T> The return type of the visit operation. Use {@link Void} for
+ * operations with no return type.
  */
 public interface DDMExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by the {@code ToMultOrDiv} labeled
-	 * alternative in {@link DDMExpressionParser#plusOrMinus}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToMultOrDiv}
+	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitToMultOrDiv(@NotNull DDMExpressionParser.ToMultOrDivContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link
-	 * DDMExpressionParser#functionParams}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code NumericLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionParams(@NotNull DDMExpressionParser.FunctionParamsContext ctx);
+	T visitNumericLiteral(@NotNull DDMExpressionParser.NumericLiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToUnary} labeled alternative in
-	 * {@link DDMExpressionParser#multOrDiv}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code NotEqualsExpression}
+	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToUnary(@NotNull DDMExpressionParser.ToUnaryContext ctx);
+	T visitNotEqualsExpression(@NotNull DDMExpressionParser.NotEqualsExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Multiplication} labeled
-	 * alternative in {@link DDMExpressionParser#multOrDiv}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToBooleanOperandExpression}
+	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiplication(@NotNull DDMExpressionParser.MultiplicationContext ctx);
+	T visitToBooleanOperandExpression(@NotNull DDMExpressionParser.ToBooleanOperandExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Or} labeled alternative in
-	 * {@link DDMExpressionParser#logicalOrExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code GreaterThanExpression}
+	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOr(@NotNull DDMExpressionParser.OrContext ctx);
+	T visitGreaterThanExpression(@NotNull DDMExpressionParser.GreaterThanExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code String} labeled alternative in
-	 * {@link DDMExpressionParser#literal}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link DDMExpressionParser#booleanUnaryExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitString(@NotNull DDMExpressionParser.StringContext ctx);
+	T visitNotExpression(@NotNull DDMExpressionParser.NotExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Eq} labeled alternative in
-	 * {@link DDMExpressionParser#equalityExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code OrExpression}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEq(@NotNull DDMExpressionParser.EqContext ctx);
+	T visitOrExpression(@NotNull DDMExpressionParser.OrExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToPlus} labeled alternative in
-	 * {@link DDMExpressionParser#primaryBooleanExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code AndExpression}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToPlus(@NotNull DDMExpressionParser.ToPlusContext ctx);
+	T visitAndExpression(@NotNull DDMExpressionParser.AndExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Function} labeled alternative
-	 * in {@link DDMExpressionParser#primaryExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToLogicalAndExpression}
+	 * labeled alternative in {@link DDMExpressionParser#logicalOrExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction(@NotNull DDMExpressionParser.FunctionContext ctx);
+	T visitToLogicalAndExpression(@NotNull DDMExpressionParser.ToLogicalAndExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code LessThan} labeled alternative
-	 * in {@link DDMExpressionParser#comparison_expr}.
-	 *
-	 * @param  ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLessThan(@NotNull DDMExpressionParser.LessThanContext ctx);
-
-	/**
-	 * Visit a parse tree produced by the {@code PrimaryBoolean} labeled
-	 * alternative in {@link DDMExpressionParser#unaryNot}.
-	 *
-	 * @param  ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimaryBoolean(@NotNull DDMExpressionParser.PrimaryBooleanContext ctx);
-
-	/**
-	 * Visit a parse tree produced by the {@code ChangeSign} labeled alternative
-	 * in {@link DDMExpressionParser#unaryMinus}.
-	 *
-	 * @param  ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitChangeSign(@NotNull DDMExpressionParser.ChangeSignContext ctx);
-
-	/**
-	 * Visit a parse tree produced by the {@code ToLogicalEntity} labeled
-	 * alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
-	 *
-	 * @param  ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitToLogicalEntity(@NotNull DDMExpressionParser.ToLogicalEntityContext ctx);
-
-	/**
-	 * Visit a parse tree produced by the {@code Primary} labeled alternative in
-	 * {@link DDMExpressionParser#unaryMinus}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code Primary}
+	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPrimary(@NotNull DDMExpressionParser.PrimaryContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code GreaterThanEQ} labeled
-	 * alternative in {@link DDMExpressionParser#comparison_expr}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by {@link DDMExpressionParser#functionCallExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGreaterThanEQ(@NotNull DDMExpressionParser.GreaterThanEQContext ctx);
+	T visitFunctionCallExpression(@NotNull DDMExpressionParser.FunctionCallExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code LessThanEq} labeled alternative
-	 * in {@link DDMExpressionParser#comparison_expr}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code DivisionExpression}
+	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLessThanEq(@NotNull DDMExpressionParser.LessThanEqContext ctx);
+	T visitDivisionExpression(@NotNull DDMExpressionParser.DivisionExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Division} labeled alternative
-	 * in {@link DDMExpressionParser#multOrDiv}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code BooleanParenthesis}
+	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDivision(@NotNull DDMExpressionParser.DivisionContext ctx);
+	T visitBooleanParenthesis(@NotNull DDMExpressionParser.BooleanParenthesisContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Plus} labeled alternative in
-	 * {@link DDMExpressionParser#plusOrMinus}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToBooleanUnaryExpression}
+	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPlus(@NotNull DDMExpressionParser.PlusContext ctx);
+	T visitToBooleanUnaryExpression(@NotNull DDMExpressionParser.ToBooleanUnaryExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code LogicalVariable} labeled
-	 * alternative in {@link DDMExpressionParser#logical_entity}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by {@link DDMExpressionParser#functionParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionParameters(@NotNull DDMExpressionParser.FunctionParametersContext ctx);
+
+	/**
+	 * Visit a parse tree produced by the {@code IntegerLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#literal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntegerLiteral(@NotNull DDMExpressionParser.IntegerLiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by the {@code LogicalVariable}
+	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLogicalVariable(@NotNull DDMExpressionParser.LogicalVariableContext ctx);
 
 	/**
+	 * Visit a parse tree produced by the {@code AdditionExpression}
+	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAdditionExpression(@NotNull DDMExpressionParser.AdditionExpressionContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DDMExpressionParser#expression}.
-	 *
-	 * @param  ctx the parse tree
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpression(@NotNull DDMExpressionParser.ExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToUnaryNot} labeled alternative
-	 * in {@link DDMExpressionParser#comparison_expr}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToEqualityExpression}
+	 * labeled alternative in {@link DDMExpressionParser#logicalAndExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToUnaryNot(@NotNull DDMExpressionParser.ToUnaryNotContext ctx);
+	T visitToEqualityExpression(@NotNull DDMExpressionParser.ToEqualityExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ChangeBoolean} labeled
-	 * alternative in {@link DDMExpressionParser#unaryNot}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code LogicalConstant}
+	 * labeled alternative in {@link DDMExpressionParser#logicalTerm}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitChangeBoolean(@NotNull DDMExpressionParser.ChangeBooleanContext ctx);
+	T visitLogicalConstant(@NotNull DDMExpressionParser.LogicalConstantContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code BooleanParen} labeled
-	 * alternative in {@link DDMExpressionParser#primaryBooleanExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToAdditionOrSubtractionEpression}
+	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBooleanParen(@NotNull DDMExpressionParser.BooleanParenContext ctx);
+	T visitToAdditionOrSubtractionEpression(@NotNull DDMExpressionParser.ToAdditionOrSubtractionEpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code NumericVariable} labeled
-	 * alternative in {@link DDMExpressionParser#numeric_entity}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToFunctionCallExpression}
+	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitToFunctionCallExpression(@NotNull DDMExpressionParser.ToFunctionCallExpressionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by the {@code NumericVariable}
+	 * labeled alternative in {@link DDMExpressionParser#numericTerm}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitNumericVariable(@NotNull DDMExpressionParser.NumericVariableContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Double} labeled alternative in
-	 * {@link DDMExpressionParser#literal}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code SubtractionExpression}
+	 * labeled alternative in {@link DDMExpressionParser#additionOrSubtractionExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDouble(@NotNull DDMExpressionParser.DoubleContext ctx);
+	T visitSubtractionExpression(@NotNull DDMExpressionParser.SubtractionExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Atom} labeled alternative in
-	 * {@link DDMExpressionParser#primaryExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToNumericUnaryExpression}
+	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAtom(@NotNull DDMExpressionParser.AtomContext ctx);
+	T visitToNumericUnaryExpression(@NotNull DDMExpressionParser.ToNumericUnaryExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Integer} labeled alternative in
-	 * {@link DDMExpressionParser#literal}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code GreaterThanOrEqualsExpression}
+	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInteger(@NotNull DDMExpressionParser.IntegerContext ctx);
+	T visitGreaterThanOrEqualsExpression(@NotNull DDMExpressionParser.GreaterThanOrEqualsExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToEquality} labeled alternative
-	 * in {@link DDMExpressionParser#logicalAndExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToNumericTerm}
+	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToEquality(@NotNull DDMExpressionParser.ToEqualityContext ctx);
+	T visitToNumericTerm(@NotNull DDMExpressionParser.ToNumericTermContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code And} labeled alternative in
-	 * {@link DDMExpressionParser#logicalAndExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code NumericParenthesis}
+	 * labeled alternative in {@link DDMExpressionParser#numericOperandExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAnd(@NotNull DDMExpressionParser.AndContext ctx);
+	T visitNumericParenthesis(@NotNull DDMExpressionParser.NumericParenthesisContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DDMExpressionParser#functionCall}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToLogicalTerm}
+	 * labeled alternative in {@link DDMExpressionParser#booleanOperandExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctionCall(@NotNull DDMExpressionParser.FunctionCallContext ctx);
+	T visitToLogicalTerm(@NotNull DDMExpressionParser.ToLogicalTermContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Tocomparison} labeled
-	 * alternative in {@link DDMExpressionParser#equalityExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code StringLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#literal}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTocomparison(@NotNull DDMExpressionParser.TocomparisonContext ctx);
+	T visitStringLiteral(@NotNull DDMExpressionParser.StringLiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Greater} labeled alternative in
-	 * {@link DDMExpressionParser#comparison_expr}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code MinusExpression}
+	 * labeled alternative in {@link DDMExpressionParser#numericUnaryEpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGreater(@NotNull DDMExpressionParser.GreaterContext ctx);
+	T visitMinusExpression(@NotNull DDMExpressionParser.MinusExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code NEQ} labeled alternative in
-	 * {@link DDMExpressionParser#equalityExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code FloatingPointLiteral}
+	 * labeled alternative in {@link DDMExpressionParser#literal}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNEQ(@NotNull DDMExpressionParser.NEQContext ctx);
+	T visitFloatingPointLiteral(@NotNull DDMExpressionParser.FloatingPointLiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToLiteral} labeled alternative
-	 * in {@link DDMExpressionParser#numeric_entity}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code ToComparisonExpression}
+	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToLiteral(@NotNull DDMExpressionParser.ToLiteralContext ctx);
+	T visitToComparisonExpression(@NotNull DDMExpressionParser.ToComparisonExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Minus} labeled alternative in
-	 * {@link DDMExpressionParser#plusOrMinus}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code LessThanOrEqualsExpression}
+	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMinus(@NotNull DDMExpressionParser.MinusContext ctx);
+	T visitLessThanOrEqualsExpression(@NotNull DDMExpressionParser.LessThanOrEqualsExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code ToLogicAnd} labeled alternative
-	 * in {@link DDMExpressionParser#logicalOrExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code MultiplicationExpression}
+	 * labeled alternative in {@link DDMExpressionParser#multiplicationOrDivisionExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitToLogicAnd(@NotNull DDMExpressionParser.ToLogicAndContext ctx);
+	T visitMultiplicationExpression(@NotNull DDMExpressionParser.MultiplicationExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code Paren} labeled alternative in
-	 * {@link DDMExpressionParser#primaryExpression}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code EqualsExpression}
+	 * labeled alternative in {@link DDMExpressionParser#equalityExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParen(@NotNull DDMExpressionParser.ParenContext ctx);
+	T visitEqualsExpression(@NotNull DDMExpressionParser.EqualsExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by the {@code LogicalConst} labeled
-	 * alternative in {@link DDMExpressionParser#logical_entity}.
-	 *
-	 * @param  ctx the parse tree
+	 * Visit a parse tree produced by the {@code LessThanExpression}
+	 * labeled alternative in {@link DDMExpressionParser#comparisonExpression}.
+	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLogicalConst(@NotNull DDMExpressionParser.LogicalConstContext ctx);
+	T visitLessThanExpression(@NotNull DDMExpressionParser.LessThanExpressionContext ctx);
 }
