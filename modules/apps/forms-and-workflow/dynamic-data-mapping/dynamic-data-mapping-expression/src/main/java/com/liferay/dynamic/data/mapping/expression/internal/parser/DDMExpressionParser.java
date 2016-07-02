@@ -34,14 +34,14 @@ public class DDMExpressionParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		IntegerLiteral=1, FloatingPointLiteral=2, DecimalFloatingPointLiteral=3, 
-		AND=4, COMMA=5, DIV=6, EQ=7, FALSE=8, GE=9, GT=10, IDENTIFIER=11, LE=12, 
-		LPAREN=13, LT=14, MINUS=15, MULT=16, NEQ=17, NOT=18, OR=19, PLUS=20, RPAREN=21, 
-		STRING=22, TRUE=23, WS=24;
+		AND=4, COMMA=5, DIV=6, EQ=7, FALSE=8, GE=9, GT=10, LE=11, LPAREN=12, LT=13, 
+		MINUS=14, MULT=15, NEQ=16, NOT=17, OR=18, PLUS=19, RPAREN=20, STRING=21, 
+		TRUE=22, IDENTIFIER=23, WS=24;
 	public static final String[] tokenNames = {
 		"<INVALID>", "IntegerLiteral", "FloatingPointLiteral", "DecimalFloatingPointLiteral", 
-		"AND", "','", "'/'", "EQ", "FALSE", "'>='", "'>'", "IDENTIFIER", "'<='", 
-		"'('", "'<'", "'-'", "'*'", "NEQ", "NOT", "OR", "'+'", "')'", "STRING", 
-		"TRUE", "WS"
+		"AND", "','", "'/'", "EQ", "FALSE", "'>='", "'>'", "'<='", "'('", "'<'", 
+		"'-'", "'*'", "NEQ", "NOT", "OR", "'+'", "')'", "STRING", "TRUE", "IDENTIFIER", 
+		"WS"
 	};
 	public static final int
 		RULE_expression = 0, RULE_logicalOrExpression = 1, RULE_logicalAndExpression = 2, 
@@ -784,11 +784,11 @@ public class DDMExpressionParser extends Parser {
 			case IntegerLiteral:
 			case FloatingPointLiteral:
 			case FALSE:
-			case IDENTIFIER:
 			case LPAREN:
 			case MINUS:
 			case STRING:
 			case TRUE:
+			case IDENTIFIER:
 				_localctx = new ToBooleanOperandExpressionContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1383,9 +1383,9 @@ public class DDMExpressionParser extends Parser {
 				break;
 			case IntegerLiteral:
 			case FloatingPointLiteral:
-			case IDENTIFIER:
 			case LPAREN:
 			case STRING:
+			case IDENTIFIER:
 				_localctx = new PrimaryContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1645,7 +1645,7 @@ public class DDMExpressionParser extends Parser {
 			setState(154); match(LPAREN);
 			setState(156);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << FALSE) | (1L << IDENTIFIER) | (1L << LPAREN) | (1L << MINUS) | (1L << NOT) | (1L << STRING) | (1L << TRUE))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << FALSE) | (1L << LPAREN) | (1L << MINUS) | (1L << NOT) | (1L << STRING) | (1L << TRUE) | (1L << IDENTIFIER))) != 0)) {
 				{
 				setState(155); functionParameters();
 				}
@@ -1914,44 +1914,44 @@ public class DDMExpressionParser extends Parser {
 		"\r\3\r\3\r\3\r\3\r\3\r\5\r\u0096\n\r\3\16\3\16\5\16\u009a\n\16\3\17\3"+
 		"\17\3\17\5\17\u009f\n\17\3\17\3\17\3\20\3\20\3\20\7\20\u00a6\n\20\f\20"+
 		"\16\20\u00a9\13\20\3\21\3\21\3\21\5\21\u00ae\n\21\3\21\2\b\4\6\b\n\22"+
-		"\24\22\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \2\3\4\2\n\n\31\31\u00b7"+
+		"\24\22\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \2\3\4\2\n\n\30\30\u00b7"+
 		"\2\"\3\2\2\2\4%\3\2\2\2\6\60\3\2\2\2\b;\3\2\2\2\nI\3\2\2\2\f`\3\2\2\2"+
 		"\16h\3\2\2\2\20l\3\2\2\2\22n\3\2\2\2\24|\3\2\2\2\26\u008d\3\2\2\2\30\u0095"+
 		"\3\2\2\2\32\u0099\3\2\2\2\34\u009b\3\2\2\2\36\u00a2\3\2\2\2 \u00ad\3\2"+
 		"\2\2\"#\5\4\3\2#$\7\2\2\3$\3\3\2\2\2%&\b\3\1\2&\'\5\6\4\2\'-\3\2\2\2("+
-		")\f\4\2\2)*\7\25\2\2*,\5\6\4\2+(\3\2\2\2,/\3\2\2\2-+\3\2\2\2-.\3\2\2\2"+
+		")\f\4\2\2)*\7\24\2\2*,\5\6\4\2+(\3\2\2\2,/\3\2\2\2-+\3\2\2\2-.\3\2\2\2"+
 		".\5\3\2\2\2/-\3\2\2\2\60\61\b\4\1\2\61\62\5\b\5\2\628\3\2\2\2\63\64\f"+
 		"\4\2\2\64\65\7\6\2\2\65\67\5\b\5\2\66\63\3\2\2\2\67:\3\2\2\28\66\3\2\2"+
 		"\289\3\2\2\29\7\3\2\2\2:8\3\2\2\2;<\b\5\1\2<=\5\n\6\2=F\3\2\2\2>?\f\5"+
-		"\2\2?@\7\t\2\2@E\5\n\6\2AB\f\4\2\2BC\7\23\2\2CE\5\n\6\2D>\3\2\2\2DA\3"+
+		"\2\2?@\7\t\2\2@E\5\n\6\2AB\f\4\2\2BC\7\22\2\2CE\5\n\6\2D>\3\2\2\2DA\3"+
 		"\2\2\2EH\3\2\2\2FD\3\2\2\2FG\3\2\2\2G\t\3\2\2\2HF\3\2\2\2IJ\b\6\1\2JK"+
 		"\5\f\7\2KZ\3\2\2\2LM\f\7\2\2MN\7\f\2\2NY\5\22\n\2OP\f\6\2\2PQ\7\13\2\2"+
-		"QY\5\22\n\2RS\f\5\2\2ST\7\20\2\2TY\5\22\n\2UV\f\4\2\2VW\7\16\2\2WY\5\22"+
+		"QY\5\22\n\2RS\f\5\2\2ST\7\17\2\2TY\5\22\n\2UV\f\4\2\2VW\7\r\2\2WY\5\22"+
 		"\n\2XL\3\2\2\2XO\3\2\2\2XR\3\2\2\2XU\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3"+
-		"\2\2\2[\13\3\2\2\2\\Z\3\2\2\2]^\7\24\2\2^a\5\f\7\2_a\5\16\b\2`]\3\2\2"+
-		"\2`_\3\2\2\2a\r\3\2\2\2bi\5\20\t\2ci\5\22\n\2de\7\17\2\2ef\5\4\3\2fg\7"+
-		"\27\2\2gi\3\2\2\2hb\3\2\2\2hc\3\2\2\2hd\3\2\2\2i\17\3\2\2\2jm\t\2\2\2"+
-		"km\7\r\2\2lj\3\2\2\2lk\3\2\2\2m\21\3\2\2\2no\b\n\1\2op\5\24\13\2py\3\2"+
-		"\2\2qr\f\5\2\2rs\7\26\2\2sx\5\24\13\2tu\f\4\2\2uv\7\21\2\2vx\5\24\13\2"+
-		"wq\3\2\2\2wt\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z\23\3\2\2\2{y\3\2\2"+
-		"\2|}\b\13\1\2}~\5\26\f\2~\u0087\3\2\2\2\177\u0080\f\5\2\2\u0080\u0081"+
-		"\7\22\2\2\u0081\u0086\5\26\f\2\u0082\u0083\f\4\2\2\u0083\u0084\7\b\2\2"+
+		"\2\2\2[\13\3\2\2\2\\Z\3\2\2\2]^\7\23\2\2^a\5\f\7\2_a\5\16\b\2`]\3\2\2"+
+		"\2`_\3\2\2\2a\r\3\2\2\2bi\5\20\t\2ci\5\22\n\2de\7\16\2\2ef\5\4\3\2fg\7"+
+		"\26\2\2gi\3\2\2\2hb\3\2\2\2hc\3\2\2\2hd\3\2\2\2i\17\3\2\2\2jm\t\2\2\2"+
+		"km\7\31\2\2lj\3\2\2\2lk\3\2\2\2m\21\3\2\2\2no\b\n\1\2op\5\24\13\2py\3"+
+		"\2\2\2qr\f\5\2\2rs\7\25\2\2sx\5\24\13\2tu\f\4\2\2uv\7\20\2\2vx\5\24\13"+
+		"\2wq\3\2\2\2wt\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z\23\3\2\2\2{y\3\2"+
+		"\2\2|}\b\13\1\2}~\5\26\f\2~\u0087\3\2\2\2\177\u0080\f\5\2\2\u0080\u0081"+
+		"\7\21\2\2\u0081\u0086\5\26\f\2\u0082\u0083\f\4\2\2\u0083\u0084\7\b\2\2"+
 		"\u0084\u0086\5\26\f\2\u0085\177\3\2\2\2\u0085\u0082\3\2\2\2\u0086\u0089"+
 		"\3\2\2\2\u0087\u0085\3\2\2\2\u0087\u0088\3\2\2\2\u0088\25\3\2\2\2\u0089"+
-		"\u0087\3\2\2\2\u008a\u008b\7\21\2\2\u008b\u008e\5\26\f\2\u008c\u008e\5"+
+		"\u0087\3\2\2\2\u008a\u008b\7\20\2\2\u008b\u008e\5\26\f\2\u008c\u008e\5"+
 		"\30\r\2\u008d\u008a\3\2\2\2\u008d\u008c\3\2\2\2\u008e\27\3\2\2\2\u008f"+
-		"\u0096\5\32\16\2\u0090\u0096\5\34\17\2\u0091\u0092\7\17\2\2\u0092\u0093"+
-		"\5\22\n\2\u0093\u0094\7\27\2\2\u0094\u0096\3\2\2\2\u0095\u008f\3\2\2\2"+
+		"\u0096\5\32\16\2\u0090\u0096\5\34\17\2\u0091\u0092\7\16\2\2\u0092\u0093"+
+		"\5\22\n\2\u0093\u0094\7\26\2\2\u0094\u0096\3\2\2\2\u0095\u008f\3\2\2\2"+
 		"\u0095\u0090\3\2\2\2\u0095\u0091\3\2\2\2\u0096\31\3\2\2\2\u0097\u009a"+
-		"\5 \21\2\u0098\u009a\7\r\2\2\u0099\u0097\3\2\2\2\u0099\u0098\3\2\2\2\u009a"+
-		"\33\3\2\2\2\u009b\u009c\7\r\2\2\u009c\u009e\7\17\2\2\u009d\u009f\5\36"+
-		"\20\2\u009e\u009d\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a0\3\2\2\2\u00a0"+
-		"\u00a1\7\27\2\2\u00a1\35\3\2\2\2\u00a2\u00a7\5\4\3\2\u00a3\u00a4\7\7\2"+
-		"\2\u00a4\u00a6\5\4\3\2\u00a5\u00a3\3\2\2\2\u00a6\u00a9\3\2\2\2\u00a7\u00a5"+
-		"\3\2\2\2\u00a7\u00a8\3\2\2\2\u00a8\37\3\2\2\2\u00a9\u00a7\3\2\2\2\u00aa"+
-		"\u00ae\7\4\2\2\u00ab\u00ae\7\3\2\2\u00ac\u00ae\7\30\2\2\u00ad\u00aa\3"+
-		"\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3\2\2\2\u00ae!\3\2\2\2\25-8DFX"+
-		"Z`hlwy\u0085\u0087\u008d\u0095\u0099\u009e\u00a7\u00ad";
+		"\5 \21\2\u0098\u009a\7\31\2\2\u0099\u0097\3\2\2\2\u0099\u0098\3\2\2\2"+
+		"\u009a\33\3\2\2\2\u009b\u009c\7\31\2\2\u009c\u009e\7\16\2\2\u009d\u009f"+
+		"\5\36\20\2\u009e\u009d\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a0\3\2\2\2"+
+		"\u00a0\u00a1\7\26\2\2\u00a1\35\3\2\2\2\u00a2\u00a7\5\4\3\2\u00a3\u00a4"+
+		"\7\7\2\2\u00a4\u00a6\5\4\3\2\u00a5\u00a3\3\2\2\2\u00a6\u00a9\3\2\2\2\u00a7"+
+		"\u00a5\3\2\2\2\u00a7\u00a8\3\2\2\2\u00a8\37\3\2\2\2\u00a9\u00a7\3\2\2"+
+		"\2\u00aa\u00ae\7\4\2\2\u00ab\u00ae\7\3\2\2\u00ac\u00ae\7\27\2\2\u00ad"+
+		"\u00aa\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ac\3\2\2\2\u00ae!\3\2\2\2"+
+		"\25-8DFXZ`hlwy\u0085\u0087\u008d\u0095\u0099\u009e\u00a7\u00ad";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -27,13 +27,83 @@ import org.junit.Test;
 public class DDMExpressionEvaluationTest {
 
 	@Test
-	public void testEvaluateBasicBooleanEqualsExpression() throws Exception {
+	public void testEvaluateBasicBooleanEqualsExpression1() throws Exception {
 		DDMExpression<Boolean> ddmExpression =
 			_ddmExpressionFactory.createBooleanDDMExpression("var1 == TRUE");
 
 		ddmExpression.setBooleanVariableValue("var1", true);
 
 		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testEvaluateBasicBooleanEqualsExpression2() throws Exception {
+		DDMExpression<Boolean> ddmExpression =
+			_ddmExpressionFactory.createBooleanDDMExpression("TRUE | true");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"TRUE || true");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"TRUE or true");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"TRUE && false");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"true and FALSE");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"true & FALSE");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"not (true)");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"NOT(5>1)");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		//boolean d = 1 != true;
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"2 != 3");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"2 <> 3");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+			"2 <> true");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+
+//		ddmExpression = _ddmExpressionFactory.createBooleanDDMExpression(
+//	"true > 5");
+//
+//		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression =
+			_ddmExpressionFactory.createBooleanDDMExpression("\"pedro\" = \"pedroaa\"");
+
+		Assert.assertFalse(ddmExpression.evaluate());
 	}
 
 	@Test

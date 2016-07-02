@@ -219,10 +219,12 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 	public Object visitEqualsExpression(
 		@NotNull DDMExpressionParser.EqualsExpressionContext context) {
 
-		boolean b1 = (Boolean)context.getChild(0).accept(this);
-		boolean b2 = (Boolean)context.getChild(2).accept(this);
+		// TODO check type?
 
-		return b1 == b2;
+		Object b1 = context.getChild(0).accept(this);
+		Object b2 = context.getChild(2).accept(this);
+
+		return b1.equals(b2);
 	}
 
 	@Override
@@ -323,9 +325,9 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 
 	@Override
 	public Object visitLogicalVariable(
-		@NotNull DDMExpressionParser.LogicalVariableContext ctx) {
+		@NotNull DDMExpressionParser.LogicalVariableContext context) {
 
-		String variable = ctx.getText();
+		String variable = context.getText();
 
 		Object variableValue = _variables.get(variable);
 
@@ -357,10 +359,12 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 	public Object visitNotEqualsExpression(
 		@NotNull DDMExpressionParser.NotEqualsExpressionContext context) {
 
-		boolean b1 = (Boolean)context.getChild(0).accept(this);
-		boolean b2 = (Boolean)context.getChild(2).accept(this);
+		// TODO check type?
 
-		return b1 != b2;
+		Object b1 = context.getChild(0).accept(this);
+		Object b2 = context.getChild(2).accept(this);
+
+		return !b1.equals(b2);
 	}
 
 	public Object visitNotExpression(
