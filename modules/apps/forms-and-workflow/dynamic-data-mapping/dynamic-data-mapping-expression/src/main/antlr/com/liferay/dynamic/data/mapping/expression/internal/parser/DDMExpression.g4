@@ -153,10 +153,6 @@ GT
 	: '>'
 	;
 
-IDENTIFIER
-	: [a-zA-Z_][a-zA-Z_0-9]*
-	;
-
 LE
 	: '<='
 	;
@@ -209,6 +205,10 @@ STRING
 TRUE
 	: 'true'
 	| 'TRUE'
+	;
+
+IDENTIFIER
+	: [a-zA-Z_][a-zA-Z_0-9]*
 	;
 
 WS
