@@ -20,13 +20,12 @@ import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpression
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.NotNull;
 
 /**
  * @author Marcellus Tavares
@@ -295,7 +294,9 @@ public class DDMExpressionVisitorImpl extends DDMExpressionBaseVisitor<Object> {
 	public Object visitIntegerLiteral(
 		@NotNull DDMExpressionParser.IntegerLiteralContext context) {
 
-		return Double.parseDouble(context.getText());
+		Number number = Long.parseLong(context.getText());
+
+		return number.doubleValue();
 	}
 
 	public Object visitLessThanExpression(
