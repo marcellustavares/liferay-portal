@@ -21,9 +21,13 @@ import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionLexer;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser;
 import com.liferay.portal.kernel.util.ListUtil;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.math.MathContext;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,12 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
  * @author Miguel Angelo Caldas Gallindo
@@ -88,6 +86,12 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 				Object variableValue = getVariableValue(entry.getValue());
 
 				ddmExpressionVisitor.addVariable(entry.getKey(), variableValue);
+			}
+
+			// TODO check function names and variable don't conflict
+
+			for (Map.Entry<String, DDMExpressionFunction> entry : _ddmExpressionFunctions.entrySet()) {
+				ddmExpressionVisitor.addFunction(entry.getKey(), entry.getValue());
 			}
 
 			Object result = _expressionContext.accept(ddmExpressionVisitor);

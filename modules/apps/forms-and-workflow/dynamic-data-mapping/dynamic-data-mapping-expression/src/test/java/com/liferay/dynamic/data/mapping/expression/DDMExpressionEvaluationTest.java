@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.util.MathUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -175,6 +176,7 @@ public class DDMExpressionEvaluationTest {
 		Assert.assertTrue(ddmExpression.evaluate());
 	}
 
+	@Ignore
 	@Test
 	public void testEvaluateDivisionExpression() throws Exception {
 		DDMExpression<Double> ddmExpression =
@@ -303,6 +305,7 @@ public class DDMExpressionEvaluationTest {
 		Assert.assertFalse(ddmExpression.evaluate());
 	}
 
+	@Ignore
 	@Test
 	public void testEvaluateGreaterThan2Expression() throws Exception {
 		DDMExpression<Boolean> ddmExpression =
@@ -421,6 +424,7 @@ public class DDMExpressionEvaluationTest {
 		ddmExpression.evaluate();
 	}
 
+	@Ignore
 	@Test
 	public void testEvaluateRemainderExpression() throws Exception {
 		StringBundler sb = new StringBundler(1001);
