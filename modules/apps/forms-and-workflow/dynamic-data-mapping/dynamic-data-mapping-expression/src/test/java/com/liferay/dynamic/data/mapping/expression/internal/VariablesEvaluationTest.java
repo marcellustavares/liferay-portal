@@ -18,4 +18,7 @@ package com.liferay.dynamic.data.mapping.expression.internal;
  * @author Marcellus Tavares
  */
 public class VariablesEvaluationTest {
+
+	// Nested variables
+	// Variables don't conflict
 }
