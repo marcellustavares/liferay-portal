@@ -2690,7 +2690,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  ernel.process.log;version="6.2.0";uses:="com.liferay.portal.kernel.io
  .unsync,com.liferay.portal.kernel.process",com.liferay.portal.kernel.
  regex;version="1.0.0",com.liferay.portal.kernel.repository;version="7
- .0.0";uses:="com.liferay.asset.kernel.service,com.liferay.document.li
+ .1.0";uses:="com.liferay.asset.kernel.service,com.liferay.document.li
  brary.kernel.service,com.liferay.portal.kernel.exception,com.liferay.
  portal.kernel.lock,com.liferay.portal.kernel.model,com.liferay.portal
  .kernel.repository.capabilities,com.liferay.portal.kernel.repository.
