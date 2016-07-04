@@ -25,7 +25,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * @author Marcellus Tavares
  */
-public class DDMExpressionListenerImpl extends DDMExpressionBaseListener {
+public class DDMExpressionListener extends DDMExpressionBaseListener {
 
 	public void enterFunctionCallExpression(
 		@NotNull DDMExpressionParser.FunctionCallExpressionContext context) {

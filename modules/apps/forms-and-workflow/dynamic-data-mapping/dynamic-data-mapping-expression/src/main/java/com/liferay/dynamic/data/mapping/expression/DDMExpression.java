@@ -31,48 +31,23 @@ public interface DDMExpression<T> {
 	public Map<String, VariableDependencies> getVariableDependenciesMap()
 		throws DDMExpressionException;
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setBooleanVariableValue(
 		String variableName, Boolean variableValue);
 
 	public void setDDMExpressionFunction(
 		String functionName, DDMExpressionFunction ddmExpressionFunction);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setDoubleVariableValue(
 		String variableName, Double variableValue);
 
 	public void setExpressionStringVariableValue(
 		String variableName, String variableValue);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setFloatVariableValue(String variableName, Float variableValue);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setIntegerVariableValue(
 		String variableName, Integer variableValue);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setLongVariableValue(String variableName, Long variableValue);
 
 	/**
@@ -81,11 +56,6 @@ public interface DDMExpression<T> {
 	@Deprecated
 	public void setMathContext(MathContext mathContext);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setVariableValue(String,
-	 *             Object)}
-	 */
-	@Deprecated
 	public void setStringVariableValue(
 			String variableName, String variableValue)
 		throws DDMExpressionException;

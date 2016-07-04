@@ -20,21 +20,26 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionLexer;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser;
+import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser.ExpressionContext;
 import com.liferay.portal.kernel.util.ListUtil;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.math.MathContext;
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
  * @author Miguel Angelo Caldas Gallindo
@@ -52,51 +57,31 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_expressionString = expressionString;
 		_expressionClass = expressionClass;
 
-		parse();
+		_expressionContext = createExpressionContext();
 
-		for (String variableName : getVariableNames()) {
-			Variable variable = new Variable(variableName);
-
-			_variables.put(variableName, variable);
-		}
+		registerDefaultFunctions();
+		registerExpressionFunctionsAndVariables();
 	}
 
 	@Override
 	public T evaluate() throws DDMExpressionException {
-		Set<String> bundledFunctions = new HashSet<>(
-			Arrays.asList(
-				"between", "concat", "contains", "equals", "isEmailAddress",
-				"isURL", "sum"));
+		Set<String> undefinedFunctionNames = getUndefinedFunctionNames();
 
-		for (String expressionFunction : getFunctionNames()) {
-			if (bundledFunctions.contains(expressionFunction) ||
-				_ddmExpressionFunctions.keySet().contains(expressionFunction)) {
-
-				continue;
-			}
-
-			throw new DDMExpressionException.FunctionNotDefined("");
+		if (!undefinedFunctionNames.isEmpty()) {
+			throw new DDMExpressionException.FunctionNotDefined(
+				undefinedFunctionNames);
 		}
 
 		try {
-			DDMExpressionVisitorImpl ddmExpressionVisitor =
-				new DDMExpressionVisitorImpl();
-
-			for (Map.Entry<String, Variable> entry : _variables.entrySet()) {
-				Object variableValue = getVariableValue(entry.getValue());
-
-				ddmExpressionVisitor.addVariable(entry.getKey(), variableValue);
-			}
-
-			// TODO check function names and variable don't conflict
-
-			for (Map.Entry<String, DDMExpressionFunction> entry : _ddmExpressionFunctions.entrySet()) {
-				ddmExpressionVisitor.addFunction(entry.getKey(), entry.getValue());
-			}
+			DDMExpressionVisitor ddmExpressionVisitor =
+				createDDMExpressionVisitor();
 
 			Object result = _expressionContext.accept(ddmExpressionVisitor);
 
 			return (T)toRetunType(result);
+		}
+		catch (DDMExpressionException ddmee) {
+			throw ddmee;
 		}
 		catch (Exception e) {
 			throw new DDMExpressionException(e);
@@ -119,7 +104,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableDependenciesMap;
 	}
 
-	@Deprecated
 	@Override
 	public void setBooleanVariableValue(
 		String variableName, Boolean variableValue) {
@@ -134,7 +118,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_ddmExpressionFunctions.put(functionName, ddmExpressionFunction);
 	}
 
-	@Deprecated
 	@Override
 	public void setDoubleVariableValue(
 		String variableName, Double variableValue) {
@@ -155,7 +138,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variable.setExpressionString(variableValue);
 	}
 
-	@Deprecated
 	@Override
 	public void setFloatVariableValue(
 		String variableName, Float variableValue) {
@@ -163,7 +145,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, variableValue);
 	}
 
-	@Deprecated
 	@Override
 	public void setIntegerVariableValue(
 		String variableName, Integer variableValue) {
@@ -171,7 +152,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		setVariableValue(variableName, variableValue);
 	}
 
-	@Deprecated
 	@Override
 	public void setLongVariableValue(String variableName, Long variableValue) {
 		setVariableValue(variableName, variableValue);
@@ -182,7 +162,6 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	public void setMathContext(MathContext mathContext) {
 	}
 
-	@Deprecated
 	@Override
 	public void setStringVariableValue(
 			String variableName, String variableValue)
@@ -204,83 +183,69 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		_variableValues.put(variableName, variableValue);
 	}
 
-	protected DDMExpression<Object> getExpression(String expressionString)
+	protected void assertResultTypeClass(
+			Class<?> expectedResultTypeClass, Class<?> resultTypeClass)
 		throws DDMExpressionException {
 
-		DDMExpressionImpl<Object> ddmExpressionImpl = new DDMExpressionImpl<>(
+		if (!expectedResultTypeClass.isAssignableFrom(resultTypeClass)) {
+			throw new DDMExpressionException.IncompatipleReturnType();
+		}
+	}
+
+	protected DDMExpressionVisitor createDDMExpressionVisitor()
+		throws DDMExpressionException {
+
+		DDMExpressionVisitor ddmExpressionVisitor = new DDMExpressionVisitor();
+
+		// Functions
+
+		ddmExpressionVisitor.addFunctions(_ddmExpressionFunctions);
+
+		// Variables
+
+		for (Map.Entry<String, Variable> entry : _variables.entrySet()) {
+			ddmExpressionVisitor.addVariable(
+				entry.getKey(), getVariableValue(entry.getValue()));
+		}
+
+		return ddmExpressionVisitor;
+	}
+
+	protected DDMExpression<Object> createExpression(String expressionString)
+		throws DDMExpressionException {
+
+		DDMExpressionImpl<Object> ddmExpression = new DDMExpressionImpl<>(
 			expressionString, Object.class);
 
-		for (String variableName : ddmExpressionImpl.getVariableNames()) {
+		for (String variableName : ddmExpression.getExpressionVariableNames()) {
 			Variable variable = _variables.get(variableName);
 
 			if (variable != null) {
 				Object variableValue = getVariableValue(variable);
 
-				ddmExpressionImpl.setVariableValue(variableName, variableValue);
+				ddmExpression.setVariableValue(variableName, variableValue);
 			}
 		}
 
-		return ddmExpressionImpl;
+		return ddmExpression;
 	}
 
-	protected DDMExpression<Object> getExpression(Variable variable)
+	protected DDMExpression<Object> createExpression(Variable variable)
 		throws DDMExpressionException {
 
 		if (variable.getExpressionString() == null) {
 			return null;
 		}
 
-		DDMExpression<Object> ddmExpression = getExpression(
+		DDMExpression<Object> ddmExpression = createExpression(
 			variable.getExpressionString());
 
 		return ddmExpression;
 	}
 
-	protected Set<String> getFunctionNames() {
-		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-
-		DDMExpressionListenerImpl ddmExpressionListener =
-			new DDMExpressionListenerImpl();
-
-		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
-
-		return ddmExpressionListener.getFunctionNames();
-	}
-
-	protected Set<String> getVariableNames() {
-		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-
-		DDMExpressionListenerImpl ddmExpressionListener =
-			new DDMExpressionListenerImpl();
-
-		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
-
-		return ddmExpressionListener.getVariableNames();
-	}
-
-	protected Object getVariableValue(Variable variable)
+	protected ExpressionContext createExpressionContext()
 		throws DDMExpressionException {
 
-		Object variableValue = _variableValues.get(variable.getName());
-
-		if (variableValue != null) {
-			return variableValue;
-		}
-
-		DDMExpression<Object> ddmExpression = getExpression(variable);
-
-//		if (ddmExpression == null) {
-//			return variable.getValue();
-//		}
-
-		variableValue = ddmExpression.evaluate();
-
-		_variableValues.put(variable.getName(), variableValue);
-
-		return variableValue;
-	}
-
-	protected void parse() throws DDMExpressionException {
 		try {
 			CharStream charStream = new ANTLRInputStream(_expressionString);
 
@@ -292,11 +257,46 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 			ddmExpressionParser.setErrorHandler(new BailErrorStrategy());
 
-			_expressionContext = ddmExpressionParser.expression();
+			return ddmExpressionParser.expression();
 		}
 		catch (Exception e) {
 			throw new DDMExpressionException.InvalidSyntax(e);
 		}
+	}
+
+	protected Set<String> getExpressionFunctionNames() {
+		return _expressionFunctionNames;
+	}
+
+	protected Set<String> getExpressionVariableNames() {
+		return _variables.keySet();
+	}
+
+	protected Set<String> getUndefinedFunctionNames() {
+		Set<String> undefinedFunctionNames = new HashSet<>(
+			getExpressionFunctionNames());
+
+		undefinedFunctionNames.removeAll(_ddmExpressionFunctions.keySet());
+
+		return undefinedFunctionNames;
+	}
+
+	protected Object getVariableValue(Variable variable)
+		throws DDMExpressionException {
+
+		Object variableValue = _variableValues.get(variable.getName());
+
+		if (variableValue != null) {
+			return variableValue;
+		}
+
+		DDMExpression<Object> ddmExpression = createExpression(variable);
+
+		variableValue = ddmExpression.evaluate();
+
+		_variableValues.put(variable.getName(), variableValue);
+
+		return variableValue;
 	}
 
 	protected VariableDependencies populateVariableDependenciesMap(
@@ -314,10 +314,12 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		variableDependencies = new VariableDependencies(variable.getName());
 
 		if (variable.getExpressionString() != null) {
-			DDMExpressionImpl<?> ddmExpressionImpl = new DDMExpressionImpl<>(
+			DDMExpressionImpl<?> ddmExpression = new DDMExpressionImpl<>(
 				variable.getExpressionString(), Object.class);
 
-			for (String variableName : ddmExpressionImpl.getVariableNames()) {
+			for (String variableName :
+					ddmExpression.getExpressionVariableNames()) {
+
 				if (!_variables.containsKey(variableName)) {
 					Variable newVariable = new Variable(variableName);
 
@@ -340,47 +342,55 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 		return variableDependencies;
 	}
 
-	protected double toDouble(Object result) throws DDMExpressionException {
-		Class<?> clazz = result.getClass();
+	protected void registerDefaultFunctions() {
+		_ddmExpressionFunctions.put("between", new BetweenFunction());
+		_ddmExpressionFunctions.put("concat", new ConcatFunction());
+		_ddmExpressionFunctions.put("contains", new ContainsFunction());
+		_ddmExpressionFunctions.put(
+			"isEmailAddress", new IsEmailAddressFunction());
+		_ddmExpressionFunctions.put("isURL", new IsURLFunction());
+		_ddmExpressionFunctions.put("sum", new SumFunction());
+	}
 
-		if (!Number.class.isAssignableFrom(clazz)) {
-			throw new DDMExpressionException.IncompatipleReturnType();
+	protected void registerExpressionFunctionsAndVariables() {
+		ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+
+		DDMExpressionListener ddmExpressionListener =
+			new DDMExpressionListener();
+
+		parseTreeWalker.walk(ddmExpressionListener, _expressionContext);
+
+		// Function names
+
+		_expressionFunctionNames.addAll(
+			ddmExpressionListener.getFunctionNames());
+
+		// Variables
+
+		for (String variableName : ddmExpressionListener.getVariableNames()) {
+			_variables.put(variableName, new Variable(variableName));
 		}
+	}
 
-		return (Double)result;
+	protected double toDouble(Object result) throws DDMExpressionException {
+		Number number = (Number)result;
+
+		return number.doubleValue();
 	}
 
 	protected float toFloat(Object result) throws DDMExpressionException {
-		Class<?> clazz = result.getClass();
-
-		if (!Number.class.isAssignableFrom(clazz)) {
-			throw new DDMExpressionException.IncompatipleReturnType();
-		}
-
 		Number number = (Number)result;
 
 		return number.floatValue();
 	}
 
 	protected int toInteger(Object result) throws DDMExpressionException {
-		Class<?> clazz = result.getClass();
-
-		if (!Number.class.isAssignableFrom(clazz)) {
-			throw new DDMExpressionException.IncompatipleReturnType();
-		}
-
 		Number number = (Number)result;
 
 		return number.intValue();
 	}
 
 	protected long toLong(Object result) throws DDMExpressionException {
-		Class<?> clazz = result.getClass();
-
-		if (!Number.class.isAssignableFrom(clazz)) {
-			throw new DDMExpressionException.IncompatipleReturnType();
-		}
-
 		Number number = (Number)result;
 
 		return number.longValue();
@@ -391,75 +401,152 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 			return String.valueOf(result);
 		}
 		else if (Boolean.class.isAssignableFrom(_expressionClass)) {
-			Class<?> clazz = result.getClass();
-
-			if (!Boolean.class.isAssignableFrom(clazz)) {
-				throw new DDMExpressionException.IncompatipleReturnType();
-			}
+			assertResultTypeClass(Boolean.class, result.getClass());
 
 			return result;
 		}
 		else if (Double.class.isAssignableFrom(_expressionClass)) {
+			assertResultTypeClass(Number.class, result.getClass());
+
 			return toDouble(result);
 		}
 		else if (Float.class.isAssignableFrom(_expressionClass)) {
+			assertResultTypeClass(Number.class, result.getClass());
+
 			return toFloat(result);
 		}
 		else if (Integer.class.isAssignableFrom(_expressionClass)) {
+			assertResultTypeClass(Number.class, result.getClass());
+
 			return toInteger(result);
 		}
 		else if (Long.class.isAssignableFrom(_expressionClass)) {
+			assertResultTypeClass(Number.class, result.getClass());
+
 			return toLong(result);
 		}
 		else if (Number.class.isAssignableFrom(_expressionClass)) {
-			Class<?> clazz = result.getClass();
-
-			if (!Number.class.isAssignableFrom(clazz)) {
-				throw new DDMExpressionException.IncompatipleReturnType();
-			}
+			assertResultTypeClass(Number.class, result.getClass());
 
 			return result;
 		}
 
 		return result;
-
-//		Class<?> clazz = result.getClass();
-//
-//		if (!_expressionClass.isAssignableFrom(clazz)) {
-//			throw new DDMExpressionException.IncompatipleReturnType();
-//		}
-//
-//
-//
-//		if (Number.class.isAssignableFrom(clazz)) {
-//			Number number = (Number)result;
-//
-//			if (clazz.isAssignableFrom(Double.class)) {
-//				return number.doubleValue();
-//			}
-//			else if (clazz.isAssignableFrom(Float.class)) {
-//				return number.floatValue();
-//			}
-//			else if (clazz.isAssignableFrom(Integer.class)) {
-//				return number.intValue();
-//			}
-//			else if (clazz.isAssignableFrom(Long.class)) {
-//				return number.longValue();
-//			}
-//			else {
-//				return number;
-//			}
-//		}
-//
-//		return result;
 	}
 
 	private final Map<String, DDMExpressionFunction> _ddmExpressionFunctions =
 		new HashMap<>();
 	private final Class<?> _expressionClass;
-	private DDMExpressionParser.ExpressionContext _expressionContext;
+	private final ExpressionContext _expressionContext;
+	private final Set<String> _expressionFunctionNames = new HashSet<>();
 	private final String _expressionString;
 	private final Map<String, Variable> _variables = new TreeMap<>();
 	private final Map<String, Object> _variableValues = new HashMap<>();
+
+	private static class BetweenFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			Number parameter = (Number)parameters[0];
+
+			Number minParameter = (Number)parameters[1];
+			Number maxParameter = (Number)parameters[2];
+
+			if ((parameter.doubleValue() >= minParameter.doubleValue()) &&
+				(parameter.doubleValue() <= maxParameter.doubleValue())) {
+
+				return Boolean.TRUE;
+			}
+
+			return Boolean.FALSE;
+		}
+
+	}
+
+	private static class ConcatFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			StringBundler sb = new StringBundler(parameters.length);
+
+			for (Object parameter : parameters) {
+				String string = (String)parameter;
+
+				if (Validator.isNull(string)) {
+					continue;
+				}
+
+				sb.append(string);
+			}
+
+			return sb.toString();
+		}
+
+	}
+
+	private static class ContainsFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			String parameter1 = (String)parameters[0];
+			String parameter2 = (String)parameters[1];
+
+			if ((parameter1 == null) || (parameter2 == null)) {
+				return false;
+			}
+
+			String string1 = StringUtil.toLowerCase(parameter1);
+			String string2 = StringUtil.toLowerCase(parameter2);
+
+			if (string1.contains(string2)) {
+				return Boolean.TRUE;
+			}
+
+			return Boolean.FALSE;
+		}
+
+	}
+
+	private static class IsEmailAddressFunction
+		implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			String string = (String)parameters[0];
+
+			if (Validator.isEmailAddress(string)) {
+				return Boolean.TRUE;
+			}
+
+			return Boolean.FALSE;
+		}
+
+	}
+
+	private static class IsURLFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			String string = (String)parameters[0];
+
+			if (Validator.isUrl(string)) {
+				return Boolean.TRUE;
+			}
+
+			return Boolean.FALSE;
+		}
+
+	}
+
+	private static class SumFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			double result = 0;
+
+			for (Object parameter : parameters) {
+				Number parameterDouble = (Number)parameter;
+
+				result += parameterDouble.doubleValue();
+			}
+
+			return result;
+		}
+
+	}
 
 }

@@ -109,7 +109,7 @@ literal
 	;
 
 IntegerLiteral
-    : Digits IntegerSuffix?
+    : Digits
     ;
 
 FloatingPointLiteral
@@ -117,8 +117,9 @@ FloatingPointLiteral
     ;
 
 DecimalFloatingPointLiteral
-	: Digits '.' Digits? FloatSuffix?
-	| '.' Digits  FloatSuffix?
+	: Digits '.' Digits? ExponentPart?
+	| '.' Digits ExponentPart?
+	| Digits ExponentPart
 	;
 
 AND
@@ -215,7 +216,6 @@ WS
 	: [ \r\t\u000C\n]+ -> skip
 	;
 
-
 fragment
 Digits
     : Digit+
@@ -227,11 +227,21 @@ Digit
 	;
 
 fragment
-IntegerSuffix
-    : [lL]
+ExponentIndicator
+    : [eE]
     ;
 
 fragment
-FloatSuffix
-    : [fFdD]
+ExponentPart
+    :   ExponentIndicator SignedInteger
+    ;
+
+fragment
+SignedInteger
+    :   Sign? Digits
+    ;
+
+fragment
+Sign
+    :   [+-]
     ;

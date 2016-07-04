@@ -15,6 +15,9 @@
 package com.liferay.dynamic.data.mapping.expression;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.util.Set;
 
 /**
  * @author Marcellus Tavares
@@ -60,19 +63,20 @@ public class DDMExpressionException extends PortalException {
 
 	public static class FunctionNotDefined extends DDMExpressionException {
 
-		public FunctionNotDefined(String functionName) {
+		public FunctionNotDefined(Set<String> undefinedFunctionNames) {
 			super(
 				String.format(
-					"The function name \"%s\" was not defined", functionName));
+					"The functions \"%s\" were not defined",
+					StringUtil.merge(undefinedFunctionNames)));
 
-			_functionName = functionName;
+			_undefinedFunctionNames = undefinedFunctionNames;
 		}
 
-		public String getFunctionName() {
-			return _functionName;
+		public Set<String> getUndefinedFunctionNames() {
+			return _undefinedFunctionNames;
 		}
 
-		private final String _functionName;
+		private final Set<String> _undefinedFunctionNames;
 
 	}
 
