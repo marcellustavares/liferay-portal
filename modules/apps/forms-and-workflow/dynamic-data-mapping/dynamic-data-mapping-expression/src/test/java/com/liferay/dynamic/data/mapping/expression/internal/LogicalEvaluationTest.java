@@ -64,7 +64,7 @@ public class LogicalEvaluationTest {
 		Assert.assertTrue(evaluate("true = true"));
 		Assert.assertTrue(evaluate("1 = 1"));
 		Assert.assertTrue(evaluate("\"Joe\" == \"Joe\""));
-		Assert.assertFalse(evaluate("true == false"));
+		Assert.assertFalse(evaluate("true == FALSE"));
 	}
 
 	@Test
