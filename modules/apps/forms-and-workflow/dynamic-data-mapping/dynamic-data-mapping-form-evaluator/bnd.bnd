@@ -2,5 +2,13 @@ Bundle-Name: Liferay Dynamic Data Mapping Form Evaluator
 Bundle-SymbolicName: com.liferay.dynamic.data.mapping.form.evaluator
 Bundle-Version: 2.0.3
 Export-Package: com.liferay.dynamic.data.mapping.form.evaluator
+Import-Package:\
+	!br.com.liferay.expression.evaluator.*,\
+	\
+	!org.apache.commons.lang3,\
+	*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Dynamic Data Mapping
+-includeresource:\
+	@commons-lang3-[0-9]*.jar,\
+	@expression-evaluator-[0-9]*.jar

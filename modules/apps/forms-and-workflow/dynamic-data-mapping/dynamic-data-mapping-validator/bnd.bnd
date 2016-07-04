@@ -2,5 +2,13 @@ Bundle-Name: Liferay Dynamic Data Mapping Validator
 Bundle-SymbolicName: com.liferay.dynamic.data.mapping.validator
 Bundle-Version: 2.1.1
 Export-Package: com.liferay.dynamic.data.mapping.validator
+Import-Package:\
+	!br.com.liferay.expression.evaluator.*,\
+	\
+	!org.apache.commons.lang3,\
+	*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Dynamic Data Mapping
+-includeresource:\
+	@commons-lang3-[0-9]*.jar,\
+	@expression-evaluator-[0-9]*.jar

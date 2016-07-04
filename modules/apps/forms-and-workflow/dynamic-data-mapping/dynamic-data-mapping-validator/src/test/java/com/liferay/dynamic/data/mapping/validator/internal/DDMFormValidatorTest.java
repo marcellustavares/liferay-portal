@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.validator.internal;
 
-import com.liferay.dynamic.data.mapping.expression.internal.DDMExpressionFactoryImpl;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -51,7 +50,6 @@ public class DDMFormValidatorTest {
 	@Before
 	public void setUp() {
 		setUpBeanPropertiesUtil();
-		setUpDDMFormValidator();
 	}
 
 	@Test(expected = MustSetValidCharactersForFieldType.class)
@@ -381,11 +379,6 @@ public class DDMFormValidatorTest {
 		BeanPropertiesUtil beanPropertiesUtil = new BeanPropertiesUtil();
 
 		beanPropertiesUtil.setBeanProperties(new BeanPropertiesImpl());
-	}
-
-	protected void setUpDDMFormValidator() {
-		_ddmFormValidatorImpl.setDDMExpressionFactory(
-			new DDMExpressionFactoryImpl());
 	}
 
 	private final DDMFormValidatorImpl _ddmFormValidatorImpl =

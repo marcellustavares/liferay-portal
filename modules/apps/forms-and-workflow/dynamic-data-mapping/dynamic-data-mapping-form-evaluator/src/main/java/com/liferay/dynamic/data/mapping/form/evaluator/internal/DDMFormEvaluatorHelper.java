@@ -14,9 +14,14 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpression;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
+import br.com.liferay.expression.evaluator.Expression;
+import br.com.liferay.expression.evaluator.ExpressionBuilder;
+import br.com.liferay.expression.evaluator.ExpressionException;
+import br.com.liferay.expression.evaluator.function.BinaryFunction;
+import br.com.liferay.expression.evaluator.function.Function;
+import br.com.liferay.expression.evaluator.function.TernaryFunction;
+import br.com.liferay.expression.evaluator.function.UnaryFunction;
+
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -39,6 +44,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -79,6 +85,54 @@ public class DDMFormEvaluatorHelper {
 		return ddmFormEvaluationResult;
 	}
 
+	protected Function createBetweenFunction() {
+		Function betweenFunction = new TernaryFunction() {
+
+			@Override
+			public Object evaluate(
+				Object param1, Object param2, Object param3) {
+
+				Double val1 = Double.valueOf(param1.toString());
+				Double val2 = Double.valueOf(param2.toString());
+				Double val3 = Double.valueOf(param3.toString());
+				return val1 >= val2 && val1 <= val3;
+			}
+
+		};
+
+		return betweenFunction;
+	}
+
+	protected Function createConcatFunction() {
+		Function concatFunction = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.concat(str2);
+			}
+
+		};
+
+		return concatFunction;
+	}
+
+	protected Function createContainsFunction() {
+		Function containsFunctions = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.contains(str2);
+			}
+
+		};
+
+		return containsFunctions;
+	}
+
 	protected DDMFormValues createEmptyDDMFormValues(DDMForm ddmForm) {
 		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
 
@@ -103,34 +157,127 @@ public class DDMFormEvaluatorHelper {
 		return ddmFormValues;
 	}
 
-	protected boolean evaluateBooleanExpression(
-			String expressionString,
-			Set<DDMFormFieldValue> ancestorDDMFormFieldValues)
+	protected Function createEqualsFunction() {
+		Function equalsFunctions = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.equals(str2);
+			}
+
+		};
+
+		return equalsFunctions;
+	}
+
+	protected Expression createExpression(
+		String expressionString, Map<String, Object> variables) {
+
+		ExpressionBuilder expressionBuilder = new ExpressionBuilder();
+
+		expressionBuilder = expressionBuilder.expression(expressionString);
+		expressionBuilder = expressionBuilder.functions(createFunctions());
+		expressionBuilder = expressionBuilder.variables(variables);
+
+		return expressionBuilder.buildExpression();
+	}
+
+	protected void createExpressionVariables(
+			List<DDMFormFieldValue> ddmFormFieldValues,
+			Set<DDMFormFieldValue> ancestorDDMFormFieldValues,
+			Map<String, Object> variables)
 		throws PortalException {
 
-		if (Validator.isNull(expressionString)) {
-			return true;
-		}
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			String name = ddmFormFieldValue.getName();
 
-		DDMExpression<Boolean> ddmExpression =
-			_ddmExpressionFactory.createBooleanDDMExpression(expressionString);
+			DDMFormField ddmFormField = _ddmFormFieldsMap.get(name);
 
-		setDDMExpressionVariables(
-			ddmExpression, _rootDDMFormFieldValues, ancestorDDMFormFieldValues);
+			if (ddmFormField.isRepeatable() &&
+				!ancestorDDMFormFieldValues.contains(ddmFormFieldValue)) {
 
-		try {
-			return ddmExpression.evaluate();
-		}
-		catch (DDMExpressionException ddmee) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Invalid expression or expression that is making " +
-						"reference to a field no longer available: " +
-							expressionString);
+				continue;
 			}
-		}
 
-		return true;
+			String valueString = getValueString(
+				ddmFormFieldValue.getValue(), ddmFormField.getType());
+
+			if (valueString != null) {
+				variables.put(name, valueString);
+			}
+
+			createExpressionVariables(
+				ddmFormFieldValue.getNestedDDMFormFieldValues(),
+				ancestorDDMFormFieldValues, variables);
+		}
+	}
+
+	protected Map<String, Function> createFunctions() {
+		Map<String, Function> functions = new HashMap<>();
+
+		functions.put("between", createBetweenFunction());
+		functions.put("concat", createConcatFunction());
+		functions.put("contains", createContainsFunction());
+		functions.put("equals", createEqualsFunction());
+		functions.put("isEmailAddress", createIsEmailAddressFunction());
+		functions.put("isURL", createIsURLFunction());
+		functions.put("sum", createSumFunction());
+
+		return functions;
+	}
+
+	protected Function createIsEmailAddressFunction() {
+		Function isEmailAddressFunction = new UnaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1) {
+				if (Validator.isNull(param1)) {
+					return false;
+				}
+
+				return Validator.isEmailAddress(param1.toString());
+			}
+
+		};
+
+		return isEmailAddressFunction;
+	}
+
+	protected Function createIsURLFunction() {
+		Function isURLFunction = new UnaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1) {
+				if (Validator.isNull(param1)) {
+					return false;
+				}
+
+				return Validator.isUrl(param1.toString());
+			}
+
+		};
+
+		return isURLFunction;
+	}
+
+	protected Function createSumFunction() {
+		Function sumFunction = new TernaryFunction() {
+
+			@Override
+			public Object evaluate(
+				Object param1, Object param2, Object param3) {
+
+				Double val1 = Double.valueOf(param1.toString());
+				Double val2 = Double.valueOf(param2.toString());
+				Double val3 = Double.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+
+		};
+
+		return sumFunction;
 	}
 
 	protected DDMFormFieldEvaluationResult evaluateDDMFormFieldValue(
@@ -162,7 +309,7 @@ public class DDMFormEvaluatorHelper {
 			new DDMFormFieldEvaluationResult(
 				ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId());
 
-		boolean visible = evaluateBooleanExpression(
+		boolean visible = evaluateExpression(
 			ddmFormField.getVisibilityExpression(), ancestorDDMFormFieldValues);
 
 		ddmFormFieldEvaluationResult.setVisible(visible);
@@ -182,7 +329,7 @@ public class DDMFormEvaluatorHelper {
 			String validationExpression = getValidationExpression(
 				ddmFormFieldValidation);
 
-			boolean valid = evaluateBooleanExpression(
+			boolean valid = evaluateExpression(
 				validationExpression, ancestorDDMFormFieldValues);
 
 			ddmFormFieldEvaluationResult.setValid(valid);
@@ -221,6 +368,37 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		return ddmFormFieldEvaluationResults;
+	}
+
+	protected boolean evaluateExpression(
+			String expressionString,
+			Set<DDMFormFieldValue> ancestorDDMFormFieldValues)
+		throws PortalException {
+
+		if (Validator.isNull(expressionString)) {
+			return true;
+		}
+
+		Map<String, Object> variables = new HashMap<>();
+
+		createExpressionVariables(
+			_rootDDMFormFieldValues, ancestorDDMFormFieldValues, variables);
+
+		Expression expression = createExpression(expressionString, variables);
+
+		try {
+			return (Boolean)expression.evaluate();
+		}
+		catch (ExpressionException ee) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Invalid expression or expression that is making " +
+						"reference to a field no longer available: " +
+							expressionString);
+			}
+		}
+
+		return true;
 	}
 
 	protected String getJSONArrayValueString(String valueString) {
@@ -286,62 +464,6 @@ public class DDMFormEvaluatorHelper {
 		return false;
 	}
 
-	protected void setDDMExpressionFactory(
-		DDMExpressionFactory ddmExpressionFactory) {
-
-		_ddmExpressionFactory = ddmExpressionFactory;
-	}
-
-	protected void setDDMExpressionVariables(
-			DDMExpression<Boolean> ddmExpression,
-			List<DDMFormFieldValue> ddmFormFieldValues,
-			Set<DDMFormFieldValue> ancestorDDMFormFieldValues)
-		throws PortalException {
-
-		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
-			String name = ddmFormFieldValue.getName();
-
-			DDMFormField ddmFormField = _ddmFormFieldsMap.get(name);
-
-			if (ddmFormField.isRepeatable() &&
-				!ancestorDDMFormFieldValues.contains(ddmFormFieldValue)) {
-
-				continue;
-			}
-
-			String valueString = getValueString(
-				ddmFormFieldValue.getValue(), ddmFormField.getType());
-
-			if (valueString != null) {
-				setExpressionVariableValue(
-					ddmExpression, name, ddmFormField.getDataType(),
-					valueString);
-			}
-
-			setDDMExpressionVariables(
-				ddmExpression, ddmFormFieldValue.getNestedDDMFormFieldValues(),
-				ancestorDDMFormFieldValues);
-		}
-	}
-
-	protected void setExpressionVariableValue(
-			DDMExpression<Boolean> ddmExpression, String variableName,
-			String variableType, String variableValue)
-		throws PortalException {
-
-		if (variableType.equals("boolean")) {
-			ddmExpression.setBooleanVariableValue(
-				variableName, GetterUtil.getBoolean(variableValue));
-		}
-		else if (variableType.equals("integer")) {
-			ddmExpression.setIntegerVariableValue(
-				variableName, GetterUtil.getInteger(variableValue));
-		}
-		else if (variableType.equals("string")) {
-			ddmExpression.setStringVariableValue(variableName, variableValue);
-		}
-	}
-
 	protected void setJSONFactory(JSONFactory jsonFactory) {
 		_jsonFactory = jsonFactory;
 	}
@@ -349,7 +471,6 @@ public class DDMFormEvaluatorHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormEvaluatorHelper.class);
 
-	private DDMExpressionFactory _ddmExpressionFactory;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private JSONFactory _jsonFactory;
 	private final Locale _locale;

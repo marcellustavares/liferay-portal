@@ -36,6 +36,7 @@ import java.util.TreeMap;
 /**
  * @author Miguel Angelo Caldas Gallindo
  */
+@Deprecated
 public class DDMExpressionImpl<T> implements DDMExpression<T> {
 
 	public DDMExpressionImpl(String expressionString, Class<T> expressionClass)

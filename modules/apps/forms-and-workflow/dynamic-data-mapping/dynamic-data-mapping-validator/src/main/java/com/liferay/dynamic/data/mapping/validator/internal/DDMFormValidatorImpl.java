@@ -14,8 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.validator.internal;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
+import br.com.liferay.expression.evaluator.Expression;
+import br.com.liferay.expression.evaluator.ExpressionBuilder;
+import br.com.liferay.expression.evaluator.function.BinaryFunction;
+import br.com.liferay.expression.evaluator.function.Function;
+import br.com.liferay.expression.evaluator.function.TernaryFunction;
+import br.com.liferay.expression.evaluator.function.UnaryFunction;
+
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -44,16 +49,17 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -76,11 +82,142 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 			ddmForm.getDefaultLocale());
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMExpressionFactory(
-		DDMExpressionFactory ddmExpressionFactory) {
+	protected Function createBetweenFunction() {
+		Function betweenFunction = new TernaryFunction() {
 
-		_ddmExpressionFactory = ddmExpressionFactory;
+			@Override
+			public Object evaluate(
+				Object param1, Object param2, Object param3) {
+
+				Double val1 = Double.valueOf(param1.toString());
+				Double val2 = Double.valueOf(param2.toString());
+				Double val3 = Double.valueOf(param3.toString());
+				return val1 >= val2 && val1 <= val3;
+			}
+
+		};
+
+		return betweenFunction;
+	}
+
+	protected Function createConcatFunction() {
+		Function concatFunction = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.concat(str2);
+			}
+
+		};
+
+		return concatFunction;
+	}
+
+	protected Function createContainsFunction() {
+		Function containsFunctions = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.contains(str2);
+			}
+
+		};
+
+		return containsFunctions;
+	}
+
+	protected Function createEqualsFunction() {
+		Function equalsFunctions = new BinaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.equals(str2);
+			}
+
+		};
+
+		return equalsFunctions;
+	}
+
+	protected Expression createExpression(String expressionString) {
+		ExpressionBuilder expressionBuilder = new ExpressionBuilder();
+
+		expressionBuilder = expressionBuilder.expression(expressionString);
+		expressionBuilder = expressionBuilder.functions(createFunctions());
+
+		return expressionBuilder.buildExpression();
+	}
+
+	protected Map<String, Function> createFunctions() {
+		Map<String, Function> functions = new HashMap<>();
+
+		functions.put("between", createBetweenFunction());
+		functions.put("concat", createConcatFunction());
+		functions.put("contains", createContainsFunction());
+		functions.put("equals", createEqualsFunction());
+		functions.put("isEmailAddress", createIsEmailAddressFunction());
+		functions.put("isURL", createIsURLFunction());
+		functions.put("sum", createSumFunction());
+
+		return functions;
+	}
+
+	protected Function createIsEmailAddressFunction() {
+		Function isEmailAddressFunction = new UnaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1) {
+				if (Validator.isNull(param1)) {
+					return false;
+				}
+
+				return Validator.isEmailAddress(param1.toString());
+			}
+
+		};
+
+		return isEmailAddressFunction;
+	}
+
+	protected Function createIsURLFunction() {
+		Function isURLFunction = new UnaryFunction() {
+
+			@Override
+			public Object evaluate(Object param1) {
+				if (Validator.isNull(param1)) {
+					return false;
+				}
+
+				return Validator.isUrl(param1.toString());
+			}
+
+		};
+
+		return isURLFunction;
+	}
+
+	protected Function createSumFunction() {
+		Function sumFunction = new TernaryFunction() {
+
+			@Override
+			public Object evaluate(
+				Object param1, Object param2, Object param3) {
+
+				Double val1 = Double.valueOf(param1.toString());
+				Double val2 = Double.valueOf(param2.toString());
+				Double val3 = Double.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+
+		};
+
+		return sumFunction;
 	}
 
 	protected void validateDDMFormAvailableLocales(
@@ -249,11 +386,9 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 			return;
 		}
 
-		try {
-			_ddmExpressionFactory.createBooleanDDMExpression(
-				visibilityExpression);
-		}
-		catch (DDMExpressionException ddmee) {
+		Expression expression = createExpression(visibilityExpression);
+
+		if (!expression.validate()) {
 			throw new MustSetValidVisibilityExpression(
 				ddmFormField.getName(), visibilityExpression);
 		}
@@ -290,7 +425,6 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 			ddmFormAvailableLocales, ddmFormDefaultLocale);
 	}
 
-	private DDMExpressionFactory _ddmExpressionFactory;
 	private final String[] _ddmFormFieldIndexTypes =
 		new String[] {StringPool.BLANK, "keyword", "text"};
 	private final Pattern _ddmFormFieldNamePattern = Pattern.compile(

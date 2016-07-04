@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.expression;
 /**
  * @author Marcellus Tavares
  */
+@Deprecated
 public interface DDMExpressionFactory {
 
 	public DDMExpression<Boolean> createBooleanDDMExpression(

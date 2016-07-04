@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 /**
  * @author Marcellus Tavares
  */
+@Deprecated
 public class DDMExpressionException extends PortalException {
 
 	public DDMExpressionException() {

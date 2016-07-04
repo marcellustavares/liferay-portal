@@ -21,6 +21,7 @@ import java.util.Map;
 /**
  * @author Miguel Angelo Caldas Gallindo
  */
+@Deprecated
 public interface DDMExpression<T> {
 
 	public T evaluate() throws DDMExpressionException;

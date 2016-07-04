@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcellus Tavares
  */
 @Component(immediate = true, service = DDMExpressionFactory.class)
+@Deprecated
 public class DDMExpressionFactoryImpl implements DDMExpressionFactory {
 
 	@Override
