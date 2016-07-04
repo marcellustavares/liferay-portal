@@ -37,15 +37,15 @@ public class DDMExpressionImplTest {
 
 	@Test
 	public void testGetFunctionNames() throws Exception {
-		DDMExpressionImpl ddmExpressionImpl =
-			new DDMExpressionImpl<>("pow(pow(log(y))) + sum(3, 4)",
-				Number.class);
+		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
+			"pow(pow(log(y))) + sum(3, 4)", Number.class);
 
 		Set<String> expectedFunctionNames = new HashSet<>(
 			Arrays.asList("pow", "log", "sum"));
 
 		Assert.assertEquals(
-			expectedFunctionNames, ddmExpressionImpl.getFunctionNames());
+			expectedFunctionNames,
+			ddmExpressionImpl.getExpressionFunctionNames());
 	}
 
 	@Test
@@ -57,20 +57,21 @@ public class DDMExpressionImplTest {
 			Arrays.asList("var1", "var2_", "__var3"));
 
 		Assert.assertEquals(
-			expectedVariableNames, ddmExpressionImpl.getVariableNames());
+			expectedVariableNames,
+			ddmExpressionImpl.getExpressionVariableNames());
 	}
 
 	@Test
 	public void testGetVariableNames2() throws Exception {
-		DDMExpressionImpl ddmExpressionImpl =
-			new DDMExpressionImpl<>("(((1+2)*(1-2/x))+log(1*6-y))",
-				Number.class);
+		DDMExpressionImpl ddmExpressionImpl = new DDMExpressionImpl<>(
+			"(((1+2)*(1-2/x))+log(1*6-y))", Number.class);
 
 		Set<String> expectedVariableNames = new HashSet<>(
 			Arrays.asList("x", "y"));
 
 		Assert.assertEquals(
-			expectedVariableNames, ddmExpressionImpl.getVariableNames());
+			expectedVariableNames,
+			ddmExpressionImpl.getExpressionVariableNames());
 	}
 
 	@Test(expected = DDMExpressionException.InvalidSyntax.class)

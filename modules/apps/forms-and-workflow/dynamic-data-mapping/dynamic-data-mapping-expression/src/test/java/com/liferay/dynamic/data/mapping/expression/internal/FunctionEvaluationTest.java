@@ -16,6 +16,8 @@ package com.liferay.dynamic.data.mapping.expression.internal;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,14 +27,13 @@ import org.junit.Test;
 public class FunctionEvaluationTest {
 
 	@Test
-	public void testFunctionEval1() throws Exception {
+	public void testCustomFunction1() throws Exception {
 		int expected = Math.abs(-5);
 
 		DDMExpression<Number> ddmExpression = new DDMExpressionImpl<>(
 			"abs(-5)", Number.class);
 
-		ddmExpression.setDDMExpressionFunction(
-			"abs", (params) -> Math.abs((Double)params[0]));
+		ddmExpression.setDDMExpressionFunction("abs", new AbsFunction());
 
 		Number actual = ddmExpression.evaluate();
 
@@ -40,49 +41,145 @@ public class FunctionEvaluationTest {
 	}
 
 	@Test
-	public void testFunctionEval2() throws Exception{
+	public void testCustomFunction2() throws Exception {
 		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
 			"not (length(\"123\") > length(\"1\"))", Boolean.class);
 
-		ddmExpression.setDDMExpressionFunction(
-			"length", (params) -> ((String)params[0]).length());
+		ddmExpression.setDDMExpressionFunction("length", new LengthFunction());
 
 		Assert.assertEquals(false, ddmExpression.evaluate());
 	}
 
+	@Test
+	public void testCustomFunction3() throws Exception {
+		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
+			"pow(2, 4) > (16 - 1)", Boolean.class);
+
+		ddmExpression.setDDMExpressionFunction("pow", new PowFunction());
+
+		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testCustomFunction4() throws Exception {
+		double expected = Math.pow(2., Math.pow(2., Math.pow(2., 4.)));
+
+		DDMExpression<Double> ddmExpression = new DDMExpressionImpl<>(
+			"pow(2., pow(2., pow(2.,4.)))", Double.class);
+
+		ddmExpression.setDDMExpressionFunction("pow", new PowFunction());
+
+		double actual = ddmExpression.evaluate();
+
+		Assert.assertEquals(expected, actual, 0.01);
+	}
+
+	@Test
+	public void testDefaultBetweenFunction() throws Exception {
+		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
+			"between(22, 20, 25)", Boolean.class);
+
+		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testDefaultConcatFunction() throws Exception {
+		DDMExpression<String> ddmExpression = new DDMExpressionImpl<>(
+			"concat(\"Hello \", \"World!\")", String.class);
+
+		Assert.assertEquals("Hello World!", ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testDefaultContainsFunction() throws Exception {
+		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
+			"contains(var1, var2)", Boolean.class);
+
+		ddmExpression.setVariableValue("var1", "Liferay");
+		ddmExpression.setVariableValue("var2", "ray");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testDefaultIsEmailAddressFunction() throws Exception {
+		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
+			"isEmailAddress(var1)", Boolean.class);
+
+		ddmExpression.setVariableValue("var1", "invalid_email");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression.setVariableValue("var1", "test@liferay.com");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testDefaultIsURLFunction() throws Exception {
+		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
+			"isURL(var1)", Boolean.class);
+
+		ddmExpression.setVariableValue("var1", "invalid_url");
+
+		Assert.assertFalse(ddmExpression.evaluate());
+
+		ddmExpression.setVariableValue("var1", "http://www.liferay.com");
+
+		Assert.assertTrue(ddmExpression.evaluate());
+	}
+
+	@Test
+	public void testDefaultSumFunction() throws Exception {
+		DDMExpression<Number> ddmExpression = new DDMExpressionImpl<>(
+			"sum(var1, var2, var3)", Number.class);
+
+		ddmExpression.setVariableValue("var1", .5);
+		ddmExpression.setVariableValue("var2", 1.5);
+		ddmExpression.setVariableValue("var3", 2.5);
+
+		Number result = ddmExpression.evaluate();
+
+		Assert.assertEquals(4.5d, result.doubleValue(), .01);
+	}
+
 	@Test(expected = DDMExpressionException.FunctionNotDefined.class)
-	public void testFunctionEval3() throws Exception {
+	public void testUndefinedFunction() throws Exception {
 		DDMExpression<Number> ddmExpression = new DDMExpressionImpl<>(
 			"time()", Number.class);
 
 		ddmExpression.evaluate();
 	}
 
-	@Test
-	public void testFunctionEval4() throws Exception {
-		DDMExpression<Boolean> ddmExpression = new DDMExpressionImpl<>(
-			"pow(2, 4) > (16 - 1)", Boolean.class);
+	private static class AbsFunction implements DDMExpressionFunction {
 
-		ddmExpression.setDDMExpressionFunction(
-			"pow", (params) -> Math.pow((Double)params[0], (Double)params[1]));
+		public Object evaluate(Object... parameters) {
+			double parameter = (double)parameters[0];
 
-		Assert.assertTrue(ddmExpression.evaluate());
+			return Math.abs(parameter);
+		}
+
 	}
 
-	@Test
-	public void testFunctionEval5() throws Exception{
-		double expected = Math.pow(2., Math.pow(2., Math.pow(2., 4.)));
+	private static class LengthFunction implements DDMExpressionFunction {
 
-		DDMExpression<Double> ddmExpression = new DDMExpressionImpl<>(
-			"pow(2., pow(2., pow(2.,4.)))", Double.class);
+		public Object evaluate(Object... parameters) {
+			String parameter = (String)parameters[0];
 
-		ddmExpression.setDDMExpressionFunction(
-			"pow",
-			(params) -> Math.pow((Double)params[0], (Double)params[1]));
+			return parameter.length();
+		}
 
-		double actual = ddmExpression.evaluate();
+	}
 
-		Assert.assertEquals(expected, actual, 0.01);
+	private static class PowFunction implements DDMExpressionFunction {
+
+		public Object evaluate(Object... parameters) {
+			double parameter1 = (double)parameters[0];
+			double parameter2 = (double)parameters[1];
+
+			return Math.pow(parameter1, parameter2);
+		}
+
 	}
 
 }
