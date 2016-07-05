@@ -75,6 +75,7 @@ public class MBCommentManagerImplTest {
 			null, serviceContext);
 
 		_initializeCommentManager();
+
 		_createDiscussion();
 	}
 
