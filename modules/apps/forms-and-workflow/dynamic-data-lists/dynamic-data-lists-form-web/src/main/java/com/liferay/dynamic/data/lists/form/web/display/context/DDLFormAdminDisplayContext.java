@@ -58,6 +58,7 @@ import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -128,6 +129,31 @@ public class DDLFormAdminDisplayContext {
 			renderRequest);
 	}
 
+	public JSONArray getAvailableLanguageIdsJSONArray() throws PortalException {
+		JSONArray availableLanguageIdsJSONArray =
+			_jsonFactory.createJSONArray();
+
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet != null) {
+			DDMStructure structure = recordSet.getDDMStructure();
+
+			for (String languageId : structure.getAvailableLanguageIds()) {
+				availableLanguageIdsJSONArray.put(languageId);
+			}
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				_ddlFormAdminRequestHelper.getThemeDisplay();
+
+			Locale locale = themeDisplay.getSiteDefaultLocale();
+
+			availableLanguageIdsJSONArray.put(LocaleUtil.toLanguageId(locale));
+		}
+
+		return availableLanguageIdsJSONArray;
+	}
+
 	public DDLFormViewRecordDisplayContext
 		getDDLFormViewRecordDisplayContext() {
 
@@ -190,6 +216,24 @@ public class DDLFormAdminDisplayContext {
 			recordSet.getDDMStructureId());
 
 		return _ddmStucture;
+	}
+
+	public String getDefaultLanguageId() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet != null) {
+			DDMStructure structure = recordSet.getDDMStructure();
+
+			return structure.getDefaultLanguageId();
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				_ddlFormAdminRequestHelper.getThemeDisplay();
+
+			Locale locale = themeDisplay.getSiteDefaultLocale();
+
+			return LocaleUtil.toLanguageId(locale);
+		}
 	}
 
 	public String getDisplayStyle() {
