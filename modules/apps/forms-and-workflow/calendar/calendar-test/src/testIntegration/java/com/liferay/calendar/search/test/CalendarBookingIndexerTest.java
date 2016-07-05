@@ -109,7 +109,7 @@ public class CalendarBookingIndexerTest {
 	}
 
 	@Test
-	public void testSearchNonAdmin() throws Exception {
+	public void testSearchNotAdmin() throws Exception {
 		setUpSearchContext(_group, _user);
 
 		String title = RandomTestUtil.randomString();
@@ -146,6 +146,7 @@ public class CalendarBookingIndexerTest {
 			serviceContext);
 
 		Map<Locale, String> titleMap = new HashMap<>();
+
 		titleMap.put(LocaleUtil.getDefault(), title);
 
 		long startTime = DateUtil.newTime() + RandomTestUtil.randomInt();
