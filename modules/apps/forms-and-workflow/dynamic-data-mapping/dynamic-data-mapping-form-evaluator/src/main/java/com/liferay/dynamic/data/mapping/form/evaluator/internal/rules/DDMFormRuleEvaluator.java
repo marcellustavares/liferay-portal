@@ -131,8 +131,14 @@ public class DDMFormRuleEvaluator {
 			Object variableValue = getDDMFormFieldValue(variableName);
 
 			if (variableValue != null) {
-				ddmExpression.setStringVariableValue(
-					variableName, variableValue.toString());
+				if (variableValue instanceof Number) {
+					ddmExpression.setDoubleVariableValue(
+						variableName, Double.valueOf(variableValue.toString()));
+				}
+				else {
+					ddmExpression.setStringVariableValue(
+						variableName, variableValue.toString());
+				}
 			}
 		}
 	}

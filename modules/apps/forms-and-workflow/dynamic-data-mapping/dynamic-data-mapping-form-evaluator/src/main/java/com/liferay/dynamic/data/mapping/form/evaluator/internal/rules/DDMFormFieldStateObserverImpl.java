@@ -37,7 +37,7 @@ public class DDMFormFieldStateObserverImpl
 	@Override
 	public Object getDDMFormFieldValue(String ddmFormFieldName) {
 		if (!_ddmFormFieldEvaluationResults.containsKey(ddmFormFieldName)) {
-			return null;
+			throw new IllegalArgumentException("Invalid field name");
 		}
 
 		Map<String, DDMFormFieldEvaluationResult>
@@ -50,7 +50,7 @@ public class DDMFormFieldStateObserverImpl
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
 		if (!iterator.hasNext()) {
-			return null;
+			throw new IllegalArgumentException("No field's instance was found");
 		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
@@ -75,7 +75,7 @@ public class DDMFormFieldStateObserverImpl
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
 		if (!iterator.hasNext()) {
-			return false;
+			throw new IllegalArgumentException("No field's instance was found");
 		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
@@ -100,7 +100,7 @@ public class DDMFormFieldStateObserverImpl
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
 		if (!iterator.hasNext()) {
-			return true;
+			throw new IllegalArgumentException("No field's instance was found");
 		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
@@ -125,7 +125,7 @@ public class DDMFormFieldStateObserverImpl
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
 		if (!iterator.hasNext()) {
-			return true;
+			throw new IllegalArgumentException("No field's instance was found");
 		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
@@ -149,6 +149,10 @@ public class DDMFormFieldStateObserverImpl
 
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
+		if (!iterator.hasNext()) {
+			throw new IllegalArgumentException("No field's instance was found");
+		}
+
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
 			iterator.next();
 
@@ -170,6 +174,10 @@ public class DDMFormFieldStateObserverImpl
 
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
 
+		if (!iterator.hasNext()) {
+			throw new IllegalArgumentException("No field's instance was found");
+		}
+
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
 			iterator.next();
 
@@ -190,6 +198,10 @@ public class DDMFormFieldStateObserverImpl
 			ddmFormFieldEvaluationResultMap.values();
 
 		Iterator<DDMFormFieldEvaluationResult> iterator = values.iterator();
+
+		if (!iterator.hasNext()) {
+			throw new IllegalArgumentException("No field's instance was found");
+		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
 			iterator.next();

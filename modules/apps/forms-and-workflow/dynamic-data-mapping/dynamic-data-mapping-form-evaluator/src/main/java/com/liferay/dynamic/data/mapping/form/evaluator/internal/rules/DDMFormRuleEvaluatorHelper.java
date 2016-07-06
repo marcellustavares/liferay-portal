@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -114,7 +115,12 @@ public class DDMFormRuleEvaluatorHelper {
 			valueString = GetterUtil.getString(value.getString(_locale));
 		}
 
-		ddmFormFieldEvaluationResult.setValue(valueString);
+		if (ddmFormField.getDataType().equals(FieldConstants.NUMBER)) {
+			ddmFormFieldEvaluationResult.setValue(Double.valueOf(valueString));
+		}
+		else {
+			ddmFormFieldEvaluationResult.setValue(valueString);
+		}
 
 		return ddmFormFieldEvaluationResult;
 	}
