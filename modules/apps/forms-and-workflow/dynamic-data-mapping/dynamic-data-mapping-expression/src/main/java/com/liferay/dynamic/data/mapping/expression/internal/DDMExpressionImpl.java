@@ -50,7 +50,7 @@ public class DDMExpressionImpl<T> implements DDMExpression<T> {
 	public DDMExpressionImpl(String expressionString, Class<T> expressionClass)
 		throws DDMExpressionException {
 
-		if (expressionString == null || expressionString.isEmpty()) {
+		if ((expressionString == null) || expressionString.isEmpty()) {
 			throw new IllegalArgumentException();
 		}
 
