@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root available-locales="en_US" default-locale="en_US">
+	<dynamic-element name="Select" type="list" index-type="keyword" index="0" instance-id="rwjb">
+		<dynamic-content language-id="en_US">
+			<option><![CDATA[Value 2]]></option>
+		</dynamic-content>
+	</dynamic-element>
+</root>

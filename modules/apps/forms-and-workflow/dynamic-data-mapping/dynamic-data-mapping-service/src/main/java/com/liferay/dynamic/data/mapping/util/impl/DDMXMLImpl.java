@@ -113,7 +113,7 @@ public class DDMXMLImpl implements DDMXML {
 				dynamicElementElement.elements("dynamic-content");
 
 			for (Element dynamicContentElement : dynamicContentElements) {
-				String fieldValue = dynamicContentElement.getText();
+				String fieldValue = dynamicContentElement.getStringValue();
 
 				String languageId = dynamicContentElement.attributeValue(
 					"language-id");
