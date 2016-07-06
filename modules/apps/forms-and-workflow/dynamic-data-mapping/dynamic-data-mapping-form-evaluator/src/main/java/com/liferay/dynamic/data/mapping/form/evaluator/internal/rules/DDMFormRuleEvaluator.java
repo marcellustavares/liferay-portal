@@ -19,8 +19,11 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
+import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.functions.FieldAtFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.functions.PropertyGetFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.internal.rules.functions.PropertySetFunction;
 
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,19 +33,20 @@ public class DDMFormRuleEvaluator {
 
 	public DDMFormRuleEvaluator(
 		DDMExpressionFactory ddmExpressionFactory,
-		Map<String, Map<String, DDMFormFieldEvaluationResult>>
-			ddmFormFieldEvaluationResults, String expression, Locale locale) {
+		Map<String, List<DDMFormFieldEvaluationResult>>
+			ddmFormFieldEvaluationResults, String expression) {
 
 		_ddmExpressionFactory = ddmExpressionFactory;
 		_ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
 		_expression = expression;
-		_locale = locale;
 	}
 
 	public boolean evaluate() throws DDMFormEvaluationException {
 		try {
 			DDMExpression<Boolean> ddmExpression =
 				_ddmExpressionFactory.createBooleanDDMExpression(_expression);
+
+			setFunctions(ddmExpression);
 
 			return ddmExpression.evaluate();
 		}
@@ -53,9 +57,11 @@ public class DDMFormRuleEvaluator {
 
 	public void execute() throws DDMFormEvaluationException {
 		try {
-			DDMExpression<String> ddmExpression = 
+			DDMExpression<String> ddmExpression =
 				_ddmExpressionFactory.createStringDDMExpression(_expression);
-			
+
+			setFunctions(ddmExpression);
+
 			ddmExpression.evaluate();
 		}
 		catch (DDMExpressionException ddmee) {
@@ -63,10 +69,20 @@ public class DDMFormRuleEvaluator {
 		}
 	}
 
+	protected void setFunctions(DDMExpression<?> ddmExpression) {
+		ddmExpression.setDDMExpressionFunction(
+			"fieldAt", new FieldAtFunction());
+
+		ddmExpression.setDDMExpressionFunction(
+			"get", new PropertyGetFunction(_ddmFormFieldEvaluationResults));
+
+		ddmExpression.setDDMExpressionFunction(
+			"set", new PropertySetFunction(_ddmFormFieldEvaluationResults));
+	}
+
 	private final DDMExpressionFactory _ddmExpressionFactory;
-	private final Map<String, Map<String, DDMFormFieldEvaluationResult>>
+	private final Map<String, List<DDMFormFieldEvaluationResult>>
 		_ddmFormFieldEvaluationResults;
 	private final String _expression;
-	private final Locale _locale;
 
 }

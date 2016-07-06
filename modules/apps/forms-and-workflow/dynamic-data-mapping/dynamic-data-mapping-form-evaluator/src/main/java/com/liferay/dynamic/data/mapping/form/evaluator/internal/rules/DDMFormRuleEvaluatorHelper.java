@@ -20,9 +20,12 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationRes
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -45,7 +48,14 @@ public class DDMFormRuleEvaluatorHelper {
 
 		_ddmExpressionFactory = ddmExpressionFactory;
 		_ddmForm = ddmForm;
-		_ddmFormValues = ddmFormValues;
+
+		if (ddmFormValues == null) {
+			_ddmFormValues = createEmptyDDMFormValues(_ddmForm);
+		}
+		else {
+			_ddmFormValues = ddmFormValues;
+		}
+
 		_locale = locale;
 	}
 
@@ -61,6 +71,10 @@ public class DDMFormRuleEvaluatorHelper {
 		}
 
 		for (DDMFormRule ddmFormRule : ddmFormRules) {
+			if (!ddmFormRule.isEnabled()) {
+				continue;
+			}
+
 			if (evaluate(ddmFormRule)) {
 				executeActions(ddmFormRule.getActions());
 			}
@@ -78,8 +92,44 @@ public class DDMFormRuleEvaluatorHelper {
 		}
 	}
 
+	protected DDMFormFieldEvaluationResult createDDMFormFieldEvaluationResult(
+		DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue) {
+
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
+			new DDMFormFieldEvaluationResult(
+				ddmFormField.getName(), ddmFormFieldValue.getInstanceId());
+
+		ddmFormFieldEvaluationResult.setErrorMessage(StringPool.BLANK);
+		ddmFormFieldEvaluationResult.setReadOnly(ddmFormField.isReadOnly());
+		ddmFormFieldEvaluationResult.setValid(true);
+		ddmFormFieldEvaluationResult.setVisible(true);
+
+		Value value = ddmFormFieldValue.getValue();
+
+		String valueString = StringPool.BLANK;
+
+		if (value != null) {
+			valueString = GetterUtil.getString(value.getString(_locale));
+		}
+
+		if (ddmFormField.getDataType().equals(FieldConstants.NUMBER)) {
+			ddmFormFieldEvaluationResult.setValue(Double.valueOf(valueString));
+		}
+		else {
+			ddmFormFieldEvaluationResult.setValue(valueString);
+		}
+
+		return ddmFormFieldEvaluationResult;
+	}
+
 	protected void createDDMFormFieldRuleEvaluationResult(
 		DDMFormField ddmFormField) {
+
+		List<DDMFormFieldEvaluationResult>
+			ddmFormFieldEvaluationResultInstances = new ArrayList<>();
+
+		_ddmFormFieldEvaluationResults.put(
+			ddmFormField.getName(), ddmFormFieldEvaluationResultInstances);
 
 		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
 			_ddmFormValues.getDDMFormFieldValuesMap();
@@ -87,36 +137,38 @@ public class DDMFormRuleEvaluatorHelper {
 		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
 			ddmFormField.getName());
 
-		Map<String, DDMFormFieldEvaluationResult>
-			ddmFormFieldEvaluationResultInstanceMap = new HashMap<>();
-
-		_ddmFormFieldEvaluationResults.put(
-			ddmFormField.getName(), ddmFormFieldEvaluationResultInstanceMap);
-
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
 			DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
-				new DDMFormFieldEvaluationResult(
-					ddmFormField.getName(), ddmFormFieldValue.getInstanceId());
+				createDDMFormFieldEvaluationResult(
+					ddmFormField, ddmFormFieldValue);
 
-			ddmFormFieldEvaluationResult.setErrorMessage(StringPool.BLANK);
-			ddmFormFieldEvaluationResult.setReadOnly(ddmFormField.isReadOnly());
-			ddmFormFieldEvaluationResult.setValid(true);
-			ddmFormFieldEvaluationResult.setVisible(true);
-
-			Value value = ddmFormFieldValue.getValue();
-
-			String valueString = StringPool.BLANK;
-
-			if (value != null) {
-				valueString = GetterUtil.getString(value.getString(_locale));
-			}
-
-			ddmFormFieldEvaluationResult.setValue(valueString);
-
-			ddmFormFieldEvaluationResultInstanceMap.put(
-				ddmFormFieldValue.getInstanceId(),
+			ddmFormFieldEvaluationResultInstances.add(
 				ddmFormFieldEvaluationResult);
 		}
+	}
+
+	protected DDMFormValues createEmptyDDMFormValues(DDMForm ddmForm) {
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+
+			ddmFormFieldValue.setName(ddmFormField.getName());
+
+			Value value = new UnlocalizedValue(StringPool.BLANK);
+
+			if (ddmFormField.isLocalizable()) {
+				value = new LocalizedValue(_locale);
+
+				value.addString(_locale, StringPool.BLANK);
+			}
+
+			ddmFormFieldValue.setValue(value);
+
+			ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+		}
+
+		return ddmFormValues;
 	}
 
 	protected boolean evaluate(DDMFormRule ddmFormRule)
@@ -124,7 +176,7 @@ public class DDMFormRuleEvaluatorHelper {
 
 		DDMFormRuleEvaluator ddmFormRuleEvaluator = new DDMFormRuleEvaluator(
 			_ddmExpressionFactory, _ddmFormFieldEvaluationResults,
-			ddmFormRule.getCondition(), _locale);
+			ddmFormRule.getCondition());
 
 		return ddmFormRuleEvaluator.evaluate();
 	}
@@ -136,7 +188,7 @@ public class DDMFormRuleEvaluatorHelper {
 			DDMFormRuleEvaluator ddmFormRuleEvaluator =
 				new DDMFormRuleEvaluator(
 					_ddmExpressionFactory, _ddmFormFieldEvaluationResults,
-					action, _locale);
+					action);
 
 			ddmFormRuleEvaluator.execute();
 		}
@@ -148,11 +200,11 @@ public class DDMFormRuleEvaluatorHelper {
 		List<DDMFormFieldEvaluationResult> ddmFormFieldEvaluationResults =
 			new ArrayList<>();
 
-		for (Map.Entry<String, Map<String, DDMFormFieldEvaluationResult>>
+		for (Map.Entry<String, List<DDMFormFieldEvaluationResult>>
 				entry: _ddmFormFieldEvaluationResults.entrySet()) {
 
 			ddmFormFieldEvaluationResults.addAll(
-				ListUtil.fromCollection(entry.getValue().values()));
+				ListUtil.fromCollection(entry.getValue()));
 		}
 
 		return ddmFormFieldEvaluationResults;
@@ -160,7 +212,7 @@ public class DDMFormRuleEvaluatorHelper {
 
 	private final DDMExpressionFactory _ddmExpressionFactory;
 	private final DDMForm _ddmForm;
-	private final Map<String, Map<String, DDMFormFieldEvaluationResult>>
+	private final Map<String, List<DDMFormFieldEvaluationResult>>
 		_ddmFormFieldEvaluationResults = new HashMap<>();
 	private final DDMFormValues _ddmFormValues;
 	private final Locale _locale;
