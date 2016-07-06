@@ -63,6 +63,7 @@ AUI.add(
 							A.merge(
 								item,
 								{
+									locale: instance.get('defaultLanguageId'),
 									parent: instance,
 									portletNamespace: portletNamespace
 								}
@@ -98,6 +99,7 @@ AUI.add(
 						var config = A.merge(
 							Util.getFieldByKey(definition, name),
 							{
+								locale: instance.get('defaultLanguageId'),
 								parent: instance,
 								portletNamespace: portletNamespace,
 								readOnly: instance.get('readOnly'),

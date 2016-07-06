@@ -9,7 +9,14 @@ AUI.add(
 		var DDLPortlet = A.Component.create(
 			{
 				ATTRS: {
+					availableLanguageIds: {
+					},
+
 					dataProviders: {
+					},
+
+					defaultLanguageId: {
+						value: themeDisplay.getLanguageId()
 					},
 
 					definition: {
@@ -70,11 +77,17 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						instance.definitionSerializer = new DefinitionSerializer();
+						instance.definitionSerializer = new DefinitionSerializer(
+							{
+								availableLanguageIds: instance.get('availableLanguageIds'),
+								defaultLanguageId: instance.get('defaultLanguageId')
+							}
+						);
 
 						instance.layoutSerializer = new LayoutSerializer(
 							{
-								builder: instance.get('formBuilder')
+								builder: instance.get('formBuilder'),
+								defaultLanguageId: instance.get('defaultLanguageId')
 							}
 						);
 
@@ -461,6 +474,7 @@ AUI.add(
 						return new Liferay.DDL.FormBuilder(
 							{
 								dataProviders: instance.get('dataProviders'),
+								defaultLanguageId: instance.get('defaultLanguageId'),
 								definition: instance.get('definition'),
 								evaluatorURL: instance.get('evaluatorURL'),
 								pagesJSON: layout.pages,

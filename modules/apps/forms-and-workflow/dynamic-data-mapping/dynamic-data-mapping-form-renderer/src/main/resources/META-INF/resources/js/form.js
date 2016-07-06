@@ -18,6 +18,10 @@ AUI.add(
 						value: ''
 					},
 
+					defaultLanguageId: {
+						value: themeDisplay.getLanguageId()
+					},
+
 					portletNamespace: {
 						value: ''
 					},

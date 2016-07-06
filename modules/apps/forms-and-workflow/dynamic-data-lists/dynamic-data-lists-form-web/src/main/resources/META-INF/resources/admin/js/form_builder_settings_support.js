@@ -35,6 +35,10 @@ AUI.add(
 			dataProviders: {
 			},
 
+			defaultLanguageId: {
+				value: themeDisplay.getLanguageId()
+			},
+
 			settingsForm: {
 				valueFn: '_valueSettingsForm'
 			}
@@ -164,6 +168,7 @@ AUI.add(
 				return new Liferay.DDL.FormBuilderSettingsForm(
 					{
 						dataProviders: instance.get('dataProviders'),
+						defaultLanguageId: instance.get('defaultLanguageId'),
 						definition: fieldType.get('settings'),
 						evaluatorURL: instance.get('evaluatorURL'),
 						field: instance,
