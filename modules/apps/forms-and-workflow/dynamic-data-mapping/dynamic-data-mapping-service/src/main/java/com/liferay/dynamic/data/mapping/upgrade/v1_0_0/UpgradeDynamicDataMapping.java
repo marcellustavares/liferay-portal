@@ -88,6 +88,7 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -745,10 +746,46 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 
 				script = updateTemplateScriptDateParseStatement(
 					ddmDateFieldName, language, script);
+
+				script = updateTemplateScriptDateGetDateStatement(
+					language, script);
 			}
 
 			updateTemplateScript(ddmTemplateId, script);
 		}
+	}
+
+	protected String updateTemplateScriptDateGetDateStatement(
+		String language, String script) {
+
+		StringBundler oldTemplateScriptSB = new StringBundler(3);
+		StringBundler newTemplateScriptSB = new StringBundler(5);
+
+		if (language.equals("ftl")) {
+			oldTemplateScriptSB.append("dateUtil.getDate\\(");
+			oldTemplateScriptSB.append("(.*)");
+			oldTemplateScriptSB.append("locale\\)");
+
+			newTemplateScriptSB.append("dateUtil.getDate(");
+			newTemplateScriptSB.append("$1");
+			newTemplateScriptSB.append("locale,");
+			newTemplateScriptSB.append("timeZoneUtil.");
+			newTemplateScriptSB.append("getTimeZone(\"UTC\"))");
+		}
+		else if (language.equals("vm")) {
+			oldTemplateScriptSB.append("dateUtil.getDate\\(");
+			oldTemplateScriptSB.append("(.*)");
+			oldTemplateScriptSB.append("locale\\)");
+
+			newTemplateScriptSB.append("dateUtil.getDate(");
+			newTemplateScriptSB.append("$1");
+			newTemplateScriptSB.append("locale,");
+			newTemplateScriptSB.append("\\$timeZoneUtil.");
+			newTemplateScriptSB.append("getTimeZone(\"UTC\"))");
+		}
+
+		return script.replaceAll(
+			oldTemplateScriptSB.toString(), newTemplateScriptSB.toString());
 	}
 
 	protected String updateTemplateScriptDateIfStatement(
@@ -798,7 +835,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			newTemplateScriptSB.append(
 				"_DateObj = dateUtil.parseDate(\"yyyy-MM-dd\", ");
 			newTemplateScriptSB.append(dateFieldName);
-			newTemplateScriptSB.append("_Data, locale)>");
+			newTemplateScriptSB.append("_Data, locale, timeZoneUtil.");
+			newTemplateScriptSB.append("getTimeZone(\"UTC\"))>");
 		}
 		else if (language.equals("vm")) {
 			dateFieldName =
@@ -816,7 +854,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			newTemplateScriptSB.append(
 				"_DateObj = \\$dateUtil.parseDate(\"yyyy-MM-dd\", ");
 			newTemplateScriptSB.append(dateFieldName);
-			newTemplateScriptSB.append("_Data, \\$locale))");
+			newTemplateScriptSB.append("_Data, \\$locale, \\$timeZoneUtil.");
+			newTemplateScriptSB.append("getTimeZone(\"UTC\")))");
 		}
 
 		return script.replaceAll(
@@ -1530,7 +1569,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 
 		private final DateFormat _dateFormat =
-			DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd");
+			DateFormatFactoryUtil.getSimpleDateFormat(
+				"yyyy-MM-dd", TimeZoneUtil.getTimeZone("UTC"));
 
 	}
 
