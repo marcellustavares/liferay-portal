@@ -53,6 +53,7 @@ public class CalendarBookingLocalServiceUtil {
 		return getService().addCalendarBooking(calendarBooking);
 	}
 
+	@Deprecated
 	public static com.liferay.calendar.model.CalendarBooking addCalendarBooking(
 		long userId, long calendarId, long[] childCalendarIds,
 		long parentCalendarBookingId,
@@ -70,6 +71,25 @@ public class CalendarBookingLocalServiceUtil {
 			startTime, endTime, allDay, recurrence, firstReminder,
 			firstReminderType, secondReminder, secondReminderType,
 			serviceContext);
+	}
+
+	public static com.liferay.calendar.model.CalendarBooking addCalendarBooking(
+		long userId, long calendarId, long[] childCalendarIds,
+		long parentCalendarBookingId, long recurringCalendarBookingId,
+		java.util.Map<java.util.Locale, java.lang.String> titleMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String location, long startTime, long endTime,
+		boolean allDay, java.lang.String recurrence, long firstReminder,
+		java.lang.String firstReminderType, long secondReminder,
+		java.lang.String secondReminderType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addCalendarBooking(userId, calendarId, childCalendarIds,
+			parentCalendarBookingId, recurringCalendarBookingId, titleMap,
+			descriptionMap, location, startTime, endTime, allDay, recurrence,
+			firstReminder, firstReminderType, secondReminder,
+			secondReminderType, serviceContext);
 	}
 
 	/**
@@ -97,6 +117,26 @@ public class CalendarBookingLocalServiceUtil {
 	}
 
 	/**
+	* Deletes the calendar booking from the database. If the second argument
+	* is true, then all instances derived from this deleted booking will be
+	* deleted, too.
+	*
+	* @param calendarBooking the calendar booking to be removed.
+	* @param allRecurringInstances a boolean signaling if forked instances
+	should be deleted as well.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static com.liferay.calendar.model.CalendarBooking deleteCalendarBooking(
+		com.liferay.calendar.model.CalendarBooking calendarBooking,
+		boolean allRecurringInstances)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .deleteCalendarBooking(calendarBooking, allRecurringInstances);
+	}
+
+	/**
 	* Deletes the calendar booking with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param calendarBookingId the primary key of the calendar booking
@@ -107,6 +147,60 @@ public class CalendarBookingLocalServiceUtil {
 		long calendarBookingId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deleteCalendarBooking(calendarBookingId);
+	}
+
+	/**
+	* Deletes the calendar booking from the database. If the second argument
+	* is true, then all instances derived from this deleted booking will be
+	* deleted, too.
+	*
+	* @param calendarBookingId primary key of the calendar booking to be
+	removed.
+	* @param allRecurringInstances a boolean signaling if forked instances
+	should be deleted as well.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static com.liferay.calendar.model.CalendarBooking deleteCalendarBooking(
+		long calendarBookingId, boolean allRecurringInstances)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .deleteCalendarBooking(calendarBookingId,
+			allRecurringInstances);
+	}
+
+	/**
+	* Deletes a recurring calendar booking from the database. If some instances
+	* where edited and so removed from the series, they will be removed as
+	* well. If you do not want taht, use
+	* {@link #deleteCalendarBooking(CalendarBooking)}.
+	*
+	* @param calendarBooking the calendar booking to be removed.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static com.liferay.calendar.model.CalendarBooking deleteRecurringCalendarBooking(
+		com.liferay.calendar.model.CalendarBooking calendarBooking)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteRecurringCalendarBooking(calendarBooking);
+	}
+
+	/**
+	* Deletes a recurring calendar booking from the database. If some instances
+	* where edited and so removed from the series, they will be removed as
+	* well. If you do not want taht, use {@link #deleteCalendarBooking(long)}.
+	*
+	* @param calendarBooking the primary key of the booking to be removed.
+	* @returns the same instance given as argument.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static com.liferay.calendar.model.CalendarBooking deleteRecurringCalendarBooking(
+		long calendarBookingId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteRecurringCalendarBooking(calendarBookingId);
 	}
 
 	public static com.liferay.calendar.model.CalendarBooking fetchCalendarBooking(
@@ -224,6 +318,48 @@ public class CalendarBookingLocalServiceUtil {
 			secondReminder, secondReminderType, serviceContext);
 	}
 
+	/**
+	* Updates the content of a calendar booking.It updates calendar bookings
+	* from invited calendars.
+	*
+	* It does not update content of recurring bookings deriving from it,
+	* however. For that, see {@link #updateRecurringCalendarBooking(
+	* long, long, long, long[], Map, Map, String, long, long, boolean, long,
+	* String, long, String, ServiceContext)}.
+	*
+	* @param userId the primary key of the calendar bookings's creator/owner
+	* @param calendarBookingId the primary key of the calendar booking being
+	updated
+	* @param calendarId the primary key of the calendar to which the calendar
+	booking is to be added.
+	* @param childCalendarIds primary keys of calendars to which invitations
+	are to be sent.
+	* @param titleMap the map with titles in different locales.
+	* @param descriptionMap a map with descriptions in different locales.
+	* @param location the location where the event will take place, as a
+	string.
+	* @param startTime the moment the event will start, as a timestamp
+	starting from Unix epoch.
+	* @param endTime the moment the event will end, as a timestamp starting
+	from Unix epoch.
+	* @param allDay a boolean. If true, the event will take all day.
+	* @param recurrence A string representing the recurrence of the event,
+	as defined by RFC-2445.
+	* @param firstReminder the moment the first reminder notification will be
+	sent, in number of milliseconds before the event start.
+	* @param firstReminderType the type of the first notification to be sent.
+	So far, the only type is "email".
+	* @param secondReminder the moment the second reminder notification will
+	be sent, in number of milliseconds before the event start.
+	* @param secondReminderType the type of the second notification to be
+	sent. So far, the only type is "email".
+	* @param serviceContext a service context. Can disable notifications
+	about the edit by setting the "sendNotification" attribute to
+	false.
+	* @return a new calendar booking object.
+	* @throws PortalException if a systemic error happens. In this case, the
+	portal may be corrupted.
+	*/
 	public static com.liferay.calendar.model.CalendarBooking updateCalendarBooking(
 		long userId, long calendarBookingId, long calendarId,
 		long[] childCalendarIds,
@@ -279,6 +415,63 @@ public class CalendarBookingLocalServiceUtil {
 			descriptionMap, location, startTime, endTime, allDay, recurrence,
 			allFollowing, firstReminder, firstReminderType, secondReminder,
 			secondReminderType, serviceContext);
+	}
+
+	/**
+	* Given a recurring calendar booking, update its content as well as the
+	* content of every other calendar booking that was edited from the
+	* recurring sequence. Only fields updated in the original instance are
+	* effectively altered. For example, if an instance had its title edited,
+	* and this method was called to change the original calendar booking's
+	* start time, the edited instance will have its start time changed, but
+	* not its title.
+	*
+	* @param userId the primary key of the calendar bookings's creator/owner
+	* @param calendarBookingId the primary key of the calendar booking being
+	updated
+	* @param calendarId the primary key of the calendar to which the calendar
+	booking is to be added.
+	* @param childCalendarIds primary keys of calendars to which invitations
+	are to be sent.
+	* @param titleMap the map with titles in different locales.
+	* @param descriptionMap a map with descriptions in different locales.
+	* @param location the location where the event will take place, as a
+	string.
+	* @param startTime the moment the event will start, as a timestamp
+	starting from Unix epoch.
+	* @param endTime the moment the event will end, as a timestamp starting
+	from Unix epoch.
+	* @param allDay a boolean. If true, the event will take all day.
+	* @param firstReminder the moment the first reminder notification will be
+	sent, in number of milliseconds before the event start.
+	* @param firstReminderType the type of the first notification to be sent.
+	So far, the only type is "email".
+	* @param secondReminder the moment the second reminder notification will
+	be sent, in number of milliseconds before the event start.
+	* @param secondReminderType the type of the second notification to be
+	sent. So far, the only type is "email".
+	* @param serviceContext a service context. Can disable notifications
+	about the edit by setting the "sendNotification" attribute to
+	false.
+	* @return a new calendar booking object.
+	* @throws PortalException if a systemic error happens. In this case, the
+	portal may be corrupted.
+	*/
+	public static com.liferay.calendar.model.CalendarBooking updateRecurringCalendarBooking(
+		long userId, long calendarBookingId, long calendarId,
+		long[] childCalendarIds,
+		java.util.Map<java.util.Locale, java.lang.String> titleMap,
+		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
+		java.lang.String location, long startTime, long endTime,
+		boolean allDay, long firstReminder, java.lang.String firstReminderType,
+		long secondReminder, java.lang.String secondReminderType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateRecurringCalendarBooking(userId, calendarBookingId,
+			calendarId, childCalendarIds, titleMap, descriptionMap, location,
+			startTime, endTime, allDay, firstReminder, firstReminderType,
+			secondReminder, secondReminderType, serviceContext);
 	}
 
 	public static com.liferay.calendar.model.CalendarBooking updateStatus(
@@ -511,6 +704,18 @@ public class CalendarBookingLocalServiceUtil {
 				   .getChildCalendarBookings(parentCalendarBookingId, status);
 	}
 
+	public static java.util.List<com.liferay.calendar.model.CalendarBooking> getRecurringCalendarBookings(
+		com.liferay.calendar.model.CalendarBooking calendarBooking) {
+		return getService().getRecurringCalendarBookings(calendarBooking);
+	}
+
+	public static java.util.List<com.liferay.calendar.model.CalendarBooking> getRecurringCalendarBookings(
+		com.liferay.calendar.model.CalendarBooking calendarBooking,
+		long startTime) {
+		return getService()
+				   .getRecurringCalendarBookings(calendarBooking, startTime);
+	}
+
 	public static java.util.List<com.liferay.calendar.model.CalendarBooking> search(
 		long companyId, long[] groupIds, long[] calendarIds,
 		long[] calendarResourceIds, long parentCalendarBookingId,
@@ -573,6 +778,21 @@ public class CalendarBookingLocalServiceUtil {
 		getService().checkCalendarBookings();
 	}
 
+	/**
+	* Removes an instance from a recurring calendar booking.
+	*
+	* If there is some instance that was removed from the series by editing,
+	* it will not be removed. If you need it to be removed, use
+	* {@link #deleteCalendarBookingInstance(CalendarBooking, int, boolean)}
+	*
+	* @param calendarBooking the calendar booking whose instnce will be
+	removed.
+	* @param instanceIndex the index of the instance
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
 	public static void deleteCalendarBookingInstance(
 		com.liferay.calendar.model.CalendarBooking calendarBooking,
 		int instanceIndex, boolean allFollowing)
@@ -582,6 +802,30 @@ public class CalendarBookingLocalServiceUtil {
 			allFollowing);
 	}
 
+	/**
+	* Removes an instance from a recurring calendar booking. If the last
+	* argument is true, then modified instances will be deleted as well.
+	*
+	* @param calendarBooking the calendar booking whose instance will be
+	removed.
+	* @param instanceIndex the index of the instance
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @param deleteRecurringCalendarBookings whether modified instances
+	should be deleted as well.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static void deleteCalendarBookingInstance(
+		com.liferay.calendar.model.CalendarBooking calendarBooking,
+		int instanceIndex, boolean allFollowing,
+		boolean deleteRecurringCalendarBookings)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.deleteCalendarBookingInstance(calendarBooking, instanceIndex,
+			allFollowing, deleteRecurringCalendarBookings);
+	}
+
 	public static void deleteCalendarBookingInstance(
 		com.liferay.calendar.model.CalendarBooking calendarBooking,
 		long startTime, boolean allFollowing)
@@ -589,6 +833,31 @@ public class CalendarBookingLocalServiceUtil {
 		getService()
 			.deleteCalendarBookingInstance(calendarBooking, startTime,
 			allFollowing);
+	}
+
+	/**
+	* Removes instances form a recurring calendar booking at a specific date,
+	* or after the specified date. If the last argument is true, then modified
+	* instances will be deleted as well.
+	*
+	* @param calendarBooking the calendar booking whose instance will be
+	removed.
+	* @param startTime the time from which instances should be removed.
+	* @param allFollowing whether only one instance, or all following, should
+	be removed.
+	* @param deleteRecurringCalendarBookings whether modified instances
+	should be deleted as well.
+	* @throws PortalException if a system error happened. This may signal
+	that something is corrupted.
+	*/
+	public static void deleteCalendarBookingInstance(
+		com.liferay.calendar.model.CalendarBooking calendarBooking,
+		long startTime, boolean allFollowing,
+		boolean deleteRecurringCalendarBookings)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.deleteCalendarBookingInstance(calendarBooking, startTime,
+			allFollowing, deleteRecurringCalendarBookings);
 	}
 
 	public static void deleteCalendarBookingInstance(long calendarBookingId,
