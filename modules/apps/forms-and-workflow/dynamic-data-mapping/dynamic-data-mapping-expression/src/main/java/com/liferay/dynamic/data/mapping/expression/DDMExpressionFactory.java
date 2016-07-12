@@ -39,6 +39,10 @@ public interface DDMExpressionFactory {
 			String ddmExpressionString)
 		throws DDMExpressionException;
 
+	public DDMExpression<Number> createNumberDDMExpression(
+			String ddmExpressionString)
+		throws DDMExpressionException;
+
 	public DDMExpression<String> createStringDDMExpression(
 			String ddmExpressionString)
 		throws DDMExpressionException;
