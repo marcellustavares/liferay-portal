@@ -1,43 +1,39 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * <p>
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.model;
+package com.liferay.dynamic.data.mapping.util;
 
-import java.io.Serializable;
+import com.liferay.dynamic.data.mapping.model.Value;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.Optional;
 
 /**
  * @author Marcellus Tavares
  */
-public interface Value extends Serializable {
+public class ValueStringMapper {
 
-	public void addString(Locale locale, String value);
+	public static Optional<String> apply(
+		Optional<Value> valueOptional, Locale locale) {
 
-	public Set<Locale> getAvailableLocales();
+		if (!valueOptional.isPresent()) {
+			return Optional.empty();
+		}
 
-	public Locale getDefaultLocale();
+		Value value = valueOptional.get();
 
-	public String getString(Locale locale);
-
-	public Map<Locale, String> getValues();
-
-	public boolean isLocalized();
-
-	public void setDefaultLocale(Locale defaultLocale);
+		return Optional.of(value.getString(locale));
+	}
 
 }

@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Pablo Carvalho
@@ -183,6 +184,10 @@ public class DDMFormField implements Serializable {
 		return nestedDDMFormFieldsMap;
 	}
 
+	public <T> Optional<T> getOptionalProperty(String name) {
+		return Optional.ofNullable((T)_properties.get(name));
+	}
+
 	public LocalizedValue getPredefinedValue() {
 		return (LocalizedValue)_properties.get("predefinedValue");
 	}
@@ -191,6 +196,10 @@ public class DDMFormField implements Serializable {
 		return _properties;
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #getOptionalProperty(String)}
+	 */
+	@Deprecated
 	public Object getProperty(String name) {
 		return _properties.get(name);
 	}

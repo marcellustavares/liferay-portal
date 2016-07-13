@@ -16,13 +16,15 @@ package com.liferay.dynamic.data.mapping.type.text.internal;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.dynamic.data.mapping.util.ValueStringMapper;
+import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -45,22 +47,24 @@ public class TextDDMFormFieldTemplateContextContributor
 
 		Map<String, Object> parameters = new HashMap<>();
 
-		parameters.put(
-			"displayStyle",
-			GetterUtil.getString(
-				ddmFormField.getProperty("displayStyle"), "singleline"));
+		Optional<String> displayStyleOptional =
+			ddmFormField.getOptionalProperty("displayStyle");
 
-		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
-			"placeholder");
+		parameters.put(
+			"displayStyle", displayStyleOptional.orElse("singleline"));
 
 		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
-		parameters.put("placeholder", placeholder.getString(locale));
+		Optional<String> placeholderOptional = ValueStringMapper.apply(
+			ddmFormField.<Value>getOptionalProperty("placeholder"), locale);
 
-		LocalizedValue tooltip = (LocalizedValue)ddmFormField.getProperty(
-			"tooltip");
+		parameters.put(
+			"placeholder", placeholderOptional.orElse(StringPool.BLANK));
 
-		parameters.put("tooltip", tooltip.getString(locale));
+		Optional<String> tooltipOptional = ValueStringMapper.apply(
+			ddmFormField.<Value>getOptionalProperty("tooltip"), locale);
+
+		parameters.put("tooltip", tooltipOptional.orElse(StringPool.BLANK));
 
 		return parameters;
 	}
