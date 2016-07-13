@@ -12,32 +12,20 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.model;
+package com.liferay.dynamic.data.mapping.form.field.type;
 
-import java.io.Serializable;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * @author Marcellus Tavares
  */
-public interface Value extends Serializable {
+public interface DDMFormFieldTemplateContextContributor {
 
-	public void addString(Locale locale, String value);
-
-	public Set<Locale> getAvailableLocales();
-
-	public Locale getDefaultLocale();
-
-	public String getString(Locale locale);
-
-	public Map<Locale, String> getValues();
-
-	public boolean isLocalized();
-
-	public void setDefaultLocale(Locale defaultLocale);
+	public Map<String, Object> getParameters(
+		DDMFormField ddmFormField,
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext);
 
 }
