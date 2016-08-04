@@ -128,6 +128,11 @@
 	</command>
 
 	<command name="addChild">
+		<execute macro="TestCase#getSiteName">
+			<return from="siteName" name="siteName" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
 		<var name="key_siteName" value="${siteName}" />
 
 		<if>
@@ -197,11 +202,13 @@
 
 		<execute function="Click" locator1="SitePagesEditPage#SELECT_CATEGORY_BUTTON" />
 
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<execute function="Click" locator1="SitePagesEditPage#CATEGORY_TREE_NODE" />
-		<execute function="Click" locator1="Icon#CLOSE" />
 
+		<execute function="SelectFrame" value1="relative=top" />
+
+		<execute function="AssertClick" locator1="Button#DONE" value1="Done" />
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 	</command>
 
@@ -498,6 +505,12 @@
 		</execute>
 	</command>
 
+	<command name="hideFromNavigationMenu">
+		<execute function="Check#checkToggleSwitch" locator1="Checkbox#HIDE_FROM_NAVIGATION_MENU" />
+
+		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
+	</command>
+
 	<command name="localizedPG">
 		<var name="key_pageLocale" value="${pageLocale}" />
 
@@ -658,14 +671,14 @@
 
 	<command name="viewFriendlyURLLanguageOptionsPG">
 		<for list="${currentLanguageList}" param="languageKey">
-			<execute function="AssertElementPresent" locator1="DockbarEditpanel#${languageKey}" />
+			<execute function="AssertElementPresent" locator1="SitePagesEditPage#${languageKey}" />
 		</for>
 
 		<if>
 			<equals arg1="${assertUnavailableLanguages}" arg2="true" />
 			<then>
 				<for list="${unavailableLanguageList}" param="languageKey">
-					<execute function="AssertElementNotPresent" locator1="DockbarEditpanel#${languageKey}" />
+					<execute function="AssertElementNotPresent" locator1="SitePagesEditPage#${languageKey}" />
 				</for>
 			</then>
 		</if>
@@ -726,6 +739,15 @@
 	</command>
 
 	<command name="viewPageFriendlyURLPG">
+		<if>
+			<isset var="friendlyUrlLocalized" />
+			<then>
+				<var name="key_friendlyUrlLocalized" value="${friendlyUrlLocalized}" />
+
+				<execute function="Click" locator1="SitePagesEditPage#FRIENDLY_URL_LOCALIZED" />
+			</then>
+		</if>
+
 		<execute function="AssertTextEquals" locator1="SitePagesEditPage#FRIENDLY_URL_FIELD" value1="/${pageName}" />
 	</command>
 
@@ -780,7 +802,7 @@
 	</command>
 
 	<command name="viewPageLockCheck">
-		<execute function="Click" locator1="Dockbar#PAGE_INFO_MESSAGE_ICON" />
+		<execute function="Click" locator1="ControlMenu#INFO" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#CUSTOMIZED_PAGE_INFO" value1="This page is linked to a site template which does not allow modifications to it." />
 	</command>
@@ -830,13 +852,13 @@
 	</command>
 
 	<command name="viewPageTemplateLockCheck">
-		<execute function="Click" locator1="Dockbar#PAGE_INFO_MESSAGE_ICON" />
+		<execute function="Click" locator1="ControlMenu#INFO" />
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="Message#CUSTOMIZED_PAGE_INFO" value1="This page is linked to a page template. Disable the automatic propagation of changes to this page to be able to make modifications." />
 	</command>
 
 	<command name="viewPageTemplateNoLockCheck">
-		<execute function="AssertElementNotPresent" locator1="Dockbar#PAGE_INFO_MESSAGE_ICON" />
+		<execute function="AssertElementNotPresent" locator1="ControlMenu#INFO" />
 		<execute function="AssertElementNotPresent" locator1="Message#CUSTOMIZED_PAGE_INFO" />
 	</command>
 

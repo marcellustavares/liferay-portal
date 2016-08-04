@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ImportsFormatter;
 import com.liferay.portal.tools.JavaImportsFormatter;
 import com.liferay.portal.tools.ToolsUtil;
+import com.liferay.source.formatter.util.CheckStyleUtil;
 import com.liferay.source.formatter.util.FileUtil;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
@@ -42,8 +43,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 /**
  * @author Hugo Huijser
@@ -725,6 +729,8 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			return content;
 		}
 
+		_ungeneratedFiles.add(file);
+
 		String className = file.getName();
 
 		int pos = className.lastIndexOf(CharPool.PERIOD);
@@ -1145,9 +1151,10 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 					newContent, matcher.start() + 1);
 
 				newContent = formatJavaTerms(
-					className, packagePath, file, fileName, absolutePath,
-					newContent, javaClassContent, javaClassLineCount,
-					matcher.group(1), _checkJavaFieldTypesExcludes,
+					StringPool.BLANK, StringPool.BLANK, file, fileName,
+					absolutePath, newContent, javaClassContent,
+					javaClassLineCount, matcher.group(1),
+					_checkJavaFieldTypesExcludes,
 					_javaTermAccessLevelModifierExcludes, _javaTermSortExcludes,
 					_testAnnotationsExcludes);
 
@@ -2274,10 +2281,6 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				}
 
 				if (line.startsWith("import ")) {
-					if (line.endsWith(".*;")) {
-						processMessage(fileName, "import", lineCount);
-					}
-
 					int pos = line.lastIndexOf(CharPool.PERIOD);
 
 					if (pos != -1) {
@@ -2367,10 +2370,14 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 				if (trimmedLine.startsWith("* @deprecated") &&
 					_addMissingDeprecationReleaseVersion) {
 
+					ComparableVersion mainReleaseComparableVersion =
+						getMainReleaseComparableVersion();
+
 					if (!trimmedLine.startsWith("* @deprecated As of ")) {
 						line = StringUtil.replace(
 							line, "* @deprecated",
-							"* @deprecated As of " + getMainReleaseVersion());
+							"* @deprecated As of " +
+								mainReleaseComparableVersion.toString());
 					}
 					else {
 						String version = trimmedLine.substring(20);
@@ -2381,7 +2388,19 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 						version = StringUtil.replace(
 							version, StringPool.COMMA, StringPool.BLANK);
 
-						if (StringUtil.count(version, CharPool.PERIOD) == 1) {
+						ComparableVersion comparableVersion =
+							new ComparableVersion(version);
+
+						if (comparableVersion.compareTo(
+								mainReleaseComparableVersion) > 0) {
+
+							line = StringUtil.replaceFirst(
+								line, version,
+								mainReleaseComparableVersion.toString());
+						}
+						else if (StringUtil.count(
+									version, CharPool.PERIOD) == 1) {
+
 							line = StringUtil.replaceFirst(
 								line, version, version + ".0");
 						}
@@ -4143,10 +4162,9 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 
 		String[] excludes = new String[] {
 			"**/*_IW.java", "**/PropsValues.java", "**/counter/service/**",
-			"**/jsp/*", "**/model/impl/*BaseImpl.java",
-			"**/model/impl/*Model.java", "**/model/impl/*ModelImpl.java",
-			"**/portal/service/**", "**/portal-client/**",
-			"**/portal-web/test/**/*Test.java", "**/portlet/**/service/**",
+			"**/jsp/*", "**/model/impl/*Model.java",
+			"**/model/impl/*ModelImpl.java", "**/portal/service/**",
+			"**/portal-client/**", "**/portal-web/test/**/*Test.java",
 			"**/test/*-generated/**", "**/source/formatter/**"
 		};
 
@@ -4170,6 +4188,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			"**/portal-test-integration/**/portal/service/**/*.java",
 			"**/service/Base*.java",
 			"**/service/PersistedModelLocalService*.java",
+			"**/service/configuration/**/*.java",
 			"**/service/http/*HttpTest.java", "**/service/http/*SoapTest.java",
 			"**/service/http/TunnelUtil.java", "**/service/impl/*.java",
 			"**/service/jms/*.java", "**/service/permission/*.java",
@@ -4322,7 +4341,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			else {
 				x = line.lastIndexOf(StringPool.SPACE);
 
-				if (x != -1) {
+				if ((x != -1) && !ToolsUtil.isInsideQuotes(line, x)) {
 					String firstLine = line.substring(0, x);
 					String secondLine =
 						indent + StringPool.TAB + line.substring(x + 1);
@@ -4430,6 +4449,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	@Override
 	protected void postFormat() throws Exception {
 		checkBndInheritAnnotationOption();
+		processCheckStyle();
 	}
 
 	@Override
@@ -4463,6 +4483,29 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 			"upgrade.data.access.connection.excludes");
 		_upgradeServiceUtilExcludes = getPropertyList(
 			"upgrade.service.util.excludes");
+	}
+
+	protected void processCheckStyle() throws Exception {
+		if (!portalSource) {
+			return;
+		}
+
+		File baseDirFile = new File(sourceFormatterArgs.getBaseDirName());
+		File configurationFile = getFile(
+			"checkstyle.xml", PORTAL_MAX_DIR_LEVEL);
+
+		List<SourceFormatterMessage> sourceFormatterMessages =
+			CheckStyleUtil.process(
+				getAbsolutePath(configurationFile), _ungeneratedFiles,
+				getAbsolutePath(baseDirFile));
+
+		for (SourceFormatterMessage sourceFormatterMessage :
+				sourceFormatterMessages) {
+
+			printError(
+				sourceFormatterMessage.getFileName(),
+				sourceFormatterMessage.toString());
+		}
 	}
 
 	protected void setBNDInheritRequiredValue(
@@ -4659,6 +4702,7 @@ public class JavaSourceProcessor extends BaseSourceProcessor {
 	private List<String> _testAnnotationsExcludes;
 	private final Pattern _throwsSystemExceptionPattern = Pattern.compile(
 		"(\n\t+.*)throws(.*) SystemException(.*)( \\{|;\n)");
+	private final List<File> _ungeneratedFiles = new CopyOnWriteArrayList<>();
 	private final Pattern _upgradeClassNamePattern = Pattern.compile(
 		"new .*?(\\w+)\\(", Pattern.DOTALL);
 	private List<String> _upgradeDataAccessConnectionExcludes;

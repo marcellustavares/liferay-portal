@@ -14,11 +14,17 @@
 
 package com.liferay.sync.engine.session;
 
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.conn.ManagedHttpClientConnection;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.conn.DefaultHttpResponseParserFactory;
 import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 
 /**
@@ -35,9 +41,42 @@ public class SyncManagedHttpClientConnectionFactory
 			connectionConfig = ConnectionConfig.DEFAULT;
 		}
 
+		CharsetDecoder charsetDecoder = null;
+		CharsetEncoder charsetEncoder = null;
+
+		Charset charset = connectionConfig.getCharset();
+
+		if (charset != null) {
+			charsetDecoder = charset.newDecoder();
+			charsetEncoder = charset.newEncoder();
+
+			CodingErrorAction malformedInputAction =
+				connectionConfig.getMalformedInputAction();
+
+			if (malformedInputAction == null) {
+				malformedInputAction = CodingErrorAction.REPORT;
+			}
+
+			charsetDecoder.onMalformedInput(malformedInputAction);
+			charsetEncoder.onMalformedInput(malformedInputAction);
+
+			CodingErrorAction unmappableInputAction =
+				connectionConfig.getUnmappableInputAction();
+
+			if (unmappableInputAction == null) {
+				unmappableInputAction = CodingErrorAction.REPORT;
+			}
+
+			charsetDecoder.onUnmappableCharacter(unmappableInputAction);
+			charsetEncoder.onUnmappableCharacter(unmappableInputAction);
+		}
+
 		return new SyncManagedHttpClientConnection(
 			"http-outgoing-" + _counter.getAndIncrement(),
-			connectionConfig.getBufferSize());
+			connectionConfig.getBufferSize(),
+			connectionConfig.getFragmentSizeHint(), charsetDecoder,
+			charsetEncoder, connectionConfig.getMessageConstraints(), null,
+			null, null, DefaultHttpResponseParserFactory.INSTANCE);
 	}
 
 	private final AtomicLong _counter = new AtomicLong();
