@@ -66,6 +66,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
 
 import org.dom4j.Document;
@@ -847,6 +848,90 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		String copyrightYear = copyright.substring(x, y);
 
 		return StringUtil.replace(content, contentCopyrightYear, copyrightYear);
+	}
+
+	protected String fixEmptyLinesBetweenTags(String content) {
+		Matcher matcher = _emptyLineBetweenTagsPattern.matcher(content);
+
+		while (matcher.find()) {
+			String tabs1 = matcher.group(1);
+			String tabs2 = matcher.group(4);
+
+			if (!tabs1.equals(tabs2)) {
+				continue;
+			}
+
+			String lineBreaks = matcher.group(3);
+			String tagName1 = matcher.group(2);
+			String tagName2 = matcher.group(5);
+
+			if (tagName1.endsWith(":when") ||
+				(tagName1.matches("dd|dt|li|span|td|th|tr") &&
+				 tagName2.matches("dd|dt|li|span|td|th|tr"))) {
+
+				if (lineBreaks.equals("\n\n")) {
+					return StringUtil.replaceFirst(
+						content, "\n\n", "\n", matcher.end(1));
+				}
+			}
+			else if (lineBreaks.equals("\n")) {
+				return StringUtil.replaceFirst(
+					content, "\n", "\n\n", matcher.end(1));
+			}
+		}
+
+		return content;
+	}
+
+	protected String fixEmptyLinesInNestedTags(String content) {
+		content = fixEmptyLinesInNestedTags(
+			content, _emptyLineInNestedTagsPattern1, true);
+
+		return fixEmptyLinesInNestedTags(
+			content, _emptyLineInNestedTagsPattern2, false);
+	}
+
+	protected String fixEmptyLinesInNestedTags(
+		String content, Pattern pattern, boolean startTag) {
+
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String tabs2 = null;
+
+			if (startTag) {
+				String secondLine = matcher.group(3);
+
+				if (secondLine.equals("<%") || secondLine.startsWith("<%--") ||
+					secondLine.startsWith("<!--")) {
+
+					continue;
+				}
+
+				tabs2 = matcher.group(2);
+			}
+			else {
+				String firstLine = matcher.group(2);
+
+				if (firstLine.equals("%>")) {
+					continue;
+				}
+
+				tabs2 = matcher.group(3);
+			}
+
+			String tabs1 = matcher.group(1);
+
+			if ((startTag && ((tabs1.length() + 1) == tabs2.length())) ||
+				(!startTag && ((tabs1.length() - 1) == tabs2.length()))) {
+
+				content = StringUtil.replaceFirst(
+					content, StringPool.NEW_LINE, StringPool.BLANK,
+					matcher.end(1));
+			}
+		}
+
+		return content;
 	}
 
 	protected String fixIncorrectParameterTypeForLanguageUtil(
@@ -1994,18 +2079,22 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 		return x + 1;
 	}
 
-	protected String getMainReleaseVersion() {
-		if (_mainReleaseVersion != null) {
-			return _mainReleaseVersion;
+	protected ComparableVersion getMainReleaseComparableVersion() {
+		if (_mainReleaseComparableVersion != null) {
+			return _mainReleaseComparableVersion;
 		}
 
 		String releaseVersion = ReleaseInfo.getVersion();
 
 		int pos = releaseVersion.lastIndexOf(CharPool.PERIOD);
 
-		_mainReleaseVersion = releaseVersion.substring(0, pos) + ".0";
+		String mainReleaseVersion =
+			releaseVersion.substring(0, pos) + ".0";
 
-		return _mainReleaseVersion;
+		_mainReleaseComparableVersion = new ComparableVersion(
+			mainReleaseVersion);
+
+		return _mainReleaseComparableVersion;
 	}
 
 	protected List<String> getModuleLangDirNames(
@@ -2477,7 +2566,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	}
 
 	protected void printError(String fileName, String message) {
-		_sourceFormatterHelper.printError(fileName, message);
+		if (sourceFormatterArgs.isPrintErrors()) {
+			_sourceFormatterHelper.printError(fileName, message);
+		}
 	}
 
 	protected void processFormattedFile(
@@ -2998,10 +3089,16 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 	private String _copyright;
 	private final Pattern _definitionPattern = Pattern.compile(
 		"^([A-Za-z-]+?)[:=][\\s\\S]*?([^\\\\]\n|\\Z)", Pattern.MULTILINE);
+	private final Pattern _emptyLineBetweenTagsPattern = Pattern.compile(
+		"\n(\t*)</([-\\w:]+)>(\n*)(\t*)<([-\\w:]+)[> ]");
+	private final Pattern _emptyLineInNestedTagsPattern1 = Pattern.compile(
+		"\n(\t*)(?:<\\w.*[^/])?>\n\n(\t*)(<.*)\n");
+	private final Pattern _emptyLineInNestedTagsPattern2 = Pattern.compile(
+		"\n(\t*)(.*>)\n\n(\t*)</.*(\n|$)");
 	private String[] _excludes;
 	private SourceMismatchException _firstSourceMismatchException;
 	private Set<String> _immutableFieldTypes;
-	private String _mainReleaseVersion;
+	private ComparableVersion _mainReleaseComparableVersion;
 	private final List<String> _modifiedFileNames =
 		new CopyOnWriteArrayList<>();
 	private final Map<String, Properties> _moduleLangLanguageProperties =

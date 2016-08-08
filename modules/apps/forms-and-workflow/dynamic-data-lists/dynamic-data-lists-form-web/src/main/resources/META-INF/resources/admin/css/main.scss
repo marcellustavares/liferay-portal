@@ -92,7 +92,7 @@ $horizontal-spacing: 35px;
 		color: #869CAD;
 		cursor: pointer;
 		font-size: 15px;
-		font-weight: 400;
+		font-weight: normal;
 		line-height: 16px;
 		list-style-type: none;
 		padding: 11px 0;
@@ -145,57 +145,22 @@ $horizontal-spacing: 35px;
 		}
 
 		.has-error .key-value-editor {
-			display: none
+			display: none;
 		}
 
 		.key-value-editor {
-			&.active {
-				.key-value-cancel,
-				.key-value-done,
-				.key-value-input {
-					display: inline-block;
-				}
-
-				.key-value-output {
-					display: none;
-				}
-			}
-
-			.key-value-cancel,
-			.key-value-done,
-			.key-value-input {
-				display: none;
-			}
-
-			.key-value-cancel,
-			.key-value-done {
-				font-weight: bold;
-				margin-left: 25px;
-				text-transform: uppercase;
-			}
-
 			.key-value-label {
 				color: #C4CFD6;
-				margin-right: 5px;
-			}
-
-			.key-value-cancel,
-			.key-value-done,
-			.key-value-input,
-			.key-value-label,
-			.key-value-output {
 				font-size: 11px;
+				margin-right: 5px;
 			}
 
 			.key-value-input {
 				border-width: 0;
+				color: #869CAD;
+				font-size: 11px;
 				margin: 0;
 				outline: none;
-			}
-
-			.key-value-input,
-			.key-value-output {
-				color: #869CAD;
 			}
 		}
 
@@ -475,7 +440,7 @@ $horizontal-spacing: 35px;
 		.ddl-form-name,
 		.ddl-form-description {
 			border-width: 0;
-			color: white;
+			color: #FFF;
 			margin: 0;
 			padding-left: 0;
 
@@ -498,7 +463,7 @@ $horizontal-spacing: 35px;
 		}
 
 		.ddl-form-description {
-			font-weight: 400;
+			font-weight: normal;
 			padding: 17px 0 0 0;
 
 			p {
@@ -547,10 +512,6 @@ $horizontal-spacing: 35px;
 }
 
 .portal-popup {
-	.portlet-layout {
-		margin: 0 0 75px;
-	}
-
 	.portlet-column {
 		padding: 0;
 	}
@@ -614,7 +575,7 @@ $horizontal-spacing: 35px;
 	.lfr-ddm-form-page-description,
 	.lfr-ddm-form-page-title {
 		color: #728694;
-		font-weight: 400;
+		font-weight: normal;
 		resize: none;
 		word-break: break-all;
 	}

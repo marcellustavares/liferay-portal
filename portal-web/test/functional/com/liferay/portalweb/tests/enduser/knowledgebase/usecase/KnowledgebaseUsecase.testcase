@@ -919,8 +919,7 @@
 			<var name="portlet" value="Knowledge Base" />
 		</execute>
 
-		<execute macro="KBArticle#gotoViaKBAdminCP">
-			<var name="hasChildArticle" value="true" />
+		<execute macro="KBArticle#gotoChildArticleDescriptiveDetails">
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
 		</execute>
 
@@ -1144,20 +1143,16 @@
 
 	<command name="ViewKBArticleNoHierarchyInFolder" priority="3">
 		<var name="kbArticleContent" value="Test Content" />
-		<var name="kbArticleTitle" value="Article 1 Title" />
-		<var name="kbFolderName" value="Folder 1" />
+		<var name="kbArticleTitle1" value="Article 1 Title" />
+		<var name="kbArticleTitle2" value="Article 2 Title" />
+		<var name="kbFolderDescription1" value="KB Folder 1 Description" />
+		<var name="kbFolderDescription2" value="KB Folder 2 Description" />
+		<var name="kbFolderName1" value="Folder 1" />
+		<var name="kbFolderName2" value="Folder 2" />
 		<var name="pageName" value="Knowledge Base Page" />
 
 		<execute macro="Page#add">
 			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1175,39 +1170,41 @@
 		</execute>
 
 		<execute macro="KBFolder#addCP">
-			<var name="kbFolderName" value="${kbFolderName}" />
+			<var name="kbFolderDescription" value="${kbFolderDescription1}" />
+			<var name="kbFolderName" value="${kbFolderName1}" />
 		</execute>
 
 		<execute macro="KBFolder#addCP">
-			<var name="kbFolderName" value="Folder 2" />
+			<var name="kbFolderDescription" value="${kbFolderDescription2}" />
+			<var name="kbFolderName" value="${kbFolderName2}" />
 		</execute>
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="${kbArticleContent}" />
-			<var name="kbArticleTitle" value="${kbArticleTitle}" />
+			<var name="kbArticleTitle" value="${kbArticleTitle1}" />
 		</execute>
 
 		<execute macro="KBArticle#addCP">
 			<var name="kbArticleContent" value="${kbArticleContent}" />
-			<var name="kbArticleTitle" value="Article 2 Title" />
+			<var name="kbArticleTitle" value="${kbArticleTitle2}" />
 		</execute>
 
 		<execute macro="KBArticle#moveArticleCP">
 			<var name="kbArticleCurrentParent" value="Home" />
-			<var name="kbArticleTitle" value="${kbArticleTitle}" />
+			<var name="kbArticleTitle" value="${kbArticleTitle1}" />
 		</execute>
 
 		<execute macro="KBFolder#selectParentCP">
-			<var name="kbFolderName" value="${kbFolderName}" />
+			<var name="kbFolderName" value="${kbFolderName1}" />
 		</execute>
 
 		<execute macro="KBArticle#moveArticleCP">
 			<var name="kbArticleCurrentParent" value="Home" />
-			<var name="kbArticleTitle" value="Article 2 Title" />
+			<var name="kbArticleTitle" value="${kbArticleTitle2}" />
 		</execute>
 
 		<execute macro="KBFolder#selectParentCP">
-			<var name="kbFolderName" value="Folder 2" />
+			<var name="kbFolderName" value="${kbFolderName2}" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1215,7 +1212,7 @@
 		</execute>
 
 		<execute macro="KBArticle#viewNoHierarchyPG">
-			<var name="kbArticleTitle" value="${kbArticleTitle}" />
+			<var name="kbArticleTitle" value="${kbArticleTitle1}" />
 		</execute>
 	</command>
 
@@ -1948,16 +1945,19 @@
 
 		<execute macro="KBArticle#gotoSuggestionsNavigationPG" />
 
+		<execute macro="KBArticleSuggestion#viewSuggestionStatus">
+			<var name="kbSuggestionBody" value="${kbSuggestionBody}" />
+			<var name="status" value="New" />
+		</execute>
+
 		<execute macro="KBArticleSuggestion#moveToInProgressStatus">
 			<var name="kbArticleTitle" value="${kbArticleTitle}" />
 			<var name="kbSuggestionBody" value="${kbSuggestionBody}" />
 		</execute>
 
-		<execute macro="KBArticle#gotoSuggestionsNavigationPG" />
-
-		<execute macro="KBArticleSuggestion#gotoSuggestionStatusInProgress">
-			<var name="kbArticleTitle" value="${kbArticleTitle}" />
-			<var name="suggestionCount" value="1" />
+		<execute macro="KBArticleSuggestion#viewSuggestionStatus">
+			<var name="kbSuggestionBody" value="${kbSuggestionBody}" />
+			<var name="status" value="In Progress" />
 		</execute>
 
 		<execute macro="KBArticleSuggestion#moveToResolvedStatus">
@@ -1965,17 +1965,9 @@
 			<var name="kbSuggestionBody" value="${kbSuggestionBody}" />
 		</execute>
 
-		<execute macro="KBArticle#gotoSuggestionsNavigationPG" />
-
-		<execute macro="KBArticleSuggestion#gotoSuggestionStatusResolved">
-			<var name="kbArticleTitle" value="${kbArticleTitle}" />
-			<var name="suggestionCount" value="1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
+		<execute macro="KBArticleSuggestion#viewSuggestionStatus">
+			<var name="kbSuggestionBody" value="${kbSuggestionBody}" />
+			<var name="status" value="Resolved" />
 		</execute>
 
 		<execute macro="MockMock#viewMail">
@@ -2093,22 +2085,6 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
 		</execute>
 
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#selectArticleCP">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#editKBArticlePriorityViaEnterKeyCP">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-			<var name="kbNewPriority" value="1.0" />
-			<var name="kbPriority" value="3.0" />
-		</execute>
-
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
@@ -2127,15 +2103,6 @@
 		</execute>
 
 		<execute macro="KBArticle#gotoNextArticlePG">
-			<var name="kbDisplayNextArticle" value="Knowledge Base Article Parent Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 3" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#gotoNextArticlePG">
 			<var name="kbDisplayNextArticle" value="Knowledge Base Article Parent Title 2" />
 		</execute>
 
@@ -2144,13 +2111,22 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
 		</execute>
 
-		<execute macro="KBArticle#gotoPreviousArticle">
-			<var name="kbDisplayPreviousArticle" value="Knowledge Base Article Parent Title 3" />
+		<execute macro="KBArticle#gotoNextArticlePG">
+			<var name="kbDisplayNextArticle" value="Knowledge Base Article Parent Title 3" />
 		</execute>
 
 		<execute macro="KBArticle#viewViaKBDisplayPG">
 			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 3" />
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
+		</execute>
+
+		<execute macro="KBArticle#gotoPreviousArticle">
+			<var name="kbDisplayPreviousArticle" value="Knowledge Base Article Parent Title 2" />
+		</execute>
+
+		<execute macro="KBArticle#viewViaKBDisplayPG">
+			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 2" />
+			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
 		</execute>
 
 		<execute macro="KBArticle#gotoPreviousArticle">
@@ -2572,8 +2548,7 @@
 			</execute>
 		</for>
 
-		<execute macro="KBArticle#gotoViaKBAdminCP">
-			<var name="hasChildArticle" value="true" />
+		<execute macro="KBArticle#gotoChildArticleDescriptiveDetails">
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
 		</execute>
 
@@ -2602,8 +2577,7 @@
 			<var name="portlet" value="Knowledge Base" />
 		</execute>
 
-		<execute macro="KBArticle#gotoViaKBAdminCP">
-			<var name="hasChildArticle" value="true" />
+		<execute macro="KBArticle#gotoChildArticleDescriptiveDetails">
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
 		</execute>
 

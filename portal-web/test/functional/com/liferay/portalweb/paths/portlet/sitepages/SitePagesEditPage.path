@@ -145,6 +145,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGE_TYPE_FULL_PAGE_APPLICATION_SELECT</td>
+	<td>//select[contains(@id,'fullPageApplication')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -249,11 +254,6 @@
 <tr>
 	<td>MOBILE_DEVICE_RULES_PANEL_TOGGLE</td>
 	<td>//li/a[contains(@id,'mobileDeviceRules')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>

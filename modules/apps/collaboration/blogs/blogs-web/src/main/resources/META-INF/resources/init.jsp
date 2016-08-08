@@ -18,7 +18,8 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
+taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/flags" prefix="liferay-flags" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
@@ -45,9 +46,10 @@ page import="com.liferay.blogs.kernel.exception.EntrySmallImageScaleException" %
 page import="com.liferay.blogs.kernel.exception.EntryTitleException" %><%@
 page import="com.liferay.blogs.kernel.exception.NoSuchEntryException" %><%@
 page import="com.liferay.blogs.kernel.model.BlogsEntry" %><%@
-page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %><%@
-page import="com.liferay.blogs.kernel.service.BlogsEntryServiceUtil" %><%@
 page import="com.liferay.blogs.kernel.util.comparator.EntryModifiedDateComparator" %><%@
+page import="com.liferay.blogs.service.BlogsEntryLocalServiceUtil" %><%@
+page import="com.liferay.blogs.service.BlogsEntryServiceUtil" %><%@
+page import="com.liferay.blogs.service.permission.BlogsEntryPermission" %><%@
 page import="com.liferay.blogs.web.configuration.BlogsPortletInstanceConfiguration" %><%@
 page import="com.liferay.blogs.web.constants.BlogsPortletKeys" %><%@
 page import="com.liferay.blogs.web.constants.BlogsWebKeys" %><%@
@@ -131,7 +133,6 @@ page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.portlet.asset.util.AssetUtil" %><%@
 page import="com.liferay.portlet.blogs.BlogsGroupServiceSettings" %><%@
 page import="com.liferay.portlet.blogs.constants.BlogsConstants" %><%@
-page import="com.liferay.portlet.blogs.service.permission.BlogsEntryPermission" %><%@
 page import="com.liferay.portlet.blogs.service.permission.BlogsPermission" %><%@
 page import="com.liferay.portlet.blogs.util.BlogsUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
