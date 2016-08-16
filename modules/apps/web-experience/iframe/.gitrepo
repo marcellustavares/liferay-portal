@@ -4,7 +4,7 @@
 ;
 [subrepo]
 	cmdver = liferay
-	commit = 25e63be0f9a1378625023cee989d53208c8e144c
+	commit = 7f179138ac9cd64e27b4897e93bbc8adb364baee
 	mode = push
-	parent = d554560ade2726325c58d03ecfbd3f3fb861fbfe
+	parent = 1e026cb421ed712e3a17848619bf605002fe37fd
 	remote = git@github.com:liferay/com-liferay-iframe.git

@@ -18,7 +18,8 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
+taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/map" prefix="liferay-map" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -110,6 +111,8 @@ page import="com.liferay.ratings.kernel.transformer.RatingsDataTransformerUtil" 
 page import="com.liferay.site.admin.web.internal.constants.SiteAdminPortletKeys" %><%@
 page import="com.liferay.site.admin.web.internal.constants.SiteAdminWebKeys" %><%@
 page import="com.liferay.site.admin.web.internal.display.context.SiteAdminDisplayContext" %><%@
+page import="com.liferay.site.constants.SiteWebKeys" %><%@
+page import="com.liferay.site.util.GroupURLProvider" %><%@
 page import="com.liferay.sites.kernel.util.Sites" %><%@
 page import="com.liferay.sites.kernel.util.SitesUtil" %>
 

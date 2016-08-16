@@ -684,8 +684,6 @@
 			<var name="url" value="http://localhost:8080/fr/web/site-name/language-page" />
 		</execute>
 
-		<execute function="Pause" locator1="2000" />
-
 		<execute macro="Alert#closePortalLocalizationWarning" />
 
 		<execute function="AssertLocation" value1="http://localhost:8080/en/web/site-name/language-page" />
@@ -695,8 +693,6 @@
 		</execute>
 
 		<execute macro="Alert#closePortalLocalizationWarning" />
-
-		<execute function="Pause" locator1="2000" />
 
 		<execute function="AssertLocation" value1="http://localhost:8080/en/web/guest" />
 
@@ -779,8 +775,8 @@
 
 		<execute macro="Page#viewFriendlyURLLanguageOptionsPG">
 			<var name="assertUnavailableLanguages" value="true" />
-			<var name="currentLanguageList" value="DETAILS_FRIENDLY_URL_PORTUGUESE_BRAZIL,DETAILS_FRIENDLY_URL_SPANISH_SPAIN" />
-			<var name="unavailableLanguageList" value="DETAILS_FRIENDLY_URL_ENGLISH_UNITED_STATES" />
+			<var name="currentLanguageList" value="FRIENDLY_URL_PORTUGUESE_BRAZIL,FRIENDLY_URL_SPANISH_SPAIN" />
+			<var name="unavailableLanguageList" value="FRIENDLY_URL_ENGLISH_UNITED_STATES" />
 		</execute>
 	</command>
 </definition>

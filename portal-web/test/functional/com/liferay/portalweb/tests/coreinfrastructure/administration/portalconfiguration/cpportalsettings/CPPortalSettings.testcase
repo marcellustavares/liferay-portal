@@ -421,6 +421,7 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#viewConfigureSiteScopeContentSharingPG">
+			<var name="childSite" value="true" />
 			<var name="contentSharingAcrossSitesEnabled" value="false" />
 			<var name="globalSiteName" value="Global" />
 			<var name="globalSiteType" value="Global" />
@@ -467,6 +468,7 @@
 		</execute>
 
 		<execute macro="AssetPublisherPortlet#viewConfigureSiteScopeContentSharingPG">
+			<var name="childSite" value="true" />
 			<var name="contentSharingAcrossSitesEnabled" value="false" />
 			<var name="globalSiteName" value="Global" />
 			<var name="globalSiteType" value="Global" />
@@ -487,13 +489,10 @@
 	</command>
 
 	<command name="ViewContentSharingEnabledAcrossSitesViaAP" priority="4">
-		<var name="entryContent" value="Blogs Entry Content" />
-		<var name="entryTitle" value="Blogs Entry Title" />
-		<var name="liferaySiteName" value="Liferay" />
-		<var name="page" value="Public Pages" />
-		<var name="pageName" value="AP Test Page" />
-		<var name="portletName" value="Asset Publisher" />
-		<var name="siteName" value="Site Name" />
+		<execute macro="TestCase#getSiteName">
+			<return from="siteName" name="siteName" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Instance Settings" />
@@ -540,7 +539,7 @@
 			<var name="contentSharingAcrossSitesEnabled" value="true" />
 			<var name="globalSiteName" value="Global" />
 			<var name="globalSiteType" value="Global" />
-			<var name="liferaySiteName" value="Liferay" />
+			<var name="liferaySiteName" value="${siteName}" />
 			<var name="liferaySiteType" value="Site" />
 		</execute>
 
@@ -629,6 +628,40 @@
 		</execute>
 
 		<execute macro="PortalSettings#viewEmailNotificationsSenderCP" />
+	</command>
+
+	<command name="ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting" priority="3">
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="System Settings" />
+		</execute>
+
+		<execute macro="SystemSettings#gotoCategory">
+			<var name="category" value="Foundation" />
+		</execute>
+
+		<execute macro="SystemSettings#viewConfiguration">
+			<var name="configurationName" value="LDAP Auth" />
+			<var name="enableLDAP" value="false" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="Instance Settings" />
+		</execute>
+
+		<execute macro="PortalSettings#enableLDAPCP" />
+
+		<execute macro="ProductMenu#gotoControlPanelConfiguration">
+			<var name="portlet" value="System Settings" />
+		</execute>
+
+		<execute macro="SystemSettings#gotoCategory">
+			<var name="category" value="Foundation" />
+		</execute>
+
+		<execute macro="SystemSettings#viewConfiguration">
+			<var name="configurationName" value="LDAP Auth" />
+			<var name="enableLDAP" value="false" />
+		</execute>
 	</command>
 
 	<command name="ViewReservedCredentialsScreenNames" priority="3">

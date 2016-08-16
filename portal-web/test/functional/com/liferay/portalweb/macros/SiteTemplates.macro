@@ -29,7 +29,14 @@
 		<if>
 			<equals arg1="${siteTemplateActive}" arg2="No" />
 			<then>
-				<execute function="Uncheck#uncheckToggleSwitch" locator1="ToggleSwitch#ACTIVE" />
+				<execute function="Uncheck#uncheckHiddenToggleSwitch" locator1="ToggleSwitch#ACTIVE" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${disableChanges}" arg2="true" />
+			<then>
+				<execute function="Uncheck#uncheckHiddenToggleSwitch" locator1="ToggleSwitch#ALLOW_SITE_ADMIN_MODIFY_PAGES" />
 			</then>
 		</if>
 
@@ -123,7 +130,17 @@
 		<execute function="AssertClickNoError" locator1="MenuItem#DELETE" value1="Delete" />
 		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
 
-		<execute macro="Alert#viewSuccessMessage" />
+		<if>
+			<equals arg1="${associatedToSite}" arg2="true" />
+			<then>
+				<execute macro="Alert#viewRequestFailedToComplete" />
+
+				<execute macro="Alert#viewFailedSiteTemplateDeletionMessage" />
+			</then>
+			<else>
+				<execute macro="Alert#viewSuccessMessage" />
+			</else>
+		</if>
 	</command>
 
 	<command name="editCP">
@@ -146,7 +163,7 @@
 				<if>
 					<equals arg1="${siteTemplateActiveEdit}" arg2="No" />
 					<then>
-						<execute function="Uncheck#uncheckToggleSwitch" locator1="ToggleSwitch#ACTIVE" />
+						<execute function="Uncheck#uncheckHiddenToggleSwitch" locator1="ToggleSwitch#ACTIVE" />
 					</then>
 				</if>
 			</then>

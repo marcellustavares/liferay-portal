@@ -21,7 +21,6 @@ import com.liferay.calendar.exception.CalendarBookingRecurrenceException;
 import com.liferay.calendar.exporter.CalendarDataFormat;
 import com.liferay.calendar.exporter.CalendarDataHandler;
 import com.liferay.calendar.exporter.CalendarDataHandlerFactory;
-import com.liferay.calendar.internal.social.CalendarActivityKeys;
 import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarBookingConstants;
@@ -32,9 +31,11 @@ import com.liferay.calendar.recurrence.Recurrence;
 import com.liferay.calendar.recurrence.RecurrenceSerializer;
 import com.liferay.calendar.service.base.CalendarBookingLocalServiceBaseImpl;
 import com.liferay.calendar.service.configuration.CalendarServiceConfigurationValues;
+import com.liferay.calendar.social.CalendarActivityKeys;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.util.RecurrenceUtil;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
@@ -151,6 +152,7 @@ public class CalendarBookingLocalServiceImpl
 		calendarBooking.setModifiedDate(serviceContext.getModifiedDate(now));
 		calendarBooking.setCalendarId(calendarId);
 		calendarBooking.setCalendarResourceId(calendar.getCalendarResourceId());
+		calendarBooking.setUuid(serviceContext.getUuid());
 
 		if (parentCalendarBookingId > 0) {
 			calendarBooking.setParentCalendarBookingId(parentCalendarBookingId);
@@ -886,8 +888,10 @@ public class CalendarBookingLocalServiceImpl
 
 		calendarBookingPersistence.update(calendarBooking);
 
-		addChildCalendarBookings(
-			calendarBooking, childCalendarIds, serviceContext);
+		if (!ExportImportThreadLocal.isImportInProcess()) {
+			addChildCalendarBookings(
+				calendarBooking, childCalendarIds, serviceContext);
+		}
 
 		// Asset
 

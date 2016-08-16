@@ -139,7 +139,7 @@
 			<var name="tagName" value="${tagName}" />
 		</execute>
 
-		<execute macro="PortletEntry#publish" />
+		<execute macro="BlogsEntry#publish" />
 	</command>
 
 	<command name="addEntryWithTags">
@@ -161,11 +161,20 @@
 			</execute>
 		</for>
 
-		<execute macro="PortletEntry#publish" />
+		<execute macro="BlogsEntry#publish" />
 	</command>
 
 	<command name="addEntryWithUploadedCoverImage">
 		<execute macro="BlogsNavigator#gotoAddEntry" />
+
+		<execute function="AssertClick" locator1="BlogsEntry#ENTRY_COVER_IMAGE_SELECT_FILE" value1="Select File" />
+
+		<execute macro="ItemSelector#uploadFile">
+			<var name="navTab" value="${navTab}" />
+			<var name="uploadFileName" value="${uploadFileName}" />
+		</execute>
+
+		<execute function="Pause" locator1="5000" />
 
 		<execute macro="BlogsEntry#addTitle">
 			<var name="entryTitle" value="${entryTitle}" />
@@ -176,15 +185,6 @@
 			<var name="entrySubtitle" value="${entrySubtitle}" />
 			<var name="entryTitle" value="${entryTitle}" />
 		</execute>
-
-		<execute function="AssertClick" locator1="BlogsEntry#ENTRY_COVER_IMAGE_SELECT_FILE" value1="Select File" />
-
-		<execute macro="ItemSelector#uploadFile">
-			<var name="navTab" value="${navTab}" />
-			<var name="uploadFileName" value="${uploadFileName}" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
 	</command>
 
 	<command name="addViaAP">

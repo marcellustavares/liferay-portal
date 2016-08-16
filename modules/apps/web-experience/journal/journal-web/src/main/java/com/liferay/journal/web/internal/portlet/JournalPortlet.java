@@ -65,6 +65,7 @@ import com.liferay.journal.util.impl.JournalUtil;
 import com.liferay.journal.web.asset.JournalArticleAssetRenderer;
 import com.liferay.journal.web.configuration.JournalWebConfiguration;
 import com.liferay.journal.web.internal.portlet.action.ActionUtil;
+import com.liferay.journal.web.util.JournalPortletUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.diff.CompareVersionsException;
 import com.liferay.portal.kernel.exception.LocaleException;
@@ -116,7 +117,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -195,8 +195,11 @@ public class JournalPortlet extends MVCPortlet {
 		PortalPreferences portalPreferences =
 			PortletPreferencesFactoryUtil.getPortalPreferences(actionRequest);
 
+		String key = JournalPortletUtil.getAddMenuFavItemKey(
+			actionRequest, actionResponse);
+
 		String[] addMenuFavItems = portalPreferences.getValues(
-			JournalPortletKeys.JOURNAL, "add-menu-fav-items", new String[0]);
+			JournalPortletKeys.JOURNAL, key, new String[0]);
 
 		if (addMenuFavItems.length >=
 				_journalWebConfiguration.maxAddMenuItems()) {
@@ -207,8 +210,14 @@ public class JournalPortlet extends MVCPortlet {
 		}
 
 		portalPreferences.setValues(
-			JournalPortletKeys.JOURNAL, "add-menu-fav-items",
+			JournalPortletKeys.JOURNAL, key,
 			ArrayUtil.append(addMenuFavItems, ddmStructureKey));
+
+		SessionMessages.add(
+			actionRequest,
+			PortalUtil.getPortletId(actionRequest) +
+				SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
+			JournalPortletKeys.JOURNAL);
 	}
 
 	public void addArticle(
@@ -428,12 +437,21 @@ public class JournalPortlet extends MVCPortlet {
 		PortalPreferences portalPreferences =
 			PortletPreferencesFactoryUtil.getPortalPreferences(actionRequest);
 
+		String key = JournalPortletUtil.getAddMenuFavItemKey(
+			actionRequest, actionResponse);
+
 		String[] addMenuFavItems = portalPreferences.getValues(
-			JournalPortletKeys.JOURNAL, "add-menu-fav-items");
+			JournalPortletKeys.JOURNAL, key);
 
 		portalPreferences.setValues(
-			JournalPortletKeys.JOURNAL, "add-menu-fav-items",
+			JournalPortletKeys.JOURNAL, key,
 			ArrayUtil.remove(addMenuFavItems, ddmStructureKey));
+
+		SessionMessages.add(
+			actionRequest,
+			PortalUtil.getPortletId(actionRequest) +
+				SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
+			JournalPortletKeys.JOURNAL);
 	}
 
 	@Override
@@ -655,9 +673,10 @@ public class JournalPortlet extends MVCPortlet {
 		double version = ParamUtil.getDouble(uploadPortletRequest, "version");
 
 		Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
-			actionRequest, "title");
+			actionRequest, "titleMapAsXML");
 		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(actionRequest, "description");
+			LocalizationUtil.getLocalizationMap(
+				actionRequest, "descriptionMapAsXML");
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			JournalArticle.class.getName(), uploadPortletRequest);
@@ -673,18 +692,7 @@ public class JournalPortlet extends MVCPortlet {
 		Fields fields = DDMUtil.getFields(
 			ddmStructure.getStructureId(), serviceContext);
 
-		String structureContent = _journalConverter.getContent(
-			ddmStructure, fields);
-
-		Map<String, byte[]> structureImages = ActionUtil.getImages(
-			structureContent, fields);
-
-		Object[] contentAndImages =
-			new Object[] {structureContent, structureImages};
-
-		String content = (String)contentAndImages[0];
-		Map<String, byte[]> images =
-			(HashMap<String, byte[]>)contentAndImages[1];
+		String content = _journalConverter.getContent(ddmStructure, fields);
 
 		String ddmTemplateKey = ParamUtil.getString(
 			uploadPortletRequest, "ddmTemplateKey");
@@ -780,7 +788,7 @@ public class JournalPortlet extends MVCPortlet {
 				expirationDateYear, expirationDateHour, expirationDateMinute,
 				neverExpire, reviewDateMonth, reviewDateDay, reviewDateYear,
 				reviewDateHour, reviewDateMinute, neverReview, indexable,
-				smallImage, smallImageURL, smallFile, images, articleURL,
+				smallImage, smallImageURL, smallFile, null, articleURL,
 				serviceContext);
 		}
 		else {
@@ -804,7 +812,7 @@ public class JournalPortlet extends MVCPortlet {
 					expirationDateHour, expirationDateMinute, neverExpire,
 					reviewDateMonth, reviewDateDay, reviewDateYear,
 					reviewDateHour, reviewDateMinute, neverReview, indexable,
-					smallImage, smallImageURL, smallFile, images, articleURL,
+					smallImage, smallImageURL, smallFile, null, articleURL,
 					serviceContext);
 			}
 
