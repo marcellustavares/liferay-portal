@@ -140,7 +140,7 @@
 </tr>
 <tr>
 	<td>ASSIGN_FORM</td>
-	<td>//a[@role='menuitem' and contains(.,'Assign Form')]</td>
+	<td>//a[@role='menuitem' and contains(.,'Assign Form') and contains(@onclick,'${key_workflowTask}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -176,6 +176,11 @@
 <tr>
 	<td>ASSIGN_USERS</td>
 	<td>//a[@role='menuitem' and contains(.,'Assign Users')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BAN_THIS_USER</td>
+	<td>//a[@role='menuitem' and contains(.,'Ban This User')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -364,6 +369,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>EDIT_LOCALIZED</td>
+	<td>//a[contains(@class,'taglib-icon')]/span[contains(.,'${key_editLocalized}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>EDIT_WITH_IMAGE_EDITOR</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem']//span[contains(.,'Edit With Image Editor')]</td>
 	<td></td>
@@ -499,6 +509,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MANAGE_FIELD_SETS</td>
+	<td>//a[@role='menuitem']//span[contains(.,'Manage Field Sets')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MANAGE_FORMS</td>
+	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Manage Forms')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MANAGE_TEMPLATES</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Manage Templates')]</td>
 	<td></td>
@@ -626,11 +646,6 @@
 <tr>
 	<td>PERMISSIONS_LEXICON</td>
 	<td>//div[contains(@class,'open')]//a[@role='menuitem' and contains(.,'Permissions')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>PLATFORM</td>
-	<td>//a[@role='menuitem' and contains(.,'Platform')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -891,6 +906,16 @@
 <tr>
 	<td>TRANSFORM_RESIZE</td>
 	<td>//div[@class=&quot;dropdown dropup open&quot;]//a[contains(.,'Resize')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>UNASSIGN_FORM</td>
+	<td>//tr[contains(.,'${key_workflowTask}')]//a[@role='menuitem' and contains(.,'Unassign Form')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>UNBAN_THIS_USER</td>
+	<td>//a[@role='menuitem' and contains(.,'Unban This User')]</td>
 	<td></td>
 </tr>
 <tr>

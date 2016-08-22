@@ -24,7 +24,7 @@
 			<var name="fieldValue" value="Text Field" />
 		</execute>
 
-		<execute macro="FormFields#save" />
+		<execute macro="Form#closeSidebar" />
 
 		<execute macro="Form#save" />
 
@@ -351,6 +351,32 @@
 		</execute>
 	</command>
 
+	<command name="publishStagedSite">
+		<execute macro="Navigator#openSiteURL">
+			<var name="siteName" value="Staging Site Staging" />
+		</execute>
+
+		<execute function="AssertElementNotPresent" locator1="Home#PORTLET" />
+
+		<execute macro="ProductMenu#gotoStagingSite" />
+
+		<execute macro="WebContent#viewPGViaWCD">
+			<var name="webContentContent" value="Web Content Content" />
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+
+		<execute macro="Staging#gotoPublishToLive" />
+
+		<execute macro="Staging#publishToLive" />
+
+		<execute macro="ProductMenu#gotoLiveSite" />
+
+		<execute macro="WebContent#viewPGViaWCD">
+			<var name="webContentContent" value="Web Content Content" />
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+	</command>
+
 	<command name="publishWCDraft">
 		<execute macro="Navigator#openURL" />
 
@@ -469,7 +495,7 @@
 
 		<var name="key_portletName" value="Asset Publisher" />
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Asset Publisher" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Asset Publisher" />
 
 		<execute macro="WebContent#viewPGViaAP">
 			<var name="webContentContent" value="Web Content Content" />
@@ -532,7 +558,7 @@
 
 		<var name="key_portletName" value="Nested Portlets" />
 
-		<execute function="AssertTextEquals" locator1="BasePortlet#TITLE" value1="Nested Portlets" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Nested Portlets" />
 
 		<execute function="AssertTextNotEquals" locator1="Message#INFO" value1="Drag portlets below to nest them." />
 

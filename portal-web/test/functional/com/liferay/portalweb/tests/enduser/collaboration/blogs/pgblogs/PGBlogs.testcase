@@ -119,7 +119,6 @@
 
 	<command name="AddBlogsEntryComment" priority="5">
 		<property name="portal.acceptance" value="true" />
-		<property name="portal.acceptance.quarantine" value="false" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="${pageName}" />
@@ -695,7 +694,6 @@
 
 	<command name="EditBlogsEntryComment" priority="5">
 		<property name="portal.acceptance" value="true" />
-		<property name="portal.acceptance.quarantine" value="false" />
 
 		<var name="entryComment" value="Blogs Entry Comment" />
 		<var name="entryCommentEdit" value="Blogs Entry Comment Edit" />
@@ -1212,6 +1210,11 @@
 	</command>
 
 	<command name="UserFlagsEntryAndAdminViewsNotificationInGmail" priority="4">
+		<execute macro="TestCase#getSiteName">
+			<return from="siteName" name="siteName" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
 		<execute macro="ProductMenu#gotoControlPanelConfiguration">
 			<var name="portlet" value="Server Administration" />
 		</execute>
@@ -1257,6 +1260,7 @@
 
 		<execute macro="BlogsEntry#flagPG">
 			<var name="flagReason" value="Spam" />
+			<var name="siteName" value="${siteName}" />
 			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
 		</execute>
 
@@ -1272,11 +1276,11 @@
 		<execute macro="Gmail#viewMail">
 			<var name="emailFromUserName" value="Joe Bloggs" />
 			<var name="gmailAssetType" value="Inappropriate Content Flagged" />
-			<var name="gmailMailTableMessageTitle" value="Inappropriate Content Flagged in Liferay" />
-			<var name="gmailMessageBody" value="You are receiving this email because you are administrator of Liferay. Please review the content in this site." />
+			<var name="gmailMailTableMessageTitle" value="Inappropriate Content Flagged in ${siteName}" />
+			<var name="gmailMessageBody" value="You are receiving this email because you are administrator of ${siteName}. Please review the content in this site." />
 			<var name="gmailMessageBodyClosing" value="Sincerely" />
 			<var name="gmailMessageBodyGreeting" value="Dear userfn1 userln1," />
-			<var name="gmailMessageTitle" value="Inappropriate Content Flagged in Liferay" />
+			<var name="gmailMessageTitle" value="Inappropriate Content Flagged in ${siteName}" />
 		</execute>
 
 		<execute macro="Gmail#tearDown">

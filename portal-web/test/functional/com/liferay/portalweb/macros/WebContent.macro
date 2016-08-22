@@ -22,6 +22,8 @@
 	</command>
 
 	<command name="addCategoryPGViaWCD">
+		<execute function="ScrollBy" value1="0, 50" />
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Metadata" />
 		</execute>
@@ -446,6 +448,8 @@
 			<var name="structureName" value="${selectStructureName}" />
 		</execute>
 
+		<execute function="Type" locator1="TextInput#TITLE" value1="${webContentTitle}" />
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Structure and Template" />
 		</execute>
@@ -454,7 +458,7 @@
 
 		<execute function="SelectFrame" value1="relative=top" />
 
-		<execute function="SelectFrame" locator1="DDMSelectStructure#DDM_STRUCTURES_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 
 		<var name="key_ddlDataDefinitionName" value="${structureName}" />
 
@@ -603,7 +607,7 @@
 
 				<execute function="Click" locator1="WC#LINK_TO_PAGE_SELECT_PAGE_RADIO" />
 
-				<execute function="Click" locator1="Button#SELECT" />
+				<execute function="ClickNoError" locator1="Button#SELECT" />
 			</then>
 		</if>
 
@@ -1030,7 +1034,7 @@
 
 		<execute function="AssertClick" locator1="MenuItem#PERMISSIONS_LEXICON" value1="Permissions" />
 
-		<execute function="SelectFrame" locator1="Permissions#PERMISSIONS_IFRAME" />
+		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
 	</command>
 
 	<command name="gotoEditDuplicateEntryCP">
@@ -1221,6 +1225,8 @@
 	</command>
 
 	<command name="selectTemplateCP">
+		<execute function="ScrollBy" value1="0, 50" />
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Structure and Template" />
 		</execute>
@@ -1240,8 +1246,6 @@
 		<execute function="Confirm#assertConfirmationNoWait" value1="Selecting a new template deletes all unsaved content. Do you want to proceed?" />
 
 		<execute macro="IFrame#selectTopFrame" />
-
-		<execute macro="IFrame#selectEditAssetFrame" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Structure and Template" />
@@ -1359,6 +1363,8 @@
 
 	<command name="viewCategorizationVocabularyCP">
 		<var name="count" value="1" />
+
+		<execute function="Type#mouseOverFocusType" locator1="TextInput#TITLE" value1="${webContentTitle}" />
 
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Metadata" />
@@ -1482,7 +1488,7 @@
 
 		<var name="key_portletName" value="Web Content Display" />
 
-		<execute function="Click#makeVisibleClickAt" locator1="BasePortlet#SPECIFIC_PORTLET_BORDERLESS_ELLIPSIS_ICON" />
+		<execute function="Click#makeVisibleClickAt" locator1="Portlet#SPECIFIC_BORDERLESS_ELLIPSIS_ICON" />
 
 		<var name="key_menuItem" value="Edit Web Content" />
 
@@ -1562,7 +1568,7 @@
 		<var name="key_portletName" value="Web Content Display" />
 
 		<execute function="AssertTextNotPresent" locator1="Message#ERROR" value1="The selected web content no longer exists." />
-		<execute function="AssertElementNotPresent" locator1="BasePortlet#PORTLET_BODY" />
+		<execute function="AssertElementNotPresent" locator1="Portlet#BODY" />
 	</command>
 
 	<command name="viewNoContentPGViaWCD">
@@ -1593,7 +1599,7 @@
 
 		<var name="key_portletName" value="Web Content Display" />
 
-		<execute function="AssertElementNotPresent" locator1="BasePortlet#SPECIFIC_PORTLET_BORDERLESS_ELLIPSIS_ICON" />
+		<execute function="AssertElementNotPresent" locator1="Portlet#SPECIFIC_BORDERLESS_ELLIPSIS_ICON" />
 	</command>
 
 	<command name="viewNoPermissionCP">
@@ -1872,6 +1878,8 @@
 	</command>
 
 	<command name="viewWCViewableByPermissions">
+		<execute function="Type" locator1="TextInput#TITLE" value1="Web Content Title" />
+
 		<execute macro="Panel#expandPanel">
 			<var name="panelHeading" value="Permissions" />
 		</execute>
@@ -1887,9 +1895,10 @@
 			<var name="displayStyle" value="Descriptive" />
 		</execute>
 
-		<execute function="AssertElementPresent#pauseAssertVisible" locator1="WC#ENTRY_DESCRIPTIVE_THUMBNAIL" />
-
-		<execute function="AssertClick" locator1="WC#ENTRY_DESCRIPTIVE_TITLE" value1="${webContentTitle}" />
+		<execute macro="WebContentNavigator#gotoEditCP">
+			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentTitleEscapeCharacter" value="${webContentTitleEscapeCharacter}" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="TextInput#TITLE" value1="${webContentTitle}" />
 

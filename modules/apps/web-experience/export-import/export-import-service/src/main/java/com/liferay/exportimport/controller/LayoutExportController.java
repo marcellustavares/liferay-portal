@@ -23,6 +23,7 @@ import static com.liferay.exportimport.kernel.lifecycle.ExportImportLifecycleCon
 import static com.liferay.exportimport.kernel.lifecycle.ExportImportLifecycleConstants.PROCESS_FLAG_LAYOUT_EXPORT_IN_PROCESS;
 import static com.liferay.exportimport.kernel.lifecycle.ExportImportLifecycleConstants.PROCESS_FLAG_LAYOUT_STAGING_IN_PROCESS;
 
+import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.kernel.controller.ExportController;
 import com.liferay.exportimport.kernel.controller.ExportImportController;
 import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
@@ -244,8 +245,14 @@ public class LayoutExportController implements ExportController {
 			StringUtil.merge(
 				LanguageUtil.getAvailableLocales(
 					portletDataContext.getScopeGroupId())));
+
 		headerElement.addAttribute(
 			"build-number", String.valueOf(ReleaseInfo.getBuildNumber()));
+
+		headerElement.addAttribute(
+			"schema-version",
+			ExportImportConstants.EXPORT_IMPORT_SCHEMA_VERSION);
+
 		headerElement.addAttribute("export-date", Time.getRFC822());
 
 		if (portletDataContext.hasDateRange()) {

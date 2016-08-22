@@ -20,11 +20,24 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 
 /**
  * @author Bruno Basto
  */
-@DDMForm
+@DDMForm(
+	rules = {
+		@DDMFormRule(
+			actions = {
+				"set(fieldAt(\"emailFromAddress\", 0), \"visible\", equals(get(fieldAt(\"sendEmailNotification\", 0), \"value\"), true))",
+				"set(fieldAt(\"emailFromName\", 0), \"visible\", equals(get(fieldAt(\"sendEmailNotification\", 0), \"value\"), true))",
+				"set(fieldAt(\"emailSubject\", 0), \"visible\", equals(get(fieldAt(\"sendEmailNotification\", 0), \"value\"), true))",
+				"set(fieldAt(\"emailToAddress\", 0), \"visible\", equals(get(fieldAt(\"sendEmailNotification\", 0), \"value\"), true))",
+				"set(fieldAt(\"published\", 0), \"visible\", false)"
+			}
+		)
+	}
+)
 @DDMFormLayout(
 	{
 		@DDMFormLayoutPage(
@@ -67,32 +80,24 @@ public interface DDLRecordSetSettings {
 	@DDMFormField(
 		label = "%from-address",
 		validationErrorMessage = "%please-enter-a-valid-email-address",
-		validationExpression = "isEmailAddress(emailFromAddress)",
-		visibilityExpression = "sendEmailNotification == TRUE"
+		validationExpression = "isEmailAddress(emailFromAddress)"
 	)
 	public String emailFromAddress();
 
-	@DDMFormField(
-		label = "%from-name",
-		visibilityExpression = "sendEmailNotification == TRUE"
-	)
+	@DDMFormField(label = "%from-name")
 	public String emailFromName();
 
-	@DDMFormField(
-		label = "%subject",
-		visibilityExpression = "sendEmailNotification == TRUE"
-	)
+	@DDMFormField(label = "%subject")
 	public String emailSubject();
 
 	@DDMFormField(
 		label = "%to-address",
 		validationErrorMessage = "%please-enter-a-valid-email-address",
-		validationExpression = "isEmailAddress(emailToAddress)",
-		visibilityExpression = "sendEmailNotification == TRUE"
+		validationExpression = "isEmailAddress(emailToAddress)"
 	)
 	public String emailToAddress();
 
-	@DDMFormField(visibilityExpression = "FALSE")
+	@DDMFormField
 	public boolean published();
 
 	@DDMFormField(

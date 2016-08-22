@@ -620,7 +620,7 @@
 </tr>
 <tr>
 	<td>SITE_ADMIN_CONTENT_BOOKMARKS_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX</td>
-	<td>//input[contains(@value,'bookmarkswebACCESS_IN_CONTROL_PANEL')]</td>
+	<td>//input[contains(@value,'BookmarksAdminPortletACCESS_IN_CONTROL_PANEL')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -629,6 +629,11 @@
 	<td></td>
 </tr>
 <!--SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS-->
+<tr>
+	<td>SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION</td>
+	<td>//input[contains(@value,'KaleoFormsAdminPortletACCESS_IN_CONTROL_PANEL')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>SITE_ADMIN_CONTENT_KALEO_FORMS_ADMIN_GENERAL_PERMISSIONS_ACTION_CHECKBOX</td>
 	<td>//input[contains(@name,'allRowIds')]</td>
@@ -845,9 +850,9 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--SITE_ADMIN_USERS_SITE_MEMBERSHIPS_GENERAL_PERMISSIONS-->
+<!--SITE_ADMIN_MEMBERS_SITE_MEMBERSHIPS_GENERAL_PERMISSIONS-->
 <tr>
-	<td>SITE_ADMIN_USERS_SITE_MEMBERSHIPS_GENERAL_PERMISSIONS_ACTION_CHECKBOX</td>
+	<td>SITE_ADMIN_MEMBERS_SITE_MEMBERSHIPS_GENERAL_PERMISSIONS_ACTION_CHECKBOX</td>
 	<td>xpath=(//input[contains(@name,'allRowIds')])[1]</td>
 	<td></td>
 </tr>
@@ -856,9 +861,9 @@
 	<td></td>
 	<td></td>
 </tr>
-<!--SITE_ADMIN_USERS_SITE_TEAMS_RESOURCE_PERMISSIONS_TEAM-->
+<!--SITE_ADMIN_MEMBERSS_SITE_TEAMS_RESOURCE_PERMISSIONS_TEAM-->
 <tr>
-	<td>SITE_ADMIN_USERS_SITE_TEAMS_RESOURCE_PERMISSIONS_TEAM_ACTION_CHECKBOX</td>
+	<td>SITE_ADMIN_MEMBERS_SITE_TEAMS_RESOURCE_PERMISSIONS_TEAM_ACTION_CHECKBOX</td>
 	<td>xpath=(//input[contains(@name,'allRowIds')])[2]</td>
 	<td></td>
 </tr>

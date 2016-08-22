@@ -20,10 +20,8 @@ import com.liferay.gradle.util.Validator;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 
@@ -33,56 +31,22 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin;
  */
 public class SourceFormatterPlugin implements Plugin<Project> {
 
+	public static final String CHECK_SOURCE_FORMATTING_TASK_NAME =
+		"checkSourceFormatting";
+
 	public static final String CONFIGURATION_NAME = "sourceFormatter";
 
 	public static final String FORMAT_SOURCE_TASK_NAME = "formatSource";
-
-	public static final String CHECK_SOURCE_FORMATTING_TASK_NAME =
-		"checkSourceFormatting";
 
 	@Override
 	public void apply(Project project) {
 		Configuration sourceFormatterConfiguration =
 			addConfigurationSourceFormatter(project);
 
-		final FormatSourceTask checkSourceFormattingTask =
-			addTaskCheckSourceFormatting(project);
-
+		addTaskCheckSourceFormatting(project);
 		addTaskFormatSource(project);
 
 		configureTasksFormatSource(project, sourceFormatterConfiguration);
-
-		PluginContainer pluginContainer = project.getPlugins();
-
-		pluginContainer.withType(
-			LifecycleBasePlugin.class,
-			new Action<LifecycleBasePlugin>() {
-
-				@Override
-				public void execute(LifecycleBasePlugin lifecycleBasePlugin) {
-					Task checkTask = GradleUtil.getTask(
-						checkSourceFormattingTask.getProject(),
-						LifecycleBasePlugin.CHECK_TASK_NAME);
-
-					checkTask.dependsOn(checkSourceFormattingTask);
-				}
-
-			});
-	}
-
-	protected FormatSourceTask addTaskCheckSourceFormatting(Project project) {
-		FormatSourceTask formatSourceTask = GradleUtil.addTask(
-			project, CHECK_SOURCE_FORMATTING_TASK_NAME, FormatSourceTask.class);
-
-		formatSourceTask.setAutoFix(false);
-		formatSourceTask.setDescription(
-			"Checks the source formatting of this project.");
-		formatSourceTask.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
-		formatSourceTask.setPrintErrors(true);
-		formatSourceTask.setThrowException(true);
-		formatSourceTask.setUseProperties(false);
-
-		return formatSourceTask;
 	}
 
 	protected Configuration addConfigurationSourceFormatter(
@@ -113,6 +77,21 @@ public class SourceFormatterPlugin implements Plugin<Project> {
 		GradleUtil.addDependency(
 			project, CONFIGURATION_NAME, "com.liferay",
 			"com.liferay.source.formatter", "latest.release");
+	}
+
+	protected FormatSourceTask addTaskCheckSourceFormatting(Project project) {
+		FormatSourceTask formatSourceTask = GradleUtil.addTask(
+			project, CHECK_SOURCE_FORMATTING_TASK_NAME, FormatSourceTask.class);
+
+		formatSourceTask.setAutoFix(false);
+		formatSourceTask.setDescription(
+			"Checks the source formatting of this project.");
+		formatSourceTask.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
+		formatSourceTask.setPrintErrors(true);
+		formatSourceTask.setThrowException(true);
+		formatSourceTask.setUseProperties(false);
+
+		return formatSourceTask;
 	}
 
 	protected FormatSourceTask addTaskFormatSource(Project project) {

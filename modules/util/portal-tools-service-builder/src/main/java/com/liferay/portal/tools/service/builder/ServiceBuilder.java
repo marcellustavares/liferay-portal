@@ -1771,13 +1771,15 @@ public class ServiceBuilder {
 	private static void _move(File sourceFile, File destinationFile)
 		throws IOException {
 
-		Path destinationPath = destinationFile.toPath();
+		File parentFile = destinationFile.getParentFile();
 
-		if (!Files.exists(destinationPath)) {
-			Files.createDirectories(destinationPath);
+		Path parentPath = parentFile.toPath();
+
+		if (!Files.exists(parentPath)) {
+			Files.createDirectories(parentPath);
 		}
 
-		Files.move(sourceFile.toPath(), destinationPath);
+		Files.move(sourceFile.toPath(), destinationFile.toPath());
 	}
 
 	private static String _normalize(String fileName) {
@@ -2301,7 +2303,7 @@ public class ServiceBuilder {
 				"<?xml version=\"1.0\"?>\n" +
 				"<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">\n" +
 				"\n" +
-				"<hibernate-mapping default-lazy=\"false\" auto-import=\"false\">\n" +
+				"<hibernate-mapping auto-import=\"false\" default-lazy=\"false\">\n" +
 				"</hibernate-mapping>";
 
 			_write(xmlFile, xml);

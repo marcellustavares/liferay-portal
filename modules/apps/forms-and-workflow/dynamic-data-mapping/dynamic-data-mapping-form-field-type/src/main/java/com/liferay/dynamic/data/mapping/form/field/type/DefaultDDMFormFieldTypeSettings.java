@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.util.StringPool;
@@ -27,7 +28,18 @@ import com.liferay.portal.kernel.util.StringPool;
 /**
  * @author Marcellus Tavares
  */
-@DDMForm
+@DDMForm(
+	rules = {
+		@DDMFormRule(
+			actions = {
+				"set(fieldAt(\"fieldNamespace\", 0), \"visible\", false)",
+				"set(fieldAt(\"indexType\", 0), \"visible\", false)",
+				"set(fieldAt(\"localizable\", 0), \"visible\", false)",
+				"set(fieldAt(\"readOnly\", 0), \"visible\", false)"
+			}
+		)
+	}
+)
 @DDMFormLayout(
 	{
 		@DDMFormLayoutPage(
@@ -66,7 +78,7 @@ import com.liferay.portal.kernel.util.StringPool;
 public interface DefaultDDMFormFieldTypeSettings
 	extends DDMFormFieldTypeSettings {
 
-	@DDMFormField(visibilityExpression = "FALSE")
+	@DDMFormField
 	public String fieldNamespace();
 
 	@DDMFormField(
@@ -74,8 +86,8 @@ public interface DefaultDDMFormFieldTypeSettings
 		optionLabels = {
 			"%not-indexable", "%indexable-keyword", "%indexable-text"
 		},
-		optionValues = {StringPool.BLANK, "keyword", "text"}, type = "select",
-		visibilityExpression = "FALSE"
+		optionValues = {StringPool.BLANK, "keyword", "text"},
+		predefinedValue = "keyword", type = "select"
 	)
 	public String indexType();
 
@@ -85,11 +97,11 @@ public interface DefaultDDMFormFieldTypeSettings
 			"placeholder=%enter-a-field-label",
 			"tooltip=%enter-a-descriptive-field-label-that-guides-users-to-enter-the-information-you-want"
 		},
-		required = true, type = "key-value"
+		type = "key_value"
 	)
 	public LocalizedValue label();
 
-	@DDMFormField(label = "%localizable", visibilityExpression = "FALSE")
+	@DDMFormField(label = "%localizable")
 	public boolean localizable();
 
 	@DDMFormField(
@@ -102,7 +114,7 @@ public interface DefaultDDMFormFieldTypeSettings
 	)
 	public LocalizedValue predefinedValue();
 
-	@DDMFormField(label = "%read-only", visibilityExpression = "FALSE")
+	@DDMFormField(label = "%read-only")
 	public boolean readOnly();
 
 	@DDMFormField(label = "%repeatable", properties = {"showAsSwitcher=true"})
@@ -113,7 +125,10 @@ public interface DefaultDDMFormFieldTypeSettings
 	)
 	public boolean required();
 
-	@DDMFormField(label = "%show-label", properties = {"showAsSwitcher=true"})
+	@DDMFormField(
+		label = "%show-label", predefinedValue = "true",
+		properties = {"showAsSwitcher=true"}
+	)
 	public boolean showLabel();
 
 	@DDMFormField(
@@ -131,6 +146,9 @@ public interface DefaultDDMFormFieldTypeSettings
 	)
 	public DDMFormFieldValidation validation();
 
+	/**
+	 * @deprecated As of 7.0.0
+	 */
 	@DDMFormField(
 		label = "%field-visibility-expression",
 		properties = {
@@ -138,6 +156,7 @@ public interface DefaultDDMFormFieldTypeSettings
 			"tooltip=%write-a-conditional-expression-to-control-whether-this-field-is-displayed"
 		}
 	)
+	@Deprecated
 	public String visibilityExpression();
 
 }
