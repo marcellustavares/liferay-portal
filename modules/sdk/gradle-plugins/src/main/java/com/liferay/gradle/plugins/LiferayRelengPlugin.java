@@ -16,6 +16,7 @@ package com.liferay.gradle.plugins;
 
 import com.liferay.gradle.plugins.cache.CacheExtension;
 import com.liferay.gradle.plugins.cache.CachePlugin;
+import com.liferay.gradle.plugins.cache.WriteDigestTask;
 import com.liferay.gradle.plugins.cache.task.TaskCache;
 import com.liferay.gradle.plugins.cache.task.TaskCacheApplicator;
 import com.liferay.gradle.plugins.change.log.builder.BuildChangeLogTask;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -134,6 +136,32 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			});*/
 	}
 
+	protected static Properties getArtifactProperties(
+		WritePropertiesTask recordArtifactTask) {
+
+		try {
+			return FileUtil.readProperties(recordArtifactTask.getOutputFile());
+		}
+		catch (IOException ioe) {
+			throw new GradleException(
+				"Unable to read artifact properties", ioe);
+		}
+	}
+
+	protected static File getRelengDir(Project project) {
+		File rootDir = GradleUtil.getRootDir(
+			project.getRootProject(), ".releng");
+
+		if (rootDir == null) {
+			return null;
+		}
+
+		File relengDir = new File(rootDir, ".releng");
+
+		return new File(
+			relengDir, FileUtil.relativize(project.getProjectDir(), rootDir));
+	}
+
 	protected PrintArtifactPublishCommandsTask
 		addTaskPrintArtifactPublishCommands(
 			Project project, final WritePropertiesTask recordArtifactTask) {
@@ -213,6 +241,19 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 									taskCache.getCacheDir(),
 									TaskCacheApplicator.DIGEST_FILE_NAME));
 						}
+					}
+
+					if (GradleUtil.hasPlugin(
+							project, LiferayThemeDefaultsPlugin.class)) {
+
+						WriteDigestTask writeDigestTask =
+							(WriteDigestTask)GradleUtil.getTask(
+								project,
+								LiferayThemeDefaultsPlugin.
+									WRITE_PARENT_THEMES_DIGEST_TASK_NAME);
+
+						printArtifactPublishCommandsTask.prepNextFiles(
+							writeDigestTask.getDigestFile());
 					}
 				}
 
@@ -569,18 +610,6 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 		configureTaskEnabledIfRelease(recordArtifactTask);
 	}
 
-	protected Properties getArtifactProperties(
-		WritePropertiesTask recordArtifactTask) {
-
-		try {
-			return FileUtil.readProperties(recordArtifactTask.getOutputFile());
-		}
-		catch (IOException ioe) {
-			throw new GradleException(
-				"Unable to read artifact properties", ioe);
-		}
-	}
-
 	protected StringBuilder getArtifactRemoteBaseURL(
 			Project project, boolean cdn)
 		throws Exception {
@@ -681,20 +710,6 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 		return result.trim();
 	}
 
-	protected File getRelengDir(Project project) {
-		File rootDir = GradleUtil.getRootDir(
-			project.getRootProject(), ".releng");
-
-		if (rootDir == null) {
-			return null;
-		}
-
-		File relengDir = new File(rootDir, ".releng");
-
-		return new File(
-			relengDir, FileUtil.relativize(project.getProjectDir(), rootDir));
-	}
-
 	protected boolean isStale(
 		final Project project, Properties artifactProperties) {
 
@@ -726,6 +741,27 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			if (!line.contains(
 					PrintArtifactPublishCommandsTask.IGNORED_MESSAGE_PATTERN)) {
 
+				return true;
+			}
+		}
+
+		if (GradleUtil.hasPlugin(project, LiferayThemeDefaultsPlugin.class)) {
+			WriteDigestTask writeDigestTask =
+				(WriteDigestTask)GradleUtil.getTask(
+					project,
+					LiferayThemeDefaultsPlugin.
+						WRITE_PARENT_THEMES_DIGEST_TASK_NAME);
+
+			String digest = writeDigestTask.getDigest();
+			String oldDigest = writeDigestTask.getOldDigest();
+
+			if (_logger.isInfoEnabled()) {
+				_logger.info(
+					"Digest for {} is {}, old digest is {}", writeDigestTask,
+					digest, oldDigest);
+			}
+
+			if (!Objects.equals(digest, oldDigest)) {
 				return true;
 			}
 		}

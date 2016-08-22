@@ -203,7 +203,7 @@
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
-		<execute function="AssertTextEquals" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="There are 3 suggestions. (3 Pending)" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="There are 3 suggestions. (3 Pending)" />
 
 		<for list="${kbSuggestionCounterList}" param="suggestionCount" >
 			<execute macro="KBArticleSuggestion#viewPG">
@@ -212,29 +212,6 @@
 				<var name="status" value="New" />
 			</execute>
 		</for>
-	</command>
-
-	<command name="CancelKBArticleSuggestion" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#cancelSuggestionPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-		</execute>
 	</command>
 
 	<command name="CannotViewDuplicateBreadcrumbsWhenAddingParentArticle" priority="3" >
@@ -611,45 +588,6 @@
 			<var name="kbArticleTitle" value="KB Article Title Edit" />
 			<var name="kbArticleTitleAddedDiff" value="Edit" />
 			<var name="viewNoXMLInTitle" value="true" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleByPriority" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-
-		<execute macro="KBArticle#setPriorityCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-			<var name="kbPriority" value="1.0" />
-		</execute>
-
-		<execute macro="KBArticle#setPriorityCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbPriority" value="2.0" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
 		</execute>
 	</command>
 
@@ -1187,6 +1125,7 @@
 			<var name="kbArticleContent" value="Knowledge Base Article Content" />
 			<var name="kbArticleFriendlyURL" value="Title" />
 			<var name="kbArticleTitle"><![CDATA[><img onerror="alert('xss')" src="xx" /><]]></var>
+			<var name="specialCharacters" value="true" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -1212,7 +1151,7 @@
 		</execute>
 	</command>
 
-	<command name="ViewKBChildArticleViaReadMoreLink" priority="4">
+	<command name="ViewKBChildArticleViaNextLink" priority="4">
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoSitesContent">
@@ -1226,7 +1165,7 @@
 
 		<execute macro="KBArticle#addChildArticleViaKBAdmin">
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="This is a child article. Lengthy articles are summarized on the KB Display portlet. When an article is summarized, a Read More link is present, which, when clicked, directs the reader to the rest of the article. Excerpt from Liferay.com: Modern portals include a full workflow enabled web content management system. Many portal websites include a great deal of content that requires regular updates. These updates are often accomplished by non-technical content contributors and need to be approved by content approvers in a workflow approval process. This last sentence of the child article should only be visible after clicking on Read More." />
+			<var name="kbChildArticleContent" value="This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry." />
 			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
 		</execute>
 
@@ -1238,7 +1177,8 @@
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title" />
 		</execute>
 
-		<execute macro="KBArticle#viewViaReadMoreLinkPG">
+		<execute macro="KBArticle#viewViaNextLinkPG">
+			<var name="kbArticleContent" value="This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry." />
 			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
 		</execute>
 	</command>

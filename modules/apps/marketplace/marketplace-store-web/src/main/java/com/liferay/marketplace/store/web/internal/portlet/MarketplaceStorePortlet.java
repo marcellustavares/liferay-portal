@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -290,6 +291,91 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 		}
 	}
 
+	public void updateAppLicense(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		String orderUuid = ParamUtil.getString(actionRequest, "orderUuid");
+		String productEntryName = ParamUtil.getString(
+			actionRequest, "productEntryName");
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("cmd", "updateAppLicense");
+
+		if (Validator.isNull(orderUuid) &&
+			Validator.isNotNull(productEntryName)) {
+
+			orderUuid = MarketplaceLicenseUtil.getOrder(productEntryName);
+		}
+
+		if (Validator.isNotNull(orderUuid)) {
+			MarketplaceLicenseUtil.registerOrder(orderUuid, productEntryName);
+
+			jsonObject.put("message", "success");
+		}
+		else {
+			jsonObject.put("message", "failed");
+		}
+
+		writeJSON(actionRequest, actionResponse, jsonObject);
+	}
+
+	public void updateApps(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("cmd", "updateApps");
+		jsonObject.put("message", "success");
+
+		if (_reentrantLock.tryLock()) {
+			try {
+				long[] appPackageIds = ParamUtil.getLongValues(
+					actionRequest, "appPackageIds");
+
+				JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+				for (long appPackageId : appPackageIds) {
+					File file = null;
+
+					try {
+						file = FileUtil.createTempFile();
+
+						downloadApp(
+							actionRequest, actionResponse, appPackageId, false,
+							file);
+
+						App app = _appService.updateApp(file);
+
+						_appService.installApp(app.getRemoteAppId());
+
+						jsonArray.put(getAppJSONObject(app));
+					}
+					catch (Exception e) {
+						jsonObject.put("message", "failed");
+					}
+					finally {
+						if (file != null) {
+							file.delete();
+						}
+					}
+				}
+
+				jsonObject.put("updatedApps", jsonArray);
+			}
+			finally {
+				_reentrantLock.unlock();
+			}
+		}
+		else {
+			jsonObject.put("message", "failed");
+		}
+
+		writeJSON(actionRequest, actionResponse, jsonObject);
+	}
+
 	@Override
 	protected void doDispatch(
 			RenderRequest renderRequest, RenderResponse renderResponse)
@@ -450,5 +536,6 @@ public class MarketplaceStorePortlet extends RemoteMVCPortlet {
 
 	private AppLocalService _appLocalService;
 	private AppService _appService;
+	private final ReentrantLock _reentrantLock = new ReentrantLock();
 
 }

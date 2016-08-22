@@ -61,6 +61,10 @@ class LiferayApp extends App {
 	}
 
 	isScreenCacheExpired(screen) {
+		if (this.getCacheExpirationTime() === 0) {
+			return false;
+		}
+
 		var lastModifiedInterval = (new Date()).getTime() - screen.getCacheLastModified();
 
 		return lastModifiedInterval > this.getCacheExpirationTime();

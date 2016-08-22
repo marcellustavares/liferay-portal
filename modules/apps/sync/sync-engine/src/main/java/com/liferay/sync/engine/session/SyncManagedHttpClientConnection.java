@@ -24,12 +24,21 @@ import com.liferay.sync.engine.util.StreamUtil;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.RequestLine;
+import org.apache.http.config.MessageConstraints;
+import org.apache.http.entity.ContentLengthStrategy;
 import org.apache.http.impl.conn.DefaultManagedHttpClientConnection;
+import org.apache.http.io.HttpMessageParserFactory;
+import org.apache.http.io.HttpMessageWriterFactory;
 import org.apache.http.util.Args;
 
 /**
@@ -38,8 +47,20 @@ import org.apache.http.util.Args;
 public class SyncManagedHttpClientConnection
 	extends DefaultManagedHttpClientConnection {
 
-	public SyncManagedHttpClientConnection(String id, int bufferSize) {
-		super(id, bufferSize);
+	public SyncManagedHttpClientConnection(
+		String id, int bufferSize, int fragmentSizeHint,
+		CharsetDecoder charsetDecoder, CharsetEncoder charsetEncoder,
+		MessageConstraints messageConstraints,
+		ContentLengthStrategy incomingContentLengthStrategy,
+		ContentLengthStrategy outgoingContentLengthStrategy,
+		HttpMessageWriterFactory<HttpRequest> httpMessageWriterFactory,
+		HttpMessageParserFactory<HttpResponse> httpMessageParserFactory) {
+
+		super(
+			id, bufferSize, fragmentSizeHint, charsetDecoder, charsetEncoder,
+			messageConstraints, incomingContentLengthStrategy,
+			outgoingContentLengthStrategy, httpMessageWriterFactory,
+			httpMessageParserFactory);
 	}
 
 	@Override
@@ -73,10 +94,14 @@ public class SyncManagedHttpClientConnection
 
 		OutputStream outputStream = prepareOutput(request);
 
-		Header syncUUIDheader = request.getFirstHeader("Sync-UUID");
+		Header syncUUIDHeader = request.getFirstHeader("Sync-UUID");
+
+		if ((syncUUIDHeader == null) || (syncUUIDHeader.getValue() == null)) {
+			return outputStream;
+		}
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
-			syncUUIDheader.getValue());
+			syncUUIDHeader.getValue());
 
 		if (syncAccount == null) {
 			return outputStream;

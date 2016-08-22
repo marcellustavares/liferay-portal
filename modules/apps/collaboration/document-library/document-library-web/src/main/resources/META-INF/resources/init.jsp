@@ -18,7 +18,8 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
+taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -81,8 +82,8 @@ page import="com.liferay.document.library.kernel.util.PDFProcessorUtil" %><%@
 page import="com.liferay.document.library.kernel.util.RawMetadataProcessor" %><%@
 page import="com.liferay.document.library.kernel.util.VideoProcessorUtil" %><%@
 page import="com.liferay.document.library.kernel.util.comparator.RepositoryModelModifiedDateComparator" %><%@
-page import="com.liferay.document.library.web.internal.constants.DLPortletKeys" %><%@
-page import="com.liferay.document.library.web.internal.constants.DLWebKeys" %><%@
+page import="com.liferay.document.library.web.constants.DLPortletKeys" %><%@
+page import="com.liferay.document.library.web.constants.DLWebKeys" %><%@
 page import="com.liferay.document.library.web.internal.dao.search.DLResultRowSplitter" %><%@
 page import="com.liferay.document.library.web.internal.dao.search.IGResultRowSplitter" %><%@
 page import="com.liferay.document.library.web.internal.display.context.DLDisplayContextProvider" %><%@
