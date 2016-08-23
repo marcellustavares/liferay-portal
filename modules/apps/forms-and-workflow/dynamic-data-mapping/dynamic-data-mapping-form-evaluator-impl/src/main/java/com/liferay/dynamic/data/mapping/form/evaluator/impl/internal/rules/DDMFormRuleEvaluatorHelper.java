@@ -16,8 +16,8 @@ package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.rules;
 
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderConsumerTracker;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
-import com.liferay.dynamic.data.mapping.expression.VariableDependencies;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
@@ -37,11 +37,9 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -69,6 +67,7 @@ public class DDMFormRuleEvaluatorHelper {
 		_ddmDataProviderInstanceService = ddmDataProviderInstanceService;
 		_ddmExpressionFactory = ddmExpressionFactory;
 		_ddmForm = ddmForm;
+		_ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 
 		if (ddmFormValues == null) {
 			ddmFormValues = createEmptyDDMFormValues(_ddmForm);
@@ -87,8 +86,6 @@ public class DDMFormRuleEvaluatorHelper {
 		throws DDMFormEvaluationException {
 
 		addDDMFormFieldRuleEvaluationResults();
-
-		addDDMFormRuleForVisibilityAndValidation();
 
 		List<DDMFormRule> ddmFormRules = _ddmForm.getDDMFormRules();
 
@@ -117,43 +114,6 @@ public class DDMFormRuleEvaluatorHelper {
 		}
 	}
 
-	protected void addDDMFormRuleForVisibilityAndValidation() {
-		Map<String, DDMFormField> ddmFormFields = _ddmForm.getDDMFormFieldsMap(
-			true);
-
-		for (DDMFormField ddmFormField : ddmFormFields.values()) {
-			String visibilityExpression =
-				ddmFormField.getVisibilityExpression();
-
-			try {
-				if (Validator.isNotNull(visibilityExpression) &&
-					!visibilityExpression.equals("TRUE")) {
-
-					createDDMFormRule(
-						ddmFormField.getName(), visibilityExpression);
-				}
-
-				DDMFormFieldValidation ddmFormFieldValidation =
-					ddmFormField.getDDMFormFieldValidation();
-
-				if (ddmFormFieldValidation != null) {
-					createDDMFormRule(
-						ddmFormField.getName(), ddmFormFieldValidation);
-				}
-			}
-			catch (Exception e) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						"Error processing visiblity expression for field: " +
-							ddmFormField.getName() +
-							", visibilityExpression: " +
-							visibilityExpression,
-						e);
-				}
-			}
-		}
-	}
-
 	protected DDMFormFieldEvaluationResult createDDMFormFieldEvaluationResult(
 		DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue) {
 
@@ -161,10 +121,12 @@ public class DDMFormRuleEvaluatorHelper {
 			new DDMFormFieldEvaluationResult(
 				ddmFormField.getName(), ddmFormFieldValue.getInstanceId());
 
-		ddmFormFieldEvaluationResult.setErrorMessage(StringPool.BLANK);
 		ddmFormFieldEvaluationResult.setReadOnly(ddmFormField.isReadOnly());
-		ddmFormFieldEvaluationResult.setValid(true);
-		ddmFormFieldEvaluationResult.setVisible(true);
+
+		setDDMFormFieldEvaluationResultValidation(
+			ddmFormFieldEvaluationResult, ddmFormField);
+		setDDMFormFieldEvaluationResultVisibility(
+			ddmFormFieldEvaluationResult, ddmFormField);
 
 		Value value = ddmFormFieldValue.getValue();
 
@@ -251,44 +213,6 @@ public class DDMFormRuleEvaluatorHelper {
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
 			populateDDMFormFieldValues(ddmFormFieldValue);
 		}
-	}
-
-	protected void createDDMFormRule(
-			String ddmFormFieldName,
-			DDMFormFieldValidation ddmFormFieldValidation)
-		throws Exception {
-
-		if (Validator.isNull(ddmFormFieldValidation.getExpression())) {
-			return;
-		}
-
-		String translatedExpression = translateExpression(
-			ddmFormFieldValidation.getExpression());
-
-		String errorMessage = StringUtil.replace(
-			ddmFormFieldValidation.getErrorMessage(), CharPool.QUOTE,
-			StringPool.DOUBLE_APOSTROPHE);
-
-		String action = String.format(
-			"set(fieldAt(\"%s\", 0), \"valid\", %s, \"%s\")", ddmFormFieldName,
-			translatedExpression, errorMessage);
-
-		DDMFormRule ddmFormRule = new DDMFormRule("TRUE", action);
-
-		_ddmForm.addDDMFormRule(ddmFormRule);
-	}
-
-	protected void createDDMFormRule(
-			String ddmFormFieldName, String visibilityExpression)
-		throws Exception {
-
-		String action = String.format(
-			"set(fieldAt(\"%s\", 0), \"visible\", %s)", ddmFormFieldName,
-			translateExpression(visibilityExpression));
-
-		DDMFormRule ddmFormRule = new DDMFormRule("TRUE", action);
-
-		_ddmForm.addDDMFormRule(ddmFormRule);
 	}
 
 	protected DDMFormFieldValue createDefaultDDMFormFieldValue(
@@ -449,24 +373,118 @@ public class DDMFormRuleEvaluatorHelper {
 		}
 	}
 
-	protected String translateExpression(String expression) throws Exception {
-		DDMExpression<Boolean> booleanDDMExpression =
-			_ddmExpressionFactory.createBooleanDDMExpression(expression);
+	protected void setDDMExpressionVariables(
+			DDMExpression<Boolean> ddmExpression)
+		throws DDMExpressionException {
 
-		Map<String, VariableDependencies> variableDependencies =
-			booleanDDMExpression.getVariableDependenciesMap();
+		for (String ddmFormFieldName : _ddmFormFieldValues.keySet()) {
+			DDMFormField ddmFormField = _ddmFormFieldsMap.get(ddmFormFieldName);
 
-		for (String variable : variableDependencies.keySet()) {
-			if (_ddmFormFieldEvaluationResults.containsKey(variable)) {
-				expression = expression.replaceAll(
-					String.format(
-						"([,\\s\\(]+|.*)(%s)([,\\s\\)]+|.*)", variable),
-					String.format(
-						"$1get(fieldAt(\"%s\", 0), \"value\")$3", variable));
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				_ddmFormFieldValues.get(ddmFormFieldName);
+
+			DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+
+			Value value = ddmFormFieldValue.getValue();
+
+			String valueString = getValueString(value, ddmFormField.getType());
+
+			if (ddmFormField.getDataType().equals(FieldConstants.INTEGER)) {
+				if (Validator.isNotNull(valueString)) {
+					ddmExpression.setIntegerVariableValue(
+						ddmFormFieldName, GetterUtil.getInteger(valueString));
+				}
+			}
+			else if (ddmFormField.getDataType().equals(
+						FieldConstants.BOOLEAN)) {
+
+				if (Validator.isNotNull(valueString)) {
+					ddmExpression.setBooleanVariableValue(
+						ddmFormFieldName, GetterUtil.getBoolean(valueString));
+				}
+			}
+			else {
+				ddmExpression.setStringVariableValue(
+					ddmFormFieldName, valueString);
 			}
 		}
+	}
 
-		return expression;
+	protected void setDDMFormFieldEvaluationResultValidation(
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
+		DDMFormField ddmFormField) {
+
+		DDMFormFieldValidation ddmFormFieldValidation =
+			ddmFormField.getDDMFormFieldValidation();
+
+		if (ddmFormFieldValidation == null) {
+			return;
+		}
+
+		String validationExpression = ddmFormFieldValidation.getExpression();
+
+		if (Validator.isNull(validationExpression)) {
+			return;
+		}
+
+		try {
+			DDMExpression<Boolean> ddmExpression =
+				_ddmExpressionFactory.createBooleanDDMExpression(
+					validationExpression);
+
+			setDDMExpressionVariables(ddmExpression);
+
+			boolean valid = ddmExpression.evaluate();
+
+			if (!valid) {
+				ddmFormFieldEvaluationResult.setErrorMessage(
+					ddmFormFieldValidation.getErrorMessage());
+				ddmFormFieldEvaluationResult.setValid(false);
+			}
+		}
+		catch (DDMExpressionException ddmee) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					String.format(
+						"Error processing validation expression \"%s\" for " +
+							"field \"%s\"",
+						validationExpression, ddmFormField.getName()),
+					ddmee);
+			}
+		}
+	}
+
+	protected void setDDMFormFieldEvaluationResultVisibility(
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
+		DDMFormField ddmFormField) {
+
+		String visibilityExpression = ddmFormField.getVisibilityExpression();
+
+		if (Validator.isNull(visibilityExpression) ||
+			visibilityExpression.equals("TRUE")) {
+
+			return;
+		}
+
+		try {
+			DDMExpression<Boolean> ddmExpression =
+				_ddmExpressionFactory.createBooleanDDMExpression(
+					visibilityExpression);
+
+			setDDMExpressionVariables(ddmExpression);
+
+			ddmFormFieldEvaluationResult.setVisible(ddmExpression.evaluate());
+		}
+		catch (DDMExpressionException ddmee) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					String.format(
+						"Error processing visibility expression \"%s\" for " +
+							"field \"%s\"",
+						visibilityExpression, ddmFormField.getName()),
+					ddmee);
+			}
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -480,6 +498,7 @@ public class DDMFormRuleEvaluatorHelper {
 	private final DDMForm _ddmForm;
 	private final Map<String, List<DDMFormFieldEvaluationResult>>
 		_ddmFormFieldEvaluationResults = new HashMap<>();
+	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private final Map<String, List<DDMFormFieldValue>> _ddmFormFieldValues =
 		new LinkedHashMap<>();
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
