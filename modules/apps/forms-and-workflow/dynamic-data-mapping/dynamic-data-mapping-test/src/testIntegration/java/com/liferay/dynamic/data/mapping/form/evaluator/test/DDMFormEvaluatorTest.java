@@ -90,6 +90,8 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 		String actualResult = jsonSerializer.serializeDeep(
 			ddmFormEvaluationResult);
 
+		System.out.println(actualResult);
+
 		JSONAssert.assertEquals(expectedResult, actualResult, false);
 	}
 
