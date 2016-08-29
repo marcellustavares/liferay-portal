@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.calendar.web.internal.upgrade;
+package com.liferay.events.calendar.web.internal.upgrade;
 
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
@@ -23,15 +23,15 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	service = {CalendarWebUpgrade.class, UpgradeStepRegistrator.class}
+	service = {EventsCalendarWebUpgrade.class, UpgradeStepRegistrator.class}
 )
-public class CalendarWebUpgrade implements UpgradeStepRegistrator {
+public class EventsCalendarWebUpgrade implements UpgradeStepRegistrator {
 
 	@Override
 	public void register(Registry registry) {
 		registry.register(
 			"com.liferay.calendar.web", "1.0.1", "1.0.2",
-			new com.liferay.calendar.web.internal.upgrade.v1_0_2.
+			new com.liferay.events.calendar.web.internal.upgrade.v1_0_2.
 				UpgradePortletId());
 	}
 
