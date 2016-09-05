@@ -12,18 +12,25 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.expression.model;
+package com.liferay.dynamic.data.mapping.form.rule.translator;
 
 import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+
+import java.util.List;
 
 /**
  * @author Leonardo Barros
  */
 @ProviderType
-public class AndExpression extends BinaryExpression {
+public interface DDMFormRuleTranslator {
 
-	public AndExpression(Expression leftOperand, Expression rightOperand) {
-		super("&&", leftOperand, rightOperand);
-	}
+	public String translate(DDMForm ddmForm)
+		throws DDMFormRuleTranslatorException;
+
+	public List<DDMFormRule> translate(String rulesJSON)
+		throws DDMFormRuleTranslatorException;
 
 }

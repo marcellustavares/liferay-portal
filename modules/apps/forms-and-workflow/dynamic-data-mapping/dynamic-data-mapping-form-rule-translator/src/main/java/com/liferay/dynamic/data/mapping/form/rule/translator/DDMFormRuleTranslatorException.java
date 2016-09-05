@@ -12,18 +12,30 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.expression.model;
+package com.liferay.dynamic.data.mapping.form.rule.translator;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * @author Leonardo Barros
  */
-@ProviderType
-public class AndExpression extends BinaryExpression {
+public class DDMFormRuleTranslatorException extends PortalException {
 
-	public AndExpression(Expression leftOperand, Expression rightOperand) {
-		super("&&", leftOperand, rightOperand);
+	public DDMFormRuleTranslatorException() {
 	}
+
+	public DDMFormRuleTranslatorException(String msg) {
+		super(msg);
+	}
+
+	public DDMFormRuleTranslatorException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public DDMFormRuleTranslatorException(Throwable cause) {
+		super(cause);
+	}
+
+	private static final long serialVersionUID = 1L;
 
 }
