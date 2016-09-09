@@ -86,7 +86,51 @@ version 1.0.125.
 ### Changed
 - [LPS-67986]: Update the [Liferay CSS Builder] dependency to version 1.0.19.
 
+## 2.0.22 - 2016-09-02
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.269.
+
+## 2.0.23 - 2016-09-05
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.270.
+
+## 2.0.24 - 2016-09-05
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.271.
+
+## 2.0.25 - 2016-09-06
+
+### Changed
+- [LPS-67996]: Update the [Liferay Source Formatter] dependency to version
+1.0.272.
+
+## 2.0.26 - 2016-09-07
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.273.
+
+## 2.0.27 - 2016-09-07
+
+### Changed
+- [LPS-68014]: Update the [Liferay Ant BND] dependency to version 2.0.29.
+- [LPS-68035]: Update the [Liferay Source Formatter] dependency to version
+1.0.274.
+
+## 2.0.28 - 2016-09-08
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.275.
+
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
+[Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
 [Liferay CSS Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/css-builder
 [Liferay Gradle Plugins Gulp]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-gulp
 [Liferay Gradle Plugins JS Module Config Generator]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-js-module-config-generator
@@ -99,3 +143,6 @@ version 1.0.125.
 [LPS-67658]: https://issues.liferay.com/browse/LPS-67658
 [LPS-67804]: https://issues.liferay.com/browse/LPS-67804
 [LPS-67986]: https://issues.liferay.com/browse/LPS-67986
+[LPS-67996]: https://issues.liferay.com/browse/LPS-67996
+[LPS-68014]: https://issues.liferay.com/browse/LPS-68014
+[LPS-68035]: https://issues.liferay.com/browse/LPS-68035

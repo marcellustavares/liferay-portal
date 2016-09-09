@@ -5354,9 +5354,7 @@ sprite.root.dir=/tmp/sprite
 
 axis.servlet.hosts.allowed=
 
-tunnel.servlet.hosts.allowed=
-
-javascript.single.page.application.timeout=300000</echo>
+tunnel.servlet.hosts.allowed=</echo>
 
 		<get-testcase-property property.name="captcha.max.challenges" />
 
@@ -8468,19 +8466,19 @@ jdbc.default.password=${database.mysql.password}</echo>
 						<var name="app.server.bundle.index" unset="true" />
 					</then>
 				</if>
-			</then>
-		</if>
 
-		<if>
-			<not>
-				<equals arg1="${tcat.enabled}" arg2="true" />
-			</not>
-			<then>
-				<waitfor maxwait="150" maxwaitunit="second">
-					<available file="${liferay.home}/logs" type="dir" />
-				</waitfor>
+				<if>
+					<not>
+						<equals arg1="${tcat.enabled}" arg2="true" />
+					</not>
+					<then>
+						<waitfor maxwait="150" maxwaitunit="second">
+							<available file="${liferay.home}/logs" type="dir" />
+						</waitfor>
 
-				<antcall target="wait-for-plugins-deployment" />
+						<antcall target="wait-for-plugins-deployment" />
+					</then>
+				</if>
 			</then>
 		</if>
 
