@@ -1,0 +1,37 @@
+[
+	{
+		"actions": [
+			{
+				"action": "hide",
+				"target": "Field1"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "arithmetic",
+						"value": {
+							"operands": [
+								{
+									"type": "constant",
+									"value": "1"
+								},
+								{
+									"type": "constant",
+									"value": "3"
+								}
+							],
+							"operator": "addition"
+						}
+					},
+					{
+						"type": "constant",
+						"value": "4"
+					}
+				],
+				"operator": "less-than-equals"
+			}
+		]
+	}
+]

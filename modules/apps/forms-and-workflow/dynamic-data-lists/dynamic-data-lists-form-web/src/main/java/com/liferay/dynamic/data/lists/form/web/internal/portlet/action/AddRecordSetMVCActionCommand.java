@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
+import com.liferay.dynamic.data.mapping.form.rule.translator.DDMFormRuleTranslator;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQuery;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
@@ -28,6 +29,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.Value;
@@ -49,6 +51,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -86,6 +89,7 @@ public class AddRecordSetMVCActionCommand
 		String name = ParamUtil.getString(actionRequest, "name");
 		String description = ParamUtil.getString(actionRequest, "description");
 		DDMForm ddmForm = getDDMForm(actionRequest);
+
 		DDMFormLayout ddmFormLayout = getDDMFormLayout(actionRequest);
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
@@ -169,6 +173,14 @@ public class AddRecordSetMVCActionCommand
 		}
 	}
 
+	protected List<DDMFormRule> getDDMFormRules(ActionRequest actionRequest)
+		throws PortalException {
+
+		String rules = ParamUtil.getString(actionRequest, "rules");
+
+		return ddmFormRuleTranslator.translate(rules);
+	}
+
 	protected Map<Locale, String> getLocalizedMap(Locale locale, String value) {
 		Map<Locale, String> localizedMap = new HashMap<>();
 
@@ -249,6 +261,13 @@ public class AddRecordSetMVCActionCommand
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDMFormRuleTranslator(
+		DDMFormRuleTranslator ddmFormRuleTranslator) {
+
+		this.ddmFormRuleTranslator = ddmFormRuleTranslator;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMFormValuesJSONDeserializer(
 		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
 
@@ -310,6 +329,7 @@ public class AddRecordSetMVCActionCommand
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
+	protected DDMFormRuleTranslator ddmFormRuleTranslator;
 	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
 	protected DDMFormValuesQueryFactory ddmFormValuesQueryFactory;
 	protected DDMStructureService ddmStructureService;

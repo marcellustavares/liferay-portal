@@ -25,15 +25,7 @@ public class ComparisonExpression extends BinaryExpression {
 	public ComparisonExpression(
 		String operator, Expression leftOperand, Expression rightOperand) {
 
-		super(leftOperand, rightOperand);
-
-		_operator = operator;
+		super(operator, leftOperand, rightOperand);
 	}
-
-	public String getOperator() {
-		return _operator;
-	}
-
-	private final String _operator;
 
 }

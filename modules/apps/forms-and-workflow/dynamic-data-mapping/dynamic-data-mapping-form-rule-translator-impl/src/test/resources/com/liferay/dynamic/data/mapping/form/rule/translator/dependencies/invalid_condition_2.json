@@ -1,0 +1,15 @@
+[
+	{
+		"actions": [
+			{
+				"action": "enable",
+				"target": "Field1"
+			}
+		],
+		"conditions": [
+			{
+				"operands": []
+			}
+		]
+	}
+]

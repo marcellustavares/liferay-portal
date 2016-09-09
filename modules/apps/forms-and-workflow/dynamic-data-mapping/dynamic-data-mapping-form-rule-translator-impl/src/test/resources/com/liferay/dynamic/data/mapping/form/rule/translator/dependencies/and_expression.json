@@ -1,0 +1,39 @@
+[
+	{
+		"actions": [
+			{
+				"action": "disable",
+				"target": "Field4"
+			}
+		],
+		"conditions": [
+			{
+				"logic-operator": "AND",
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "field",
+						"value": "Field2"
+					}
+				],
+				"operator": "greater-than-equals"
+			},
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "constant",
+						"value": "10"
+					}
+				],
+				"operator": "less-than-equals"
+			}
+		]
+	}
+]

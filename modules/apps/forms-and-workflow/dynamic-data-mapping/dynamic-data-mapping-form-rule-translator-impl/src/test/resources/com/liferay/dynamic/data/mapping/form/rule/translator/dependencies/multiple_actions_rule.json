@@ -1,0 +1,23 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field1"
+			},
+			{
+				"action": "hide",
+				"target": "Field2"
+			},
+			{
+				"action": "enable",
+				"target": "Field3"
+			},
+			{
+				"action": "disable",
+				"target": "Field4"
+			}
+		],
+		"conditions": []
+	}
+]
