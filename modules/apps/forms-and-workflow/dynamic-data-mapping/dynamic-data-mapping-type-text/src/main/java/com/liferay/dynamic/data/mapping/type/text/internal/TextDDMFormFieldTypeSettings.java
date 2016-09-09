@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
@@ -31,7 +32,8 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 @DDMForm(
 	rules = {
 		@DDMFormRule(
-			actions = {"set(fieldAt(\"tooltip\", 0), \"visible\", false)"}
+			actions = {"set(fieldAt(\"tooltip\", 0), \"visible\", false)"},
+			type = DDMFormRuleType.VISIBILITY
 		)
 	}
 )

@@ -49,7 +49,10 @@ AUI.add(
 
 					recordSetId: {
 						value: 0
-					}
+					},
+
+					rules: {
+					},
 				},
 
 				AUGMENTS: [Liferay.PortletBase],

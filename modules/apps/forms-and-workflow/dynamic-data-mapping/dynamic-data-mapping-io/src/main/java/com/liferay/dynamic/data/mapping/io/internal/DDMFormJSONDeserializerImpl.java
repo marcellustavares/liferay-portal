@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -262,7 +263,11 @@ public class DDMFormJSONDeserializerImpl implements DDMFormJSONDeserializer {
 		List<String> actions = getDDMFormRuleActions(
 			jsonObject.getJSONArray("actions"));
 
-		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
+		DDMFormRuleType ddmFormRuleType = DDMFormRuleType.parse(
+			jsonObject.getString("type"));
+
+		DDMFormRule ddmFormRule = new DDMFormRule(
+			condition, ddmFormRuleType, actions);
 
 		boolean enabled = jsonObject.getBoolean("enabled", true);
 

@@ -1,0 +1,42 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field1"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "function",
+						"value": {
+							"name": "sum",
+							"parameters": [
+								{
+									"type": "constant",
+									"value": "1"
+								},
+								{
+									"type": "constant",
+									"value": "3"
+								},
+								{
+									"type": "constant",
+									"value": "5"
+								}
+							]
+						}
+					},
+					{
+						"type": "constant",
+						"value": "4"
+					}
+				],
+				"operator": "less-than"
+			}
+		],
+		"type": "VISIBILITY"
+	}
+]

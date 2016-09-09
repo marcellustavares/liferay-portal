@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.rules.DDMFo
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -104,7 +105,8 @@ public class DDMFormRuleEvaluatorHelperTest extends PowerMockito {
 			"get(fieldAt(\"field0\", 0), \"value\") > 0 && " +
 				"get(fieldAt(\"field1\", 0), \"value\") > 0";
 
-		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
+		DDMFormRule ddmFormRule = new DDMFormRule(
+			condition, DDMFormRuleType.NOT_AVAILABLE, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule);
 
@@ -185,7 +187,8 @@ public class DDMFormRuleEvaluatorHelperTest extends PowerMockito {
 		List<String> actions = ListUtil.fromArray(
 			new String[] {"set(fieldAt(\"field1\", 0), \"visible\", false)"});
 
-		DDMFormRule ddmFormRule = new DDMFormRule("TRUE", actions);
+		DDMFormRule ddmFormRule = new DDMFormRule(
+			"TRUE", DDMFormRuleType.VISIBILITY, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule);
 
@@ -278,7 +281,8 @@ public class DDMFormRuleEvaluatorHelperTest extends PowerMockito {
 
 		String condition = "get(fieldAt(\"field0\", 0), \"value\") >= 30";
 
-		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
+		DDMFormRule ddmFormRule = new DDMFormRule(
+			condition, DDMFormRuleType.READ_ONLY, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule);
 

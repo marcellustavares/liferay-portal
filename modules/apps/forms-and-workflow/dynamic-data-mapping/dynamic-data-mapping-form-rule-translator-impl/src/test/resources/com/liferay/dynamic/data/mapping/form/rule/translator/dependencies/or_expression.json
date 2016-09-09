@@ -1,0 +1,40 @@
+[
+	{
+		"actions": [
+			{
+				"action": "hide",
+				"target": "Field3"
+			}
+		],
+		"conditions": [
+			{
+				"logic-operator": "OR",
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "field",
+						"value": "Field2"
+					}
+				],
+				"operator": "equals-to"
+			},
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "constant",
+						"value": "5"
+					}
+				],
+				"operator": "not-equals-to"
+			}
+		],
+		"type": "VISIBILITY"
+	}
+]
