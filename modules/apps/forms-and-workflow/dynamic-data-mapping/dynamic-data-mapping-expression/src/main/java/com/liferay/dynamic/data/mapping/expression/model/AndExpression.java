@@ -23,7 +23,7 @@ import aQute.bnd.annotation.ProviderType;
 public class AndExpression extends BinaryExpression {
 
 	public AndExpression(Expression leftOperand, Expression rightOperand) {
-		super(leftOperand, rightOperand);
+		super("&&", leftOperand, rightOperand);
 	}
 
 }

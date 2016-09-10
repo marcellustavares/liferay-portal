@@ -1,0 +1,23 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field2"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "field"
+					},
+					{
+						"type": "constant"
+					}
+				],
+				"operator": "greater-than"
+			}
+		]
+	}
+]

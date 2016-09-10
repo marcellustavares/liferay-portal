@@ -23,7 +23,7 @@ import aQute.bnd.annotation.ProviderType;
 public class OrExpression extends BinaryExpression {
 
 	public OrExpression(Expression leftOperand, Expression rightOperand) {
-		super(leftOperand, rightOperand);
+		super("||", leftOperand, rightOperand);
 	}
 
 }

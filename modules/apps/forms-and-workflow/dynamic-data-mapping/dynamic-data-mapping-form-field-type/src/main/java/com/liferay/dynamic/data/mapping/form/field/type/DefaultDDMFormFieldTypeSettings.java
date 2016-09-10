@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.util.StringPool;
 
@@ -36,7 +37,8 @@ import com.liferay.portal.kernel.util.StringPool;
 				"set(fieldAt(\"indexType\", 0), \"visible\", false)",
 				"set(fieldAt(\"localizable\", 0), \"visible\", false)",
 				"set(fieldAt(\"readOnly\", 0), \"visible\", false)"
-			}
+			},
+			type = DDMFormRuleType.VISIBILITY
 		)
 	}
 )

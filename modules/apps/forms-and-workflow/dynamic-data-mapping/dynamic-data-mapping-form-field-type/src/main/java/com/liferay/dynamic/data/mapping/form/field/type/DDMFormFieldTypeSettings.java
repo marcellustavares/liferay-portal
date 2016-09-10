@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 
 /**
  * @author Marcellus Tavares
@@ -32,7 +33,8 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 				"set(fieldAt(\"dataType\", 0), \"visible\", false)",
 				"set(fieldAt(\"name\", 0), \"visible\", false)",
 				"set(fieldAt(\"type\", 0), \"visible\", false)"
-			}
+			},
+			type = DDMFormRuleType.VISIBILITY
 		)
 	}
 )

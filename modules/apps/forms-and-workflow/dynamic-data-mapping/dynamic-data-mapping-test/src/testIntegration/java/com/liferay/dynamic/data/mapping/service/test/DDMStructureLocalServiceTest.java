@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceLink;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
@@ -202,7 +203,8 @@ public class DDMStructureLocalServiceTest extends BaseDDMServiceTestCase {
 
 		actions.add("call(" + dataProviderInstance1.getUuid() + ")");
 
-		DDMFormRule ddmFormRule = new DDMFormRule("TRUE", actions);
+		DDMFormRule ddmFormRule = new DDMFormRule(
+			"TRUE", DDMFormRuleType.NOT_AVAILABLE, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule);
 
@@ -660,7 +662,8 @@ public class DDMStructureLocalServiceTest extends BaseDDMServiceTestCase {
 		actions.add("call(" + dataProviderInstance1.getUuid() + ")");
 		actions.add("call(" + dataProviderInstance2.getUuid() + ")");
 
-		DDMFormRule ddmFormRule1 = new DDMFormRule("TRUE", actions);
+		DDMFormRule ddmFormRule1 = new DDMFormRule(
+			"TRUE", DDMFormRuleType.AUTO_FILL, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule1);
 
@@ -668,7 +671,8 @@ public class DDMStructureLocalServiceTest extends BaseDDMServiceTestCase {
 
 		actions.add("call(" + dataProviderInstance1.getUuid() + ")");
 
-		DDMFormRule ddmFormRule2 = new DDMFormRule("FALSE", actions);
+		DDMFormRule ddmFormRule2 = new DDMFormRule(
+			"FALSE", DDMFormRuleType.AUTO_FILL, actions);
 
 		ddmForm.addDDMFormRule(ddmFormRule2);
 

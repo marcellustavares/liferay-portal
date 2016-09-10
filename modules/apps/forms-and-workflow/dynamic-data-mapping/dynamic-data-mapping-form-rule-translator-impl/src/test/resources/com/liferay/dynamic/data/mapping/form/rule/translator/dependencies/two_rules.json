@@ -1,0 +1,50 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field2"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "constant",
+						"value": "showField"
+					}
+				],
+				"operator": "equals-to"
+			}
+		],
+		"type": "VISIBILITY"
+	},
+	{
+		"actions": [
+			{
+				"action": "hide",
+				"target": "Field2"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field3"
+					},
+					{
+						"type": "constant",
+						"value": "hideField"
+					}
+				],
+				"operator": "equals-to"
+			}
+		],
+		"type": "VISIBILITY"
+	}
+]

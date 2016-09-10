@@ -181,14 +181,16 @@
 				"Action 2"
 			],
 			"condition": "Condition 1",
-			"enabled": true
+			"enabled": true,
+			"type": "VISIBILITY"
 		},
 		{
 			"actions": [
 				"Action 3"
 			],
 			"condition": "Condition 2",
-			"enabled": false
+			"enabled": false,
+			"type": "AUTO_FILL"
 		}
 	]
 }

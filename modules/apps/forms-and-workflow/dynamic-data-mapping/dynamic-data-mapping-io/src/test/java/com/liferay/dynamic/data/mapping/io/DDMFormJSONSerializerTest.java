@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeSettings
 import com.liferay.dynamic.data.mapping.io.internal.DDMFormJSONSerializerImpl;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormFieldTypeSettingsTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.util.ReflectionUtil;
@@ -73,12 +74,14 @@ public class DDMFormJSONSerializerTest extends BaseDDMFormSerializerTestCase {
 		List<DDMFormRule> ddmFormRules = new ArrayList<>();
 
 		DDMFormRule ddmFormRule1 = new DDMFormRule(
-			"Condition 1", Arrays.asList("Action 1", "Action 2"));
+			"Condition 1", DDMFormRuleType.VISIBILITY,
+			Arrays.asList("Action 1", "Action 2"));
 
 		ddmFormRules.add(ddmFormRule1);
 
 		DDMFormRule ddmFormRule2 = new DDMFormRule(
-			"Condition 2", Arrays.asList("Action 3"));
+			"Condition 2", DDMFormRuleType.AUTO_FILL,
+			Arrays.asList("Action 3"));
 
 		ddmFormRule2.setEnabled(false);
 

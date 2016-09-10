@@ -1,0 +1,26 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field2"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "constant",
+						"value": "1"
+					}
+				],
+				"operator": "greater-than"
+			}
+		],
+		"type": "VISIBILITY"
+	}
+]

@@ -1,0 +1,50 @@
+[
+	{
+		"actions": [
+			{
+				"action": "enable",
+				"target": "Field1"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "arithmetic",
+						"value": {
+							"operands": [
+								{
+									"type": "constant",
+									"value": "5"
+								},
+								{
+									"type": "constant",
+									"value": "2"
+								}
+							],
+							"operator": "subtraction"
+						}
+					},
+					{
+						"type": "arithmetic",
+						"value": {
+							"operands": [
+								{
+									"type": "constant",
+									"value": "4"
+								},
+								{
+									"type": "constant",
+									"value": "3"
+								}
+							],
+							"operator": "division"
+						}
+					}
+				],
+				"operator": "greater-than"
+			}
+		],
+		"type": "READ_ONLY"
+	}
+]

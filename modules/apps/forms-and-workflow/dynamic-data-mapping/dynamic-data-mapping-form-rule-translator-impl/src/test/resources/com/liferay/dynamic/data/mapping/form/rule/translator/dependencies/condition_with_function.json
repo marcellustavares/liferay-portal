@@ -1,0 +1,26 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field3"
+			}
+		],
+		"conditions": [
+			{
+				"operands": [
+					{
+						"type": "field",
+						"value": "Field1"
+					},
+					{
+						"type": "field",
+						"value": "Field2"
+					}
+				],
+				"operator": "equals-to"
+			}
+		],
+		"type": "VISIBILITY"
+	}
+]
