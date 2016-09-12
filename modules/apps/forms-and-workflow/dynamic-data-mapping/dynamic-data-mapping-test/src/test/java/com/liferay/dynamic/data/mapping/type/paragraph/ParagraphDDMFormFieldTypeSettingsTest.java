@@ -58,12 +58,12 @@ public class ParagraphDDMFormFieldTypeSettingsTest
 
 		Assert.assertArrayEquals(
 			new String[] {
-				"set(fieldAt(\"predefinedValue\", 0), \"visible\", false)",
-				"set(fieldAt(\"repeatable\", 0), \"visible\", false)",
-				"set(fieldAt(\"required\", 0), \"visible\", false)",
-				"set(fieldAt(\"showLabel\", 0), \"visible\", false)",
-				"set(fieldAt(\"tip\", 0), \"visible\", false)",
-				"set(fieldAt(\"validation\", 0), \"visible\", false)"
+				"set(fieldAt(\"predefinedValue\",0),\"visible\",false)",
+				"set(fieldAt(\"repeatable\",0),\"visible\",false)",
+				"set(fieldAt(\"required\",0),\"visible\",false)",
+				"set(fieldAt(\"showLabel\",0),\"visible\",false)",
+				"set(fieldAt(\"tip\",0),\"visible\",false)",
+				"set(fieldAt(\"validation\",0),\"visible\",false)"
 			},
 			ddmFormRuleActions.toArray());
 
