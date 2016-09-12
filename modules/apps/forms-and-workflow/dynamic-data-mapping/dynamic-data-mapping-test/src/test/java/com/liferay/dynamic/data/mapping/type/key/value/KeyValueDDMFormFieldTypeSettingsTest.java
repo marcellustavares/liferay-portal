@@ -47,7 +47,6 @@ public class KeyValueDDMFormFieldTypeSettingsTest
 			KeyValueDDMFormFieldTypeSettings.class);
 
 		List<DDMFormRule> ddmFormRules = ddmForm.getDDMFormRules();
-
 		Assert.assertEquals(1, ddmFormRules.size());
 
 		DDMFormRule ddmFormRule = ddmFormRules.get(0);
