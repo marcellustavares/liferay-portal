@@ -57,9 +57,7 @@ public class RadioDDMFormFieldTypeSettingsTest
 		List<String> ddmFormRuleActions = ddmFormRule.getActions();
 
 		Assert.assertArrayEquals(
-			new String[] {
-				"set(fieldAt(\"validation\", 0), \"visible\", false)"
-			},
+			new String[] {"set(fieldAt(\"validation\",0),\"visible\",false)"},
 			ddmFormRuleActions.toArray());
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
@@ -79,6 +77,13 @@ public class RadioDDMFormFieldTypeSettingsTest
 		Assert.assertNotNull(optionsDDMFormField.getLabel());
 		Assert.assertTrue(optionsDDMFormField.isRequired());
 		Assert.assertEquals("options", optionsDDMFormField.getType());
+
+		DDMFormField validationDDMFormField = ddmFormFieldsMap.get(
+			"validation");
+
+		Assert.assertNotNull(validationDDMFormField);
+		Assert.assertEquals(
+			"FALSE", validationDDMFormField.getVisibilityExpression());
 	}
 
 }

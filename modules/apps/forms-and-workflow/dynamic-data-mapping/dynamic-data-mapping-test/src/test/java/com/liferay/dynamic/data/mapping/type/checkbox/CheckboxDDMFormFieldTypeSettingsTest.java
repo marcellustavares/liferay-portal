@@ -58,8 +58,8 @@ public class CheckboxDDMFormFieldTypeSettingsTest
 
 		Assert.assertArrayEquals(
 			new String[] {
-				"set(fieldAt(\"repeatable\", 0), \"visible\", false)",
-				"set(fieldAt(\"validation\", 0), \"visible\", false)"
+				"set(fieldAt(\"repeatable\",0),\"visible\",false)",
+				"set(fieldAt(\"validation\",0),\"visible\",false)"
 			},
 			ddmFormRuleActions.toArray());
 
@@ -77,6 +77,13 @@ public class CheckboxDDMFormFieldTypeSettingsTest
 		Assert.assertEquals(
 			"true", predefinedValueDDMFormField.getProperty("showAsSwitcher"));
 
+		DDMFormField repeatableDDMFormField = ddmFormFieldsMap.get(
+			"repeatable");
+
+		Assert.assertNotNull(repeatableDDMFormField);
+		Assert.assertEquals(
+			"FALSE", repeatableDDMFormField.getVisibilityExpression());
+
 		DDMFormField showAsSwitcherDDMFormField = ddmFormFieldsMap.get(
 			"showAsSwitcher");
 
@@ -86,6 +93,13 @@ public class CheckboxDDMFormFieldTypeSettingsTest
 			"boolean", showAsSwitcherDDMFormField.getDataType());
 		Assert.assertEquals(
 			"true", showAsSwitcherDDMFormField.getProperty("showAsSwitcher"));
+
+		DDMFormField validationDDMFormField = ddmFormFieldsMap.get(
+			"validation");
+
+		Assert.assertNotNull(validationDDMFormField);
+		Assert.assertEquals(
+			"FALSE", validationDDMFormField.getVisibilityExpression());
 	}
 
 }

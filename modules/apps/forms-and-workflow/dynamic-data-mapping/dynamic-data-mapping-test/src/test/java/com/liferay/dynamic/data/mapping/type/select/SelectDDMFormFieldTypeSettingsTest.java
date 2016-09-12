@@ -58,13 +58,13 @@ public class SelectDDMFormFieldTypeSettingsTest
 
 		Assert.assertArrayEquals(
 			new String[] {
-				"set(fieldAt(\"ddmDataProviderInstanceId\", 0), \"visible\", " +
-					"equals(get(fieldAt(\"dataSourceType\", 0), \"value\"), " +
+				"set(fieldAt(\"ddmDataProviderInstanceId\",0),\"visible\"," +
+					"equals(get(fieldAt(\"dataSourceType\",0),\"value\")," +
 						"\"data-provider\"))",
-				"set(fieldAt(\"options\", 0), \"visible\", " +
-					"equals(get(fieldAt(\"dataSourceType\", 0), \"value\"), " +
+				"set(fieldAt(\"options\",0),\"visible\", " +
+					"equals(get(fieldAt(\"dataSourceType\",0),\"value\")," +
 						"\"manual\"))",
-				"set(fieldAt(\"validation\", 0), \"visible\", false)"
+				"set(fieldAt(\"validation\",0),\"visible\",false)"
 			},
 			ddmFormRuleActions.toArray());
 
@@ -86,6 +86,9 @@ public class SelectDDMFormFieldTypeSettingsTest
 		Assert.assertNotNull(ddmDataProviderInstanceIdDDMFormField.getLabel());
 		Assert.assertEquals(
 			"select", ddmDataProviderInstanceIdDDMFormField.getType());
+		Assert.assertEquals(
+			"equals(dataSourceType, \"data-provider\")",
+			ddmDataProviderInstanceIdDDMFormField.getVisibilityExpression());
 
 		DDMFormField multipleDDMFormField = ddmFormFieldsMap.get("multiple");
 
@@ -103,6 +106,16 @@ public class SelectDDMFormFieldTypeSettingsTest
 			"false", optionsDDMFormField.getProperty("showLabel"));
 		Assert.assertTrue(optionsDDMFormField.isRequired());
 		Assert.assertEquals("options", optionsDDMFormField.getType());
+		Assert.assertEquals(
+			"equals(dataSourceType, \"manual\")",
+			optionsDDMFormField.getVisibilityExpression());
+
+		DDMFormField validationDDMFormField = ddmFormFieldsMap.get(
+			"validation");
+
+		Assert.assertNotNull(validationDDMFormField);
+		Assert.assertEquals(
+			"FALSE", validationDDMFormField.getVisibilityExpression());
 	}
 
 }

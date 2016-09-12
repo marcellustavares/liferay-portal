@@ -57,7 +57,7 @@ public class KeyValueDDMFormFieldTypeSettingsTest
 		List<String> ddmFormRuleActions = ddmFormRule.getActions();
 
 		Assert.assertArrayEquals(
-			new String[] {"set(fieldAt(\"tooltip\", 0), \"visible\", false)"},
+			new String[] {"set(fieldAt(\"tooltip\",0),\"visible\",false)"},
 			ddmFormRuleActions.toArray());
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
@@ -69,6 +69,12 @@ public class KeyValueDDMFormFieldTypeSettingsTest
 		Assert.assertNotNull(placeholderDDMFormField);
 		Assert.assertEquals("string", placeholderDDMFormField.getDataType());
 		Assert.assertEquals("text", placeholderDDMFormField.getType());
+
+		DDMFormField tooltipDDMFormField = ddmFormFieldsMap.get("tooltip");
+
+		Assert.assertNotNull(tooltipDDMFormField);
+		Assert.assertEquals(
+			"FALSE", tooltipDDMFormField.getVisibilityExpression());
 	}
 
 }
