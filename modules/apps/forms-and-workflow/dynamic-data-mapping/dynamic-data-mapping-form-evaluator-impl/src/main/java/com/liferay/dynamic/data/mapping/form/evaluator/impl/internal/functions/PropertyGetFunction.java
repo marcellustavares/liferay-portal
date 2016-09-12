@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.rules.functions;
+package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
@@ -20,13 +20,12 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationRes
 /**
  * @author Leonardo Barros
  */
-public class PropertySetFunction implements DDMExpressionFunction {
+public class PropertyGetFunction implements DDMExpressionFunction {
 
 	@Override
 	public Object evaluate(Object... parameters) {
-		if (parameters.length < 3) {
-			throw new IllegalArgumentException(
-				"Three or more parameters are expected");
+		if (parameters.length != 2) {
+			throw new IllegalArgumentException("Two parameters are expected");
 		}
 
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
@@ -34,14 +33,7 @@ public class PropertySetFunction implements DDMExpressionFunction {
 
 		String propertyName = parameters[1].toString();
 
-		ddmFormFieldEvaluationResult.setProperty(propertyName, parameters[2]);
-
-		if (propertyName.equals("valid") && (parameters.length > 3)) {
-			ddmFormFieldEvaluationResult.setErrorMessage(
-				parameters[3].toString());
-		}
-
-		return true;
+		return ddmFormFieldEvaluationResult.getProperty(propertyName);
 	}
 
 }
