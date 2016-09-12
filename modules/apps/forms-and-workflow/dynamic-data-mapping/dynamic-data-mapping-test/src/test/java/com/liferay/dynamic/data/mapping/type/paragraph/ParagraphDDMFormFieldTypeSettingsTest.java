@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.type.paragraph;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.type.BaseDDMFormFieldTypeSettingsTest;
 import com.liferay.dynamic.data.mapping.type.paragraph.internal.ParagraphDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
@@ -66,6 +67,9 @@ public class ParagraphDDMFormFieldTypeSettingsTest
 				"set(fieldAt(\"validation\", 0), \"visible\", false)"
 			},
 			ddmFormRuleActions.toArray());
+
+		Assert.assertEquals(
+			DDMFormRuleType.VISIBILITY, ddmFormRule.getDDMFormRuleType());
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			ddmForm.getDDMFormFieldsMap(false);

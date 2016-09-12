@@ -281,6 +281,7 @@ public class DDMFormJSONSerializerImpl implements DDMFormJSONSerializer {
 			"actions", ruleActionsToJSONArray(ddmFormRule.getActions()));
 		jsonObject.put("condition", ddmFormRule.getCondition());
 		jsonObject.put("enabled", ddmFormRule.isEnabled());
+		jsonObject.put("type", ddmFormRule.getDDMFormRuleType().getValue());
 
 		return jsonObject;
 	}

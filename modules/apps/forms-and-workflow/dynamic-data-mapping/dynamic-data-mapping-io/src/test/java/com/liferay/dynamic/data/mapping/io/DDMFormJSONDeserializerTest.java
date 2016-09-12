@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormFieldTypeSettingsTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -180,6 +181,8 @@ public class DDMFormJSONDeserializerTest
 		Assert.assertEquals(
 			Arrays.asList("Action 1", "Action 2"), ddmFormRule1.getActions());
 		Assert.assertTrue(ddmFormRule1.isEnabled());
+		Assert.assertEquals(
+			DDMFormRuleType.VISIBILITY, ddmFormRule1.getDDMFormRuleType());
 
 		DDMFormRule ddmFormRule2 = ddmFormRules.get(1);
 
@@ -187,6 +190,8 @@ public class DDMFormJSONDeserializerTest
 		Assert.assertEquals(
 			Arrays.asList("Action 3"), ddmFormRule2.getActions());
 		Assert.assertFalse(ddmFormRule2.isEnabled());
+		Assert.assertEquals(
+			DDMFormRuleType.READ_ONLY, ddmFormRule2.getDDMFormRuleType());
 	}
 
 	@Override

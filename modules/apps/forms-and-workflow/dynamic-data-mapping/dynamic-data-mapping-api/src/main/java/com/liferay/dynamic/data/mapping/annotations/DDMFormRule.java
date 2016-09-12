@@ -14,6 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.annotations;
 
+import com.liferay.dynamic.data.mapping.model.DDMFormRuleType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,5 +31,7 @@ public @interface DDMFormRule {
 	public String[] actions() default {};
 
 	public String condition() default "TRUE";
+
+	public DDMFormRuleType type() default DDMFormRuleType.NOT_AVAILABLE;
 
 }

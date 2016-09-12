@@ -36,6 +36,7 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.rule.translator.DDMFormRuleTranslator;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -98,6 +99,7 @@ public class DDLFormAdminDisplayContext {
 		DDMFormJSONSerializer ddmFormJSONSerializer,
 		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer,
 		DDMFormRenderer ddmFormRenderer,
+		DDMFormRuleTranslator ddmFormRuleTranslator,
 		DDMFormValuesFactory ddmFormValuesFactory,
 		DDMFormValuesMerger ddmFormValuesMerger,
 		DDMStructureLocalService ddmStructureLocalService,
@@ -115,6 +117,7 @@ public class DDLFormAdminDisplayContext {
 		_ddmFormJSONSerializer = ddmFormJSONSerializer;
 		_ddmFormLayoutJSONSerializer = ddmFormLayoutJSONSerializer;
 		_ddmFormRenderer = ddmFormRenderer;
+		_ddmFormRuleTranslator = ddmFormRuleTranslator;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
 		_ddmStructureLocalService = ddmStructureLocalService;
@@ -347,15 +350,7 @@ public class DDLFormAdminDisplayContext {
 			return definition;
 		}
 
-		DDMStructure ddmStructure = getDDMStructure();
-
-		DDMForm ddmForm = new DDMForm();
-
-		if (ddmStructure != null) {
-			ddmForm = ddmStructure.getDDMForm();
-		}
-
-		return _ddmFormJSONSerializer.serialize(ddmForm);
+		return _ddmFormJSONSerializer.serialize(getDDMForm());
 	}
 
 	public String getSerializedDDMFormLayout() throws PortalException {
@@ -374,6 +369,16 @@ public class DDLFormAdminDisplayContext {
 		}
 
 		return _ddmFormLayoutJSONSerializer.serialize(ddmFormLayout);
+	}
+
+	public String getSerializedDDMFormRules() throws PortalException {
+		String rules = ParamUtil.getString(_renderRequest, "rules");
+
+		if (Validator.isNotNull(rules)) {
+			return rules;
+		}
+
+		return _ddmFormRuleTranslator.translate(getDDMForm());
 	}
 
 	public boolean isDDLRecordWorkflowHandlerDeployed() {
@@ -477,6 +482,18 @@ public class DDLFormAdminDisplayContext {
 		}
 
 		return orderByComparator;
+	}
+
+	protected DDMForm getDDMForm() throws PortalException {
+		DDMStructure ddmStructure = getDDMStructure();
+
+		DDMForm ddmForm = new DDMForm();
+
+		if (ddmStructure != null) {
+			ddmForm = ddmStructure.getDDMForm();
+		}
+
+		return ddmForm;
 	}
 
 	protected JSONArray getDDMFormFieldTypePropertyNames(
@@ -647,6 +664,7 @@ public class DDLFormAdminDisplayContext {
 	private final DDMFormJSONSerializer _ddmFormJSONSerializer;
 	private final DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
 	private final DDMFormRenderer _ddmFormRenderer;
+	private final DDMFormRuleTranslator _ddmFormRuleTranslator;
 	private final DDMFormValuesFactory _ddmFormValuesFactory;
 	private final DDMFormValuesMerger _ddmFormValuesMerger;
 	private final DDMStructureLocalService _ddmStructureLocalService;

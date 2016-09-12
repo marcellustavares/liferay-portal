@@ -1,0 +1,11 @@
+[
+	{
+		"actions": [
+			{
+				"action": "show",
+				"target": "Field2"
+			}
+		],
+		"conditions": []
+	}
+]
