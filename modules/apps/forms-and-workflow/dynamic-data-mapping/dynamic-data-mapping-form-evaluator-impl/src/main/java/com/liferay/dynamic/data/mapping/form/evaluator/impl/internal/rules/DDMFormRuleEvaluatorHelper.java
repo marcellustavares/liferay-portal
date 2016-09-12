@@ -325,14 +325,20 @@ public class DDMFormRuleEvaluatorHelper {
 
 		boolean required = ddmFormFieldEvaluationResult.isRequired();
 
-		if (required && ddmFormFieldEvaluationResult.isVisible() &&
-			isDDMFormFieldValueEmpty(
-				ddmFormField, ddmFormFieldValue)) {
+		if (!required &&
+			isDDMFormFieldValueEmpty(ddmFormField, ddmFormFieldValue)) {
+
+			return;
+		}
+		else if (required && ddmFormFieldEvaluationResult.isVisible() &&
+				 isDDMFormFieldValueEmpty(ddmFormField, ddmFormFieldValue)) {
 
 			ddmFormFieldEvaluationResult.setErrorMessage(
 				LanguageUtil.get(_locale, "this-field-is-required"));
 
 			ddmFormFieldEvaluationResult.setValid(false);
+
+			return;
 		}
 
 		DDMFormFieldValidation ddmFormFieldValidation =
