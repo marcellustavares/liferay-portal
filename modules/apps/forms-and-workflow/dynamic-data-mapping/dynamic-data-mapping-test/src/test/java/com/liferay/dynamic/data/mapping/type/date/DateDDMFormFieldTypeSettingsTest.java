@@ -57,9 +57,7 @@ public class DateDDMFormFieldTypeSettingsTest
 		List<String> ddmFormRuleActions = ddmFormRule.getActions();
 
 		Assert.assertArrayEquals(
-			new String[] {
-				"set(fieldAt(\"validation\", 0), \"visible\", false)"
-			},
+			new String[] {"set(fieldAt(\"validation\",0),\"visible\",false)"},
 			ddmFormRuleActions.toArray());
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
