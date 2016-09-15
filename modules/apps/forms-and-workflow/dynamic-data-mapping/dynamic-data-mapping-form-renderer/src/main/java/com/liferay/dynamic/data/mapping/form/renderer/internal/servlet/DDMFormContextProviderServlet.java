@@ -29,6 +29,8 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
@@ -78,7 +80,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 					request, response, ddmFormValues, defaultLocale,
 					portletNamespace);
 
-			_prepareThreadLocal(defaultLocale);
+			_prepareThreadLocal(request, defaultLocale);
 
 			DDMFormLayout ddmFormLayout = getDDMFormLayout(request);
 
@@ -178,10 +180,16 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 			ddmForm, serializedDDMFormValues);
 	}
 
-	private void _prepareThreadLocal(Locale locale)
-		throws Exception, PortalException {
+	private void _prepareThreadLocal(
+		HttpServletRequest request, Locale locale) {
 
 		LocaleThreadLocal.setThemeDisplayLocale(locale);
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setRequest(request);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

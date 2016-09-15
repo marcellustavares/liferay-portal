@@ -19,6 +19,8 @@ import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderConsumerReq
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderConsumerResponse;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderConsumerTracker;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContextContributor;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
@@ -32,6 +34,8 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.KeyValuePair;
@@ -50,6 +54,7 @@ import java.util.Map;
 public class CallFunction extends BasePropertyFunction {
 
 	public CallFunction(
+		DDMDataProviderTracker ddmDataProviderTracker,
 		DDMDataProviderConsumerTracker ddmDataProviderConsumerTracker,
 		DDMDataProviderInstanceService ddmDataProviderInstanceService,
 		Map<String, List<DDMFormFieldEvaluationResult>>
@@ -59,6 +64,7 @@ public class CallFunction extends BasePropertyFunction {
 
 		super(ddmFormFieldEvaluationResults);
 
+		_ddmDataProviderTracker = ddmDataProviderTracker;
 		_ddmDataProviderConsumerTracker = ddmDataProviderConsumerTracker;
 		_ddmDataProviderInstanceService = ddmDataProviderInstanceService;
 		_ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
@@ -100,6 +106,7 @@ public class CallFunction extends BasePropertyFunction {
 	}
 
 	protected void addDDMDataProviderContextParameters(
+		String ddmDataProviderType,
 		DDMDataProviderContext ddmDataProviderContext,
 		String paramsExpression) {
 
@@ -107,6 +114,32 @@ public class CallFunction extends BasePropertyFunction {
 
 		if (!parameters.isEmpty()) {
 			ddmDataProviderContext.addParameters(parameters);
+		}
+
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext == null) {
+			return;
+		}
+
+		List<DDMDataProviderContextContributor>
+			ddmDataProviderContextContributors =
+				_ddmDataProviderTracker.getDDMDataProviderContextContributors(
+					ddmDataProviderType);
+
+		for (DDMDataProviderContextContributor
+				ddmDataProviderContextContributor :
+					ddmDataProviderContextContributors) {
+
+			Map<String, String> contextContributorParameters =
+				ddmDataProviderContextContributor.getParameters(
+					serviceContext.getRequest());
+
+			if (contextContributorParameters != null) {
+				ddmDataProviderContext.addParameters(
+					contextContributorParameters);
+			}
 		}
 	}
 
@@ -148,7 +181,8 @@ public class CallFunction extends BasePropertyFunction {
 			new DDMDataProviderContext(ddmFormValues);
 
 		addDDMDataProviderContextParameters(
-			ddmDataProviderContext, paramsExpression);
+			ddmDataProviderInstance.getType(), ddmDataProviderContext,
+			paramsExpression);
 
 		DDMDataProviderConsumerRequest ddmDataProviderConsumerRequest =
 			new DDMDataProviderConsumerRequest(ddmDataProviderContext);
@@ -326,6 +360,7 @@ public class CallFunction extends BasePropertyFunction {
 		_ddmDataProviderConsumerTracker;
 	private final DDMDataProviderInstanceService
 		_ddmDataProviderInstanceService;
+	private final DDMDataProviderTracker _ddmDataProviderTracker;
 	private final Map<String, List<DDMFormFieldEvaluationResult>>
 		_ddmFormFieldEvaluationResults;
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
