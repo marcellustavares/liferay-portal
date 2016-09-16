@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 
 import java.util.List;
@@ -23,16 +22,13 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public abstract class BasePropertyFunction implements DDMExpressionFunction {
+public class EnableFunction extends BaseReadOnlyFunction {
 
-	public BasePropertyFunction(
+	public EnableFunction(
 		Map<String, List<DDMFormFieldEvaluationResult>>
 			ddmFormFieldEvaluationResults) {
 
-		this.ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
+		super(ddmFormFieldEvaluationResults, false);
 	}
-
-	protected final Map<String, List<DDMFormFieldEvaluationResult>>
-		ddmFormFieldEvaluationResults;
 
 }

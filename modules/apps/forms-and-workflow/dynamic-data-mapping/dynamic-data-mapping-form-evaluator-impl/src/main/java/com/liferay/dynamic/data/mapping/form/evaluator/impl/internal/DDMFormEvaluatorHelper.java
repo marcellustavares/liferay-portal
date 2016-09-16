@@ -22,9 +22,14 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationExceptio
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.CallFunction;
-import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.FieldAtFunction;
-import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.PropertyGetFunction;
-import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.PropertySetFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.DisableFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.EnableFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.GetValueFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.HideFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetInvalidFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetValidFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetValueFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.ShowFunction;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -103,7 +108,9 @@ public class DDMFormEvaluatorHelper {
 			new DDMFormFieldEvaluationResult(
 				ddmFormField.getName(), ddmFormFieldValue.getInstanceId());
 
-		ddmFormFieldEvaluationResult.setReadOnly(ddmFormField.isReadOnly());
+		boolean readOnly = getDefaultReadOnly(ddmFormField);
+
+		ddmFormFieldEvaluationResult.setReadOnly(readOnly);
 		ddmFormFieldEvaluationResult.setRequired(ddmFormField.isRequired());
 
 		setDDMFormFieldEvaluationResultVisibility(
@@ -191,6 +198,70 @@ public class DDMFormEvaluatorHelper {
 		return ddmFormFieldEvaluationResults;
 	}
 
+	protected boolean getDefaultReadOnly(DDMFormField ddmFormField) {
+		String ddmFormFieldName = ddmFormField.getName();
+		List<DDMFormRule> ddmFormRules = _ddmForm.getDDMFormRules();
+
+		String enableAction = String.format("enable(\"%s\")", ddmFormFieldName);
+		String disableAction = String.format(
+			"disable(\"%s\")", ddmFormFieldName);
+
+		for (DDMFormRule ddmFormRule : ddmFormRules) {
+			for (String action : ddmFormRule.getActions()) {
+				if (enableAction.equals(action)) {
+					return true;
+				}
+				else if (disableAction.equals(action)) {
+					return false;
+				}
+			}
+		}
+
+		return ddmFormField.isReadOnly();
+	}
+
+	protected boolean getDefaultValidState(String ddmFormFieldName) {
+		List<DDMFormRule> ddmFormRules = _ddmForm.getDDMFormRules();
+
+		String setValidAction = String.format(
+			"setValid(\"%s\")", ddmFormFieldName);
+		String setInvalidAction = String.format(
+			"setInvalid(\"%s\")", ddmFormFieldName);
+
+		for (DDMFormRule ddmFormRule : ddmFormRules) {
+			for (String action : ddmFormRule.getActions()) {
+				if (setValidAction.equals(action)) {
+					return false;
+				}
+				else if (setInvalidAction.equals(action)) {
+					return true;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	protected boolean getDefaultVisibility(String ddmFormFieldName) {
+		List<DDMFormRule> ddmFormRules = _ddmForm.getDDMFormRules();
+
+		String showAction = String.format("show(\"%s\")", ddmFormFieldName);
+		String hideAction = String.format("hide(\"%s\")", ddmFormFieldName);
+
+		for (DDMFormRule ddmFormRule : ddmFormRules) {
+			for (String action : ddmFormRule.getActions()) {
+				if (showAction.equals(action)) {
+					return false;
+				}
+				else if (hideAction.equals(action)) {
+					return true;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	protected String getJSONArrayValueString(String valueString) {
 		try {
 			JSONArray jsonArray = _jsonFactory.createJSONArray(valueString);
@@ -274,11 +345,25 @@ public class DDMFormEvaluatorHelper {
 				_ddmFormFieldEvaluationResultsMap,
 				_ddmFormValuesJSONDeserializer, _jsonFactory));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
-			"fieldAt", new FieldAtFunction(_ddmFormFieldEvaluationResultsMap));
+			"disable", new DisableFunction(_ddmFormFieldEvaluationResultsMap));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
-			"get", new PropertyGetFunction());
+			"enable", new EnableFunction(_ddmFormFieldEvaluationResultsMap));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
-			"set", new PropertySetFunction());
+			"getValue",
+			new GetValueFunction(_ddmFormFieldEvaluationResultsMap));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"hide", new HideFunction(_ddmFormFieldEvaluationResultsMap));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"setInvalid",
+			new SetInvalidFunction(_ddmFormFieldEvaluationResultsMap));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"setValid",
+			new SetValidFunction(_ddmFormFieldEvaluationResultsMap));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"setValue",
+			new SetValueFunction(_ddmFormFieldEvaluationResultsMap));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"show", new ShowFunction(_ddmFormFieldEvaluationResultsMap));
 	}
 
 	protected void setDDMExpressionVariables(
@@ -350,6 +435,10 @@ public class DDMFormEvaluatorHelper {
 			ddmFormField.getDDMFormFieldValidation();
 
 		if (ddmFormFieldValidation == null) {
+			boolean valid = getDefaultValidState(ddmFormField.getName());
+
+			ddmFormFieldEvaluationResult.setValid(valid);
+
 			return;
 		}
 
@@ -394,6 +483,10 @@ public class DDMFormEvaluatorHelper {
 
 		if (Validator.isNull(visibilityExpression) ||
 			StringUtil.equalsIgnoreCase(visibilityExpression, "TRUE")) {
+
+			boolean visible = getDefaultVisibility(ddmFormField.getName());
+
+			ddmFormFieldEvaluationResult.setVisible(visible);
 
 			return;
 		}

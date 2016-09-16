@@ -14,34 +14,21 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Leonardo Barros
  */
-public class PropertySetFunction implements DDMExpressionFunction {
+public class HideFunction extends BaseVisibilityFunction {
 
-	@Override
-	public Object evaluate(Object... parameters) {
-		if (parameters.length < 3) {
-			throw new IllegalArgumentException(
-				"Three or more parameters are expected");
-		}
+	public HideFunction(
+		Map<String, List<DDMFormFieldEvaluationResult>>
+			ddmFormFieldEvaluationResults) {
 
-		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
-			(DDMFormFieldEvaluationResult)parameters[0];
-
-		String propertyName = parameters[1].toString();
-
-		ddmFormFieldEvaluationResult.setProperty(propertyName, parameters[2]);
-
-		if (propertyName.equals("valid") && (parameters.length > 3)) {
-			ddmFormFieldEvaluationResult.setErrorMessage(
-				parameters[3].toString());
-		}
-
-		return true;
+		super(ddmFormFieldEvaluationResults, false);
 	}
 
 }

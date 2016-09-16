@@ -15,6 +15,8 @@
 package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -22,29 +24,41 @@ import java.util.Map;
 /**
  * @author Leonardo Barros
  */
-public class FieldAtFunction extends BasePropertyFunction {
+public abstract class BaseReadOnlyFunction extends BasePropertyFunction {
 
-	public FieldAtFunction(
+	public BaseReadOnlyFunction(
 		Map<String, List<DDMFormFieldEvaluationResult>>
-			ddmFormFieldEvaluationResultsMap) {
+			ddmFormFieldEvaluationResults, boolean readOnly) {
 
-		super(ddmFormFieldEvaluationResultsMap);
+		super(ddmFormFieldEvaluationResults);
+
+		_readOnly = readOnly;
 	}
 
 	@Override
 	public Object evaluate(Object... parameters) {
-		if (parameters.length != 2) {
-			throw new IllegalArgumentException("Two parameters are expected");
+		if (ArrayUtil.isEmpty(parameters) || (parameters.length != 1)) {
+			throw new IllegalArgumentException("Expected 1 parameter.");
 		}
 
-		String fieldNameParameter = parameters[0].toString();
-		Number fieldIndexParameter = (Number)parameters[1];
+		String fieldName = String.valueOf(parameters[0]);
 
-		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult =
-			getDDMFormFieldEvaluationResult(
-				fieldNameParameter, fieldIndexParameter.intValue());
+		List<DDMFormFieldEvaluationResult> formFieldEvaluationResults =
+			ddmFormFieldEvaluationResults.get(fieldName);
 
-		return ddmFormFieldEvaluationResult;
+		if (ListUtil.isEmpty(formFieldEvaluationResults)) {
+			return true;
+		}
+
+		for (DDMFormFieldEvaluationResult formFieldEvaluationResult :
+				formFieldEvaluationResults) {
+
+			formFieldEvaluationResult.setReadOnly(_readOnly);
+		}
+
+		return true;
 	}
+
+	private final boolean _readOnly;
 
 }
