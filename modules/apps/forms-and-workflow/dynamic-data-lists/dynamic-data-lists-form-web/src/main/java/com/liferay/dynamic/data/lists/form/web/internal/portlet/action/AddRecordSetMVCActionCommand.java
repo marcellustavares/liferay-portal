@@ -15,6 +15,8 @@
 package com.liferay.dynamic.data.lists.form.web.internal.portlet.action;
 
 import com.liferay.dynamic.data.lists.form.web.constants.DDLFormPortletKeys;
+import com.liferay.dynamic.data.lists.form.web.internal.display.context.DDLFormRule;
+import com.liferay.dynamic.data.lists.form.web.internal.display.context.DDLFormRuleToDDMFormRuleRuleConverter;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
@@ -28,6 +30,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.Value;
@@ -37,6 +40,9 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONDeserializer;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -48,7 +54,10 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -149,7 +158,13 @@ public class AddRecordSetMVCActionCommand
 			String definition = ParamUtil.getString(
 				actionRequest, "definition");
 
-			return ddmFormJSONDeserializer.deserialize(definition);
+			DDMForm ddmForm = ddmFormJSONDeserializer.deserialize(definition);
+
+			List<DDMFormRule> ddmFormRules = getDDMFormRules(actionRequest);
+
+			ddmForm.setDDMFormRules(ddmFormRules);
+
+			return ddmForm;
 		}
 		catch (PortalException pe) {
 			throw new StructureDefinitionException(pe);
@@ -307,6 +322,39 @@ public class AddRecordSetMVCActionCommand
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId(), 0,
 			workflowDefinition);
 	}
+
+	protected List<DDMFormRule> getDDMFormRules(ActionRequest actionRequest)
+ 		throws PortalException {
+
+ 		String rules = ParamUtil.getString(actionRequest, "rules");
+
+		if (Validator.isNull(rules)) {
+			return Collections.emptyList();
+		}
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(rules);
+
+		List<DDLFormRule> ddlFormRules = new ArrayList<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONDeserializer<DDLFormRule> jsonDeserializer = _jsonFactory.createJSONDeserializer();
+
+			ddlFormRules.add(jsonDeserializer.deserialize(jsonArray.getJSONObject(i).toString(), DDLFormRule.class));
+		}
+
+		List<DDMFormRule> ddmFormRules = new ArrayList<>();
+
+		for (DDLFormRule ddlFormRule : ddlFormRules) {
+			DDLFormRuleToDDMFormRuleRuleConverter ddlFormRuleToDDMFormRuleRuleConverter = new DDLFormRuleToDDMFormRuleRuleConverter(ddlFormRule);
+
+			ddmFormRules.addAll(ddlFormRuleToDDMFormRuleRuleConverter.convert());
+		}
+
+ 		return ddmFormRules;
+ 	}
+
+	@Reference
+	protected JSONFactory _jsonFactory;
 
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;

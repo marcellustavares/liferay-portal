@@ -25,6 +25,7 @@
 								'liferay-ddl-form-builder-layout-visitor',
 								'liferay-ddl-form-builder-pages-manager',
 								'liferay-ddl-form-builder-rule-builder',
+								'liferay-ddl-form-builder-rule',
 								'liferay-ddl-form-builder-util',
 								'liferay-ddm-form-field-types',
 								'liferay-ddm-form-renderer'
@@ -35,10 +36,6 @@
 							requires: [
 								'soyutils'
 							]
-						},
-						'liferay-ddl-form-builder-confirmation-dialog': {
-							path: 'form_builder_confirmation_dialog.js',
-							requires: []
 						},
 						'liferay-ddl-form-builder-definition-serializer': {
 							path: 'form_definition_serializer.js',
@@ -130,12 +127,22 @@
 								'liferay-ddm-form-renderer-wizard'
 							]
 						},
+						'liferay-ddl-form-builder-rule': {
+							path: 'form_builder_rule.js',
+							requires: ['liferay-ddl-form-builder-rule-template', 'liferay-ddm-form-renderer-field']
+						},
 						'liferay-ddl-form-builder-rule-builder': {
 							path: 'form_builder_rule_builder.js',
 							requires: ['aui-popover', 'liferay-ddl-form-builder-rule-builder-template']
 						},
 						'liferay-ddl-form-builder-rule-builder-template': {
 							path: '../templates/rule_builder.soy.js',
+							requires: [
+								'soyutils'
+							]
+						},
+						'liferay-ddl-form-builder-rule-template': {
+							path: '../templates/rule.soy.js',
 							requires: [
 								'soyutils'
 							]

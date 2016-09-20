@@ -34,6 +34,11 @@ public class ComparisonExpression extends BinaryExpression {
 		return _operator;
 	}
 
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitComparisonExpression(this);
+	}
+
 	private final String _operator;
 
 }

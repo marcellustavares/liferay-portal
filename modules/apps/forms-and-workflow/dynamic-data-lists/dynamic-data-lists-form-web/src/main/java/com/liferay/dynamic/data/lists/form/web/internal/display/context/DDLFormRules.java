@@ -12,23 +12,30 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.expression.model;
+package com.liferay.dynamic.data.lists.form.web.internal.display.context;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.json.JSON;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Leonardo Barros
+ * @author Marcellus Tavares
  */
-@ProviderType
-public class AndExpression extends BinaryExpression {
+@JSON
+public class DDLFormRules {
 
-	public AndExpression(Expression leftOperand, Expression rightOperand) {
-		super(leftOperand, rightOperand);
+	@JSON
+	public List<DDLFormRule> getRules() {
+		return rules;
 	}
 
-	@Override
-	public <T> T accept(ExpressionVisitor<T> visitor) {
-		return visitor.visitAndExpression(this);
+	@JSON
+	public void setRules(List<DDLFormRule> rules) {
+		this.rules = rules;
 	}
+
+	@JSON
+	private List<DDLFormRule> rules = new ArrayList<>();
 
 }

@@ -30,6 +30,11 @@ public class Term extends Expression {
 		return _value;
 	}
 
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitTerm(this);
+	}
+
 	private final String _value;
 
 }

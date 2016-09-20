@@ -8,8 +8,9 @@
 {template .rule_builder autoescape="deprecated-contextual"}
 	<div class="form-builder-rule-builder-container">
 		<div class="form-builder-rule-builder-rules-list"></div>
+		// call rule_list
 		<div class="form-builder-rule-builder-add-rule-container">
-			<div class="btn-action-secondary btn-bottom-right dropdown form-builder-rule-builder-add-rule-button">
+			<div class="btn-action-secondary btn-bottom-right form-builder-rule-builder-add-rule-button dropdown">
 				<button class="btn btn-primary form-builder-rule-builder-add-rule-button-icon" type="button">
 					{$plusIcon|noAutoescape}
 				</button>
@@ -39,12 +40,8 @@
 							{$kebab|noAutoescape}
 						</a>
 						<ul class="dropdown-menu dropdown-menu-right">
-							<li class="rule-card-edit" data-card-id="{index($rule)}">
-								<a href="javascript:;">{$strings.edit}</a>
-							</li>
-							<li class="rule-card-delete" data-card-id="{index($rule)}">
-								<a href="javascript:;">{$strings.delete}</a>
-							</li>
+							<li class="rule-card-edit" data-card-id="{index($rule)}"><a href="javascript:;">Edit</a></li>
+							<li class="rule-card-delete" data-card-id="{index($rule)}"><a href="javascript:;">Delete</a></li>
 						</ul>
 					</div>
 				</div>
@@ -55,6 +52,7 @@
 	{/foreach}
 {/template}
 
+
 /**
  * Prints the list of rule types on the Popover.
  *
@@ -63,7 +61,9 @@
 {template .rule_types autoescape="deprecated-contextual"}
 	<ul class="dropdown-menu">
 		<li>
-			<a data-rule-type="visibility" href="javascript:;">{$strings.showHide}</a>
+			<a href="javascript:;" data-rule-type="visibility">{$strings.showHide}</a>
+			<a href="javascript:;" data-rule-type="readonly">{$strings.enableDisable}</a>
+			<a href="javascript:;" data-rule-type="require">{$strings.require}</a>
 		</li>
 	</ul>
 {/template}
