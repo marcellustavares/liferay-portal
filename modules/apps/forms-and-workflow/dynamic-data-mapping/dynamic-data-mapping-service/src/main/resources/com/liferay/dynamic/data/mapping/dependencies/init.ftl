@@ -151,15 +151,19 @@
 <#assign dlAppServiceUtil = serviceLocator.findService("com.liferay.document.library.kernel.service.DLAppService") />
 
 <#function getFileEntry fileJSONObject>
-	<#assign fileEntryUUID = fileJSONObject.getString("uuid") />
+	<#if fileJSONObject.uuid??>
+		<#assign fileEntryUUID = fileJSONObject.getString("uuid") />
 
-	<#if fileJSONObject.getLong("groupId") gt 0>
-		<#assign fileEntryGroupId = fileJSONObject.getLong("groupId") />
+		<#if fileJSONObject.getLong("groupId") gt 0>
+			<#assign fileEntryGroupId = fileJSONObject.getLong("groupId") />
+		<#else>
+			<#assign fileEntryGroupId = scopeGroupId />
+		</#if>
+
+		<#return dlAppServiceUtil.getFileEntryByUuidAndGroupId(fileEntryUUID, fileEntryGroupId)!"">
 	<#else>
-		<#assign fileEntryGroupId = scopeGroupId />
+		<#return "">
 	</#if>
-
-	<#return dlAppServiceUtil.getFileEntryByUuidAndGroupId(fileEntryUUID, fileEntryGroupId)!"">
 </#function>
 
 <#function getFileEntryURL fileEntry>

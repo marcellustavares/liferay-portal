@@ -93,8 +93,14 @@ public class UpgradeDocumentLibraryTypeContent extends UpgradeProcess {
 
 				fileEntry = getFileEntryByOldDocumentLibraryURL(url);
 			}
-			else if (url.contains("/documents/")) {
+			else if (url.contains("/documents/") && !url.contains("http")) {
 				fileEntry = getFileEntryByDocumentLibraryURL(url);
+			}
+			else {
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+				jsonObject.put("title", url);
+				return jsonObject.toString();
 			}
 
 			if (fileEntry == null) {
