@@ -43,6 +43,11 @@ public class FunctionCallExpression extends Expression {
 		return _parameters;
 	}
 
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitFunctionCallExpression(this);
+	}
+
 	private final String _functionName;
 	private final List<Expression> _parameters;
 

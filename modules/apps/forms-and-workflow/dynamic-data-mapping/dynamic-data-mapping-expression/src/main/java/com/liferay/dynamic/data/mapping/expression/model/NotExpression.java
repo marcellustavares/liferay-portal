@@ -26,4 +26,11 @@ public class NotExpression extends UnaryExpression {
 		super(operand);
 	}
 
+
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitNotExpression(this);
+	}
+
+
 }

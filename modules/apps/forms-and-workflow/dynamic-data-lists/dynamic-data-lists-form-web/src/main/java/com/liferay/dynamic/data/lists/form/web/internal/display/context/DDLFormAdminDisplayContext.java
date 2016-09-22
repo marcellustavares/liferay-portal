@@ -33,6 +33,7 @@ import com.liferay.dynamic.data.lists.service.permission.DDLRecordSetPermission;
 import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetCreateDateComparator;
 import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetModifiedDateComparator;
 import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
@@ -44,6 +45,7 @@ import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
@@ -51,8 +53,10 @@ import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONDeserializer;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
@@ -69,6 +73,7 @@ import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,6 +97,7 @@ public class DDLFormAdminDisplayContext {
 		DDLFormWebConfiguration ddlFormWebConfiguration,
 		DDLRecordLocalService ddlRecordLocalService,
 		DDLRecordSetService ddlRecordSetService,
+		DDMExpressionFactory ddmExpressionFactory,
 		Servlet ddmFormContextProviderServlet,
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
 		DDMFormFieldTypesJSONSerializer ddmFormFieldTypesJSONSerializer,
@@ -109,6 +115,7 @@ public class DDLFormAdminDisplayContext {
 		_ddlFormWebConfiguration = ddlFormWebConfiguration;
 		_ddlRecordLocalService = ddlRecordLocalService;
 		_ddlRecordSetService = ddlRecordSetService;
+		_ddmExpressionFactory = ddmExpressionFactory;
 		_ddmFormContextProviderServlet = ddmFormContextProviderServlet;
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 		_ddmFormFieldTypesJSONSerializer = ddmFormFieldTypesJSONSerializer;
@@ -194,6 +201,41 @@ public class DDLFormAdminDisplayContext {
 
 		return ddlFormViewRecordDisplayContext.getDDMFormHTML(renderRequest);
 	}
+
+	public String getSerializedDDMFormRules() throws PortalException {
+		String rules = ParamUtil.getString(_renderRequest, "rules");
+
+ 		if (Validator.isNotNull(rules)) {
+ 			return rules;
+ 		}
+
+		List<DDMFormRule> ddmFormRules = getDDMForm().getDDMFormRules();
+
+		List<DDLFormRule> ddlFormRules = new ArrayList<>();
+
+		for(DDMFormRule ddmFormRule : ddmFormRules){
+			DDMFormRuleToDDLFormRuleConverter ddmFormRuleToDDLFormRuleConverter =
+				new DDMFormRuleToDDLFormRuleConverter(ddmFormRule, _ddmExpressionFactory);
+
+			ddlFormRules.add(ddmFormRuleToDDLFormRuleConverter.convert());
+		}
+
+		JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
+
+ 		return jsonSerializer.serializeDeep(ddlFormRules);
+ 	}
+
+	protected DDMForm getDDMForm() throws PortalException {
+ 		DDMStructure ddmStructure = getDDMStructure();
+
+ 		DDMForm ddmForm = new DDMForm();
+
+ 		if (ddmStructure != null) {
+ 			ddmForm = ddmStructure.getDDMForm();
+ 		}
+
+ 		return ddmForm;
+ 	}
 
 	public DDMStructure getDDMStructure() throws PortalException {
 		if (_ddmStucture != null) {
@@ -636,6 +678,7 @@ public class DDLFormAdminDisplayContext {
 
 	private static final String[] _DISPLAY_VIEWS = {"descriptive", "list"};
 
+	private final DDMExpressionFactory _ddmExpressionFactory;
 	private final DDLFormAdminRequestHelper _ddlFormAdminRequestHelper;
 	private final DDLFormWebConfiguration _ddlFormWebConfiguration;
 	private final DDLRecordLocalService _ddlRecordLocalService;

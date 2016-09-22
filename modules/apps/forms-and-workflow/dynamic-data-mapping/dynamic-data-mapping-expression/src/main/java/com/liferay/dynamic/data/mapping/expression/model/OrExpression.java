@@ -26,4 +26,9 @@ public class OrExpression extends BinaryExpression {
 		super(leftOperand, rightOperand);
 	}
 
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitOrExpression(this);
+	}
+
 }

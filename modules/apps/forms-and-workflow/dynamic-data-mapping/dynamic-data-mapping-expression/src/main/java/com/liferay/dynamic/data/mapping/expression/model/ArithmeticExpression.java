@@ -34,6 +34,11 @@ public class ArithmeticExpression extends BinaryExpression {
 		return _operator;
 	}
 
+	@Override
+	public <T> T accept(ExpressionVisitor<T> visitor) {
+		return visitor.visitArithmeticExpression(this);
+	}
+
 	private final String _operator;
 
 }

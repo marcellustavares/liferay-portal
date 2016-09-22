@@ -718,6 +718,7 @@ Error-Prone was automatically installed. Please rerun your task.
 			</if>
 
 			<junit dir="${project.dir}" fork="on" forkmode="@{forkmode}" haltonfailure="${junit.halt.on.failure}" jvm="${junit.jvm}" outputtoformatters="false" printsummary="on" showoutput="true">
+				<sysproperty key="catalina.base" value="." />
 				<sysproperty file="woven-classes" key="junit.aspectj.dump" />
 				<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
 				<sysproperty if:true="${jvm.debug}" key="jvm.debug" value="true" />

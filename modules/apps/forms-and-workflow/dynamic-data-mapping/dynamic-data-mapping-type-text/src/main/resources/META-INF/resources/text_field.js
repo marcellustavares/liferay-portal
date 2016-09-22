@@ -46,7 +46,8 @@ AUI.add(
 						var instance = this;
 
 						instance._eventHandlers.push(
-							instance.after('optionsChange', instance._afterOptionsChange)
+							instance.after('optionsChange', instance._afterOptionsChange),
+							instance.after('visibelChange', instance._afterVisibleChange)
 						);
 
 						instance.bindInputEvent('focus', instance._onFocusInput);
@@ -73,21 +74,8 @@ AUI.add(
 							autoComplete.set('inputNode', inputNode);
 						}
 						else {
-							autoComplete = new A.AutoComplete(
-								{
-									after: {
-										select: A.bind(instance.evaluate, instance)
-									},
-									inputNode: inputNode,
-									maxResults: 10,
-									render: true,
-									resultFilters: ['charMatch', 'subWordMatch'],
-									resultHighlighter: 'subWordMatch',
-									resultTextLocator: 'label'
-								}
-							);
-
-							instance._autoComplete = autoComplete;
+							instance._createAutocomplete();
+							autoComplete = instance._autoComplete;
 						}
 
 						return autoComplete;
@@ -142,6 +130,36 @@ AUI.add(
 								}
 							);
 						}
+					},
+
+					_afterVisibleChange: function() {
+						var instance = this;
+
+						if(!instance._autoComplete) {
+							instance._createAutocomplete();
+						}
+					},
+
+					_createAutocomplete: function() {
+						var instance = this;
+
+						var inputNode = instance.getInputNode();
+
+						autoComplete = new A.AutoComplete(
+								{
+									after: {
+										select: A.bind(instance.evaluate, instance)
+									},
+									inputNode: inputNode,
+									maxResults: 10,
+									render: true,
+									resultFilters: ['charMatch', 'subWordMatch'],
+									resultHighlighter: 'subWordMatch',
+									resultTextLocator: 'label'
+								}
+							);
+
+						instance._autoComplete = autoComplete;
 					},
 
 					_onFocusInput: function() {
