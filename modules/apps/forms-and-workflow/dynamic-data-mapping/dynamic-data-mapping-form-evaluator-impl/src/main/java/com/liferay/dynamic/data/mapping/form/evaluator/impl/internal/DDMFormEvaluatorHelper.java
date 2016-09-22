@@ -104,8 +104,10 @@ public class DDMFormEvaluatorHelper {
 			new DDMFormFieldEvaluationResult(
 				ddmFormField.getName(), ddmFormFieldValue.getInstanceId());
 
-		ddmFormFieldEvaluationResult.setReadOnly(ddmFormField.isReadOnly());
-		ddmFormFieldEvaluationResult.setRequired(ddmFormField.isRequired());
+		setDDMFormFieldEvaluationResultReadOnly(
+			ddmFormFieldEvaluationResult, ddmFormField);
+		setDDMFormFieldEvaluationResultRequired(
+			ddmFormFieldEvaluationResult, ddmFormField);
 
 		setDDMFormFieldEvaluationResultVisibility(
 			ddmFormFieldEvaluationResult, ddmFormField, ddmFormFieldValue);
@@ -122,6 +124,43 @@ public class DDMFormEvaluatorHelper {
 		ddmFormFieldEvaluationResult.setValue(value);
 
 		return ddmFormFieldEvaluationResult;
+	}
+
+	protected void setDDMFormFieldEvaluationResultRequired(
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
+		DDMFormField ddmFormField) {
+
+		boolean required = ddmFormField.isRequired();
+
+		if (required) {
+			ddmFormFieldEvaluationResult.setRequired(true);
+
+			return;
+		}
+
+		required = getDefaultBooleanPropertyState(
+			"setRequired", ddmFormField.getName());
+
+		ddmFormFieldEvaluationResult.setRequired(required);
+
+	}
+
+	protected void setDDMFormFieldEvaluationResultReadOnly(
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
+		DDMFormField ddmFormField) {
+
+		boolean readOnly = ddmFormField.isRequired();
+
+		if (readOnly) {
+			ddmFormFieldEvaluationResult.setReadOnly(true);
+
+			return;
+		}
+
+		boolean enabled = getDefaultBooleanPropertyState(
+			"setEnabled", ddmFormField.getName());
+
+		ddmFormFieldEvaluationResult.setReadOnly(!enabled);
 	}
 
 	protected void createDDMFormFieldRuleEvaluationResultsMap() {
@@ -404,6 +443,23 @@ public class DDMFormEvaluatorHelper {
 		}
 	}
 
+	protected boolean getDefaultBooleanPropertyState(
+		String functionName, String ddmFormFieldName) {
+
+		String setFieldVisibleAction = String.format(
+			"%s('%s' true)", functionName, ddmFormFieldName);
+
+		for (DDMFormRule ddmFormRule : _ddmForm.getDDMFormRules()) {
+			for (String action : ddmFormRule.getActions()) {
+				if (Objects.equals(setFieldVisibleAction, action)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	protected void setDDMFormFieldEvaluationResultVisibility(
 		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult,
 		DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue) {
@@ -413,7 +469,10 @@ public class DDMFormEvaluatorHelper {
 		if (Validator.isNull(visibilityExpression) ||
 			StringUtil.equalsIgnoreCase(visibilityExpression, "TRUE")) {
 
-			return;
+			boolean defaultState =  getDefaultBooleanPropertyState(
+				"setVisible", ddmFormField.getName());
+
+			ddmFormFieldEvaluationResult.setVisible(defaultState);
 		}
 
 		try {
