@@ -19,6 +19,8 @@
 
 	<#if fileEntry != "">
 		<#assign fileEntryTitle = fileEntry.getTitle() />
+	<#else>
+		<#assign fileEntryTitle = fileJSONObject.getString("title")>
 	</#if>
 </#if>
 
