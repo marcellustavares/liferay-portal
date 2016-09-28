@@ -88,7 +88,7 @@
 	<sql id="com.liferay.dynamic.data.lists.service.persistence.DDLRecordSetFinder.findByC_G_N_D_S">
 		<![CDATA[
 			SELECT
-				{DDLRecordSet.*}
+				DISTINCT {DDLRecordSet.*}
 			FROM
 				DDLRecordSet
 			WHERE
