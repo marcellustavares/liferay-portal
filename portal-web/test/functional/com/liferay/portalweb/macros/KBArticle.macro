@@ -58,7 +58,7 @@
 	</command>
 
 	<command name="addChildPGViaKBDisplay">
-		<var name="key_kbTool" value="Add Child" />
+		<var name="key_kbTool" value="Add Child Article" />
 
 		<execute function="AssertClick" locator1="KnowledgeBase#KB_TOOLS" value1="Add Child Article" />
 
@@ -1683,6 +1683,10 @@
 		<var name="key_kbTool" value="Edit" />
 
 		<execute function="AssertClick" locator1="KnowledgeBase#KB_TOOLS" value1="Edit" />
+
+		<execute macro="Panel#expandPanel">
+			<var name="panelHeading" value="Configuration" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="CKEditor#SOURCE_URL" value1="${kbArticleSourceURL}" />
 	</command>
