@@ -99,6 +99,8 @@
 					(lower(DDLRecordSet.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
 					(DDLRecordSet.description LIKE ? [$AND_OR_NULL_CHECK$])
 				)
+			GROUP BY
+				DDLRecordSet.recordSetId
 			ORDER BY
 				DDLRecordSet.recordSetId DESC
 		]]>
