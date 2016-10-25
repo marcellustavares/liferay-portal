@@ -15,6 +15,8 @@
 package com.liferay.dynamic.data.mapping.util;
 
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormFieldSet;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
@@ -74,6 +76,20 @@ public class DDMFormFactoryHelper {
 		}
 	}
 
+	protected void collectDDMFormFieldSetMethodsMap(
+		Class<?> clazz, Map<String, Method> methodsMap) {
+
+		for (Class<?> interfaceClass : clazz.getInterfaces()) {
+			collectDDMFormFieldMethodsMap(interfaceClass, methodsMap);
+		}
+
+		for (Method method : clazz.getDeclaredMethods()) {
+			if (method.isAnnotationPresent(_DDM_FORM_FIELD_SET_ANNOTATION)) {
+				methodsMap.put(method.getName(), method);
+			}
+		}
+	}
+
 	protected Set<Locale> getAvailableLocales() {
 		if (Validator.isNull(_ddmForm.availableLanguageIds())) {
 			Locale defaultLocale = getDefaultLocale();
@@ -117,7 +133,26 @@ public class DDMFormFactoryHelper {
 			ddmFormFields.add(ddmFormFieldFactoryHelper.createDDMFormField());
 		}
 
+		for (Method method : getDDMFormFieldSetMethods()) {
+			DDMFormFieldSetFactoryHelper ddmFormFieldSetFactoryHelper =
+				new DDMFormFieldSetFactoryHelper(method);
+
+			ddmFormFieldSetFactoryHelper.setAvailableLocales(_availableLocales);
+			ddmFormFieldSetFactoryHelper.setDefaultLocale(_defaultLocale);
+
+			ddmFormFields.add(
+				ddmFormFieldSetFactoryHelper.createDDMFormField());
+		}
+
 		return ddmFormFields;
+	}
+
+	protected Collection<Method> getDDMFormFieldSetMethods() {
+		Map<String, Method> methodsMap = new HashMap<>();
+
+		collectDDMFormFieldSetMethodsMap(_clazz, methodsMap);
+
+		return methodsMap.values();
 	}
 
 	protected List<com.liferay.dynamic.data.mapping.model.DDMFormRule>
@@ -151,8 +186,10 @@ public class DDMFormFactoryHelper {
 	}
 
 	private static final Class<? extends Annotation>
-		_DDM_FORM_FIELD_ANNOTATION =
-			com.liferay.dynamic.data.mapping.annotations.DDMFormField.class;
+		_DDM_FORM_FIELD_ANNOTATION = DDMFormField.class;
+
+	private static final Class<? extends Annotation>
+		_DDM_FORM_FIELD_SET_ANNOTATION = DDMFormFieldSet.class;
 
 	private final Set<Locale> _availableLocales;
 	private final Class<?> _clazz;

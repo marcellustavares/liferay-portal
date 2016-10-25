@@ -14,6 +14,8 @@
 
 package com.liferay.sync.engine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -23,6 +25,13 @@ import com.liferay.sync.engine.service.persistence.BasePersistenceImpl;
  * @author Shinn Lok
  */
 @DatabaseTable(daoClass = BasePersistenceImpl.class, tableName = "SyncAccount")
+@JsonIgnoreProperties(
+	ignoreUnknown = true,
+	value = {
+		"lanCertificate", "lanKey", "oauthConsumerKey", "oauthConsumerSecret",
+		"oauthToken", "oauthTokenSecret", "password"
+	}
+)
 public class SyncAccount extends StateAwareModel {
 
 	public static final int STATE_CONNECTED = 2;

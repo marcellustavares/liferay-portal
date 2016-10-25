@@ -15,9 +15,13 @@
 package com.liferay.dynamic.data.mapping.util;
 
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,6 +69,61 @@ public class DDMFormFactoryTest {
 			new String[] {"action1"}, ddmFormRuleActions.toArray());
 	}
 
+	@Test
+	public void testeCreateDynamicFormWithFieldSet() {
+		DDMForm ddmForm = DDMFormFactory.create(DynamicFormWithFieldSet.class);
+
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
+		Assert.assertEquals(1, ddmFormFields.size());
+
+		DDMFormField ddmFormField = ddmFormFields.get(0);
+
+		Assert.assertEquals("fieldset", ddmFormField.getType());
+		Assert.assertTrue(ddmFormField.isRepeatable());
+
+		List<DDMFormField> nestedDDMFormFields =
+			ddmFormField.getNestedDDMFormFields();
+
+		Assert.assertEquals(2, nestedDDMFormFields.size());
+
+		Assert.assertNotNull(ddmFormField.getProperty("rows"));
+
+		List<DDMFormLayoutRow> rows =
+			(List<DDMFormLayoutRow>)ddmFormField.getProperty("rows");
+
+		Assert.assertEquals(1, rows.size());
+
+		List<DDMFormLayoutColumn> columns = rows.get(
+			0).getDDMFormLayoutColumns();
+
+		Assert.assertEquals(1, columns.size());
+
+		List<String> fieldNames = columns.get(0).getDDMFormFieldNames();
+
+		Assert.assertEquals(2, fieldNames.size());
+
+		Assert.assertTrue(fieldNames.contains("parameterName"));
+		Assert.assertTrue(fieldNames.contains("parameterValue"));
+	}
+
+	@com.liferay.dynamic.data.mapping.annotations.DDMForm
+	private interface DynamicFormWithFieldSet {
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormFieldSet(
+			definition = ParametersFieldSetSettings.class, repeatable = true,
+			rows = {
+				@com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow(
+					@com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn(
+						size = 12, value = {"parameterName", "parameterValue"}
+					)
+				)
+			}
+		)
+		public Map<String, List<Object>> parameters();
+
+	}
+
 	@com.liferay.dynamic.data.mapping.annotations.DDMForm
 	private interface DynamicFormWithoutRules {
 	}
@@ -80,6 +139,16 @@ public class DDMFormFactoryTest {
 		}
 	)
 	private interface DynamicFormWithRules {
+	}
+
+	private interface ParametersFieldSetSettings {
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public String parameterName();
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public String parameterValue();
+
 	}
 
 }
