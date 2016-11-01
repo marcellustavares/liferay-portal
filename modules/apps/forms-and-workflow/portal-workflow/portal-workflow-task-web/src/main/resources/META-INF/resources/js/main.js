@@ -42,11 +42,13 @@ AUI.add(
 				var comments = A.one('#' + randomId + 'updateComments');
 
 				if (content) {
-					form.append(content.getContent());
+					form.append(content);
+					content.show();
 				}
 
 				if (comments) {
-					form.append(comments.getContent());
+					form.append(comments);
+					comments.show();
 				}
 
 				var dialog = Liferay.Util.Window.getWindow(
@@ -62,6 +64,13 @@ AUI.add(
 										label: Liferay.Language.get('done'),
 										on: {
 											click: function() {
+												var updatedContent = form.get('children')._nodes[0];
+												var updatedComments = form.get('children')._nodes[1];
+												var entryActionColumn = document.getElementById(updatedContent.id).parentNode;
+
+												entryActionColumn.appendChild(updatedContent);
+												entryActionColumn.appendChild(updatedComments);
+
 												submitForm(form);
 											}
 										}
