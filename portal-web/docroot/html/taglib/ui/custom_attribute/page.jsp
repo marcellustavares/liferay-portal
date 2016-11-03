@@ -612,6 +612,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 						</c:when>
 						
 						<c:when test="<%= type == ExpandoColumnConstants.GEOLOCATION %>">
+						
 						    <style>
 						      /* Always set the map height explicitly to define the size of the div
 						       * element that contains the map. */
@@ -749,7 +750,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 						    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap"
 						        async defer></script>
 							
-							<input type="hidden" name='<%="ExpandoAttribute--" + name + "--" %>'>
+							<input type="hidden" name='<%="ExpandoAttribute--" + name + "--" %>' value='<%=value %>'>
 							
 						</c:when>
 						

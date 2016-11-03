@@ -19,6 +19,8 @@ import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -166,6 +168,13 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 		return GetterUtil.getIntegerValues(StringUtil.split(getData()));
 	}
 
+	@Override
+	public JSONObject getGeolocation() throws PortalException {
+		validate(ExpandoColumnConstants.GEOLOCATION);
+
+		return JSONFactoryUtil.createJSONObject(getData());
+	}
+	
 	@Override
 	public long getLong() throws PortalException {
 		validate(ExpandoColumnConstants.LONG);
@@ -407,6 +416,13 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 
 		setData(StringUtil.merge(data));
 	}
+	
+	@Override
+	public void setGeloLocation(JSONObject data) throws PortalException {
+		validate(ExpandoColumnConstants.GEOLOCATION);
+		
+		setData(data.toJSONString());
+	}
 
 	@Override
 	public void setInteger(int data) throws PortalException {
@@ -421,7 +437,7 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 
 		setData(StringUtil.merge(data));
 	}
-
+	
 	@Override
 	public void setLong(long data) throws PortalException {
 		validate(ExpandoColumnConstants.LONG);
