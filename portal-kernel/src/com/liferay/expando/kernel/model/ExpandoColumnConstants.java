@@ -63,14 +63,14 @@ public class ExpandoColumnConstants {
 
 	public static final int FLOAT_ARRAY = 8;
 
-	public static final int GEOLOCATION = 21;
-	
-	public static final String GEOLOCATION_LABEL =
-			"custom.field.java.lang.String.geolocation";
-	
 	public static final String FLOAT_ARRAY_LABEL = "custom.field.float.array";
 
 	public static final String FLOAT_LABEL = "custom.field.float";
+
+	public static final int GEOLOCATION = 21;
+
+	public static final String GEOLOCATION_LABEL =
+		"custom.field.java.lang.String.geolocation";
 
 	public static final String INDEX_TYPE = "index-type";
 
@@ -152,7 +152,7 @@ public class ExpandoColumnConstants {
 
 	public static final String STRING_LOCALIZED_LABEL =
 		"custom.field.java.lang.String.localized";
-	
+
 	public static final int[] TYPES = new int[] {
 		BOOLEAN, BOOLEAN_ARRAY, DATE, DATE_ARRAY, DOUBLE, DOUBLE_ARRAY, FLOAT,
 		FLOAT_ARRAY, INTEGER, INTEGER_ARRAY, LONG, LONG_ARRAY, NUMBER,
@@ -257,6 +257,9 @@ public class ExpandoColumnConstants {
 		else if (type == FLOAT_ARRAY) {
 			return FLOAT_ARRAY_LABEL;
 		}
+		else if (type == GEOLOCATION) {
+			return GEOLOCATION_LABEL;
+		}
 		else if (type == INTEGER) {
 			return INTEGER_LABEL;
 		}
@@ -292,9 +295,6 @@ public class ExpandoColumnConstants {
 		}
 		else if (type == STRING_LOCALIZED) {
 			return STRING_LOCALIZED_LABEL;
-		}
-		else if (type == GEOLOCATION) {
-			return GEOLOCATION_LABEL;
 		}
 
 		return UNKNOWN_LABEL;

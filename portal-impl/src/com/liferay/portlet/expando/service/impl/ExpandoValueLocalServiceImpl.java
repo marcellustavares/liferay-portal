@@ -21,11 +21,8 @@ import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSON;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONObjectUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.typeconverter.DateArrayConverter;
 import com.liferay.portal.typeconverter.NumberArrayConverter;
@@ -336,7 +333,7 @@ public class ExpandoValueLocalServiceImpl
 			table.getClassNameId(), table.getTableId(), column.getColumnId(),
 			classPK, value.getData());
 	}
-	
+
 	@Override
 	public ExpandoValue addValue(
 			long companyId, String className, String tableName,
@@ -780,7 +777,9 @@ public class ExpandoValueLocalServiceImpl
 				value.setFloatArray((float[])attributeValue);
 			}
 			else if (type == ExpandoColumnConstants.GEOLOCATION) {
-				value.setGeloLocation(JSONFactoryUtil.createJSONObject(attributeValue.toString()));
+				value.setGeloLocation(
+					JSONFactoryUtil.createJSONObject(
+						attributeValue.toString()));
 			}
 			else if (type == ExpandoColumnConstants.INTEGER) {
 				value.setInteger((Integer)attributeValue);
@@ -1255,23 +1254,6 @@ public class ExpandoValueLocalServiceImpl
 			return value.getFloatArray();
 		}
 	}
-	
-	@Override
-	public JSONObject getData(
-			long companyId, String className, String tableName,
-			String columnName, long classPK, JSONObject defaultData)
-		throws PortalException {
-
-		ExpandoValue value = expandoValueLocalService.getValue(
-			companyId, className, tableName, columnName, classPK);
-
-		if (value == null) {
-			return defaultData;
-		}
-		else {
-			return value.getGeolocation();
-		}
-	}
 
 	@Override
 	public int getData(
@@ -1304,6 +1286,23 @@ public class ExpandoValueLocalServiceImpl
 		}
 		else {
 			return value.getIntegerArray();
+		}
+	}
+
+	@Override
+	public JSONObject getData(
+			long companyId, String className, String tableName,
+			String columnName, long classPK, JSONObject defaultData)
+		throws PortalException {
+
+		ExpandoValue value = expandoValueLocalService.getValue(
+			companyId, className, tableName, columnName, classPK);
+
+		if (value == null) {
+			return defaultData;
+		}
+		else {
+			return value.getGeolocation();
 		}
 	}
 

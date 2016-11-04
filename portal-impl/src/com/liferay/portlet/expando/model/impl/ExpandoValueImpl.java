@@ -155,6 +155,13 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 	}
 
 	@Override
+	public JSONObject getGeolocation() throws PortalException {
+		validate(ExpandoColumnConstants.GEOLOCATION);
+
+		return JSONFactoryUtil.createJSONObject(getData());
+	}
+
+	@Override
 	public int getInteger() throws PortalException {
 		validate(ExpandoColumnConstants.INTEGER);
 
@@ -168,13 +175,6 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 		return GetterUtil.getIntegerValues(StringUtil.split(getData()));
 	}
 
-	@Override
-	public JSONObject getGeolocation() throws PortalException {
-		validate(ExpandoColumnConstants.GEOLOCATION);
-
-		return JSONFactoryUtil.createJSONObject(getData());
-	}
-	
 	@Override
 	public long getLong() throws PortalException {
 		validate(ExpandoColumnConstants.LONG);
@@ -416,11 +416,11 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 
 		setData(StringUtil.merge(data));
 	}
-	
+
 	@Override
 	public void setGeloLocation(JSONObject data) throws PortalException {
 		validate(ExpandoColumnConstants.GEOLOCATION);
-		
+
 		setData(data.toJSONString());
 	}
 
@@ -437,7 +437,7 @@ public class ExpandoValueImpl extends ExpandoValueBaseImpl {
 
 		setData(StringUtil.merge(data));
 	}
-	
+
 	@Override
 	public void setLong(long data) throws PortalException {
 		validate(ExpandoColumnConstants.LONG);
