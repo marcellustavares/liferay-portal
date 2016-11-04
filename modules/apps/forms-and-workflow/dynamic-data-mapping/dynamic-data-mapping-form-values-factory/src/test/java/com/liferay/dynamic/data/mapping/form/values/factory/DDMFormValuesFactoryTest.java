@@ -130,9 +130,11 @@ public class DDMFormValuesFactoryTest extends PowerMockito {
 			actualNameDDMFormFieldValue.getValue();
 
 		Assert.assertEquals(
-			LocaleUtil.US, actualNameDDMFormFieldValueValue.getDefaultLocale());
+			LocaleUtil.BRAZIL,
+			actualNameDDMFormFieldValueValue.getDefaultLocale());
 		Assert.assertEquals(
-			"Joe", actualNameDDMFormFieldValueValue.getString(LocaleUtil.US));
+			"Joe",
+			actualNameDDMFormFieldValueValue.getString(LocaleUtil.BRAZIL));
 
 		// Phone
 
@@ -146,10 +148,11 @@ public class DDMFormValuesFactoryTest extends PowerMockito {
 			actualPhoneDDMFormFieldValue.getValue();
 
 		Assert.assertEquals(
-			LocaleUtil.US,
+			LocaleUtil.BRAZIL,
 			actualPhoneDDMFormFieldValueValue.getDefaultLocale());
 		Assert.assertEquals(
-			"123", actualPhoneDDMFormFieldValueValue.getString(LocaleUtil.US));
+			"123",
+			actualPhoneDDMFormFieldValueValue.getString(LocaleUtil.BRAZIL));
 	}
 
 	@Test
@@ -875,6 +878,7 @@ public class DDMFormValuesFactoryTest extends PowerMockito {
 		_originalThemeDisplayLocale = LocaleThreadLocal.getThemeDisplayLocale();
 
 		LocaleThreadLocal.setThemeDisplayLocale(LocaleUtil.US);
+		LocaleThreadLocal.setSiteDefaultLocale(LocaleUtil.BRAZIL);
 	}
 
 	protected void setUpLocaleUtil() {
