@@ -514,8 +514,8 @@ public class ExpandoValueLocalServiceImpl
 		}
 		else if (type == ExpandoColumnConstants.GEOLOCATION) {
 			return expandoValueLocalService.addValue(
-					companyId, className, tableName, columnName, classPK,
-					JSONFactoryUtil.createJSONObject(data.toString()));
+				companyId, className, tableName, columnName, classPK,
+				JSONFactoryUtil.createJSONObject(data.toString()));
 		}
 		else if (type == ExpandoColumnConstants.INTEGER) {
 			return expandoValueLocalService.addValue(

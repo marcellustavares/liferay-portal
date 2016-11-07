@@ -614,7 +614,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 
 						<style>
 						/* Always set the map height explicitly to define the size of the div
-						       * element that contains the map. */
+							   * element that contains the map. */
 						#map {
 						height: 300px;
 
@@ -838,7 +838,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 						<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=geoPicker.initMap"
 						async defer></script>
 
-							<input name="<%= "ExpandoAttribute--" + name + "--" %>" type="hidden" value='<%= HtmlUtil.escape(value.toString())%>'>
+							<input name="<%= "ExpandoAttribute--" + name + "--" %>" type="hidden" value="<%= HtmlUtil.escape(value.toString()) %>">
 						</c:when>
 						<c:otherwise>
 
