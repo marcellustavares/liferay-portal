@@ -670,7 +670,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 									},
 
 									getExpandoInput : function() {
-										return $('[name=<%= "ExpandoAttribute--" + name + "--" %>]');
+										return $('[name="<%= "ExpandoAttribute--" + name + "--" %>"]');
 									},
 
 									getDefaultPosition : function() {
@@ -694,7 +694,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 									getPosition : function() {
 										var instance = this;
 
-										var position;
+										var position = {};
 
 										var expandoValue = instance.getExpandoValue();
 
@@ -838,7 +838,7 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 						<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=geoPicker.initMap"
 						async defer></script>
 
-							<input name="<%= "ExpandoAttribute--" + name + "--" %>" type="hidden" value="<%= HtmlUtil.escape(value) %>">
+							<input name="<%= "ExpandoAttribute--" + name + "--" %>" type="hidden" value='<%= HtmlUtil.escape(value.toString())%>'>
 						</c:when>
 						<c:otherwise>
 
