@@ -610,6 +610,236 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 
 							<liferay-ui:input-localized cssClass="lfr-input-text" id="<%= randomNamespace + name %>" name='<%= "ExpandoAttribute--" + name + "--" %>' xml="<%= xml %>" />
 						</c:when>
+						<c:when test="<%= type == ExpandoColumnConstants.GEOLOCATION %>">
+
+						<style>
+						/* Always set the map height explicitly to define the size of the div
+							   * element that contains the map. */
+						#map {
+						height: 300px;
+
+						}
+						#pac-input {
+						background-color: #fff;
+						font-family: Roboto;
+						font-size: 15px;
+						font-weight: 300;
+						margin-left: 12px;
+						padding: 0 11px 0 13px;
+						text-overflow: ellipsis;
+						width: 300px;
+						}
+
+						#pac-input:focus {
+						border-color: #4d90fe;
+						}
+
+						.pac-container {
+						font-family: Roboto;
+						}
+
+						</style>
+
+						<input id="pac-input" class="controls" type="text"
+						placeholder="Enter a location">
+
+						<div id="map"></div>
+
+						<script>
+
+						var geoPicker = {
+
+									createAddress : function(place) {
+										var address = '';
+										if (place.address_components) {
+										address = [
+										(place.address_components[0] && place.address_components[0].short_name || ''),
+										(place.address_components[1] && place.address_components[1].short_name || ''),
+										(place.address_components[2] && place.address_components[2].short_name || '')
+										].join(' ');
+										}
+
+										return address;
+									},
+
+									createInfoContent : function(place) {
+										var instance = this;
+
+										var address = instance.createAddress(place);
+										return '<div><strong>' + place.name + '</strong><br>' + address;
+									},
+
+									getExpandoInput : function() {
+										return $('[name="<%= "ExpandoAttribute--" + name + "--" %>"]');
+									},
+
+									getDefaultPosition : function() {
+										return {lat: -33.8688, lng: 151.2195};
+									},
+
+									getExpandoValue : function() {
+										var instance = this;
+
+										return instance.getExpandoInput().val();
+									},
+
+									getLocation : function(place) {
+										var location = {
+											lat : place.geometry.location.lat(),
+											lng : place.geometry.location.lng()
+											}
+										return location;
+									},
+
+									getPosition : function() {
+										var instance = this;
+
+										var position = {};
+
+										var expandoValue = instance.getExpandoValue();
+
+										if (expandoValue) {
+											position = JSON.parse(expandoValue);
+										}
+										if (!position.lat) {
+											position = instance.getDefaultPosition();
+										}
+
+										return position;
+									},
+
+									handleMarkerDragEvent : function() {
+										var instance = this;
+
+										var map = instance.map;
+
+										var geocoder = instance.geocoder;
+
+										var infowindow = instance.infowindow;
+										infowindow.close();
+
+										var marker = instance.marker;
+										var markerPosition = marker.getPosition();
+										map.setCenter(markerPosition);
+										instance.setExpandoValue(markerPosition);
+
+										geocoder.geocode({'location': markerPosition}, function(results, status) {
+
+										if (status === 'OK') {
+										if (results[1]) {
+										infowindow.setContent(results[1].formatted_address);
+										infowindow.open(map, marker);
+
+										} else {
+										console.info('No results found');
+										}
+										} else {
+										console.info('Geocoder failed due to: ' + status);
+										}
+									});
+									},
+
+								setExpandoValue : function(location) {
+									var instance = this;
+
+									instance.getExpandoInput().val( JSON.stringify(location));
+								},
+
+								showPlaceGeometry : function(place) {
+									var instance = this;
+
+									var map = instance.map;
+
+									// If the place has a geometry, then present it on a map.
+									if (place.geometry.viewport) {
+									map.fitBounds(place.geometry.viewport);
+									} else {
+									map.setCenter(place.geometry.location);
+									map.setZoom(17); // Why 17? Because it looks good.
+									}
+								},
+
+								updateMarkerLocation : function(place) {
+									var instance = this;
+
+									var marker = instance.marker;
+
+									marker.setVisible(false);
+									marker.setPosition(place.geometry.location);
+									marker.setVisible(true);
+								},
+
+								initMap : function() {
+									var instance = this;
+
+									instance.infowindow = new google.maps.InfoWindow;
+									instance.geocoder = new google.maps.Geocoder;
+
+									instance.position = instance.getPosition();
+
+									instance.map = new google.maps.Map(document.getElementById('map'), {
+										center: instance.position,
+										clickableIcons: true,
+										zoom: 13
+									});
+
+									instance.marker = new google.maps.Marker({
+										position: instance.position,
+										map: instance.map,
+										draggable: true,
+										animation: google.maps.Animation.DROP
+									});
+
+									instance.marker.addListener('dragend', function() {
+										instance.handleMarkerDragEvent();
+
+									});
+
+									if (instance.position.address) {
+										instance.infowindow.setContent(instance.position.address);
+										instance.infowindow.open(instance.map,instance.marker);
+									}
+
+								var input = (document.getElementById('pac-input'));
+
+								instance.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+									var autocomplete = new google.maps.places.Autocomplete(input);
+									autocomplete.bindTo('bounds', instance.map);
+
+									autocomplete.addListener('place_changed', function() {
+
+										var place = autocomplete.getPlace();
+
+										var infowindow = instance.infowindow
+
+										if (!place.geometry) {
+										return;
+										}
+
+										instance.showPlaceGeometry(place);
+
+										instance.updateMarkerLocation(place);
+
+										infowindow.close();
+										infowindow.setContent(instance.createInfoContent(place));
+										infowindow.open(instance.map, instance.marker);
+
+										var location = instance.getLocation(place);
+										location.address = instance.createInfoContent(place);
+										instance.setExpandoValue(location);
+								});
+								}
+
+							}
+
+						</script>
+
+						<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=geoPicker.initMap"
+						async defer></script>
+
+							<input name="<%= "ExpandoAttribute--" + name + "--" %>" type="hidden" value="<%= HtmlUtil.escape(value.toString()) %>">
+						</c:when>
 						<c:otherwise>
 
 							<%
