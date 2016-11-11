@@ -352,6 +352,9 @@ public class DDLFormAdminDisplayContext {
 	}
 
 	public String getSerializedDDMForm() throws PortalException {
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
 		String definition = ParamUtil.getString(_renderRequest, "definition");
 
 		if (Validator.isNotNull(definition)) {
@@ -364,6 +367,10 @@ public class DDLFormAdminDisplayContext {
 
 		if (ddmStructure != null) {
 			ddmForm = ddmStructure.getDDMForm();
+		}
+		else {
+			ddmForm.addAvailableLocale(themeDisplay.getSiteDefaultLocale());
+			ddmForm.setDefaultLocale(themeDisplay.getSiteDefaultLocale());
 		}
 
 		return _ddmFormJSONSerializer.serialize(ddmForm);

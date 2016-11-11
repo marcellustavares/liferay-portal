@@ -228,15 +228,19 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							window,
 							'<portlet:namespace />init',
 							function() {
+								var definition = <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>;
+
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
 
 								Liferay.component(
 									'formPortlet',
 									new Liferay.DDL.Portlet(
 										{
+											availableLanguageIds: definition.availableLanguageIds,
 											autosaveInterval: '<%= ddlFormAdminDisplayContext.getAutosaveInterval() %>',
 											autosaveURL: '<%= saveRecordSetURL.toString() %>',
-											definition: <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>,
+											defaultLanguageId: definition.defaultLanguageId,
+											definition: definition,
 											description: '<%= HtmlUtil.escapeJS(description) %>',
 											editForm: event.form,
 											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
