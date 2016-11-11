@@ -269,9 +269,6 @@ public class SaveRecordSetMVCCommandHelper {
 	protected DDMStructure updateDDMStructure(PortletRequest portletRequest)
 		throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		long ddmStructureId = ParamUtil.getLong(
 			portletRequest, "ddmStructureId");
 		String name = ParamUtil.getString(portletRequest, "name");
@@ -284,9 +281,9 @@ public class SaveRecordSetMVCCommandHelper {
 
 		return ddmStructureService.updateStructure(
 			ddmStructureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description),
-			ddmForm, ddmFormLayout, serviceContext);
+			getLocalizedMap(ddmForm.getDefaultLocale(), name),
+			getLocalizedMap(ddmForm.getDefaultLocale(), description), ddmForm,
+			ddmFormLayout, serviceContext);
 	}
 
 	protected DDLRecordSet updateRecordSet(
