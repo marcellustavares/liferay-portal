@@ -66,7 +66,7 @@ AUI.add(
 
 						var definitionFields = fieldTypesDefinitions[field.get('type')];
 
-						var languageId = themeDisplay.getDefaultLanguageId();
+						var languageId = instance.get('defaultLanguageId');
 
 						definitionFields.forEach(
 							function(fieldSetting) {

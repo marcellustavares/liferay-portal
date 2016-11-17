@@ -160,7 +160,9 @@ AUI.add(
 					_deserializePage: function(page) {
 						var instance = this;
 
-						var languageId = themeDisplay.getDefaultLanguageId();
+						var definition = instance.get('definition');
+
+						var languageId = definition.defaultLanguageId;
 
 						var description = page.description && page.description[languageId];
 
