@@ -264,10 +264,11 @@ public class SaveRecordSetMVCCommandHelper {
 
 		Value value = ddmFormFieldValue.getValue();
 
-		String jsonArrayString = value.getString(ddmFormValues.getDefaultLocale());
-		
+		String jsonArrayString = value.getString(
+			ddmFormValues.getDefaultLocale());
+
 		JSONArray jsonArray = jsonFactory.createJSONArray(jsonArrayString);
-		
+
 		return jsonArray.getString(0);
 	}
 
