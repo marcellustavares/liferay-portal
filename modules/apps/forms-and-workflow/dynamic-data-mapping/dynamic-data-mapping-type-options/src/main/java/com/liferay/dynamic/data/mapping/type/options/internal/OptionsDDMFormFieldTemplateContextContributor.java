@@ -50,8 +50,9 @@ public class OptionsDDMFormFieldTemplateContextContributor
 		parameters.put(
 			"value", getValue(ddmFormField, ddmFormFieldRenderingContext));
 		parameters.put(
-			"allowEmptyOptions", 
-			GetterUtil.getBoolean(ddmFormField.getProperty("allowEmptyOptions")));
+			"allowEmptyOptions",
+			GetterUtil.getBoolean(
+				ddmFormField.getProperty("allowEmptyOptions")));
 
 		return parameters;
 	}
