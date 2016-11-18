@@ -352,9 +352,6 @@ public class DDLFormAdminDisplayContext {
 	}
 
 	public String getSerializedDDMForm() throws PortalException {
-		ThemeDisplay themeDisplay =
-			_ddlFormAdminRequestHelper.getThemeDisplay();
-
 		String definition = ParamUtil.getString(_renderRequest, "definition");
 
 		if (Validator.isNotNull(definition)) {
@@ -365,12 +362,11 @@ public class DDLFormAdminDisplayContext {
 
 		DDMForm ddmForm = new DDMForm();
 
+		ddmForm.addAvailableLocale(getSiteDefaultLocale());
+		ddmForm.setDefaultLocale(getSiteDefaultLocale());
+
 		if (ddmStructure != null) {
 			ddmForm = ddmStructure.getDDMForm();
-		}
-		else {
-			ddmForm.addAvailableLocale(themeDisplay.getSiteDefaultLocale());
-			ddmForm.setDefaultLocale(themeDisplay.getSiteDefaultLocale());
 		}
 
 		return _ddmFormJSONSerializer.serialize(ddmForm);
@@ -603,6 +599,13 @@ public class DDLFormAdminDisplayContext {
 		ServletContext servletContext = servletConfig.getServletContext();
 
 		return servletContext.getContextPath();
+	}
+
+	protected Locale getSiteDefaultLocale() {
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		return themeDisplay.getSiteDefaultLocale();
 	}
 
 	protected int getTotal() throws PortalException {
