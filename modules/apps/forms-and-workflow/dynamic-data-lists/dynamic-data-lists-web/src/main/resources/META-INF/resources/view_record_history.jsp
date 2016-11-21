@@ -38,17 +38,20 @@ for (DDLRecordVersion recordVersion : recordVersions) {
 
 		<h4><liferay-ui:message arguments="<%= recordVersion.getVersion() %>" key="version-x" /></h4>
 
-		<p>
-			<small class="text-muted">
-				<liferay-ui:message key="author" />: <%= recordVersion.getUserName() %>
-			</small>
-		</p>
-
-		<p>
-			<small class="text-muted">
-				<liferay-ui:message key="create-date" />: <%= dateSearchEntry.getName(request) %>
-			</small>
-		</p>
+		<dl>
+			<dt class="small text-muted">
+				<liferay-ui:message key="author" />
+			</dt>
+			<dd class="small text-muted">
+				<%= recordVersion.getUserName() %>
+			</dd>
+			<dt class="small text-muted">
+				<liferay-ui:message key="create-date" />
+			</dt>
+			<dd class="small text-muted">
+				<%= dateSearchEntry.getName(request) %>
+			</dd>
+		</dl>
 	</div>
 
 	<%} %>

@@ -122,28 +122,32 @@ else {
 				<liferay-ui:tabs cssClass="navbar-no-collapse" names="details,versions" refresh="<%= false %>" type="dropdown">
 					<liferay-ui:section>
 						<div class="sidebar-body">
-							<h3 class="version">
-								<liferay-ui:message key="version" /> <%= HtmlUtil.escape(recordVersion.getVersion()) %>
-							</h3>
+							<dl>
+								<dt class="h3 version">
+									<liferay-ui:message key="version" />
+								</dt>
+								<dd class="version">
+									<%= HtmlUtil.escape(recordVersion.getVersion()) %>
+								</dd>
 
-							<div>
-								<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
+								<div>
+									<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
 
-								<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
-							</div>
+									<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
+								</div>
 
-							<div>
-								<h5><strong><liferay-ui:message key="created" /></strong></h5>
-
-								<p>
+								<dt class="h5">
+									<liferay-ui:message key="created" />
+								</dt>
+								<dd>
 
 									<%
 									Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 									%>
 
 									<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(recordVersion.getUserName()), dateFormatDateTime.format(recordVersion.getCreateDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
-								</p>
-							</div>
+								</dd>
+							</dl>
 						</div>
 					</liferay-ui:section>
 
