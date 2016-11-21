@@ -294,6 +294,315 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 								</c:when>
 							</c:choose>
 						</c:when>
+						<c:when test="<%= type == ExpandoColumnConstants.GEOLOCATION %>">
+
+						<%
+							String googleMapsAPIKey = GetterUtil.getString(
+								themeDisplay.getScopeGroup().getTypeSettingsProperty("googleMapsAPIKey"),
+								null);
+
+							if (googleMapsAPIKey == null) {
+								PortletPreferences companyPortletPreferences =
+									PrefsPropsUtil.getPreferences(themeDisplay.getCompanyId());
+
+								googleMapsAPIKey = companyPortletPreferences.getValue("googleMapsAPIKey", null);
+
+							}
+						%>
+
+						<style>
+							/* Always set the map height explicitly to define the size of the div
+								   * element that contains the map. */
+							#map {
+							height: 300px;
+
+							}
+							#pac-input {
+							background-color: #fff;
+							font-family: Roboto;
+							font-size: 15px;
+							font-weight: 300;
+							margin-left: 12px;
+							padding: 0 11px 0 13px;
+							text-overflow: ellipsis;
+							width: 300px;
+							}
+
+							#pac-input:focus {
+							border-color: #4d90fe;
+							}
+
+							.pac-container {
+							font-family: Roboto;
+							}
+
+						</style>
+
+						<input id="pac-input" class="controls" type="text"
+						placeholder=<liferay-ui:message key="enter-a-location" />>
+
+						<div id="map"></div>
+
+						<script>
+
+							var geoPicker = {
+
+										createAddress : function(place) {
+											var address = '';
+											if (place.address_components) {
+												address = [
+													(place.address_components[0] && place.address_components[0].short_name || ''),
+													(place.address_components[1] && place.address_components[1].short_name || ''),
+													(place.address_components[2] && place.address_components[2].short_name || '')
+												].join(' ');
+											}
+
+											return address;
+										},
+
+										createInfoContent : function(place) {
+											var instance = geoPicker;
+
+											var address = instance.createAddress(place);
+
+											return '<div><strong>' + place.name + '</strong><br>' + address;
+										},
+
+										getExpandoInput : function() {
+											return $('[name="<%= portletDisplay.getNamespace()+"ExpandoAttribute--" + name + "--" %>"]');
+										},
+
+										getDefaultPosition : function() {
+											return {lat: -33.8688, lng: 151.2195};
+										},
+
+										getExpandoValue : function() {
+											var instance = geoPicker;
+
+											return instance.getExpandoInput().val();
+										},
+
+										getGoogleAPIURL : function() {
+											var googleAPIURL = "https://maps.googleapis.com/maps/api/js?libraries=places";
+											var googleMapsAPIKey = "<%= googleMapsAPIKey %>";
+
+											if (googleMapsAPIKey !== "null") {
+												googleAPIURL = googleAPIURL + "&key=" + googleMapsAPIKey;
+											}
+
+											return googleAPIURL;
+										},
+
+										getLocation : function(place) {
+											var location = {
+													lat : place.geometry.location.lat(),
+													lng : place.geometry.location.lng()
+												}
+
+											return location;
+										},
+
+										getPosition : function() {
+											var instance = geoPicker;
+
+											var position = {};
+
+											var expandoValue = instance.getExpandoValue();
+
+											if (expandoValue) {
+												position = JSON.parse(expandoValue);
+											}
+											if (!position.lat) {
+												position = instance.getDefaultPosition();
+											}
+
+											return position;
+										},
+
+										handleMarkerDragEvent : function() {
+											var instance = geoPicker;
+
+											var map = instance.map;
+
+											var geocoder = instance.geocoder;
+
+											var infowindow = instance.infowindow;
+											infowindow.close();
+
+											var marker = instance.marker;
+
+											var markerPosition = marker.getPosition();
+											map.setCenter(markerPosition);
+
+											instance.setExpandoValue(markerPosition);
+
+											geocoder.geocode({'location': markerPosition}, function(results, status) {
+
+												if (status === 'OK' && results[1]) {
+													infowindow.setContent(results[1].formatted_address);
+													infowindow.open(map, marker);
+												}
+											});
+										},
+
+										setExpandoValue : function(location) {
+											var instance = geoPicker;
+
+											instance.getExpandoInput().val( JSON.stringify(location));
+										},
+
+										showPlaceGeometry : function(place) {
+											var instance = geoPicker;
+
+											var map = instance.map;
+
+											// If the place has a geometry, then present it on a map.
+											if (place.geometry.viewport) {
+												map.fitBounds(place.geometry.viewport);
+											}
+											else {
+												map.setCenter(place.geometry.location);
+												map.setZoom(17);
+											}
+										},
+
+										updateMarkerLocation : function(place) {
+											var instance = geoPicker;
+
+											var marker = instance.marker;
+
+											marker.setVisible(false);
+											marker.setPosition(place.geometry.location);
+											marker.setVisible(true);
+										},
+
+										initAutoComplete : function(input) {
+											var instance = geoPicker;
+
+											instance.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+											var autocomplete = new google.maps.places.Autocomplete(input);
+
+											autocomplete.bindTo('bounds', instance.map);
+
+											autocomplete.addListener('place_changed', function() {
+
+												var place = autocomplete.getPlace();
+
+												var infowindow = instance.infowindow;
+
+												if (!place.geometry) {
+													return;
+												}
+
+												instance.showPlaceGeometry(place);
+
+												instance.updateMarkerLocation(place);
+
+												infowindow.close();
+												infowindow.setContent(instance.createInfoContent(place));
+												infowindow.open(instance.map, instance.marker);
+
+												var location = instance.getLocation(place);
+												location.address = instance.createInfoContent(place);
+												instance.setExpandoValue(location);
+											});
+										},
+
+										initMap : function() {
+											var instance = geoPicker;
+
+											instance.infowindow = new google.maps.InfoWindow;
+											instance.geocoder = new google.maps.Geocoder;
+
+											instance.position = instance.getPosition();
+
+											instance.map = new google.maps.Map(document.getElementById('map'), {
+												center: instance.position,
+												clickableIcons: true,
+												zoom: 13
+											});
+
+											instance.initMarker();
+
+											instance.updateInfoWindow();
+
+											var input = (document.getElementById('pac-input'));
+
+											instance.initAutoComplete(input);
+
+											var observer = new MutationObserver(function(mutations) {
+												var instance = geoPicker;
+												instance.resizeMap();
+
+											});
+
+											var target = $('.taglib-custom-attributes-list').parents('.panel-body').parent()[0];
+
+											observer.observe(target, {
+															childList: false,
+															attributes: true
+															});
+										},
+
+										initMarker : function() {
+											var instance = geoPicker;
+
+											instance.marker = new google.maps.Marker({
+												position: instance.position,
+												map: instance.map,
+												draggable: true,
+												animation: google.maps.Animation.DROP
+											});
+
+											instance.marker.addListener('dragend', function() {
+												instance.handleMarkerDragEvent();
+
+											});
+										},
+
+										resizeMap : function() {
+											var instance = geoPicker;
+
+											var map = instance.map;
+											var marker = instance.marker;
+											var markerPosition = instance.getPosition();
+
+											google.maps.event.trigger(instance.map, "resize");
+
+											map.setZoom(13);
+											map.setCenter(markerPosition);
+
+											instance.updateInfoWindow();
+										},
+
+										updateInfoWindow : function() {
+											var instance = geoPicker;
+											var infowindow = instance.infowindow;
+											var position = instance.position;
+
+											if (position.address) {
+												infowindow.setContent(position.address);
+												infowindow.open(instance.map,instance.marker);
+											}
+										}
+								}
+
+								if (typeof google !== 'undefined'
+									&& google.maps.places !== 'undefined') {
+
+									geoPicker.initMap();
+								}
+								else {
+									$.getScript( geoPicker.getGoogleAPIURL(),
+											function( data, textStatus, jqxhr ) {
+												geoPicker.initMap();
+											});
+								}
+							</script>
+
+							<input name="<%= portletDisplay.getNamespace()+"ExpandoAttribute--" + name + "--" %>" type="hidden" value="<%= HtmlUtil.escape(value.toString()) %>">
+						</c:when>
 						<c:when test="<%= type == ExpandoColumnConstants.INTEGER_ARRAY %>">
 
 							<%
