@@ -677,8 +677,7 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	public DDMStructure fetchStructure(
 			long groupId, long classNameId, String structureKey,
-			boolean includeAncestorStructures)
-		throws PortalException {
+			boolean includeAncestorStructures) {
 
 		structureKey = getStructureKey(structureKey);
 
