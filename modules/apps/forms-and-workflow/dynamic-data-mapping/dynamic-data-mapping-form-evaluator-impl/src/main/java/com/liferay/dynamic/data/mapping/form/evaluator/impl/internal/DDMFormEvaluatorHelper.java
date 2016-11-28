@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.CallFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.GetPropertyFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.JumpToPageFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetEnabledFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetInvalidFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetPropertyFunction;
@@ -54,11 +55,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * @author Leonardo Barros
  */
-public class DDMFormEvaluatorHelper {
+public class DDMFormEvaluatorHelper implements Observer {
 
 	public DDMFormEvaluatorHelper(
 		DDMDataProviderTracker ddmDataProviderTracker,
@@ -102,6 +105,13 @@ public class DDMFormEvaluatorHelper {
 			ddmFormFieldEvaluationResults);
 
 		return ddmFormEvaluationResult;
+	}
+
+	@Override
+	public void update(Observable observable, Object value) {
+		if (observable instanceof JumpToPageFunction) {
+			_formNextPage = value.toString();
+		}
 	}
 
 	protected DDMFormFieldEvaluationResult createDDMFormFieldEvaluationResult(
@@ -544,6 +554,7 @@ public class DDMFormEvaluatorHelper {
 	private final Map<String, List<DDMFormFieldValue>> _ddmFormFieldValuesMap =
 		new LinkedHashMap<>();
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
+	private String _formNextPage;
 	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
 
