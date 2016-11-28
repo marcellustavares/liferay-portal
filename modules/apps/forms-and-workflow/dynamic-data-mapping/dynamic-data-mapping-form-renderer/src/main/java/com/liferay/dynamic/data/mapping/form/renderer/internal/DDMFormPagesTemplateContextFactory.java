@@ -136,6 +136,8 @@ public class DDMFormPagesTemplateContextFactory {
 			DDMFormEvaluationResult ddmFormEvaluationResult =
 				_ddmFormEvaluator.evaluate(_ddmForm, _ddmFormValues, _locale);
 
+			updateDDMFormRenderingContext(ddmFormEvaluationResult);
+
 			return ddmFormEvaluationResult.
 				getDDMFormFieldEvaluationResultsMap();
 		}
@@ -280,6 +282,13 @@ public class DDMFormPagesTemplateContextFactory {
 				ddmFormFieldsMap,
 				ddmFormFieldValue.getNestedDDMFormFieldValues());
 		}
+	}
+
+	protected void updateDDMFormRenderingContext(
+		DDMFormEvaluationResult ddmFormEvaluationResult) {
+
+		_ddmFormRenderingContext.setNextPage(
+			ddmFormEvaluationResult.getNextPage());
 	}
 
 	private DDMFormEvaluationResult _createDDMFormEvaluationResult() {
