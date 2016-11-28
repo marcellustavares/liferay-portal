@@ -131,6 +131,8 @@ public class DDMFormTemplateContextFactoryImpl
 		templateContext.put(
 			"layout", _ddmFormLayoutJSONSerializer.serialize(ddmFormLayout));
 
+		templateContext.put("nextPage", ddmFormRenderingContext.getNextPage());
+
 		List<Object> pages = getPages(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 

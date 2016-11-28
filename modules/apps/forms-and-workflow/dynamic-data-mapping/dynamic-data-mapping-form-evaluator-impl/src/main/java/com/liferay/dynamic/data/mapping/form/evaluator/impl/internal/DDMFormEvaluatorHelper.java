@@ -104,6 +104,8 @@ public class DDMFormEvaluatorHelper implements Observer {
 		ddmFormEvaluationResult.setDDMFormFieldEvaluationResults(
 			ddmFormFieldEvaluationResults);
 
+		ddmFormEvaluationResult.setNextPage(_formNextPage);
+
 		return ddmFormEvaluationResult;
 	}
 
@@ -336,6 +338,8 @@ public class DDMFormEvaluatorHelper implements Observer {
 				_ddmDataProviderTracker, _ddmDataProviderInstanceService,
 				_ddmFormFieldEvaluationResultsMap,
 				_ddmFormValuesJSONDeserializer, _jsonFactory));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"jumpToPage", new JumpToPageFunction(this));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"getValue",
 			new GetPropertyFunction(
