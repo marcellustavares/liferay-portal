@@ -25,9 +25,15 @@ import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
+import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormInstanceFactory;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
@@ -39,6 +45,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
@@ -181,6 +189,122 @@ public class DDLRecordSetLocalServiceImpl
 			recordSet.getCompanyId(), recordSet.getGroupId(),
 			recordSet.getUserId(), DDLRecordSet.class.getName(),
 			recordSet.getRecordSetId(), groupPermissions, guestPermissions);
+	}
+
+	protected static DDMFormFieldValue createDDMFormFieldValue(
+		String instanceId, String name, Value value) {
+
+		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+
+		ddmFormFieldValue.setInstanceId(instanceId);
+		ddmFormFieldValue.setName(name);
+		ddmFormFieldValue.setValue(value);
+
+		return ddmFormFieldValue;
+	}
+
+	protected static DDMFormFieldValue createDDMFormFieldValue(
+		String name, Value value) {
+
+		return createDDMFormFieldValue(StringUtil.randomString(), name, value);
+	}
+
+	protected static DDMFormValues createDDMFormValues(DDMForm ddmForm) {
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		ddmFormValues.setAvailableLocales(ddmForm.getAvailableLocales());
+		ddmFormValues.setDefaultLocale(ddmForm.getDefaultLocale());
+
+		return ddmFormValues;
+	}
+
+	protected static DDMFormFieldValue createUnlocalizedDDMFormFieldValue(
+		String name, String value) {
+
+		return createDDMFormFieldValue(name, new UnlocalizedValue(value));
+	}
+
+	protected DDMFormValues createDefaultSettingsDDMFormValues() {
+		DDMForm settingsDDMForm = DDMFormFactory.create(
+			DDLRecordSetSettings.class);
+		DDMFormValues settingsDDMFormValues =
+			createDDMFormValues(settingsDDMForm);
+
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"emailFromAddress", StringPool.BLANK));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"emailFromName", StringPool.BLANK));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"emailSubject", StringPool.BLANK));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"emailToAddress", StringPool.BLANK));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"published", Boolean.FALSE.toString()));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"redirectURL", StringPool.BLANK));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"requireCaptcha", Boolean.FALSE.toString()));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"sendEmailNotification", Boolean.FALSE.toString()));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"storageType", StorageType.JSON.toString()));
+		settingsDDMFormValues.addDDMFormFieldValue(
+			createUnlocalizedDDMFormFieldValue(
+				"workflowDefinition", StringPool.BLANK));
+
+		return settingsDDMFormValues;
+	}
+
+	@Override
+	public DDLRecordSet copyRecordSet(
+		long groupId, long recordSetId, Map<Locale, String> nameMap,
+		ServiceContext serviceContext)
+		throws PortalException {
+
+		DDLRecordSet recordSet = getRecordSet(recordSetId);
+
+		long userId = recordSet.getUserId();
+
+		DDMStructure oldDDMStructure = recordSet.getDDMStructure();
+
+		DDMStructure newDDMStructure = ddmStructureLocalService.
+			copyStructure(userId, oldDDMStructure.getStructureId(),
+				serviceContext);
+
+		long classNameId = classNameLocalService.
+			getClassNameId(DDLRecordSet.class);
+		long oldStructureId = oldDDMStructure.getStructureId();
+		long newStructureId = newDDMStructure.getStructureId();
+
+		ddmTemplateLocalService.copyTemplates(userId,
+			classNameId, oldStructureId, newStructureId,
+			DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY, serviceContext);
+
+		ddmTemplateLocalService.copyTemplates(userId,
+			classNameId, oldStructureId, newStructureId,
+			DDMTemplateConstants.TEMPLATE_TYPE_FORM, serviceContext);
+
+		DDLRecordSet ddlRecordSetCopy = addRecordSet(userId, groupId,
+			newDDMStructure.getStructureId(), null, nameMap,
+			recordSet.getDescriptionMap(),
+			recordSet.getMinDisplayRows(),
+			recordSet.getScope(), serviceContext);
+
+		DDMFormValues settingsDDMFormValues =
+			createDefaultSettingsDDMFormValues();
+		updateRecordSet(ddlRecordSetCopy.getRecordSetId(),
+			settingsDDMFormValues);
+
+		return ddlRecordSetCopy;
 	}
 
 	/**
@@ -769,4 +893,6 @@ public class DDLRecordSetLocalServiceImpl
 	@ServiceReference(type = DDMStructureLocalService.class)
 	protected DDMStructureLocalService ddmStructureLocalService;
 
+	@ServiceReference(type = DDMTemplateLocalService.class)
+	protected DDMTemplateLocalService ddmTemplateLocalService;
 }

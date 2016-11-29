@@ -76,6 +76,19 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 			descriptionMap, minDisplayRows, scope, serviceContext);
 	}
 
+	@Override
+	public DDLRecordSet copyRecordSet(
+		long groupId, long recordSetId, Map<Locale, String> nameMap,
+		ServiceContext serviceContext)
+		throws PortalException {
+
+		DDLPermission.check(
+			getPermissionChecker(), groupId, DDLActionKeys.ADD_RECORD_SET);
+
+		return ddlRecordSetLocalService.copyRecordSet(groupId, recordSetId,
+			nameMap, serviceContext);
+	}
+
 	/**
 	 * Deletes a record set and its resources.
 	 *
