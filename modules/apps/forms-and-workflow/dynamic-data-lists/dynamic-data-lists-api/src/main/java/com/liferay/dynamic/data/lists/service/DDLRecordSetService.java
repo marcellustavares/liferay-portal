@@ -88,6 +88,10 @@ public interface DDLRecordSetService extends BaseService {
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
 		int scope, ServiceContext serviceContext) throws PortalException;
 
+	public DDLRecordSet copyRecordSet(long groupId, long recordSetId,
+		Map<Locale, java.lang.String> nameMap, ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	* Returns a record set with the ID.
 	*

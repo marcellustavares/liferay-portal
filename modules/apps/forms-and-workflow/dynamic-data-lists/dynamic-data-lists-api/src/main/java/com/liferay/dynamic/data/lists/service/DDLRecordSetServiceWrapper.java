@@ -68,6 +68,16 @@ public class DDLRecordSetServiceWrapper implements DDLRecordSetService,
 			serviceContext);
 	}
 
+	@Override
+	public com.liferay.dynamic.data.lists.model.DDLRecordSet copyRecordSet(
+		long groupId, long recordSetId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordSetService.copyRecordSet(groupId, recordSetId,
+			nameMap, serviceContext);
+	}
+
 	/**
 	* Returns a record set with the ID.
 	*
