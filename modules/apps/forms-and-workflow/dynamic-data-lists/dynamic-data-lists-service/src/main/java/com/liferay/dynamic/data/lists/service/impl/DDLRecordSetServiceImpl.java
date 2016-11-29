@@ -78,15 +78,15 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 
 	@Override
 	public DDLRecordSet copyRecordSet(
-		long groupId, long recordSetId, Map<Locale, String> nameMap,
-		ServiceContext serviceContext)
+			long groupId, long recordSetId, Map<Locale, String> nameMap,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		DDLPermission.check(
 			getPermissionChecker(), groupId, DDLActionKeys.ADD_RECORD_SET);
 
-		return ddlRecordSetLocalService.copyRecordSet(groupId, recordSetId,
-			nameMap, serviceContext);
+		return ddlRecordSetLocalService.copyRecordSet(
+			groupId, recordSetId, nameMap, serviceContext);
 	}
 
 	/**

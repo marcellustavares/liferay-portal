@@ -28,23 +28,24 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.PortletSession;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Pedro Queiroz
  */
-
 @Component(
 	immediate = true,
 	property = {
@@ -57,31 +58,23 @@ public class CopyRecordSetMVCActionCommand extends BaseMVCActionCommand {
 
 	public Map<Locale, String> getRecordSetNameCopy(long recordSetId)
 		throws Exception {
-		DDLRecordSet ddlRecordSet = _ddlRecordSetService
-			.getRecordSet(recordSetId);
+
+		DDLRecordSet ddlRecordSet = _ddlRecordSetService.getRecordSet(
+			recordSetId);
 		Locale siteDefaultLocale = LocaleUtil.getSiteDefault();
 
 		Map<Locale, String> nameMapCopy = new HashMap<>();
 
-		String nameCopy =
-			LanguageUtil.format(getResourceBundle(siteDefaultLocale),
-				"copy-of-x", ddlRecordSet.getName(siteDefaultLocale, Boolean.TRUE));
+		String nameCopy = LanguageUtil.format(
+			getResourceBundle(siteDefaultLocale), "copy-of-x",
+			ddlRecordSet.getName(siteDefaultLocale, Boolean.TRUE));
 
 		nameMapCopy.put(siteDefaultLocale, nameCopy);
 
 		return nameMapCopy;
 	}
 
-	protected ResourceBundle getResourceBundle(Locale locale) {
-
-		Class<?> clazz = getClass();
-
-		return ResourceBundleUtil.getBundle("content.Language", locale, clazz);
-	}
-
-	protected void copyRecordSet(ActionRequest actionRequest)
-		throws Exception {
-
+	protected void copyRecordSet(ActionRequest actionRequest) throws Exception {
 		long groupId = ParamUtil.getLong(actionRequest, "groupId");
 		long recordSetId = ParamUtil.getLong(actionRequest, "recordSetId");
 
@@ -91,14 +84,14 @@ public class CopyRecordSetMVCActionCommand extends BaseMVCActionCommand {
 		serviceContext.setAddGroupPermissions(Boolean.TRUE);
 		serviceContext.setAddGuestPermissions(Boolean.TRUE);
 
-		_ddlRecordSetService.copyRecordSet(groupId, recordSetId,
-			getRecordSetNameCopy(recordSetId), serviceContext);
-
+		_ddlRecordSetService.copyRecordSet(
+			groupId, recordSetId, getRecordSetNameCopy(recordSetId),
+			serviceContext);
 	}
 
 	@Override
 	protected void doProcessAction(
-		ActionRequest actionRequest, ActionResponse actionResponse)
+			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
 		try {
@@ -106,7 +99,6 @@ public class CopyRecordSetMVCActionCommand extends BaseMVCActionCommand {
 		}
 		catch (Exception e) {
 			if (e instanceof NoSuchRecordSetException) {
-
 				SessionErrors.add(actionRequest, e.getClass());
 
 				PortletSession portletSession =
@@ -126,6 +118,12 @@ public class CopyRecordSetMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
+	protected ResourceBundle getResourceBundle(Locale locale) {
+		Class<?> clazz = getClass();
+
+		return ResourceBundleUtil.getBundle("content.Language", locale, clazz);
+	}
+
 	@Reference(unbind = "-")
 	protected void setDDLRecordSetService(
 		DDLRecordSetService ddlRecordSetService) {
@@ -134,4 +132,5 @@ public class CopyRecordSetMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	private DDLRecordSetService _ddlRecordSetService;
+
 }
