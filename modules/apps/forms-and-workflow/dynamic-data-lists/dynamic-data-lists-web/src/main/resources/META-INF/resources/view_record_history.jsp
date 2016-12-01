@@ -16,42 +16,44 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-DDLRecord record = (DDLRecord)request.getAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD);
+<ul class="sidebar-block tabular-list-group-unstyled">
 
-DateSearchEntry dateSearchEntry = new DateSearchEntry();
+	<%
+	DDLRecord record = (DDLRecord)request.getAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD);
 
-List<DDLRecordVersion> recordVersions = DDLRecordVersionServiceUtil.getRecordVersions(record.getRecordId());
+	DateSearchEntry dateSearchEntry = new DateSearchEntry();
 
-for (DDLRecordVersion recordVersion : recordVersions) {
-	dateSearchEntry.setDate(recordVersion.getCreateDate());
+	List<DDLRecordVersion> recordVersions = DDLRecordVersionServiceUtil.getRecordVersions(record.getRecordId());
 
-	request.setAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD_VERSION, recordVersion);
-%>
+	for (DDLRecordVersion recordVersion : recordVersions) {
+		dateSearchEntry.setDate(recordVersion.getCreateDate());
 
-	<div>
-		<ul class="sidebar-header-actions">
-			<li>
+		request.setAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS_RECORD_VERSION, recordVersion);
+	%>
+
+		<li class="list-group-item">
+			<div class="list-group-item-content">
+				<div class="h5">
+					<liferay-ui:message arguments="<%= recordVersion.getVersion() %>" key="version-x" />
+				</div>
+				<div class="h6">
+					<liferay-ui:message key="author" />
+				</div>
+				<div class="h6 sidebar-caption">
+					<%= recordVersion.getUserName() %>
+				</div>
+				<div class="h6">
+					<liferay-ui:message key="create-date" />
+				</div>
+				<div class="h6 sidebar-caption">
+					<%= dateSearchEntry.getName(request) %>
+				</div>
+			</div>
+			<div class="list-group-item-field">
 				<liferay-util:include page="/record_version_action.jsp" servletContext="<%= application %>" />
-			</li>
-		</ul>
-
-		<h4><liferay-ui:message arguments="<%= recordVersion.getVersion() %>" key="version-x" /></h4>
-
-		<dl>
-			<dt class="small text-muted">
-				<liferay-ui:message key="author" />
-			</dt>
-			<dd class="small text-muted">
-				<%= recordVersion.getUserName() %>
-			</dd>
-			<dt class="small text-muted">
-				<liferay-ui:message key="create-date" />
-			</dt>
-			<dd class="small text-muted">
-				<%= dateSearchEntry.getName(request) %>
-			</dd>
-		</dl>
-	</div>
+			</div>
+		</li>
 
 	<%} %>
+
+</ul>

@@ -116,30 +116,34 @@ else {
 		<div class="sidenav-menu-slider">
 			<div class="sidebar sidebar-default sidenav-menu">
 				<div class="sidebar-header">
-					<aui:icon cssClass="icon-monospaced sidenav-close text-default visible-xs-inline-block" image="times" markupView="lexicon" url="javascript:;" />
+					<ul class="sidebar-actions">
+						<li>
+							<aui:icon cssClass="icon-monospaced sidenav-close text-default visible-xs-inline-block" image="times" markupView="lexicon" url="javascript:;" />
+						</li>
+					</ul>
 				</div>
 
 				<liferay-ui:tabs cssClass="navbar-no-collapse" names="details,versions" refresh="<%= false %>" type="dropdown">
 					<liferay-ui:section>
 						<div class="sidebar-body">
-							<dl>
-								<dt class="h3 version">
+							<dl class="sidebar-block">
+								<dt class="h5 version">
 									<liferay-ui:message key="version" />
 								</dt>
-								<dd class="version">
+								<dd class="h6 sidebar-caption version">
 									<%= HtmlUtil.escape(recordVersion.getVersion()) %>
+
+									<div>
+										<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
+
+										<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
+									</div>
 								</dd>
-
-								<div>
-									<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
-
-									<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
-								</div>
 
 								<dt class="h5">
 									<liferay-ui:message key="created" />
 								</dt>
-								<dd>
+								<dd class="h6 sidebar-caption">
 
 									<%
 									Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
