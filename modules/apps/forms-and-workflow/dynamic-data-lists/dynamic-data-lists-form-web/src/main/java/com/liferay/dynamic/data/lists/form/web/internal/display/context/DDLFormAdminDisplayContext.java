@@ -402,6 +402,18 @@ public class DDLFormAdminDisplayContext {
 		return jsonSerializer.serializeDeep(ddlFormRules);
 	}
 
+	public boolean isAuthenticationRequired() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet == null) {
+			return false;
+		}
+
+		DDLRecordSetSettings recordSetSettings = recordSet.getSettingsModel();
+
+		return recordSetSettings.requireAuthentication();
+	}
+
 	public boolean isDDLRecordWorkflowHandlerDeployed() {
 		if (!_workflowEngineManager.isDeployed()) {
 			return false;

@@ -178,6 +178,14 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 					<aui:input label="" name="publishCheckbox" type="toggle-switch" value="<%= ddlFormAdminDisplayContext.isFormPublished() %>" />
 				</label>
+
+				<label class="control-label ddl-publish-checkbox" for="<portlet:namespace />publishCheckbox">
+					<span class="pull-left">
+						<small><liferay-ui:message key="require-user-authentication" /></small>
+					</span>
+
+					<aui:input label="" name="requireAuthenticationCheckbox" type="toggle-switch" value="<%= ddlFormAdminDisplayContext.isAuthenticationRequired() %>" />
+				</label>
 			</div>
 
 			<div class="alert alert-info">

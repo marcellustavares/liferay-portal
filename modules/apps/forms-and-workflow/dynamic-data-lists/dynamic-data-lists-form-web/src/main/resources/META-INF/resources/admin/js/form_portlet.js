@@ -311,7 +311,7 @@ AUI.add(
 							{
 								dialog: {
 									cssClass: 'publish-modal-container',
-									height: 400,
+									height: 430,
 									resizable: false,
 									'toolbars.footer': [
 										{
