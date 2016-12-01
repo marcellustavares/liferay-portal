@@ -80,6 +80,17 @@ public class DDLRecordSetTestHelper {
 			serviceContext);
 	}
 
+	public DDLRecordSet copyRecordSet(
+			long recordSetId, Map<Locale, String> nameMap)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		return DDLRecordSetLocalServiceUtil.copyRecordSet(
+			_group.getGroupId(), recordSetId, nameMap, serviceContext);
+	}
+
 	public DDLRecordSet updateRecordSet(
 			long recordSetId, DDMFormValues settingsDDMFormValues)
 		throws PortalException {
