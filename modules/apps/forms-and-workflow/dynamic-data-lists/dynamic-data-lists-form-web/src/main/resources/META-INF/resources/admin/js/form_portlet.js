@@ -307,6 +307,10 @@ AUI.add(
 
 						publishCheckbox.setData('previousValue', publishCheckbox.attr('checked'));
 
+						var requireAuthenticationCheckbox = instance.one('#requireAuthenticationCheckbox');
+
+						requireAuthenticationCheckbox.setData('previousValue', requireAuthenticationCheckbox.attr('checked'));
+
 						Liferay.Util.openWindow(
 							{
 								dialog: {
@@ -372,6 +376,12 @@ AUI.add(
 						var publishedField = settingsDDMForm.getField('published');
 
 						publishedField.setValue(publishCheckbox.attr('checked'));
+
+						var requireAuthenticationCheckbox = instance.one('#requireAuthenticationCheckbox');
+
+						var requireAuthenticationField = settingsDDMForm.getField('requireAuthentication');
+
+						requireAuthenticationField.setValue(requireAuthenticationCheckbox.attr('checked'));
 
 						var settings = settingsDDMForm.toJSON();
 
@@ -563,6 +573,10 @@ AUI.add(
 						var publishCheckbox = instance.one('#publishCheckbox');
 
 						publishCheckbox.attr('checked', publishCheckbox.getData('previousValue'));
+
+						var requireAuthenticationCheckbox = instance.one('#requireAuthenticationCheckbox');
+
+						requireAuthenticationCheckbox.attr('checked', requireAuthenticationCheckbox.getData('previousValue'));
 
 						Liferay.Util.getWindow(instance.ns('publishModalContainer')).hide();
 					},
