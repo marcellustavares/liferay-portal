@@ -154,7 +154,6 @@ AUI.add(
 							instance.after('autosave', instance._afterAutosave),
 							formBuilder._layoutBuilder.after('layout-builder:moveEnd', A.bind(instance._afterFormBuilderLayoutBuilderMoveEnd, instance)),
 							formBuilder._layoutBuilder.after('layout-builder:moveStart', A.bind(instance._afterFormBuilderLayoutBuilderMoveStart, instance)),
-							instance.one('.btn-cancel').on('click', A.bind('_onCancel', instance)),
 							instance.one('#preview').on('click', A.bind('_onPreviewButtonClick', instance)),
 							instance.one('#publish').on('click', A.bind('_onPublishButtonClick', instance)),
 							instance.one('#save').on('click', A.bind('_onSaveButtonClick', instance)),
@@ -271,47 +270,6 @@ AUI.add(
 						var fields = definition.fields;
 
 						return fields.length === 0;
-					},
-
-					openConfirmationModal: function(confirm, cancel) {
-						var instance = this;
-
-						var dialog = Liferay.Util.Window.getWindow(
-							{
-								dialog: {
-									bodyContent: Liferay.Language.get('are-you-sure-you-want-to-cancel'),
-									destroyOnHide: true,
-									height: 200,
-									resizable: false,
-									toolbars: {
-										footer: [
-											{
-												cssClass: 'btn-lg btn-primary',
-												label: Liferay.Language.get('yes-cancel'),
-												on: {
-													click: function() {
-														confirm.call(instance, dialog);
-													}
-												}
-											},
-											{
-												cssClass: 'btn-lg btn-link',
-												label: Liferay.Language.get('no-continue'),
-												on: {
-													click: function() {
-														cancel.call(instance, dialog);
-													}
-												}
-											}
-										]
-									},
-									width: 500
-								},
-								title: Liferay.Language.get('confirm')
-							}
-						);
-
-						return dialog;
 					},
 
 					openPublishModal: function() {
@@ -549,26 +507,6 @@ AUI.add(
 								return (key === 'instanceId') || undefined;
 							}
 						);
-					},
-
-					_onCancel: function(event) {
-						var instance = this;
-
-						if (!instance._isSameState(instance.getState(), instance.initialState)) {
-							event.preventDefault();
-							event.stopPropagation();
-
-							instance.openConfirmationModal(
-								function(dialog) {
-									window.location.href = event.currentTarget.get('href');
-
-									dialog.hide();
-								},
-								function(dialog) {
-									dialog.hide();
-								}
-							);
-						}
 					},
 
 					_onCancelPublishModal: function() {
