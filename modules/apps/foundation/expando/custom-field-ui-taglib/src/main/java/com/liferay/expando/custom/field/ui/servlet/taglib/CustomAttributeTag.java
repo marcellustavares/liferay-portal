@@ -12,16 +12,18 @@
  * details.
  */
 
-package com.liferay.taglib.ui;
+package com.liferay.expando.custom.field.ui.servlet.taglib;
 
+import com.liferay.expando.custom.field.ui.servlet.ServletContextUtil;
 import com.liferay.taglib.util.IncludeTag;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Brian Wing Shun Chan
  */
-public class CustomAttributeListTag extends IncludeTag {
+public class CustomAttributeTag extends IncludeTag {
 
 	public void setClassName(String className) {
 		_className = className;
@@ -35,12 +37,12 @@ public class CustomAttributeListTag extends IncludeTag {
 		_editable = editable;
 	}
 
-	public void setIgnoreAttributeNames(String ignoreAttributeNames) {
-		_ignoreAttributeNames = ignoreAttributeNames;
-	}
-
 	public void setLabel(boolean label) {
 		_label = label;
+	}
+
+	public void setName(String name) {
+		_name = name;
 	}
 
 	@Override
@@ -48,8 +50,8 @@ public class CustomAttributeListTag extends IncludeTag {
 		_className = null;
 		_classPK = 0;
 		_editable = false;
-		_ignoreAttributeNames = null;
 		_label = false;
+		_name = null;
 	}
 
 	@Override
@@ -60,27 +62,30 @@ public class CustomAttributeListTag extends IncludeTag {
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
 		request.setAttribute(
-			"liferay-ui:custom-attribute-list:className", _className);
+			"custom-field-ui:custom-attribute:className", _className);
 		request.setAttribute(
-			"liferay-ui:custom-attribute-list:classPK",
-			String.valueOf(_classPK));
+			"custom-field-ui:custom-attribute:classPK", String.valueOf(_classPK));
 		request.setAttribute(
-			"liferay-ui:custom-attribute-list:editable",
-			String.valueOf(_editable));
+			"custom-field-ui:custom-attribute:editable", String.valueOf(_editable));
 		request.setAttribute(
-			"liferay-ui:custom-attribute-list:ignoreAttributeNames",
-			_ignoreAttributeNames);
-		request.setAttribute(
-			"liferay-ui:custom-attribute-list:label", String.valueOf(_label));
+			"custom-field-ui:custom-attribute:label", String.valueOf(_label));
+		request.setAttribute("custom-field-ui:custom-attribute:name", _name);
 	}
 
+	@Override
+	public void setPageContext(PageContext pageContext) {
+		super.setPageContext(pageContext);
+
+		servletContext = ServletContextUtil.getServletContext();
+	}
+	
 	private static final String _PAGE =
-		"/html/taglib/ui/custom_attribute_list/page.jsp";
+		"/custom_attribute/page.jsp";
 
 	private String _className;
 	private long _classPK;
 	private boolean _editable;
-	private String _ignoreAttributeNames;
 	private boolean _label;
+	private String _name;
 
 }

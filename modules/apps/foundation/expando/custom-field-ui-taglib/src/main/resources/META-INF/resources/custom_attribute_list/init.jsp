@@ -14,6 +14,8 @@
  */
 --%>
 
-<%@ include file="/html/taglib/init.jsp" %>
+<%@ taglib uri="http://liferay.com/tld/custom_field_ui" prefix="liferay-custom-field-ui" %>
+
+<%@ include file="/init.jsp" %>
 
 <%@ page import="com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil" %>
