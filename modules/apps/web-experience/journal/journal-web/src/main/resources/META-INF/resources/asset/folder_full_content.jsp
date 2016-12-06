@@ -49,14 +49,14 @@ JournalFolder folder = journalDisplayContext.getFolder();
 				</div>
 			</div>
 
-			<liferay-ui:custom-attributes-available className="<%= JournalFolder.class.getName() %>">
-				<liferay-ui:custom-attribute-list
+			<liferay-custom-field-ui:custom-attribute-available className="<%= JournalFolder.class.getName() %>">
+				<liferay-custom-field-ui:custom-attribute-list
 					className="<%= JournalFolder.class.getName() %>"
 					classPK="<%= folder.getFolderId() %>"
 					editable="<%= false %>"
 					label="<%= true %>"
 				/>
-			</liferay-ui:custom-attributes-available>
+			</liferay-custom-field-ui:custom-attribute-available>
 		</aui:col>
 	</aui:row>
 </c:if>
