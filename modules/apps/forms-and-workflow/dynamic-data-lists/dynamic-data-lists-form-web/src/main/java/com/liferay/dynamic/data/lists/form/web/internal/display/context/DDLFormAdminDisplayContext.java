@@ -253,11 +253,11 @@ public class DDLFormAdminDisplayContext {
 
 	public String getOrderByCol() {
 		return ParamUtil.getString(
-			_renderRequest, "orderByCol", "modified-date");
+			_renderRequest, "orderByCol", "create-date");
 	}
 
 	public String getOrderByType() {
-		return ParamUtil.getString(_renderRequest, "orderByType", "asc");
+		return ParamUtil.getString(_renderRequest, "orderByType", "desc");
 	}
 
 	public PortletURL getPortletURL() {
