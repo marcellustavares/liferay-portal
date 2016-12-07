@@ -149,6 +149,7 @@ AUI.add(
 							instance.one('#save').on('click', A.bind('_onSaveButtonClick', instance)),
 							instance.one('#showRules').on('click', A.bind('_onRulesButtonClick', instance)),
 							instance.one('#showForm').on('click', A.bind('_onFormButtonClick', instance)),
+							instance.one('#requireAuthenticationCheckbox').on('change', A.bind('_onRequireAuthenticationCheckboxChanged', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
 
@@ -657,6 +658,14 @@ AUI.add(
 						saveAndPublish.set('value', 'true');
 
 						instance.submitForm();
+					},
+
+					_onRequireAuthenticationCheckboxChanged: function() {
+						var instance = this;
+
+						var clipboardInput = instance.one('#clipboard');
+
+						clipboardInput.set('value', instance._createFormURL());
 					},
 
 					_onRulesButtonClick: function() {
