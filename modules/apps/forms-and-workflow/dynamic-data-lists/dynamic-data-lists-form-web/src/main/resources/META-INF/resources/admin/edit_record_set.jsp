@@ -253,14 +253,15 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											editForm: event.form,
 											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
 											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
-											formURL: '<%= ddlFormAdminDisplayContext.getFormURL() %>',
 											getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
 											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
 											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',
 											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
 											recordSetId: <%= recordSetId %>,
-											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>
+											restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
+											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
+											sharedFormURL: '<%= ddlFormAdminDisplayContext.getSharedFormURL() %>'
 										}
 									)
 								);

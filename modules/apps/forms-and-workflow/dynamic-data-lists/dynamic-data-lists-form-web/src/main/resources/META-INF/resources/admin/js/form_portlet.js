@@ -52,9 +52,6 @@ AUI.add(
 						valueFn: '_valueFormBuilder'
 					},
 
-					formURL: {
-					},
-
 					getFieldTypeSettingFormContextURL: {
 						value: ''
 					},
@@ -75,12 +72,18 @@ AUI.add(
 						value: 0
 					},
 
+					restrictedFormURL: {
+					},
+
 					ruleBuilder: {
 						valueFn: '_valueRuleBuilder'
 					},
 
 					rules: {
 						value: []
+					},
+
+					sharedFormURL: {
 					}
 				},
 
@@ -483,14 +486,31 @@ AUI.add(
 						}
 					},
 
-					_createPreviewURL: function() {
+					_createFormURL: function() {
 						var instance = this;
 
-						var formURL = instance.get('formURL');
+						var formURL;
+
+						var requireAuthenticationCheckbox = instance.one('#requireAuthenticationCheckbox');
+
+						if (requireAuthenticationCheckbox.attr('checked')) {
+							formURL = instance.get('restrictedFormURL');
+						}
+						else {
+							formURL = instance.get('sharedFormURL');
+						}
 
 						var recordSetId = instance.byId('recordSetId').val();
 
-						return formURL + recordSetId + '/preview';
+						return formURL + recordSetId;
+					},
+
+					_createPreviewURL: function() {
+						var instance = this;
+
+						var formURL = instance._createFormURL();
+
+						return formURL   + '/preview';
 					},
 
 					_defineIds: function(response) {
