@@ -236,19 +236,20 @@ public class DDLFormAdminDisplayContext {
 	}
 
 	public String getFormURL() throws PortalException {
-		StringBundler sb = new StringBundler(4);
+		DDLRecordSet recordSet = getRecordSet();
 
-		ThemeDisplay themeDisplay =
-			_ddlFormAdminRequestHelper.getThemeDisplay();
+		DDLRecordSetSettings settings = recordSet.getSettingsModel();
 
-		Group group = themeDisplay.getSiteGroup();
+		String formURL;
 
-		sb.append(themeDisplay.getPortalURL());
-		sb.append(group.getPathFriendlyURL(false, themeDisplay));
+		if (settings.requireAuthentication()) {
+			formURL = getRestrictedFormURL();
+		}
+		else {
+			formURL = getSharedFormURL();
+		}
 
-		sb.append("/forms/shared/-/form/");
-
-		return sb.toString();
+		return formURL;
 	}
 
 	public String getOrderByCol() {
@@ -351,6 +352,22 @@ public class DDLFormAdminDisplayContext {
 		return record.getLatestRecordVersion();
 	}
 
+	public String getRestrictedFormURL() {
+		StringBundler sb = new StringBundler(4);
+
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getSiteGroup();
+
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(group.getPathFriendlyURL(true, themeDisplay));
+
+		sb.append("/forms/shared/-/form/");
+
+		return sb.toString();
+	}
+
 	public String getSerializedDDMForm() throws PortalException {
 		String definition = ParamUtil.getString(_renderRequest, "definition");
 
@@ -400,6 +417,22 @@ public class DDLFormAdminDisplayContext {
 				ddmForm.getDDMFormRules());
 
 		return jsonSerializer.serializeDeep(ddlFormRules);
+	}
+
+	public String getSharedFormURL() {
+		StringBundler sb = new StringBundler(4);
+
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
+		Group group = themeDisplay.getSiteGroup();
+
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(group.getPathFriendlyURL(false, themeDisplay));
+
+		sb.append("/forms/shared/-/form/");
+
+		return sb.toString();
 	}
 
 	public boolean isAuthenticationRequired() throws PortalException {
