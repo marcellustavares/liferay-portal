@@ -139,7 +139,6 @@ else {
 										<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
 									</div>
 								</dd>
-
 								<dt class="h5">
 									<liferay-ui:message key="created" />
 								</dt>

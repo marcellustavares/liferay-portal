@@ -36,24 +36,28 @@
 				<div class="h5">
 					<liferay-ui:message arguments="<%= recordVersion.getVersion() %>" key="version-x" />
 				</div>
+
 				<div class="h6">
 					<liferay-ui:message key="author" />
 				</div>
+
 				<div class="h6 sidebar-caption">
 					<%= recordVersion.getUserName() %>
 				</div>
+
 				<div class="h6">
 					<liferay-ui:message key="create-date" />
 				</div>
+
 				<div class="h6 sidebar-caption">
 					<%= dateSearchEntry.getName(request) %>
 				</div>
 			</div>
+
 			<div class="list-group-item-field">
 				<liferay-util:include page="/record_version_action.jsp" servletContext="<%= application %>" />
 			</div>
 		</li>
 
 	<%} %>
-
 </ul>
