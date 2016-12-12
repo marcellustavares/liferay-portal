@@ -110,6 +110,10 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
 		int scope, ServiceContext serviceContext) throws PortalException;
 
+	public DDLRecordSet copyRecordSet(long groupId, long recordSetId,
+		Map<Locale, java.lang.String> nameMap, ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	* Creates a new d d l record set with the primary key. Does not add the d d l record set to the database.
 	*

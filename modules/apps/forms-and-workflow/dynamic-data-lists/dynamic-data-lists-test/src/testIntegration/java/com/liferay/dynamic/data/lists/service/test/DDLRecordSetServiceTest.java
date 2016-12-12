@@ -96,6 +96,30 @@ public class DDLRecordSetServiceTest {
 	}
 
 	@Test
+	public void testCopyRecordSet() throws Exception {
+		DDMForm ddmStructureDDMForm = DDMFormTestUtil.createDDMForm("Field");
+
+		DDLRecordSet ddlRecordSet = _ddlRecordSetTestHelper.addRecordSet(
+			ddmStructureDDMForm);
+
+		DDLRecordSet ddlRecordSetCopy = _ddlRecordSetTestHelper.copyRecordSet(
+			ddlRecordSet.getRecordSetId(), ddlRecordSet.getNameMap());
+
+		Assert.assertEquals(
+			ddlRecordSet.getUserId(), ddlRecordSetCopy.getUserId());
+		Assert.assertEquals(
+			ddlRecordSet.getGroupId(), ddlRecordSetCopy.getGroupId());
+		Assert.assertNotEquals(
+			ddlRecordSet.getRecordSetId(), ddlRecordSetCopy.getRecordSetId());
+		Assert.assertNotEquals(
+			ddlRecordSet.getDDMStructureId(),
+			ddlRecordSetCopy.getDDMStructureId());
+
+		Assert.assertNotNull(ddlRecordSetCopy.getSettingsDDMFormValues());
+		Assert.assertNotNull(ddlRecordSetCopy.getNameMap());
+	}
+
+	@Test
 	public void testUpdateRecordSetWithFailStorage() throws Exception {
 		DDMForm ddmStructureDDMForm = DDMFormTestUtil.createDDMForm("Field");
 

@@ -90,6 +90,15 @@ public class DDLRecordSetLocalServiceUtil {
 			nameMap, descriptionMap, minDisplayRows, scope, serviceContext);
 	}
 
+	public static com.liferay.dynamic.data.lists.model.DDLRecordSet copyRecordSet(
+		long groupId, long recordSetId,
+		java.util.Map<java.util.Locale, java.lang.String> nameMap,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .copyRecordSet(groupId, recordSetId, nameMap, serviceContext);
+	}
+
 	/**
 	* Creates a new d d l record set with the primary key. Does not add the d d l record set to the database.
 	*

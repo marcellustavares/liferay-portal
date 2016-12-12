@@ -119,6 +119,27 @@ public class DDLRecordSetServiceSoap {
 		}
 	}
 
+	public static com.liferay.dynamic.data.lists.model.DDLRecordSetSoap copyRecordSet(
+		long groupId, long recordSetId, java.lang.String[] nameMapLanguageIds,
+		java.lang.String[] nameMapValues,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(nameMapLanguageIds,
+					nameMapValues);
+
+			com.liferay.dynamic.data.lists.model.DDLRecordSet returnValue = DDLRecordSetServiceUtil.copyRecordSet(groupId,
+					recordSetId, nameMap, serviceContext);
+
+			return com.liferay.dynamic.data.lists.model.DDLRecordSetSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	/**
 	* Deletes a record set and its resources.
 	*
