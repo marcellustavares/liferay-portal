@@ -294,6 +294,66 @@ ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(company.
 								</c:when>
 							</c:choose>
 						</c:when>
+						<c:when test="<%= type == ExpandoColumnConstants.GEOLOCATION %>">
+
+							<%
+								JSONObject geolocationJson = JSONFactoryUtil.createJSONObject(value.toString());
+							%>
+
+							<div id="<portlet:namespace/>CoordinatesContainer">
+								<div class="glyphicon glyphicon-map-marker"
+									id="<%= portletDisplay.getNamespace()+"ExpandoAttribute--" + name + "--Location" %>">
+								</div>
+
+								<liferay-map:map-display
+									geolocation="<%= true %>"
+									latitude='<%= geolocationJson.getDouble("latitude", -33.8688) %>'
+									longitude='<%= geolocationJson.getDouble("longitude", 151.2195) %>'
+									name='<%= "ExpandoAttribute--" + name +"--" %>'
+								/>
+							</div>
+
+							<aui:script use="aui-base, liferay-map-base">
+
+								var inputName = "<%= portletDisplay.getNamespace()+"ExpandoAttribute--" + name + "--" %>";
+
+								var geolocationField = {
+
+									init: function() {
+										Liferay.MapBase.get(
+											inputName,
+											function(map) {
+												map.on('positionChange', geolocationField.onPositionChange, geolocationField);
+											}
+										);
+									},
+
+									onPositionChange: function(event) {
+										var instance = geolocationField;
+
+										var location = event.newVal.location;
+										var locationString = JSON.stringify(
+																	{
+																		latitude: location.lat,
+																		longitude: location.lng
+																	}
+																)
+
+										var inputNode = A.one('[name="'+inputName+'"]');
+
+										inputNode.val(locationString);
+
+										var locationNode = A.one('#' + inputName + 'Location');
+
+										locationNode.html(event.newVal.address);
+									}
+								}
+
+								geolocationField.init();
+							</aui:script>
+
+							<aui:input name='<%= "ExpandoAttribute--" + name + "--" %>' type="hidden" value="<%= HtmlUtil.escape(value.toString()) %>" />
+						</c:when>
 						<c:when test="<%= type == ExpandoColumnConstants.INTEGER_ARRAY %>">
 
 							<%
