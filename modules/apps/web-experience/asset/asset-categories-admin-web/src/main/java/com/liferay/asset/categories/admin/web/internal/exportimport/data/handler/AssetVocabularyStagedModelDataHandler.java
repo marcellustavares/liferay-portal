@@ -14,15 +14,19 @@
 
 package com.liferay.asset.categories.admin.web.internal.exportimport.data.handler;
 
+import com.liferay.asset.kernel.model.AssetCategoryConstants;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
-import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
+import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -98,6 +102,23 @@ public class AssetVocabularyStagedModelDataHandler
 		return vocabulary.getTitleCurrentValue();
 	}
 
+	protected JSONObject createClassNameIdClassNameMapperJSONObject(
+		AssetVocabulary vocabulary) {
+
+		JSONObject classNameIdClassNameMapperJSONObject =
+			_jsonFactory.createJSONObject();
+
+		putInJSONObject(
+			classNameIdClassNameMapperJSONObject,
+			vocabulary.getRequiredClassNameIds());
+
+		putInJSONObject(
+			classNameIdClassNameMapperJSONObject,
+			vocabulary.getSelectedClassNameIds());
+
+		return classNameIdClassNameMapperJSONObject;
+	}
+
 	protected ServiceContext createServiceContext(
 		PortletDataContext portletDataContext, AssetVocabulary vocabulary) {
 
@@ -125,6 +146,9 @@ public class AssetVocabularyStagedModelDataHandler
 		vocabularyElement.addAttribute("path", vocabularyPath);
 
 		vocabulary.setUserUuid(vocabulary.getUserUuid());
+
+		exportClassNameIdClassNames(
+			portletDataContext, vocabulary, vocabularyElement);
 
 		portletDataContext.addReferenceElement(
 			vocabulary, vocabularyElement, vocabulary,
@@ -165,6 +189,9 @@ public class AssetVocabularyStagedModelDataHandler
 
 		ServiceContext serviceContext = createServiceContext(
 			portletDataContext, vocabulary);
+
+		vocabulary.setSettings(
+			getImportSettings(portletDataContext, vocabulary));
 
 		AssetVocabulary importedVocabulary = null;
 
@@ -210,6 +237,65 @@ public class AssetVocabularyStagedModelDataHandler
 			importedVocabulary.getVocabularyId());
 	}
 
+	protected void exportClassNameIdClassNames(
+		PortletDataContext portletDataContext, AssetVocabulary vocabulary,
+		Element vocabularyElement) {
+
+		String classNameIdClassNameMapperPath =
+			ExportImportPathUtil.getModelPath(
+				vocabulary, _CLASSNAME_CLASSNAME_ID_MAPPER + ".json");
+
+		vocabularyElement.addAttribute(
+			_CLASSNAME_CLASSNAME_ID_MAPPER, classNameIdClassNameMapperPath);
+
+		JSONObject classNameIdClassNameMapperJSONObject =
+			createClassNameIdClassNameMapperJSONObject(vocabulary);
+
+		portletDataContext.addZipEntry(
+			classNameIdClassNameMapperPath,
+			classNameIdClassNameMapperJSONObject.toJSONString());
+	}
+
+	protected JSONObject getImportClassNameIdClassNameMapperJSONObject(
+			PortletDataContext portletDataContext, Element vocabularyElement)
+		throws PortalException {
+
+		String classNameIdClassNameMapperPath =
+			vocabularyElement.attributeValue(_CLASSNAME_CLASSNAME_ID_MAPPER);
+
+		String serializedClassNameIdClassNameMapper =
+			portletDataContext.getZipEntryAsString(
+				classNameIdClassNameMapperPath);
+
+		return _jsonFactory.createJSONObject(
+			serializedClassNameIdClassNameMapper);
+	}
+
+	protected String getImportSettings(
+			PortletDataContext portletDataContext, AssetVocabulary vocabulary)
+		throws PortalException {
+
+		Element vocabularyElement = portletDataContext.getImportDataElement(
+			vocabulary);
+
+		JSONObject classNameClassNameIdMapperJSONObject =
+			getImportClassNameIdClassNameMapperJSONObject(
+				portletDataContext, vocabularyElement);
+
+		if (classNameClassNameIdMapperJSONObject.length() == 0) {
+			return vocabulary.getSettings();
+		}
+
+		AssetVocabularySettingsImportHelper
+			assetVocabularySettingsImportHelper =
+				new AssetVocabularySettingsImportHelper(
+					vocabulary.getSettings(),
+					classNameClassNameIdMapperJSONObject,
+					_classNameLocalService);
+
+		return assetVocabularySettingsImportHelper.getUpdatedSettings();
+	}
+
 	protected String getVocabularyName(
 			String uuid, long groupId, String name, int count)
 		throws Exception {
@@ -245,13 +331,31 @@ public class AssetVocabularyStagedModelDataHandler
 		return titleMap;
 	}
 
-	@Reference(unbind = "-")
-	protected void setAssetVocabularyLocalService(
-		AssetVocabularyLocalService assetVocabularyLocalService) {
+	protected void putInJSONObject(
+		JSONObject classNameClassNameIdMapper, long[] classNameIds) {
 
-		_assetVocabularyLocalService = assetVocabularyLocalService;
+		for (long classNameId : classNameIds) {
+			String className = StringPool.BLANK;
+
+			if (classNameId != AssetCategoryConstants.ALL_CLASS_NAME_ID) {
+				className = PortalUtil.getClassName(classNameId);
+			}
+
+			classNameClassNameIdMapper.put(
+				String.valueOf(classNameId), className);
+		}
 	}
 
+	private static final String _CLASSNAME_CLASSNAME_ID_MAPPER =
+		"class-name-id-class-name-mapper";
+
+	@Reference
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 }
