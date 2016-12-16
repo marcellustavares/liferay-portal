@@ -14,9 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.liferay.dynamic.data.mapping.expression.internal.DDMExpressionFactoryImpl;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.DDMFormEvaluatorImpl;
@@ -36,17 +33,18 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.mockito.Matchers;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Marcellus Tavares
@@ -102,11 +100,15 @@ public class DDMFormPagesTemplateContextFactoryTest {
 			createDDMFormPagesTemplateContextFactory(
 				ddmForm, ddmFormLayout, null, false, true);
 
-		List<Object> pages = ddmFormPagesTemplateContextFactory.create();
+		Map<String, Object> pagesTemplateContext =
+			ddmFormPagesTemplateContextFactory.create();
 
-		Assert.assertEquals(1, pages.size());
+		List<Object> pagesContext = (List<Object>)pagesTemplateContext.get(
+			"pages");
 
-		Map<String, Object> page1 = (Map<String, Object>)pages.get(0);
+		Assert.assertEquals(1, pagesContext.size());
+
+		Map<String, Object> page1 = (Map<String, Object>)pagesContext.get(0);
 
 		Assert.assertEquals("Page 1", page1.get("title"));
 		Assert.assertEquals("Page 1 Description", page1.get("description"));
@@ -194,20 +196,23 @@ public class DDMFormPagesTemplateContextFactoryTest {
 			createDDMFormPagesTemplateContextFactory(
 				ddmForm, ddmFormLayout, null, false, false);
 
-		List<Object> pagesTemplateContext =
+		Map<String, Object> pagesTemplateContext =
 			ddmFormPagesTemplateContextFactory.create();
 
-		Assert.assertEquals(2, pagesTemplateContext.size());
+		List<Object> pagesContext = (List<Object>)pagesTemplateContext.get(
+			"pages");
+
+		Assert.assertEquals(2, pagesContext.size());
 
 		Map<String, Object> page1TemplateContext =
-			(Map<String, Object>)pagesTemplateContext.get(0);
+			(Map<String, Object>)pagesContext.get(0);
 
 		Assert.assertFalse(
 			MapUtil.getBoolean(
 				page1TemplateContext, "showRequiredFieldsWarning"));
 
 		Map<String, Object> page2TemplateContext =
-			(Map<String, Object>)pagesTemplateContext.get(1);
+			(Map<String, Object>)pagesContext.get(1);
 
 		Assert.assertFalse(
 			MapUtil.getBoolean(
@@ -267,20 +272,23 @@ public class DDMFormPagesTemplateContextFactoryTest {
 			createDDMFormPagesTemplateContextFactory(
 				ddmForm, ddmFormLayout, null, false, true);
 
-		List<Object> pagesTemplateContext =
+		Map<String, Object> pagesTemplateContext =
 			ddmFormPagesTemplateContextFactory.create();
 
-		Assert.assertEquals(2, pagesTemplateContext.size());
+		List<Object> pagesContext = (List<Object>)pagesTemplateContext.get(
+			"pages");
+
+		Assert.assertEquals(2, pagesContext.size());
 
 		Map<String, Object> page1TemplateContext =
-			(Map<String, Object>)pagesTemplateContext.get(0);
+			(Map<String, Object>)pagesContext.get(0);
 
 		Assert.assertTrue(
 			MapUtil.getBoolean(
 				page1TemplateContext, "showRequiredFieldsWarning"));
 
 		Map<String, Object> page2TemplateContext =
-			(Map<String, Object>)pagesTemplateContext.get(1);
+			(Map<String, Object>)pagesContext.get(1);
 
 		Assert.assertFalse(
 			MapUtil.getBoolean(

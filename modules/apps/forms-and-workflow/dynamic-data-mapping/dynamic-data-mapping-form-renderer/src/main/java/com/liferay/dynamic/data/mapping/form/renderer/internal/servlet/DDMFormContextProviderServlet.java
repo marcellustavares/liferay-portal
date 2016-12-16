@@ -36,8 +36,8 @@ import com.liferay.portal.kernel.util.ParamUtil;
 
 import java.io.IOException;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -62,7 +62,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DDMFormContextProviderServlet extends HttpServlet {
 
-	protected List<Object> createDDMFormPagesTemplateContext(
+	protected Map<String, Object> createDDMFormPagesTemplateContext(
 		HttpServletRequest request, HttpServletResponse response,
 		String portletNamespace) {
 
@@ -128,7 +128,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		String portletNamespace = ParamUtil.getString(
 			request, "portletNamespace");
 
-		List<Object> ddmFormPagesTemplateContext =
+		Map<String, Object> ddmFormPagesTemplateContext =
 			createDDMFormPagesTemplateContext(
 				request, response, portletNamespace);
 
@@ -178,9 +178,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 			ddmForm, serializedDDMFormValues);
 	}
 
-	private void _prepareThreadLocal(Locale locale)
-		throws Exception, PortalException {
-
+	private void _prepareThreadLocal(Locale locale) {
 		LocaleThreadLocal.setThemeDisplayLocale(locale);
 	}
 

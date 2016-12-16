@@ -16,32 +16,31 @@ package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Map;
 
 /**
  * @author Inácio Nery
  */
-public class JumpToPageFunction
-	extends Observable implements DDMExpressionFunction {
+public class JumpToPageFunction implements DDMExpressionFunction {
 
-	public JumpToPageFunction(Observer observer) {
-		addObserver(observer);
+	public JumpToPageFunction(Map<String, String> pageFlow) {
+		_pageFlow = pageFlow;
 	}
 
 	@Override
 	public Object evaluate(Object... parameters) {
-		if (parameters.length != 1) {
-			throw new IllegalArgumentException("One parameter is expected");
+		if (parameters.length != 2) {
+			throw new IllegalArgumentException("Two parameters are expected");
 		}
 
-		String pageIndex = parameters[0].toString();
+		String fromPage = parameters[0].toString();
+		String toPage = parameters[1].toString();
 
-		setChanged();
-
-		notifyObservers(pageIndex);
+		_pageFlow.put(fromPage, toPage);
 
 		return true;
 	}
+
+	private final Map<String, String> _pageFlow;
 
 }

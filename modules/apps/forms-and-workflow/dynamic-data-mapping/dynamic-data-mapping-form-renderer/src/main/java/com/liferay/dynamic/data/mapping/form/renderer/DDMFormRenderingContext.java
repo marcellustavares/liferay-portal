@@ -46,10 +46,6 @@ public class DDMFormRenderingContext {
 		return _locale;
 	}
 
-	public String getNextPage() {
-		return _nextPage;
-	}
-
 	public String getPortletNamespace() {
 		return _portletNamespace;
 	}
@@ -92,10 +88,6 @@ public class DDMFormRenderingContext {
 		_locale = locale;
 	}
 
-	public void setNextPage(String nextPage) {
-		_nextPage = nextPage;
-	}
-
 	public void setPortletNamespace(String portletNamespace) {
 		_portletNamespace = portletNamespace;
 	}
@@ -123,7 +115,6 @@ public class DDMFormRenderingContext {
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private Locale _locale;
-	private String _nextPage;
 	private String _portletNamespace;
 	private boolean _readOnly;
 	private boolean _showRequiredFieldsWarning = true;

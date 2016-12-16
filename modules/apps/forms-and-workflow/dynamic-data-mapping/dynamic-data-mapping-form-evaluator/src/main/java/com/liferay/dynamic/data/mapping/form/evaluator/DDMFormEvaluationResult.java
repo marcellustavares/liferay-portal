@@ -64,8 +64,8 @@ public class DDMFormEvaluationResult {
 		return _ddmFormFieldEvaluationResultsMap;
 	}
 
-	public String getNextPage() {
-		return _nextPage;
+	public Map<String, String> getPageFlow() {
+		return _pageFlow;
 	}
 
 	public void setDDMFormFieldEvaluationResults(
@@ -74,8 +74,8 @@ public class DDMFormEvaluationResult {
 		_ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
 	}
 
-	public void setNextPage(String nextPage) {
-		_nextPage = nextPage;
+	public void setPageFlow(Map<String, String> pageFlow) {
+		_pageFlow = pageFlow;
 	}
 
 	protected void populateDDMFormFieldEvaluationResultsMap(
@@ -116,6 +116,6 @@ public class DDMFormEvaluationResult {
 		new ArrayList<>();
 	private Map<String, DDMFormFieldEvaluationResult>
 		_ddmFormFieldEvaluationResultsMap;
-	private String _nextPage;
+	private Map<String, String> _pageFlow;
 
 }
