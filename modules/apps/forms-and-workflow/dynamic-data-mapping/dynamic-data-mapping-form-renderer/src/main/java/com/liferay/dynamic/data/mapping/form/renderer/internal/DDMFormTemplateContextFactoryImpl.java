@@ -131,12 +131,11 @@ public class DDMFormTemplateContextFactoryImpl
 		templateContext.put(
 			"layout", _ddmFormLayoutJSONSerializer.serialize(ddmFormLayout));
 
-		templateContext.put("nextPage", ddmFormRenderingContext.getNextPage());
-
-		List<Object> pages = getPages(
+		Map<String, Object> pagesTemplateContext = getPagesTemplateContext(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
-		templateContext.put("pages", pages);
+		templateContext.put("pageFlow", pagesTemplateContext.get("pageFlow"));
+		templateContext.put("pages", pagesTemplateContext.get("pages"));
 
 		templateContext.put(
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
@@ -226,7 +225,7 @@ public class DDMFormTemplateContextFactoryImpl
 		return stringsMap;
 	}
 
-	protected List<Object> getPages(
+	protected Map<String, Object> getPagesTemplateContext(
 		DDMForm ddmForm, DDMFormLayout ddmFormLayout,
 		DDMFormRenderingContext ddmFormRenderingContext) {
 

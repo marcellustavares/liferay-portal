@@ -77,7 +77,7 @@ public class DDMFormEvaluatorHelperTest {
 		String condition = "getValue(\"field0\") >= 1";
 
 		List<String> actions = ListUtil.fromArray(
-			new String[] {"jumpToPage(\"2\")"});
+			new String[] {"jumpToPage(\"1\", \"4\")"});
 
 		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
 
@@ -91,7 +91,9 @@ public class DDMFormEvaluatorHelperTest {
 		DDMFormEvaluationResult ddmFormEvaluationResult =
 			ddmFormEvaluatorHelper.evaluate();
 
-		Assert.assertEquals("2", ddmFormEvaluationResult.getNextPage());
+		Map<String, String> pageFlow = ddmFormEvaluationResult.getPageFlow();
+
+		Assert.assertEquals("4", pageFlow.get("1"));
 	}
 
 	@Test
@@ -112,7 +114,7 @@ public class DDMFormEvaluatorHelperTest {
 		String condition = "getValue(\"field0\") > 1";
 
 		List<String> actions = ListUtil.fromArray(
-			new String[] {"jumpToPage(\"2\")"});
+			new String[] {"jumpToPage(\"1\", \"4\")"});
 
 		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
 
@@ -126,7 +128,9 @@ public class DDMFormEvaluatorHelperTest {
 		DDMFormEvaluationResult ddmFormEvaluationResult =
 			ddmFormEvaluatorHelper.evaluate();
 
-		Assert.assertNull(ddmFormEvaluationResult.getNextPage());
+		Map<String, String> pageFlow = ddmFormEvaluationResult.getPageFlow();
+
+		Assert.assertTrue(pageFlow.isEmpty());
 	}
 
 	@Test

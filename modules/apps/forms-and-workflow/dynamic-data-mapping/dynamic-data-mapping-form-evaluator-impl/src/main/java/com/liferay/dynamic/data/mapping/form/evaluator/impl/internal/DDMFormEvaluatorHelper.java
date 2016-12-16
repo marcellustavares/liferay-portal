@@ -55,13 +55,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * @author Leonardo Barros
  */
-public class DDMFormEvaluatorHelper implements Observer {
+public class DDMFormEvaluatorHelper {
 
 	public DDMFormEvaluatorHelper(
 		DDMDataProviderTracker ddmDataProviderTracker,
@@ -104,16 +102,9 @@ public class DDMFormEvaluatorHelper implements Observer {
 		ddmFormEvaluationResult.setDDMFormFieldEvaluationResults(
 			ddmFormFieldEvaluationResults);
 
-		ddmFormEvaluationResult.setNextPage(_formNextPage);
+		ddmFormEvaluationResult.setPageFlow(_pageFlow);
 
 		return ddmFormEvaluationResult;
-	}
-
-	@Override
-	public void update(Observable observable, Object value) {
-		if (observable instanceof JumpToPageFunction) {
-			_formNextPage = value.toString();
-		}
 	}
 
 	protected DDMFormFieldEvaluationResult createDDMFormFieldEvaluationResult(
@@ -339,7 +330,7 @@ public class DDMFormEvaluatorHelper implements Observer {
 				_ddmFormFieldEvaluationResultsMap,
 				_ddmFormValuesJSONDeserializer, _jsonFactory));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
-			"jumpToPage", new JumpToPageFunction(this));
+			"jumpToPage", new JumpToPageFunction(_pageFlow));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"getValue",
 			new GetPropertyFunction(
@@ -558,8 +549,8 @@ public class DDMFormEvaluatorHelper implements Observer {
 	private final Map<String, List<DDMFormFieldValue>> _ddmFormFieldValuesMap =
 		new LinkedHashMap<>();
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
-	private String _formNextPage;
 	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
+	private final Map<String, String> _pageFlow = new HashMap<>();
 
 }

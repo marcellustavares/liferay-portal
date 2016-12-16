@@ -14,8 +14,8 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,35 +27,23 @@ public class JumpToPageFunctionTest extends BaseDDMFormRuleFunctionTest {
 
 	@Test
 	public void testEvaluate() {
-		JumpToPageFunction jumpToPageFunction = new JumpToPageFunction(
-			_OBSERVER);
+		Map<String, String> pageFlow = new HashMap<>();
 
-		Object result = jumpToPageFunction.evaluate("1");
+		JumpToPageFunction jumpToPageFunction = new JumpToPageFunction(
+			pageFlow);
+
+		Object result = jumpToPageFunction.evaluate("1", "5");
 
 		Assert.assertEquals(true, result);
+
+		Assert.assertEquals("5", pageFlow.get("1"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testIllegalArgument() throws Exception {
-		JumpToPageFunction jumpToPageFunction = new JumpToPageFunction(
-			_OBSERVER);
+		JumpToPageFunction jumpToPageFunction = new JumpToPageFunction(null);
 
 		jumpToPageFunction.evaluate();
 	}
-
-	@Test(expected = NullPointerException.class)
-	public void testNullPointer() throws Exception {
-		new JumpToPageFunction(null);
-	}
-
-	private static final Observer _OBSERVER = new Observer() {
-
-		@Override
-		public void update(Observable observable, Object value) {
-			Assert.assertTrue(observable instanceof JumpToPageFunction);
-			Assert.assertEquals("1", String.valueOf(value));
-		}
-
-	};
 
 }
