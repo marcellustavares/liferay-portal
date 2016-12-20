@@ -60,6 +60,80 @@ public class DDMFormEvaluatorHelperTest {
 	}
 
 	@Test
+	public void testJumpToPageAction() throws Exception {
+		DDMForm ddmForm = new DDMForm();
+
+		DDMFormField ddmFormField = createDDMFormField(
+			"field0", "text", FieldConstants.NUMBER);
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createDDMFormFieldValue(
+				"field0_instanceId", "field0", new UnlocalizedValue("1")));
+
+		String condition = "getValue(\"field0\") >= 1";
+
+		List<String> actions = ListUtil.fromArray(
+			new String[] {"jumpToPage(\"1\", \"4\")"});
+
+		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
+
+		ddmForm.addDDMFormRule(ddmFormRule);
+
+		DDMFormEvaluatorHelper ddmFormEvaluatorHelper =
+			new DDMFormEvaluatorHelper(
+				null, null, _ddmExpressionFactory, ddmForm, ddmFormValues, null,
+				_jsonFactory, LocaleUtil.US);
+
+		DDMFormEvaluationResult ddmFormEvaluationResult =
+			ddmFormEvaluatorHelper.evaluate();
+
+		Map<String, String> pageFlow = ddmFormEvaluationResult.getPageFlow();
+
+		Assert.assertEquals("4", pageFlow.get("1"));
+	}
+
+	@Test
+	public void testNotCalledJumpToPageAction() throws Exception {
+		DDMForm ddmForm = new DDMForm();
+
+		DDMFormField ddmFormField = createDDMFormField(
+			"field0", "text", FieldConstants.NUMBER);
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createDDMFormFieldValue(
+				"field0_instanceId", "field0", new UnlocalizedValue("1")));
+
+		String condition = "getValue(\"field0\") > 1";
+
+		List<String> actions = ListUtil.fromArray(
+			new String[] {"jumpToPage(\"1\", \"4\")"});
+
+		DDMFormRule ddmFormRule = new DDMFormRule(condition, actions);
+
+		ddmForm.addDDMFormRule(ddmFormRule);
+
+		DDMFormEvaluatorHelper ddmFormEvaluatorHelper =
+			new DDMFormEvaluatorHelper(
+				null, null, _ddmExpressionFactory, ddmForm, ddmFormValues, null,
+				_jsonFactory, LocaleUtil.US);
+
+		DDMFormEvaluationResult ddmFormEvaluationResult =
+			ddmFormEvaluatorHelper.evaluate();
+
+		Map<String, String> pageFlow = ddmFormEvaluationResult.getPageFlow();
+
+		Assert.assertTrue(pageFlow.isEmpty());
+	}
+
+	@Test
 	public void testRequiredValidationWithCheckboxField() throws Exception {
 		DDMForm ddmForm = new DDMForm();
 

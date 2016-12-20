@@ -17,7 +17,6 @@ package com.liferay.dynamic.data.mapping.form.renderer.internal;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
-import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -33,6 +32,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -75,9 +75,21 @@ public class DDMFormPagesTemplateContextFactory {
 		_locale = ddmFormRenderingContext.getLocale();
 	}
 
-	public List<Object> create() {
-		return createPagesTemplateContext(
-			_ddmFormLayout.getDDMFormLayoutPages());
+	public Map<String, Object> create() {
+		_ddmFormEvaluationResult = _createDDMFormEvaluationResult();
+
+		if (_ddmFormEvaluationResult == null) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("pageFlow", _ddmFormEvaluationResult.getPageFlow());
+		context.put(
+			"pages",
+			createPagesTemplateContext(_ddmFormLayout.getDDMFormLayoutPages()));
+
+		return context;
 	}
 
 	public void setDDMFormEvaluator(DDMFormEvaluator ddmFormEvaluator) {
@@ -129,23 +141,6 @@ public class DDMFormPagesTemplateContextFactory {
 		return columnTemplateContext;
 	}
 
-	protected Map<String, DDMFormFieldEvaluationResult>
-		createDDMFormFieldEvaluationResultsMap() {
-
-		try {
-			DDMFormEvaluationResult ddmFormEvaluationResult =
-				_ddmFormEvaluator.evaluate(_ddmForm, _ddmFormValues, _locale);
-
-			return ddmFormEvaluationResult.
-				getDDMFormFieldEvaluationResultsMap();
-		}
-		catch (DDMFormEvaluationException ddmfee) {
-			_log.error("Unable to evaluate the form", ddmfee);
-		}
-
-		return new HashMap<>();
-	}
-
 	protected List<Object> createFieldsTemplateContext(
 		List<String> ddmFormFieldNames) {
 
@@ -160,10 +155,6 @@ public class DDMFormPagesTemplateContextFactory {
 	}
 
 	protected List<Object> createFieldTemplateContext(String ddmFormFieldName) {
-		if (_ddmFormEvaluationResult == null) {
-			_ddmFormEvaluationResult = _createDDMFormEvaluationResult();
-		}
-
 		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
 			new DDMFormFieldTemplateContextFactory(
 				_ddmFormFieldsMap, _ddmFormEvaluationResult,

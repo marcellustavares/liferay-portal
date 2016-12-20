@@ -64,10 +64,18 @@ public class DDMFormEvaluationResult {
 		return _ddmFormFieldEvaluationResultsMap;
 	}
 
+	public Map<String, String> getPageFlow() {
+		return _pageFlow;
+	}
+
 	public void setDDMFormFieldEvaluationResults(
 		List<DDMFormFieldEvaluationResult> ddmFormFieldEvaluationResults) {
 
 		_ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
+	}
+
+	public void setPageFlow(Map<String, String> pageFlow) {
+		_pageFlow = pageFlow;
 	}
 
 	protected void populateDDMFormFieldEvaluationResultsMap(
@@ -108,5 +116,6 @@ public class DDMFormEvaluationResult {
 		new ArrayList<>();
 	private Map<String, DDMFormFieldEvaluationResult>
 		_ddmFormFieldEvaluationResultsMap;
+	private Map<String, String> _pageFlow;
 
 }

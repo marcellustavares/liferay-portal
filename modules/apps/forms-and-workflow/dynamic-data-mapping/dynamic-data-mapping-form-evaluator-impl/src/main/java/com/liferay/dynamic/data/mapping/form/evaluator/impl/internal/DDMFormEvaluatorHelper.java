@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.CallFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.GetPropertyFunction;
+import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.JumpToPageFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetEnabledFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetInvalidFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetPropertyFunction;
@@ -100,6 +101,8 @@ public class DDMFormEvaluatorHelper {
 
 		ddmFormEvaluationResult.setDDMFormFieldEvaluationResults(
 			ddmFormFieldEvaluationResults);
+
+		ddmFormEvaluationResult.setPageFlow(_pageFlow);
 
 		return ddmFormEvaluationResult;
 	}
@@ -327,6 +330,8 @@ public class DDMFormEvaluatorHelper {
 				_ddmFormFieldEvaluationResultsMap,
 				_ddmFormValuesJSONDeserializer, _jsonFactory));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"jumpToPage", new JumpToPageFunction(_pageFlow));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"getValue",
 			new GetPropertyFunction(
 				_ddmFormFieldEvaluationResultsMap, "value"));
@@ -546,5 +551,6 @@ public class DDMFormEvaluatorHelper {
 	private final DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private final JSONFactory _jsonFactory;
 	private final Locale _locale;
+	private final Map<String, String> _pageFlow = new HashMap<>();
 
 }
