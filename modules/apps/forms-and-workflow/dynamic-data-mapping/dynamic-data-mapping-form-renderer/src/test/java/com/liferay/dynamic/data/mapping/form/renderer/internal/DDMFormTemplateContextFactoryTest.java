@@ -14,9 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
@@ -41,28 +39,26 @@ import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.PortalImpl;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import java.lang.reflect.Field;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.mockito.Matchers;
-
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Marcellus Tavares
@@ -77,6 +73,7 @@ public class DDMFormTemplateContextFactoryTest {
 
 		setUpDDM();
 		setUpDDMFormContextProviderServlet();
+		setUpDDMFormEvaluator();
 		setUpDDMFormFieldTypeServicesTracker();
 		setUpDDMFormFieldTypesJSONSerializer();
 		setUpDDMFormJSONSerializer();
@@ -462,6 +459,14 @@ public class DDMFormTemplateContextFactoryTest {
 		setDeclaredField(
 			_ddmFormTemplateContextFactory, "_ddmFormFieldTypeServicesTracker",
 			ddmFormFieldTypeServicesTracker);
+	}
+
+	protected void setUpDDMFormEvaluator() throws Exception {
+		DDMFormEvaluator ddmFormEvaluator = mock(DDMFormEvaluator.class);
+
+		setDeclaredField(
+			_ddmFormTemplateContextFactory, "_ddmFormEvaluator",
+			ddmFormEvaluator);
 	}
 
 	protected void setUpDDMFormFieldTypesJSONSerializer() throws Exception {
