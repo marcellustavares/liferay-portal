@@ -14,6 +14,19 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer.internal.servlet;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
@@ -34,20 +47,6 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ParamUtil;
 
-import java.io.IOException;
-
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author Marcellus Tavares
  */
@@ -62,7 +61,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DDMFormContextProviderServlet extends HttpServlet {
 
-	protected List<Object> createDDMFormPagesTemplateContext(
+	protected Map<String, Object> createDDMFormPagesTemplateContext(
 		HttpServletRequest request, HttpServletResponse response,
 		String portletNamespace) {
 
@@ -93,7 +92,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 				setDDMFormFieldTypeServicesTracker(
 					_ddmFormFieldTypeServicesTracker);
 
-			return ddmFormPagesTemplateContextFactory.create();
+			return ddmFormPagesTemplateContextFactory.createFull();
 		}
 		catch (Exception e) {
 			if (_log.isDebugEnabled()) {
@@ -128,7 +127,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		String portletNamespace = ParamUtil.getString(
 			request, "portletNamespace");
 
-		List<Object> ddmFormPagesTemplateContext =
+		Map<String, Object> ddmFormPagesTemplateContext =
 			createDDMFormPagesTemplateContext(
 				request, response, portletNamespace);
 

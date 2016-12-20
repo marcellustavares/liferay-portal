@@ -11,6 +11,7 @@ AUI.add(
 				var instance = this;
 
 				instance.after('render', instance._afterPaginatedFormRender);
+				instance.after('nextPage', instance._afterNextPageChange);
 			},
 
 			getCurrentPage: function() {
@@ -89,7 +90,16 @@ AUI.add(
 
 				var pagination = instance.getPagination();
 
-				pagination.next();
+				var nextPage = instance.get('nextPage');
+debugger;
+				if (nextPage) {
+					pagination.set('page', nextPage);
+
+					instance.set('nextPage', undefined);
+				}
+				else {
+					pagination.next();
+				}
 			},
 
 			prevPage: function() {

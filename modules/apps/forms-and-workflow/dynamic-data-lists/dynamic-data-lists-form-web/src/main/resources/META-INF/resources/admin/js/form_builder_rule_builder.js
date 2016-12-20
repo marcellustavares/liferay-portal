@@ -113,6 +113,27 @@ AUI.add(
 						return fields;
 					},
 
+					getPages: function() {
+						var instance = this;
+
+						var pages;
+
+						var formBuilder = instance.get('formBuilder');
+
+						var pagesQuantity = formBuilder.get('layouts').length;
+
+						pages = new Array(pagesQuantity);
+
+						for (var i = 0; i < pagesQuantity; i++) {
+							pages[i] = {
+								value: i + 1,
+								label: i + 1
+							};
+						}
+
+						return pages;
+					},
+
 					hide: function() {
 						var instance = this;
 
@@ -125,17 +146,19 @@ AUI.add(
 						var instance = this;
 
 						if (!instance._ruleClasses) {
-							instance._ruleClasses = new Liferay.DDL.FormBuilderRule(
+							instance._ruleClasses = new Liferay.DDL.FormBuilderRenderRule(
 								{
 									boundingBox: instance.get('boundingBox'),
 									bubbleTargets: [instance],
 									contentBox: instance.get('contentBox'),
-									fields: instance.getFields()
+									fields: instance.getFields(),
+									pages: instance.getPages()
 								}
 							);
 						}
 
 						instance._ruleClasses.set('fields', instance.getFields());
+						instance._ruleClasses.set('pages', instance.getPages());
 
 						instance._ruleClasses.render(rule);
 					},

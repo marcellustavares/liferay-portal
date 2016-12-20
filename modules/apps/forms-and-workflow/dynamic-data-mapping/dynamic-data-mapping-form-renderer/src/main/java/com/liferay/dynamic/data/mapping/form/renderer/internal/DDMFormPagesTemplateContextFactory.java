@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,21 @@ public class DDMFormPagesTemplateContextFactory {
 	public List<Object> create() {
 		return createPagesTemplateContext(
 			_ddmFormLayout.getDDMFormLayoutPages());
+	}
+	
+	public Map<String, Object> createFull() {
+		Map<String, Object> fullContext = new HashMap<>();
+		
+		List<Object> pages = createPagesTemplateContext(
+			_ddmFormLayout.getDDMFormLayoutPages());
+		
+		fullContext.put("pages", pages);
+		
+		if (Validator.isNotNull(_nextPage)) {
+			fullContext.put("nextPage", _nextPage);
+		}
+		
+		return fullContext;
 	}
 
 	public void setDDMFormEvaluator(DDMFormEvaluator ddmFormEvaluator) {
@@ -129,23 +145,6 @@ public class DDMFormPagesTemplateContextFactory {
 		return columnTemplateContext;
 	}
 
-	protected Map<String, DDMFormFieldEvaluationResult>
-		createDDMFormFieldEvaluationResultsMap() {
-
-		try {
-			DDMFormEvaluationResult ddmFormEvaluationResult =
-				_ddmFormEvaluator.evaluate(_ddmForm, _ddmFormValues, _locale);
-
-			return ddmFormEvaluationResult.
-				getDDMFormFieldEvaluationResultsMap();
-		}
-		catch (DDMFormEvaluationException ddmfee) {
-			_log.error("Unable to evaluate the form", ddmfee);
-		}
-
-		return new HashMap<>();
-	}
-
 	protected List<Object> createFieldsTemplateContext(
 		List<String> ddmFormFieldNames) {
 
@@ -164,6 +163,8 @@ public class DDMFormPagesTemplateContextFactory {
 			_ddmFormEvaluationResult = _createDDMFormEvaluationResult();
 		}
 
+		updateDDMFormRenderingContext(_ddmFormEvaluationResult);
+		
 		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
 			new DDMFormFieldTemplateContextFactory(
 				_ddmFormFieldsMap, _ddmFormEvaluationResult,
@@ -282,6 +283,12 @@ public class DDMFormPagesTemplateContextFactory {
 		}
 	}
 
+	protected void updateDDMFormRenderingContext(
+		DDMFormEvaluationResult ddmFormEvaluationResult) {
+
+		_nextPage = ddmFormEvaluationResult.getNextPage();
+	}
+
 	private DDMFormEvaluationResult _createDDMFormEvaluationResult() {
 		try {
 			return _ddmFormEvaluator.evaluate(
@@ -307,5 +314,6 @@ public class DDMFormPagesTemplateContextFactory {
 	private final DDMFormRenderingContext _ddmFormRenderingContext;
 	private final DDMFormValues _ddmFormValues;
 	private final Locale _locale;
+	private String _nextPage;
 
 }

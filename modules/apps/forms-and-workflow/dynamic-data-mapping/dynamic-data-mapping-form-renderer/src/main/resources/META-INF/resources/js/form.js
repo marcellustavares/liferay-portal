@@ -30,6 +30,10 @@ AUI.add(
 						value: {}
 					},
 
+					nextPage: {
+						state: false
+					},
+
 					portletNamespace: {
 						value: ''
 					},

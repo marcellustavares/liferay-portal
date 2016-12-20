@@ -64,10 +64,18 @@ public class DDMFormEvaluationResult {
 		return _ddmFormFieldEvaluationResultsMap;
 	}
 
+	public String getNextPage() {
+		return _nextPage;
+	}
+
 	public void setDDMFormFieldEvaluationResults(
 		List<DDMFormFieldEvaluationResult> ddmFormFieldEvaluationResults) {
 
 		_ddmFormFieldEvaluationResults = ddmFormFieldEvaluationResults;
+	}
+
+	public void setNextPage(String nextPage) {
+		_nextPage = nextPage;
 	}
 
 	protected void populateDDMFormFieldEvaluationResultsMap(
@@ -108,5 +116,6 @@ public class DDMFormEvaluationResult {
 		new ArrayList<>();
 	private Map<String, DDMFormFieldEvaluationResult>
 		_ddmFormFieldEvaluationResultsMap;
+	private String _nextPage;
 
 }
