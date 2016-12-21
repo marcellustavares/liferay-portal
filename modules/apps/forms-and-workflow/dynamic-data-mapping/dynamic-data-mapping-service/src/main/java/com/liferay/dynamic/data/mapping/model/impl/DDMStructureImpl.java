@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -47,6 +48,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PropsValues;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -116,8 +118,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	public DDMFormField getDDMFormField(String fieldName)
 		throws PortalException {
 
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			getFullHierarchyDDMFormFieldsMap(true);
+		Map<String, DDMFormField> ddmFormFieldsMap = getDDMFormFieldsMap();
 
 		DDMFormField ddmFormField = ddmFormFieldsMap.get(fieldName);
 
@@ -131,8 +132,7 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public List<DDMFormField> getDDMFormFields(boolean includeTransientFields) {
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			getFullHierarchyDDMFormFieldsMap(true);
+		Map<String, DDMFormField> ddmFormFieldsMap = getDDMFormFieldsMap();
 
 		List<DDMFormField> ddmFormFields = new ArrayList<>(
 			ddmFormFieldsMap.values());
@@ -142,6 +142,31 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 
 		return filterTransientDDMFormFields(ddmFormFields);
+	}
+
+	@Override
+	public Map<String, DDMFormField> getDDMFormFieldsMap() {
+		if (_ddmFormFieldsMap == null) {
+			initDDMFormFieldsMap();
+		}
+
+		Map<String, DDMFormField> ddmFormFieldsMap = new HashMap<>();
+
+		MapUtil.copy(_ddmFormFieldsMap, ddmFormFieldsMap);
+
+		try {
+			DDMStructure parentDDMStructure = getParentDDMStructure();
+
+			if (parentDDMStructure != null) {
+				ddmFormFieldsMap.putAll(
+					parentDDMStructure.getDDMFormFieldsMap());
+			}
+		}
+		catch (PortalException pe) {
+			_log.error(pe, pe);
+		}
+
+		return ddmFormFieldsMap;
 	}
 
 	@Override
@@ -377,10 +402,15 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public boolean hasField(String fieldName) {
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			getFullHierarchyDDMFormFieldsMap(true);
+		Map<String, DDMFormField> ddmFormFieldsMap = getDDMFormFieldsMap();
 
 		return ddmFormFieldsMap.containsKey(fieldName);
+	}
+
+	public void initDDMFormFieldsMap() {
+		DDMForm ddmForm = getDDMForm();
+
+		_ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
 	}
 
 	@Override
@@ -421,6 +451,13 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 	@Override
 	public void setDDMForm(DDMForm ddmForm) {
 		_ddmForm = ddmForm;
+	}
+
+	@Override
+	public void setDDMFormFieldsMap(
+		Map<String, DDMFormField> ddmFormFieldsMap) {
+
+		_ddmFormFieldsMap = ddmFormFieldsMap;
 	}
 
 	@Override
@@ -478,5 +515,8 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@CacheField(methodName = "DDMForm", propagateToInterface = true)
 	private DDMForm _ddmForm;
+
+	@CacheField(methodName = "DDMFormFieldsMap", propagateToInterface = true)
+	private Map<String, DDMFormField> _ddmFormFieldsMap;
 
 }

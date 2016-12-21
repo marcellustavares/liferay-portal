@@ -720,6 +720,11 @@ public class DDMStructureWrapper implements DDMStructure,
 		return _ddmStructure.getTemplates();
 	}
 
+	@Override
+	public Map<java.lang.String, DDMFormField> getDDMFormFieldsMap() {
+		return _ddmStructure.getDDMFormFieldsMap();
+	}
+
 	/**
 	* Returns a map of the locales and localized descriptions of this ddm structure.
 	*
@@ -832,6 +837,11 @@ public class DDMStructureWrapper implements DDMStructure,
 	}
 
 	@Override
+	public void initDDMFormFieldsMap() {
+		_ddmStructure.initDDMFormFieldsMap();
+	}
+
+	@Override
 	public void persist() {
 		_ddmStructure.persist();
 	}
@@ -892,6 +902,12 @@ public class DDMStructureWrapper implements DDMStructure,
 	@Override
 	public void setDDMForm(DDMForm ddmForm) {
 		_ddmStructure.setDDMForm(ddmForm);
+	}
+
+	@Override
+	public void setDDMFormFieldsMap(
+		Map<java.lang.String, DDMFormField> ddmFormFieldsMap) {
+		_ddmStructure.setDDMFormFieldsMap(ddmFormFieldsMap);
 	}
 
 	/**

@@ -69,6 +69,8 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public java.util.List<DDMFormField> getDDMFormFields(
 		boolean includeTransientFields);
 
+	public java.util.Map<java.lang.String, DDMFormField> getDDMFormFieldsMap();
+
 	public DDMFormLayout getDDMFormLayout()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -141,6 +143,8 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 
 	public boolean hasField(java.lang.String fieldName);
 
+	public void initDDMFormFieldsMap();
+
 	public boolean isFieldRepeatable(java.lang.String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -148,4 +152,7 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public void setDDMForm(DDMForm ddmForm);
+
+	public void setDDMFormFieldsMap(
+		java.util.Map<java.lang.String, DDMFormField> ddmFormFieldsMap);
 }
