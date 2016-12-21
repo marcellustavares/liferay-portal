@@ -116,34 +116,41 @@ else {
 		<div class="sidenav-menu-slider">
 			<div class="sidebar sidebar-default sidenav-menu">
 				<div class="sidebar-header">
-					<aui:icon cssClass="icon-monospaced sidenav-close text-default visible-xs-inline-block" image="times" markupView="lexicon" url="javascript:;" />
+					<ul class="sidebar-actions">
+						<li>
+							<aui:icon cssClass="icon-monospaced sidenav-close text-default visible-xs-inline-block" image="times" markupView="lexicon" url="javascript:;" />
+						</li>
+					</ul>
 				</div>
 
 				<liferay-ui:tabs cssClass="navbar-no-collapse" names="details,versions" refresh="<%= false %>" type="dropdown">
 					<liferay-ui:section>
 						<div class="sidebar-body">
-							<h3 class="version">
-								<liferay-ui:message key="version" /> <%= HtmlUtil.escape(recordVersion.getVersion()) %>
-							</h3>
+							<dl class="sidebar-block">
+								<dt class="h5 version">
+									<liferay-ui:message key="version" />
+								</dt>
+								<dd class="h6 sidebar-caption version">
+									<%= HtmlUtil.escape(recordVersion.getVersion()) %>
 
-							<div>
-								<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
+									<div>
+										<aui:model-context bean="<%= recordVersion %>" model="<%= DDLRecordVersion.class %>" />
 
-								<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
-							</div>
-
-							<div>
-								<h5><strong><liferay-ui:message key="created" /></strong></h5>
-
-								<p>
+										<aui:workflow-status model="<%= DDLRecord.class %>" status="<%= recordVersion.getStatus() %>" />
+									</div>
+								</dd>
+								<dt class="h5">
+									<liferay-ui:message key="created" />
+								</dt>
+								<dd class="h6 sidebar-caption">
 
 									<%
 									Format dateFormatDateTime = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 									%>
 
 									<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(recordVersion.getUserName()), dateFormatDateTime.format(recordVersion.getCreateDate())} %>" key="by-x-on-x" translateArguments="<%= false %>" />
-								</p>
-							</div>
+								</dd>
+							</dl>
 						</div>
 					</liferay-ui:section>
 

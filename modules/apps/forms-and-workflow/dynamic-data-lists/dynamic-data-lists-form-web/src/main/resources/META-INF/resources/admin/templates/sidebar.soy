@@ -43,7 +43,7 @@
  */
 {template .header autoescape="deprecated-contextual"}
 	<div class="sidebar-header">
-		<ul class="sidebar-header-actions">
+		<ul class="sidebar-actions">
 			{if $toolbarTemplateContext}
 			<li>
 				{call ddl.sidebar.field_options_toolbar data="all" /}
@@ -55,7 +55,7 @@
 			</li>
 		</ul>
 
-		<h4 class="form-builder-sidebar-title truncate-text" title="{$title}">{$title or ''}</h4>
+		<h4 class="form-builder-sidebar-title sidebar-title truncate-text" title="{$title}">{$title or ''}</h4>
 		<h5 class="form-builder-sidebar-description" title="{$description}">{$description or ''}</h5>
 	</div>
 {/template}
