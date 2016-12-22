@@ -14,11 +14,13 @@
 
 package com.liferay.dynamic.data.mapping.util.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
+import com.liferay.dynamic.data.mapping.storage.FieldConstants;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
@@ -45,19 +47,17 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-
-import java.io.Serializable;
-
-import java.math.BigDecimal;
-
-import java.text.Format;
-
-import java.util.Date;
-import java.util.Locale;
-import java.util.Set;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.Format;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Alexander Chow
@@ -75,12 +75,18 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		Set<Locale> locales = LanguageUtil.getAvailableLocales(groupId);
 
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
+
 		Fields fields = toFields(ddmStructure, ddmFormValues);
 
 		for (Field field : fields) {
 			try {
-				String indexType = ddmStructure.getFieldProperty(
-					field.getName(), "indexType");
+				DDMFormField ddmFormField =
+					ddmFormFieldsMap.get(field.getName());
+
+				String indexType = GetterUtil.getString(
+					ddmFormField.getProperty("indexType"));
 
 				if (Validator.isNull(indexType)) {
 					continue;
@@ -91,7 +97,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 						ddmStructure.getStructureId(), field.getName(), locale,
 						indexType);
 
-					Serializable value = field.getValue(locale);
+					Serializable value = getValue(ddmFormField, field, locale);
 
 					if (value instanceof BigDecimal) {
 						document.addNumberSortable(name, (BigDecimal)value);
@@ -160,7 +166,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 					else {
 						String valueString = String.valueOf(value);
 
-						String type = field.getType();
+						String type = ddmFormField.getType();
 
 						if (type.equals(DDMFormFieldType.GEOLOCATION)) {
 							JSONObject geolocationJSONObject =
@@ -205,6 +211,29 @@ public class DDMIndexerImpl implements DDMIndexer {
 				}
 			}
 		}
+	}
+
+	protected Serializable getValue(
+		DDMFormField ddmFormField, Field field, Locale locale) {
+
+		List<Serializable> values = field.getValues(locale);
+
+		if (values.isEmpty()) {
+			return null;
+		}
+
+		try {
+			if (ddmFormField.isRepeatable() || (values.size() > 1)) {
+				return FieldConstants.getSerializable(ddmFormField.getDataType(), values);
+			}
+
+			return values.get(0);
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return null;
 	}
 
 	@Override
@@ -279,18 +308,24 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		StringBundler sb = new StringBundler();
 
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
+
 		Fields fields = toFields(ddmStructure, ddmFormValues);
 
 		for (Field field : fields) {
 			try {
-				String indexType = ddmStructure.getFieldProperty(
-					field.getName(), "indexType");
+				DDMFormField ddmFormField =
+					ddmFormFieldsMap.get(field.getName());
+
+				String indexType = GetterUtil.getString(
+					ddmFormField.getProperty("indexType"));
 
 				if (Validator.isNull(indexType)) {
 					continue;
 				}
 
-				Serializable value = field.getValue(locale);
+				Serializable value = getValue(ddmFormField, field, locale);
 
 				if (value instanceof Boolean || value instanceof Number) {
 					sb.append(value);
@@ -319,7 +354,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 				else {
 					String valueString = String.valueOf(value);
 
-					String type = field.getType();
+					String type = ddmFormField.getType();
 
 					if (type.equals(DDMImpl.TYPE_RADIO) ||
 						type.equals(DDMImpl.TYPE_SELECT)) {
