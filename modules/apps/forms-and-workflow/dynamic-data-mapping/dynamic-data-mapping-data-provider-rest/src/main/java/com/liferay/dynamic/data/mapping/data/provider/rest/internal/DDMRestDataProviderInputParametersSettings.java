@@ -27,15 +27,15 @@ public interface DDMRestDataProviderInputParametersSettings {
 		label = "%name", properties = {"placeholder=%enter-a-name"},
 		required = true
 	)
-	public String name();
+	public String inputParameterName();
 
 	@DDMFormField(label = "%required", type = "checkbox")
-	public boolean required();
+	public boolean inputParameterRequired();
 
 	@DDMFormField(
 		label = "%type", optionLabels = {"%text", "%number"},
 		optionValues = {"text", "number"}, type = "select"
 	)
-	public String type();
+	public String inputParameterType();
 
 }
