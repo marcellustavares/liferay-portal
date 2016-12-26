@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.type.fieldset.internal;
 
+import com.liferay.dynamic.data.mapping.annotations.DDMFieldSetOrientation;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
@@ -51,7 +52,25 @@ public class FieldSetDDMFormFieldTemplateContextContributor
 
 		LocalizedValue label = ddmFormField.getLabel();
 
-		parameters.put("columnSize", getColumnSize(nestedFields));
+		Map<String, Object> properties = ddmFormField.getProperties();
+
+		if (properties.containsKey("orientation")) {
+			DDMFieldSetOrientation ddmFieldSetOrientation =
+				DDMFieldSetOrientation.parse(
+					String.valueOf(properties.get("orientation")));
+
+			switch (ddmFieldSetOrientation) {
+				case VERTICAL:
+					parameters.put("columnSize", 12);
+					break;
+				default:
+					parameters.put("columnSize", getColumnSize(nestedFields));
+					break;
+			}
+		}
+		else {
+			parameters.put("columnSize", getColumnSize(nestedFields));
+		}
 
 		if (label != null) {
 			parameters.put("label", label.getString(
