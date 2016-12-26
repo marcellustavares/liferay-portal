@@ -39,6 +39,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONDeserializer;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -273,7 +274,12 @@ public class SaveRecordSetMVCCommandHelper {
 
 		Value value = ddmFormFieldValue.getValue();
 
-		return value.getString(ddmFormValues.getDefaultLocale());
+		String jsonArrayString = value.getString(
+			ddmFormValues.getDefaultLocale());
+
+		JSONArray jsonArray = jsonFactory.createJSONArray(jsonArrayString);
+
+		return jsonArray.getString(0);
 	}
 
 	protected DDMStructure updateDDMStructure(PortletRequest portletRequest)
