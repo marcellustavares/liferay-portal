@@ -75,6 +75,7 @@ public class FieldSetDDMFormFieldTemplateContextContributor
 		if (label != null) {
 			parameters.put("label", label.getString(
 				ddmFormFieldRenderingContext.getLocale()));
+			parameters.put("showLabel", true);
 		}
 
 		parameters.put("fields", nestedFields);

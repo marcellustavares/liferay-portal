@@ -44,6 +44,7 @@
  * @param name
  * @param fields
  * @param? label
+ * @param? showLabel
  * @param tip
  * @param visible
  */
@@ -55,7 +56,9 @@
 		{/if}
 
 		<fieldset>
-			<legend>{$label}</legend>
+			{if $showLabel}
+				<legend>{$label}</legend>
+			{/if}
 
 			{call ddm.fieldset_columns data="all"}
 				{param columnSize: $columnSize /}
