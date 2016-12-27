@@ -55,6 +55,10 @@ AUI.add(
 					formURL: {
 					},
 
+					getDataProviderParametersSettingsURL: {
+						value: ''
+					},
+
 					getFieldTypeSettingFormContextURL: {
 						value: ''
 					},
