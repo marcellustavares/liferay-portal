@@ -62,11 +62,42 @@ AUI.add(
 			copy: function() {
 				var instance = this;
 
-				var config = instance._copyConfiguration();
+				var config = instance.copyConfiguration();
 
 				var fieldClass = instance.getFieldClass();
 
 				return new fieldClass(config);
+			},
+
+			copyConfiguration: function() {
+				var instance = this;
+
+				var context = instance.get('context');
+
+				var repetitions = instance.get('repetitions');
+
+				var config = A.merge(
+					context,
+					{
+						enableEvaluations: instance.get('enableEvaluations'),
+						fieldName: instance.get('fieldName'),
+						parent: instance.get('parent'),
+						portletNamespace: instance.get('portletNamespace'),
+						repeatedIndex: repetitions.length,
+						repetitions: repetitions,
+						type: instance.get('type'),
+						visible: instance.get('visible')
+					}
+				);
+
+				config.context = A.clone(context);
+
+				delete config.context.name;
+				delete config.context.value;
+				delete config.name;
+				delete config.value;
+
+				return config;
 			},
 
 			getFieldClass: function() {
@@ -166,37 +197,6 @@ AUI.add(
 				var instance = this;
 
 				instance.render();
-			},
-
-			_copyConfiguration: function() {
-				var instance = this;
-
-				var context = instance.get('context');
-
-				var repetitions = instance.get('repetitions');
-
-				var config = A.merge(
-					context,
-					{
-						enableEvaluations: instance.get('enableEvaluations'),
-						fieldName: instance.get('fieldName'),
-						parent: instance.get('parent'),
-						portletNamespace: instance.get('portletNamespace'),
-						repeatedIndex: repetitions.length,
-						repetitions: repetitions,
-						type: instance.get('type'),
-						visible: instance.get('visible')
-					}
-				);
-
-				config.context = A.clone(context);
-
-				delete config.context.name;
-				delete config.context.value;
-				delete config.name;
-				delete config.value;
-
-				return config;
 			},
 
 			_handleToolbarClick: function(event) {

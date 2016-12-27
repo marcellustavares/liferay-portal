@@ -15,9 +15,12 @@
  */
 {template .fieldset_column autoescape="deprecated-contextual"}
 	<div class="col-md-{$columnSize}">
-		{let $variant: $field.type /}
 
-		{delcall ddm.field variant="$variant" data="$field" /}
+		<div class="clearfix {if not $field.visible}hide{/if} lfr-ddm-form-field-container">
+			{let $variant: $field.type /}
+
+			{delcall ddm.field variant="$variant" data="$field" /}
+		</div>
 	</div>
 {/template}
 
@@ -41,8 +44,8 @@
  * Prints the DDM form fieldset field.
  *
  * @param columnSize
- * @param name
  * @param fields
+ * @param name
  * @param? label
  * @param? showLabel
  * @param tip
