@@ -176,6 +176,14 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 					<aui:input label="" name="publishCheckbox" type="toggle-switch" value="<%= ddlFormAdminDisplayContext.isFormPublished() %>" />
 				</label>
+
+				<label class="control-label ddl-publish-checkbox" for="<portlet:namespace />publishCheckbox">
+					<span class="pull-left">
+						<small><liferay-ui:message key="require-user-authentication" /></small>
+					</span>
+
+					<aui:input label="" name="requireAuthenticationCheckbox" type="toggle-switch" value="<%= ddlFormAdminDisplayContext.isAuthenticationRequired() %>" />
+				</label>
 			</div>
 
 			<div class="alert alert-info">
@@ -243,14 +251,15 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											editForm: event.form,
 											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
 											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
-											formURL: '<%= ddlFormAdminDisplayContext.getFormURL() %>',
 											getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
 											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
 											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',
 											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
 											recordSetId: <%= recordSetId %>,
-											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>
+											restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
+											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
+											sharedFormURL: '<%= ddlFormAdminDisplayContext.getSharedFormURL() %>'
 										}
 									)
 								);
