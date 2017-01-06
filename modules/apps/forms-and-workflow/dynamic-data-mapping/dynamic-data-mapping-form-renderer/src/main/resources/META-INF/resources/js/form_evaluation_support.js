@@ -62,7 +62,7 @@ AUI.add(
 				if (result && Lang.isObject(result)) {
 					var visitor = instance.get('visitor');
 
-					visitor.set('pages', result);
+					instance.set('pages', result);
 
 					visitor.set(
 						'fieldHandler',
