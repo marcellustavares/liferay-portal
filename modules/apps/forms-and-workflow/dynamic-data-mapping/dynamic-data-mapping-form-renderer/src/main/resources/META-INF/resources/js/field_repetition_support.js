@@ -48,15 +48,9 @@ AUI.add(
 			destructor: function() {
 				var instance = this;
 
-				var repetitions = instance.get('repetitions');
+				instance._removeCurrentFieldFromRepetitionList();
 
-				var index = repetitions.indexOf(instance);
-
-				if (index > -1) {
-					repetitions.splice(index, 1);
-				}
-
-				repetitions.forEach(A.bind('_syncRepeatableField', instance));
+				instance._syncOtherRepeatableFields();
 			},
 
 			copy: function() {
@@ -128,6 +122,7 @@ AUI.add(
 				var instance = this;
 
 				instance.renderRepeatableUI();
+
 				instance.syncRepeatablelUI();
 			},
 
@@ -144,27 +139,28 @@ AUI.add(
 			repeat: function() {
 				var instance = this;
 
-				var field = instance.copy();
-
-				field.render();
+				var copiedField = instance.copy();
 
 				var repetitions = instance.getRepeatedSiblings();
 
 				var index = repetitions.indexOf(instance) + 1;
 
-				repetitions.splice(index, 0, field);
+				repetitions.splice(index, 0, copiedField);
+
+				copiedField.render();
 
 				var container = instance.get('container');
 
-				container.insert(field.get('container'), 'after');
+				container.insert(copiedField.get('container'), 'after');
 
-				if (repetitions.length > index + 1) {
-					for (var i = index; i < repetitions.length; i++) {
-						instance._syncRepeatableField(repetitions[i]);
-					}
+				var fieldAddedInMiddle = index >= 1 && index < repetitions.length - 1;
+
+				if (fieldAddedInMiddle) {
+					repetitions.filter(instance._getCurrentMiddleFieldAndAfterSiblings, index)
+						.forEach(A.bind('_syncRepeatableField', instance));
 				}
 
-				return field;
+				return copiedField;
 			},
 
 			syncRepeatablelUI: function() {
@@ -199,6 +195,12 @@ AUI.add(
 				instance.render();
 			},
 
+			_getCurrentMiddleFieldAndAfterSiblings: function(element, index) {
+				if (index >= this) {
+					return element;
+				}
+			},
+
 			_handleToolbarClick: function(event) {
 				var instance = this;
 
@@ -214,6 +216,26 @@ AUI.add(
 				event.stopPropagation();
 			},
 
+			_removeCurrentFieldFromRepetitionList: function() {
+				var instance = this;
+
+				var repetitions = instance.get('repetitions');
+
+				var index = repetitions.indexOf(instance);
+
+				if (index > -1) {
+					repetitions.splice(index, 1);
+				}
+			},
+
+			_syncOtherRepeatableFields: function() {
+				var instance = this;
+
+				var repetitions = instance.get('repetitions');
+
+				repetitions.forEach(A.bind('_syncRepeatableField', instance));
+			},
+
 			_syncRepeatableField: function(field) {
 				var instance = this;
 
@@ -225,6 +247,8 @@ AUI.add(
 				field.set('repetitions', repeatedSiblings);
 
 				field.setValue(value);
+
+				field.render();
 			},
 
 			_valueRepetitions: function() {
