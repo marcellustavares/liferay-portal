@@ -23,6 +23,8 @@ public class DDMFormFieldType {
 
 	public static final String CHECKBOX_MULTIPLE = "checkbox_multiple";
 
+	public static final String COLOR = "ddm-color";
+
 	public static final String DATE = "ddm-date";
 
 	public static final String DECIMAL = "ddm-decimal";

@@ -30,6 +30,8 @@ AUI.add(
 
 		var STR_SPACE = ' ';
 
+		var TPL_COLOR = '<input class="field form-control" type="text" value="' + A.Escape.html(Liferay.Language.get('color')) + '" readonly="readonly">';
+
 		var TPL_GEOLOCATION = '<div class="field-labels-inline">' +
 				'<img src="' + themeDisplay.getPathThemeImages() + '/common/geolocation.png" title="' + A.Escape.html(Liferay.Language.get('geolocate')) + '" />' +
 			'<div>';
@@ -1009,6 +1011,34 @@ AUI.add(
 			);
 		};
 
+		var DDMColorField = A.Component.create(
+			{
+				ATTRS: {
+					dataType: {
+						value: 'color'
+					},
+
+					fieldNamespace: {
+						value: 'ddm'
+					},
+
+					showLabel: {
+						value: false
+					}
+				},
+
+				EXTENDS: A.FormBuilderField,
+
+				NAME: 'ddm-color',
+
+				prototype: {
+					getHTML: function() {
+						return TPL_COLOR;
+					}
+				}
+			}
+		);
+
 		var DDMDateField = A.Component.create(
 			{
 				ATTRS: {
@@ -1522,6 +1552,7 @@ AUI.add(
 		);
 
 		var plugins = [
+			DDMColorField,
 			DDMDateField,
 			DDMDecimalField,
 			DDMDocumentLibraryField,
