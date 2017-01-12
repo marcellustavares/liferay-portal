@@ -1,9 +1,11 @@
 dependencies {
-	provided group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.0.0"
-
-	testCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-api")
-	testCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-definition-api")
-	testCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-service")
-
 	testIntegrationCompile group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge", version: "1.0.5"
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.0.0"
+	testIntegrationCompile project(":apps:collaboration:blogs:blogs-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-lists:dynamic-data-lists-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:dynamic-data-mapping:dynamic-data-mapping-test-util")
+	testIntegrationCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-definition-api")
+	testIntegrationCompile project(":apps:forms-and-workflow:portal-workflow:portal-workflow-kaleo-service")
 }
