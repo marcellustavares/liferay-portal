@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.type.fieldset.internal;
 
-import com.liferay.dynamic.data.mapping.annotations.DDMFieldSetOrientation;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
@@ -42,7 +41,7 @@ public class FieldSetDDMFormFieldTemplateContextContributorTest {
 
 		int columnSize =
 			fieldSetDDMFormFieldTemplateContextContributor.getColumnSize(
-				new ArrayList<>());
+				new ArrayList<>(), "horizontal");
 
 		Assert.assertEquals(0, columnSize);
 	}
@@ -55,7 +54,7 @@ public class FieldSetDDMFormFieldTemplateContextContributorTest {
 
 		int columnSize =
 			fieldSetDDMFormFieldTemplateContextContributor.getColumnSize(
-				Arrays.asList(new Object(), new Object()));
+				Arrays.asList(new Object(), new Object()), "horizontal");
 
 		Assert.assertEquals(6, columnSize);
 	}
@@ -72,8 +71,7 @@ public class FieldSetDDMFormFieldTemplateContextContributorTest {
 		Map<String, Object> ddmFormFieldProperties =
 			ddmFormField.getProperties();
 
-		ddmFormFieldProperties.put(
-			"orientation", DDMFieldSetOrientation.HORIZONTAL);
+		ddmFormFieldProperties.put("orientation", "horizontal");
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
 			new DDMFormFieldRenderingContext();
@@ -148,8 +146,7 @@ public class FieldSetDDMFormFieldTemplateContextContributorTest {
 		Map<String, Object> ddmFormFieldProperties =
 			ddmFormField.getProperties();
 
-		ddmFormFieldProperties.put(
-			"orientation", DDMFieldSetOrientation.VERTICAL);
+		ddmFormFieldProperties.put("orientation", "vertical");
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
 			new DDMFormFieldRenderingContext();
@@ -188,13 +185,11 @@ public class FieldSetDDMFormFieldTemplateContextContributorTest {
 				ddmFormField, ddmFormFieldRenderingContext);
 
 		Assert.assertFalse(parameters.containsKey("showLabel"));
-
 		Assert.assertTrue(parameters.containsKey("columnSize"));
 
 		Assert.assertEquals(12, parameters.get("columnSize"));
 
 		Assert.assertFalse(parameters.containsKey("label"));
-
 		Assert.assertTrue(parameters.containsKey("fields"));
 
 		nestedFields = (List<Object>)parameters.get("fields");
