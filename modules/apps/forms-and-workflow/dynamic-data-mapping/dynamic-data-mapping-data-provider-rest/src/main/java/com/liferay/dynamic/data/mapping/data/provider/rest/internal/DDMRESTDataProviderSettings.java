@@ -81,7 +81,7 @@ public interface DDMRESTDataProviderSettings {
 	public String filterParameterName();
 
 	@DDMFormField(label = "%input-parameters")
-	public DDMRestDataProviderInputParametersSettings[] inputParameters();
+	public DDMRESTDataProviderInputParametersSettings[] inputParameters();
 
 	@DDMFormField(
 		label = "%displayed-json-attribute",
@@ -94,7 +94,7 @@ public interface DDMRESTDataProviderSettings {
 	public String key();
 
 	@DDMFormField(label = "%output-parameters")
-	public DDMRestDataProviderOutputParametersSettings[] outputParameters();
+	public DDMRESTDataProviderOutputParametersSettings[] outputParameters();
 
 	@DDMFormField(
 		label = "%password",

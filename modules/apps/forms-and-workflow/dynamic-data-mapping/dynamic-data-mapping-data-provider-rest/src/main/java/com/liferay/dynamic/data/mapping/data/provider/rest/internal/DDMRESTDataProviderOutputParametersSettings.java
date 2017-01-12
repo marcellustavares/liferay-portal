@@ -21,7 +21,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
  * @author Leonardo Barros
  */
 @DDMForm
-public interface DDMRestDataProviderOutputParametersSettings {
+public interface DDMRESTDataProviderOutputParametersSettings {
 
 	@DDMFormField(label = "%name", properties = {"placeholder=%enter-a-name"})
 	public String outputParameterName();
