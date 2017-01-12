@@ -122,7 +122,7 @@ AUI.add(
 							value = value.join();
 						}
 						else {
-							value = inputNode.val();
+							value = inputNode.val().split();
 						}
 
 						return value;
