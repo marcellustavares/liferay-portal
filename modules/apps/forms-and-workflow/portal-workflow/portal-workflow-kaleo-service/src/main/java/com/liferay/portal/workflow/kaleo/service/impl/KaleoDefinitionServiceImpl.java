@@ -24,11 +24,19 @@ import java.util.List;
  */
 public class KaleoDefinitionServiceImpl extends KaleoDefinitionServiceBaseImpl {
 
+	/**
+	 * @deprecated As of 2.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public List<KaleoDefinition> getKaleoDefinitions(int start, int end) {
 		return kaleoDefinitionPersistence.findAll(start, end);
 	}
 
+	/**
+	 * @deprecated As of 2.0.0, with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public List<KaleoDefinition> getKaleoDefinitions(
 		long companyId, int start, int end) {
