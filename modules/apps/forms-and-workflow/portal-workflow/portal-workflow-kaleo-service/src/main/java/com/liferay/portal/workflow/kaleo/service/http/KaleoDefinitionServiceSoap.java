@@ -64,6 +64,10 @@ import java.rmi.RemoteException;
  */
 @ProviderType
 public class KaleoDefinitionServiceSoap {
+	/**
+	* @deprecated As of 2.0.0, with no direct replacement
+	*/
+	@Deprecated
 	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinitionSoap[] getKaleoDefinitions(
 		int start, int end) throws RemoteException {
 		try {
@@ -79,6 +83,10 @@ public class KaleoDefinitionServiceSoap {
 		}
 	}
 
+	/**
+	* @deprecated As of 2.0.0, with no direct replacement
+	*/
+	@Deprecated
 	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinitionSoap[] getKaleoDefinitions(
 		long companyId, int start, int end) throws RemoteException {
 		try {

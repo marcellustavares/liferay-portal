@@ -83,6 +83,19 @@
 		<field name="active" type="boolean" />
 		<field name="startKaleoNodeId" type="long" />
 	</model>
+	<model name="com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion">
+		<field name="kaleoDefinitionVersionId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="name" type="String" />
+		<field localized="true" name="title" type="String" />
+		<field name="content" type="String" />
+		<field name="version" type="int" />
+	</model>
 	<model name="com.liferay.portal.workflow.kaleo.model.KaleoInstance">
 		<field name="kaleoInstanceId" type="long" />
 		<field name="groupId" type="long" />

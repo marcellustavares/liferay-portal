@@ -61,9 +61,17 @@ public interface KaleoDefinitionService extends BaseService {
 	*/
 	public java.lang.String getOSGiServiceIdentifier();
 
+	/**
+	* @deprecated As of 2.0.0, with no direct replacement
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<KaleoDefinition> getKaleoDefinitions(int start, int end);
 
+	/**
+	* @deprecated As of 2.0.0, with no direct replacement
+	*/
+	@java.lang.Deprecated
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<KaleoDefinition> getKaleoDefinitions(long companyId, int start,
 		int end);
