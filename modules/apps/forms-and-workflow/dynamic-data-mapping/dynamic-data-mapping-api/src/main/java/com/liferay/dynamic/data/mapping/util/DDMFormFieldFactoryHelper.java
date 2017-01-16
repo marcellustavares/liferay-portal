@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.util;
 
+import com.liferay.dynamic.data.mapping.annotations.DDMFieldSet;
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -85,11 +86,7 @@ public class DDMFormFieldFactoryHelper {
 			getDDMFormFieldVisibilityExpression());
 
 		if (Objects.equals(type, "fieldset")) {
-			com.liferay.dynamic.data.mapping.model.DDMForm nestedDDMForm =
-				_getNestedDDMForm();
-
-			ddmFormField.setNestedDDMFormFields(
-				nestedDDMForm.getDDMFormFields());
+			setNestedDDMFormFields(ddmFormField);
 		}
 
 		return ddmFormField;
@@ -423,6 +420,46 @@ public class DDMFormFieldFactoryHelper {
 
 	protected void setDefaultLocale(Locale defaultLocale) {
 		_defaultLocale = defaultLocale;
+	}
+
+	protected void setNestedDDMFormFields(
+		com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField) {
+
+		com.liferay.dynamic.data.mapping.model.DDMForm nestedDDMForm =
+			_getNestedDDMForm();
+
+		Map<String, com.liferay.dynamic.data.mapping.model.DDMFormField>
+			ddmFormFieldsMap = nestedDDMForm.getDDMFormFieldsMap(false);
+
+		DDMFieldSet ddmFieldSetDefinition = _getDDMFieldSetDefinition();
+
+		if (ddmFieldSetDefinition != null) {
+			Map<String, Object> propertiesMap = ddmFormField.getProperties();
+
+			propertiesMap.put(
+				"orientation", ddmFieldSetDefinition.orientation());
+
+			String[] fields = ddmFieldSetDefinition.fields();
+
+			List<com.liferay.dynamic.data.mapping.model.DDMFormField>
+				ddmFormFields = new ArrayList<>();
+
+			for (String field : fields) {
+				ddmFormFields.add(ddmFormFieldsMap.get(field));
+			}
+
+			ddmFormField.setNestedDDMFormFields(ddmFormFields);
+		}
+		else {
+			ddmFormField.setNestedDDMFormFields(
+				nestedDDMForm.getDDMFormFields());
+		}
+	}
+
+	private DDMFieldSet _getDDMFieldSetDefinition() {
+		Class<?> returnType = _getReturnType();
+
+		return returnType.getAnnotation(DDMFieldSet.class);
 	}
 
 	private com.liferay.dynamic.data.mapping.model.DDMForm _getNestedDDMForm() {

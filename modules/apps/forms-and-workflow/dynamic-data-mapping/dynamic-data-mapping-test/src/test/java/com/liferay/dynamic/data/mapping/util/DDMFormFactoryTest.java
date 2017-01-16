@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import com.liferay.dynamic.data.mapping.annotations.DDMFieldSetOrientation;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -185,30 +186,74 @@ public class DDMFormFactoryTest {
 
 		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
 
-		Assert.assertEquals(1, ddmFormFields.size());
+		Assert.assertEquals(2, ddmFormFields.size());
 
-		DDMFormField ddmFormField = ddmFormFields.get(0);
+		for (DDMFormField ddmFormField : ddmFormFields) {
+			Map<String, Object> properties = ddmFormField.getProperties();
 
-		Assert.assertEquals("parameters", ddmFormField.getName());
-		Assert.assertEquals("fieldset", ddmFormField.getType());
-		Assert.assertEquals(StringPool.BLANK, ddmFormField.getDataType());
+			if ("parameters".equals(ddmFormField.getName())) {
+				Assert.assertEquals("fieldset", ddmFormField.getType());
+				Assert.assertEquals(
+					StringPool.BLANK, ddmFormField.getDataType());
 
-		Assert.assertTrue(ddmFormField.isRepeatable());
+				Assert.assertEquals(
+					DDMFieldSetOrientation.VERTICAL,
+					properties.get("orientation"));
 
-		List<DDMFormField> nestedDDMFormFields =
-			ddmFormField.getNestedDDMFormFields();
+				Assert.assertTrue(ddmFormField.isRepeatable());
 
-		Assert.assertEquals(2, nestedDDMFormFields.size());
+				List<DDMFormField> nestedDDMFormFields =
+					ddmFormField.getNestedDDMFormFields();
 
-		DDMFormField nestedDDMFormField1 = nestedDDMFormFields.get(0);
+				Assert.assertEquals(2, nestedDDMFormFields.size());
 
-		Assert.assertEquals("parameterName", nestedDDMFormField1.getName());
-		Assert.assertEquals("text", nestedDDMFormField1.getType());
+				DDMFormField nestedDDMFormField1 = nestedDDMFormFields.get(0);
 
-		DDMFormField nestedDDMFormField2 = nestedDDMFormFields.get(1);
+				Assert.assertEquals(
+					"parameterName", nestedDDMFormField1.getName());
+				Assert.assertEquals("text", nestedDDMFormField1.getType());
 
-		Assert.assertEquals("parameterValue", nestedDDMFormField2.getName());
-		Assert.assertEquals("text", nestedDDMFormField2.getType());
+				DDMFormField nestedDDMFormField2 = nestedDDMFormFields.get(1);
+
+				Assert.assertEquals(
+					"parameterValue", nestedDDMFormField2.getName());
+				Assert.assertEquals("text", nestedDDMFormField2.getType());
+			}
+			else {
+				Assert.assertEquals("fieldset", ddmFormField.getType());
+				Assert.assertEquals(
+					StringPool.BLANK, ddmFormField.getDataType());
+
+				Assert.assertEquals(
+					DDMFieldSetOrientation.HORIZONTAL,
+					properties.get("orientation"));
+
+				Assert.assertTrue(ddmFormField.isRepeatable());
+
+				List<DDMFormField> nestedDDMFormFields =
+					ddmFormField.getNestedDDMFormFields();
+
+				Assert.assertEquals(3, nestedDDMFormFields.size());
+
+				DDMFormField nestedDDMFormField1 = nestedDDMFormFields.get(0);
+
+				Assert.assertEquals(
+					"parameterValue", nestedDDMFormField1.getName());
+				Assert.assertEquals("text", nestedDDMFormField1.getType());
+
+				DDMFormField nestedDDMFormField2 = nestedDDMFormFields.get(1);
+
+				Assert.assertEquals(
+					"parameterName", nestedDDMFormField2.getName());
+				Assert.assertEquals("text", nestedDDMFormField2.getType());
+
+				DDMFormField nestedDDMFormField3 = nestedDDMFormFields.get(2);
+
+				Assert.assertEquals(
+					"otherParameter", nestedDDMFormField3.getName());
+				Assert.assertEquals("text", nestedDDMFormField3.getType());
+			}
+		}
 	}
 
 	protected void assertRequiredDDMFormFieldTypeSettings(
@@ -266,6 +311,9 @@ public class DDMFormFactoryTest {
 		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
 		public ParametersFieldSetSettings[] parameters();
 
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public ParametersFieldSetSettings2[] parameters2();
+
 	}
 
 	@com.liferay.dynamic.data.mapping.annotations.DDMForm
@@ -285,8 +333,30 @@ public class DDMFormFactoryTest {
 	private interface DynamicFormWithRules {
 	}
 
+	@com.liferay.dynamic.data.mapping.annotations.DDMFieldSet(
+		fields = {"parameterName", "parameterValue"},
+		orientation = DDMFieldSetOrientation.VERTICAL
+	)
 	@com.liferay.dynamic.data.mapping.annotations.DDMForm
 	private interface ParametersFieldSetSettings {
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public String parameterName();
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public String parameterValue();
+
+	}
+
+	@com.liferay.dynamic.data.mapping.annotations.DDMFieldSet(
+		fields = {"parameterValue", "parameterName", "otherParameter"},
+		orientation = DDMFieldSetOrientation.HORIZONTAL
+	)
+	@com.liferay.dynamic.data.mapping.annotations.DDMForm
+	private interface ParametersFieldSetSettings2 {
+
+		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
+		public String otherParameter();
 
 		@com.liferay.dynamic.data.mapping.annotations.DDMFormField
 		public String parameterName();
