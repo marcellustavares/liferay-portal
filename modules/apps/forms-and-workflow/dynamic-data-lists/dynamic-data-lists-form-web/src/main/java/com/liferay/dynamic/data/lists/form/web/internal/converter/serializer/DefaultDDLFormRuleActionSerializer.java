@@ -12,15 +12,24 @@
  * details.
  */
 
-package com.liferay.dynamic.data.lists.form.web.internal.converter.model;
+package com.liferay.dynamic.data.lists.form.web.internal.converter.serializer;
+
+import com.liferay.dynamic.data.lists.form.web.internal.converter.model.action.DefaultDDLFormRuleAction;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-public interface DDLFormRuleAction {
+public class DefaultDDLFormRuleActionSerializer
+	extends DDLFormRuleActionSerializer<DefaultDDLFormRuleAction> {
 
-	public String getAction();
+	@Override
+	public String serialize(DefaultDDLFormRuleAction ddlFormRuleAction) {
+		String functionName = actionBooleanFunctionNameMap.get(
+			ddlFormRuleAction.getAction());
 
-	public String serialize();
+		return String.format(
+			setBooleanPropertyFormat, functionName,
+			ddlFormRuleAction.getTarget());
+	}
 
 }
