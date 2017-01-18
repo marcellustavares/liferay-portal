@@ -83,7 +83,14 @@ AUI.add(
 						var action = instance.get('action');
 
 						if (action && action.source) {
-							value = action.source;
+							if (action.source.value) {
+								value = action.source.value;
+							}
+							else {
+								var options = instance.get('options');
+
+								value = options[action.source].value;
+							}
 						}
 
 						instance._sourceField = new Liferay.DDM.Field.Select(
@@ -110,7 +117,14 @@ AUI.add(
 						var action = instance.get('action');
 
 						if (action && action.target) {
-							value = action.target;
+							if (action.target.value) {
+								value = action.target.value;
+							}
+							else {
+								var options = instance.get('options');
+
+								value = options[action.target].value;
+							}
 						}
 
 						instance._targetField = new Liferay.DDM.Field.Select(

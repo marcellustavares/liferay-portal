@@ -283,10 +283,6 @@ public class JournalContentExportImportPortletPreferencesProcessor
 						articleId, true);
 				}
 			}
-			else {
-				portletPreferences.setValue("groupId", StringPool.BLANK);
-				portletPreferences.setValue("articleId", StringPool.BLANK);
-			}
 
 			String ddmTemplateKey = portletPreferences.getValue(
 				"ddmTemplateKey", null);
@@ -301,9 +297,6 @@ public class JournalContentExportImportPortletPreferencesProcessor
 					ddmTemplateKeys, ddmTemplateKey, ddmTemplateKey);
 
 				portletPreferences.setValue("ddmTemplateKey", ddmTemplateKey);
-			}
-			else {
-				portletPreferences.setValue("ddmTemplateKey", StringPool.BLANK);
 			}
 		}
 		catch (PortalException pe) {

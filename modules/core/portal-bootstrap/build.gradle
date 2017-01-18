@@ -14,6 +14,7 @@ task buildSystemPackagesExtraManifest
 task copySystemPackagesExtraLibs(type: Copy)
 task copySystemPackagesExtraManifest(type: Copy)
 
+String buildProfile = System.properties["build.profile"]
 File systemPackagesExtraBndFile = file("system.packages.extra.bnd")
 File systemPackagesExtraManifestFile = file("system.packages.extra.mf")
 
@@ -59,7 +60,7 @@ copySystemPackagesExtraLibs {
 }
 
 copySystemPackagesExtraManifest {
-	if (!FileUtil.isUpToDate(project, systemPackagesExtraBndFile, systemPackagesExtraManifestFile)) {
+	if ((buildProfile == "slim") || !FileUtil.isUpToDate(project, systemPackagesExtraBndFile, systemPackagesExtraManifestFile)) {
 		dependsOn buildSystemPackagesExtraManifest
 	}
 
@@ -84,10 +85,15 @@ dependencies {
 	provided project(":core:jaxws-osgi-bridge")
 	provided project(":core:osgi-felix-util")
 	provided project(":core:portal-app-license-api")
-	provided project(":core:portal-compat:blogs:portal-impl-blogs-compat")
-	provided project(":core:portal-compat:blogs:portal-kernel-blogs-compat")
 	provided project(":core:registry-api")
 	provided project(":core:registry-impl")
+}
+
+if (buildProfile != "slim") {
+	dependencies {
+		provided project(":core:portal-compat:blogs:portal-impl-blogs-compat")
+		provided project(":core:portal-compat:blogs:portal-kernel-blogs-compat")
+	}
 }
 
 jar {

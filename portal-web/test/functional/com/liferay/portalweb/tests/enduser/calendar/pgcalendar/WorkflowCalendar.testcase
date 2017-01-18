@@ -404,7 +404,7 @@
 		</execute>
 	</command>
 
-	<command name="ViewPendingStatusInEventDetails">
+	<command name="ViewPendingStatusInEventDetails" priority="2">
 		<execute macro="CalendarNavigator#gotoView">
 			<var name="viewType" value="Week" />
 		</execute>

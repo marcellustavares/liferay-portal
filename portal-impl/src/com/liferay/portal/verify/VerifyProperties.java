@@ -274,10 +274,6 @@ public class VerifyProperties extends VerifyProcess {
 		new String[] {
 			"http.header.secure.x.xss.protection",
 			"http.header.secure.x.xss.protection"
-		},
-		new String[] {"session.id.delimiter", "session.id.delimiter"},
-		new String[] {
-			"session.id.weblogic.delimiter", "session.id.weblogic.delimiter"
 		}
 	};
 

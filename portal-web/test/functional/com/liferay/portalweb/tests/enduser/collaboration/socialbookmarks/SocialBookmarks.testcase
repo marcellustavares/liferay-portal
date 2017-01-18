@@ -117,6 +117,8 @@
 	</command>
 
 	<command name="ViewBlogsEntryWithSocialBookmarksSites" priority="3">
+		<property name="test.assert.warning.exceptions" value="true" />
+
 		<execute macro="Page#add">
 			<var name="pageName" value="Blogs Page" />
 		</execute>

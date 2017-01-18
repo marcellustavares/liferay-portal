@@ -20,7 +20,7 @@ Here are some of the types of changes documented in this file:
   replaces an old API, in spite of the old API being kept in Liferay Portal for
   backwards compatibility.
 
-*This document has been reviewed through commit `16080bf`.*
+*This document has been reviewed through commit `d5f10c3`.*
 
 ## Breaking Changes Contribution Guidelines
 
@@ -4150,7 +4150,7 @@ addition, this change avoids future security issues from outdated flash movies.
 
 #### What changed?
 
-All Journal portlet properties have been moved to an OSGI configuration.
+All Journal portlet properties have been moved to an OSGi configuration.
 
 #### Who is affected?
 
@@ -4246,8 +4246,8 @@ Portal by means of an OSGi container.
 #### What changed?
 
 The Shopping file uploads portlet properties have been moved from Server
-Administration to an OSGI configuration named `ShoppingFileUploadsConfiguration`
-in the `shopping-api` module.
+Administration to an OSGi configuration named
+`ShoppingFileUploadsConfiguration.java` in the `shopping-api` module.
 
 #### Who is affected?
 
@@ -4262,7 +4262,7 @@ This affects anyone who is using the following portlet properties:
 
 Instead of overriding the `portal.properties` file, you can manage the
 properties from Portal's configuration administrator. This can be accessed by
-navigating to Liferay's Control Panel &rarr; *Configuration* &rarr; *System
+navigating to Liferay's *Control Panel* &rarr; *Configuration* &rarr; *System
 Settings* &rarr; *Shopping Cart Images* and editing the settings there.
 
 If you would like to include the new configuration in your application, follow
@@ -4315,22 +4315,22 @@ Portal by means of an OSGi container.
 
 #### What changed?
 
-The Journal file uploads portlet properties have been moved from Server
-Administration to an OSGI configuration named `JournalFileUploadsConfiguration.java`
-in the `journal-service` module.
+The Journal File Uploads portlet properties have been moved from Server
+Administration to an OSGi configuration named
+`JournalFileUploadsConfiguration.java` in the `journal-service` module.
 
 #### Who is affected?
 
 This affects anyone who is using the following portlet properties:
 
-- `journal.image.small.max.size`
 - `journal.image.extensions`
+- `journal.image.small.max.size`
 
 #### How should I update my code?
 
 Instead of overriding the `portal.properties` file, you can manage the
 properties from Portal's configuration administrator. This can be accessed by
-navigating to Liferay's Control Panel &rarr; *Configuration* &rarr; *System
+navigating to Liferay's *Control Panel* &rarr; *Configuration* &rarr; *System
 Settings* &rarr; *Web Content File Uploads* and editing the settings there.
 
 If you would like to include the new configuration in your application, follow

@@ -131,26 +131,20 @@ AUI.add(
 
 						var formBuilder = instance.get('formBuilder');
 
+						var pagesTitles = formBuilder.getPagesTitle();
+
 						var pagesQuantity = formBuilder.get('layouts').length;
 
 						pages = new Array(pagesQuantity);
 
 						for (var i = 0; i < pagesQuantity; i++) {
 							pages[i] = {
-								label: (i + 1).toString(),
+								label: pagesTitles[i] ? pagesTitles[i] : (i + 1).toString(),
 								value: i.toString()
 							};
 						}
 
 						return pages;
-					},
-
-					hide: function() {
-						var instance = this;
-
-						FormBuilderRuleBuilder.superclass.hide.apply(instance, arguments);
-
-						instance.syncUI();
 					},
 
 					renderRule: function(rule) {
@@ -174,6 +168,14 @@ AUI.add(
 						instance._ruleClasses.render(rule);
 					},
 
+					show: function() {
+						var instance = this;
+
+						FormBuilderRuleBuilder.superclass.show.apply(instance, arguments);
+
+						instance.syncUI();
+					},
+
 					_getActionDescription: function(type, action) {
 						var instance = this;
 
@@ -185,6 +187,8 @@ AUI.add(
 
 						var actionKey = MAP_ACTION_DESCRIPTIONS[type];
 
+						var pages = instance.getPages();
+
 						if (actionKey) {
 							var data;
 
@@ -192,12 +196,12 @@ AUI.add(
 								data = [
 									badgeTemplate(
 										{
-											content: Number(action.source) + 1
+											content: pages[action.source].label
 										}
 									),
 									badgeTemplate(
 										{
-											content: Number(action.target) + 1
+											content: pages[action.target].label
 										}
 									)
 								];

@@ -99,6 +99,9 @@ AUI.add(
 						instance.after(instance._toggleShowRemoveButton, instance, '_addAction');
 						instance.after(instance._toggleShowRemoveButton, instance, '_addCondition');
 
+						instance.after('fieldsChange', A.bind(instance._afterFieldsChange, instance));
+						instance.after('pagesChange', A.bind(instance._afterPagesChange, instance));
+
 						instance.on('*:valueChange', A.bind(instance._handleFieldValueChange, instance));
 						instance.on('logicOperatorChange', A.bind(instance._onLogicOperatorChange, instance));
 					},
@@ -153,6 +156,18 @@ AUI.add(
 						instance._conditionsIndexes.push(Number(index));
 					},
 
+					_afterFieldsChange: function(event) {
+						var instance = this;
+
+						instance._actionFactory.set('fields', event.newVal);
+					},
+
+					_afterPagesChange: function(event) {
+						var instance = this;
+
+						instance._actionFactory.set('pages', event.newVal);
+					},
+
 					_canDeleteCondition: function() {
 						var instance = this;
 
@@ -194,6 +209,8 @@ AUI.add(
 						var contentBox = instance.get('contentBox');
 
 						var container = contentBox.one('.target-' + index);
+
+						container.empty();
 
 						var target = instance._actionFactory.createAction(type, index, action, container);
 

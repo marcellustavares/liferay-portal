@@ -22,6 +22,7 @@ import com.liferay.journal.service.JournalFolderService;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.toolbar.contributor.BasePortletToolbarContributor;
@@ -141,11 +142,13 @@ public class JournalContentPortletToolbarContributor
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		Layout layout = themeDisplay.getLayout();
 		long scopeGroupId = themeDisplay.getScopeGroupId();
 
 		if (!_resourcePermissionChecker.checkResource(
 				themeDisplay.getPermissionChecker(), scopeGroupId,
-				ActionKeys.ADD_ARTICLE)) {
+				ActionKeys.ADD_ARTICLE) ||
+			layout.isLayoutPrototypeLinkActive()) {
 
 			return Collections.emptyList();
 		}

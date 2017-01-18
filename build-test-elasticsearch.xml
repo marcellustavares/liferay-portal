@@ -116,6 +116,8 @@ subjectKeyIdentifier = hash</echo>
 				<arg value="liferay" />
 			</exec>
 
+			<get-ip-address />
+
 			<exec dir="${elastic.shield.ca.dir}" executable="keytool" failonerror="true">
 				<arg value="-genkey" />
 				<arg value="-alias" />
@@ -134,6 +136,8 @@ subjectKeyIdentifier = hash</echo>
 				<arg value="liferay" />
 				<arg value="-validity" />
 				<arg value="3650" />
+				<arg value="-ext" />
+				<arg value="san=dns:${hostname},dns:localhost,ip:${ip.address}" />
 			</exec>
 
 			<exec dir="${elastic.shield.ca.dir}" executable="keytool" failonerror="true">
@@ -154,6 +158,8 @@ subjectKeyIdentifier = hash</echo>
 				<arg value="liferay" />
 				<arg value="-validity" />
 				<arg value="3650" />
+				<arg value="-ext" />
+				<arg value="san=dns:${hostname},dns:localhost,ip:${ip.address}" />
 			</exec>
 
 			<exec dir="${elastic.shield.ca.dir}" executable="openssl" failonerror="true">
