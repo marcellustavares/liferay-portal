@@ -164,6 +164,11 @@ public interface KaleoDefinitionLocalService extends BaseLocalService,
 	public KaleoDefinition updateKaleoDefinition(
 		KaleoDefinition kaleoDefinition);
 
+	public KaleoDefinition updateKaleoDefinition(java.lang.String name,
+		java.lang.String title, java.lang.String description,
+		java.lang.String content, ServiceContext serviceContext,
+		KaleoDefinition kaleoDefinition) throws PortalException;
+
 	public KaleoDefinition updateTitle(java.lang.String name, int version,
 		java.lang.String title, ServiceContext serviceContext)
 		throws PortalException;

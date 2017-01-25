@@ -10,6 +10,9 @@ create index IX_408542BA on KaleoDefinition (companyId, active_);
 create index IX_4C23F11B on KaleoDefinition (companyId, name[$COLUMN_LENGTH:200$], active_);
 create index IX_EC14F81A on KaleoDefinition (companyId, name[$COLUMN_LENGTH:200$], version);
 
+create unique index IX_AE02DCC on KaleoDefinitionVersion (companyId, name[$COLUMN_LENGTH:200$], version[$COLUMN_LENGTH:75$]);
+create index IX_ECA6E1B3 on KaleoDefinitionVersion (kaleoDefinitionId);
+
 create index IX_58D85ECB on KaleoInstance (className[$COLUMN_LENGTH:200$], classPK);
 create index IX_BF5839F8 on KaleoInstance (companyId, kaleoDefinitionName[$COLUMN_LENGTH:200$], kaleoDefinitionVersion, completionDate);
 create index IX_C6D7A867 on KaleoInstance (companyId, userId);
