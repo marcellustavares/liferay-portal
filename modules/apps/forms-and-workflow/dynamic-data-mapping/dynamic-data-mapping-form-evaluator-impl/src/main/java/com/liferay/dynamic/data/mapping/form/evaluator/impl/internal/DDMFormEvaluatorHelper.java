@@ -28,10 +28,13 @@ import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.S
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetInvalidFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.impl.internal.functions.SetPropertyFunction;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.kernel.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -57,6 +60,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * @author Leonardo Barros
@@ -136,6 +140,17 @@ public class DDMFormEvaluatorHelper {
 			ddmFormField.getDataType(), valueString);
 
 		ddmFormFieldEvaluationResult.setValue(value);
+		
+		if (Objects.equals(ddmFormFieldValue.getName(), "options")) {
+			Value optionsValue = ddmFormFieldValue.getValue();
+			
+			String optionsValueString = optionsValue.getString(_locale);
+			
+			if (!Objects.equals("", optionsValueString)){
+			
+			ddmFormFieldEvaluationResult.setProperty("options", _jsonFactory.looseDeserialize(optionsValueString));
+			}
+		}
 
 		return ddmFormFieldEvaluationResult;
 	}
@@ -377,6 +392,10 @@ public class DDMFormEvaluatorHelper {
 			new GetPropertyFunction(
 				_ddmFormFieldEvaluationResultsMap, "value"));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
+				"getOptions",
+				new GetPropertyFunction(
+					_ddmFormFieldEvaluationResultsMap, "options"));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"jumpPage", new JumpPageFunction(_pageFlow));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"setEnabled",
@@ -388,6 +407,10 @@ public class DDMFormEvaluatorHelper {
 			"setRequired",
 			new SetPropertyFunction(
 				_ddmFormFieldEvaluationResultsMap, "required"));
+		ddmFormRuleEvaluator.setDDMExpressionFunction(
+			"setOptions",
+			new SetPropertyFunction(
+				_ddmFormFieldEvaluationResultsMap, "options"));
 		ddmFormRuleEvaluator.setDDMExpressionFunction(
 			"setValue",
 			new SetPropertyFunction(

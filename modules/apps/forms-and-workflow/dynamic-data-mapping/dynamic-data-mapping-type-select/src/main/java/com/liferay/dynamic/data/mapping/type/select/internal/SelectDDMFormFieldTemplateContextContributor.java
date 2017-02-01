@@ -90,7 +90,7 @@ public class SelectDDMFormFieldTemplateContextContributor
 
 		parameters.put("strings", stringsMap);
 		parameters.put(
-			"value", getValue(ddmFormField, ddmFormFieldRenderingContext));
+			"value", getValue(ddmFormField, ddmFormFieldRenderingContext));	
 
 		return parameters;
 	}

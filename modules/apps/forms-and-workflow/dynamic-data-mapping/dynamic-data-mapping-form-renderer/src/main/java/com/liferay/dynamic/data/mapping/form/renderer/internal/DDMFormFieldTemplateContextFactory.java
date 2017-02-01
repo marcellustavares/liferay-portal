@@ -148,7 +148,7 @@ public class DDMFormFieldTemplateContextFactory {
 		setDDMFormFieldTemplateContextVisible(
 			ddmFormFieldTemplateContext, ddmFormFieldEvaluationResult);
 		setDDMFormFieldTemplateContextOptions(
-			ddmFormFieldTemplateContext, ddmFormField.getDDMFormFieldOptions());
+			ddmFormFieldTemplateContext, ddmFormFieldEvaluationResult, ddmFormField.getDDMFormFieldOptions());
 
 		// Contributed template parameters
 
@@ -340,11 +340,20 @@ public class DDMFormFieldTemplateContextFactory {
 
 	protected void setDDMFormFieldTemplateContextOptions(
 		Map<String, Object> ddmFormFieldTemplateContext,
+		DDMFormFieldEvaluationResult ddmFormFieldEvaluationResult, 
 		DDMFormFieldOptions ddmFormFieldOptions) {
+		
+		List<Map<String, String>> list = ddmFormFieldEvaluationResult.getProperty("options");
+		
+		if (list != null && !list.isEmpty()) {
+			ddmFormFieldTemplateContext.put("options", list);
+			
+			return;
+		}
 
 		Map<String, LocalizedValue> options = ddmFormFieldOptions.getOptions();
 
-		List<Map<String, String>> list = new ArrayList<>();
+		list = new ArrayList<>();
 
 		for (Entry<String, LocalizedValue> entry : options.entrySet()) {
 			Map<String, String> option = new HashMap<>();
