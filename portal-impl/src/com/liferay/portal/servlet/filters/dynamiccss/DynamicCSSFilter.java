@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.cache.key.CacheKeyGeneratorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
+import com.liferay.portal.kernel.servlet.DynamicIncludeResourcesUtil;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.servlet.PortletResourcesUtil;
@@ -135,10 +136,21 @@ public class DynamicCSSFilter extends IgnoreModuleRequestFilter {
 					resourceURL = PortletResourcesUtil.getResource(
 						resourceServletContext, requestPath);
 				}
-			}
 
-			if (resourceURL == null) {
-				return null;
+				if (resourceURL == null) {
+					resourceServletContext =
+						DynamicIncludeResourcesUtil.getPathServletContext(
+							requestPath);
+
+					if (resourceServletContext != null) {
+						resourceURL = DynamicIncludeResourcesUtil.getResource(
+							resourceServletContext, requestPath);
+					}
+				}
+
+				if (resourceURL == null) {
+					return null;
+				}
 			}
 
 			servletContext = resourceServletContext;
