@@ -2881,7 +2881,7 @@ Export-Package: com.liferay.ibm.icu;version="4.0.1",com.liferay.ibm.ic
  7.0.0";uses:="com.liferay.portal.kernel.servlet,javax.servlet.http",c
  om.liferay.portal.kernel.servlet.filters.invoker;version="7.2.0";uses
  :="com.liferay.portal.kernel.util,javax.servlet,javax.servlet.http",c
- om.liferay.portal.kernel.servlet.taglib;version="7.0.0";uses:="com.li
+ om.liferay.portal.kernel.servlet.taglib;version="7.1.0";uses:="com.li
  feray.portal.kernel.log,com.liferay.portal.kernel.util,javax.servlet,
  javax.servlet.http",com.liferay.portal.kernel.servlet.taglib.aui;vers
  ion="7.0.0";uses:="com.liferay.portal.kernel.util",com.liferay.portal
