@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.servlet.taglib;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +24,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Carlos Sierra Andrés
  */
 public interface DynamicInclude {
+
+	public default ServletContext getServletContext() {
+		return null;
+	}
 
 	public void include(
 			HttpServletRequest request, HttpServletResponse response,
