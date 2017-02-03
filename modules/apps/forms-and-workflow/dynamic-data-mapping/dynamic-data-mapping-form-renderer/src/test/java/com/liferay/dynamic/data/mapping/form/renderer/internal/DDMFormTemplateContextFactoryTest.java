@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
+import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluatorContext;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.internal.util.DDMImpl;
@@ -31,7 +32,6 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
-import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -464,8 +464,7 @@ public class DDMFormTemplateContextFactoryTest {
 
 		when(
 			ddmFormEvaluator.evaluate(
-				Matchers.any(DDMForm.class), Matchers.any(DDMFormValues.class),
-				Matchers.any(Locale.class))
+				Matchers.any(DDMFormEvaluatorContext.class))
 		).thenReturn(
 			new DDMFormEvaluationResult()
 		);

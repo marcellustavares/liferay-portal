@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.evaluator.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
+import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluatorContext;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
@@ -80,7 +81,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
 
@@ -114,7 +117,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult checkboxDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(
@@ -144,7 +149,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult checkboxDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(
@@ -174,7 +181,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult phoneDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(
@@ -204,7 +213,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult phoneDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(
@@ -234,7 +245,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult phoneDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(
@@ -264,7 +277,9 @@ public class DDMFormEvaluatorTest extends BaseDDMServiceTestCase {
 			DDMFormEvaluator.class);
 
 		DDMFormEvaluationResult ddmFormEvaluationResult =
-			ddmFormEvaluator.evaluate(ddmForm, ddmFormValues, LocaleUtil.US);
+			ddmFormEvaluator.evaluate(
+				new DDMFormEvaluatorContext(
+					ddmForm, ddmFormValues, LocaleUtil.US));
 
 		DDMFormFieldEvaluationResult phoneDDMFormFieldEvaluationResult =
 			ddmFormEvaluationResult.geDDMFormFieldEvaluationResult(

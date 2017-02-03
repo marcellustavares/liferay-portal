@@ -290,6 +290,7 @@ public class DDMFormRuleToDDLFormRuleConverter {
 			_operatorMap.put(">", "greater-than");
 			_operatorMap.put(">=", "greater-than-equals");
 
+			_functionNameOperatorMap.put("belongsTo", "belongs-to");
 			_functionNameOperatorMap.put("contains", "contains");
 			_functionNameOperatorMap.put("equals", "equals-to");
 		}

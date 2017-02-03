@@ -56,6 +56,13 @@ public class DDMFormRuleToDDLFormRuleConverterTest
 	}
 
 	@Test
+	public void testBelongsToCondition() throws Exception {
+		assertConversion(
+			"ddm-form-rules-belongs-to-condition.json",
+			"ddl-form-rules-belongs-to-condition.json");
+	}
+
+	@Test
 	public void testBooleanActions() throws Exception {
 		assertConversion(
 			"ddm-form-rules-boolean-actions.json",

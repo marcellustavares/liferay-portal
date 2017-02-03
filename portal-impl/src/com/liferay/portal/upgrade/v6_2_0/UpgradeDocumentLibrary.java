@@ -150,7 +150,6 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 
 				if (Validator.isNotNull(userName)) {
 					ps2.setString(1, userName);
-
 					ps2.setLong(2, userId);
 
 					ps2.addBatch();
