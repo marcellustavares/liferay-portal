@@ -14,15 +14,20 @@
 
 package com.liferay.journal.properties.transformer.listener.internal;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.journal.constants.JournalPortletKeys;
+import com.liferay.journal.transformer.JournalTransformerListenerRegistryUtil;
 import com.liferay.journal.transformer.TokensTransformerListener;
-import com.liferay.journal.util.impl.JournalUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.templateparser.BaseTransformerListener;
 import com.liferay.portal.kernel.templateparser.TransformerListener;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -33,6 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
@@ -68,6 +74,28 @@ public class JournalPropertiesTransformerListener
 		return replace(script, languageId, tokens);
 	}
 
+	protected String getTemplateScript(
+			long groupId, String ddmTemplateKey, Map<String, String> tokens,
+			String languageId)
+		throws PortalException {
+
+		DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
+			groupId, PortalUtil.getClassNameId(DDMStructure.class),
+			ddmTemplateKey, true);
+
+		String script = ddmTemplate.getScript();
+
+		for (TransformerListener transformerListener :
+				JournalTransformerListenerRegistryUtil.
+					getTransformerListeners()) {
+
+			script = transformerListener.onScript(
+				script, (Document)null, languageId, tokens);
+		}
+
+		return script;
+	}
+
 	/**
 	 * Replace the properties in a given string with their values fetched from
 	 * the template GLOBAL-PROPERTIES.
@@ -100,7 +128,7 @@ public class JournalPropertiesTransformerListener
 			long articleGroupId = GetterUtil.getLong(
 				tokens.get("article_group_id"));
 
-			String script = JournalUtil.getTemplateScript(
+			String script = getTemplateScript(
 				articleGroupId, _GLOBAL_PROPERTIES, newTokens, languageId);
 
 			PropertiesUtil.load(properties, script);
@@ -165,5 +193,8 @@ public class JournalPropertiesTransformerListener
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalPropertiesTransformerListener.class);
+
+	@Reference
+	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 }
