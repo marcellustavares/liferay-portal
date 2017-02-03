@@ -53,6 +53,11 @@ public class DDMFormRendererTopHeadDynamicInclude extends BaseDynamicInclude {
 	}
 
 	@Override
+	public ServletContext getServletContext() {
+		return _servletContext;
+	}
+
+	@Override
 	public void include(
 			HttpServletRequest request, HttpServletResponse response,
 			String key)
