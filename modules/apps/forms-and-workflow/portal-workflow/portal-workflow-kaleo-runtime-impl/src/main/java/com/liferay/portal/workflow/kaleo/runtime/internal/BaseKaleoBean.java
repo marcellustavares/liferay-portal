@@ -18,6 +18,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portal.workflow.kaleo.service.KaleoActionLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoConditionLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionLocalService;
+import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionVersionLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoInstanceLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoInstanceTokenLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalService;
@@ -32,6 +33,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTimerInstanceTokenLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTimerLocalService;
 import com.liferay.portal.workflow.kaleo.service.KaleoTransitionLocalService;
+import com.liferay.portal.workflow.kaleo.service.persistence.KaleoDefinitionVersionPersistence;
 
 /**
  * @author Brian Wing Shun Chan
@@ -46,6 +48,14 @@ public class BaseKaleoBean {
 
 	@ServiceReference(type = KaleoDefinitionLocalService.class)
 	protected KaleoDefinitionLocalService kaleoDefinitionLocalService;
+
+	@ServiceReference(type = KaleoDefinitionVersionLocalService.class)
+	protected KaleoDefinitionVersionLocalService
+		kaleoDefinitionVersionLocalService;
+
+	@ServiceReference(type = KaleoDefinitionVersionPersistence.class)
+	protected KaleoDefinitionVersionPersistence
+		kaleoDefinitionVersionPersistence;
 
 	@ServiceReference(type = KaleoInstanceLocalService.class)
 	protected KaleoInstanceLocalService kaleoInstanceLocalService;

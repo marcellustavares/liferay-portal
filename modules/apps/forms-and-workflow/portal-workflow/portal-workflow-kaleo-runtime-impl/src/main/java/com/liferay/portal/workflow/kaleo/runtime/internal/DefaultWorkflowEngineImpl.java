@@ -14,6 +14,7 @@
 
 package com.liferay.portal.workflow.kaleo.runtime.internal;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -23,6 +24,8 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
@@ -35,6 +38,7 @@ import com.liferay.portal.workflow.kaleo.definition.deployment.WorkflowDeployer;
 import com.liferay.portal.workflow.kaleo.definition.parser.WorkflowModelParser;
 import com.liferay.portal.workflow.kaleo.definition.parser.WorkflowValidator;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
+import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstance;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 import com.liferay.portal.workflow.kaleo.model.KaleoNode;
@@ -47,6 +51,7 @@ import com.liferay.portal.workflow.kaleo.runtime.WorkflowEngine;
 import com.liferay.portal.workflow.kaleo.runtime.internal.node.NodeExecutorFactory;
 import com.liferay.portal.workflow.kaleo.runtime.node.NodeExecutor;
 import com.liferay.portal.workflow.kaleo.runtime.util.comparator.KaleoInstanceOrderByComparator;
+import com.liferay.portal.workflow.kaleo.util.comparator.KaleoDefinitionVersionVersionComparator;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -72,8 +77,35 @@ public class DefaultWorkflowEngineImpl
 		throws WorkflowException {
 
 		try {
-			kaleoDefinitionLocalService.deleteKaleoDefinition(
-				name, version, serviceContext);
+			List<KaleoDefinitionVersion> kaleoDefinitionVersions =
+				kaleoDefinitionVersionLocalService.getKaleoDefinitionVersions(
+					serviceContext.getCompanyId(), name, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS,
+					new KaleoDefinitionVersionVersionComparator());
+
+			if (kaleoDefinitionVersions.size() == 1) {
+				kaleoDefinitionLocalService.deleteKaleoDefinition(
+					name, version, serviceContext);
+
+				return;
+			}
+
+			KaleoDefinitionVersion kaleoDefinitionVersion =
+				kaleoDefinitionVersions.get(0);
+
+			if (kaleoDefinitionVersion.getVersion().equals(
+					getVersion(version))) {
+
+				kaleoDefinitionVersionLocalService.deleteKaleoDefinitionVersion(
+					kaleoDefinitionVersion);
+
+				updateKaleoDefinition(
+					kaleoDefinitionVersions.get(1), name, serviceContext);
+			}
+			else {
+				kaleoDefinitionVersionPersistence.removeByC_N_V(
+					serviceContext.getCompanyId(), name, getVersion(version));
+			}
 		}
 		catch (Exception e) {
 			throw new WorkflowException(e);
@@ -219,14 +251,8 @@ public class DefaultWorkflowEngineImpl
 			Boolean completed, ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				userId, assetClassName, assetClassPK, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			userId, assetClassName, assetClassPK, completed, serviceContext);
 	}
 
 	@Override
@@ -235,13 +261,8 @@ public class DefaultWorkflowEngineImpl
 			ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				userId, assetClassNames, completed, serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			userId, assetClassNames, completed, serviceContext);
 	}
 
 	@Override
@@ -250,14 +271,9 @@ public class DefaultWorkflowEngineImpl
 			boolean completed, ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.getKaleoInstancesCount(
-				workflowDefinitionName, workflowDefinitionVersion, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.getKaleoInstancesCount(
+			workflowDefinitionName, workflowDefinitionVersion, completed,
+			serviceContext);
 	}
 
 	@Override
@@ -364,14 +380,9 @@ public class DefaultWorkflowEngineImpl
 			ServiceContext serviceContext)
 		throws WorkflowException {
 
-		try {
-			return kaleoInstanceLocalService.searchCount(
-				userId, assetType, nodeName, kaleoDefinitionName, completed,
-				serviceContext);
-		}
-		catch (Exception e) {
-			throw new WorkflowException(e);
-		}
+		return kaleoInstanceLocalService.searchCount(
+			userId, assetType, nodeName, kaleoDefinitionName, completed,
+			serviceContext);
 	}
 
 	public void setKaleoSignaler(KaleoSignaler kaleoSignaler) {
@@ -597,6 +608,16 @@ public class DefaultWorkflowEngineImpl
 		}
 	}
 
+	protected String getVersion(int version) {
+		return version + StringPool.PERIOD + 0;
+	}
+
+	protected int getVersion(String version) {
+		int[] versionParts = StringUtil.split(version, StringPool.PERIOD, 0);
+
+		return versionParts[0];
+	}
+
 	protected List<WorkflowInstance> toWorkflowInstances(
 			List<KaleoInstance> kaleoInstances, ServiceContext serviceContext)
 		throws PortalException {
@@ -614,6 +635,28 @@ public class DefaultWorkflowEngineImpl
 		}
 
 		return workflowInstances;
+	}
+
+	protected void updateKaleoDefinition(
+			KaleoDefinitionVersion kaleoDefinitionVersion, String name,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		KaleoDefinition kaleoDefinition =
+			kaleoDefinitionLocalService.getLatestKaleoDefinition(
+				name, serviceContext);
+
+		kaleoDefinition.setName(kaleoDefinitionVersion.getName());
+		kaleoDefinition.setTitle(kaleoDefinitionVersion.getTitle());
+		kaleoDefinition.setDescription(kaleoDefinitionVersion.getDescription());
+		kaleoDefinition.setContent(kaleoDefinitionVersion.getContent());
+		kaleoDefinition.setVersion(
+			getVersion(kaleoDefinitionVersion.getVersion()));
+		kaleoDefinition.setActive(kaleoDefinitionVersion.getActive());
+		kaleoDefinition.setStartKaleoNodeId(
+			kaleoDefinitionVersion.getStartKaleoNodeId());
+
+		kaleoDefinitionLocalService.updateKaleoDefinition(kaleoDefinition);
 	}
 
 	@ServiceReference(type = GroupLocalService.class)
