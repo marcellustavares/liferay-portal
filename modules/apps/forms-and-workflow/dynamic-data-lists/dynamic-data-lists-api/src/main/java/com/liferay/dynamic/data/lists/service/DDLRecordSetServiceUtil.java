@@ -132,7 +132,8 @@ public class DDLRecordSetServiceUtil {
 	* display rows for the record set matching the group ID and record set key.
 	*
 	* @param groupId the primary key of the record set's group
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param recordSetKey the record set's mnemonic primary key
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
@@ -145,15 +146,17 @@ public class DDLRecordSetServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		long groupId, long ddmStructureId, java.lang.String recordSetKey,
+		long groupId, long ddmStructureVersionId,
+		java.lang.String recordSetKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int minDisplayRows,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateRecordSet(groupId, ddmStructureId, recordSetKey,
-			nameMap, descriptionMap, minDisplayRows, serviceContext);
+				   .updateRecordSet(groupId, ddmStructureVersionId,
+			recordSetKey, nameMap, descriptionMap, minDisplayRows,
+			serviceContext);
 	}
 
 	/**
@@ -178,7 +181,8 @@ public class DDLRecordSetServiceUtil {
 	* display rows for the record set matching the record set ID.
 	*
 	* @param recordSetId the primary key of the record set
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
@@ -190,15 +194,15 @@ public class DDLRecordSetServiceUtil {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		long recordSetId, long ddmStructureId,
+		long recordSetId, long ddmStructureVersionId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int minDisplayRows,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateRecordSet(recordSetId, ddmStructureId, nameMap,
-			descriptionMap, minDisplayRows, serviceContext);
+				   .updateRecordSet(recordSetId, ddmStructureVersionId,
+			nameMap, descriptionMap, minDisplayRows, serviceContext);
 	}
 
 	/**

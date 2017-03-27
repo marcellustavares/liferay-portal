@@ -448,7 +448,8 @@ public class DDLRecordSetServiceSoap {
 	* display rows for the record set matching the record set ID.
 	*
 	* @param recordSetId the primary key of the record set
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
@@ -460,7 +461,7 @@ public class DDLRecordSetServiceSoap {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSetSoap updateRecordSet(
-		long recordSetId, long ddmStructureId,
+		long recordSetId, long ddmStructureVersionId,
 		java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
@@ -474,8 +475,8 @@ public class DDLRecordSetServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.dynamic.data.lists.model.DDLRecordSet returnValue = DDLRecordSetServiceUtil.updateRecordSet(recordSetId,
-					ddmStructureId, nameMap, descriptionMap, minDisplayRows,
-					serviceContext);
+					ddmStructureVersionId, nameMap, descriptionMap,
+					minDisplayRows, serviceContext);
 
 			return com.liferay.dynamic.data.lists.model.DDLRecordSetSoap.toSoapModel(returnValue);
 		}
@@ -491,7 +492,8 @@ public class DDLRecordSetServiceSoap {
 	* display rows for the record set matching the group ID and record set key.
 	*
 	* @param groupId the primary key of the record set's group
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param recordSetKey the record set's mnemonic primary key
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
@@ -504,8 +506,8 @@ public class DDLRecordSetServiceSoap {
 	* @throws PortalException if a portal exception occurred
 	*/
 	public static com.liferay.dynamic.data.lists.model.DDLRecordSetSoap updateRecordSet(
-		long groupId, long ddmStructureId, java.lang.String recordSetKey,
-		java.lang.String[] nameMapLanguageIds,
+		long groupId, long ddmStructureVersionId,
+		java.lang.String recordSetKey, java.lang.String[] nameMapLanguageIds,
 		java.lang.String[] nameMapValues,
 		java.lang.String[] descriptionMapLanguageIds,
 		java.lang.String[] descriptionMapValues, int minDisplayRows,
@@ -518,8 +520,8 @@ public class DDLRecordSetServiceSoap {
 					descriptionMapValues);
 
 			com.liferay.dynamic.data.lists.model.DDLRecordSet returnValue = DDLRecordSetServiceUtil.updateRecordSet(groupId,
-					ddmStructureId, recordSetKey, nameMap, descriptionMap,
-					minDisplayRows, serviceContext);
+					ddmStructureVersionId, recordSetKey, nameMap,
+					descriptionMap, minDisplayRows, serviceContext);
 
 			return com.liferay.dynamic.data.lists.model.DDLRecordSetSoap.toSoapModel(returnValue);
 		}

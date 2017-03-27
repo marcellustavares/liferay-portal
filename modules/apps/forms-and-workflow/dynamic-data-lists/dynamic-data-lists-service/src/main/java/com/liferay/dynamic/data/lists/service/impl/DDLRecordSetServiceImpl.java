@@ -344,7 +344,8 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	 * display rows for the record set matching the record set ID.
 	 *
 	 * @param  recordSetId the primary key of the record set
-	 * @param  ddmStructureId the primary key of the record set's DDM structure
+	 * @param  ddmStructureVersionId the primary key of the record set's DDM
+	 * 		   structure version
 	 * @param  nameMap the record set's locales and localized names
 	 * @param  descriptionMap the record set's locales and localized
 	 *         descriptions
@@ -357,17 +358,17 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	 */
 	@Override
 	public DDLRecordSet updateRecordSet(
-			long recordSetId, long ddmStructureId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, int minDisplayRows,
-			ServiceContext serviceContext)
+			long recordSetId, long ddmStructureVersionId,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			int minDisplayRows, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.UPDATE);
 
 		return ddlRecordSetLocalService.updateRecordSet(
-			recordSetId, ddmStructureId, nameMap, descriptionMap,
-			minDisplayRows, serviceContext);
+			getUserId(), recordSetId, ddmStructureVersionId, nameMap,
+			descriptionMap, minDisplayRows, serviceContext);
 	}
 
 	/**
@@ -375,7 +376,8 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	 * display rows for the record set matching the group ID and record set key.
 	 *
 	 * @param  groupId the primary key of the record set's group
-	 * @param  ddmStructureId the primary key of the record set's DDM structure
+	 * @param  ddmStructureVersionId the primary key of the record set's DDM
+	 * 		   structure version
 	 * @param  recordSetKey the record set's mnemonic primary key
 	 * @param  nameMap the record set's locales and localized names
 	 * @param  descriptionMap the record set's locales and localized
@@ -389,7 +391,7 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	 */
 	@Override
 	public DDLRecordSet updateRecordSet(
-			long groupId, long ddmStructureId, String recordSetKey,
+			long groupId, long ddmStructureVersionId, String recordSetKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			int minDisplayRows, ServiceContext serviceContext)
 		throws PortalException {
@@ -398,8 +400,8 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 			getPermissionChecker(), groupId, recordSetKey, ActionKeys.UPDATE);
 
 		return ddlRecordSetLocalService.updateRecordSet(
-			groupId, ddmStructureId, recordSetKey, nameMap, descriptionMap,
-			minDisplayRows, serviceContext);
+			getUserId(), groupId, ddmStructureVersionId, recordSetKey, nameMap,
+			descriptionMap, minDisplayRows, serviceContext);
 	}
 
 }

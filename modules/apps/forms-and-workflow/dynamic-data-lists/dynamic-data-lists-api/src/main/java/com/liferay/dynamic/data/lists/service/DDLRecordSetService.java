@@ -134,7 +134,8 @@ public interface DDLRecordSetService extends BaseService {
 	* display rows for the record set matching the group ID and record set key.
 	*
 	* @param groupId the primary key of the record set's group
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param recordSetKey the record set's mnemonic primary key
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
@@ -146,8 +147,9 @@ public interface DDLRecordSetService extends BaseService {
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
-	public DDLRecordSet updateRecordSet(long groupId, long ddmStructureId,
-		java.lang.String recordSetKey, Map<Locale, java.lang.String> nameMap,
+	public DDLRecordSet updateRecordSet(long groupId,
+		long ddmStructureVersionId, java.lang.String recordSetKey,
+		Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
 		ServiceContext serviceContext) throws PortalException;
 
@@ -169,7 +171,8 @@ public interface DDLRecordSetService extends BaseService {
 	* display rows for the record set matching the record set ID.
 	*
 	* @param recordSetId the primary key of the record set
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
@@ -180,8 +183,8 @@ public interface DDLRecordSetService extends BaseService {
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
-	public DDLRecordSet updateRecordSet(long recordSetId, long ddmStructureId,
-		Map<Locale, java.lang.String> nameMap,
+	public DDLRecordSet updateRecordSet(long recordSetId,
+		long ddmStructureVersionId, Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
 		ServiceContext serviceContext) throws PortalException;
 
