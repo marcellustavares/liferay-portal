@@ -194,6 +194,7 @@
 	<exceptions>
 		<exception>RecordGroupId</exception>
 		<exception>RecordSetDDMStructureId</exception>
+		<exception>RecordSetDDMStructureVersionId</exception>
 		<exception>RecordSetDuplicateRecordSetKey</exception>
 		<exception>RecordSetName</exception>
 		<exception>RecordSetSettingsRedirectURL</exception>
