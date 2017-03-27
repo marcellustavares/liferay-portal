@@ -29,11 +29,13 @@ import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFact
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -113,7 +115,8 @@ public class SaveRecordSetMVCCommandHelper {
 	}
 
 	protected DDLRecordSet addRecordSet(
-			PortletRequest portletRequest, long ddmStructureId)
+			PortletRequest portletRequest, long ddmStructureVersionId,
+			DDMFormValues settingsDDMFormValues)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
@@ -123,27 +126,39 @@ public class SaveRecordSetMVCCommandHelper {
 		String description = ParamUtil.getString(portletRequest, "description");
 
 		return addRecordSet(
-			portletRequest, ddmStructureId,
+			portletRequest, ddmStructureVersionId,
 			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description));
+			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description),
+			settingsDDMFormValues);
 	}
 
 	protected DDLRecordSet addRecordSet(
-			PortletRequest portletRequest, long ddmStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap)
+			PortletRequest portletRequest, long ddmStructureVersionId,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			DDMFormValues settingsDDMFormValues)
 		throws Exception {
 
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 		String recordSetKey = ParamUtil.getString(
 			portletRequest, "recordSetKey");
 
+		validateRedirectURL(settingsDDMFormValues);
+
+		String settings = ddmFormValuesJSONSerializer.serialize(
+			settingsDDMFormValues);
+
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecordSet.class.getName(), portletRequest);
 
-		return ddlRecordSetService.addRecordSet(
-			groupId, ddmStructureId, recordSetKey, nameMap, descriptionMap,
-			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
-			DDLRecordSetConstants.SCOPE_FORMS, serviceContext);
+		DDLRecordSet ddlRecordSet = ddlRecordSetService.addRecordSet(
+			groupId, ddmStructureVersionId, recordSetKey, nameMap,
+			descriptionMap, DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
+			DDLRecordSetConstants.SCOPE_FORMS, settings, serviceContext);
+
+		updateWorkflowDefinitionLink(
+			portletRequest, ddlRecordSet, settingsDDMFormValues);
+
+		return ddlRecordSet;
 	}
 
 	protected DDLRecordSet addRecordSet(
@@ -156,11 +171,12 @@ public class SaveRecordSetMVCCommandHelper {
 		DDMStructure ddmStructure = addDDMStructure(
 			portletRequest, settingsDDMFormValues);
 
-		DDLRecordSet recordSet = addRecordSet(
-			portletRequest, ddmStructure.getStructureId());
+		DDMStructureVersion ddmStructureVersion =
+			ddmStructure.getLatestStructureVersion();
 
-		updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);
+		DDLRecordSet recordSet = addRecordSet(
+			portletRequest, ddmStructureVersion.getStructureVersionId(),
+			settingsDDMFormValues);
 
 		return recordSet;
 	}
@@ -301,7 +317,8 @@ public class SaveRecordSetMVCCommandHelper {
 	}
 
 	protected DDLRecordSet updateRecordSet(
-			PortletRequest portletRequest, long ddmStructureId)
+			PortletRequest portletRequest, long ddmStructureVersionId,
+			DDMFormValues settingsDDMFormValues)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
@@ -312,14 +329,25 @@ public class SaveRecordSetMVCCommandHelper {
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 
+		validateRedirectURL(settingsDDMFormValues);
+
+		String settings = ddmFormValuesJSONSerializer.serialize(
+			settingsDDMFormValues);
+
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecordSet.class.getName(), portletRequest);
 
-		return ddlRecordSetService.updateRecordSet(
-			recordSetId, ddmStructureId,
+		DDLRecordSet ddlRecordSet = ddlRecordSetService.updateRecordSet(
+			recordSetId, ddmStructureVersionId,
 			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
 			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description),
-			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, serviceContext);
+			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, settings,
+			serviceContext);
+
+		updateWorkflowDefinitionLink(
+			portletRequest, ddlRecordSet, settingsDDMFormValues);
+
+		return ddlRecordSet;
 	}
 
 	protected DDLRecordSet updateRecordSet(
@@ -328,30 +356,17 @@ public class SaveRecordSetMVCCommandHelper {
 
 		DDMStructure ddmStructure = updateDDMStructure(portletRequest);
 
-		DDLRecordSet recordSet = updateRecordSet(
-			portletRequest, ddmStructure.getStructureId());
+		DDMStructureVersion ddmStructureVersion =
+			ddmStructure.getLatestStructureVersion();
 
 		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
 			portletRequest);
 
-		updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);
+		DDLRecordSet recordSet = updateRecordSet(
+			portletRequest, ddmStructureVersion.getStructureVersionId(),
+			settingsDDMFormValues);
 
 		return recordSet;
-	}
-
-	protected void updateRecordSetSettings(
-			PortletRequest portletRequest, DDLRecordSet recordSet,
-			DDMFormValues settingsDDMFormValues)
-		throws PortalException {
-
-		validateRedirectURL(settingsDDMFormValues);
-
-		ddlRecordSetService.updateRecordSet(
-			recordSet.getRecordSetId(), settingsDDMFormValues);
-
-		updateWorkflowDefinitionLink(
-			portletRequest, recordSet, settingsDDMFormValues);
 	}
 
 	protected void updateWorkflowDefinitionLink(
@@ -424,6 +439,9 @@ public class SaveRecordSetMVCCommandHelper {
 
 	@Reference
 	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
+
+	@Reference
+	protected DDMFormValuesJSONSerializer ddmFormValuesJSONSerializer;
 
 	@Reference
 	protected DDMFormValuesQueryFactory ddmFormValuesQueryFactory;

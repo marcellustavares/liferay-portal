@@ -66,10 +66,12 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
 		attributes.put("userName", getUserName());
+		attributes.put("versionUserId", getVersionUserId());
+		attributes.put("versionUserName", getVersionUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("DDMStructureId", getDDMStructureId());
 		attributes.put("recordSetKey", getRecordSetKey());
+		attributes.put("version", getVersion());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("minDisplayRows", getMinDisplayRows());
@@ -118,6 +120,18 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 			setUserName(userName);
 		}
 
+		Long versionUserId = (Long)attributes.get("versionUserId");
+
+		if (versionUserId != null) {
+			setVersionUserId(versionUserId);
+		}
+
+		String versionUserName = (String)attributes.get("versionUserName");
+
+		if (versionUserName != null) {
+			setVersionUserName(versionUserName);
+		}
+
 		Date createDate = (Date)attributes.get("createDate");
 
 		if (createDate != null) {
@@ -130,16 +144,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 			setModifiedDate(modifiedDate);
 		}
 
-		Long DDMStructureId = (Long)attributes.get("DDMStructureId");
-
-		if (DDMStructureId != null) {
-			setDDMStructureId(DDMStructureId);
-		}
-
 		String recordSetKey = (String)attributes.get("recordSetKey");
 
 		if (recordSetKey != null) {
 			setRecordSetKey(recordSetKey);
+		}
+
+		String version = (String)attributes.get("version");
+
+		if (version != null) {
+			setVersion(version);
 		}
 
 		String name = (String)attributes.get("name");
@@ -221,6 +235,12 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 		long formDDMTemplateId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecordSet.getDDMStructure(formDDMTemplateId);
+	}
+
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMStructureVersion getDDMStructureVersion()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordSet.getDDMStructureVersion();
 	}
 
 	@Override
@@ -469,6 +489,36 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 		return _ddlRecordSet.getUuid();
 	}
 
+	/**
+	* Returns the version of this ddl record set.
+	*
+	* @return the version of this ddl record set
+	*/
+	@Override
+	public java.lang.String getVersion() {
+		return _ddlRecordSet.getVersion();
+	}
+
+	/**
+	* Returns the version user name of this ddl record set.
+	*
+	* @return the version user name of this ddl record set
+	*/
+	@Override
+	public java.lang.String getVersionUserName() {
+		return _ddlRecordSet.getVersionUserName();
+	}
+
+	/**
+	* Returns the version user uuid of this ddl record set.
+	*
+	* @return the version user uuid of this ddl record set
+	*/
+	@Override
+	public java.lang.String getVersionUserUuid() {
+		return _ddlRecordSet.getVersionUserUuid();
+	}
+
 	@Override
 	public java.lang.String toString() {
 		return _ddlRecordSet.toString();
@@ -549,14 +599,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 		return _ddlRecordSet.getCompanyId();
 	}
 
-	/**
-	* Returns the ddm structure ID of this ddl record set.
-	*
-	* @return the ddm structure ID of this ddl record set
-	*/
 	@Override
-	public long getDDMStructureId() {
+	public long getDDMStructureId()
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecordSet.getDDMStructureId();
+	}
+
+	@Override
+	public long getDDMStructureVersionId()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordSet.getDDMStructureVersionId();
 	}
 
 	/**
@@ -597,6 +649,16 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public long getUserId() {
 		return _ddlRecordSet.getUserId();
+	}
+
+	/**
+	* Returns the version user ID of this ddl record set.
+	*
+	* @return the version user ID of this ddl record set
+	*/
+	@Override
+	public long getVersionUserId() {
+		return _ddlRecordSet.getVersionUserId();
 	}
 
 	@Override
@@ -640,16 +702,6 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public void setCreateDate(Date createDate) {
 		_ddlRecordSet.setCreateDate(createDate);
-	}
-
-	/**
-	* Sets the ddm structure ID of this ddl record set.
-	*
-	* @param DDMStructureId the ddm structure ID of this ddl record set
-	*/
-	@Override
-	public void setDDMStructureId(long DDMStructureId) {
-		_ddlRecordSet.setDDMStructureId(DDMStructureId);
 	}
 
 	/**
@@ -931,6 +983,46 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	@Override
 	public void setUuid(java.lang.String uuid) {
 		_ddlRecordSet.setUuid(uuid);
+	}
+
+	/**
+	* Sets the version of this ddl record set.
+	*
+	* @param version the version of this ddl record set
+	*/
+	@Override
+	public void setVersion(java.lang.String version) {
+		_ddlRecordSet.setVersion(version);
+	}
+
+	/**
+	* Sets the version user ID of this ddl record set.
+	*
+	* @param versionUserId the version user ID of this ddl record set
+	*/
+	@Override
+	public void setVersionUserId(long versionUserId) {
+		_ddlRecordSet.setVersionUserId(versionUserId);
+	}
+
+	/**
+	* Sets the version user name of this ddl record set.
+	*
+	* @param versionUserName the version user name of this ddl record set
+	*/
+	@Override
+	public void setVersionUserName(java.lang.String versionUserName) {
+		_ddlRecordSet.setVersionUserName(versionUserName);
+	}
+
+	/**
+	* Sets the version user uuid of this ddl record set.
+	*
+	* @param versionUserUuid the version user uuid of this ddl record set
+	*/
+	@Override
+	public void setVersionUserUuid(java.lang.String versionUserUuid) {
+		_ddlRecordSet.setVersionUserUuid(versionUserUuid);
 	}
 
 	@Override

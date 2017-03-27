@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.Locale;
 import java.util.Map;
@@ -76,7 +77,8 @@ public class UpdateRecordSetMVCActionCommand
 
 		return ddlRecordSetService.updateRecordSet(
 			recordSetId, ddmStructureId, nameMap, descriptionMap,
-			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, serviceContext);
+			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, StringPool.BLANK,
+			serviceContext);
 	}
 
 }

@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.StrictPortletPreferencesImpl;
@@ -74,7 +75,8 @@ public class AddRecordSetMVCActionCommand extends BaseMVCActionCommand {
 		return ddlRecordSetService.addRecordSet(
 			groupId, ddmStructureId, null, nameMap, descriptionMap,
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
-			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, serviceContext);
+			DDLRecordSetConstants.SCOPE_DYNAMIC_DATA_LISTS, StringPool.BLANK,
+			serviceContext);
 	}
 
 	@Override

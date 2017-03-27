@@ -31,7 +31,6 @@ import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.List;
@@ -156,18 +155,9 @@ public class DDLRecordSetStagedModelDataHandler
 			PortletDataContext portletDataContext, DDLRecordSet recordSet)
 		throws Exception {
 
-		Map<Long, Long> ddmStructureIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				DDMStructure.class);
-
-		long ddmStructureId = MapUtil.getLong(
-			ddmStructureIds, recordSet.getDDMStructureId(),
-			recordSet.getDDMStructureId());
-
 		DDLRecordSet importedRecordSet = (DDLRecordSet)recordSet.clone();
 
 		importedRecordSet.setGroupId(portletDataContext.getScopeGroupId());
-		importedRecordSet.setDDMStructureId(ddmStructureId);
 
 		DDLRecordSet existingRecordSet =
 			_stagedModelRepository.fetchStagedModelByUuidAndGroupId(
@@ -195,7 +185,9 @@ public class DDLRecordSetStagedModelDataHandler
 				portletDataContext, recordSetElement);
 
 			_ddlRecordSetLocalService.updateRecordSet(
-				importedRecordSet.getRecordSetId(), settingsDDMFormValues);
+				importedRecordSet.getUserId(),
+				importedRecordSet.getRecordSetId(), settingsDDMFormValues,
+				portletDataContext.createServiceContext(importedRecordSet));
 		}
 
 		portletDataContext.importClassedModel(recordSet, importedRecordSet);

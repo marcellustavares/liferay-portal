@@ -16,11 +16,14 @@ package com.liferay.dynamic.data.lists.model.impl;
 
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalServiceUtil;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetVersionLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -35,7 +38,9 @@ public class DDLRecordSetImpl extends DDLRecordSetBaseImpl {
 
 	@Override
 	public DDMStructure getDDMStructure() throws PortalException {
-		return DDMStructureLocalServiceUtil.getStructure(getDDMStructureId());
+		DDMStructureVersion ddmStructureVersion = getDDMStructureVersion();
+
+		return ddmStructureVersion.getStructure();
 	}
 
 	@Override
@@ -50,7 +55,8 @@ public class DDLRecordSetImpl extends DDLRecordSetBaseImpl {
 
 			if (ddmTemplate != null) {
 
-				// Clone ddmStructure to make sure changes are never persisted
+				// Clone ddmStructure to make sure changes are never
+				// persisted
 
 				ddmStructure = (DDMStructure)ddmStructure.clone();
 
@@ -59,6 +65,28 @@ public class DDLRecordSetImpl extends DDLRecordSetBaseImpl {
 		}
 
 		return ddmStructure;
+	}
+
+	public long getDDMStructureId() throws PortalException {
+		DDMStructure ddmStructure = getDDMStructure();
+
+		return ddmStructure.getStructureId();
+	}
+
+	@Override
+	public DDMStructureVersion getDDMStructureVersion() throws PortalException {
+		DDLRecordSetVersion ddlRecordSetVersion =
+			DDLRecordSetVersionLocalServiceUtil.getDDLRecordSetVersion(
+				getRecordSetId(), getVersion());
+
+		return DDMStructureVersionLocalServiceUtil.getStructureVersion(
+			ddlRecordSetVersion.getDDMStructureVersionId());
+	}
+
+	public long getDDMStructureVersionId() throws PortalException {
+		DDMStructureVersion ddmStructureVersion = getDDMStructureVersion();
+
+		return ddmStructureVersion.getStructureVersionId();
 	}
 
 	@Override

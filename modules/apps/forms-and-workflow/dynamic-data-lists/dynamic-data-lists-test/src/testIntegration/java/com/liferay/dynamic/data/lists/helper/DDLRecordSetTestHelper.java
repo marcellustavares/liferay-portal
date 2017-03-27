@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestHelper;
@@ -30,6 +31,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -77,19 +79,21 @@ public class DDLRecordSetTestHelper {
 			TestPropsValues.getUserId(), _group.getGroupId(),
 			ddmStructure.getStructureId(), null, nameMap, null,
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, scope,
-			serviceContext);
+			StringPool.BLANK, serviceContext);
 	}
 
 	public DDLRecordSet updateRecordSet(
-			long recordSetId, DDMFormValues settingsDDMFormValues)
+			long userId, long recordSetId, DDMFormValues settingsDDMFormValues,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		return DDLRecordSetLocalServiceUtil.updateRecordSet(
-			recordSetId, settingsDDMFormValues);
+			userId, recordSetId, settingsDDMFormValues, serviceContext);
 	}
 
 	public DDLRecordSet updateRecordSet(
-			long recordSetId, DDMStructure ddmStructure)
+			long userId, long recordSetId,
+			DDMStructureVersion ddmStructureVersion)
 		throws Exception {
 
 		Map<Locale, String> nameMap = new HashMap<>();
@@ -100,8 +104,9 @@ public class DDLRecordSetTestHelper {
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
 
 		return DDLRecordSetLocalServiceUtil.updateRecordSet(
-			recordSetId, ddmStructure.getStructureId(), nameMap, null,
-			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, serviceContext);
+			userId, recordSetId, ddmStructureVersion.getStructureVersionId(),
+			nameMap, null, DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT,
+			StringPool.BLANK, serviceContext);
 	}
 
 	private final Group _group;

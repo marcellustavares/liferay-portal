@@ -26,7 +26,10 @@ import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.Sync;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 
 import java.util.List;
 import java.util.Map;
@@ -69,8 +72,12 @@ public class DDLFormStagedModelDataHandlerTest
 		DDLRecordSet recordSet = recordSetTestHelper.addRecordSet(
 			ddmStructure, DDLRecordSetConstants.SCOPE_FORMS);
 
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
 		return recordSetTestHelper.updateRecordSet(
-			recordSet.getRecordSetId(), _recordSetSettingsDDMFormValues);
+			TestPropsValues.getUserId(), recordSet.getRecordSetId(),
+			_recordSetSettingsDDMFormValues, serviceContext);
 	}
 
 	protected DDMFormValues createRecordSetSettingsDDMFormValues() {

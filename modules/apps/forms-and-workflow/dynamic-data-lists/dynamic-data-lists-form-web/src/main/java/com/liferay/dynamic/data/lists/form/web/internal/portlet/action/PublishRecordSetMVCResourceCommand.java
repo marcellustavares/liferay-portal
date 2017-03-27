@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -72,8 +74,11 @@ public class PublishRecordSetMVCResourceCommand extends BaseMVCResourceCommand {
 
 		updatePublishedDDMFormFieldValue(settingsDDMFormValues, published);
 
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			DDLRecordSet.class.getName(), resourceRequest);
+
 		_ddlRecordSetService.updateRecordSet(
-			recordSetId, settingsDDMFormValues);
+			recordSetId, settingsDDMFormValues, serviceContext);
 	}
 
 	@Reference(unbind = "-")

@@ -20,7 +20,6 @@ import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
@@ -33,13 +32,9 @@ import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -77,10 +72,12 @@ public class DDLRecordSetStagedModelRepository
 		}
 
 		return _ddlRecordSetLocalService.addRecordSet(
-			userId, ddlRecordSet.getGroupId(), ddlRecordSet.getDDMStructureId(),
+			userId, ddlRecordSet.getGroupId(),
+			ddlRecordSet.getDDMStructureVersionId(),
 			ddlRecordSet.getRecordSetKey(), ddlRecordSet.getNameMap(),
 			ddlRecordSet.getDescriptionMap(), ddlRecordSet.getMinDisplayRows(),
-			ddlRecordSet.getScope(), serviceContext);
+			ddlRecordSet.getScope(), ddlRecordSet.getSettings(),
+			serviceContext);
 	}
 
 	@Override
@@ -115,8 +112,6 @@ public class DDLRecordSetStagedModelRepository
 			PortletDataContext portletDataContext, int scope)
 		throws PortalException {
 
-		Set<Long> recordSetDDMStructureIds = new HashSet<>();
-
 		List<DDLRecordSet> recordSets = _ddlRecordSetLocalService.search(
 			portletDataContext.getCompanyId(),
 			portletDataContext.getScopeGroupId(), null, scope,
@@ -124,12 +119,8 @@ public class DDLRecordSetStagedModelRepository
 			new DDLRecordSetNameComparator());
 
 		for (DDLRecordSet recordSet : recordSets) {
-			recordSetDDMStructureIds.add(recordSet.getDDMStructureId());
-
 			_ddlRecordSetLocalService.deleteRecordSet(recordSet);
 		}
-
-		deleteDDMStructures(recordSetDDMStructureIds);
 	}
 
 	@Override
@@ -230,26 +221,13 @@ public class DDLRecordSetStagedModelRepository
 			ddlRecordSet);
 
 		return _ddlRecordSetLocalService.updateRecordSet(
-			ddlRecordSet.getRecordSetId(), ddlRecordSet.getDDMStructureId(),
-			ddlRecordSet.getNameMap(), ddlRecordSet.getDescriptionMap(),
-			ddlRecordSet.getMinDisplayRows(), serviceContext);
+			serviceContext.getUserId(), ddlRecordSet.getRecordSetId(),
+			ddlRecordSet.getDDMStructureVersionId(), ddlRecordSet.getNameMap(),
+			ddlRecordSet.getDescriptionMap(), ddlRecordSet.getMinDisplayRows(),
+			ddlRecordSet.getSettings(), serviceContext);
 	}
-
-	protected void deleteDDMStructures(Set<Long> ddmStructureIds)
-		throws PortalException {
-
-		for (Long ddmStructureId : ddmStructureIds) {
-			_ddmStructureLocalService.deleteStructure(ddmStructureId);
-		}
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDLRecordSetStagedModelRepository.class);
 
 	@Reference
 	private DDLRecordSetLocalService _ddlRecordSetLocalService;
-
-	@Reference
-	private DDMStructureLocalService _ddmStructureLocalService;
 
 }

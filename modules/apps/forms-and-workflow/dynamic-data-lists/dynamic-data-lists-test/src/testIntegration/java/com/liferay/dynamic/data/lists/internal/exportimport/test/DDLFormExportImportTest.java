@@ -31,9 +31,11 @@ import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.lar.test.BasePortletExportImportTestCase;
@@ -90,8 +92,12 @@ public class DDLFormExportImportTest extends BasePortletExportImportTestCase {
 		DDMFormValues settingsDDMFormValues =
 			createDefaultSettingsDDMFormValues();
 
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group.getGroupId());
+
 		DDLRecordSetLocalServiceUtil.updateRecordSet(
-			recordSet.getRecordSetId(), settingsDDMFormValues);
+			TestPropsValues.getUserId(), recordSet.getRecordSetId(),
+			settingsDDMFormValues, serviceContext);
 
 		_ddlRecordTestHelper = new DDLRecordTestHelper(group, recordSet);
 	}

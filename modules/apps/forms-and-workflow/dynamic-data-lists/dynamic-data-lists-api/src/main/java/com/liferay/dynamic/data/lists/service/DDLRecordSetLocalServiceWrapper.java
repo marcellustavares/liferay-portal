@@ -63,6 +63,7 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	<code>DDLRecordSetConstants</code> in the
 	<code>dynamic.data.lists.api</code> module for constants starting
 	with the "SCOPE_" prefix.
+	* @param settings the record set's settings
 	* @param serviceContext the service context to be applied. Can set the
 	UUID, guest permissions, and group permissions for the record
 	set.
@@ -71,16 +72,16 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	*/
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet addRecordSet(
-		long userId, long groupId, long ddmStructureId,
+		long userId, long groupId, long ddmStructureVersionId,
 		java.lang.String recordSetKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int minDisplayRows, int scope,
+		int minDisplayRows, int scope, java.lang.String settings,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddlRecordSetLocalService.addRecordSet(userId, groupId,
-			ddmStructureId, recordSetKey, nameMap, descriptionMap,
-			minDisplayRows, scope, serviceContext);
+			ddmStructureVersionId, recordSetKey, nameMap, descriptionMap,
+			minDisplayRows, scope, settings, serviceContext);
 	}
 
 	/**
@@ -271,14 +272,17 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	* Updates the DDM strucutre, name, description, and minimum number of
 	* display rows for the record set matching the record set key and group ID.
 	*
+	* @param userId the primary key of the user
 	* @param groupId the primary key of the record set's group
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param recordSetKey the record set's mnemonic primary key
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
 	* @param minDisplayRows the record set's minimum number of rows to be
 	displayed in spreadsheet view
+	* @param settings the record set's settings
 	* @param serviceContext the service context to be applied. This can set
 	the record set modified date.
 	* @return the record set
@@ -286,15 +290,16 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	*/
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		long groupId, long ddmStructureId, java.lang.String recordSetKey,
+		long userId, long groupId, long ddmStructureVersionId,
+		java.lang.String recordSetKey,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int minDisplayRows,
+		int minDisplayRows, java.lang.String settings,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddlRecordSetLocalService.updateRecordSet(groupId,
-			ddmStructureId, recordSetKey, nameMap, descriptionMap,
-			minDisplayRows, serviceContext);
+		return _ddlRecordSetLocalService.updateRecordSet(userId, groupId,
+			ddmStructureVersionId, recordSetKey, nameMap, descriptionMap,
+			minDisplayRows, settings, serviceContext);
 	}
 
 	/**
@@ -309,24 +314,28 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	*/
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		long recordSetId,
-		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues)
+		long userId, long recordSetId,
+		com.liferay.dynamic.data.mapping.storage.DDMFormValues settingsDDMFormValues,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddlRecordSetLocalService.updateRecordSet(recordSetId,
-			settingsDDMFormValues);
+		return _ddlRecordSetLocalService.updateRecordSet(userId, recordSetId,
+			settingsDDMFormValues, serviceContext);
 	}
 
 	/**
 	* Updates the DDM structure, name, description, and minimum number of
 	* display rows for the record set matching the record set ID.
 	*
+	* @param userId the primary key of the user
 	* @param recordSetId the primary key of the record set
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
 	* @param minDisplayRows the record set's minimum number of rows to be
 	displayed in spreadsheet view
+	* @param settings the settings of record set
 	* @param serviceContext the service context to be applied. This can set
 	the record set modified date.
 	* @return the record set
@@ -334,15 +343,15 @@ public class DDLRecordSetLocalServiceWrapper implements DDLRecordSetLocalService
 	*/
 	@Override
 	public com.liferay.dynamic.data.lists.model.DDLRecordSet updateRecordSet(
-		long recordSetId, long ddmStructureId,
+		long userId, long recordSetId, long ddmStructureVersionId,
 		java.util.Map<java.util.Locale, java.lang.String> nameMap,
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
-		int minDisplayRows,
+		int minDisplayRows, java.lang.String settings,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _ddlRecordSetLocalService.updateRecordSet(recordSetId,
-			ddmStructureId, nameMap, descriptionMap, minDisplayRows,
-			serviceContext);
+		return _ddlRecordSetLocalService.updateRecordSet(userId, recordSetId,
+			ddmStructureVersionId, nameMap, descriptionMap, minDisplayRows,
+			settings, serviceContext);
 	}
 
 	/**

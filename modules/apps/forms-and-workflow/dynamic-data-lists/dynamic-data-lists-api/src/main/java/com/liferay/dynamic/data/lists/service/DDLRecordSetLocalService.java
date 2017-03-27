@@ -98,6 +98,7 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	<code>DDLRecordSetConstants</code> in the
 	<code>dynamic.data.lists.api</code> module for constants starting
 	with the "SCOPE_" prefix.
+	* @param settings the record set's settings
 	* @param serviceContext the service context to be applied. Can set the
 	UUID, guest permissions, and group permissions for the record
 	set.
@@ -105,10 +106,11 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* @throws PortalException if a portal exception occurred
 	*/
 	public DDLRecordSet addRecordSet(long userId, long groupId,
-		long ddmStructureId, java.lang.String recordSetKey,
+		long ddmStructureVersionId, java.lang.String recordSetKey,
 		Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
-		int scope, ServiceContext serviceContext) throws PortalException;
+		int scope, java.lang.String settings, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Creates a new ddl record set with the primary key. Does not add the ddl record set to the database.
@@ -253,23 +255,28 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* Updates the DDM strucutre, name, description, and minimum number of
 	* display rows for the record set matching the record set key and group ID.
 	*
+	* @param userId the primary key of the user
 	* @param groupId the primary key of the record set's group
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param recordSetKey the record set's mnemonic primary key
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
 	* @param minDisplayRows the record set's minimum number of rows to be
 	displayed in spreadsheet view
+	* @param settings the record set's settings
 	* @param serviceContext the service context to be applied. This can set
 	the record set modified date.
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
-	public DDLRecordSet updateRecordSet(long groupId, long ddmStructureId,
-		java.lang.String recordSetKey, Map<Locale, java.lang.String> nameMap,
+	public DDLRecordSet updateRecordSet(long userId, long groupId,
+		long ddmStructureVersionId, java.lang.String recordSetKey,
+		Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
-		ServiceContext serviceContext) throws PortalException;
+		java.lang.String settings, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Updates the the record set's settings.
@@ -281,29 +288,34 @@ public interface DDLRecordSetLocalService extends BaseLocalService,
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
-	public DDLRecordSet updateRecordSet(long recordSetId,
-		DDMFormValues settingsDDMFormValues) throws PortalException;
+	public DDLRecordSet updateRecordSet(long userId, long recordSetId,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Updates the DDM structure, name, description, and minimum number of
 	* display rows for the record set matching the record set ID.
 	*
+	* @param userId the primary key of the user
 	* @param recordSetId the primary key of the record set
-	* @param ddmStructureId the primary key of the record set's DDM structure
+	* @param ddmStructureVersionId the primary key of the record set's DDM
+	structure version
 	* @param nameMap the record set's locales and localized names
 	* @param descriptionMap the record set's locales and localized
 	descriptions
 	* @param minDisplayRows the record set's minimum number of rows to be
 	displayed in spreadsheet view
+	* @param settings the settings of record set
 	* @param serviceContext the service context to be applied. This can set
 	the record set modified date.
 	* @return the record set
 	* @throws PortalException if a portal exception occurred
 	*/
-	public DDLRecordSet updateRecordSet(long recordSetId, long ddmStructureId,
-		Map<Locale, java.lang.String> nameMap,
+	public DDLRecordSet updateRecordSet(long userId, long recordSetId,
+		long ddmStructureVersionId, Map<Locale, java.lang.String> nameMap,
 		Map<Locale, java.lang.String> descriptionMap, int minDisplayRows,
-		ServiceContext serviceContext) throws PortalException;
+		java.lang.String settings, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Returns the record set's settings.

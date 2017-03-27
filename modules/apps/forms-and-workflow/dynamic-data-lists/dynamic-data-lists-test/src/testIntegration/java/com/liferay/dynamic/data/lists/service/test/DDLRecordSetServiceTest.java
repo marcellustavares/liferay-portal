@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.registry.Registry;
@@ -133,7 +134,8 @@ public class DDLRecordSetServiceTest {
 			ddmStructure.getStructureId(), ddmStructureDDMForm);
 
 		return _ddlRecordSetTestHelper.updateRecordSet(
-			ddlRecordSet.getRecordSetId(), ddmStructure);
+			TestPropsValues.getUserId(), ddlRecordSet.getRecordSetId(),
+			ddmStructure.getLatestStructureVersion());
 	}
 
 	private static ServiceRegistration<StorageAdapter> _serviceRegistration;

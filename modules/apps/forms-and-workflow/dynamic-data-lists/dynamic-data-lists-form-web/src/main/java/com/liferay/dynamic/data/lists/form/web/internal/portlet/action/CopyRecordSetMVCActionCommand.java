@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -122,16 +123,17 @@ public class CopyRecordSetMVCActionCommand
 		DDMStructure ddmStructureCopy = copyRecordSetDDMStructure(
 			actionRequest, recordSet);
 
-		DDLRecordSet recordSetCopy = saveRecordSetMVCCommandHelper.addRecordSet(
-			actionRequest, ddmStructureCopy.getStructureId(),
-			getNameMap(recordSet, themeDisplay.getSiteDefaultLocale()),
-			getDescriptionMap(recordSet, themeDisplay.getSiteDefaultLocale()));
+		DDMStructureVersion ddmStructureVersionCopy =
+			ddmStructureCopy.getLatestStructureVersion();
 
 		DDMFormValues settingsDDMFormValues =
 			createRecordSetSettingsDDMFormValues(actionRequest, recordSet);
 
-		ddlRecordSetService.updateRecordSet(
-			recordSetCopy.getRecordSetId(), settingsDDMFormValues);
+		saveRecordSetMVCCommandHelper.addRecordSet(
+			actionRequest, ddmStructureVersionCopy.getStructureVersionId(),
+			getNameMap(recordSet, themeDisplay.getSiteDefaultLocale()),
+			getDescriptionMap(recordSet, themeDisplay.getSiteDefaultLocale()),
+			settingsDDMFormValues);
 	}
 
 	protected Map<Locale, String> getDescriptionMap(
