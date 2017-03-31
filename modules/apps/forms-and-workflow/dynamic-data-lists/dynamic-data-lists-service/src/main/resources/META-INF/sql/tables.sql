@@ -11,6 +11,7 @@ create table DDLRecord (
 	modifiedDate DATE null,
 	DDMStorageId LONG,
 	recordSetId LONG,
+	recordSetVersion VARCHAR(75) null,
 	version VARCHAR(75) null,
 	displayIndex INTEGER,
 	lastPublishDate DATE null
@@ -62,6 +63,7 @@ create table DDLRecordVersion (
 	createDate DATE null,
 	DDMStorageId LONG,
 	recordSetId LONG,
+	recordSetVersion VARCHAR(75) null,
 	recordId LONG,
 	version VARCHAR(75) null,
 	displayIndex INTEGER,

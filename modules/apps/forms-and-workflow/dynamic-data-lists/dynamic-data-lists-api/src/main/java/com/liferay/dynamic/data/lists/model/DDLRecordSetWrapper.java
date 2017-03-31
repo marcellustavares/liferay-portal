@@ -196,6 +196,17 @@ public class DDLRecordSetWrapper implements DDLRecordSet,
 	}
 
 	@Override
+	public DDLRecordSetVersion getRecordSetVersion() {
+		return _ddlRecordSet.getRecordSetVersion();
+	}
+
+	@Override
+	public DDLRecordSetVersion getRecordSetVersion(java.lang.String version)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddlRecordSet.getRecordSetVersion(version);
+	}
+
+	@Override
 	public boolean isCachedModel() {
 		return _ddlRecordSet.isCachedModel();
 	}

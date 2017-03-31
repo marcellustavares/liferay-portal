@@ -21,6 +21,7 @@
 		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
 		<property name="DDMStorageId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="recordSetId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="recordSetVersion" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="version" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="displayIndex" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
 		<property name="lastPublishDate" type="org.hibernate.type.TimestampType" />
@@ -75,6 +76,7 @@
 		<property name="createDate" type="org.hibernate.type.TimestampType" />
 		<property name="DDMStorageId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="recordSetId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="recordSetVersion" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="recordId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
 		<property name="version" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="displayIndex" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />

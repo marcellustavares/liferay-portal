@@ -14,6 +14,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="DDMStorageId" type="long" />
 		<field name="recordSetId" type="long" />
+		<field name="recordSetVersion" type="String" />
 		<field name="version" type="String" />
 		<field name="displayIndex" type="int" />
 		<field name="lastPublishDate" type="Date" />
@@ -71,6 +72,7 @@
 		<field name="createDate" type="Date" />
 		<field name="DDMStorageId" type="long" />
 		<field name="recordSetId" type="long" />
+		<field name="recordSetVersion" type="String" />
 		<field name="recordId" type="long" />
 		<field name="version" type="String" />
 		<field name="displayIndex" type="int" />

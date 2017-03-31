@@ -134,6 +134,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		record.setDDMStorageId(ddmStorageId);
 
 		record.setRecordSetId(recordSetId);
+		record.setRecordSetVersion(recordSet.getVersion());
 		record.setVersion(DDLRecordConstants.VERSION_DEFAULT);
 		record.setDisplayIndex(displayIndex);
 
@@ -1098,6 +1099,8 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		DDLRecordVersion recordVersion = ddlRecordVersionPersistence.create(
 			recordVersionId);
 
+		DDLRecordSet recordSet = record.getRecordSet();
+
 		recordVersion.setGroupId(record.getGroupId());
 		recordVersion.setCompanyId(record.getCompanyId());
 		recordVersion.setUserId(user.getUserId());
@@ -1105,6 +1108,7 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 		recordVersion.setCreateDate(record.getModifiedDate());
 		recordVersion.setDDMStorageId(ddmStorageId);
 		recordVersion.setRecordSetId(record.getRecordSetId());
+		recordVersion.setRecordSetVersion(recordSet.getVersion());
 		recordVersion.setRecordId(record.getRecordId());
 		recordVersion.setVersion(version);
 		recordVersion.setDisplayIndex(displayIndex);
