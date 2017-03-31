@@ -112,6 +112,14 @@ public class DDLXMLExporter extends BaseDDLExporter {
 			addFieldElement(
 				fieldsElement, LanguageUtil.get(getLocale(), "status"),
 				getStatusMessage(recordVersion.getStatus()));
+
+			addFieldElement(
+				fieldsElement, LanguageUtil.get(getLocale(), "modified-date"),
+				recordVersion.getStatusDate());
+
+			addFieldElement(
+				fieldsElement, LanguageUtil.get(getLocale(), "author"),
+				recordVersion.getUserName());
 		}
 
 		String xml = document.asXML();

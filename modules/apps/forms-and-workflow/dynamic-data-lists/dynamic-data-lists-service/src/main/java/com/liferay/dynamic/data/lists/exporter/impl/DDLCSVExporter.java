@@ -77,6 +77,10 @@ public class DDLCSVExporter extends BaseDDLExporter {
 		}
 
 		sb.append(LanguageUtil.get(getLocale(), "status"));
+		sb.append(CharPool.COMMA);
+		sb.append(LanguageUtil.get(getLocale(), "modified-date"));
+		sb.append(CharPool.COMMA);
+		sb.append(LanguageUtil.get(getLocale(), "author"));
 		sb.append(StringPool.NEW_LINE);
 
 		List<DDLRecord> records = _ddlRecordLocalService.getRecords(
@@ -107,6 +111,14 @@ public class DDLCSVExporter extends BaseDDLExporter {
 			sb.append(CharPool.COMMA);
 
 			sb.append(getStatusMessage(recordVersion.getStatus()));
+
+			sb.append(CharPool.COMMA);
+
+			sb.append(recordVersion.getStatusDate());
+
+			sb.append(CharPool.COMMA);
+
+			sb.append(CSVUtil.encode(recordVersion.getUserName()));
 
 			if (iterator.hasNext()) {
 				sb.append(StringPool.NEW_LINE);
