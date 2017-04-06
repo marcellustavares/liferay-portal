@@ -244,6 +244,8 @@ public interface DDLRecordSetVersionLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<DDLRecordSetVersion> findByG_C(long groupId, long companyId);
+
 	/**
 	* Returns a range of all the ddl record set versions.
 	*

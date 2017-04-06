@@ -285,6 +285,12 @@ public class DDLRecordSetVersionLocalServiceWrapper
 			start, end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordSetVersion> findByG_C(
+		long groupId, long companyId) {
+		return _ddlRecordSetVersionLocalService.findByG_C(groupId, companyId);
+	}
+
 	/**
 	* Returns a range of all the ddl record set versions.
 	*

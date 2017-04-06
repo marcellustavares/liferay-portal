@@ -678,6 +678,181 @@ public class DDLRecordSetVersionUtil {
 	}
 
 	/**
+	* Returns all the ddl record set versions where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @return the matching ddl record set versions
+	*/
+	public static List<DDLRecordSetVersion> findByG_C(long groupId,
+		long companyId) {
+		return getPersistence().findByG_C(groupId, companyId);
+	}
+
+	/**
+	* Returns a range of all the ddl record set versions where groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DDLRecordSetVersionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of ddl record set versions
+	* @param end the upper bound of the range of ddl record set versions (not inclusive)
+	* @return the range of matching ddl record set versions
+	*/
+	public static List<DDLRecordSetVersion> findByG_C(long groupId,
+		long companyId, int start, int end) {
+		return getPersistence().findByG_C(groupId, companyId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the ddl record set versions where groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DDLRecordSetVersionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of ddl record set versions
+	* @param end the upper bound of the range of ddl record set versions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching ddl record set versions
+	*/
+	public static List<DDLRecordSetVersion> findByG_C(long groupId,
+		long companyId, int start, int end,
+		OrderByComparator<DDLRecordSetVersion> orderByComparator) {
+		return getPersistence()
+				   .findByG_C(groupId, companyId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the ddl record set versions where groupId = &#63; and companyId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link DDLRecordSetVersionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param start the lower bound of the range of ddl record set versions
+	* @param end the upper bound of the range of ddl record set versions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching ddl record set versions
+	*/
+	public static List<DDLRecordSetVersion> findByG_C(long groupId,
+		long companyId, int start, int end,
+		OrderByComparator<DDLRecordSetVersion> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByG_C(groupId, companyId, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first ddl record set version in the ordered set where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching ddl record set version
+	* @throws NoSuchRecordSetVersionException if a matching ddl record set version could not be found
+	*/
+	public static DDLRecordSetVersion findByG_C_First(long groupId,
+		long companyId, OrderByComparator<DDLRecordSetVersion> orderByComparator)
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetVersionException {
+		return getPersistence()
+				   .findByG_C_First(groupId, companyId, orderByComparator);
+	}
+
+	/**
+	* Returns the first ddl record set version in the ordered set where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching ddl record set version, or <code>null</code> if a matching ddl record set version could not be found
+	*/
+	public static DDLRecordSetVersion fetchByG_C_First(long groupId,
+		long companyId, OrderByComparator<DDLRecordSetVersion> orderByComparator) {
+		return getPersistence()
+				   .fetchByG_C_First(groupId, companyId, orderByComparator);
+	}
+
+	/**
+	* Returns the last ddl record set version in the ordered set where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching ddl record set version
+	* @throws NoSuchRecordSetVersionException if a matching ddl record set version could not be found
+	*/
+	public static DDLRecordSetVersion findByG_C_Last(long groupId,
+		long companyId, OrderByComparator<DDLRecordSetVersion> orderByComparator)
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetVersionException {
+		return getPersistence()
+				   .findByG_C_Last(groupId, companyId, orderByComparator);
+	}
+
+	/**
+	* Returns the last ddl record set version in the ordered set where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching ddl record set version, or <code>null</code> if a matching ddl record set version could not be found
+	*/
+	public static DDLRecordSetVersion fetchByG_C_Last(long groupId,
+		long companyId, OrderByComparator<DDLRecordSetVersion> orderByComparator) {
+		return getPersistence()
+				   .fetchByG_C_Last(groupId, companyId, orderByComparator);
+	}
+
+	/**
+	* Returns the ddl record set versions before and after the current ddl record set version in the ordered set where groupId = &#63; and companyId = &#63;.
+	*
+	* @param recordSetVersionId the primary key of the current ddl record set version
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next ddl record set version
+	* @throws NoSuchRecordSetVersionException if a ddl record set version with the primary key could not be found
+	*/
+	public static DDLRecordSetVersion[] findByG_C_PrevAndNext(
+		long recordSetVersionId, long groupId, long companyId,
+		OrderByComparator<DDLRecordSetVersion> orderByComparator)
+		throws com.liferay.dynamic.data.lists.exception.NoSuchRecordSetVersionException {
+		return getPersistence()
+				   .findByG_C_PrevAndNext(recordSetVersionId, groupId,
+			companyId, orderByComparator);
+	}
+
+	/**
+	* Removes all the ddl record set versions where groupId = &#63; and companyId = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	*/
+	public static void removeByG_C(long groupId, long companyId) {
+		getPersistence().removeByG_C(groupId, companyId);
+	}
+
+	/**
+	* Returns the number of ddl record set versions where groupId = &#63; and companyId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param companyId the company ID
+	* @return the number of matching ddl record set versions
+	*/
+	public static int countByG_C(long groupId, long companyId) {
+		return getPersistence().countByG_C(groupId, companyId);
+	}
+
+	/**
 	* Returns the ddl record set version where recordSetId = &#63; and version = &#63; or throws a {@link NoSuchRecordSetVersionException} if it could not be found.
 	*
 	* @param recordSetId the record set ID

@@ -271,6 +271,8 @@ public interface DDLRecordVersionLocalService extends BaseLocalService,
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
 		int end, OrderByComparator<T> orderByComparator);
 
+	public List<DDLRecordVersion> findByG_C(long groupId, long companyId);
+
 	/**
 	* Returns a range of all the ddl record versions.
 	*
@@ -310,6 +312,9 @@ public interface DDLRecordVersionLocalService extends BaseLocalService,
 	public List<DDLRecordVersion> getDDLRecordVersionsByUuidAndCompanyId(
 		java.lang.String uuid, long companyId, int start, int end,
 		OrderByComparator<DDLRecordVersion> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDLRecordVersion> getRecordVersions(long recordId);
 
 	/**
 	* Returns an ordered range of record versions matching the record's ID.

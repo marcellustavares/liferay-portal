@@ -312,6 +312,12 @@ public class DDLRecordVersionLocalServiceWrapper
 			end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordVersion> findByG_C(
+		long groupId, long companyId) {
+		return _ddlRecordVersionLocalService.findByG_C(groupId, companyId);
+	}
+
 	/**
 	* Returns a range of all the ddl record versions.
 	*
@@ -359,6 +365,12 @@ public class DDLRecordVersionLocalServiceWrapper
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.lists.model.DDLRecordVersion> orderByComparator) {
 		return _ddlRecordVersionLocalService.getDDLRecordVersionsByUuidAndCompanyId(uuid,
 			companyId, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordVersion> getRecordVersions(
+		long recordId) {
+		return _ddlRecordVersionLocalService.getRecordVersions(recordId);
 	}
 
 	/**

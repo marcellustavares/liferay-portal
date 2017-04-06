@@ -244,6 +244,14 @@ public class DDLRecordSetVersionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByG_C() throws Exception {
+		_persistence.countByG_C(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByG_C(0L, 0L);
+	}
+
+	@Test
 	public void testCountByRS_V() throws Exception {
 		_persistence.countByRS_V(RandomTestUtil.nextLong(), StringPool.BLANK);
 

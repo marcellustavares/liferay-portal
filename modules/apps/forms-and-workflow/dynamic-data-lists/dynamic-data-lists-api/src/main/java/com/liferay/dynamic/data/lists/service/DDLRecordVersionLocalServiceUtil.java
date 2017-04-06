@@ -293,6 +293,11 @@ public class DDLRecordVersionLocalServiceUtil {
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordVersion> findByG_C(
+		long groupId, long companyId) {
+		return getService().findByG_C(groupId, companyId);
+	}
+
 	/**
 	* Returns a range of all the ddl record versions.
 	*
@@ -338,6 +343,11 @@ public class DDLRecordVersionLocalServiceUtil {
 		return getService()
 				   .getDDLRecordVersionsByUuidAndCompanyId(uuid, companyId,
 			start, end, orderByComparator);
+	}
+
+	public static java.util.List<com.liferay.dynamic.data.lists.model.DDLRecordVersion> getRecordVersions(
+		long recordId) {
+		return getService().getRecordVersions(recordId);
 	}
 
 	/**
