@@ -98,6 +98,20 @@ public class DDMStructureVersionLocalServiceWrapper
 	}
 
 	/**
+	* Returns the ddm structure version matching the UUID and group.
+	*
+	* @param uuid the ddm structure version's UUID
+	* @param groupId the primary key of the group
+	* @return the matching ddm structure version, or <code>null</code> if a matching ddm structure version could not be found
+	*/
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMStructureVersion fetchDDMStructureVersionByUuidAndGroupId(
+		java.lang.String uuid, long groupId) {
+		return _ddmStructureVersionLocalService.fetchDDMStructureVersionByUuidAndGroupId(uuid,
+			groupId);
+	}
+
+	/**
 	* Returns the ddm structure version with the primary key.
 	*
 	* @param structureVersionId the primary key of the ddm structure version
@@ -109,6 +123,22 @@ public class DDMStructureVersionLocalServiceWrapper
 		long structureVersionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmStructureVersionLocalService.getDDMStructureVersion(structureVersionId);
+	}
+
+	/**
+	* Returns the ddm structure version matching the UUID and group.
+	*
+	* @param uuid the ddm structure version's UUID
+	* @param groupId the primary key of the group
+	* @return the matching ddm structure version
+	* @throws PortalException if a matching ddm structure version could not be found
+	*/
+	@Override
+	public com.liferay.dynamic.data.mapping.model.DDMStructureVersion getDDMStructureVersionByUuidAndGroupId(
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmStructureVersionLocalService.getDDMStructureVersionByUuidAndGroupId(uuid,
+			groupId);
 	}
 
 	@Override
@@ -153,6 +183,12 @@ public class DDMStructureVersionLocalServiceWrapper
 	@Override
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return _ddmStructureVersionLocalService.dynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
+		return _ddmStructureVersionLocalService.getExportActionableDynamicQuery(portletDataContext);
 	}
 
 	@Override
@@ -272,6 +308,38 @@ public class DDMStructureVersionLocalServiceWrapper
 		int start, int end) {
 		return _ddmStructureVersionLocalService.getDDMStructureVersions(start,
 			end);
+	}
+
+	/**
+	* Returns all the ddm structure versions matching the UUID and company.
+	*
+	* @param uuid the UUID of the ddm structure versions
+	* @param companyId the primary key of the company
+	* @return the matching ddm structure versions, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		java.lang.String uuid, long companyId) {
+		return _ddmStructureVersionLocalService.getDDMStructureVersionsByUuidAndCompanyId(uuid,
+			companyId);
+	}
+
+	/**
+	* Returns a range of ddm structure versions matching the UUID and company.
+	*
+	* @param uuid the UUID of the ddm structure versions
+	* @param companyId the primary key of the company
+	* @param start the lower bound of the range of ddm structure versions
+	* @param end the upper bound of the range of ddm structure versions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the range of matching ddm structure versions, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		java.lang.String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMStructureVersion> orderByComparator) {
+		return _ddmStructureVersionLocalService.getDDMStructureVersionsByUuidAndCompanyId(uuid,
+			companyId, start, end, orderByComparator);
 	}
 
 	@Override

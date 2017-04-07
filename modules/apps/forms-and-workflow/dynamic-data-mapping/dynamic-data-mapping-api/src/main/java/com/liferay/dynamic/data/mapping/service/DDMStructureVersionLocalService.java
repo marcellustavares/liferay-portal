@@ -19,8 +19,11 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -109,6 +112,17 @@ public interface DDMStructureVersionLocalService extends BaseLocalService,
 	public DDMStructureVersion fetchDDMStructureVersion(long structureVersionId);
 
 	/**
+	* Returns the ddm structure version matching the UUID and group.
+	*
+	* @param uuid the ddm structure version's UUID
+	* @param groupId the primary key of the group
+	* @return the matching ddm structure version, or <code>null</code> if a matching ddm structure version could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DDMStructureVersion fetchDDMStructureVersionByUuidAndGroupId(
+		java.lang.String uuid, long groupId);
+
+	/**
 	* Returns the ddm structure version with the primary key.
 	*
 	* @param structureVersionId the primary key of the ddm structure version
@@ -118,6 +132,18 @@ public interface DDMStructureVersionLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DDMStructureVersion getDDMStructureVersion(long structureVersionId)
 		throws PortalException;
+
+	/**
+	* Returns the ddm structure version matching the UUID and group.
+	*
+	* @param uuid the ddm structure version's UUID
+	* @param groupId the primary key of the group
+	* @return the matching ddm structure version
+	* @throws PortalException if a matching ddm structure version could not be found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DDMStructureVersion getDDMStructureVersionByUuidAndGroupId(
+		java.lang.String uuid, long groupId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DDMStructureVersion getLatestStructureVersion(long structureId)
@@ -145,6 +171,10 @@ public interface DDMStructureVersionLocalService extends BaseLocalService,
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	public DynamicQuery dynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		PortletDataContext portletDataContext);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -231,6 +261,32 @@ public interface DDMStructureVersionLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMStructureVersion> getDDMStructureVersions(int start, int end);
+
+	/**
+	* Returns all the ddm structure versions matching the UUID and company.
+	*
+	* @param uuid the UUID of the ddm structure versions
+	* @param companyId the primary key of the company
+	* @return the matching ddm structure versions, or an empty list if no matches were found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		java.lang.String uuid, long companyId);
+
+	/**
+	* Returns a range of ddm structure versions matching the UUID and company.
+	*
+	* @param uuid the UUID of the ddm structure versions
+	* @param companyId the primary key of the company
+	* @param start the lower bound of the range of ddm structure versions
+	* @param end the upper bound of the range of ddm structure versions (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the range of matching ddm structure versions, or an empty list if no matches were found
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		java.lang.String uuid, long companyId, int start, int end,
+		OrderByComparator<DDMStructureVersion> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMStructureVersion> getStructureVersions(long structureId);

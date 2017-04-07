@@ -107,12 +107,14 @@
 		<field name="structureId" type="long" />
 	</model>
 	<model name="com.liferay.dynamic.data.mapping.model.DDMStructureVersion">
+		<field name="uuid" type="String" />
 		<field name="structureVersionId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="userId" type="long" />
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
 		<field name="structureId" type="long" />
 		<field name="version" type="String" />
 		<field name="parentStructureId" type="long" />
@@ -131,6 +133,7 @@
 		<field name="statusByUserId" type="long" />
 		<field name="statusByUserName" type="String" />
 		<field name="statusDate" type="Date" />
+		<field name="lastPublishDate" type="Date" />
 	</model>
 	<model name="com.liferay.dynamic.data.mapping.model.DDMTemplate">
 		<field name="uuid" type="String" />

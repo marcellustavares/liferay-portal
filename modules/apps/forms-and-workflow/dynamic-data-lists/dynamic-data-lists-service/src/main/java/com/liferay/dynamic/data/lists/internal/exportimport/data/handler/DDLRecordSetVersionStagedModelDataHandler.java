@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.lar.BaseStagedModelDataHandler;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.portal.kernel.xml.Element;
@@ -49,6 +50,13 @@ public class DDLRecordSetVersionStagedModelDataHandler
 
 		Element recordSetVersionElement =
 			portletDataContext.getExportDataElement(recordSetVersion);
+		
+		DDMStructureVersion ddmStructureVersion = 
+			recordSetVersion.getDDMStructureVersion();
+		
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, recordSetVersion, ddmStructureVersion,
+			PortletDataContext.REFERENCE_TYPE_STRONG);
 
 		portletDataContext.addClassedModel(
 			recordSetVersionElement,

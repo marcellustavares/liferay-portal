@@ -1532,6 +1532,7 @@ public class DDMStructureLocalServiceImpl
 		structureVersion.setUserId(structure.getUserId());
 		structureVersion.setUserName(structure.getUserName());
 		structureVersion.setCreateDate(structure.getModifiedDate());
+		structureVersion.setModifiedDate(structure.getModifiedDate());
 		structureVersion.setStructureId(structure.getStructureId());
 		structureVersion.setVersion(version);
 		structureVersion.setParentStructureId(structure.getParentStructureId());

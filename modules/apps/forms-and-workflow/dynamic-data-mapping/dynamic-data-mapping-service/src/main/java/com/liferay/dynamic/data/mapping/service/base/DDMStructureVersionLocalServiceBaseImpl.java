@@ -20,17 +20,32 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMStructureVersionPersistence;
 
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerRegistryUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Conjunction;
+import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Disjunction;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
@@ -41,6 +56,7 @@ import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
 import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
@@ -214,6 +230,19 @@ public abstract class DDMStructureVersionLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the ddm structure version matching the UUID and group.
+	 *
+	 * @param uuid the ddm structure version's UUID
+	 * @param groupId the primary key of the group
+	 * @return the matching ddm structure version, or <code>null</code> if a matching ddm structure version could not be found
+	 */
+	@Override
+	public DDMStructureVersion fetchDDMStructureVersionByUuidAndGroupId(
+		String uuid, long groupId) {
+		return ddmStructureVersionPersistence.fetchByUUID_G(uuid, groupId);
+	}
+
+	/**
 	 * Returns the ddm structure version with the primary key.
 	 *
 	 * @param structureVersionId the primary key of the ddm structure version
@@ -262,6 +291,107 @@ public abstract class DDMStructureVersionLocalServiceBaseImpl
 		actionableDynamicQuery.setPrimaryKeyPropertyName("structureVersionId");
 	}
 
+	@Override
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		final PortletDataContext portletDataContext) {
+		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+				@Override
+				public long performCount() throws PortalException {
+					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+
+					StagedModelType stagedModelType = getStagedModelType();
+
+					long modelAdditionCount = super.performCount();
+
+					manifestSummary.addModelAdditionCount(stagedModelType,
+						modelAdditionCount);
+
+					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
+							stagedModelType);
+
+					manifestSummary.addModelDeletionCount(stagedModelType,
+						modelDeletionCount);
+
+					return modelAdditionCount;
+				}
+			};
+
+		initActionableDynamicQuery(exportActionableDynamicQuery);
+
+		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Criterion modifiedDateCriterion = portletDataContext.getDateRangeCriteria(
+							"modifiedDate");
+
+					if (modifiedDateCriterion != null) {
+						Conjunction conjunction = RestrictionsFactoryUtil.conjunction();
+
+						conjunction.add(modifiedDateCriterion);
+
+						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
+
+						disjunction.add(RestrictionsFactoryUtil.gtProperty(
+								"modifiedDate", "lastPublishDate"));
+
+						Property lastPublishDateProperty = PropertyFactoryUtil.forName(
+								"lastPublishDate");
+
+						disjunction.add(lastPublishDateProperty.isNull());
+
+						conjunction.add(disjunction);
+
+						modifiedDateCriterion = conjunction;
+					}
+
+					Criterion statusDateCriterion = portletDataContext.getDateRangeCriteria(
+							"statusDate");
+
+					if ((modifiedDateCriterion != null) &&
+							(statusDateCriterion != null)) {
+						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
+
+						disjunction.add(modifiedDateCriterion);
+						disjunction.add(statusDateCriterion);
+
+						dynamicQuery.add(disjunction);
+					}
+
+					Property workflowStatusProperty = PropertyFactoryUtil.forName(
+							"status");
+
+					if (portletDataContext.isInitialPublication()) {
+						dynamicQuery.add(workflowStatusProperty.ne(
+								WorkflowConstants.STATUS_IN_TRASH));
+					}
+					else {
+						StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(DDMStructureVersion.class.getName());
+
+						dynamicQuery.add(workflowStatusProperty.in(
+								stagedModelDataHandler.getExportableStatuses()));
+					}
+				}
+			});
+
+		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+
+		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
+
+		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<DDMStructureVersion>() {
+				@Override
+				public void performAction(
+					DDMStructureVersion ddmStructureVersion)
+					throws PortalException {
+					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
+						ddmStructureVersion);
+				}
+			});
+		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+				PortalUtil.getClassNameId(DDMStructureVersion.class.getName())));
+
+		return exportActionableDynamicQuery;
+	}
+
 	/**
 	 * @throws PortalException
 	 */
@@ -275,6 +405,51 @@ public abstract class DDMStructureVersionLocalServiceBaseImpl
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
 		return ddmStructureVersionPersistence.findByPrimaryKey(primaryKeyObj);
+	}
+
+	/**
+	 * Returns all the ddm structure versions matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the ddm structure versions
+	 * @param companyId the primary key of the company
+	 * @return the matching ddm structure versions, or an empty list if no matches were found
+	 */
+	@Override
+	public List<DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		String uuid, long companyId) {
+		return ddmStructureVersionPersistence.findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of ddm structure versions matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the ddm structure versions
+	 * @param companyId the primary key of the company
+	 * @param start the lower bound of the range of ddm structure versions
+	 * @param end the upper bound of the range of ddm structure versions (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the range of matching ddm structure versions, or an empty list if no matches were found
+	 */
+	@Override
+	public List<DDMStructureVersion> getDDMStructureVersionsByUuidAndCompanyId(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<DDMStructureVersion> orderByComparator) {
+		return ddmStructureVersionPersistence.findByUuid_C(uuid, companyId,
+			start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns the ddm structure version matching the UUID and group.
+	 *
+	 * @param uuid the ddm structure version's UUID
+	 * @param groupId the primary key of the group
+	 * @return the matching ddm structure version
+	 * @throws PortalException if a matching ddm structure version could not be found
+	 */
+	@Override
+	public DDMStructureVersion getDDMStructureVersionByUuidAndGroupId(
+		String uuid, long groupId) throws PortalException {
+		return ddmStructureVersionPersistence.findByUUID_G(uuid, groupId);
 	}
 
 	/**
