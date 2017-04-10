@@ -19,9 +19,6 @@ AUI.add(
 				value: null
 			},
 
-			evaluatorURL: {
-			},
-
 			content: {
 				getter: function() {
 					var instance = this;
@@ -204,11 +201,9 @@ AUI.add(
 				return new Liferay.DDL.FormBuilderSettingsForm(
 					{
 						context: context,
-						definition: JSON.parse(context.definition),
 						editMode: builder.get('recordSetId') === 0 || instance.isPersisted(),
-						evaluatorURL: instance.get('evaluatorURL'),
+						evaluatorURL: Liferay.DDL.ImmutableData.evaluatorURL,
 						field: instance,
-						layout: JSON.parse(context.layout),
 						portletNamespace: instance.get('portletNamespace'),
 						templateNamespace: 'ddm.settings_form'
 					}

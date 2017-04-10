@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -54,14 +55,12 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 
 import java.io.IOException;
-
 import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.Servlet;
 
 import org.osgi.service.component.annotations.Component;
@@ -332,7 +331,7 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 				_ddmFormFieldTypeServicesTracker,
 				_ddmFormFieldTypesJSONSerializer, _ddmFormJSONSerializer,
 				_ddmFormLayoutJSONSerializer, _ddmFormRenderer,
-				_ddmFormRulesToDDLFormRulesConverter, _ddmFormValuesFactory,
+				_ddmFormRulesToDDLFormRulesConverter, _ddmFormTemplateContextFactory, _ddmFormValuesFactory,
 				_ddmFormValuesMerger, _ddmStructureLocalService, _jsonFactory,
 				_storageEngine, _workflowEngineManager);
 
@@ -377,6 +376,9 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDMFormValuesMerger _ddmFormValuesMerger;
 	private DDMStructureLocalService _ddmStructureLocalService;
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 
 	@Reference
 	private Portal _portal;

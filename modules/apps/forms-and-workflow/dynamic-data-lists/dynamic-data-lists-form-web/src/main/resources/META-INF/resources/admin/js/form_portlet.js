@@ -113,14 +113,6 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						instance.definitionSerializer = new DefinitionSerializer(
-							{
-								availableLanguageIds: instance.get('availableLanguageIds'),
-								defaultLanguageId: instance.get('defaultLanguageId'),
-								fieldTypesDefinitions: instance.get('fieldTypesDefinitions')
-							}
-						);
-
 						instance.layoutSerializer = new LayoutSerializer(
 							{
 								builder: instance.get('formBuilder'),
@@ -745,15 +737,11 @@ AUI.add(
 					_valueFormBuilder: function() {
 						var instance = this;
 
-						var layout = instance.get('layout');
-
 						return new Liferay.DDL.FormBuilder(
 							{
-								defaultLanguageId: instance.get('defaultLanguageId'),
-								definition: instance.get('definition'),
 								evaluatorURL: instance.get('evaluatorURL'),
 								getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
-								pagesJSON: layout.pages,
+								pagesJSON: instance.get('layout'),
 								portletNamespace: instance.get('namespace'),
 								recordSetId: instance.get('recordSetId')
 							}

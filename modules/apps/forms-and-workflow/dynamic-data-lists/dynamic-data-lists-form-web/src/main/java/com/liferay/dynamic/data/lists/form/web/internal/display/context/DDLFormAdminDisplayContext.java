@@ -40,6 +40,8 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -49,6 +51,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
@@ -88,7 +91,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -111,6 +113,7 @@ public class DDLFormAdminDisplayContext {
 		DDMFormLayoutJSONSerializer ddmFormLayoutJSONSerializer,
 		DDMFormRenderer ddmFormRenderer,
 		DDMFormRuleToDDLFormRuleConverter ddmFormRulesToDDLFormRulesConverter,
+		DDMFormTemplateContextFactory ddmFormTemplateContextFactory,
 		DDMFormValuesFactory ddmFormValuesFactory,
 		DDMFormValuesMerger ddmFormValuesMerger,
 		DDMStructureLocalService ddmStructureLocalService,
@@ -130,6 +133,7 @@ public class DDLFormAdminDisplayContext {
 		_ddmFormRenderer = ddmFormRenderer;
 		_ddmFormRulesToDDLFormRulesConverter =
 			ddmFormRulesToDDLFormRulesConverter;
+		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
 		_ddmStructureLocalService = ddmStructureLocalService;
@@ -175,26 +179,32 @@ public class DDLFormAdminDisplayContext {
 			"/dynamic-data-mapping-form-context-provider/");
 	}
 
-	public JSONObject getDDMFormFieldTypesDefinitionsMap()
-		throws PortalException {
+	public String getDDMFormDefinitionContext() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
 
-		JSONObject jsonObject = _jsonFactory.createJSONObject();
-
-		for (DDMFormFieldType ddmFormFieldType :
-				_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes()) {
-
-			Class<?> clazz = ddmFormFieldType.getDDMFormFieldTypeSettings();
-
-			DDMForm ddmFormFieldTypeSettingsDDMForm = DDMFormFactory.create(
-				clazz);
-
-			jsonObject.put(
-				ddmFormFieldType.getName(),
-				getDDMFormFieldTypePropertyNames(
-					ddmFormFieldTypeSettingsDDMForm));
+		if (recordSet == null) {
+			return "[]";
 		}
 
-		return jsonObject;
+		DDMStructure ddmStructure = recordSet.getDDMStructure();
+
+		DDMFormRenderingContext ddmFormRenderingContext =
+			new DDMFormRenderingContext();
+
+		ddmFormRenderingContext.setHttpServletRequest(
+			_ddlFormAdminRequestHelper.getRequest());
+		ddmFormRenderingContext.setLocale(
+			_ddlFormAdminRequestHelper.getLocale());
+
+		Map<String, Object> ddmFormTemplateContext =
+			_ddmFormTemplateContextFactory.create(
+				ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
+				ddmFormRenderingContext);
+
+		JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
+
+		return jsonSerializer.serializeDeep(
+			ddmFormTemplateContext.get("pages"));
 	}
 
 	public JSONArray getDDMFormFieldTypesJSONArray() throws PortalException {
@@ -581,27 +591,6 @@ public class DDLFormAdminDisplayContext {
 		return ddmForm;
 	}
 
-	protected JSONArray getDDMFormFieldTypePropertyNames(
-			DDMForm ddmFormFieldTypeSettingsDDMForm)
-		throws PortalException {
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray();
-
-		for (DDMFormField ddmFormField :
-				ddmFormFieldTypeSettingsDDMForm.getDDMFormFields()) {
-
-			JSONObject jsonObject = _jsonFactory.createJSONObject();
-
-			jsonObject.put("localizable", ddmFormField.isLocalizable());
-			jsonObject.put("name", ddmFormField.getName());
-			jsonObject.put("type", ddmFormField.getType());
-
-			jsonArray.put(jsonObject);
-		}
-
-		return jsonArray;
-	}
-
 	protected String getDisplayStyle(
 		PortletRequest portletRequest,
 		DDLFormWebConfiguration ddlFormWebConfiguration,
@@ -788,5 +777,6 @@ public class DDLFormAdminDisplayContext {
 	private final RenderResponse _renderResponse;
 	private final StorageEngine _storageEngine;
 	private final WorkflowEngineManager _workflowEngineManager;
+	private final DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 
 }

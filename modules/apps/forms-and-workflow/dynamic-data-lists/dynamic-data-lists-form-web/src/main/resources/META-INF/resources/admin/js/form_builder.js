@@ -36,14 +36,6 @@ AUI.add(
 						}
 					},
 
-					defaultLanguageId: {
-						value: themeDisplay.getDefaultLanguageId()
-					},
-
-					definition: {
-						validator: Lang.isObject
-					},
-
 					deserializer: {
 						valueFn: '_valueDeserializer'
 					},
@@ -203,7 +195,6 @@ AUI.add(
 								fieldType.get('defaultConfig'),
 								{
 									builder: instance,
-									defaultLanguageId: instance.get('defaultLanguageId'),
 									evaluatorURL: instance.get('evaluatorURL'),
 									getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
 									portletNamespace: instance.get('portletNamespace'),
@@ -711,8 +702,7 @@ AUI.add(
 
 						return new Liferay.DDL.LayoutDeserializer(
 							{
-								builder: instance,
-								definition: instance.get('definition')
+								builder: instance
 							}
 						);
 					},

@@ -222,6 +222,13 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="getRoles" var="getRoles" />
 
 		<aui:script>
+			Liferay.namespace('DDL').ImmutableData = {
+				evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
+				fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
+				getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
+				publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
+			};
+
 			var initHandler = Liferay.after(
 				'form:registered',
 				function(event) {
@@ -252,25 +259,17 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 									'formPortlet',
 									new Liferay.DDL.Portlet(
 										{
-											availableLanguageIds: definition.availableLanguageIds,
 											autosaveInterval: '<%= ddlFormAdminDisplayContext.getAutosaveInterval() %>',
 											autosaveURL: '<%= autoSaveRecordSetURL.toString() %>',
-											defaultLanguageId: definition.defaultLanguageId,
-											definition: definition,
 											description: '<%= HtmlUtil.escapeJS(description) %>',
 											editForm: event.form,
-											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
-											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
 											functionsMetadata: <%= ddlFormAdminDisplayContext.getSerializedDDMExpressionFunctionsMetadata() %>,
-											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
 											getDataProviderInstancesURL: '<%= getDataProviderInstancesURL.toString() %>',
 											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
-											getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
 											getRolesURL: '<%= getRoles.toString() %>',
-											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
+											layout: '<%= ddlFormAdminDisplayContext.getDDMDefinitionContext() %>'
 											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',
-											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
 											recordSetId: <%= recordSetId %>,
 											restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
 											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
