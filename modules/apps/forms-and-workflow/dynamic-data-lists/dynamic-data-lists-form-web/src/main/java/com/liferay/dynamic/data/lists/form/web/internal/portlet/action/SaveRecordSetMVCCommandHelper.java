@@ -41,6 +41,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -48,6 +49,7 @@ import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -98,7 +100,8 @@ public class SaveRecordSetMVCCommandHelper {
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 		String structureKey = ParamUtil.getString(
 			portletRequest, "structureKey");
-		String storageType = getStorageType(settingsDDMFormValues);
+		//String storageType = getStorageType(settingsDDMFormValues);
+		String storageType = "json";
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
@@ -156,17 +159,16 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
-		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
-			portletRequest);
+		/*DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
+			portletRequest);*/
 
-		DDMStructure ddmStructure = addDDMStructure(
-			portletRequest, settingsDDMFormValues);
+		DDMStructure ddmStructure = addDDMStructure(portletRequest, null);
 
 		DDLRecordSet recordSet = addRecordSet(
 			portletRequest, ddmStructure.getStructureId());
 
-		updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);
+/* updateRecordSetSettings(
+			portletRequest, recordSet, settingsDDMFormValues);*/
 
 		return recordSet;
 	}
@@ -176,20 +178,29 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			String definition = ParamUtil.getString(
-				portletRequest, "definition");
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-			DDMForm ddmForm = ddmFormJSONDeserializer.deserialize(definition);
+			String serializedContext = ParamUtil.getString(
+				portletRequest, "serializedContext");
 
-			serviceContext.setAttribute("form", ddmForm);
+			DDLFormBuilderContextJSONDeserializer ddlFormBuilderContextJSONDeserializer =
+				new DDLFormBuilderContextJSONDeserializer(
+					serializedContext, jsonFactory,
+					ddmFormLayoutJSONDeserializer,
+					themeDisplay.getSiteDefaultLocale());
+
+			Tuple tuple = ddlFormBuilderContextJSONDeserializer.deserialize();
+
+			//serviceContext.setAttribute("form", ddmForm);
 
 			ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
-			List<DDMFormRule> ddmFormRules = getDDMFormRules(portletRequest);
+//			List<DDMFormRule> ddmFormRules = getDDMFormRules(portletRequest);
+//
+//			ddmForm.setDDMFormRules(ddmFormRules);
 
-			ddmForm.setDDMFormRules(ddmFormRules);
-
-			return ddmForm;
+			return (DDMForm)tuple.getObject(0);
 		}
 		catch (PortalException pe) {
 			throw new StructureDefinitionException(pe);
@@ -203,9 +214,21 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			String layout = ParamUtil.getString(portletRequest, "layout");
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-			return ddmFormLayoutJSONDeserializer.deserialize(layout);
+			String serializedContext = ParamUtil.getString(
+				portletRequest, "serializedContext");
+
+			DDLFormBuilderContextJSONDeserializer ddlFormBuilderContextJSONDeserializer =
+				new DDLFormBuilderContextJSONDeserializer(
+					serializedContext, jsonFactory,
+					ddmFormLayoutJSONDeserializer,
+					themeDisplay.getSiteDefaultLocale());
+
+			Tuple tuple = ddlFormBuilderContextJSONDeserializer.deserialize();
+
+			return (DDMFormLayout)tuple.getObject(1);
 		}
 		catch (PortalException pe) {
 			throw new StructureLayoutException(pe);
@@ -342,11 +365,11 @@ public class SaveRecordSetMVCCommandHelper {
 		DDLRecordSet recordSet = updateRecordSet(
 			portletRequest, ddmStructure.getStructureId());
 
-		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
+		/*DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
 			portletRequest);
 
 		updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);
+			portletRequest, recordSet, settingsDDMFormValues);*/
 
 		return recordSet;
 	}
@@ -441,6 +464,9 @@ public class SaveRecordSetMVCCommandHelper {
 
 	@Reference
 	protected DDMStructureService ddmStructureService;
+
+	@Reference
+	protected JSONFactory jsonFactory;
 
 	@Reference
 	protected volatile WorkflowDefinitionLinkLocalService

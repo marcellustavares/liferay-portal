@@ -31,10 +31,6 @@ AUI.add(
 						value: ''
 					},
 
-					portletNamespace: {
-						value: ''
-					},
-
 					rules: {
 						value: []
 					},
@@ -214,8 +210,7 @@ AUI.add(
 									functionsMetadata: instance.get('functionsMetadata'),
 									getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 									getDataProviders: instance._dataProviders,
-									pages: instance.getPages(),
-									portletNamespace: instance.get('portletNamespace')
+									pages: instance.getPages()
 								}
 							);
 						}
