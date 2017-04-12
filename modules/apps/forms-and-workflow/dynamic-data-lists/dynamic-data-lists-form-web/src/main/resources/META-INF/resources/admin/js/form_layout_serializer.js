@@ -73,8 +73,8 @@ AUI.add(
 
 						var pages = builder.get('pages');
 
-						var descriptions = pages.get('descriptions');
-						var titles = pages.get('titles');
+						var descriptions = pages.get('localizedDescriptions');
+						var titles = pages.get('localizedTitles');
 
 						return {
 							description: descriptions[index] || '',
