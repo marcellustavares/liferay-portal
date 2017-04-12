@@ -12,10 +12,6 @@ AUI.add(
 						valueFn: '_valueColumnHandler'
 					},
 
-					defaultLanguageId: {
-						value: themeDisplay.getDefaultLanguageId()
-					},
-
 					fieldHandler: {
 						valueFn: '_valueFieldHandler'
 					},
@@ -39,7 +35,6 @@ AUI.add(
 
 						return A.JSON.stringify(
 							{
-								defaultLanguageId: instance.get('defaultLanguageId'),
 								pages: instance.visit()
 							}
 						);
@@ -52,15 +47,15 @@ AUI.add(
 							size: column.get('size')
 						};
 
-						var fieldNames = [];
+						var fields = [];
 
 						var fieldsList = column.get('value');
 
 						if (fieldsList) {
-							fieldNames = instance._visitFields(fieldsList.get('fields'));
+							fields = instance._visitFields(fieldsList.get('fields'));
 						}
 
-						serializedColumn.fieldNames = fieldNames;
+						serializedColumn.fields = fields;
 
 						return serializedColumn;
 					},
@@ -68,7 +63,7 @@ AUI.add(
 					_serializeField: function(field) {
 						var instance = this;
 
-						return field.get('fieldName');
+						return field.get('context');
 					},
 
 					_serializePage: function(page, index) {
@@ -81,20 +76,10 @@ AUI.add(
 						var descriptions = pages.get('descriptions');
 						var titles = pages.get('titles');
 
-						var languageId = instance.get('defaultLanguageId');
-
-						var description = {};
-
-						description[languageId] = descriptions[index] || '';
-
-						var title = {};
-
-						title[languageId] = titles[index] || '';
-
 						return {
-							description: description,
+							description: descriptions[index] || '',
 							rows: instance._visitRows(page.get('rows')),
-							title: title
+							title: titles[index] || ''
 						};
 					},
 
@@ -137,7 +122,7 @@ AUI.add(
 							function(item) {
 								return item.columns.filter(
 									function(column) {
-										return column.fieldNames.length > 0;
+										return column.fields.length > 0;
 									}
 								).length > 0;
 							}

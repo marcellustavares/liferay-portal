@@ -1,9 +1,11 @@
 AUI.add(
 	'liferay-ddl-portlet',
 	function(A) {
-		var DefinitionSerializer = Liferay.DDL.DefinitionSerializer;
-
 		var LayoutSerializer = Liferay.DDL.LayoutSerializer;
+
+		var Settings = Liferay.DDL.Settings;
+
+		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
 
 		var EMPTY_FN = A.Lang.emptyFn;
 
@@ -11,15 +13,11 @@ AUI.add(
 
 		var TPL_BUTTON_SPINNER = '<span aria-hidden="true"><span class="icon-spinner icon-spin"></span></span>';
 
+		var STR_TRANSLATION_MANAGER = 'translationManager';
+
 		var DDLPortlet = A.Component.create(
 			{
 				ATTRS: {
-					autosaveInterval: {
-					},
-
-					autosaveURL: {
-					},
-
 					availableLanguageIds: {
 						value: [
 							themeDisplay.getDefaultLanguageId()
@@ -30,22 +28,15 @@ AUI.add(
 						value: themeDisplay.getDefaultLanguageId()
 					},
 
-					definition: {
-					},
-
 					description: {
-						getter: '_getDescription',
-						value: ''
+						value: {}
 					},
 
 					editForm: {
 					},
 
-					evaluatorURL: {
-					},
-
-					fieldTypesDefinitions: {
-						value: {}
+					editingLocale:{
+						value: themeDisplay.getDefaultLanguageId()
 					},
 
 					formBuilder: {
@@ -56,18 +47,6 @@ AUI.add(
 						value: []
 					},
 
-					getDataProviderInstancesURL: {
-						value: ''
-					},
-
-					getDataProviderParametersSettingsURL: {
-						value: ''
-					},
-
-					getFieldTypeSettingFormContextURL: {
-						value: ''
-					},
-
 					getFunctionsURL: {
 						value: ''
 					},
@@ -76,34 +55,22 @@ AUI.add(
 						value: ''
 					},
 
-					layout: {
+					context: {
 					},
 
 					name: {
-						getter: '_getName',
-						setter: '_setName',
-						value: ''
-					},
-
-					publishRecordSetURL: {
+						value: {}
 					},
 
 					recordSetId: {
 						value: 0
 					},
 
-					restrictedFormURL: {
-					},
-
 					ruleBuilder: {
 						valueFn: '_valueRuleBuilder'
+					translationManager: {
 					},
 
-					rules: {
-						value: []
-					},
-
-					sharedFormURL: {
 					}
 				},
 
@@ -117,18 +84,12 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						instance.definitionSerializer = new DefinitionSerializer(
-							{
-								availableLanguageIds: instance.get('availableLanguageIds'),
-								defaultLanguageId: instance.get('defaultLanguageId'),
-								fieldTypesDefinitions: instance.get('fieldTypesDefinitions')
-							}
-						);
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						instance.layoutSerializer = new LayoutSerializer(
 							{
 								builder: instance.get('formBuilder'),
-								defaultLanguageId: instance.get('defaultLanguageId')
+								defaultLanguageId: defaultLanguageId
 							}
 						);
 
@@ -137,6 +98,18 @@ AUI.add(
 						instance.bindUI();
 
 						instance.savedState = instance.initialState = instance.getState();
+
+						var name = {};
+
+						name[defaultLanguageId] = Liferay.Language.get('untitled-form');
+
+						instance.set('name', name);
+
+						var description = {};
+
+						description[defaultLanguageId] = '';
+
+						instance.set('description', description);
 					},
 
 					renderUI: function() {
@@ -159,6 +132,8 @@ AUI.add(
 
 						var formBuilder = instance.get('formBuilder');
 
+						var translationManager = instance.get(STR_TRANSLATION_MANAGER);
+
 						instance._eventHandlers = [
 							instance.after('autosave', instance._afterAutosave),
 							formBuilder._layoutBuilder.after('layout-builder:moveEnd', A.bind(instance._afterFormBuilderLayoutBuilderMoveEnd, instance)),
@@ -170,10 +145,11 @@ AUI.add(
 							instance.one('#showRules').on('click', A.bind('_onRulesButtonClick', instance)),
 							instance.one('#showForm').on('click', A.bind('_onFormButtonClick', instance)),
 							instance.one('#requireAuthenticationCheckbox').on('change', A.bind('_onRequireAuthenticationCheckboxChanged', instance)),
-							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
+							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance)),
+							translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance))
 						];
 
-						var autosaveInterval = instance.get('autosaveInterval');
+						var autosaveInterval = Settings.autosaveInterval;
 
 						if (autosaveInterval > 0) {
 							instance._intervalId = setInterval(A.bind('_autosave', instance), autosaveInterval * MINUTE);
@@ -252,23 +228,21 @@ AUI.add(
 
 						var pages = formBuilder.get('layouts');
 
-						instance.definitionSerializer.set('pages', pages);
-
-						instance.definitionSerializer.set('successPage', formBuilder.getSuccessPageDefinition());
-
-						var definition = JSON.parse(instance.definitionSerializer.serialize());
-
 						var rules = JSON.stringify(ruleBuilder.get('rules'));
 
 						instance.layoutSerializer.set('pages', pages);
 
 						var layout = JSON.parse(instance.layoutSerializer.serialize());
 
+						var translationManager = instance.get('translationManager');
+
 						return {
-							definition: definition,
-							description: instance.get('description').trim(),
-							layout: layout,
-							name: instance.get('name').trim(),
+							availableLanguageIds: translationManager.get('availableLocales'),
+							defaultLanguageId: translationManager.get('defaultLocale'),
+							description: instance.get('description'),
+							pages: layout.pages,
+							name: instance.get('name'),
+							paginationMode: formBuilder.get('pageManager').get('mode'),
 							rules: rules
 						};
 					},
@@ -276,13 +250,15 @@ AUI.add(
 					isEmpty: function() {
 						var instance = this;
 
-						var state = instance.getState();
+						var formBuilder = instance.get('formBuilder');
 
-						var definition = state.definition;
+						var count = 0;
 
-						var fields = definition.fields;
+						formBuilder.eachFields(function(field) {
+							count++;
+						});
 
-						return fields.length === 0;
+						return count === 0;
 					},
 
 					openConfirmationModal: function(confirm, cancel) {
@@ -385,15 +361,11 @@ AUI.add(
 
 						var state = instance.getState();
 
-						instance.one('#description').val(state.description);
+						instance.one('#description').val(JSON.stringify(state.description));
+						instance.one('#serializedContext').val(JSON.stringify(state));
 
-						instance.one('#definition').val(JSON.stringify(state.definition));
 
-						instance.one('#layout').val(JSON.stringify(state.layout));
-
-						instance.one('#name').val(state.name);
-
-						instance.one('#rules').val(state.rules);
+						instance.one('#name').val(JSON.stringify(state.name));
 
 						var publishCheckbox = instance.one('#publishCheckbox');
 
@@ -419,15 +391,44 @@ AUI.add(
 					submitForm: function() {
 						var instance = this;
 
-						if (!instance.get('name').trim()) {
-							instance.set('name', Liferay.Language.get('untitled-form'));
-						}
-
 						instance.serializeFormBuilder();
 
 						var editForm = instance.get('editForm');
 
 						submitForm(editForm.form);
+					},
+
+					_afterEditingLocaleChange: function(event) {
+						var instance = this;
+
+						var oldLocale = instance.get('editingLocale');
+
+						var name = instance.get('name');
+						var description = instance.get('description');
+
+						name[oldLocale] = instance._getName();
+						description[oldLocale] = instance._getDescription();
+
+						var editingLocale = event.newVal;
+
+						var formBuilder = instance.get('formBuilder');
+
+						formBuilder.eachFields(function(field) {
+							field.set('locale', editingLocale);
+
+							field.saveSettings();
+						});
+
+						var pageManager = formBuilder.get('pageManager');
+
+						pageManager.fire('localeChange', {
+							editingLocale: editingLocale
+						});
+
+						instance.set('editingLocale', editingLocale);
+
+						instance._setName(name[editingLocale] || '');
+						instance._setDescription(description[editingLocale] || '');
 					},
 
 					_afterAutosave: function(event) {
@@ -473,7 +474,7 @@ AUI.add(
 								var formData = instance._getFormData(A.IO.stringify(editForm.form));
 
 								A.io.request(
-									instance.get('autosaveURL'),
+									Settings.autosaveURL,
 									{
 										after: {
 											success: function() {
@@ -513,10 +514,10 @@ AUI.add(
 						var requireAuthenticationCheckbox = instance.one('#requireAuthenticationCheckbox');
 
 						if (requireAuthenticationCheckbox.attr('checked')) {
-							formURL = instance.get('restrictedFormURL');
+							formURL = Settings.restrictedFormURL;
 						}
 						else {
-							formURL = instance.get('sharedFormURL');
+							formURL = Settings.sharedFormURL;
 						}
 
 						var recordSetId = instance.byId('recordSetId').val();
@@ -551,19 +552,25 @@ AUI.add(
 					_getDescription: function() {
 						var instance = this;
 
-						return window[instance.ns('descriptionEditor')].getHTML();
+						var editor = instance._getDescriptionEditor();
+
+						return editor.getHTML();
+					},
+
+					_getDescriptionEditor: function() {
+						var instance = this;
+
+						return window[instance.ns('descriptionEditor')];
 					},
 
 					_getFormData: function(formString) {
 						var instance = this;
 
-						if (!instance.get('name').trim()) {
-							var formObject = A.QueryString.parse(formString);
+						var formObject = A.QueryString.parse(formString);
 
-							formObject[instance.ns('name')] = Liferay.Language.get('untitled-form');
+						formObject[instance.ns('name')] = instance.get('name');
 
-							formString = A.QueryString.stringify(formObject);
-						}
+						formString = A.QueryString.stringify(formObject);
 
 						return formString;
 					},
@@ -571,7 +578,15 @@ AUI.add(
 					_getName: function() {
 						var instance = this;
 
-						return window[instance.ns('nameEditor')].getHTML();
+						var editor = instance._getNameEditor();
+
+						return editor.getHTML();
+					},
+
+					_getNameEditor: function() {
+						var instance = this;
+
+						return window[instance.ns('nameEditor')];
 					},
 
 					_isSameState: function(state1, state2) {
@@ -731,7 +746,7 @@ AUI.add(
 						);
 
 						A.io.request(
-							instance.get('publishRecordSetURL'),
+							Settings.publishRecordSetURL,
 							{
 								data: payload,
 								dataType: 'JSON',
@@ -740,26 +755,28 @@ AUI.add(
 						);
 					},
 
+					_setDescription: function(value) {
+						var instance = this;
+
+						var editor = instance._getDescriptionEditor();
+
+						editor.setHTML(value);
+					},
+
 					_setName: function(value) {
 						var instance = this;
 
-						window[instance.ns('nameEditor')].setHTML(value);
+						var editor = instance._getNameEditor();
+
+						editor.setHTML(value);
 					},
 
 					_valueFormBuilder: function() {
 						var instance = this;
 
-						var layout = instance.get('layout');
-
 						return new Liferay.DDL.FormBuilder(
 							{
-								defaultLanguageId: instance.get('defaultLanguageId'),
-								definition: instance.get('definition'),
-								evaluatorURL: instance.get('evaluatorURL'),
-								getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
-								pagesJSON: layout.pages,
-								portletNamespace: instance.get('namespace'),
-								recordSetId: instance.get('recordSetId')
+								context: instance.get('context')
 							}
 						);
 					},
@@ -770,13 +787,10 @@ AUI.add(
 						return new Liferay.DDL.FormBuilderRuleBuilder(
 							{
 								formBuilder: instance.get('formBuilder'),
-								functionsMetadata: instance.get('functionsMetadata'),
-								getDataProviderInstancesURL: instance.get('getDataProviderInstancesURL'),
-								getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
-								getFunctionsURL: instance.get('getFunctionsURL'),
-								getRolesURL: instance.get('getRolesURL'),
-								portletNamespace: instance.get('namespace'),
-								rules: instance.get('rules'),
+								functionsMetadata: Settings.functionsMetadata,
+								getDataProviderInstancesURL: Settings.getDataProviderInstancesURL,
+								getDataProviderParametersSettingsURL: Settings.getDataProviderParametersSettingsURL,
+								rules: Settings.rules,
 								visible: false
 							}
 						);
@@ -789,6 +803,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['io-base', 'liferay-ddl-form-builder', 'liferay-ddl-form-builder-definition-serializer', 'liferay-ddl-form-builder-layout-serializer', 'liferay-ddl-form-builder-rule-builder', 'liferay-portlet-base', 'liferay-util-window', 'querystring-parse']
+		requires: ['io-base', 'liferay-ddl-form-builder', 'liferay-ddl-form-builder-util', 'liferay-ddl-form-builder-layout-serializer', 'liferay-ddl-form-builder-rule-builder', 'liferay-portlet-base', 'liferay-util-window', 'querystring-parse']
 	}
 );

@@ -26,10 +26,6 @@ AUI.add(
 
 					pages: {
 						value: []
-					},
-
-					portletNamespace: {
-						value: ''
 					}
 				},
 
@@ -75,8 +71,7 @@ AUI.add(
 									getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 									getDataProviders: instance.get('getDataProviders'),
 									index: index,
-									options: instance.get('dataProviders'),
-									portletNamespace: instance.get('portletNamespace')
+									options: instance.get('dataProviders')
 								}
 							);
 						}
@@ -87,8 +82,7 @@ AUI.add(
 									boundingBox: container,
 									getFunctionsURL: instance.get('getFunctionsURL'),
 									index: index,
-									options: instance.get('fields'),
-									portletNamespace: instance.get('portletNamespace')
+									options: instance.get('fields')
 								}
 							);
 						}

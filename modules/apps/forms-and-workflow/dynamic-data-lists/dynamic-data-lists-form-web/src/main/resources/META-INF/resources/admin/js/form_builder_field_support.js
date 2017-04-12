@@ -1,7 +1,17 @@
 AUI.add(
 	'liferay-ddl-form-builder-field-support',
 	function(A) {
-		var FieldTypes = Liferay.DDM.Renderer.FieldTypes;
+		var Lang = A.Lang;
+
+		var Renderer = Liferay.DDM.Renderer;
+
+		var FieldTypes = Renderer.FieldTypes;
+
+		var Settings = Liferay.DDL.Settings;
+
+		var FormBuilderUtil = Liferay.DDL.FormBuilderUtil;
+
+		var Util = Renderer.Util;
 
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
@@ -19,19 +29,12 @@ AUI.add(
 				value: null
 			},
 
-			evaluatorURL: {
-			},
-
 			content: {
 				getter: function() {
 					var instance = this;
 
 					return instance.get('container');
 				}
-			},
-
-			getFieldTypeSettingFormContextURL: {
-				value: ''
 			},
 
 			settingsRetriever: {
@@ -66,6 +69,23 @@ AUI.add(
 				return copy;
 			},
 
+			createSettingsForm: function(context) {
+				var instance = this;
+
+				var builder = instance.get('builder');
+
+				return new Liferay.DDL.FormBuilderSettingsForm(
+					{
+						context: context,
+						editMode: builder.get('recordSetId') === 0 || instance.isPersisted(),
+						evaluatorURL: Settings.evaluatorURL,
+						field: instance,
+						portletNamespace: Settings.portletNamespace,
+						templateNamespace: 'ddm.settings_form'
+					}
+				);
+			},
+
 			generateFieldName: function(key) {
 				var instance = this;
 
@@ -97,24 +117,30 @@ AUI.add(
 				return name;
 			},
 
-			getSettings: function(settingsForm) {
+			getSettings: function() {
 				var instance = this;
 
 				var settings = {};
 
-				var fieldSettingsJSON = settingsForm.toJSON();
+				var context = instance.get('context.settingsContext');
 
-				fieldSettingsJSON.fieldValues.forEach(
-					function(item) {
-						var name = item.name;
+				var defaultLocale = themeDisplay.getDefaultLanguageId();
 
-						if (name === 'name') {
-							name = 'fieldName';
-						}
+				var locale = instance.get('locale');
 
-						settings[name] = item.value;
+				FormBuilderUtil.visitLayout(context.pages, function(formFieldContext) {
+					var fieldName = Util.getFieldNameFromQualifiedName(formFieldContext.name);
+
+					if (formFieldContext.localizable) {
+						var localizedValue = formFieldContext.localizedValue.values[locale] || formFieldContext.localizedValue.values[defaultLocale] || '';
+
+						settings[fieldName] = localizedValue;
+						formFieldContext.value = localizedValue;
 					}
-				);
+					else {
+						settings[fieldName] = formFieldContext.value;
+					}
+				});
 
 				if (!settings.dataType) {
 					settings.dataType = instance.get('dataType');
@@ -124,8 +150,6 @@ AUI.add(
 				settings.type = instance.get('type');
 				settings.value = '';
 				settings.visible = true;
-
-				settings.context = A.clone(settings);
 
 				return settings;
 			},
@@ -143,11 +167,17 @@ AUI.add(
 
 				var builder = instance.get('builder');
 
-				var definition = builder.get('definition');
+				var context = builder.get('context');
 
-				var searchResults = RendererUtil.searchFieldsByKey(definition, instance.get('fieldName'), 'fieldName');
+				var persisted = false;
 
-				return searchResults.length === 0;
+				FormBuilderUtil.visitLayout(context.pages, function(formFieldContext) {
+					if (instance.get('fieldName') === formFieldContext.fieldName) {
+						persisted = true;
+					}
+				});
+
+				return persisted;
 			},
 
 			loadSettingsForm: function() {
@@ -158,33 +188,23 @@ AUI.add(
 				var fieldContext = instance.get('context');
 
 				return settingsRetriever
-					.getSettingsContext(instance.get('type'))
+					.getSettingsContext(instance)
 					.then(
-						function(context) {
-							var visitor = new Liferay.DDM.LayoutVisitor();
-
-							visitor.setAttrs(
-								{
-									fieldHandler: function(formFieldContext) {
-										instance._fillSettingsFormField(formFieldContext, fieldContext);
-									},
-									pages: context.pages
-								}
-							);
-
-							visitor.visit();
-
-							var settingsForm = instance._createSettingsForm(context);
+						function(settingsContext) {
+							var settingsForm = instance.createSettingsForm(settingsContext);
 
 							return settingsForm;
 						}
 					);
 			},
 
-			saveSettings: function(settingsForm) {
+			saveSettings: function() {
 				var instance = this;
 
-				instance.setAttrs(instance.getSettings(settingsForm));
+				var settings = instance.getSettings();
+
+				instance.setAttrs(settings);
+				instance.set('context', settings);
 
 				instance.render();
 
@@ -194,46 +214,6 @@ AUI.add(
 						field: instance
 					}
 				);
-			},
-
-			_createSettingsForm: function(context) {
-				var instance = this;
-
-				var builder = instance.get('builder');
-
-				return new Liferay.DDL.FormBuilderSettingsForm(
-					{
-						context: context,
-						definition: JSON.parse(context.definition),
-						editMode: builder.get('recordSetId') === 0 || instance.isPersisted(),
-						evaluatorURL: instance.get('evaluatorURL'),
-						field: instance,
-						layout: JSON.parse(context.layout),
-						portletNamespace: instance.get('portletNamespace'),
-						templateNamespace: 'ddm.settings_form'
-					}
-				);
-			},
-
-			_fillSettingsFormField: function(formFieldContext, fieldContext, settingsForm) {
-				var instance = this;
-
-				var contextKey = RendererUtil.getFieldNameFromQualifiedName(formFieldContext.name);
-
-				if (contextKey === 'name') {
-					var fieldName = fieldContext.fieldName;
-
-					if (!fieldName) {
-						fieldName = instance.generateFieldName(fieldContext.type);
-					}
-
-					formFieldContext.value = fieldName;
-
-					fieldContext.fieldName = fieldName;
-				}
-				else if (contextKey in fieldContext) {
-					formFieldContext.value = fieldContext[contextKey];
-				}
 			},
 
 			_renderFormBuilderField: function() {
@@ -250,37 +230,10 @@ AUI.add(
 				wrapper.append('<div class="' + CSS_FIELD_CONTENT_TARGET + '"></div>');
 			},
 
-			_updateSettingsFormValues: function(settingsForm) {
-				var instance = this;
-
-				settingsForm.get('fields').forEach(
-					function(item, index) {
-						var name = item.get('fieldName');
-
-						if (name === 'name') {
-							name = 'fieldName';
-						}
-
-						var context = instance.get('context');
-
-						if (context.hasOwnProperty(name)) {
-							item.set('errorMessage', '');
-							item.set('valid', true);
-							item.set('value', context[name]);
-						}
-					}
-				);
-			},
-
 			_valueSettingsRetriever: function() {
 				var instance = this;
 
-				return new Liferay.DDL.FormBuilderSettingsRetriever(
-					{
-						getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
-						portletNamespace: instance.get('portletNamespace')
-					}
-				);
+				return new Liferay.DDL.FormBuilderSettingsRetriever();
 			}
 		};
 

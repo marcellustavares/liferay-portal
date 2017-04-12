@@ -31,22 +31,6 @@ AUI.add(
 						value: ''
 					},
 
-					getFunctionsURL: {
-						value: ''
-					},
-
-					getRoles: {
-						value: []
-					},
-
-					getRolesURL: {
-						value: ''
-					},
-
-					portletNamespace: {
-						value: ''
-					},
-
 					rules: {
 						setter: '_setRules',
 						value: []
@@ -236,8 +220,7 @@ AUI.add(
 									getDataProviders: instance._dataProviders,
 									getFunctionsURL: instance.get('getFunctionsURL'),
 									getRoles: instance.get('getRoles'),
-									pages: instance.getPages(),
-									portletNamespace: instance.get('portletNamespace')
+									pages: instance.getPages()
 								}
 							);
 						}

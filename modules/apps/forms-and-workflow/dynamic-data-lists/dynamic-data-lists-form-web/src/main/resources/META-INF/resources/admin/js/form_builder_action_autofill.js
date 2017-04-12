@@ -3,6 +3,8 @@ AUI.add(
 	function(A) {
 		var Lang = A.Lang;
 
+		var Settings = Liferay.DDL.Settings;
+
 		var TPL_CONTAINER_INPUT_OUTPUT_COMPONENT = '<div class="col-md-9 container-input-field container-input-field-{index}"></div>';
 
 		var TPL_CONTAINER_INPUT_OUTPUT_FIELD = '<div class="col-md-3 container-input-label">{field}</div>';
@@ -34,10 +36,6 @@ AUI.add(
 
 					options: {
 						value: []
-					},
-
-					portletNamespace: {
-						value: ''
 					},
 
 					strings: {
@@ -297,10 +295,8 @@ AUI.add(
 					_getDataProviderPayload: function(ddmDataProviderInstanceId) {
 						var instance = this;
 
-						var portletNamespace = instance.get('portletNamespace');
-
 						var payload = Liferay.Util.ns(
-							portletNamespace,
+							Settings.portletNamespace,
 							{
 								ddmDataProviderInstanceId: ddmDataProviderInstanceId
 							}

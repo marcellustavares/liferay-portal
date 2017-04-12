@@ -40,10 +40,6 @@ AUI.add(
 						value: 0
 					},
 
-					portletNamespace: {
-						value: ''
-					},
-
 					strings: {
 						value: {
 							and: Liferay.Language.get('and'),
@@ -88,8 +84,7 @@ AUI.add(
 								getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 								getDataProviders: instance.get('getDataProviders'),
 								getFunctionsURL: instance.get('getFunctionsURL'),
-								pages: instance.get('pages'),
-								portletNamespace: instance.get('portletNamespace')
+								pages: instance.get('pages')
 							}
 						);
 
