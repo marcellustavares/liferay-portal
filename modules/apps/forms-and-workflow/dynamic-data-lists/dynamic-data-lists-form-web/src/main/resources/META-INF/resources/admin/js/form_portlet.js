@@ -383,7 +383,7 @@ AUI.add(
 
 						var settings = settingsDDMForm.toJSON();
 
-						var settingsInput = instance.one('#serializedSettingsDDMFormValues');
+						var settingsInput = instance.one('#serializedSettingsContext');
 
 						settingsInput.val(JSON.stringify(settings));
 					},
