@@ -126,7 +126,7 @@ public interface DefaultDDMFormFieldTypeSettings
 			"placeholder=%enter-help-text",
 			"tooltip=%add-a-comment-to-help-users-understand-the-field-label"
 		},
-		type = "text"
+		type = "text_localizable"
 	)
 	public LocalizedValue tip();
 

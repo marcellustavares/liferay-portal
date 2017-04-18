@@ -78,7 +78,9 @@ AUI.add(
 
 						repeatedOption.addTarget(instance);
 
-						instance.fire('addOption');
+						instance.fire('addOption', {
+							option: repeatedOption
+						});
 
 						return repeatedOption;
 					},
@@ -125,6 +127,12 @@ AUI.add(
 						var options = instance.getOptions();
 
 						return instance.getOption(options.length - 1);
+					},
+
+					getMainOption: function() {
+						var instance = this;
+
+						return instance._mainOption;
 					},
 
 					getOption: function(index) {

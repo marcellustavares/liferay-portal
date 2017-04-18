@@ -14,23 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.type.text.localizable;
 
-import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.model.Value;
-import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.WebKeys;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +24,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 
 /**
  * @author Leonardo Barros
@@ -72,11 +71,6 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 			"availableLocalesMetadata",
 			getAvailableLocalesMetadata(themeDisplay));
 
-		parameters.put(
-			"displayStyle",
-			GetterUtil.getString(
-				ddmFormField.getProperty("displayStyle"), "singleline"));
-
 		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
 			"placeholder");
 
@@ -88,6 +82,22 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 			"tooltip");
 
 		parameters.put("tooltip", getValueString(tooltip, locale));
+
+		LocalizedValue localizedValue =
+			(LocalizedValue)ddmFormFieldRenderingContext.getProperty(
+				"localizedValue");
+
+		if(localizedValue != null) {
+			Map<Locale,String> values = localizedValue.getValues();
+			Map<String,String> localizedValues = new HashMap<>();
+
+			for(Map.Entry<Locale, String> entry: values.entrySet()) {
+				String languageId = LanguageUtil.getLanguageId(entry.getKey());
+				localizedValues.put(languageId, entry.getValue());
+			}
+
+			parameters.put("value", localizedValues);
+		}
 
 		return parameters;
 	}
