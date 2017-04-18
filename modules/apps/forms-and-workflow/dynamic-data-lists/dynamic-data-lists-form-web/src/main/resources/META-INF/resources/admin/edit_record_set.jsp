@@ -69,7 +69,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
 		<aui:input name="saveAndPublish" type="hidden" value="<%= true %>" />
-		<aui:input name="serializedSettingsDDMFormValues" type="hidden" value="" />
+		<aui:input name="serializedSettingsContext" type="hidden" value="" />
 
 		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
 
