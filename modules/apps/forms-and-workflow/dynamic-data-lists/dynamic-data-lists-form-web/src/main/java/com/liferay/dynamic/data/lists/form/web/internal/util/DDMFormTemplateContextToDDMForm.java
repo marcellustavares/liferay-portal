@@ -84,16 +84,27 @@ public class DDMFormTemplateContextToDDMForm {
 							@Override
 							public void accept(JSONObject fieldJSONObject) {
 								try {
+									boolean localizable =
+										fieldJSONObject.getBoolean(
+											"localizable");
+
+									String valueProperty = "value";
+
+									if (localizable) {
+										valueProperty = "localizedValue";
+									}
+
 									Object deserializedDDMFormFieldProperty =
 										deserializeDDMFormFieldProperty(
-											jsonObject.getString("value"),
-											jsonObject.getBoolean(
-												"localizable"),
-											jsonObject.getString("dataType"),
-											jsonObject.getString("type"));
+											fieldJSONObject.getString(
+												valueProperty),
+											localizable,
+											fieldJSONObject.getString(
+												"dataType"),
+											fieldJSONObject.getString("type"));
 
 									ddmFormField.setProperty(
-										jsonObject.getString("fieldName"),
+										fieldJSONObject.getString("fieldName"),
 										deserializedDDMFormFieldProperty);
 								}
 								catch (PortalException pe) {

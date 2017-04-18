@@ -162,7 +162,8 @@ public class SaveRecordSetMVCCommandHelper {
 		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
 			portletRequest);
 
-		DDMStructure ddmStructure = addDDMStructure(portletRequest, null);
+		DDMStructure ddmStructure = addDDMStructure(
+			portletRequest, settingsDDMFormValues);
 
 		DDLRecordSet recordSet = addRecordSet(
 			portletRequest, ddmStructure.getStructureId());
@@ -232,7 +233,7 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		String settingsContext = ParamUtil.getString(
-			portletRequest, "settingsContext");
+			portletRequest, "serializedSettingsContext");
 
 		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettings.class);
 
