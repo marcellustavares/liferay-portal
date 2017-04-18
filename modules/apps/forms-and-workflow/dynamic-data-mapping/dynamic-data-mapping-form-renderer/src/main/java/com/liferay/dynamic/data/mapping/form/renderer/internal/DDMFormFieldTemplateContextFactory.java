@@ -489,7 +489,7 @@ public class DDMFormFieldTemplateContextFactory {
 		boolean localizable = MapUtil.getBoolean(
 			ddmFormFieldTemplateContext, "localizable");
 
-		if(localizable) {
+		if (localizable) {
 			ddmFormFieldTemplateContext.put("localizedValue", value);
 		}
 	}
