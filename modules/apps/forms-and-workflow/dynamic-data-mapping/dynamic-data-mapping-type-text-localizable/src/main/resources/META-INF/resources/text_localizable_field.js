@@ -2,6 +2,7 @@ AUI.add(
 	'liferay-ddm-form-field-text-localizable',
 	function(A) {
 		var Renderer = Liferay.DDM.Renderer;
+		var AArray = A.Array;
 
 		new A.TooltipDelegate(
 			{
@@ -16,9 +17,9 @@ AUI.add(
 		var TextLocalizableField = A.Component.create(
 			{
 				ATTRS: {
-					displayStyle: {
-						state: true,
-						value: 'singleline'
+					availableLocalesMetadata: {
+						validator: AArray.isArray,
+						value:[]
 					},
 
 					placeholder: {
@@ -42,7 +43,6 @@ AUI.add(
 						Liferay.InputLocalized.unregister(instance.getQualifiedName());
 
 						instance._eventHandlers.push(
-							instance.after('valueChange', instance._onTextFieldValueChange),
 							instance.bindContainerEvent('blur', instance._hideLocalizedPanel, '.liferay-ddm-form-field-text-localizable'),
 							instance.bindContainerEvent('focus', instance._showLocalizedPanel, '.liferay-ddm-form-field-text-localizable'),
 							instance.bindContainerEvent('mouseenter', instance._showLocalizedPanel, '.liferay-ddm-form-field-text-localizable'),
@@ -54,24 +54,27 @@ AUI.add(
 						return 'input';
 					},
 
-					getTextHeight: function() {
+					getValue: function() {
 						var instance = this;
 
-						var text = instance.getValue();
+						var localizedValues = {};
 
-						return text.split('\n').length;
-					},
+						var inputLocalized = instance._getInputLocalizedInstance();
 
-					render: function() {
-						var instance = this;
+						var languageIds = instance._getLanguageIds();
 
-						TextLocalizableField.superclass.render.apply(instance, arguments);
-
-						if (instance.get('displayStyle') === 'multiline') {
-							instance.syncInputHeight();
+						if(!inputLocalized) {
+							languageIds.forEach(function(languageId) {
+								localizedValues[languageId] = '';
+							});
+						}
+						else {
+							languageIds.forEach(function(languageId) {
+								localizedValues[languageId] = inputLocalized.getValue(languageId);
+							});
 						}
 
-						return instance;
+						return localizedValues;
 					},
 
 					showErrorMessage: function() {
@@ -84,21 +87,6 @@ AUI.add(
 						var inputGroup = container.one('.input-group-container');
 
 						inputGroup.insert(container.one('.help-block'), 'after');
-					},
-
-					syncInputHeight: function() {
-						var instance = this;
-
-						var inputNode = instance.getInputNode();
-
-						var height = instance.getTextHeight();
-
-						if (height < 2) {
-							inputNode.set('rows', 2);
-						}
-						else {
-							inputNode.set('rows', height);
-						}
 					},
 
 					_createInputLocalized: function() {
@@ -118,7 +106,7 @@ AUI.add(
 								id: instance.get('fieldName'),
 								inputPlaceholder: instance.getInputSelector(),
 								instanceId: instance.getQualifiedName(),
-								items: ["en_US", "zh_CN", "es_ES", "ja_JP", "nl_NL", "hu_HU", "pt_BR", "de_DE", "iw_IL", "fi_FI", "ca_ES", "fr_FR"],
+								items: instance._getLanguageIds(),
 								itemsError: [],
 								lazy: true,
 								name: instance.get('fieldName'),
@@ -135,19 +123,25 @@ AUI.add(
 						return Liferay.InputLocalized._instances[instance.getQualifiedName()];
 					},
 
+					_getLanguageIds: function() {
+						var instance = this;
+
+						var availableLocalesMetadata = instance.get('availableLocalesMetadata');
+
+						var languageIds = [];
+
+						availableLocalesMetadata.forEach(function(availableLocaleMetadata) {
+							languageIds.push(availableLocaleMetadata.languageId);
+						});
+
+						return languageIds;
+					},
+
 					_hideLocalizedPanel: function() {
 						var instance = this;
 
 						if (!instance.get('container').one('.input-localized').hasClass('input-localized-focused')) {
 							instance.get('container').one('.input-localized-content').addClass('hidden');
-						}
-					},
-
-					_onTextFieldValueChange: function() {
-						var instance = this;
-
-						if (instance.get('displayStyle') === 'multiline') {
-							instance.syncInputHeight();
 						}
 					},
 

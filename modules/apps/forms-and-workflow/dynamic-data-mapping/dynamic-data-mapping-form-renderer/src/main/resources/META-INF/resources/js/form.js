@@ -3,6 +3,7 @@ AUI.add(
 	function(A) {
 		var AArray = A.Array;
 		var Renderer = Liferay.DDM.Renderer;
+		var Util = Renderer.Util;
 
 		var TPL_CONTAINER = '<div class="lfr-ddm-form-container"></div>';
 
@@ -18,20 +19,17 @@ AUI.add(
 						value: ''
 					},
 
-					definition: {
-						value: {}
-					},
-
 					enableEvaluations: {
 						value: true
 					},
 
-					layout: {
-						value: {}
-					},
-
 					portletNamespace: {
 						value: ''
+					},
+
+					rules: {
+						validator: AArray.isArray,
+						value:[]
 					},
 
 					strings: {
@@ -91,10 +89,9 @@ AUI.add(
 
 						return {
 							p_auth: Liferay.authToken,
+							pages: JSON.stringify(instance.toJSON()),
 							portletNamespace: instance.get('portletNamespace'),
-							serializedDDMForm: JSON.stringify(instance.get('definition')),
-							serializedDDMFormLayout: JSON.stringify(instance.get('layout')),
-							serializedDDMFormValues: JSON.stringify(instance.toJSON())
+							rules: instance.get('rules')
 						};
 					},
 
@@ -153,13 +150,24 @@ AUI.add(
 					toJSON: function() {
 						var instance = this;
 
-						var defaultLanguageId = themeDisplay.getDefaultLanguageId();
+						var context = instance.get('context');
 
-						return {
-							availableLanguageIds: [defaultLanguageId],
-							defaultLanguageId: defaultLanguageId,
-							fieldValues: AArray.invoke(instance.getImmediateFields(), 'toJSON')
-						};
+						var visitor = instance.get('visitor');
+
+						visitor.set(
+							'fieldHandler',
+							function(fieldContext) {
+								var fieldName = Util.getFieldNameFromQualifiedName(fieldContext.name);
+
+								var field = instance.getField(fieldName);
+
+								fieldContext.value = field.getValue();
+							}
+						);
+
+						visitor.visit();
+
+						return context;
 					},
 
 					_afterFormRender: function() {

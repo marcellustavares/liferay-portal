@@ -26,12 +26,11 @@
  *
  * @param containerId
  * @param context
- * @param definition
  * @param evaluatorURL
  * @param fieldTypes
- * @param layout
  * @param portletNamespace
  * @param readOnly
+ * @param rules
  */
 {template .form_renderer_js autoescape="deprecated-contextual"}
 	<script type="text/javascript">
@@ -47,11 +46,10 @@
 						{lb}
 							container: '#{$containerId}',
 							context: {$context|noAutoescape},
-							definition: {$definition|noAutoescape},
 							evaluatorURL: '{$evaluatorURL}',
-							layout: {$layout|noAutoescape},
 							portletNamespace: '{$portletNamespace}',
-							readOnly: {$readOnly}
+							readOnly: {$readOnly},
+							rules: {$rules|noAutoescape}
 						{rb}
 					).render()
 				);

@@ -15,6 +15,7 @@
  * @param dir
  * @param displayStyle
  * @param? label
+ * @param? localizedValues
  * @param name
  * @param placeholder
  * @param predefinedValue
@@ -64,6 +65,12 @@
 						<a class="help-icon help-icon-default icon-monospaced icon-question" data-original-title="{$tooltip}" data-toggle="popover" href="javascript:;" title="{$tooltip}"></a>
 					</span>
 				</span>
+			{/if}
+
+			{if $localizedValues}
+				{foreach $key in keys($localizedValues)}
+					<input id="{$name}_{$key}" name="{$name}_{$key}" type="hidden" value="{$localizedValues[$key]}">
+				{/foreach}
 			{/if}
 		</div>
 
