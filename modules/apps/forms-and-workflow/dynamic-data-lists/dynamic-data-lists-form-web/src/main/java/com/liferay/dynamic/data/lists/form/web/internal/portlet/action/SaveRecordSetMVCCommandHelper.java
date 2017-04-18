@@ -18,6 +18,9 @@ import com.liferay.dynamic.data.lists.exception.RecordSetSettingsRedirectURLExce
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleDeserializer;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleToDDMFormRuleConverter;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.model.DDLFormRule;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMForm;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMFormLayout;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMFormValues;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
@@ -44,12 +47,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -100,8 +101,7 @@ public class SaveRecordSetMVCCommandHelper {
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 		String structureKey = ParamUtil.getString(
 			portletRequest, "structureKey");
-		//String storageType = getStorageType(settingsDDMFormValues);
-		String storageType = "json";
+		String storageType = getStorageType(settingsDDMFormValues);
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
@@ -159,16 +159,16 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
-		/*DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
-			portletRequest);*/
+		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
+			portletRequest);
 
 		DDMStructure ddmStructure = addDDMStructure(portletRequest, null);
 
 		DDLRecordSet recordSet = addRecordSet(
 			portletRequest, ddmStructure.getStructureId());
 
-/* updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);*/
+		updateRecordSetSettings(
+			portletRequest, recordSet, settingsDDMFormValues);
 
 		return recordSet;
 	}
@@ -178,35 +178,14 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
 			String serializedContext = ParamUtil.getString(
 				portletRequest, "serializedContext");
 
-			DDLFormBuilderContextJSONDeserializer ddlFormBuilderContextJSONDeserializer =
-				new DDLFormBuilderContextJSONDeserializer(
-					serializedContext, jsonFactory,
-					ddmFormLayoutJSONDeserializer,
-					themeDisplay.getSiteDefaultLocale());
-
-			Tuple tuple = ddlFormBuilderContextJSONDeserializer.deserialize();
-
-			//serviceContext.setAttribute("form", ddmForm);
-
-			ServiceContextThreadLocal.pushServiceContext(serviceContext);
-
-//			List<DDMFormRule> ddmFormRules = getDDMFormRules(portletRequest);
-//
-//			ddmForm.setDDMFormRules(ddmFormRules);
-
-			return (DDMForm)tuple.getObject(0);
+			return ddmFormTemplateContextToDDMForm.deserialize(
+				serializedContext);
 		}
 		catch (PortalException pe) {
 			throw new StructureDefinitionException(pe);
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
 		}
 	}
 
@@ -214,21 +193,11 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
 			String serializedContext = ParamUtil.getString(
 				portletRequest, "serializedContext");
 
-			DDLFormBuilderContextJSONDeserializer ddlFormBuilderContextJSONDeserializer =
-				new DDLFormBuilderContextJSONDeserializer(
-					serializedContext, jsonFactory,
-					ddmFormLayoutJSONDeserializer,
-					themeDisplay.getSiteDefaultLocale());
-
-			Tuple tuple = ddlFormBuilderContextJSONDeserializer.deserialize();
-
-			return (DDMFormLayout)tuple.getObject(1);
+			return ddmFormTemplateContextToDDMFormLayout.deserialize(
+				serializedContext);
 		}
 		catch (PortalException pe) {
 			throw new StructureLayoutException(pe);
@@ -262,14 +231,14 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest)
 		throws PortalException {
 
-		String serializedSettingsDDMFormValues = ParamUtil.getString(
-			portletRequest, "serializedSettingsDDMFormValues");
+		String settingsContext = ParamUtil.getString(
+			portletRequest, "settingsContext");
 
 		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettings.class);
 
 		DDMFormValues settingsDDMFormValues =
-			ddmFormValuesJSONDeserializer.deserialize(
-				ddmForm, serializedSettingsDDMFormValues);
+			ddmFormTemplateContextToDDMFormValues.deserialize(
+				ddmForm, settingsContext);
 
 		return settingsDDMFormValues;
 	}
@@ -365,11 +334,11 @@ public class SaveRecordSetMVCCommandHelper {
 		DDLRecordSet recordSet = updateRecordSet(
 			portletRequest, ddmStructure.getStructureId());
 
-		/*DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
+		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
 			portletRequest);
 
 		updateRecordSetSettings(
-			portletRequest, recordSet, settingsDDMFormValues);*/
+			portletRequest, recordSet, settingsDDMFormValues);
 
 		return recordSet;
 	}
@@ -455,6 +424,17 @@ public class SaveRecordSetMVCCommandHelper {
 
 	@Reference
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
+
+	@Reference
+	protected DDMFormTemplateContextToDDMForm ddmFormTemplateContextToDDMForm;
+
+	@Reference
+	protected DDMFormTemplateContextToDDMFormLayout
+		ddmFormTemplateContextToDDMFormLayout;
+
+	@Reference
+	protected DDMFormTemplateContextToDDMFormValues
+		ddmFormTemplateContextToDDMFormValues;
 
 	@Reference
 	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
