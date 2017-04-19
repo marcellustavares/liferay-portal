@@ -14,13 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
@@ -42,6 +35,13 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Marcellus Tavares
@@ -127,8 +127,10 @@ public class DDMFormFieldTemplateContextFactory {
 			ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId(),
 			index, parentDDMFormFieldParameterName);
 
-		ddmFormFieldTemplateContext.put("fieldName", ddmFormFieldValue.getName());
-		ddmFormFieldTemplateContext.put("localizable", ddmFormField.isLocalizable());
+		ddmFormFieldTemplateContext.put(
+			"fieldName", ddmFormFieldValue.getName());
+		ddmFormFieldTemplateContext.put(
+			"localizable", ddmFormField.isLocalizable());
 
 		setDDMFormFieldTemplateContextName(
 			ddmFormFieldTemplateContext, ddmFormFieldParameterName);
