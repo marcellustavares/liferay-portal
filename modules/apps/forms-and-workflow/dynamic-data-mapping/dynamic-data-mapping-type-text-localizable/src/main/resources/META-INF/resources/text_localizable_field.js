@@ -63,7 +63,7 @@ AUI.add(
 
 						var languageIds = instance._getLanguageIds();
 
-						if(!inputLocalized) {
+						if (!inputLocalized) {
 							languageIds.forEach(function(languageId) {
 								localizedValues[languageId] = '';
 							});

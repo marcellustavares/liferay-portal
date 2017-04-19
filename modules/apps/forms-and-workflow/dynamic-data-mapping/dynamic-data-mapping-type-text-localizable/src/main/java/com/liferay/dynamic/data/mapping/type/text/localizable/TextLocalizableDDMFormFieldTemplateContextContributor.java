@@ -14,17 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.type.text.localizable;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
@@ -40,6 +29,17 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
@@ -87,11 +87,11 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 			(LocalizedValue)ddmFormFieldRenderingContext.getProperty(
 				"localizedValue");
 
-		if(localizedValue != null) {
-			Map<Locale,String> values = localizedValue.getValues();
-			Map<String,String> localizedValues = new HashMap<>();
+		if (localizedValue != null) {
+			Map<Locale, String> values = localizedValue.getValues();
+			Map<String, String> localizedValues = new HashMap<>();
 
-			for(Map.Entry<Locale, String> entry: values.entrySet()) {
+			for (Map.Entry<Locale, String> entry : values.entrySet()) {
 				String languageId = LanguageUtil.getLanguageId(entry.getKey());
 				localizedValues.put(languageId, entry.getValue());
 			}
