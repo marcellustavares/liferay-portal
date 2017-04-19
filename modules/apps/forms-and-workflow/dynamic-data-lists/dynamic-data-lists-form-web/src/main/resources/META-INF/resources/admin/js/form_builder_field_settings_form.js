@@ -75,12 +75,12 @@ AUI.add(
 
 					_afterFieldValueChange: function(event) {
 						var instance = this;
-						
+
 						var field = event.target;
-						 
+
 						var localizedValue = field.get('context.localizedValue');
-						
-						if(localizedValue) {
+
+						if (localizedValue) {
 							var formBuilderField = instance.get('field');
 
 							var locale = formBuilderField.get('locale');
@@ -105,11 +105,11 @@ AUI.add(
 						var editModeValue = instance.get('editMode');
 
 						var labelField = instance.getField('label');
-						
+
 						var formBuilderField = instance.get('field');
-						
+
 						var locale = formBuilderField.get('locale');
-						
+
 						var nameField = instance.getField('name');
 
 						(new A.EventHandle(instance._fieldEventHandlers)).detach();
@@ -294,12 +294,12 @@ AUI.add(
 						var instance = this;
 
 						var nameField = instance.getField('name');
-						
+
 						var formBuilderField = instance.get('field');
-						
+
 						var locale = formBuilderField.get('locale');
-						
-						if(locale === themeDisplay.getDefaultLanguageId()) {
+
+						if (locale === themeDisplay.getDefaultLanguageId()) {
 							nameField.setValue(event.newVal);
 						}
 

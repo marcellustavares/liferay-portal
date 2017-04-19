@@ -162,6 +162,8 @@ AUI.add(
 								var field = instance.getField(fieldName);
 
 								fieldContext.value = field.getValue();
+								fieldContext.localizedValue = field.get('context.localizedValue');
+								fieldContext.nestedFields = AArray.invoke(field.getImmediateFields(), 'toJSON');
 							}
 						);
 
