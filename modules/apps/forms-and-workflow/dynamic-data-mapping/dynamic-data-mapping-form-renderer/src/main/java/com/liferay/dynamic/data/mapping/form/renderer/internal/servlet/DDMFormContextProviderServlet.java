@@ -18,9 +18,6 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.internal.DDMFormPagesTemplateContextFactory;
-import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -67,10 +64,21 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		String portletNamespace) {
 
 		try {
-			DDMForm ddmForm = getDDMForm(request);
+			String serializedDDMFormTemplateContext = ParamUtil.getString(
+				request, "serializedDDMFormTemplateContext");
 
-			DDMFormValues ddmFormValues = getDDMFormValues(request, ddmForm);
+			DDMFormTemplateContextProcessor
+				ddmFormPagesTemplateContextProcessor =
+					new DDMFormTemplateContextProcessor(
+						_jsonFactory.createJSONObject(
+							serializedDDMFormTemplateContext));
 
+			DDMForm ddmForm = ddmFormPagesTemplateContextProcessor.getDDMForm();
+
+			DDMFormValues ddmFormValues =
+				ddmFormPagesTemplateContextProcessor.getDDMFormValues();
+
+			//TODO mustfix
 			Locale defaultLocale = ddmForm.getDefaultLocale();
 
 			DDMFormRenderingContext ddmFormRenderingContext =
@@ -80,7 +88,8 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 
 			_prepareThreadLocal(defaultLocale);
 
-			DDMFormLayout ddmFormLayout = getDDMFormLayout(request);
+			DDMFormLayout ddmFormLayout =
+				ddmFormPagesTemplateContextProcessor.getDDMFormLayout();
 
 			DDMFormPagesTemplateContextFactory
 				ddmFormPagesTemplateContextFactory =
@@ -148,36 +157,6 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 			jsonSerializer.serializeDeep(ddmFormPagesTemplateContext));
 	}
 
-	protected DDMForm getDDMForm(HttpServletRequest request)
-		throws PortalException {
-
-		String serializedDDMForm = ParamUtil.getString(
-			request, "serializedDDMForm");
-
-		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
-	}
-
-	protected DDMFormLayout getDDMFormLayout(HttpServletRequest request)
-		throws PortalException {
-
-		String serializedDDMFormLayout = ParamUtil.getString(
-			request, "serializedDDMFormLayout");
-
-		return _ddmFormLayoutJSONDeserializer.deserialize(
-			serializedDDMFormLayout);
-	}
-
-	protected DDMFormValues getDDMFormValues(
-			HttpServletRequest request, DDMForm ddmForm)
-		throws PortalException {
-
-		String serializedDDMFormValues = ParamUtil.getString(
-			request, "serializedDDMFormValues");
-
-		return _ddmFormValuesJSONDeserializer.deserialize(
-			ddmForm, serializedDDMFormValues);
-	}
-
 	private void _prepareThreadLocal(Locale locale)
 		throws Exception, PortalException {
 
@@ -194,15 +173,6 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 
 	@Reference
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
-
-	@Reference
-	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
-
-	@Reference
-	private DDMFormLayoutJSONDeserializer _ddmFormLayoutJSONDeserializer;
-
-	@Reference
-	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 
 	@Reference
 	private JSONFactory _jsonFactory;
