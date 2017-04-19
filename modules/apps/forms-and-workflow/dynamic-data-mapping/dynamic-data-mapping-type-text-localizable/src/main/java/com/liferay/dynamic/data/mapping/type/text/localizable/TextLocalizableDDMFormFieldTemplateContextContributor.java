@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -72,11 +71,6 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 			"availableLocalesMetadata",
 			getAvailableLocalesMetadata(themeDisplay));
 
-		parameters.put(
-			"displayStyle",
-			GetterUtil.getString(
-				ddmFormField.getProperty("displayStyle"), "singleline"));
-
 		LocalizedValue placeholder = (LocalizedValue)ddmFormField.getProperty(
 			"placeholder");
 
@@ -88,6 +82,22 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 			"tooltip");
 
 		parameters.put("tooltip", getValueString(tooltip, locale));
+
+		LocalizedValue localizedValue =
+			(LocalizedValue)ddmFormFieldRenderingContext.getProperty(
+				"localizedValue");
+
+		if (localizedValue != null) {
+			Map<Locale, String> values = localizedValue.getValues();
+			Map<String, String> localizedValues = new HashMap<>();
+
+			for (Map.Entry<Locale, String> entry : values.entrySet()) {
+				String languageId = LanguageUtil.getLanguageId(entry.getKey());
+				localizedValues.put(languageId, entry.getValue());
+			}
+
+			parameters.put("value", localizedValues);
+		}
 
 		return parameters;
 	}

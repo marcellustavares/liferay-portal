@@ -18,6 +18,9 @@ import com.liferay.dynamic.data.lists.exception.RecordSetSettingsRedirectURLExce
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleDeserializer;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleToDDMFormRuleConverter;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.model.DDLFormRule;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMForm;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMFormLayout;
+import com.liferay.dynamic.data.lists.form.web.internal.util.DDMFormTemplateContextToDDMFormValues;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
@@ -41,9 +44,9 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -176,26 +179,14 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			String definition = ParamUtil.getString(
-				portletRequest, "definition");
+			String serializedContext = ParamUtil.getString(
+				portletRequest, "serializedContext");
 
-			DDMForm ddmForm = ddmFormJSONDeserializer.deserialize(definition);
-
-			serviceContext.setAttribute("form", ddmForm);
-
-			ServiceContextThreadLocal.pushServiceContext(serviceContext);
-
-			List<DDMFormRule> ddmFormRules = getDDMFormRules(portletRequest);
-
-			ddmForm.setDDMFormRules(ddmFormRules);
-
-			return ddmForm;
+			return ddmFormTemplateContextToDDMForm.deserialize(
+				serializedContext);
 		}
 		catch (PortalException pe) {
 			throw new StructureDefinitionException(pe);
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
 		}
 	}
 
@@ -203,9 +194,11 @@ public class SaveRecordSetMVCCommandHelper {
 		throws PortalException {
 
 		try {
-			String layout = ParamUtil.getString(portletRequest, "layout");
+			String serializedContext = ParamUtil.getString(
+				portletRequest, "serializedContext");
 
-			return ddmFormLayoutJSONDeserializer.deserialize(layout);
+			return ddmFormTemplateContextToDDMFormLayout.deserialize(
+				serializedContext);
 		}
 		catch (PortalException pe) {
 			throw new StructureLayoutException(pe);
@@ -239,14 +232,14 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest)
 		throws PortalException {
 
-		String serializedSettingsDDMFormValues = ParamUtil.getString(
-			portletRequest, "serializedSettingsDDMFormValues");
+		String settingsContext = ParamUtil.getString(
+			portletRequest, "serializedSettingsContext");
 
 		DDMForm ddmForm = DDMFormFactory.create(DDLRecordSetSettings.class);
 
 		DDMFormValues settingsDDMFormValues =
-			ddmFormValuesJSONDeserializer.deserialize(
-				ddmForm, serializedSettingsDDMFormValues);
+			ddmFormTemplateContextToDDMFormValues.deserialize(
+				ddmForm, settingsContext);
 
 		return settingsDDMFormValues;
 	}
@@ -434,6 +427,17 @@ public class SaveRecordSetMVCCommandHelper {
 	protected DDMFormLayoutJSONDeserializer ddmFormLayoutJSONDeserializer;
 
 	@Reference
+	protected DDMFormTemplateContextToDDMForm ddmFormTemplateContextToDDMForm;
+
+	@Reference
+	protected DDMFormTemplateContextToDDMFormLayout
+		ddmFormTemplateContextToDDMFormLayout;
+
+	@Reference
+	protected DDMFormTemplateContextToDDMFormValues
+		ddmFormTemplateContextToDDMFormValues;
+
+	@Reference
 	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
 
 	@Reference
@@ -441,6 +445,9 @@ public class SaveRecordSetMVCCommandHelper {
 
 	@Reference
 	protected DDMStructureService ddmStructureService;
+
+	@Reference
+	protected JSONFactory jsonFactory;
 
 	@Reference
 	protected volatile WorkflowDefinitionLinkLocalService

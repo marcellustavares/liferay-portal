@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -125,6 +126,11 @@ public class DDMFormFieldTemplateContextFactory {
 		String ddmFormFieldParameterName = getDDMFormFieldParameterName(
 			ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId(),
 			index, parentDDMFormFieldParameterName);
+
+		ddmFormFieldTemplateContext.put(
+			"fieldName", ddmFormFieldValue.getName());
+		ddmFormFieldTemplateContext.put(
+			"localizable", ddmFormField.isLocalizable());
 
 		setDDMFormFieldTemplateContextName(
 			ddmFormFieldTemplateContext, ddmFormFieldParameterName);
@@ -480,6 +486,13 @@ public class DDMFormFieldTemplateContextFactory {
 		}
 		else if (value != null) {
 			ddmFormFieldTemplateContext.put("value", value.getString(_locale));
+		}
+
+		boolean localizable = MapUtil.getBoolean(
+			ddmFormFieldTemplateContext, "localizable");
+
+		if (localizable) {
+			ddmFormFieldTemplateContext.put("localizedValue", value);
 		}
 	}
 

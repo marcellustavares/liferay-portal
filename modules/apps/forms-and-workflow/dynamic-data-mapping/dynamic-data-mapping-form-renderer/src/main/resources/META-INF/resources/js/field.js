@@ -303,19 +303,13 @@ AUI.add(
 					toJSON: function() {
 						var instance = this;
 
-						var fieldJSON = {
-							instanceId: instance.get('instanceId'),
-							name: instance.get('fieldName'),
-							value: instance.getValue()
-						};
+						var context = instance.get('context');
 
-						var fields = instance.getImmediateFields();
+						context.value = instance.getValue();
+						context.localizedValue = instance.get('context.localizedValue');
+						context.nestedFields = AArray.invoke(instance.getImmediateFields(), 'toJSON');
 
-						if (fields.length > 0) {
-							fieldJSON.nestedFieldValues = AArray.invoke(fields, 'toJSON');
-						}
-
-						return fieldJSON;
+						return context;
 					},
 
 					updateContainer: function() {

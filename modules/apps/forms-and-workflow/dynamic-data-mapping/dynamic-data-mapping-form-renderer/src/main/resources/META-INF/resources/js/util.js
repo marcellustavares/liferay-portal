@@ -212,7 +212,7 @@ AUI.add(
 						results.push(next);
 					}
 					else {
-						var children = next.fields || next.nestedFields || next.fieldValues || next.nestedFieldValues;
+						var children = next.fields || next.nestedFields;
 
 						if (children) {
 							children.forEach(addToQueue);

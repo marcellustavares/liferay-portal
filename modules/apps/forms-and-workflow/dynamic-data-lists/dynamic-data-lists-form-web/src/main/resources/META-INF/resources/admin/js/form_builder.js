@@ -11,6 +11,8 @@ AUI.add(
 
 		var Lang = A.Lang;
 
+		var Settings = Liferay.DDL.Settings;
+
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
 		var CSS_FORM_BUILDER_TABS = A.getClassName('form', 'builder', 'tabs');
@@ -36,19 +38,8 @@ AUI.add(
 						}
 					},
 
-					defaultLanguageId: {
-						value: themeDisplay.getDefaultLanguageId()
-					},
-
-					definition: {
-						validator: Lang.isObject
-					},
-
 					deserializer: {
 						valueFn: '_valueDeserializer'
-					},
-
-					evaluatorURL: {
 					},
 
 					fieldTypes: {
@@ -56,21 +47,16 @@ AUI.add(
 						valueFn: '_valueFieldTypes'
 					},
 
-					getFieldTypeSettingFormContextURL: {
-						validator: Lang.isString,
-						value: ''
-					},
-
 					layouts: {
 						valueFn: '_valueLayouts'
 					},
 
-					pagesJSON: {
-						validator: Array.isArray,
-						value: []
+					context: {
+						value: {}
 					},
 
-					portletNamespace: {
+					pageManager: {
+						value:{}
 					},
 
 					recordSetId: {
@@ -89,10 +75,6 @@ AUI.add(
 							removeRowModal: Liferay.Language.get('you-will-also-delete-fields-with-this-row-are-you-sure-you-want-delete-it')
 						},
 						writeOnce: true
-					},
-
-					successPage: {
-						value: {}
 					},
 
 					visitor: {
@@ -203,10 +185,7 @@ AUI.add(
 								fieldType.get('defaultConfig'),
 								{
 									builder: instance,
-									defaultLanguageId: instance.get('defaultLanguageId'),
 									evaluatorURL: instance.get('evaluatorURL'),
-									getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
-									portletNamespace: instance.get('portletNamespace'),
 									readOnly: true
 								},
 								config
@@ -482,7 +461,9 @@ AUI.add(
 								)
 							);
 
-							instance._pageManager.setSuccessPage(instance.get('definition').successPage);
+							instance._pageManager.setSuccessPage(instance.get('context').successPage);
+
+							instance.set('pageManager', instance._pageManager);
 						}
 
 						return instance._pageManager;
@@ -510,7 +491,7 @@ AUI.add(
 						var instance = this;
 
 						var newFieldDefaultContext = {
-							portletNamespace: instance.get('portletNamespace'),
+							portletNamespace: Settings.portletNamespace,
 							readOnly: true,
 							showLabel: true,
 							type: field.get('type'),
@@ -728,8 +709,7 @@ AUI.add(
 
 						return new Liferay.DDL.LayoutDeserializer(
 							{
-								builder: instance,
-								definition: instance.get('definition')
+								builder: instance
 							}
 						);
 					},
@@ -755,7 +735,7 @@ AUI.add(
 								draggable: false,
 								fieldTypes: instance.get('fieldTypes'),
 								modal: true,
-								portletNamespace: instance.get('portletNamespace'),
+								portletNamespace: Settings.portletNamespace,
 								resizable: false,
 								strings: strings,
 								visible: false
@@ -772,7 +752,9 @@ AUI.add(
 
 						var deserializer = instance.get('deserializer');
 
-						deserializer.set('pages', instance.get('pagesJSON'));
+						var context = instance.get('context');
+
+						deserializer.set('pages', context.pages);
 
 						return deserializer.deserialize();
 					},

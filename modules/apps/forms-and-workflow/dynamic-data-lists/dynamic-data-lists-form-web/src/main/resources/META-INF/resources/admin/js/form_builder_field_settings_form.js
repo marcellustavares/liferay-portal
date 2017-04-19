@@ -64,33 +64,31 @@ AUI.add(
 
 						var optionsField = event.target;
 
-						var field = instance.get('field');
+						event.option.transient = true;
 
-						var builder = field.get('builder');
-
-						var definition = builder.get('definition');
-
-						var searchResults = RendererUtil.searchFieldsByKey(definition, field.get('fieldName'), 'fieldName');
-
-						if (searchResults.length) {
-							var definitionOptions = searchResults[0].options || [];
-
-							optionsField.eachOption(
-								function(option) {
-									var existingOption = definitionOptions.find(
-										function(definitionOption) {
-											return definitionOption.value === option.get('key');
-										}
-									);
-
-									option.set('keyInputEnabled', !existingOption);
-								}
-							);
-						}
+						optionsField.eachOption(
+							function(option) {
+								option.set('keyInputEnabled', option.transient);
+							}
+						);
 					},
 
-					_afterFieldValueChange: function() {
+					_afterFieldValueChange: function(event) {
 						var instance = this;
+
+						var field = event.target;
+
+						var localizedValue = field.get('context.localizedValue');
+
+						if (localizedValue) {
+							var formBuilderField = instance.get('field');
+
+							var locale = formBuilderField.get('locale');
+
+							localizedValue.values[locale] = event.newVal;
+
+							formBuilderField.set('context.settingsContext', instance.toJSON());
+						}
 
 						instance._saveSettings();
 					},
@@ -108,6 +106,10 @@ AUI.add(
 
 						var labelField = instance.getField('label');
 
+						var formBuilderField = instance.get('field');
+
+						var locale = formBuilderField.get('locale');
+
 						var nameField = instance.getField('name');
 
 						(new A.EventHandle(instance._fieldEventHandlers)).detach();
@@ -118,12 +120,22 @@ AUI.add(
 						);
 
 						labelField.set('key', nameField.getValue());
-						labelField.set('keyInputEnabled', editModeValue);
+						labelField.set('keyInputEnabled', editModeValue && locale === themeDisplay.getDefaultLanguageId());
 						labelField.set('generationLocked', !editModeValue);
 
 						if (instance.get('field').get('type') === 'text') {
 							instance._createAutocompleteButton();
 							instance._createAutocompleteContainer();
+						}
+
+						if (editModeValue) {
+							var options = instance.getField('options');
+
+							if (options) {
+								var mainOption = options.getMainOption();
+
+								mainOption.transient = true;
+							}
 						}
 					},
 
@@ -283,7 +295,13 @@ AUI.add(
 
 						var nameField = instance.getField('name');
 
-						nameField.setValue(event.newVal);
+						var formBuilderField = instance.get('field');
+
+						var locale = formBuilderField.get('locale');
+
+						if (locale === themeDisplay.getDefaultLanguageId()) {
+							nameField.setValue(event.newVal);
+						}
 
 						instance._saveSettings();
 					},
@@ -307,7 +325,7 @@ AUI.add(
 
 						var field = instance.get('field');
 
-						field.saveSettings(instance);
+						field.saveSettings();
 					},
 
 					_showLastActivatedPage: function() {
