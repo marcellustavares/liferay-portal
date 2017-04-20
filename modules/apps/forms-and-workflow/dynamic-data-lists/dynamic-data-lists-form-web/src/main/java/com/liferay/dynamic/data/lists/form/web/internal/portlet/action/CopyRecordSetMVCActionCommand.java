@@ -125,7 +125,7 @@ public class CopyRecordSetMVCActionCommand
 		DDLRecordSet recordSetCopy = saveRecordSetMVCCommandHelper.addRecordSet(
 			actionRequest, ddmStructureCopy.getStructureId(),
 			getNameMap(recordSet, themeDisplay.getSiteDefaultLocale()),
-			getDescriptionMap(recordSet, themeDisplay.getSiteDefaultLocale()));
+			recordSet.getDescriptionMap());
 
 		DDMFormValues settingsDDMFormValues =
 			createRecordSetSettingsDDMFormValues(actionRequest, recordSet);
@@ -134,22 +134,19 @@ public class CopyRecordSetMVCActionCommand
 			recordSetCopy.getRecordSetId(), settingsDDMFormValues);
 	}
 
-	protected Map<Locale, String> getDescriptionMap(
-		DDLRecordSet recordSet, Locale locale) {
-
-		return saveRecordSetMVCCommandHelper.getLocalizedMap(
-			locale, recordSet.getDescription(locale, true));
-	}
-
 	protected Map<Locale, String> getNameMap(
 		DDLRecordSet recordSet, Locale locale) {
+
+		Map<Locale, String> nameMap = recordSet.getNameMap();
 
 		ResourceBundle resourceBundle = getResourceBundle(locale);
 
 		String name = LanguageUtil.format(
-			resourceBundle, "copy-of-x", recordSet.getName(locale, true));
+			resourceBundle, "copy-of-x", nameMap.get(locale));
 
-		return saveRecordSetMVCCommandHelper.getLocalizedMap(locale, name);
+		nameMap.put(locale, name);
+
+		return nameMap;
 	}
 
 	protected ResourceBundle getResourceBundle(Locale locale) {

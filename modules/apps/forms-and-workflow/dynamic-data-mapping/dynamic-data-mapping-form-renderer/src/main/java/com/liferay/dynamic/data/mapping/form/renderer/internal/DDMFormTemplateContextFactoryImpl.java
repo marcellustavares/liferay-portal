@@ -29,10 +29,12 @@ import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -144,8 +146,11 @@ public class DDMFormTemplateContextFactoryImpl
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
 		templateContext.put("readOnly", ddmFormRenderingContext.isReadOnly());
 
-		templateContext.put(
-			"rules", _jsonFactory.serialize(ddmForm.getDDMFormRules()));
+
+		templateContext.put("rules", ddmForm.getDDMFormRules());
+
+//		templateContext.put("defaultLanguageId", LocaleUtil.toLanguageId(ddmForm.getDefaultLocale()));
+//		templateContext.put("availableLangy", LocaleUtil.toLanguageId(ddmForm.getDefaultLocale()));
 
 		Locale locale = ddmFormRenderingContext.getLocale();
 

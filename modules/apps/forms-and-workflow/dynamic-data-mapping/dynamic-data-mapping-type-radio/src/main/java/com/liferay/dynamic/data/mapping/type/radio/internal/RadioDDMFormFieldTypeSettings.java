@@ -75,7 +75,7 @@ public interface RadioDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "ddm-options", label = "%options", required = true,
-		type = "options"
+		type = "options", properties = {"localizable=true"}
 	)
 	public DDMFormFieldOptions options();
 

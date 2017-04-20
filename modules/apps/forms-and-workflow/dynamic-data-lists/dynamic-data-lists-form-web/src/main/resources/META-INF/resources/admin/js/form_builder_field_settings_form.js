@@ -79,16 +79,17 @@ AUI.add(
 						var field = event.target;
 
 						var localizedValue = field.get('context.localizedValue');
+						var type = field.get('context.type');
 
-						if (localizedValue) {
-							var formBuilderField = instance.get('field');
+						var formBuilderField = instance.get('field');
 
+						if (localizedValue || type === 'options') {
 							var locale = formBuilderField.get('locale');
 
-							localizedValue.values[locale] = event.newVal;
-
-							formBuilderField.set('context.settingsContext', instance.toJSON());
+							localizedValue[locale] = event.newVal;
 						}
+
+						formBuilderField.set('context.settingsContext', instance.get('context'));
 
 						instance._saveSettings();
 					},
@@ -111,6 +112,9 @@ AUI.add(
 						var locale = formBuilderField.get('locale');
 
 						var nameField = instance.getField('name');
+						var typeField = instance.getField('type');
+
+						typeField.set('value', formBuilderField.get('type'));
 
 						(new A.EventHandle(instance._fieldEventHandlers)).detach();
 
@@ -121,7 +125,7 @@ AUI.add(
 
 						labelField.set('key', nameField.getValue());
 						labelField.set('keyInputEnabled', editModeValue && locale === themeDisplay.getDefaultLanguageId());
-						labelField.set('generationLocked', !editModeValue);
+						labelField.set('generationLocked', !editModeValue || locale !== themeDisplay.getDefaultLanguageId());
 
 						if (instance.get('field').get('type') === 'text') {
 							instance._createAutocompleteButton();
@@ -181,10 +185,12 @@ AUI.add(
 
 						tabView.get('panelNode').append(emptyPageNode);
 
-						sidebarBody.one('.autocomplete-body').append(dataSourceTypeContainer);
-						sidebarBody.one('.autocomplete-body').append(ddmDataProviderInstanceIdContainer);
-						sidebarBody.one('.autocomplete-body').append(ddmDataProviderInstanceOutputContainer);
-						sidebarBody.one('.autocomplete-body').append(optionsContainer);
+						var autocompleteBody = sidebarBody.one('.autocomplete-body');
+
+						autocompleteBody.append(dataSourceTypeContainer);
+						autocompleteBody.append(ddmDataProviderInstanceIdContainer);
+						autocompleteBody.append(ddmDataProviderInstanceOutputContainer);
+						autocompleteBody.append(optionsContainer);
 
 						sidebarBody.one('.autocomplete-header-back').on('click', A.bind('_onClickAutocompleteHeaderBack', instance));
 						tabView.after('selectionChange', A.bind('_afterTabViewSelectionChange', instance));
@@ -300,7 +306,8 @@ AUI.add(
 						var locale = formBuilderField.get('locale');
 
 						if (locale === themeDisplay.getDefaultLanguageId()) {
-							nameField.setValue(event.newVal);
+							nameField.set('value', event.newVal);
+							formBuilderField.set('context.fieldName', event.newVal);
 						}
 
 						instance._saveSettings();

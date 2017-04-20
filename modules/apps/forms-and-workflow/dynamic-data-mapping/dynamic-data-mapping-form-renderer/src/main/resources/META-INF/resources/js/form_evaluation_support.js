@@ -94,6 +94,16 @@ AUI.add(
 
 							fieldContext = field.processEvaluationContext(fieldContext, result);
 
+							fieldContext = A.merge(field.get('context'), {
+                                errorMessage: fieldContext.errorMessage,
+                                valid: fieldContext.valid,
+                                required: fieldContext.required,
+                                value: fieldContext.value,
+                                options: fieldContext.options,
+                                visible: fieldContext.visible,
+                                readOnly: fieldContext.readOnly
+                            });
+
 							field.set('context', fieldContext);
 						}
 					);

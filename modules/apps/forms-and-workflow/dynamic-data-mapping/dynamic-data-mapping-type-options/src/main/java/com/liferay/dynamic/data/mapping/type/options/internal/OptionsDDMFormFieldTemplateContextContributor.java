@@ -16,13 +16,18 @@ package com.liferay.dynamic.data.mapping.type.options.internal;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,8 +59,35 @@ public class OptionsDDMFormFieldTemplateContextContributor
 		parameters.put(
 			"value", getValue(ddmFormField, ddmFormFieldRenderingContext));
 
+		parameters.put(
+			"localizedValue",
+			getLocalizedValue(ddmFormField.getDDMForm().getAvailableLocales(), ddmFormField.getDDMFormFieldOptions()));
+
 		return parameters;
 	}
+
+	protected Map<String, Object> getLocalizedValue(
+		Set<Locale> availableLocales, DDMFormFieldOptions ddmFormFieldOptions) {
+
+		Map<String, Object> localizedValue = new HashMap<>();
+
+		Set<String> optionValues = ddmFormFieldOptions.getOptionsValues();
+
+		for (Locale locale : availableLocales) {
+			Map<String, String> map = new HashMap<String, String>();
+
+			for (String optionValue : optionValues) {
+				map.put("value", optionValue);
+				map.put("label", ddmFormFieldOptions.getOptionLabels(optionValue).getString(locale));
+			}
+
+			localizedValue.put(LocaleUtil.toLanguageId(locale), map);
+		}
+
+
+		return localizedValue;
+	}
+
 
 	protected List<Object> getValue(
 		DDMFormField ddmFormField,

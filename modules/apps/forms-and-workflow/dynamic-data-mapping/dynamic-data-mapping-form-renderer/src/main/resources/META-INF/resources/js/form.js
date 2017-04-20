@@ -89,9 +89,8 @@ AUI.add(
 
 						return {
 							p_auth: Liferay.authToken,
-							pages: JSON.stringify(instance.toJSON()),
-							portletNamespace: instance.get('portletNamespace'),
-							rules: instance.get('rules')
+							serializedFormContext: JSON.stringify(instance.get('context')),
+							portletNamespace: instance.get('portletNamespace')
 						};
 					},
 
@@ -147,30 +146,32 @@ AUI.add(
 						);
 					},
 
-					toJSON: function() {
-						var instance = this;
-
-						var context = instance.get('context');
-
-						var visitor = instance.get('visitor');
-
-						visitor.set(
-							'fieldHandler',
-							function(fieldContext) {
-								var fieldName = Util.getFieldNameFromQualifiedName(fieldContext.name);
-
-								var field = instance.getField(fieldName);
-
-								fieldContext.value = field.getValue();
-								fieldContext.localizedValue = field.get('context.localizedValue');
-								fieldContext.nestedFields = AArray.invoke(field.getImmediateFields(), 'toJSON');
-							}
-						);
-
-						visitor.visit();
-
-						return context;
-					},
+//					toJSON: function() {
+//						var instance = this;
+//
+//						var context = instance.get('context');
+//
+//						var visitor = instance.get('visitor');
+//
+//						visitor.set('pages', context.pages);
+//
+//						visitor.set(
+//							'fieldHandler',
+//							function(fieldContext) {
+//								var fieldName = Util.getFieldNameFromQualifiedName(fieldContext.name);
+//
+//								var field = instance.getField(fieldName);
+//
+//								fieldContext.value = field.getValue();
+//								fieldContext.localizedValue = field.get('context.localizedValue');
+//								fieldContext.nestedFields = AArray.invoke(field.getImmediateFields(), 'toJSON');
+//							}
+//						);
+//
+//						visitor.visit();
+//
+//						return context;
+//					},
 
 					_afterFormRender: function() {
 						var instance = this;

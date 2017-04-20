@@ -351,6 +351,8 @@ AUI.add(
 							instance.set('errorMessage', '');
 							instance.set('valid', true);
 						}
+
+						instance.set('value', value);
 					},
 
 					_afterRenderOption: function(event) {

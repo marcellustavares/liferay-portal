@@ -64,14 +64,14 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		String portletNamespace) {
 
 		try {
-			String serializedDDMFormTemplateContext = ParamUtil.getString(
-				request, "serializedDDMFormTemplateContext");
+			String serializedFormContext = ParamUtil.getString(
+				request, "serializedFormContext");
 
 			DDMFormTemplateContextProcessor
 				ddmFormPagesTemplateContextProcessor =
 					new DDMFormTemplateContextProcessor(
 						_jsonFactory.createJSONObject(
-							serializedDDMFormTemplateContext));
+								serializedFormContext));
 
 			DDMForm ddmForm = ddmFormPagesTemplateContextProcessor.getDDMForm();
 
@@ -79,7 +79,8 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 				ddmFormPagesTemplateContextProcessor.getDDMFormValues();
 
 			//TODO mustfix
-			Locale defaultLocale = ddmForm.getDefaultLocale();
+			//Locale defaultLocale = ddmForm.getDefaultLocale();
+			Locale defaultLocale = Locale.US;
 
 			DDMFormRenderingContext ddmFormRenderingContext =
 				createDDMFormRenderingContext(

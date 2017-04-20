@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -153,6 +154,8 @@ public class DDMFormTemplateContextProcessor {
 			localizedValue.addString(
 				LocaleThreadLocal.getSiteDefaultLocale(),
 				fieldJSONObject.getString("value"));
+
+			ddmFormFieldValue.setValue(localizedValue);
 		}
 		else {
 			ddmFormFieldValue.setValue(
@@ -178,18 +181,36 @@ public class DDMFormTemplateContextProcessor {
 	}
 
 	protected void process() {
-		JSONArray jsonArray = _ddmFormTemplateContextJSONObject.getJSONArray(
-			"availableLanguageIds");
+//		JSONArray jsonArray = _ddmFormTemplateContextJSONObject.getJSONArray(
+//			"availableLanguageIds");
+//
+//		for (int i = 0; i < jsonArray.length(); i++) {
+//			_ddmForm.addAvailableLocale(
+//				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
+//		}
+//
+//		Locale defaultLocale = LocaleUtil.fromLanguageId(
+//			_ddmFormTemplateContextJSONObject.getString("defaultLanguageId"));
 
-		for (int i = 0; i < jsonArray.length(); i++) {
-			_ddmForm.addAvailableLocale(
-				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
+//		_ddmForm.setDefaultLocale();
+
+		JSONArray rules =  _ddmFormTemplateContextJSONObject.getJSONArray("rules");
+
+		for (int i = 0; i < rules.length(); i++) {
+			JSONObject jsonObject = rules.getJSONObject(i);
+
+			List<String> actions = new ArrayList<>();
+
+			JSONArray actionsJSONArray = jsonObject.getJSONArray("actions");
+
+			for (int j = 0; j < actionsJSONArray.length(); j++) {
+				actions.add(actionsJSONArray.getString(j));
+			}
+
+			DDMFormRule ddmFormRule = new DDMFormRule(jsonObject.getString("condition"), actions);
+
+			_ddmForm.addDDMFormRule(ddmFormRule);
 		}
-
-		Locale defaultLocale = LocaleUtil.fromLanguageId(
-			_ddmFormTemplateContextJSONObject.getString("defaultLanguageId"));
-
-		_ddmForm.setDefaultLocale(defaultLocale);
 
 		traversePages(_ddmFormTemplateContextJSONObject.getJSONArray("pages"));
 	}

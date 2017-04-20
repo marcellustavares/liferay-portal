@@ -68,7 +68,7 @@ AUI.add(
 
 				return copy;
 			},
-			
+
 			createSettingsForm: function(context) {
 				var instance = this;
 
@@ -123,7 +123,7 @@ AUI.add(
 				var settings = {};
 
 				var context = instance.get('context.settingsContext');
-				
+
 				var defaultLocale = themeDisplay.getDefaultLanguageId();
 
 				var locale = instance.get('locale');
@@ -132,8 +132,8 @@ AUI.add(
 					var fieldName = Util.getFieldNameFromQualifiedName(formFieldContext.name);
 
 					if (formFieldContext.localizable) {
-						var localizedValue = formFieldContext.localizedValue.values[locale] || formFieldContext.localizedValue.values[defaultLocale] || '';
-						
+						var localizedValue = formFieldContext.localizedValue[locale] || formFieldContext.localizedValue[defaultLocale] || '';
+
 						settings[fieldName] = localizedValue;
 						formFieldContext.value = localizedValue;
 					}
@@ -215,7 +215,7 @@ AUI.add(
 					}
 				);
 			},
-			
+
 			_renderFormBuilderField: function() {
 				var instance = this;
 

@@ -130,7 +130,11 @@ public class DDMFormFieldTemplateContextFactory {
 		ddmFormFieldTemplateContext.put(
 			"fieldName", ddmFormFieldValue.getName());
 		ddmFormFieldTemplateContext.put(
+			"instanceId", ddmFormFieldValue.getInstanceId());
+		ddmFormFieldTemplateContext.put(
 			"localizable", ddmFormField.isLocalizable());
+		ddmFormFieldTemplateContext.put(
+			"visibilityExpression", ddmFormField.getVisibilityExpression());
 
 		setDDMFormFieldTemplateContextName(
 			ddmFormFieldTemplateContext, ddmFormFieldParameterName);
@@ -492,7 +496,15 @@ public class DDMFormFieldTemplateContextFactory {
 			ddmFormFieldTemplateContext, "localizable");
 
 		if (localizable) {
-			ddmFormFieldTemplateContext.put("localizedValue", value);
+			Map<String, String> serializedValue = new HashMap<String, String>();
+
+			for (Locale locale :value.getAvailableLocales()) {
+				serializedValue.put(
+					LanguageUtil.getLanguageId(locale),
+					value.getString(locale));
+			}
+
+			ddmFormFieldTemplateContext.put("localizedValue", serializedValue);
 		}
 	}
 

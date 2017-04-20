@@ -44,11 +44,15 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -57,6 +61,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -95,13 +100,10 @@ public class SaveRecordSetMVCCommandHelper {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMStructure.class.getName(), portletRequest);
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 		String structureKey = ParamUtil.getString(
 			portletRequest, "structureKey");
-		String storageType = getStorageType(settingsDDMFormValues);
+		String storageType = "json"; //getStorageType(settingsDDMFormValues);
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
@@ -110,8 +112,7 @@ public class SaveRecordSetMVCCommandHelper {
 		return ddmStructureService.addStructure(
 			groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
 			_portal.getClassNameId(DDLRecordSet.class), structureKey,
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description),
+			getLocalizedMap(name), getLocalizedMap(description),
 			ddmForm, ddmFormLayout, storageType,
 			DDMStructureConstants.TYPE_AUTO, serviceContext);
 	}
@@ -120,16 +121,12 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest, long ddmStructureId)
 		throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 
 		return addRecordSet(
 			portletRequest, ddmStructureId,
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description));
+			getLocalizedMap(name), getLocalizedMap(description));
 	}
 
 	protected DDLRecordSet addRecordSet(
@@ -220,10 +217,22 @@ public class SaveRecordSetMVCCommandHelper {
 		return ddlFormRulesToDDMFormRulesConverter.convert(ddlFormRules);
 	}
 
-	protected Map<Locale, String> getLocalizedMap(Locale locale, String value) {
+	protected Map<Locale, String> getLocalizedMap(String valueJSONObject)
+		throws PortalException {
+
 		Map<Locale, String> localizedMap = new HashMap<>();
 
-		localizedMap.put(locale, value);
+		JSONObject jsonObject  = jsonFactory.createJSONObject(valueJSONObject);
+
+		Iterator<String> itr = jsonObject.keys();
+
+		while (itr.hasNext()) {
+			String languageId = itr.next();
+
+			localizedMap.put(
+				LocaleUtil.fromLanguageId(languageId),
+				jsonObject.getString(languageId));
+		}
 
 		return localizedMap;
 	}
@@ -294,17 +303,13 @@ public class SaveRecordSetMVCCommandHelper {
 
 		return ddmStructureService.updateStructure(
 			ddmStructureId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-			getLocalizedMap(ddmForm.getDefaultLocale(), name),
-			getLocalizedMap(ddmForm.getDefaultLocale(), description), ddmForm,
+			getLocalizedMap(name), getLocalizedMap(description), ddmForm,
 			ddmFormLayout, serviceContext);
 	}
 
 	protected DDLRecordSet updateRecordSet(
 			PortletRequest portletRequest, long ddmStructureId)
 		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
 
 		long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
 
@@ -321,8 +326,7 @@ public class SaveRecordSetMVCCommandHelper {
 
 		return ddlRecordSetService.updateRecordSet(
 			recordSetId, ddmStructureId,
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), name),
-			getLocalizedMap(themeDisplay.getSiteDefaultLocale(), description),
+			getLocalizedMap(name), getLocalizedMap(description),
 			DDLRecordSetConstants.MIN_DISPLAY_ROWS_DEFAULT, serviceContext);
 	}
 
@@ -354,8 +358,8 @@ public class SaveRecordSetMVCCommandHelper {
 		ddlRecordSetService.updateRecordSet(
 			recordSet.getRecordSetId(), settingsDDMFormValues);
 
-		updateWorkflowDefinitionLink(
-			portletRequest, recordSet, settingsDDMFormValues);
+//		updateWorkflowDefinitionLink(
+//			portletRequest, recordSet, settingsDDMFormValues);
 	}
 
 	protected void updateWorkflowDefinitionLink(

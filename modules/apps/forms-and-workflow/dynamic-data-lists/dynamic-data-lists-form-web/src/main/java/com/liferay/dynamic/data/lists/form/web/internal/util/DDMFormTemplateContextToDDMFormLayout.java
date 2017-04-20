@@ -46,6 +46,8 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
+		ddmFormLayout.setDefaultLocale(LocaleThreadLocal.getSiteDefaultLocale());
+
 		JSONObject jsonObject = jsonFactory.createJSONObject(
 			serializedDDMFormTemplateContext);
 
@@ -77,7 +79,7 @@ public class DDMFormTemplateContextToDDMFormLayout {
 						deserializeLocalizedValue(
 							pageJSONObject.getJSONObject("title")));
 
-					ddmFormLayoutPage.setDDMFormLayoutRows(ddmFormLayoutRows);
+					ddmFormLayoutPage.setDDMFormLayoutRows(new ArrayList<DDMFormLayoutRow>(ddmFormLayoutRows));
 
 					ddmFormLayout.addDDMFormLayoutPage(ddmFormLayoutPage);
 
@@ -94,7 +96,7 @@ public class DDMFormTemplateContextToDDMFormLayout {
 					DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
 
 					ddmFormLayoutRow.setDDMFormLayoutColumns(
-						ddmFormLayoutColumns);
+						new ArrayList<DDMFormLayoutColumn>(ddmFormLayoutColumns));
 
 					ddmFormLayoutRows.add(ddmFormLayoutRow);
 
@@ -113,7 +115,9 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 					ddmFormLayoutColumn.setSize(
 						columnJSONObject.getInt("size"));
-					ddmFormLayoutColumn.setDDMFormFieldNames(fieldNames);
+					ddmFormLayoutColumn.setDDMFormFieldNames(new ArrayList<String>(fieldNames));
+
+					ddmFormLayoutColumns.add(ddmFormLayoutColumn);
 
 					fieldNames.clear();
 				}
