@@ -14,16 +14,20 @@
 
 package com.liferay.dynamic.data.mapping.type.options.internal;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,40 +36,67 @@ import java.util.Map;
  */
 public class OptionsDDMFormFieldContextHelper {
 
+	private DDMForm _ddmForm;
 	public OptionsDDMFormFieldContextHelper(
-		JSONFactory jsonFactory, String value) {
+		JSONFactory jsonFactory, DDMFormField ddmFormField, String value) {
 
+		_ddmForm = ddmFormField.getDDMForm();
 		_jsonFactory = jsonFactory;
 		_value = value;
 	}
 
-	protected List<Object> getValue() {
-		List<Object> list = new ArrayList<>();
+	protected Map<String, Object> getValue() {
+		Map<String, Object> localizedValue = new HashMap<>();
 
 		if (Validator.isNull(_value)) {
-			return list;
+			List<Object> list = new ArrayList<>();
+
+			Map<String, String> map = new HashMap<String, String>();
+
+			map.put("value", "Option");
+			map.put("label", "Option");
+
+			list.add(map);
+
+			localizedValue.put(LocaleUtil.toLanguageId(_ddmForm.getDefaultLocale()), list);
+
+			return localizedValue;
 		}
 
 		try {
-			JSONArray jsonArray = _jsonFactory.createJSONArray(_value);
+			JSONObject jsonObject = _jsonFactory.createJSONObject(_value);
 
-			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
+			Iterator<String> itr = jsonObject.keys();
 
-				Map<String, String> optionMap = new HashMap<>();
+			while(itr.hasNext()) {
+				String languageId = itr.next();
 
-				optionMap.put("label", jsonObject.getString("label"));
-				optionMap.put("value", jsonObject.getString("value"));
+				JSONArray jsonArray = jsonObject.getJSONArray(languageId);
 
-				list.add(optionMap);
+				List<Object> list = new ArrayList<>();
+
+				for (int i = 0; i < jsonArray.length(); i++) {
+					JSONObject obj = jsonArray.getJSONObject(i);
+
+					Map<String, String> optionMap = new HashMap<>();
+
+					optionMap.put("label", obj.getString("label"));
+					optionMap.put("value", obj.getString("value"));
+
+					list.add(optionMap);
+				}
+
+
+				localizedValue.put(languageId, list);
+
 			}
 
-			return list;
+			return localizedValue;
 		}
 		catch (JSONException jsone) {
 			_log.error("Unable to parse JSON array", jsone);
 
-			return list;
+			return localizedValue;
 		}
 	}
 

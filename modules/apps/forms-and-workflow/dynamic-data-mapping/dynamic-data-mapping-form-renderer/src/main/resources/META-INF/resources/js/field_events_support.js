@@ -108,7 +108,6 @@ AUI.add(
 				var value = instance.getValue();
 
 				instance.set('value', value);
-				console.log(instance.get('context'));
 			}
 		};
 

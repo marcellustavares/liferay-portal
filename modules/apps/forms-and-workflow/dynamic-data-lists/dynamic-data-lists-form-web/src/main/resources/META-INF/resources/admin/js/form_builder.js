@@ -63,6 +63,14 @@ AUI.add(
 						value: 0
 					},
 
+					defaultLanguageId: {
+						value: themeDisplay.getDefaultLanguageId()
+					},
+
+					editingLanguageId:{
+						value: themeDisplay.getDefaultLanguageId()
+					},
+
 					strings: {
 						value: {
 							addColumn: Liferay.Language.get('add-column'),
@@ -106,7 +114,8 @@ AUI.add(
 							boundingBox.delegate('click', A.bind('_afterFieldClick', instance), '.' + CSS_FIELD, instance),
 							instance.after('liferay-ddl-form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
 							instance.after('render', instance._afterFormBuilderRender, instance),
-							instance.after(instance._afterRemoveField, instance, 'removeField')
+							instance.after(instance._afterRemoveField, instance, 'removeField'),
+							instance.after('editingLanguageIdChange', instance._afterEditingLanguageId)
 						];
 					},
 
@@ -261,6 +270,19 @@ AUI.add(
 						return field;
 					},
 
+					isEditMode: function() {
+						var instance = this;
+
+						var translating = instance.get('defaultLanguageId') !== instance.get('editingLanguageId');
+
+						if (instance.get('recordSetId') > 0 || translating) {
+							return true;
+						}
+						else {
+							return false;
+						}
+					},
+
 					findTypeOfField: function(field) {
 						var instance = this;
 
@@ -326,6 +348,16 @@ AUI.add(
 								);
 							}
 						);
+					},
+
+					_afterEditingLanguageId: function(event) {
+						var instance = this;
+
+						instance.eachFields(function(field) {
+							field.set('locale', event.newVal);
+
+							field.saveSettings();
+						});
 					},
 
 					_afterActivePageNumberChange: function(event) {

@@ -77,7 +77,7 @@ AUI.add(
 				return new Liferay.DDL.FormBuilderSettingsForm(
 					{
 						context: context,
-						editMode: builder.get('recordSetId') === 0 || instance.isPersisted(),
+						editMode: builder.isEditMode() || instance.isPersisted(),
 						evaluatorURL: Settings.evaluatorURL,
 						field: instance,
 						portletNamespace: Settings.portletNamespace,
@@ -187,13 +187,10 @@ AUI.add(
 
 				var fieldContext = instance.get('context');
 
-				return settingsRetriever
-					.getSettingsContext(instance)
+				return settingsRetriever.getSettingsContext(instance)
 					.then(
 						function(settingsContext) {
-							var settingsForm = instance.createSettingsForm(settingsContext);
-
-							return settingsForm;
+							return instance.createSettingsForm(settingsContext);
 						}
 					);
 			},

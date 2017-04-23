@@ -252,6 +252,7 @@ AUI.add(
 						boundingBox.removeClass('loading-data');
 					},
 
+					// TODO check this
 					_saveCurrentContext: function() {
 						var instance = this;
 

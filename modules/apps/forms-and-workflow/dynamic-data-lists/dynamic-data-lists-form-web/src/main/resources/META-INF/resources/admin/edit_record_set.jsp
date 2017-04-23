@@ -281,8 +281,9 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 										{
 											context: <%= ddlFormAdminDisplayContext.getFormBuilderContext() %>,
 											description: '<%= HtmlUtil.escapeJS(description) %>',
+											defaultLanguageId: 'en_US',
+											editingLanguageId: 'en_US',
 											editForm: event.form,
-											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',
 											translationManager: Liferay.component('<portlet:namespace />translationManager')
 										}

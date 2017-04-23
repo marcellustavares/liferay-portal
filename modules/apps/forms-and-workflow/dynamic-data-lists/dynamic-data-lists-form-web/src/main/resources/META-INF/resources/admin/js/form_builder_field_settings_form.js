@@ -83,7 +83,7 @@ AUI.add(
 
 						var formBuilderField = instance.get('field');
 
-						if (localizedValue || type === 'options') {
+						if (localizedValue) {
 							var locale = formBuilderField.get('locale');
 
 							localizedValue[locale] = event.newVal;
@@ -103,44 +103,97 @@ AUI.add(
 					_afterSettingsFormRender: function() {
 						var instance = this;
 
-						var editModeValue = instance.get('editMode');
+						instance._createSettingsFormEventHandlers();
+						instance._createAutocompleElements();
 
-						var labelField = instance.getField('label');
+						instance._updateFormFieldProperties();
+					},
 
-						var formBuilderField = instance.get('field');
+					_updateFormFieldProperties: function() {
+						var instance = this;
 
-						var locale = formBuilderField.get('locale');
+						instance._updateTypeField();
+						instance._updateLabelField();
+						instance._updateOptionsField();
+					},
 
-						var nameField = instance.getField('name');
-						var typeField = instance.getField('type');
+					_updateOptionsField: function() {
+						var instance = this;
 
-						typeField.set('value', formBuilderField.get('type'));
+						var optionsField = instance.getField('options');
 
-						(new A.EventHandle(instance._fieldEventHandlers)).detach();
+						if (!optionsField) {
+							return;
+						}
 
-						instance._fieldEventHandlers.push(
-							labelField.on('keyChange', A.bind('_onLabelFieldKeyChange', instance)),
-							labelField.after(A.bind('_afterLabelFieldNormalizeKey', instance), labelField, 'normalizeKey')
-						);
+						var editMode = instance.get('editMode');
 
-						labelField.set('key', nameField.getValue());
-						labelField.set('keyInputEnabled', editModeValue && locale === themeDisplay.getDefaultLanguageId());
-						labelField.set('generationLocked', !editModeValue || locale !== themeDisplay.getDefaultLanguageId());
+						//didnt get this
+						//if (editMode) {
+						//	var mainOption = options.getMainOption();
 
-						if (instance.get('field').get('type') === 'text') {
+						//	mainOption.transient = true;
+						//}
+
+						if (editMode) {
+							optionsField.set('sortable', false);
+							optionsField.set('editable', false);
+						}
+					},
+
+					_createAutocompleElements: function() {
+						var instance = this;
+
+						var formBuilderFieldType = instance._getFormBuilderFieldType();
+
+						if (formBuilderFieldType === 'text') {
 							instance._createAutocompleteButton();
 							instance._createAutocompleteContainer();
 						}
+					},
 
-						if (editModeValue) {
-							var options = instance.getField('options');
+					_updateLabelField: function() {
+						var instance = this;
 
-							if (options) {
-								var mainOption = options.getMainOption();
+						var editMode = instance.get('editMode');
 
-								mainOption.transient = true;
-							}
-						}
+						var labelField = instance.getField('label');
+						var nameField = instance.getField('name');
+
+						labelField.set('key', nameField.getValue());
+						labelField.set('keyInputEnabled', !editMode);
+						labelField.set('generationLocked', editMode);
+					},
+
+					_updateTypeField: function() {
+						var instance = this;
+
+						var typeField = instance.getField('type');
+
+						typeField.set('value', instance._getFormBuilderFieldType());
+					},
+
+					_getFormBuilderFieldType: function() {
+						var instance = this;
+
+						var formBuilderField = instance.get('field');
+
+						return formBuilderField.get('type');
+					},
+
+					_createSettingsFormEventHandlers: function() {
+						var instance = this;
+
+						var labelField = instance.getField('label');
+
+						var fieldEventHandlers = new A.EventHandle(instance._fieldEventHandlers);
+
+						fieldEventHandlers.detach();
+
+						instance._fieldEventHandlers.push(
+							labelField.on('keyChange', A.bind('_onLabelFieldChange', instance)),
+							labelField.after(A.bind('_afterLabelFieldNormalizeKey', instance), labelField, 'normalizeKey')
+						);
 					},
 
 					_afterTabViewSelectionChange: function() {
@@ -296,7 +349,7 @@ AUI.add(
 						instance._syncModeToggler();
 					},
 
-					_onLabelFieldKeyChange: function(event) {
+					_onLabelFieldChange: function(event) {
 						var instance = this;
 
 						var nameField = instance.getField('name');

@@ -30,14 +30,10 @@ AUI.add(
 				NAME: 'liferay-ddl-form-builder-layout-serializer',
 
 				prototype: {
-					serialize: function() {
+					getPages: function() {
 						var instance = this;
 
-						return A.JSON.stringify(
-							{
-								pages: instance.visit()
-							}
-						);
+						return instance.visit();
 					},
 
 					_serializeColumn: function(column) {

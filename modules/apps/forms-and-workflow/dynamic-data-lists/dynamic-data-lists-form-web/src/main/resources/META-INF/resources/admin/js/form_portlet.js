@@ -18,29 +18,20 @@ AUI.add(
 		var DDLPortlet = A.Component.create(
 			{
 				ATTRS: {
-					availableLanguageIds: {
-						value: [
-							themeDisplay.getDefaultLanguageId()
-						]
-					},
-
 					defaultLanguageId: {
-						value: themeDisplay.getDefaultLanguageId()
 					},
 
-					description: {
+					localizedDescription: {
 						value: {}
 					},
 
 					editForm: {
 					},
 
-					editingLocale:{
-						value: themeDisplay.getDefaultLanguageId()
+					editingLanguageId: {
 					},
 
 					formBuilder: {
-						valueFn: '_valueFormBuilder'
 					},
 
 					functionsMetadata: {
@@ -58,7 +49,7 @@ AUI.add(
 					context: {
 					},
 
-					name: {
+					localizedName: {
 						value: {}
 					},
 
@@ -68,9 +59,9 @@ AUI.add(
 
 					ruleBuilder: {
 						valueFn: '_valueRuleBuilder'
-					translationManager: {
 					},
 
+					translationManager: {
 					}
 				},
 
@@ -84,32 +75,19 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						var defaultLanguageId = instance.get('defaultLanguageId');
+						instance._initFormBuilder();
 
-						instance.layoutSerializer = new LayoutSerializer(
+						instance.layoutVisitor = new LayoutSerializer(
 							{
 								builder: instance.get('formBuilder'),
-								defaultLanguageId: defaultLanguageId
+								defaultLanguageId: instance.get('defaultLanguageId')
 							}
 						);
 
 						instance.renderUI();
-
 						instance.bindUI();
 
 						instance.savedState = instance.initialState = instance.getState();
-
-						var name = {};
-
-						name[defaultLanguageId] = Liferay.Language.get('untitled-form');
-
-						instance.set('name', name);
-
-						var description = {};
-
-						description[defaultLanguageId] = '';
-
-						instance.set('description', description);
 					},
 
 					renderUI: function() {
@@ -120,7 +98,6 @@ AUI.add(
 						instance.one('.portlet-forms').removeClass('hide');
 
 						instance.get('formBuilder').render(instance.one('#formBuilder'));
-
 						instance.get('ruleBuilder').render(instance.one('#ruleBuilder'));
 
 						instance.createEditor(instance.ns('descriptionEditor'));
@@ -134,6 +111,9 @@ AUI.add(
 
 						var translationManager = instance.get(STR_TRANSLATION_MANAGER);
 
+						var descriptionEditor = CKEDITOR.instances[instance.ns('descriptionEditor')];
+						var nameEditor = CKEDITOR.instances[instance.ns('nameEditor')];
+
 						instance._eventHandlers = [
 							instance.after('autosave', instance._afterAutosave),
 							formBuilder._layoutBuilder.after('layout-builder:moveEnd', A.bind(instance._afterFormBuilderLayoutBuilderMoveEnd, instance)),
@@ -146,6 +126,8 @@ AUI.add(
 							instance.one('#showForm').on('click', A.bind('_onFormButtonClick', instance)),
 							instance.one('#requireAuthenticationCheckbox').on('change', A.bind('_onRequireAuthenticationCheckboxChanged', instance)),
 							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance)),
+							nameEditor.on('blur', A.bind('_onNameEditorBlur', instance)),
+							descriptionEditor.on('blur', A.bind('_onDescriptionEditorBlur', instance)),
 							translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance))
 						];
 
@@ -165,6 +147,9 @@ AUI.add(
 						instance.get('ruleBuilder').destroy();
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
+
+						instance._getNameEditor().destroy();
+						instance._getDescriptionEditor().destroy();
 					},
 
 					createEditor: function(editorName) {
@@ -214,7 +199,7 @@ AUI.add(
 					enableNameEditor: function() {
 						var instance = this;
 
-						var nameEditor = CKEDITOR.instances[instance.ns('nameEditor')];
+						var descriptionEditor = CKEDITOR.instances[instance.ns('nameEditor')];
 
 						nameEditor.setReadOnly(false);
 					},
@@ -223,27 +208,20 @@ AUI.add(
 						var instance = this;
 
 						var formBuilder = instance.get('formBuilder');
-
 						var ruleBuilder = instance.get('ruleBuilder');
 
-						var pages = formBuilder.get('layouts');
-
-						var rules = JSON.stringify(ruleBuilder.get('rules'));
-
-						instance.layoutSerializer.set('pages', pages);
-
-						var layout = JSON.parse(instance.layoutSerializer.serialize());
+						instance.layoutVisitor.set('pages', formBuilder.get('layouts'));
 
 						var translationManager = instance.get('translationManager');
 
 						return {
-							availableLanguageIds: translationManager.get('availableLocales'),
-							defaultLanguageId: translationManager.get('defaultLocale'),
-							description: instance.get('description'),
-							pages: layout.pages,
-							name: instance.get('name'),
+							availableLanguageIds: translationManager.availableLocales,
+							defaultLanguageId: translationManager.defaultLocale,
+							description: instance.get('localizedDescription'),
+							pages: instance.layoutVisitor.getPages(),
+							name: instance.get('localizedName'),
 							paginationMode: formBuilder.get('pageManager').get('mode'),
-							rules: rules
+							rules: ruleBuilder.get('rules')
 						};
 					},
 
@@ -356,16 +334,15 @@ AUI.add(
 
 					},
 
-					serializeFormBuilder: function() {
+					syncInputValues: function() {
 						var instance = this;
 
 						var state = instance.getState();
 
 						instance.one('#description').val(JSON.stringify(state.description));
-						instance.one('#serializedContext').val(JSON.stringify(state));
-
-
 						instance.one('#name').val(JSON.stringify(state.name));
+
+						instance.one('#serializedContext').val(JSON.stringify(state));
 
 						var publishCheckbox = instance.one('#publishCheckbox');
 
@@ -391,7 +368,7 @@ AUI.add(
 					submitForm: function() {
 						var instance = this;
 
-						instance.serializeFormBuilder();
+						instance.syncInputValues();
 
 						var editForm = instance.get('editForm');
 
@@ -401,35 +378,34 @@ AUI.add(
 					_afterEditingLocaleChange: function(event) {
 						var instance = this;
 
-						var oldLocale = instance.get('editingLocale');
-
-						var name = instance.get('name');
-						var description = instance.get('description');
-
-						name[oldLocale] = instance._getName();
-						description[oldLocale] = instance._getDescription();
-
-						var editingLocale = event.newVal;
+						var previousEditingLaguageId = event.oldVal;
+						var editingLanguageId = event.newVal;
 						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						var formBuilder = instance.get('formBuilder');
 
-						formBuilder.eachFields(function(field) {
-							field.set('locale', editingLocale);
+						instance.set('editingLanguageId', editingLanguageId);
+						formBuilder.set('editingLanguageId', editingLanguageId);
 
-							field.saveSettings();
-						});
+						var localizedName = instance.get('localizedName');
+
+						var name = localizedName[editingLanguageId] || localizedName[defaultLanguageId];
+						localizedName[editingLanguageId] = name;
+
+						instance._setName(name);
+
+						var localizedDescription = instance.get('localizedDescription');
+
+						var description = localizedDescription[editingLanguageId] || localizedDescription[defaultLanguageId];
+						localizedDescription[editingLanguageId] = description;
+
+						instance._setDescription(description);
 
 						var pageManager = formBuilder.get('pageManager');
 
 						pageManager.fire('localeChange', {
-							editingLocale: editingLocale
+							editingLocale: event.newVal
 						});
-
-						instance.set('editingLocale', editingLocale);
-
-						instance._setName(name[editingLocale] || name[defaultLanguageId] || '');
-						instance._setDescription(description[editingLocale] || description[defaultLanguageId] || '');
 					},
 
 					_afterAutosave: function(event) {
@@ -650,6 +626,28 @@ AUI.add(
 						instance.destroy();
 					},
 
+					_onNameEditorBlur: function(event) {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId');
+						var localizedName = instance.get('localizedName');
+
+						var nameEditor = instance._getNameEditor();
+
+						localizedName[editingLanguageId] = nameEditor.getHTML();
+					},
+
+					_onDescriptionEditorBlur: function(event) {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId');
+						var localizedDescription = instance.get('localizedDescription');
+
+						var descriptionEditor = instance._getDescriptionEditor();
+
+						localizedDescription[editingLanguageId] = descriptionEditor.getHTML();
+					},
+
 					_onFormButtonClick: function() {
 						var instance = this;
 
@@ -772,14 +770,18 @@ AUI.add(
 						editor.setHTML(value);
 					},
 
-					_valueFormBuilder: function() {
+					_initFormBuilder: function() {
 						var instance = this;
 
-						return new Liferay.DDL.FormBuilder(
+						var formBuilder = new Liferay.DDL.FormBuilder(
 							{
-								context: instance.get('context')
+								context: instance.get('context'),
+								defaultLanguageId: instance.get('defaultLanguageId'),
+								editingLanguageId: instance.get('editingLanguageId')
 							}
 						);
+
+						instance.set('formBuilder', formBuilder);
 					},
 
 					_valueRuleBuilder: function() {
