@@ -522,11 +522,16 @@ AUI.add(
 					_insertField: function(field) {
 						var instance = this;
 
+						//fix this, placeholder as blank is required for text or undefined
+						// side effect of localizable placeholder
 						var newFieldDefaultContext = {
 							portletNamespace: Settings.portletNamespace,
 							readOnly: true,
 							showLabel: true,
+							label: '',
 							type: field.get('type'),
+							value: '',
+							placeholder: '',
 							visible: true
 						};
 

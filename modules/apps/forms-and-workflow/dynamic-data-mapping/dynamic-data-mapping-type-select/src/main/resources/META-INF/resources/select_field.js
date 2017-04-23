@@ -64,6 +64,7 @@ AUI.add(
 					},
 
 					value: {
+						validator: Array.isArray,
 						value: []
 					}
 				},

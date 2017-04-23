@@ -46,8 +46,6 @@ AUI.add(
 						instance.set(attributeName, context[attributeName]);
 
 						instance.after(attributeName + 'Change', A.bind(instance._afterAttributeChange, instance, attributeName));
-
-//						context[attributeName] = instance.get(attributeName);
 					}
 
 					instance._setStateRepaintableAttributeValue(attributeName, !!attributes[attributeName].state);

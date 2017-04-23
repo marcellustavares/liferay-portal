@@ -137,6 +137,9 @@ AUI.add(
 						settings[fieldName] = localizedValue;
 						formFieldContext.value = localizedValue;
 					}
+					else if (formFieldContext.type === 'options') {
+						settings[fieldName] = formFieldContext.value[locale] || formFieldContext.value[defaultLocale];
+					}
 					else {
 						settings[fieldName] = formFieldContext.value;
 					}

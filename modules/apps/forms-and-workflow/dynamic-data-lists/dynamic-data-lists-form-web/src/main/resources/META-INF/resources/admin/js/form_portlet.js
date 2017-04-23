@@ -19,6 +19,7 @@ AUI.add(
 			{
 				ATTRS: {
 					defaultLanguageId: {
+						value: themeDisplay.getDefaultLanguageId()
 					},
 
 					localizedDescription: {
@@ -29,9 +30,11 @@ AUI.add(
 					},
 
 					editingLanguageId: {
+						value: themeDisplay.getDefaultLanguageId()
 					},
 
 					formBuilder: {
+						valueFn: '_valueFormBuilder'
 					},
 
 					functionsMetadata: {
@@ -74,8 +77,6 @@ AUI.add(
 				prototype: {
 					initializer: function() {
 						var instance = this;
-
-						instance._initFormBuilder();
 
 						instance.layoutVisitor = new LayoutSerializer(
 							{
@@ -199,7 +200,7 @@ AUI.add(
 					enableNameEditor: function() {
 						var instance = this;
 
-						var descriptionEditor = CKEDITOR.instances[instance.ns('nameEditor')];
+						var nameEditor = CKEDITOR.instances[instance.ns('nameEditor')];
 
 						nameEditor.setReadOnly(false);
 					},
@@ -770,18 +771,16 @@ AUI.add(
 						editor.setHTML(value);
 					},
 
-					_initFormBuilder: function() {
+					_valueFormBuilder: function() {
 						var instance = this;
 
-						var formBuilder = new Liferay.DDL.FormBuilder(
+						return new Liferay.DDL.FormBuilder(
 							{
 								context: instance.get('context'),
 								defaultLanguageId: instance.get('defaultLanguageId'),
 								editingLanguageId: instance.get('editingLanguageId')
 							}
 						);
-
-						instance.set('formBuilder', formBuilder);
 					},
 
 					_valueRuleBuilder: function() {
