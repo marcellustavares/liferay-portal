@@ -789,9 +789,6 @@ AUI.add(
 						return new Liferay.DDL.FormBuilderRuleBuilder(
 							{
 								formBuilder: instance.get('formBuilder'),
-								functionsMetadata: Settings.functionsMetadata,
-								getDataProviderInstancesURL: Settings.getDataProviderInstancesURL,
-								getDataProviderParametersSettingsURL: Settings.getDataProviderParametersSettingsURL,
 								rules: Settings.rules,
 								visible: false
 							}

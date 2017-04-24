@@ -101,7 +101,13 @@ AUI.add(
 					_afterDataProviderChange: function(event) {
 						var instance = this;
 
-						var ddmDataProviderInstanceId = event.newVal[0];
+						var dataProviderSelectField = event.newVal;
+
+						if (!dataProviderSelectField) {
+							return;
+						}
+
+						var ddmDataProviderInstanceId = dataProviderSelectField.getValue()[0];
 
 						if (!ddmDataProviderInstanceId) {
 							return;
@@ -173,13 +179,17 @@ AUI.add(
 								value = action.inputs[name];
 							}
 
+							var context = {
+								fieldName: instance.get('index') + '-action',
+								options: instance.getFieldsByType(inputParameters[i].type),
+								showLabel: false,
+								visible: true
+							};
+
 							inputParameterField = new Liferay.DDM.Field.Select(
 								{
-									fieldName: instance.get('index') + '-action',
-									options: instance.getFieldsByType(inputParameters[i].type),
-									showLabel: false,
-									value: value,
-									visible: true
+									context: context,
+									value: value
 								}
 							).render(inputParametersContainer.one('.container-input-field-' + i));
 
@@ -195,11 +205,16 @@ AUI.add(
 					_createDataProviderList: function() {
 						var instance = this;
 
+						var context = {
+							fieldName: instance.get('index') + '-action',
+							showLabel: false,
+							visible: true,
+							options: []
+						};
+
 						instance._dataProvidersList = new Liferay.DDM.Field.Select(
 							{
-								fieldName: instance.get('index') + '-action',
-								showLabel: false,
-								visible: true
+								context: context
 							}
 						);
 
@@ -252,14 +267,18 @@ AUI.add(
 								value = action.outputs[name];
 							}
 
+							var context = {
+								fieldName: instance.get('index') + '-action',
+								label: outputParameters[i],
+								options: instance.getFieldsByType(outputParameters[i].type),
+								showLabel: false,
+								visible: true
+							};
+
 							outputParameterField = new Liferay.DDM.Field.Select(
 								{
-									fieldName: instance.get('index') + '-action',
-									label: outputParameters[i],
-									options: instance.getFieldsByType(outputParameters[i].type),
-									showLabel: false,
-									value: value,
-									visible: true
+									context: context,
+									value: value
 								}
 							).render(outputParametersContainer.one('.container-input-field-' + i));
 

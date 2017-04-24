@@ -82,7 +82,7 @@ AUI.add(
 
 						var settingsForm = instance.settingsForm;
 
-						return field.getSettings(settingsForm.toJSON());
+						return field.getSettings(settingsForm);
 					},
 
 					getPreviousContext: function() {

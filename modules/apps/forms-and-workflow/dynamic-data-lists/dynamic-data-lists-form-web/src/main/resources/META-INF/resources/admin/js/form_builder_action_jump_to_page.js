@@ -43,8 +43,8 @@ AUI.add(
 						var instance = this;
 
 						return {
-							source: instance._sourceField.getValue(),
-							target: instance._targetField.getValue()
+							source: instance._sourceField.getValue()[0],
+							target: instance._targetField.getValue()[0]
 						};
 					},
 
@@ -77,15 +77,19 @@ AUI.add(
 							}
 						}
 
+						var context = {
+							fieldName: instance.get('index') + '-action',
+							label: Liferay.Language.get('the'),
+							options: instance.get('options'),
+							showLabel: false,
+							visible: false
+						};
+
 						instance._sourceField = new Liferay.DDM.Field.Select(
 							{
 								bubbleTargets: [instance],
-								fieldName: instance.get('index') + '-action',
-								label: Liferay.Language.get('the'),
-								options: instance.get('options'),
-								showLabel: false,
-								value: value,
-								visible: false
+								context: context,
+								value: value
 							}
 						);
 
@@ -112,15 +116,19 @@ AUI.add(
 							}
 						}
 
+						var context = {
+							fieldName: instance.get('index') + '-action',
+							label: Liferay.Language.get('the'),
+							options: instance.get('options'),
+							showLabel: false,
+							visible: true
+						};
+
 						instance._targetField = new Liferay.DDM.Field.Select(
 							{
 								bubbleTargets: [instance],
-								fieldName: instance.get('index') + '-action',
-								label: Liferay.Language.get('the'),
-								options: instance.get('options'),
-								showLabel: false,
-								value: value,
-								visible: true
+								context: context,
+								value: value
 							}
 						);
 
@@ -132,7 +140,11 @@ AUI.add(
 					_setSourcePage: function(pageIndex) {
 						var instance = this;
 
-						instance._sourceField.setValue(String(pageIndex));
+						var value = [
+				             String(pageIndex)
+			             ];
+
+						instance._sourceField.setValue(value);
 					},
 
 					_setTargetOptions: function(pages) {

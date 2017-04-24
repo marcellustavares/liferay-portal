@@ -1,6 +1,8 @@
 AUI.add(
 	'liferay-ddl-form-builder-rule-builder',
 	function(A) {
+		var Settings = Liferay.DDL.Settings;
+
 		var SoyTemplateUtil = Liferay.DDM.SoyTemplateUtil;
 
 		var MAP_ACTION_DESCRIPTIONS = {
@@ -17,18 +19,6 @@ AUI.add(
 				ATTRS: {
 					formBuilder: {
 						value: null
-					},
-
-					functionsMetadata: {
-						value: []
-					},
-
-					getDataProviderInstancesURL: {
-						value: ''
-					},
-
-					getDataProviderParametersSettingsURL: {
-						value: ''
 					},
 
 					rules: {
@@ -215,8 +205,6 @@ AUI.add(
 									bubbleTargets: [instance],
 									contentBox: instance.get('contentBox'),
 									fields: instance.getFields(),
-									functionsMetadata: instance.get('functionsMetadata'),
-									getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 									getDataProviders: instance._dataProviders,
 									getFunctionsURL: instance.get('getFunctionsURL'),
 									getRoles: instance.get('getRoles'),
@@ -248,7 +236,7 @@ AUI.add(
 						var instance = this;
 
 						A.io.request(
-							instance.get('getDataProviderInstancesURL'),
+							Settings.getDataProviderInstancesURL,
 							{
 								method: 'GET',
 								on: {

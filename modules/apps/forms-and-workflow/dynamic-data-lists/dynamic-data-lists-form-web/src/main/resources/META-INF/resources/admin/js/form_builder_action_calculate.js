@@ -124,13 +124,17 @@ AUI.add(
 							value = action.expression.replace(/\[|\]/g, '');
 						}
 
+						var context = {
+							displayStyle: 'multiline',
+							fieldName: instance.get('index') + '-action',
+							placeholder: Liferay.Language.get('the-expression-will-be-displayed-here'),
+							visible: true
+						};
+
 						instance._expressionField = new Liferay.DDM.Field.Text(
 							{
-								displayStyle: 'multiline',
-								fieldName: instance.get('index') + '-action',
-								placeholder: Liferay.Language.get('the-expression-will-be-displayed-here'),
-								value: value,
-								visible: true
+								context: context,
+								value: value
 							}
 						);
 
@@ -148,13 +152,17 @@ AUI.add(
 							value = action.target;
 						}
 
+						var context = {
+							fieldName: instance.get('index') + '-action',
+							label: Liferay.Language.get('choose-a-field-to-show-the-result'),
+							options: instance.get('options'),
+							visible: true
+						};
+
 						instance._targetField = new Liferay.DDM.Field.Select(
 							{
-								fieldName: instance.get('index') + '-action',
-								label: Liferay.Language.get('choose-a-field-to-show-the-result'),
-								options: instance.get('options'),
-								value: value,
-								visible: true
+								context: context,
+								value: value
 							}
 						);
 

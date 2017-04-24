@@ -12,10 +12,6 @@ AUI.add(
 						value: []
 					},
 
-					getDataProviderParametersSettingsURL: {
-						value: ''
-					},
-
 					getDataProviders: {
 						value: []
 					},
@@ -81,7 +77,6 @@ AUI.add(
 							{
 								bubbleTargets: [instance],
 								fields: instance.get('fields'),
-								getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 								getDataProviders: instance.get('getDataProviders'),
 								getFunctionsURL: instance.get('getFunctionsURL'),
 								pages: instance.get('pages')
@@ -105,10 +100,10 @@ AUI.add(
 
 						instance.after('fieldsChange', A.bind(instance._afterFieldsChange, instance));
 						instance.after('pagesChange', A.bind(instance._afterPagesChange, instance));
+
 						instance.after('*:valueChange', A.bind(instance._afterValueChange, instance));
 
 						instance.on('*:valueChange', A.bind(instance._handleActionChange, instance));
-
 						instance.on('*:valueChange', A.bind(instance._handleActionUpdates, instance));
 					},
 
@@ -176,26 +171,30 @@ AUI.add(
 					_createActionSelect: function(index, action, container) {
 						var instance = this;
 
-						var value;
+						var value = [];
 
 						if (action && action.action) {
 							value = action.action;
 						}
 
+						var context = {
+							fieldName: index + '-target',
+							options: instance._getActionOptions(),
+							showLabel: false,
+							visible: true
+						};
+
 						var field = new Liferay.DDM.Field.Select(
 							{
 								bubbleTargets: [instance],
-								fieldName: index + '-target',
-								options: instance._getActionOptions(),
-								showLabel: false,
-								value: value,
-								visible: true
+								context: context,
+								value: value
 							}
 						);
 
 						field.render(container);
 
-						if (value) {
+						if (!A.Object.isEmpty(value)) {
 							instance._createTargetSelect(index, value, action);
 						}
 
@@ -291,7 +290,7 @@ AUI.add(
 
 						for (var conditionKey in instance._conditions) {
 							if (!!conditionKey.match('-condition-second-operand-select') || !!conditionKey.match('-condition-first-operand')) {
-								var fieldName = instance._conditions[conditionKey].getValue();
+								var fieldName = instance._getSelectFieldFirstValue(instance._conditions[conditionKey]);
 
 								if (fieldName && fieldName != 'user') {
 									fields.push(instance._getFieldPageIndex(fieldName));
@@ -300,6 +299,19 @@ AUI.add(
 						}
 
 						return fields;
+					},
+
+					_getSelectFieldFirstValue: function(selectField) {
+						var instance = this;
+
+						var value = selectField.getValue();
+
+						if (A.Object.isEmpty(value)) {
+							return '';
+						}
+						else {
+							return value[0];
+						}
 					},
 
 					_getFieldDataType: function(fieldName) {

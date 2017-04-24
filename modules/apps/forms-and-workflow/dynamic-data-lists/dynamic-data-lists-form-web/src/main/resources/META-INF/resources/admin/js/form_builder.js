@@ -157,15 +157,16 @@ AUI.add(
 					confirmCancelFieldChanges: function(field, fieldContext, fieldSettingsPanel) {
 						var instance = this;
 
-						field.set('context', fieldContext);
-
-						field.render();
-
 						var settingForm = fieldSettingsPanel.settingsForm;
 
 						settingForm.set('context', fieldSettingsPanel._previousFormContext);
 
-						settingForm.render();
+						field.set('context', fieldContext);
+						field.set('context.settingsContet', fieldContext);
+
+						field.render();
+
+//						settingForm.render();
 					},
 
 					contains: function(field) {
