@@ -101,13 +101,13 @@ AUI.add(
 					_afterDataProviderChange: function(event) {
 						var instance = this;
 
-						var dataProviderSelectField = event.newVal;
+						var dataProviderInstanceSelectFieldValue = event.newVal;
 
-						if (!dataProviderSelectField) {
+						if (A.Object.isEmpty(dataProviderInstanceSelectFieldValue)) {
 							return;
 						}
 
-						var ddmDataProviderInstanceId = dataProviderSelectField.getValue()[0];
+						var ddmDataProviderInstanceId = dataProviderInstanceSelectFieldValue[0];
 
 						if (!ddmDataProviderInstanceId) {
 							return;
@@ -120,7 +120,7 @@ AUI.add(
 						boundingBox.one('.additional-info-' + index).empty();
 
 						A.io.request(
-							instance.get('getDataProviderParametersSettingsURL'),
+							Settings.getDataProviderParametersSettingsURL,
 							{
 								data: instance._getDataProviderPayload(ddmDataProviderInstanceId),
 								method: 'GET',
@@ -209,6 +209,7 @@ AUI.add(
 							fieldName: instance.get('index') + '-action',
 							showLabel: false,
 							visible: true,
+							value: [],
 							options: []
 						};
 
@@ -393,7 +394,7 @@ AUI.add(
 
 						var uuid;
 
-						var value;
+						var value = [];
 
 						var action = instance.get('action');
 
@@ -403,7 +404,9 @@ AUI.add(
 
 						for (var i = 0; i < result.length; i++) {
 							if (result[i].uuid === uuid) {
-								value = result[i].id;
+								value = [
+								         result[i].id
+						         ];
 							}
 
 							dataProvidersList.push(
