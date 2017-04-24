@@ -773,7 +773,6 @@ AUI.add(
 								draggable: false,
 								fieldTypes: instance.get('fieldTypes'),
 								modal: true,
-								portletNamespace: Settings.portletNamespace,
 								resizable: false,
 								strings: strings,
 								visible: false

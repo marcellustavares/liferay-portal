@@ -114,31 +114,30 @@ AUI.add(
 
 						instance._updateTypeField();
 						instance._updateLabelField();
-						instance._updateOptionsField();
+						instance._updateOptionsFields();
 					},
 
-					_updateOptionsField: function() {
+					_updateOptionsField: function(optionsField) {
 						var instance = this;
 
-						var optionsField = instance.getField('options');
-
-						if (!optionsField) {
-							return;
-						}
-
 						var editMode = instance.get('editMode');
-
-						//didnt get this
-						//if (editMode) {
-						//	var mainOption = options.getMainOption();
-
-						//	mainOption.transient = true;
-						//}
 
 						if (editMode) {
 							optionsField.set('sortable', false);
 							optionsField.set('editable', false);
 						}
+					},
+
+					_updateOptionsFields: function() {
+						var instance = this;
+
+						instance.eachField(function(field) {
+							var type = field.get('type');
+
+							if (type === 'options') {
+								instance._updateOptionsField(field);
+							}
+						});
 					},
 
 					_createAutocompleElements: function() {

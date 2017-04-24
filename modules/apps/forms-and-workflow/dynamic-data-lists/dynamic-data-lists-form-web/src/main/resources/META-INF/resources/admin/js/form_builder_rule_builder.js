@@ -372,7 +372,7 @@ AUI.add(
 						var fieldLabel;
 
 						for (var index in fields) {
-							if (fields[index].value === fieldValue) {
+							if (fields[index].value === fieldValue[0]) {
 								fieldLabel = fields[index].label;
 							}
 						}
