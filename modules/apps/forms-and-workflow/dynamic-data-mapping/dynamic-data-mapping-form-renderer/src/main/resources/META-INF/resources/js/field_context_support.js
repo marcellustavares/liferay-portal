@@ -43,7 +43,11 @@ AUI.add(
 
 				var setAttributeChangeEvent = function(attributes, attributeName) {
 					if (context.hasOwnProperty(attributeName)) {
-						instance.set(attributeName, context[attributeName]);
+						var attributeValue = instance.get('value');
+
+						if (!Util.compare(attributeValue, context[attributeName])) {
+							instance.set(attributeName, context[attributeName]);
+						}
 
 						instance.after(attributeName + 'Change', A.bind(instance._afterAttributeChange, instance, attributeName));
 					}

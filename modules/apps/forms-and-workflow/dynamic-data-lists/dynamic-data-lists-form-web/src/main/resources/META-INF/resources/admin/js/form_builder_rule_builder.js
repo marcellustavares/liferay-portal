@@ -368,6 +368,10 @@ AUI.add(
 						}
 
 						var fields = instance.getFields();
+//
+//						if (A.Lang.isArray(fieldValue)) {
+//							fieldValue = fieldValue[0];
+//						}
 
 						var fieldLabel;
 

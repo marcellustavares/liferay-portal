@@ -60,7 +60,6 @@ AUI.add(
 					context,
 					{
 						context: A.clone(context),
-						fieldName: name,
 						parent: instance,
 						portletNamespace: instance.get('portletNamespace'),
 						repeatedIndex: repeatedIndex
