@@ -85,6 +85,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -152,8 +153,18 @@ public class DDLFormAdminDisplayContext {
 		return _ddlFormWebConfiguration.autosaveInterval();
 	}
 
-	public Locale[] getAvailableLocales() {
-		return new Locale[] {LocaleUtil.getSiteDefault()};
+	public Locale[] getAvailableLocales() throws PortalException {
+		DDMStructure ddmStructure = getDDMStructure();
+
+		if (ddmStructure == null) {
+			return new Locale[] {getSiteDefaultLocale()};
+		}
+
+		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		Set<Locale> availableLocales = ddmForm.getAvailableLocales();
+
+		return availableLocales.toArray(new Locale[availableLocales.size()]);
 	}
 
 	public DDLFormViewRecordDisplayContext

@@ -75,7 +75,6 @@ AUI.add(
 
 						var builder = instance.get('builder');
 
-						context.fieldName = context.name;
 						context.portletNamespace = Settings.portletNamespace;
 						context.visible = true;
 						context.value = '';

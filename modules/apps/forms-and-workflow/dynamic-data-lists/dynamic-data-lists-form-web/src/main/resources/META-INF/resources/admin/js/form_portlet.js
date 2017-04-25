@@ -221,6 +221,8 @@ AUI.add(
 						var formBuilder = instance.get('formBuilder');
 						var ruleBuilder = instance.get('ruleBuilder');
 
+						var pageManager = formBuilder.get('pageManager');
+
 						instance.layoutVisitor.set('pages', formBuilder.get('layouts'));
 
 						var translationManager = instance.get('translationManager');
@@ -231,7 +233,8 @@ AUI.add(
 							description: instance.get('localizedDescription'),
 							pages: instance.layoutVisitor.getPages(),
 							name: instance.get('localizedName'),
-							paginationMode: formBuilder.get('pageManager').get('mode'),
+							successPageSettings: pageManager.get('successPageSettings'),
+							paginationMode: pageManager.get('mode'),
 							rules: ruleBuilder.get('rules')
 						};
 					},

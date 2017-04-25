@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.lists.form.web.internal.util;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -34,6 +33,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -95,15 +95,23 @@ public class DDMFormTemplateContextToDDMForm {
         JSONArray rulesJSONArray = jsonObject.getJSONArray("rules");
         ddmForm.setDDMFormRules(getDDMFormRules(rulesJSONArray.toString()));
 
-//		JSONObject successPageJSONObject = jsonObject.getJSONObject("successPage");
+		JSONObject successPageJSONObject = jsonObject.getJSONObject("successPageSettings");
 
 
-//		DDMFormSuccessPageSettings ddmFormSuccessPageSettings = new DDMFormSuccessPageSettings();
-//
-//		ddmFormSuccessPageSettings.setBody(successPageJSONObject.getString("body"));
-//		ddmFormSuccessPageSettings.setTitle(title);
-//		ddmFormSuccessPageSettings.setEnabled(enabled);
-//
+		DDMFormSuccessPageSettings ddmFormSuccessPageSettings =
+			new DDMFormSuccessPageSettings();
+
+		JSONObject bodyJSONObject = successPageJSONObject.getJSONObject("body");
+
+		ddmFormSuccessPageSettings.setBody(bodyJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
+
+		JSONObject titleJSONObject = successPageJSONObject.getJSONObject("title");
+
+		ddmFormSuccessPageSettings.setTitle(titleJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
+		ddmFormSuccessPageSettings.setEnabled(successPageJSONObject.getBoolean("enabled"));
+
+		ddmForm.setDDMFormSuccessPageSettings(ddmFormSuccessPageSettings);
+
 
 		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
 			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
@@ -195,6 +203,10 @@ public class DDMFormTemplateContextToDDMForm {
 									return deserializeDDMFormFieldValidation(
 										serializedDDMFormFieldProperty);
 								}
+								else if (Objects.equals(type, "select")) {
+									return deserializeDDMFormFieldSelect(
+										serializedDDMFormFieldProperty);
+								}
 								else if (localizable) {
 									return deserializeLocalizedValue(
 										serializedDDMFormFieldProperty);
@@ -202,6 +214,20 @@ public class DDMFormTemplateContextToDDMForm {
 								else {
 									return serializedDDMFormFieldProperty;
 								}
+							}
+
+							protected String deserializeDDMFormFieldSelect(
+									String serializedDDMFormFieldProperty)
+								throws PortalException {
+
+								JSONArray jsonArray = jsonFactory.createJSONArray(
+									serializedDDMFormFieldProperty);
+
+								if (jsonArray.length() == 0) {
+									return "";
+								}
+
+								return jsonArray.getString(0);
 							}
 
 							protected DDMFormFieldValidation
@@ -295,8 +321,6 @@ public class DDMFormTemplateContextToDDMForm {
 						});
 
 					settingsTemplateContextVisitor.visit();
-
-					ddmFormField.setIndexType("keyword");
 
 					ddmForm.addDDMFormField(ddmFormField);
 				}
