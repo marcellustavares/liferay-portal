@@ -15,10 +15,12 @@
 package com.liferay.dynamic.data.lists.form.web.internal.util;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.osgi.service.component.annotations.Component;
@@ -32,7 +34,6 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
-import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -76,10 +77,14 @@ public class DDMFormTemplateContextToDDMForm {
 
 		JSONArray jsonArray = jsonObject.getJSONArray("availableLanguageIds");
 
+		Set<Locale> availableLocales = new HashSet<Locale>();
+
 		for (int i = 0; i < jsonArray.length(); i++) {
-			ddmForm.addAvailableLocale(
+			availableLocales.add(
 				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
 		}
+
+		ddmForm.setAvailableLocales(availableLocales);
 
 		Locale defaultLocale = LocaleUtil.fromLanguageId(
 			jsonObject.getString("defaultLanguageId"));
@@ -236,14 +241,17 @@ public class DDMFormTemplateContextToDDMForm {
 									jsonFactory.createJSONObject(
 										serializedDDMFormFieldProperty);
 
-								Iterator<String> itr = jsonObject.keys();
 
-								while (itr.hasNext()) {
-									String languageId = itr.next();
+								for (Locale availableLocale : availableLocales) {
+									String valueString = jsonObject.getString(
+										LocaleUtil.toLanguageId(availableLocale), null);
 
-									localizedValue.addString(
-										LocaleUtil.fromLanguageId(languageId),
-										jsonObject.getString(languageId));
+									if (valueString == null) {
+										valueString = jsonObject.getString(
+											LocaleUtil.toLanguageId(defaultLocale));
+									}
+
+									localizedValue.addString(availableLocale, valueString);
 								}
 
 								return localizedValue;
@@ -255,27 +263,31 @@ public class DDMFormTemplateContextToDDMForm {
 								DDMFormFieldOptions ddmFormFieldOptions =
 									new DDMFormFieldOptions();
 
-								ddmFormFieldOptions.setDefaultLocale(
-									defaultLocale);
-
-								Iterator<String> itr = jsonObject.keys();
-
-								while (itr.hasNext()) {
-									String key = itr.next();
-
+								for (Locale availableLocale : availableLocales) {
 									JSONArray jsonArray =
-										jsonObject.getJSONArray(key);
+										jsonObject.getJSONArray(
+											LocaleUtil.toLanguageId(availableLocale));
+
+									if (jsonArray == null) {
+										jsonArray = jsonObject.getJSONArray(
+											LocaleUtil.toLanguageId(defaultLocale));
+									}
 
 									for (int i = 0; i < jsonArray.length(); i++) {
 										JSONObject jsonObject2 =
 											jsonArray.getJSONObject(i);
 
 										ddmFormFieldOptions.addOptionLabel(
-												jsonObject2.getString("value"),
-												LocaleUtil.fromLanguageId(key),
-												jsonObject2.getString("label"));
+											jsonObject2.getString("value"),
+											availableLocale,
+											jsonObject2.getString("label"));
 									}
 								}
+
+
+								ddmFormFieldOptions.setDefaultLocale(
+									defaultLocale);
+
 
 								return ddmFormFieldOptions;
 							}

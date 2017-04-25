@@ -20,14 +20,18 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.osgi.service.component.annotations.Component;
@@ -46,10 +50,22 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
-		ddmFormLayout.setDefaultLocale(LocaleThreadLocal.getSiteDefaultLocale());
-
 		JSONObject jsonObject = jsonFactory.createJSONObject(
 			serializedDDMFormTemplateContext);
+
+		JSONArray jsonArray = jsonObject.getJSONArray("availableLanguageIds");
+
+		Set<Locale> availableLocales = new HashSet<Locale>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			availableLocales.add(
+				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
+		}
+
+		Locale defaultLocale = LocaleUtil.fromLanguageId(
+			jsonObject.getString("defaultLanguageId"));
+
+		ddmFormLayout.setDefaultLocale(defaultLocale);
 
 		String paginationMode = jsonObject.getString(
 			"paginationMode", DDMFormLayout.WIZARD_MODE);
@@ -73,11 +89,11 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 					ddmFormLayoutPage.setDescription(
 						deserializeLocalizedValue(
-							pageJSONObject.getJSONObject("description")));
+							pageJSONObject.getJSONObject("description"), defaultLocale, availableLocales));
 
 					ddmFormLayoutPage.setTitle(
 						deserializeLocalizedValue(
-							pageJSONObject.getJSONObject("title")));
+							pageJSONObject.getJSONObject("title"), defaultLocale, availableLocales));
 
 					ddmFormLayoutPage.setDDMFormLayoutRows(new ArrayList<DDMFormLayoutRow>(ddmFormLayoutRows));
 
@@ -139,21 +155,22 @@ public class DDMFormTemplateContextToDDMFormLayout {
 		return ddmFormLayout;
 	}
 
-	protected LocalizedValue deserializeLocalizedValue(JSONObject jsonObject) {
-		LocalizedValue value = new LocalizedValue(
-			LocaleThreadLocal.getSiteDefaultLocale());
+	protected LocalizedValue deserializeLocalizedValue(JSONObject jsonObject, Locale defaultLocale, Set<Locale> availableLocales) {
+		LocalizedValue localizedValue = new LocalizedValue(defaultLocale);
 
-		Iterator<String> itr = jsonObject.keys();
+		for (Locale availableLocale : availableLocales) {
+			String valueString = jsonObject.getString(
+				LocaleUtil.toLanguageId(availableLocale), null);
 
-		while (itr.hasNext()) {
-			String languageId = itr.next();
+			if (valueString == null) {
+				valueString = jsonObject.getString(
+					LocaleUtil.toLanguageId(defaultLocale));
+			}
 
-			value.addString(
-				LocaleUtil.fromLanguageId(languageId),
-				jsonObject.getString(languageId));
+			localizedValue.addString(availableLocale, valueString);
 		}
 
-		return value;
+		return localizedValue;
 	}
 
 	@Reference
