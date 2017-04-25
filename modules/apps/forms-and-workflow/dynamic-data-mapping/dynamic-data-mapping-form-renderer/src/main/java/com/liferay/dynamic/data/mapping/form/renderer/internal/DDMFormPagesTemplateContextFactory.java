@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -180,7 +181,10 @@ public class DDMFormPagesTemplateContextFactory {
 
 		LocalizedValue description = ddmFormLayoutPage.getDescription();
 
-		pageTemplateContext.put("description", description.getString(_locale));
+		pageTemplateContext.put(
+			"localizedDescription", serializeLocalizedValue(description));
+		pageTemplateContext.put(
+			"description", description.getString(_locale));
 
 		pageTemplateContext.put("enabled", isPageEnabled(pageIndex));
 
@@ -197,9 +201,24 @@ public class DDMFormPagesTemplateContextFactory {
 
 		LocalizedValue title = ddmFormLayoutPage.getTitle();
 
+		pageTemplateContext.put("localizedTitle", serializeLocalizedValue(title));
 		pageTemplateContext.put("title", title.getString(_locale));
 
 		return pageTemplateContext;
+	}
+
+	protected Map<String, String> serializeLocalizedValue(
+		LocalizedValue localizedValue) {
+
+		Map<String , String> map = new HashMap<>();
+
+		for (Map.Entry<Locale, String> entry :
+				localizedValue.getValues().entrySet()) {
+
+			map.put(LocaleUtil.toLanguageId(entry.getKey()), entry.getValue());
+		}
+
+		return map;
 	}
 
 	protected List<Object> createRowsTemplateContext(

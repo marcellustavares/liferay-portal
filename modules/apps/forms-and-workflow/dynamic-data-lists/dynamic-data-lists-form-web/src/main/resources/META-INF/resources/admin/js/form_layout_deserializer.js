@@ -104,8 +104,10 @@ AUI.add(
 					_deserializePage: function(page) {
 						var instance = this;
 
-						instance.get('descriptions').push(page.descriptions);
-						instance.get('titles').push(page.title);
+//						instance.get('descriptions').push(page.description);
+//						instance.get('titles').push(page.title);
+						instance.get('descriptions').push(page.localizedDescription);
+						instance.get('titles').push(page.localizedTitle);
 
 						return new A.Layout(
 							{

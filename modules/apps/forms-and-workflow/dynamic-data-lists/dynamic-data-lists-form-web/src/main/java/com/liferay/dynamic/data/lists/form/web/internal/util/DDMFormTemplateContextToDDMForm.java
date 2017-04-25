@@ -62,8 +62,8 @@ public class DDMFormTemplateContextToDDMForm {
 
 		ddmForm.setDefaultLocale(defaultLocale);
 
-		DDMFormTemplateContextVisitor ddmFormTemplateContextVisitor =
-			new DDMFormTemplateContextVisitor(jsonObject.getJSONArray("pages"));
+		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
+			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
 
 		ddmFormTemplateContextVisitor.onVisitField(
 			new Consumer<JSONObject>() {
@@ -73,9 +73,9 @@ public class DDMFormTemplateContextToDDMForm {
 					JSONObject jsonObject = fieldJSONObject.getJSONObject(
 						"settingsContext");
 
-					DDMFormTemplateContextVisitor
+					DDMFormTemplateJSONContextVisitor
 						settingsTemplateContextVisitor =
-							new DDMFormTemplateContextVisitor(
+							new DDMFormTemplateJSONContextVisitor(
 								jsonObject.getJSONArray("pages"));
 
 					DDMFormField ddmFormField = new DDMFormField();

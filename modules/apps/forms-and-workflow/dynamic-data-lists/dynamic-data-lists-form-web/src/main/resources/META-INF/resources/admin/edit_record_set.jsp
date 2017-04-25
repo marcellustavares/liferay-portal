@@ -280,9 +280,10 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 									new Liferay.DDL.Portlet(
 										{
 											context: <%= ddlFormAdminDisplayContext.getFormBuilderContext() %>,
-											description: '<%= HtmlUtil.escapeJS(description) %>',
-											defaultLanguageId: 'en_US',
-											editingLanguageId: 'en_US',
+											localizedDescription: <%= ddlFormAdminDisplayContext.getFormDescription() %>,
+											localizedName: <%= ddlFormAdminDisplayContext.getFormName() %>,
+											defaultLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
+											editingLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
 											editForm: event.form,
 											namespace: '<portlet:namespace />',
 											translationManager: Liferay.component('<portlet:namespace />translationManager')

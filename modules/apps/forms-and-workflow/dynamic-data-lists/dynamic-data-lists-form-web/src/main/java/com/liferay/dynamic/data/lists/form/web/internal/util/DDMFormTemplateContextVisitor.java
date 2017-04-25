@@ -14,9 +14,8 @@
 
 package com.liferay.dynamic.data.lists.form.web.internal.util;
 
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONObject;
-
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -24,78 +23,54 @@ import java.util.function.Consumer;
  */
 public class DDMFormTemplateContextVisitor {
 
-	public DDMFormTemplateContextVisitor(JSONArray pagesJSONArray) {
-		_pagesJSONArray = pagesJSONArray;
+	public DDMFormTemplateContextVisitor(
+		Map<String, Object> ddmFormTemplateContext) {
+
+		_ddmFormTemplateContext = ddmFormTemplateContext;
 	}
 
-	public void onVisitColumn(Consumer<JSONObject> columnConsumer) {
-		_columnConsumer = columnConsumer;
-	}
+	public void onVisitField(
+		Consumer<Map<String, Object>> fieldConsumer) {
 
-	public void onVisitField(Consumer<JSONObject> fieldConsumer) {
 		_fieldConsumer = fieldConsumer;
 	}
 
-	public void onVisitPage(Consumer<JSONObject> pageConsumer) {
-		_pageConsumer = pageConsumer;
-	}
-
-	public void onVisitRow(Consumer<JSONObject> rowConsumer) {
-		_rowConsumer = rowConsumer;
-	}
-
 	public void visit() {
-		traversePages(_pagesJSONArray);
+		traversePages((List<Map<String, Object>>) _ddmFormTemplateContext.get("pages"));
 	}
 
-	protected void traverseColumns(JSONArray columnnsJSONArray) {
-		for (int i = 0; i < columnnsJSONArray.length(); i++) {
-			JSONObject columnJSONObject = columnnsJSONArray.getJSONObject(i);
-
-			traverseFields(columnJSONObject.getJSONArray("fields"));
-
-			_columnConsumer.accept(columnJSONObject);
+	protected void traverseColumns(List<Map<String, Object>> columns) {
+		for (Map<String, Object> column : columns) {
+			traverseFields((List<Map<String, Object>>) column.get("fields"));
 		}
 	}
 
-	protected void traverseFields(JSONArray fieldsJSONArray) {
-		for (int i = 0; i < fieldsJSONArray.length(); i++) {
-			JSONObject fieldJSONObject = fieldsJSONArray.getJSONObject(i);
-
-			_fieldConsumer.accept(fieldJSONObject);
+	protected void traverseFields(List<Map<String, Object>> fields) {
+		for (Map<String, Object> field : fields) {
+			_fieldConsumer.accept(field);
 		}
 	}
 
-	protected void traversePages(JSONArray pagesJSONArray) {
-		for (int i = 0; i < pagesJSONArray.length(); i++) {
-			JSONObject pageJSONObject = pagesJSONArray.getJSONObject(i);
-
-			traverseRows(pageJSONObject.getJSONArray("rows"));
-
-			_pageConsumer.accept(pageJSONObject);
+	protected void traversePages(List<Map<String, Object>> pages) {
+		for (Map<String, Object> page : pages) {
+			traverseRows((List<Map<String, Object>>) page.get("rows"));
 		}
 	}
 
-	protected void traverseRows(JSONArray rowsJSONArray) {
-		for (int i = 0; i < rowsJSONArray.length(); i++) {
-			JSONObject rowJSONObject = rowsJSONArray.getJSONObject(i);
-
-			traverseColumns(rowJSONObject.getJSONArray("columns"));
-
-			_rowConsumer.accept(rowJSONObject);
+	protected void traverseRows(List<Map<String, Object>> rows) {
+		for (Map<String, Object> row : rows) {
+			traverseColumns((List<Map<String, Object>>) row.get("columns"));
 		}
 	}
+	private Map<String, Object> _ddmFormTemplateContext;
+	private Consumer<Map<String, Object>> _fieldConsumer =
+			new NOPFieldContextConsumer();
 
-	private Consumer<JSONObject> _columnConsumer = new NOPJSONObjectConsumer();
-	private Consumer<JSONObject> _fieldConsumer = new NOPJSONObjectConsumer();
-	private Consumer<JSONObject> _pageConsumer = new NOPJSONObjectConsumer();
-	private final JSONArray _pagesJSONArray;
-	private Consumer<JSONObject> _rowConsumer = new NOPJSONObjectConsumer();
-
-	private static class NOPJSONObjectConsumer implements Consumer<JSONObject> {
+	private static class NOPFieldContextConsumer
+		implements Consumer<Map<String, Object> > {
 
 		@Override
-		public void accept(JSONObject jsonObject) {
+		public void accept(Map<String, Object> fieldContext) {
 		}
 
 	}

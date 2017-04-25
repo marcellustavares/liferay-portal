@@ -43,7 +43,11 @@ AUI.add(
 					builder: {
 					},
 
-					editingLocale:{
+					editingLanguageId:{
+						value: themeDisplay.getDefaultLanguageId()
+					},
+
+					defaultLanguageId:{
 						value: themeDisplay.getDefaultLanguageId()
 					},
 
@@ -58,6 +62,14 @@ AUI.add(
 					mode: {
 						validator: '_validateMode',
 						value: 'pagination'
+					},
+
+					titles: {
+						getter: '_getTitles'
+					},
+
+					descriptions: {
+						getter: '_getDescriptions'
 					},
 
 					strings: {
@@ -126,7 +138,7 @@ AUI.add(
 
 						instance._eventHandlers = [
 							A.on('windowresize', A.bind('_syncPageInformationHeight', instance)),
-							instance.after('localeChange', A.bind('_afterLocaleChange', instance)),
+							instance.after('editingLanguageIdChange', A.bind('_afterEditingLanguageIdChange', instance)),
 							instance.after('titlesChange', A.bind('_afterTitlesChange', instance))
 						];
 
@@ -150,7 +162,7 @@ AUI.add(
 
 						content.append(successPage);
 
-						instance._createTitleForEditingLocale();
+						instance._createTitleForEditingLanguageId();
 					},
 
 					destructor: function() {
@@ -265,12 +277,12 @@ AUI.add(
 						switchModeNode.toggle(event.newVal > 1);
 					},
 
-					_afterLocaleChange: function(event) {
+					_afterEditingLanguageIdChange: function(event) {
 						var instance = this;
 
 						instance._updateSuccessPageSettings();
 
-						instance.set('editingLocale', event.editingLocale);
+						instance.set('editingLanguageId', event.newVal);
 
 						var wizard = instance._getWizard();
 
@@ -284,6 +296,7 @@ AUI.add(
 						else {
 							instance._syncTitle();
 						}
+
 						instance._syncWizardItems();
 					},
 
@@ -358,33 +371,30 @@ AUI.add(
 						return popover;
 					},
 
-					_createTitleForEditingLocale: function() {
+					_createTitleForEditingLanguageId: function() {
 						var instance = this;
 
 						var activePageNumber = instance.get('activePageNumber');
-						var editingLocale = instance.get('editingLocale');
-						var defaultLocale = themeDisplay.getDefaultLanguageId();
-						var titles = instance.get('localizedTitles');
-						var descriptions = instance.get('localizedDescriptions');
+						var editingLanguageId = instance.get('editingLanguageId');
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
-						if(!titles[activePageNumber-1]) {
-							titles[activePageNumber-1] = {};
+						var localizedTitles = instance.get('localizedTitles');
+						var localizedDescriptions = instance.get('localizedDescriptions');
+
+						if(!localizedTitles[activePageNumber-1]) {
+							localizedTitles[activePageNumber-1] = {};
 						}
 
-						if(!descriptions[activePageNumber-1]) {
-							descriptions[activePageNumber-1] = {};
+						if(!localizedDescriptions[activePageNumber-1]) {
+							localizedDescriptions[activePageNumber-1] = {};
 						}
 
-						if(!titles[activePageNumber-1][editingLocale]) {
-							titles[activePageNumber-1][editingLocale] = titles[activePageNumber-1][defaultLocale] || '';
-
-							instance.set('localizedTitles', titles);
+						if(!localizedTitles[activePageNumber-1][editingLanguageId]) {
+							localizedTitles[activePageNumber-1][editingLanguageId] = localizedTitles[activePageNumber-1][defaultLanguageId] || '';
 						}
 
-						if(!descriptions[activePageNumber-1][editingLocale]) {
-							descriptions[activePageNumber-1][editingLocale] = descriptions[activePageNumber-1][defaultLocale] || '';
-
-							instance.set('localizedDescriptions', descriptions);
+						if(!localizedDescriptions[activePageNumber-1][editingLanguageId]) {
+							localizedDescriptions[activePageNumber-1][editingLanguageId] = localizedDescriptions[activePageNumber-1][defaultLanguageId] || '';
 						}
 					},
 
@@ -411,20 +421,21 @@ AUI.add(
 						var activePageNumber = instance.get('activePageNumber');
 						var pagesQuantity = instance.get('pagesQuantity');
 
-						instance._createTitleForEditingLocale();
+						instance._createTitleForEditingLanguageId();
 
-						var editingLocale = instance.get('editingLocale');
-						var defaultLocale = themeDisplay.getDefaultLanguageId();
-						var titles = instance.get('localizedTitles');
+						var editingLanguageId = instance.get('editingLanguageId');
+						var defaultLanguageId = instance.get('defaultLanguageId');
+
+						var localizedTitles = instance.get('localizedTitles');
 
 						var items = [];
 
 						for (var i = 1; i <= pagesQuantity; i++) {
-							if (!titles[i - 1]) {
-								titles[i - 1] = {}
+							if (!localizedTitles[i - 1]) {
+								localizedTitles[i - 1] = {}
 							}
 
-							var title = titles[i - 1][editingLocale] || titles[i - 1][defaultLocale];
+							var title = localizedTitles[i - 1][editingLanguageId] || localizedTitles[i - 1][defaultLanguageId];
 
 							if (!title) {
 								title = instance._createUntitledPageLabel(i, pagesQuantity);
@@ -539,14 +550,14 @@ AUI.add(
 						var instance = this;
 
 						var activePageNumber = instance.get('activePageNumber');
-						var editingLocale = instance.get('editingLocale');
+						var editingLanguageId = instance.get('editingLanguageId');
 						var descriptions = instance.get('descriptions');
 						var localizedDescriptions = instance.get('localizedDescriptions');
 
 						var description = event.newVal.trim();
 
 						descriptions[activePageNumber - 1] = description;
-						localizedDescriptions[activePageNumber - 1][editingLocale] = description;
+						localizedDescriptions[activePageNumber - 1][editingLanguageId] = description;
 
 						instance.set('descriptions', descriptions);
 						instance.set('localizedDescriptions', localizedDescriptions);
@@ -660,7 +671,7 @@ AUI.add(
 						var instance = this;
 
 						var activePageNumber = instance.get('activePageNumber');
-						var editingLocale = instance.get('editingLocale');
+						var editingLanguageId = instance.get('editingLanguageId');
 						var titles = instance.get('titles');
 						var localizedTitles = instance.get('localizedTitles');
 
@@ -673,7 +684,7 @@ AUI.add(
 						}
 
 						titles[activePageNumber - 1] = title;
-						localizedTitles[activePageNumber - 1][editingLocale] = title;
+						localizedTitles[activePageNumber - 1][editingLanguageId] = title;
 
 						instance.set('titles', titles);
 						instance.set('localizedTitles', localizedTitles);
@@ -785,7 +796,7 @@ AUI.add(
 							title: {}
 						};
 
-						var defaultLanguageId = themeDisplay.getDefaultLanguageId();
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						successPageSettings.body[defaultLanguageId] = strings.defaultContent;
 						successPageSettings.title[defaultLanguageId] = strings.defaultTitle;
@@ -903,45 +914,42 @@ AUI.add(
 
 						var successPage = boundingBox.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE);
 
-						var editingLocale = instance.get('editingLocale');
-
-						var defaultLocale = themeDisplay.getDefaultLanguageId();
+						var editingLanguageId = instance.get('editingLanguageId');
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						var successPageSettings = instance.get('successPageSettings');
 
-						if(!successPageSettings.body[editingLocale]) {
+						if(!successPageSettings.body[editingLanguageId]) {
 							var strings = instance.get('strings');
 
-							if(successPageSettings.body[defaultLocale]) {
-								successPageSettings.body[editingLocale] = A.clone(successPageSettings.body[defaultLocale]);
+							if(successPageSettings.body[defaultLanguageId]) {
+								successPageSettings.body[editingLanguageId] = A.clone(successPageSettings.body[defaultLanguageId]);
 							}
 							else {
-								successPageSettings.body[editingLocale] = strings.defaultContent;
+								successPageSettings.body[editingLanguageId] = strings.defaultContent;
 							}
 
-							if(successPageSettings.title[defaultLocale]) {
-								successPageSettings.title[editingLocale] = A.clone(successPageSettings.title[defaultLocale]);
+							if(successPageSettings.title[defaultLanguageId]) {
+								successPageSettings.title[editingLanguageId] = A.clone(successPageSettings.title[defaultLanguageId]);
 							}
 							else {
-								successPageSettings.title[editingLocale] = strings.defaultTitle;
+								successPageSettings.title[editingLanguageId] = strings.defaultTitle;
 							}
 
 							instance.set('successPageSettings', successPageSettings);
 						}
 
-						successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_TITLE).val(successPageSettings.title[editingLocale]);
-
-						successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_CONTENT).val(successPageSettings.body[editingLocale]);
+						successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_TITLE).val(successPageSettings.title[editingLanguageId]);
+						successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_CONTENT).val(successPageSettings.body[editingLanguageId]);
 					},
 
 					_syncTitle: function() {
 						var instance = this;
 
-						instance._createTitleForEditingLocale();
+						instance._createTitleForEditingLanguageId();
 
-						var editingLocale = instance.get('editingLocale');
-
-						var defaultLocale = themeDisplay.getDefaultLanguageId();
+						var editingLanguageId = instance.get('editingLanguageId');
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						var titles = instance.get('localizedTitles');
 						var descriptions = instance.get('localizedDescriptions');
@@ -952,11 +960,11 @@ AUI.add(
 
 						var titleNode = pageHeader.one('.' + CSS_PAGE_HEADER_TITLE);
 
-						titleNode.val(titles[activePageNumber - 1][editingLocale] || titles[activePageNumber - 1][defaultLocale] || '');
+						titleNode.val(titles[activePageNumber - 1][editingLanguageId] || titles[activePageNumber - 1][defaultLanguageId] || '');
 
 						var descriptionNode = pageHeader.one('.' + CSS_PAGE_HEADER_DESCRIPTION);
 
-						descriptionNode.val(descriptions[activePageNumber - 1][editingLocale] || descriptions[activePageNumber - 1][defaultLocale] || '');
+						descriptionNode.val(descriptions[activePageNumber - 1][editingLanguageId] || descriptions[activePageNumber - 1][defaultLanguageId] || '');
 					},
 
 					_syncWizardItems: function() {
@@ -1032,12 +1040,12 @@ AUI.add(
 						var wizard = instance._getWizard();
 
 						var successPageSettings = instance.get('successPageSettings');
-						var editingLocale = instance.get('editingLocale');
+						var editingLanguageId = instance.get('editingLanguageId');
 
 						successPageSettings.enabled = wizard.get('successPage');
 
-						successPageSettings.body[editingLocale] = successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_CONTENT).val();
-						successPageSettings.title[editingLocale] = successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_TITLE).val();
+						successPageSettings.body[editingLanguageId] = successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_CONTENT).val();
+						successPageSettings.title[editingLanguageId] = successPage.one('.' + CSS_FORM_BUILDER_SUCCESS_PAGE_TITLE).val();
 
 						instance.set('successPageSettings', successPageSettings);
 
@@ -1046,6 +1054,26 @@ AUI.add(
 
 					_validateMode: function(mode) {
 						return (mode === 'pagination' || mode === 'wizard');
+					},
+
+					_getTitles: function() {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId');
+
+						return instance.get('localizedTitles').map(function(localizedTitle) {
+							return localizedTitle[editingLanguageId];
+						});
+					},
+
+					_getDescriptions: function() {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId');
+
+						return instance.get('localizedDescriptions').map(function(localizedDescription) {
+							return localizedDescription[editingLanguageId];
+						});
 					}
 				}
 			}

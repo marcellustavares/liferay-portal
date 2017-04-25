@@ -56,8 +56,8 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 		ddmFormLayout.setPaginationMode(paginationMode);
 
-		DDMFormTemplateContextVisitor ddmFormTemplateContextVisitor =
-			new DDMFormTemplateContextVisitor(jsonObject.getJSONArray("pages"));
+		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
+			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
 
 		List<DDMFormLayoutRow> ddmFormLayoutRows = new ArrayList<>();
 		List<DDMFormLayoutColumn> ddmFormLayoutColumns = new ArrayList<>();

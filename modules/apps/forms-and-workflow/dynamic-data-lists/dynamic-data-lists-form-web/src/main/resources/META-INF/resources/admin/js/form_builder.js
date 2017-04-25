@@ -115,7 +115,7 @@ AUI.add(
 							instance.after('liferay-ddl-form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
 							instance.after('render', instance._afterFormBuilderRender, instance),
 							instance.after(instance._afterRemoveField, instance, 'removeField'),
-							instance.after('editingLanguageIdChange', instance._afterEditingLanguageId)
+							instance.after('editingLanguageIdChange', instance._afterEditingLanguageIdChange)
 						];
 					},
 
@@ -351,7 +351,7 @@ AUI.add(
 						);
 					},
 
-					_afterEditingLanguageId: function(event) {
+					_afterEditingLanguageIdChange: function(event) {
 						var instance = this;
 
 						instance.eachFields(function(field) {
@@ -359,6 +359,10 @@ AUI.add(
 
 							field.saveSettings();
 						});
+
+						var pageManager = instance.get('pageManager');
+
+						pageManager.set('editingLanguageId', event.newVal);
 					},
 
 					_afterActivePageNumberChange: function(event) {
@@ -479,14 +483,22 @@ AUI.add(
 
 						var contentBox = instance.get('contentBox');
 
+						var deserializer = instance.get('deserializer');
+
+						var layouts = instance.get('layouts');
+
 						if (!instance._pageManager) {
 							instance._pageManager = new Liferay.DDL.FormBuilderPagesManager(
 								A.merge(
 									{
 										builder: instance,
+										localizedDescriptions: deserializer.get('descriptions'),
+										localizedTitles: deserializer.get('titles'),
+										editingLanguageId: instance.get('editingLanguageId'),
+										defaultLanguageId: instance.get('defaultLanguageId'),
 										mode: 'wizard',
 										pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
-										pagesQuantity: instance.get('layouts').length,
+										pagesQuantity: layouts.length,
 										paginationContainer: contentBox.one('.' + CSS_PAGES),
 										tabviewContainer: contentBox.one('.' + CSS_FORM_BUILDER_TABS)
 									},
@@ -632,12 +644,7 @@ AUI.add(
 					_renderPages: function() {
 						var instance = this;
 
-						var deserializer = instance.get('deserializer');
-
 						var pages = instance.get('pages');
-
-						pages.set('descriptions', deserializer.get('descriptions'));
-						pages.set('titles', deserializer.get('titles'));
 
 						pages._uiSetActivePageNumber(pages.get('activePageNumber'));
 					},

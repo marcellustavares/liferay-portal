@@ -40,6 +40,7 @@ import com.liferay.dynamic.data.lists.util.comparator.DDLRecordSetNameComparator
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
@@ -89,7 +90,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -100,6 +100,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DDLFormAdminDisplayContext {
 
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 	public DDLFormAdminDisplayContext(
 		RenderRequest renderRequest, RenderResponse renderResponse,
 		DDLFormWebConfiguration ddlFormWebConfiguration,
@@ -116,7 +117,8 @@ public class DDLFormAdminDisplayContext {
 		DDMFormValuesMerger ddmFormValuesMerger,
 		DDMStructureLocalService ddmStructureLocalService,
 		JSONFactory jsonFactory, StorageEngine storageEngine,
-		WorkflowEngineManager workflowEngineManager) {
+		WorkflowEngineManager workflowEngineManager,
+		DDMFormTemplateContextFactory ddmFormTemplateContextFactory) {
 
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
@@ -137,6 +139,8 @@ public class DDLFormAdminDisplayContext {
 		_jsonFactory = jsonFactory;
 		_storageEngine = storageEngine;
 		_workflowEngineManager = workflowEngineManager;
+
+		_ddmFormTemplateContextFactory = ddmFormTemplateContextFactory;
 
 		_ddlFormAdminRequestHelper = new DDLFormAdminRequestHelper(
 			renderRequest);
@@ -233,8 +237,15 @@ public class DDLFormAdminDisplayContext {
 		Optional<DDLRecordSet> recordSetOptional = Optional.ofNullable(
 			getRecordSet());
 
+		ThemeDisplay themeDisplay =
+			_ddlFormAdminRequestHelper.getThemeDisplay();
+
 		DDLFormBuilderContext ddlFormBuilderDisplayContext =
-			new DDLFormBuilderContext(recordSetOptional);
+			new DDLFormBuilderContext(
+				recordSetOptional, _ddmFormTemplateContextFactory, _ddmFormFieldTypeServicesTracker,
+				_ddlFormAdminRequestHelper.getLocale(),
+				themeDisplay.getRequest(),
+				themeDisplay.getResponse(), _jsonFactory);
 
 		Map<String, Object> formBuilderContext =
 			ddlFormBuilderDisplayContext.create();
@@ -242,6 +253,61 @@ public class DDLFormAdminDisplayContext {
 		JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
 
 		return jsonSerializer.serializeDeep(formBuilderContext);
+	}
+
+	public String getFormDescription() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		if (recordSet == null) {
+			jsonObject.put(getDefaultLanguageId(), "");
+		}
+		else {
+			Map<Locale, String> descriptionMap = recordSet.getDescriptionMap();
+
+			for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
+				jsonObject.put(
+					LocaleUtil.toLanguageId(entry.getKey()), entry.getValue());
+			}
+
+		}
+
+		return jsonObject.toString();
+	}
+
+	public String getFormName() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		if (recordSet == null) {
+			jsonObject.put(getDefaultLanguageId(), "");
+		}
+		else {
+			Map<Locale, String> nameMap = recordSet.getNameMap();
+
+			for (Map.Entry<Locale, String> entry : nameMap.entrySet()) {
+				jsonObject.put(
+					LocaleUtil.toLanguageId(entry.getKey()), entry.getValue());
+			}
+
+		}
+
+		return jsonObject.toString();
+	}
+
+	public String getDefaultLanguageId() throws PortalException {
+		DDLRecordSet recordSet = getRecordSet();
+
+		if (recordSet == null) {
+			return LocaleUtil.toLanguageId(getSiteDefaultLocale());
+		}
+
+		DDMStructure ddmStructure = recordSet.getDDMStructure();
+
+		return ddmStructure.getDefaultLanguageId();
+
 	}
 
 	public String getFormURL() throws PortalException {

@@ -88,6 +88,9 @@ AUI.add(
 						instance.renderUI();
 						instance.bindUI();
 
+//						instance._syncName();
+//						instance._syncDescription();
+
 						instance.savedState = instance.initialState = instance.getState();
 					},
 
@@ -103,6 +106,10 @@ AUI.add(
 
 						instance.createEditor(instance.ns('descriptionEditor'));
 						instance.createEditor(instance.ns('nameEditor'));
+					},
+
+					syncUI: function() {
+						console.log('form builder sync ui');
 					},
 
 					bindUI: function() {
@@ -126,11 +133,14 @@ AUI.add(
 							instance.one('#showRules').on('click', A.bind('_onRulesButtonClick', instance)),
 							instance.one('#showForm').on('click', A.bind('_onFormButtonClick', instance)),
 							instance.one('#requireAuthenticationCheckbox').on('change', A.bind('_onRequireAuthenticationCheckboxChanged', instance)),
-							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance)),
-							nameEditor.on('blur', A.bind('_onNameEditorBlur', instance)),
-							descriptionEditor.on('blur', A.bind('_onDescriptionEditorBlur', instance)),
-							translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance))
+							Liferay.on('destroyPortlet', A.bind('_onDestroyPortlet', instance))
 						];
+
+						// check detach
+						translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance));
+						nameEditor.on('blur', A.bind('_onNameEditorBlur', instance));
+						descriptionEditor.on('blur', A.bind('_onDescriptionEditorBlur', instance));
+
 
 						var autosaveInterval = Settings.autosaveInterval;
 
@@ -142,15 +152,15 @@ AUI.add(
 					destructor: function() {
 						var instance = this;
 
-						clearInterval(instance._intervalId);
+						//clearInterval(instance._intervalId);
 
 						instance.get('formBuilder').destroy();
 						instance.get('ruleBuilder').destroy();
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
 
-						instance._getNameEditor().destroy();
-						instance._getDescriptionEditor().destroy();
+//						instance._getNameEditor().destroy();
+//						instance._getDescriptionEditor().destroy();
 					},
 
 					createEditor: function(editorName) {
@@ -340,7 +350,7 @@ AUI.add(
 
 						var state = instance.getState();
 
-						console.log('state', state);
+						console.log('saved state', JSON.stringify(state));
 
 						instance.one('#description').val(JSON.stringify(state.description));
 						instance.one('#name').val(JSON.stringify(state.name));
@@ -375,7 +385,7 @@ AUI.add(
 
 						var editForm = instance.get('editForm');
 
-						//submitForm(editForm.form);
+						submitForm(editForm.form);
 					},
 
 					_afterEditingLocaleChange: function(event) {
@@ -390,12 +400,29 @@ AUI.add(
 						instance.set('editingLanguageId', editingLanguageId);
 						formBuilder.set('editingLanguageId', editingLanguageId);
 
+						instance._syncName();
+						instance._syncDescription();
+					},
+
+					_syncName: function() {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId')
+						var defaultLanguageId = instance.get('defaultLanguageId');
+
 						var localizedName = instance.get('localizedName');
 
 						var name = localizedName[editingLanguageId] || localizedName[defaultLanguageId];
 						localizedName[editingLanguageId] = name;
 
 						instance._setName(name);
+					},
+
+					_syncDescription: function() {
+						var instance = this;
+
+						var editingLanguageId = instance.get('editingLanguageId')
+						var defaultLanguageId = instance.get('defaultLanguageId');
 
 						var localizedDescription = instance.get('localizedDescription');
 
@@ -403,12 +430,6 @@ AUI.add(
 						localizedDescription[editingLanguageId] = description;
 
 						instance._setDescription(description);
-
-						var pageManager = formBuilder.get('pageManager');
-
-						pageManager.fire('localeChange', {
-							editingLocale: event.newVal
-						});
 					},
 
 					_afterAutosave: function(event) {
@@ -775,6 +796,8 @@ AUI.add(
 
 					_valueFormBuilder: function() {
 						var instance = this;
+
+						console.log('loaded stated', JSON.stringify(instance.get('context')));
 
 						return new Liferay.DDL.FormBuilder(
 							{
