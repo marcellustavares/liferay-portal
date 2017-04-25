@@ -44,14 +44,14 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 	<portlet:param name="mvcPath" value="/admin/edit_record_set.jsp" />
 </portlet:actionURL>
 
-<liferay-frontend:translation-manager
-	availableLocales="<%= availableLocales %>"
-	componentId='<%= renderResponse.getNamespace() + "translationManager" %>'
-	defaultLanguageId="<%= defaultLanguageId %>"
-	id="translationManager"
-/>
-
 <div class="hide portlet-forms" id="<portlet:namespace />formContainer">
+	<liferay-frontend:translation-manager
+		availableLocales="<%= availableLocales %>"
+		componentId='<%= renderResponse.getNamespace() + "translationManager" %>'
+		defaultLanguageId="<%= defaultLanguageId %>"
+		id="translationManager"
+	/>
+
 	<aui:nav-bar cssClass="collapse-basic-search" id="toolbar" markupView="lexicon">
 		<aui:nav cssClass="navbar-nav">
 			<aui:nav-item id="showForm" label="Builder" selected="<%= true %>" />

@@ -108,10 +108,6 @@ AUI.add(
 						instance.createEditor(instance.ns('nameEditor'));
 					},
 
-					syncUI: function() {
-						console.log('form builder sync ui');
-					},
-
 					bindUI: function() {
 						var instance = this;
 
@@ -797,8 +793,6 @@ AUI.add(
 
 					_valueFormBuilder: function() {
 						var instance = this;
-
-						console.log('loaded stated', JSON.stringify(instance.get('context')));
 
 						return new Liferay.DDL.FormBuilder(
 							{

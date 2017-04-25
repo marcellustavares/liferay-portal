@@ -14,6 +14,20 @@
 
 package com.liferay.dynamic.data.lists.form.web.internal.portlet.action;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.liferay.dynamic.data.lists.exception.RecordSetSettingsRedirectURLException;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleDeserializer;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleToDDMFormRuleConverter;
@@ -44,10 +58,11 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
@@ -55,24 +70,10 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -84,13 +85,21 @@ public class SaveRecordSetMVCCommandHelper {
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
-		long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
-
-		if (recordSetId == 0) {
-			return addRecordSet(portletRequest, portletResponse);
-		}
-		else {
-			return updateRecordSet(portletRequest, portletResponse);
+		try {
+			long recordSetId = ParamUtil.getLong(portletRequest, "recordSetId");
+	
+			if (recordSetId == 0) {
+				return addRecordSet(portletRequest, portletResponse);
+			}
+			else {
+				return updateRecordSet(portletRequest, portletResponse);
+			}
+		} 
+		catch(Exception e) {
+			if(_log.isDebugEnabled()) {
+				_log.debug(e);
+			}
+			throw e;
 		}
 	}
 
@@ -104,7 +113,7 @@ public class SaveRecordSetMVCCommandHelper {
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
 		String structureKey = ParamUtil.getString(
 			portletRequest, "structureKey");
-		String storageType = "json"; //getStorageType(settingsDDMFormValues);
+		String storageType = getStorageType(settingsDDMFormValues);
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
@@ -268,7 +277,8 @@ public class SaveRecordSetMVCCommandHelper {
 
 		Value value = ddmFormFieldValue.getValue();
 
-		String storageType = value.getString(ddmFormValues.getDefaultLocale());
+		String storageType = getSingleValue(
+			value.getString(ddmFormValues.getDefaultLocale()));
 
 		if (Validator.isNull(storageType)) {
 			storageType = StorageType.JSON.toString();
@@ -289,7 +299,23 @@ public class SaveRecordSetMVCCommandHelper {
 
 		Value value = ddmFormFieldValue.getValue();
 
-		return value.getString(ddmFormValues.getDefaultLocale());
+		return getSingleValue(
+			value.getString(ddmFormValues.getDefaultLocale()));
+	}
+	
+	protected String getSingleValue(String value) {
+		try {
+			JSONArray jsonArray = jsonFactory.createJSONArray(value);
+			
+			if(jsonArray.length() > 0) {
+				return jsonArray.getString(0);
+			}
+			
+			return StringPool.BLANK;
+		}
+		catch(Exception e) {
+			return value;
+		}
 	}
 
 	protected DDMStructure updateDDMStructure(PortletRequest portletRequest)
@@ -364,8 +390,8 @@ public class SaveRecordSetMVCCommandHelper {
 		ddlRecordSetService.updateRecordSet(
 			recordSet.getRecordSetId(), settingsDDMFormValues);
 
-//		updateWorkflowDefinitionLink(
-//			portletRequest, recordSet, settingsDDMFormValues);
+		updateWorkflowDefinitionLink(
+			portletRequest, recordSet, settingsDDMFormValues);
 	}
 
 	protected void updateWorkflowDefinitionLink(
@@ -466,4 +492,6 @@ public class SaveRecordSetMVCCommandHelper {
 	@Reference
 	private Portal _portal;
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		SaveRecordSetMVCCommandHelper.class);
 }
