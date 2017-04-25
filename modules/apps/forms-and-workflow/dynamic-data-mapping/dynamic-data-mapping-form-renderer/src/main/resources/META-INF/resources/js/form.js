@@ -27,11 +27,6 @@ AUI.add(
 						value: ''
 					},
 
-					rules: {
-						validator: AArray.isArray,
-						value:[]
-					},
-
 					strings: {
 						value: {
 							next: Liferay.Language.get('next'),

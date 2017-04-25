@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -146,11 +147,7 @@ public class DDMFormTemplateContextFactoryImpl
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
 		templateContext.put("readOnly", ddmFormRenderingContext.isReadOnly());
 
-
 		templateContext.put("rules", ddmForm.getDDMFormRules());
-
-//		templateContext.put("defaultLanguageId", LocaleUtil.toLanguageId(ddmForm.getDefaultLocale()));
-//		templateContext.put("availableLangy", LocaleUtil.toLanguageId(ddmForm.getDefaultLocale()));
 
 		Locale locale = ddmFormRenderingContext.getLocale();
 

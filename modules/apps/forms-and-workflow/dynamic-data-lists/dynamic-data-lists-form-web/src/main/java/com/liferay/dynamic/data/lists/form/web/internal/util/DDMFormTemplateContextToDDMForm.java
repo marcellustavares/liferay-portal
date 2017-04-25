@@ -14,19 +14,7 @@
 
 package com.liferay.dynamic.data.lists.form.web.internal.util;
 
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
-import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
-
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -36,11 +24,47 @@ import java.util.function.Consumer;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleDeserializer;
+import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleToDDMFormRuleConverter;
+import com.liferay.dynamic.data.lists.form.web.internal.converter.model.DDLFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Validator;
+
 /**
  * @author Marcellus Tavares
  */
 @Component(immediate = true, service = DDMFormTemplateContextToDDMForm.class)
 public class DDMFormTemplateContextToDDMForm {
+
+	  @Reference
+	    protected DDLFormRuleDeserializer ddlFormRuleDeserializer;
+	    @Reference
+	    protected DDLFormRuleToDDMFormRuleConverter
+	        ddlFormRulesToDDMFormRulesConverter;
+
+	protected List<DDMFormRule> getDDMFormRules(String rules)
+        throws PortalException {
+
+		if (Validator.isNull(rules) || Objects.equals("[]", rules)) {
+            return Collections.emptyList();
+        }
+
+		List<DDLFormRule> ddlFormRules = ddlFormRuleDeserializer.deserialize(
+            rules);
+        return ddlFormRulesToDDMFormRulesConverter.convert(ddlFormRules);
+    }
+
 
 	public DDMForm deserialize(String serializedDDMFormTemplateContext)
 		throws PortalException {
@@ -61,6 +85,20 @@ public class DDMFormTemplateContextToDDMForm {
 			jsonObject.getString("defaultLanguageId"));
 
 		ddmForm.setDefaultLocale(defaultLocale);
+
+
+        JSONArray rulesJSONArray = jsonObject.getJSONArray("rules");
+        ddmForm.setDDMFormRules(getDDMFormRules(rulesJSONArray.toString()));
+
+//		JSONObject successPageJSONObject = jsonObject.getJSONObject("successPage");
+
+
+//		DDMFormSuccessPageSettings ddmFormSuccessPageSettings = new DDMFormSuccessPageSettings();
+//
+//		ddmFormSuccessPageSettings.setBody(successPageJSONObject.getString("body"));
+//		ddmFormSuccessPageSettings.setTitle(title);
+//		ddmFormSuccessPageSettings.setEnabled(enabled);
+//
 
 		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
 			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
