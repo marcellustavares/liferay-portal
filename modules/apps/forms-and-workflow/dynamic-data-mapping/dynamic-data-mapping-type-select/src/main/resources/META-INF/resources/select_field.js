@@ -64,7 +64,6 @@ AUI.add(
 					},
 
 					value: {
-						validator: Array.isArray,
 						value: []
 					}
 				},
@@ -145,7 +144,25 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						return instance.get('value');
+						var value = instance.get('value');
+
+						if (!Lang.isArray(value)) {
+							value = [value];
+						}
+
+						value = value.join();
+
+						if (!value) {
+							var contextValue = instance._getContextValue();
+
+							var hasOption = instance._hasOption(contextValue);
+
+							if (contextValue && !hasOption) {
+								value = contextValue;
+							}
+						}
+
+						return value;
 					},
 
 					getValueSelected: function() {
@@ -153,7 +170,13 @@ AUI.add(
 
 						var value = instance.get('value');
 
-						return instance._getOptionsSelected(value);
+						if (!Lang.isArray(value)) {
+							value = [value];
+						}
+
+						var values = instance._getOptionsSelected(value);
+
+						return values;
 					},
 
 					openList: function() {
@@ -196,6 +219,10 @@ AUI.add(
 					setValue: function(value) {
 						var instance = this;
 
+						if (!Lang.isArray(value)) {
+							value = [value];
+						}
+
 						instance.set('value', value);
 
 						instance.render();
@@ -234,6 +261,18 @@ AUI.add(
 						instance._preventDocumentClick = false;
 					},
 
+					_getContextValue: function() {
+						var instance = this;
+
+						var contextValue = instance.get('value');
+
+						if (Lang.isArray(contextValue)) {
+							contextValue = contextValue[0];
+						}
+
+						return contextValue;
+					},
+
 					_getDataSourceType: function(value) {
 						if (Lang.isString(value)) {
 							try {
@@ -261,15 +300,15 @@ AUI.add(
 
 						var optionsSelected = [];
 
-						if (value) {
+						if (Lang.isArray(value)) {
 							value.forEach(
 								function(value, index) {
 									options.forEach(
-											function(option, index) {
-												if (value && option.value === value) {
-													optionsSelected.push(option);
-												}
+										function(option, index) {
+											if (value && option.value === value) {
+												optionsSelected.push(option);
 											}
+										}
 									);
 								}
 							);
@@ -319,14 +358,16 @@ AUI.add(
 					_handleItemClick: function(target) {
 						var instance = this;
 
-						var value = instance.get('value');
+						var value;
 
 						var currentTarget = target;
 
-						var itemValue = currentTarget.getAttribute('data-option-value');
-
 						if (instance.get('multiple')) {
+							value = instance.get('value').slice();
+
 							instance._open = true;
+
+							var itemValue = currentTarget.getAttribute('data-option-value');
 
 							if (currentTarget.getAttribute('data-option-selected')) {
 								value = instance._removeBadge(itemValue);
@@ -336,9 +377,7 @@ AUI.add(
 							}
 						}
 						else {
-							value = value.slice(1);
-
-							value.push(itemValue);
+							value = currentTarget.getAttribute('data-option-value');
 
 							instance._open = false;
 						}
@@ -427,6 +466,40 @@ AUI.add(
 						}
 
 						return values;
+					},
+
+					_selectDOMOption: function(optionNode, value) {
+						var selected = false;
+
+						if (Lang.isArray(value)) {
+							value = value[0];
+						}
+
+						if (value) {
+							if (optionNode.val()) {
+								selected = value.indexOf(optionNode.val()) > -1;
+							}
+
+							if (selected) {
+								optionNode.attr('selected', selected);
+							}
+							else {
+								optionNode.removeAttribute('selected');
+							}
+						}
+					},
+
+					_setSelectNodeOptions: function(optionNode, value) {
+						var instance = this;
+
+						if (instance.get('multiple')) {
+							for (var i = 0; i < value.length; i++) {
+								instance._selectDOMOption(optionNode, value[i]);
+							}
+						}
+						else {
+							instance._selectDOMOption(optionNode, value);
+						}
 					}
 				}
 			}

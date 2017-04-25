@@ -233,9 +233,7 @@ AUI.add(
 			_getOperatorValue: function(index) {
 				var instance = this;
 
-				var operator = instance._getOperator(index);
-
-				return instance._getFieldValue(operator);
+				return instance._getOperator(index).getValue();
 			},
 
 			_getSecondOperand: function(index, type) {
@@ -260,33 +258,13 @@ AUI.add(
 			_getSecondOperandTypeValue: function(index) {
 				var instance = this;
 
-				var secondOperandType = instance._getSecondOperandType(index);
-
-				return instance._getFieldValue(secondOperandType);
-			},
-
-			_getFieldValue: function(selectField) {
-				var instance = this;
-
-				var value = selectField.getValue();
-
-				if (!A.Lang.isArray(value)) {
-					return value;
-				}
-
-				if (value.length == 0) {
-					return '';
-				}
-
-				return value[0];
+				return instance._getSecondOperandType(index).getValue();
 			},
 
 			_getSecondOperandValue: function(index, type) {
 				var instance = this;
 
-				var secondOperand = instance._getSecondOperand(index, type);
-
-				return instance._getFieldValue(secondOperand);
+				return instance._getSecondOperand(index, type).getValue();
 			},
 
 			_handleAddConditionClick: function() {
@@ -480,12 +458,12 @@ AUI.add(
 			_renderOperator: function(index, condition, container) {
 				var instance = this;
 
-				var value = [];
+				var value;
 
 				if (condition) {
 					instance._updateOperatorList(instance._getFieldDataType(condition.operands[0].value), index);
 
-					value =  [condition.operator];
+					value = condition.operator;
 				}
 
 				var context = {
@@ -511,7 +489,7 @@ AUI.add(
 			_renderSecondOperandInput: function(index, condition, container) {
 				var instance = this;
 
-				var value = '';
+				var value;
 
 				var firstOperand = instance._getFirstOperand(index);
 
@@ -548,7 +526,7 @@ AUI.add(
 			_renderSecondOperandSelectField: function(index, condition, container) {
 				var instance = this;
 
-				var value = [];
+				var value;
 
 				var visible = instance._getSecondOperandTypeValue(index) === 'field';
 
@@ -580,7 +558,7 @@ AUI.add(
 			_renderSecondOperandSelectOptions: function(index, condition, container) {
 				var instance = this;
 
-				var value = [];
+				var value;
 				var options = [];
 
 				var visible = instance._getSecondOperandTypeValue(index) === 'constant' &&
@@ -614,7 +592,7 @@ AUI.add(
 			_renderSecondOperandType: function(index, condition, container) {
 				var instance = this;
 
-				var value = [];
+				var value;
 
 				if (condition && instance._isBinaryCondition(index)) {
 					value = condition.operands[1].type;
@@ -723,7 +701,7 @@ AUI.add(
 
 				var secondOperandType = instance._getSecondOperandType(index);
 
-				var secondOperandTypeValue = secondOperandType ? instance._getFieldValue(secondOperandType) : '';
+				var secondOperandTypeValue = secondOperandType ? secondOperandType.getValue() : '';
 
 				if (secondOperandTypeValue && secondOperandType.get('visible')) {
 					var secondOperandFields = instance._getSecondOperand(index, 'fields');
@@ -794,7 +772,7 @@ AUI.add(
 						secondOperandType.set('visible', true);
 					}
 					else {
-						instance._getSecondOperand(index, 'fields').set('value', ['']);
+						instance._getSecondOperand(index, 'fields').set('value', '');
 						secondOperandType.set('visible', false);
 					}
 				}

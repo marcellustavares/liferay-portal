@@ -171,7 +171,7 @@ AUI.add(
 					_createActionSelect: function(index, action, container) {
 						var instance = this;
 
-						var value = [];
+						var value;
 
 						if (action && action.action) {
 							value = action.action;
@@ -194,7 +194,7 @@ AUI.add(
 
 						field.render(container);
 
-						if (!A.Object.isEmpty(value)) {
+						if (value) {
 							instance._createTargetSelect(index, value, action);
 						}
 

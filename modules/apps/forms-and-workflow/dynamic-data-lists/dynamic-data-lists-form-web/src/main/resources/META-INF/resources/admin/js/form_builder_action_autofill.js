@@ -101,13 +101,13 @@ AUI.add(
 					_afterDataProviderChange: function(event) {
 						var instance = this;
 
-						var dataProviderInstanceSelectFieldValue = event.newVal;
+						var dataProviderSelectField = event.newVal;
 
-						if (A.Object.isEmpty(dataProviderInstanceSelectFieldValue)) {
+						if (!dataProviderSelectField) {
 							return;
 						}
 
-						var ddmDataProviderInstanceId = dataProviderInstanceSelectFieldValue[0];
+						var ddmDataProviderInstanceId = dataProviderSelectField.getValue()[0];
 
 						if (!ddmDataProviderInstanceId) {
 							return;
@@ -209,7 +209,6 @@ AUI.add(
 							fieldName: instance.get('index') + '-action',
 							showLabel: false,
 							visible: true,
-							value: [],
 							options: []
 						};
 
@@ -394,7 +393,7 @@ AUI.add(
 
 						var uuid;
 
-						var value = [];
+						var value;
 
 						var action = instance.get('action');
 
@@ -404,9 +403,7 @@ AUI.add(
 
 						for (var i = 0; i < result.length; i++) {
 							if (result[i].uuid === uuid) {
-								value = [
-								         result[i].id
-						         ];
+								value = result[i].id;
 							}
 
 							dataProvidersList.push(

@@ -350,8 +350,6 @@ AUI.add(
 
 						var state = instance.getState();
 
-						console.log('saved state', JSON.stringify(state));
-
 						instance.one('#description').val(JSON.stringify(state.description));
 						instance.one('#name').val(JSON.stringify(state.name));
 

@@ -61,7 +61,7 @@ AUI.add(
 					_createField: function() {
 						var instance = this;
 
-						var value = [];
+						var value;
 
 						var action = instance.get('action');
 
