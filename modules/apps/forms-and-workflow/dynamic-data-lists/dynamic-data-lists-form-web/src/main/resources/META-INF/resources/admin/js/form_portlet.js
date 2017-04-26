@@ -141,22 +141,22 @@ AUI.add(
 						var autosaveInterval = Settings.autosaveInterval;
 
 						if (autosaveInterval > 0) {
-//							instance._intervalId = setInterval(A.bind('_autosave', instance), autosaveInterval * MINUTE);
+							instance._intervalId = setInterval(A.bind('_autosave', instance), autosaveInterval * MINUTE);
 						}
 					},
 
 					destructor: function() {
 						var instance = this;
 
-						//clearInterval(instance._intervalId);
+						clearInterval(instance._intervalId);
 
 						instance.get('formBuilder').destroy();
 						instance.get('ruleBuilder').destroy();
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
 
-//						instance._getNameEditor().destroy();
-//						instance._getDescriptionEditor().destroy();
+						//instance._getNameEditor().destroy();
+						//instance._getDescriptionEditor().destroy();
 					},
 
 					createEditor: function(editorName) {
@@ -461,7 +461,7 @@ AUI.add(
 
 						callback = callback || EMPTY_FN;
 
-						instance.serializeFormBuilder();
+						instance.syncInputValues();
 
 						var state = instance.getState();
 

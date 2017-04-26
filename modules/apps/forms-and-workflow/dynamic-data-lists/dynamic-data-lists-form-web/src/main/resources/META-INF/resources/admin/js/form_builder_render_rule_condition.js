@@ -432,21 +432,16 @@ AUI.add(
 
                 var fields = instance.get('fields').slice();
 
-				var context = {
-					fieldName: index + '-condition-first-operand',
-					label: instance.get('strings').if,
-					options: fields,
-					showLabel: false,
-					value: value,
-					visible: true
-				};
+                fields.unshift(currentUser);
 
-				options.unshift(currentUser);
-
-				var field = new Liferay.DDM.Field.Select(
+				var field = instance.createSelectField(
 					{
-						bubbleTargets: [instance],
-						context: context
+						fieldName: index + '-condition-first-operand',
+						label: instance.get('strings').if,
+						options: fields,
+						showLabel: false,
+						value: value,
+						visible: true
 					}
 				);
 
@@ -458,38 +453,35 @@ AUI.add(
 			_renderOperator: function(index, condition, container) {
 				var instance = this;
 
-				var value;
+				var value = [];
 
-				if (condition) {
-					instance._updateOperatorList(instance._getFieldDataType(condition.operands[0].value), index);
+                if (condition) {
+                    value = condition.operator;
+                }
 
-					value = condition.operator;
-				}
+                var field = instance.createSelectField(
+            		{
+                        fieldName: index + '-condition-operator',
+                        showLabel: false,
+                        value: value,
+                        visible: true,
+                        options: []
+                    }
+                );
+                instance._conditions[index + '-condition-operator'] = field;
 
-				var context = {
-					fieldName: index + '-condition-operator',
-					showLabel: false,
-					value: value,
-					visible: true,
-					options: []
-				};
 
-				var field = new Liferay.DDM.Field.Select(
-					{
-						bubbleTargets: [instance],
-						context: context
-					}
-				);
+                field.render(container);
 
-				field.render(container);
-
-				instance._conditions[index + '-condition-operator'] = field;
+                if (condition) {
+                    instance._updateOperatorList(instance._getFieldDataType(condition.operands[0].value), index);
+                }
 			},
 
 			_renderSecondOperandInput: function(index, condition, container) {
 				var instance = this;
 
-				var value;
+				var value = '';
 
 				var firstOperand = instance._getFirstOperand(index);
 
@@ -501,20 +493,15 @@ AUI.add(
 					value = condition.operands[1].value;
 				}
 
-				var context = {
-					fieldName: index + '-condition-second-operand-input',
-					options: [],
-					placeholder: '',
-					showLabel: false,
-					value: value,
-					strings: {},
-					visible: visible
-				};
-
-				var field = new Liferay.DDM.Field.Text(
+				var field = instance.createTextField(
 					{
-						bubbleTargets: [instance],
-						context: context
+						fieldName: index + '-condition-second-operand-input',
+						options: [],
+						placeholder: '',
+						showLabel: false,
+						value: value,
+						strings: {},
+						visible: visible
 					}
 				);
 
@@ -526,7 +513,7 @@ AUI.add(
 			_renderSecondOperandSelectField: function(index, condition, container) {
 				var instance = this;
 
-				var value;
+				var value = [];
 
 				var visible = instance._getSecondOperandTypeValue(index) === 'field';
 
@@ -534,19 +521,14 @@ AUI.add(
 					value = condition.operands[1].value;
 				}
 
-				var context = {
-					fieldName: index + '-condition-second-operand-select',
-					label: 'Put this label after',
-					options: instance.get('fields'),
-					showLabel: false,
-					value: value,
-					visible: visible
-				};
-
-				var field = new Liferay.DDM.Field.Select(
+				var field = instance.createSelectField(
 					{
-						bubbleTargets: [instance],
-						context: context
+						fieldName: index + '-condition-second-operand-select',
+						label: 'Put this label after',
+						options: instance.get('fields'),
+						showLabel: false,
+						value: value,
+						visible: visible
 					}
 				);
 
@@ -558,7 +540,7 @@ AUI.add(
 			_renderSecondOperandSelectOptions: function(index, condition, container) {
 				var instance = this;
 
-				var value;
+				var value = [];
 				var options = [];
 
 				var visible = instance._getSecondOperandTypeValue(index) === 'constant' &&
@@ -569,18 +551,13 @@ AUI.add(
 					value = condition.operands[1].value;
 				}
 
-				var context = {
-					fieldName: index + '-condition-second-operand-options-select',
-					options: options,
-					showLabel: false,
-					value: value,
-					visible: visible
-				};
-
-				var field = new Liferay.DDM.Field.Select(
+				var field = instance.createSelectField(
 					{
-						bubbleTargets: [instance],
-						context: context
+						fieldName: index + '-condition-second-operand-options-select',
+						options: options,
+						showLabel: false,
+						value: value,
+						visible: visible
 					}
 				);
 
@@ -592,34 +569,29 @@ AUI.add(
 			_renderSecondOperandType: function(index, condition, container) {
 				var instance = this;
 
-				var value;
+				var value = [];
 
 				if (condition && instance._isBinaryCondition(index)) {
 					value = condition.operands[1].type;
 				}
 
-				var context = {
-					fieldName: index + '-condition-second-operand-type',
-					label: instance.get('strings').the,
-					options: [
-						{
-							label: instance.get('strings').value,
-							value: 'constant'
-						},
-						{
-							label: instance.get('strings').otherField,
-							value: 'field'
-						}
-					],
-					showLabel: false,
-					value: value,
-					visible: instance._isBinaryCondition(index)
-				};
-
-				var field = new Liferay.DDM.Field.Select(
+				var field = instance.createSelectField(
 					{
-						bubbleTargets: [instance],
-						context: context
+						fieldName: index + '-condition-second-operand-type',
+						label: instance.get('strings').the,
+						options: [
+							{
+								label: instance.get('strings').value,
+								value: 'constant'
+							},
+							{
+								label: instance.get('strings').otherField,
+								value: 'field'
+							}
+						],
+						showLabel: false,
+						value: value,
+						visible: instance._isBinaryCondition(index)
 					}
 				);
 

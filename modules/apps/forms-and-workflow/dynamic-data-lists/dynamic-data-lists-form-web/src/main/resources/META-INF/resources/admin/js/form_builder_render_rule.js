@@ -171,34 +171,57 @@ AUI.add(
 					_createActionSelect: function(index, action, container) {
 						var instance = this;
 
-						var value;
+						var value = [];
 
 						if (action && action.action) {
-							value = action.action;
+							value = [action.action];
 						}
 
-						var context = {
-							fieldName: index + '-target',
-							options: instance._getActionOptions(),
-							showLabel: false,
-							visible: true
-						};
-
-						var field = new Liferay.DDM.Field.Select(
+						var field = instance.createSelectField(
 							{
-								bubbleTargets: [instance],
-								context: context,
-								value: value
+								fieldName: index + '-target',
+								options: instance._getActionOptions(),
+								showLabel: false,
+								value: value,
+								visible: true
 							}
 						);
 
 						field.render(container);
 
-						if (value) {
-							instance._createTargetSelect(index, value, action);
+						if (value.length) {
+							instance._createTargetSelect(index, value[0], action);
 						}
 
 						instance._actions[index + '-target'] = field;
+					},
+
+					createSelectField: function(context) {
+						var instance = this;
+
+						var config = A.merge(
+							context,
+							{
+								bubbleTargets: [instance],
+								context: A.clone(context)
+							}
+						);
+
+						return new Liferay.DDM.Field.Select(config);
+					},
+
+					createTextField: function(context) {
+						var instance = this;
+
+						var config = A.merge(
+							context,
+							{
+								bubbleTargets: [instance],
+								context: A.clone(context)
+							}
+						);
+
+						return new Liferay.DDM.Field.Text(config);
 					},
 
 					_createTargetSelect: function(index, type, action) {

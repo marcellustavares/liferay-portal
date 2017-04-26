@@ -29,6 +29,7 @@ AUI.add(
 					}
 				);
 			},
+
 			visitLayout: function(pages, fieldHandler) {
 				var visitor = new Liferay.DDM.LayoutVisitor();
 
