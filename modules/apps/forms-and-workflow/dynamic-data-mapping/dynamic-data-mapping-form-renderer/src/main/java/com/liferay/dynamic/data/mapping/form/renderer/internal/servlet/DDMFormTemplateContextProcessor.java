@@ -135,6 +135,20 @@ public class DDMFormTemplateContextProcessor {
 			ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
 		}
 
+		// nested fields
+
+		JSONArray nestedFieldsJSONArray =
+			fieldJSONObject.getJSONArray("nestedFields");
+
+		if (nestedFieldsJSONArray != null) {
+			for (int i = 0; i < nestedFieldsJSONArray.length(); i++) {
+				JSONObject nestedFieldJSONObject = nestedFieldsJSONArray.getJSONObject(i);
+
+				ddmFormField.addNestedDDMFormField(createDDMFormField(nestedFieldJSONObject));
+			}
+		}
+
+
 		return ddmFormField;
 	}
 
