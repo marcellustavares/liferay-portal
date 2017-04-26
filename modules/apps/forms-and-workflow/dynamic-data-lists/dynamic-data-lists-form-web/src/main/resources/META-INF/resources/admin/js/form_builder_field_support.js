@@ -74,7 +74,7 @@ AUI.add(
 
 				var builder = instance.get('builder');
 
-				return new Liferay.DDL.FormBuilderSettingsForm(
+				var settingsForm = new Liferay.DDL.FormBuilderSettingsForm(
 					{
 						context: context,
 						editMode: builder.isEditMode() || instance.isPersisted(),
@@ -84,6 +84,12 @@ AUI.add(
 						templateNamespace: 'ddm.settings_form'
 					}
 				);
+
+				var dataTypeField = settingsForm.getField('dataType');
+
+				dataTypeField.set('value', 'string');
+
+				return settingsForm;
 			},
 
 			generateFieldName: function(key) {
@@ -124,30 +130,27 @@ AUI.add(
 
 				var context = instance.get('context.settingsContext');
 
+				// check this
 				var defaultLocale = themeDisplay.getDefaultLanguageId();
 
 				var locale = instance.get('locale');
 
-				FormBuilderUtil.visitLayout(context.pages, function(formFieldContext) {
-					var fieldName = Util.getFieldNameFromQualifiedName(formFieldContext.name);
+				FormBuilderUtil.visitLayout(context.pages, function(settingsFormFieldContext) {
+					var fieldName = Util.getFieldNameFromQualifiedName(settingsFormFieldContext.name);
 
-					if (formFieldContext.localizable) {
-						var localizedValue = formFieldContext.localizedValue[locale] || formFieldContext.localizedValue[defaultLocale] || '';
+					if (settingsFormFieldContext.localizable) {
+						var localizedValue = settingsFormFieldContext.localizedValue[locale] || settingsFormFieldContext.localizedValue[defaultLocale] || '';
 
 						settings[fieldName] = localizedValue;
-						formFieldContext.value = localizedValue;
+						settingsFormFieldContext.value = localizedValue;
 					}
-					else if (formFieldContext.type === 'options') {
-						settings[fieldName] = formFieldContext.value[locale] || formFieldContext.value[defaultLocale];
+					else if (settingsFormFieldContext.type === 'options') {
+						settings[fieldName] = settingsFormFieldContext.value[locale] || settingsFormFieldContext.value[defaultLocale];
 					}
 					else {
-						settings[fieldName] = formFieldContext.value;
+						settings[fieldName] = settingsFormFieldContext.value;
 					}
 				});
-
-				if (!settings.dataType) {
-					settings.dataType = instance.get('dataType');
-				}
 
 				settings.readOnly = true;
 				settings.type = instance.get('type');

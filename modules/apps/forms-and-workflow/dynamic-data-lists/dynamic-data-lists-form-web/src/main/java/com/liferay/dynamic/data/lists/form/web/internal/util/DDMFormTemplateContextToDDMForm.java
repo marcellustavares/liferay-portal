@@ -143,7 +143,7 @@ public class DDMFormTemplateContextToDDMForm {
 
 									String valueProperty = "value";
 
-									if (localizable || fieldJSONObject.getString("type").equals("options")) {
+									if (localizable /*|| fieldJSONObject.getString("type").equals("options")*/) {
 										valueProperty = "localizedValue";
 									}
 

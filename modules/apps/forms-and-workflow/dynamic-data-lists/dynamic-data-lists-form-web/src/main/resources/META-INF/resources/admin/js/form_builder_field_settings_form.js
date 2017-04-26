@@ -29,7 +29,6 @@ AUI.add(
 						var instance = this;
 
 						instance._eventHandlers.push(
-							instance.after('*:valueChange', instance._afterFieldValueChange),
 							instance.after('render', instance._afterSettingsFormRender),
 							instance.on('*:addOption', instance._afterAddOption),
 							instance.on('*:removeOption', instance.alignModal)
@@ -77,11 +76,10 @@ AUI.add(
 						var instance = this;
 
 						var field = event.target;
+						var formBuilderField = instance.get('field');
+
 
 						var localizedValue = field.get('context.localizedValue');
-						var type = field.get('context.type');
-
-						var formBuilderField = instance.get('field');
 
 						if (localizedValue) {
 							var locale = formBuilderField.get('locale');
@@ -107,6 +105,10 @@ AUI.add(
 						instance._createAutocompleElements();
 
 						instance._updateFormFieldProperties();
+
+						instance._eventHandlers.push(
+							instance.after('*:valueChange', instance._afterFieldValueChange)
+						);
 					},
 
 					_updateFormFieldProperties: function() {
