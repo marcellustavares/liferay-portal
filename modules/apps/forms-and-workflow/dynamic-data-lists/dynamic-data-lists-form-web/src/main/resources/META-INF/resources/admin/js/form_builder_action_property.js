@@ -69,7 +69,7 @@ AUI.add(
 							value = action.target;
 						}
 
-						instance._field = instance._createSelectField(
+						instance._field = instance.createSelectField(
 							{
 								fieldName: instance.get('index') + '-action',
 								label: Liferay.Language.get('the'),
@@ -81,22 +81,7 @@ AUI.add(
 						);
 
 						return instance._field;
-					},
-
-					_createSelectField: function(context) {
-						var instance = this;
-
-						var config = A.merge(
-							context,
-							{
-								bubbleTargets: [instance],
-								context: A.clone(context)
-							}
-						);
-
-						return new Liferay.DDM.Field.Select(config);
-					},
-
+					}
 				}
 			}
 		);

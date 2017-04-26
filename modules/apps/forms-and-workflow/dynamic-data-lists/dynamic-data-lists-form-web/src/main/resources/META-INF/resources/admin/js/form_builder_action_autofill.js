@@ -155,7 +155,7 @@ AUI.add(
 						for (var i = 0; i < inputParameters.length; i++) {
 							var name = inputParameters[i].name;
 
-							value = null;
+							value = [];
 
 							inputParametersContainer.append(
 								Lang.sub(
@@ -176,20 +176,16 @@ AUI.add(
 							);
 
 							if (action && action.inputs && action.inputs[name]) {
-								value = action.inputs[name];
+								value = [action.inputs[name]];
 							}
 
-							var context = {
-								fieldName: instance.get('index') + '-action',
-								options: instance.getFieldsByType(inputParameters[i].type),
-								showLabel: false,
-								visible: true
-							};
-
-							inputParameterField = new Liferay.DDM.Field.Select(
+							inputParameterField = instance.createSelectField(
 								{
-									context: context,
-									value: value
+									fieldName: instance.get('index') + '-action',
+									options: instance.getFieldsByType(inputParameters[i].type),
+									showLabel: false,
+									value: value,
+									visible: true
 								}
 							).render(inputParametersContainer.one('.container-input-field-' + i));
 
@@ -205,16 +201,12 @@ AUI.add(
 					_createDataProviderList: function() {
 						var instance = this;
 
-						var context = {
-							fieldName: instance.get('index') + '-action',
-							showLabel: false,
-							visible: true,
-							options: []
-						};
-
-						instance._dataProvidersList = new Liferay.DDM.Field.Select(
+						instance._dataProvidersList = instance.createSelectField(
 							{
-								context: context
+								fieldName: instance.get('index') + '-action',
+								showLabel: false,
+								visible: true,
+								options: []
 							}
 						);
 
@@ -243,7 +235,7 @@ AUI.add(
 						for (var i = 0; i < outputParameters.length; i++) {
 							var name = outputParameters[i].name;
 
-							value = null;
+							value = [];
 
 							outputParametersContainer.append(
 								Lang.sub(
@@ -264,21 +256,17 @@ AUI.add(
 							);
 
 							if (action && action.outputs && action.outputs[name]) {
-								value = action.outputs[name];
+								value = [action.outputs[name]];
 							}
 
-							var context = {
-								fieldName: instance.get('index') + '-action',
-								label: outputParameters[i],
-								options: instance.getFieldsByType(outputParameters[i].type),
-								showLabel: false,
-								visible: true
-							};
-
-							outputParameterField = new Liferay.DDM.Field.Select(
+							outputParameterField = instance.createSelectField(
 								{
-									context: context,
-									value: value
+									fieldName: instance.get('index') + '-action',
+									label: outputParameters[i],
+									options: instance.getFieldsByType(outputParameters[i].type),
+									showLabel: false,
+									value: value,
+									visible: true
 								}
 							).render(outputParametersContainer.one('.container-input-field-' + i));
 

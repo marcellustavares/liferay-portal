@@ -329,8 +329,8 @@ AUI.add(
 
 						var value = selectField.getValue();
 
-						if (A.Object.isEmpty(value)) {
-							return '';
+						if (!A.Lang.isArray(value)) {
+							return value || '';
 						}
 						else {
 							return value[0];

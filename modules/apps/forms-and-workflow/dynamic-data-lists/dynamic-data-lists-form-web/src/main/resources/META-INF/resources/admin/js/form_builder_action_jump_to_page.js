@@ -62,34 +62,29 @@ AUI.add(
 					_createSourceField: function() {
 						var instance = this;
 
-						var value;
+						var value = [];
 
 						var action = instance.get('action');
 
 						if (action && action.source) {
 							if (action.source.value) {
-								value = action.source.value;
+								value = [action.source.value];
 							}
 							else {
 								var options = instance.get('options');
 
-								value = options[action.source].value;
+								value = [options[action.source].value];
 							}
 						}
 
-						var context = {
-							fieldName: instance.get('index') + '-action',
-							label: Liferay.Language.get('the'),
-							options: instance.get('options'),
-							showLabel: false,
-							visible: false
-						};
-
-						instance._sourceField = new Liferay.DDM.Field.Select(
+						instance._sourceField = instance.createSelectField(
 							{
-								bubbleTargets: [instance],
-								context: context,
-								value: value
+								fieldName: instance.get('index') + '-action',
+								label: Liferay.Language.get('the'),
+								options: instance.get('options'),
+								showLabel: false,
+								value: value,
+								visible: false
 							}
 						);
 
@@ -101,34 +96,29 @@ AUI.add(
 					_createTargetField: function() {
 						var instance = this;
 
-						var value;
+						var value = [];
 
 						var action = instance.get('action');
 
 						if (action && action.target) {
 							if (action.target.value) {
-								value = action.target.value;
+								value = [action.target.value];
 							}
 							else {
 								var options = instance.get('options');
 
-								value = options[action.target].value;
+								value = [options[action.target].value];
 							}
 						}
 
-						var context = {
-							fieldName: instance.get('index') + '-action',
-							label: Liferay.Language.get('the'),
-							options: instance.get('options'),
-							showLabel: false,
-							visible: true
-						};
-
-						instance._targetField = new Liferay.DDM.Field.Select(
+						instance._targetField = instance.createSelectField(
 							{
-								bubbleTargets: [instance],
-								context: context,
-								value: value
+								fieldName: instance.get('index') + '-action',
+								label: Liferay.Language.get('the'),
+								options: instance.get('options'),
+								showLabel: false,
+								value: value,
+								visible: true
 							}
 						);
 
