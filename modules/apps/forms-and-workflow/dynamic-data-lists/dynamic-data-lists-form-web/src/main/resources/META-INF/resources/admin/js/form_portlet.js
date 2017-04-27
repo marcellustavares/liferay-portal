@@ -134,9 +134,8 @@ AUI.add(
 
 						// check detach
 						translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance));
-						nameEditor.on('blur', A.bind('_onNameEditorBlur', instance));
-						descriptionEditor.on('blur', A.bind('_onDescriptionEditorBlur', instance));
-
+						nameEditor.on('change', A.bind('_onNameEditorChange', instance));
+						descriptionEditor.on('change', A.bind('_onDescriptionEditorChange', instance));
 
 						var autosaveInterval = Settings.autosaveInterval;
 
@@ -348,6 +347,14 @@ AUI.add(
 						var instance = this;
 
 						var state = instance.getState();
+						
+						var defaultLanguageId = instance.get('defaultLanguageId');
+						
+						var name = state.name;
+						
+						if(!name[defaultLanguageId]) {
+							name[defaultLanguageId] = Liferay.Language.get('untitled-form');
+						}
 
 						instance.one('#description').val(JSON.stringify(state.description));
 						instance.one('#name').val(JSON.stringify(state.name));
@@ -565,8 +572,10 @@ AUI.add(
 						var instance = this;
 
 						var formObject = A.QueryString.parse(formString);
-
-						formObject[instance.ns('name')] = instance.get('name');
+						
+						var state = instance.getState();
+						
+						formObject[instance.ns('name')] = JSON.stringify(state.name);
 
 						formString = A.QueryString.stringify(formObject);
 
@@ -647,7 +656,7 @@ AUI.add(
 						instance.destroy();
 					},
 
-					_onNameEditorBlur: function(event) {
+					_onNameEditorChange: function(event) {
 						var instance = this;
 
 						var editingLanguageId = instance.get('editingLanguageId');
@@ -658,7 +667,7 @@ AUI.add(
 						localizedName[editingLanguageId] = nameEditor.getHTML();
 					},
 
-					_onDescriptionEditorBlur: function(event) {
+					_onDescriptionEditorChange: function(event) {
 						var instance = this;
 
 						var editingLanguageId = instance.get('editingLanguageId');

@@ -245,7 +245,6 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				getRolesURL: '<%= getRoles.toString() %>',
 				publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
 				portletNamespace: '<portlet:namespace />',
-				recordSetId: <%= recordSetId %>,
 				restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
 				rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
 				sharedFormURL: '<%= ddlFormAdminDisplayContext.getSharedFormURL() %>'
@@ -286,6 +285,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											editingLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
 											editForm: event.form,
 											namespace: '<portlet:namespace />',
+											recordSetId: <%= recordSetId %>,
 											translationManager: Liferay.component('<portlet:namespace />translationManager')
 										}
 									)
