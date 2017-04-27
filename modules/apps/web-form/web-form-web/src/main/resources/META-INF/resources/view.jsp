@@ -225,6 +225,8 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 				for (var i = 1; i < keys.length; i++) {
 					var key = keys[i];
 
+					var field = A.one('#<portlet:namespace />' + key);
+
 					var currentFieldValue = fieldsMap[key];
 
 					var optionalFieldError = A.one('#<portlet:namespace />fieldOptionalError' + key);
@@ -239,6 +241,8 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 							optionalFieldError.show();
 							optionalFieldError.replace(optionalFieldError);
 						}
+
+						field.attr('aria-invalid', true);
 					}
 					else if (!fieldValidationFunctions[key](currentFieldValue, fieldsMap)) {
 						validationErrors = true;
@@ -253,6 +257,8 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 							validationError.show();
 							validationError.replace(validationError);
 						}
+
+						field.attr('aria-invalid', true);
 					}
 					else {
 						if (optionalFieldError) {
@@ -262,6 +268,8 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 						if (validationError) {
 							validationError.hide();
 						}
+
+						field.attr('aria-invalid', false);
 					}
 				}
 
