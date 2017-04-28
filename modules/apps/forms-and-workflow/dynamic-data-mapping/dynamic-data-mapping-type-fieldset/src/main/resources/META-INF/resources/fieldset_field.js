@@ -35,9 +35,9 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-//						instance._eventHandlers.push(
-//							instance.after('contextChange', instance._afterContextChange)
-//						);
+						instance._eventHandlers.push(
+							instance.after('contextChange', instance._afterContextChange)
+						);
 					},
 
 					copyConfiguration: function() {
@@ -158,8 +158,6 @@ AUI.add(
 								repeatedIndex: 0
 							}
 						);
-
-						console.log(nestedFieldContext);
 
 						return new FieldSetNestedField(nestedFieldContext);
 					},

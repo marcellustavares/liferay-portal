@@ -73,9 +73,9 @@ AUI.add(
 				var config = A.merge(
 					context,
 					{
+						context: A.clone(context),
 						enableEvaluations: instance.get('enableEvaluations'),
 						fieldName: instance.get('fieldName'),
-						parent: instance.get('parent'),
 						portletNamespace: instance.get('portletNamespace'),
 						repeatable: instance.get('repeatable'),
 						repeatedIndex: repetitions.length,
@@ -84,8 +84,6 @@ AUI.add(
 						visible: instance.get('visible')
 					}
 				);
-
-				config.context = A.clone(context);
 
 				delete config.context.name;
 				delete config.context.value;
