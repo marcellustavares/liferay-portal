@@ -23,12 +23,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -55,7 +53,7 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 		JSONArray jsonArray = jsonObject.getJSONArray("availableLanguageIds");
 
-		Set<Locale> availableLocales = new HashSet<Locale>();
+		Set<Locale> availableLocales = new HashSet<>();
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			availableLocales.add(
@@ -73,7 +71,8 @@ public class DDMFormTemplateContextToDDMFormLayout {
 		ddmFormLayout.setPaginationMode(paginationMode);
 
 		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
-			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
+			new DDMFormTemplateJSONContextVisitor(
+				jsonObject.getJSONArray("pages"));
 
 		List<DDMFormLayoutRow> ddmFormLayoutRows = new ArrayList<>();
 		List<DDMFormLayoutColumn> ddmFormLayoutColumns = new ArrayList<>();
@@ -89,13 +88,16 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 					ddmFormLayoutPage.setDescription(
 						deserializeLocalizedValue(
-							pageJSONObject.getJSONObject("description"), defaultLocale, availableLocales));
+							pageJSONObject.getJSONObject("description"),
+							defaultLocale, availableLocales));
 
 					ddmFormLayoutPage.setTitle(
 						deserializeLocalizedValue(
-							pageJSONObject.getJSONObject("title"), defaultLocale, availableLocales));
+							pageJSONObject.getJSONObject("title"),
+							defaultLocale, availableLocales));
 
-					ddmFormLayoutPage.setDDMFormLayoutRows(new ArrayList<DDMFormLayoutRow>(ddmFormLayoutRows));
+					ddmFormLayoutPage.setDDMFormLayoutRows(
+						new ArrayList<DDMFormLayoutRow>(ddmFormLayoutRows));
 
 					ddmFormLayout.addDDMFormLayoutPage(ddmFormLayoutPage);
 
@@ -112,7 +114,8 @@ public class DDMFormTemplateContextToDDMFormLayout {
 					DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
 
 					ddmFormLayoutRow.setDDMFormLayoutColumns(
-						new ArrayList<DDMFormLayoutColumn>(ddmFormLayoutColumns));
+						new ArrayList<DDMFormLayoutColumn>(
+							ddmFormLayoutColumns));
 
 					ddmFormLayoutRows.add(ddmFormLayoutRow);
 
@@ -131,7 +134,8 @@ public class DDMFormTemplateContextToDDMFormLayout {
 
 					ddmFormLayoutColumn.setSize(
 						columnJSONObject.getInt("size"));
-					ddmFormLayoutColumn.setDDMFormFieldNames(new ArrayList<String>(fieldNames));
+					ddmFormLayoutColumn.setDDMFormFieldNames(
+						new ArrayList<String>(fieldNames));
 
 					ddmFormLayoutColumns.add(ddmFormLayoutColumn);
 
@@ -155,7 +159,10 @@ public class DDMFormTemplateContextToDDMFormLayout {
 		return ddmFormLayout;
 	}
 
-	protected LocalizedValue deserializeLocalizedValue(JSONObject jsonObject, Locale defaultLocale, Set<Locale> availableLocales) {
+	protected LocalizedValue deserializeLocalizedValue(
+		JSONObject jsonObject, Locale defaultLocale,
+		Set<Locale> availableLocales) {
+
 		LocalizedValue localizedValue = new LocalizedValue(defaultLocale);
 
 		for (Locale availableLocale : availableLocales) {

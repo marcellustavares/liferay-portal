@@ -254,6 +254,7 @@ public class DDLFormDisplayContext {
 			WebKeys.THEME_DISPLAY);
 
 		ddmFormRenderingContext.setLocale(themeDisplay.getLocale());
+
 		ddmFormRenderingContext.setPortletNamespace(
 			_renderResponse.getNamespace());
 

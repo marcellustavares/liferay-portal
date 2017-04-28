@@ -29,19 +29,18 @@ public class DDMFormTemplateContextVisitor {
 		_ddmFormTemplateContext = ddmFormTemplateContext;
 	}
 
-	public void onVisitField(
-		Consumer<Map<String, Object>> fieldConsumer) {
-
+	public void onVisitField(Consumer<Map<String, Object>> fieldConsumer) {
 		_fieldConsumer = fieldConsumer;
 	}
 
 	public void visit() {
-		traversePages((List<Map<String, Object>>) _ddmFormTemplateContext.get("pages"));
+		traversePages(
+			(List<Map<String, Object>>)_ddmFormTemplateContext.get("pages"));
 	}
 
 	protected void traverseColumns(List<Map<String, Object>> columns) {
 		for (Map<String, Object> column : columns) {
-			traverseFields((List<Map<String, Object>>) column.get("fields"));
+			traverseFields((List<Map<String, Object>>)column.get("fields"));
 		}
 	}
 
@@ -53,21 +52,22 @@ public class DDMFormTemplateContextVisitor {
 
 	protected void traversePages(List<Map<String, Object>> pages) {
 		for (Map<String, Object> page : pages) {
-			traverseRows((List<Map<String, Object>>) page.get("rows"));
+			traverseRows((List<Map<String, Object>>)page.get("rows"));
 		}
 	}
 
 	protected void traverseRows(List<Map<String, Object>> rows) {
 		for (Map<String, Object> row : rows) {
-			traverseColumns((List<Map<String, Object>>) row.get("columns"));
+			traverseColumns((List<Map<String, Object>>)row.get("columns"));
 		}
 	}
-	private Map<String, Object> _ddmFormTemplateContext;
+
+	private final Map<String, Object> _ddmFormTemplateContext;
 	private Consumer<Map<String, Object>> _fieldConsumer =
-			new NOPFieldContextConsumer();
+		new NOPFieldContextConsumer();
 
 	private static class NOPFieldContextConsumer
-		implements Consumer<Map<String, Object> > {
+		implements Consumer<Map<String, Object>> {
 
 		@Override
 		public void accept(Map<String, Object> fieldContext) {

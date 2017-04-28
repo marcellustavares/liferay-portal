@@ -55,12 +55,14 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 
 import java.io.IOException;
+
 import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.servlet.Servlet;
 
 import org.osgi.service.component.annotations.Component;
@@ -373,6 +375,10 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 	private DDMFormRenderer _ddmFormRenderer;
 	private DDMFormRuleToDDLFormRuleConverter
 		_ddmFormRulesToDDLFormRulesConverter;
+
+	@Reference
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
+
 	private DDMFormValuesFactory _ddmFormValuesFactory;
 	private DDMFormValuesMerger _ddmFormValuesMerger;
 	private DDMStructureLocalService _ddmStructureLocalService;
@@ -380,9 +386,6 @@ public class DDLFormAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 
 	private StorageEngine _storageEngine;
 	private WorkflowEngineManager _workflowEngineManager;

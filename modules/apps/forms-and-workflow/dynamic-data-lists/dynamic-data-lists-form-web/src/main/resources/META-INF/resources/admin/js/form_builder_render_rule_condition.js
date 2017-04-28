@@ -1,18 +1,18 @@
 AUI.add(
 	'liferay-ddl-form-builder-render-rule-condition',
 	function(A) {
-        var currentUser = {
+		var currentUser = {
 			dataType: 'user',
 			label: 'User',
 			value: 'user'
 		};
 
-        var Settings = Liferay.DDL.Settings;
+		var Settings = Liferay.DDL.Settings;
 
 		var FormBuilderRenderRuleCondition = function(config) {};
 
 		FormBuilderRenderRuleCondition.ATTRS = {
-            if: {
+			if: {
 				value: Liferay.Language.get('if')
 			},
 
@@ -430,9 +430,9 @@ AUI.add(
 					value = condition.operands[0].value;
 				}
 
-                var fields = instance.get('fields').slice();
+				var fields = instance.get('fields').slice();
 
-                fields.unshift(currentUser);
+				fields.unshift(currentUser);
 
 				var field = instance.createSelectField(
 					{
@@ -455,27 +455,26 @@ AUI.add(
 
 				var value = [];
 
-                if (condition) {
-                    value = condition.operator;
-                }
+				if (condition) {
+					value = condition.operator;
+				}
 
-                var field = instance.createSelectField(
-            		{
-                        fieldName: index + '-condition-operator',
-                        showLabel: false,
-                        value: value,
-                        visible: true,
-                        options: []
-                    }
-                );
-                instance._conditions[index + '-condition-operator'] = field;
+				var field = instance.createSelectField(
+					{
+						fieldName: index + '-condition-operator',
+						showLabel: false,
+						value: value,
+						visible: true,
+						options: []
+					}
+				);
+				instance._conditions[index + '-condition-operator'] = field;
 
+				field.render(container);
 
-                field.render(container);
-
-                if (condition) {
-                    instance._updateOperatorList(instance._getFieldDataType(condition.operands[0].value), index);
-                }
+				if (condition) {
+					instance._updateOperatorList(instance._getFieldDataType(condition.operands[0].value), index);
+				}
 			},
 
 			_renderSecondOperandInput: function(index, condition, container) {

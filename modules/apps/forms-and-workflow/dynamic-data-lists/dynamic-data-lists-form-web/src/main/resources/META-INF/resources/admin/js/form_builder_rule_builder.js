@@ -20,7 +20,7 @@ AUI.add(
 					formBuilder: {
 						value: null
 					},
-					
+
 					roles: {
 						value: []
 					},

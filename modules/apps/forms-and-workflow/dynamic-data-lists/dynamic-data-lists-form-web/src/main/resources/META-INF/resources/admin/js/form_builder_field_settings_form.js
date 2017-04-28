@@ -78,7 +78,6 @@ AUI.add(
 						var field = event.target;
 						var formBuilderField = instance.get('field');
 
-
 						var localizedValue = field.get('context.localizedValue');
 
 						if (localizedValue) {

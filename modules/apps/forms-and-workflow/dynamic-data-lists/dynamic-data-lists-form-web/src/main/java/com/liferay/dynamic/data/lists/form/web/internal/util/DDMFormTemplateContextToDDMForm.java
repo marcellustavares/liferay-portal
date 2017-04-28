@@ -14,17 +14,6 @@
 
 package com.liferay.dynamic.data.lists.form.web.internal.util;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleDeserializer;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.DDLFormRuleToDDMFormRuleConverter;
 import com.liferay.dynamic.data.lists.form.web.internal.converter.model.DDLFormRule;
@@ -42,30 +31,22 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Marcellus Tavares
  */
 @Component(immediate = true, service = DDMFormTemplateContextToDDMForm.class)
 public class DDMFormTemplateContextToDDMForm {
-
-	  @Reference
-	    protected DDLFormRuleDeserializer ddlFormRuleDeserializer;
-	    @Reference
-	    protected DDLFormRuleToDDMFormRuleConverter
-	        ddlFormRulesToDDMFormRulesConverter;
-
-	protected List<DDMFormRule> getDDMFormRules(String rules)
-        throws PortalException {
-
-		if (Validator.isNull(rules) || Objects.equals("[]", rules)) {
-            return Collections.emptyList();
-        }
-
-		List<DDLFormRule> ddlFormRules = ddlFormRuleDeserializer.deserialize(
-            rules);
-        return ddlFormRulesToDDMFormRulesConverter.convert(ddlFormRules);
-    }
-
 
 	public DDMForm deserialize(String serializedDDMFormTemplateContext)
 		throws PortalException {
@@ -77,7 +58,7 @@ public class DDMFormTemplateContextToDDMForm {
 
 		JSONArray jsonArray = jsonObject.getJSONArray("availableLanguageIds");
 
-		Set<Locale> availableLocales = new HashSet<Locale>();
+		Set<Locale> availableLocales = new HashSet<>();
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			availableLocales.add(
@@ -91,30 +72,35 @@ public class DDMFormTemplateContextToDDMForm {
 
 		ddmForm.setDefaultLocale(defaultLocale);
 
+		JSONArray rulesJSONArray = jsonObject.getJSONArray("rules");
 
-        JSONArray rulesJSONArray = jsonObject.getJSONArray("rules");
-        ddmForm.setDDMFormRules(getDDMFormRules(rulesJSONArray.toString()));
+		ddmForm.setDDMFormRules(getDDMFormRules(rulesJSONArray.toString()));
 
-		JSONObject successPageJSONObject = jsonObject.getJSONObject("successPageSettings");
-
+		JSONObject successPageJSONObject = jsonObject.getJSONObject(
+			"successPageSettings");
 
 		DDMFormSuccessPageSettings ddmFormSuccessPageSettings =
 			new DDMFormSuccessPageSettings();
 
 		JSONObject bodyJSONObject = successPageJSONObject.getJSONObject("body");
 
-		ddmFormSuccessPageSettings.setBody(bodyJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
+		ddmFormSuccessPageSettings.setBody(
+			bodyJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
 
-		JSONObject titleJSONObject = successPageJSONObject.getJSONObject("title");
+		JSONObject titleJSONObject = successPageJSONObject.getJSONObject(
+			"title");
 
-		ddmFormSuccessPageSettings.setTitle(titleJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
-		ddmFormSuccessPageSettings.setEnabled(successPageJSONObject.getBoolean("enabled"));
+		ddmFormSuccessPageSettings.setTitle(
+			titleJSONObject.getString(LocaleUtil.toLanguageId(defaultLocale)));
+
+		ddmFormSuccessPageSettings.setEnabled(
+			successPageJSONObject.getBoolean("enabled"));
 
 		ddmForm.setDDMFormSuccessPageSettings(ddmFormSuccessPageSettings);
 
-
 		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
-			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
+			new DDMFormTemplateJSONContextVisitor(
+				jsonObject.getJSONArray("pages"));
 
 		ddmFormTemplateContextVisitor.onVisitField(
 			new Consumer<JSONObject>() {
@@ -143,7 +129,10 @@ public class DDMFormTemplateContextToDDMForm {
 
 									String valueProperty = "value";
 
-									if (localizable /*|| fieldJSONObject.getString("type").equals("options")*/) {
+									// || fieldJSONObject.getString(
+									// "type").equals("options")
+
+									if (localizable) {
 										valueProperty = "localizedValue";
 									}
 
@@ -189,9 +178,7 @@ public class DDMFormTemplateContextToDDMForm {
 									String type)
 								throws PortalException {
 
-								if (Objects.equals(
-										dataType, "ddm-options")) {
-
+								if (Objects.equals(dataType, "ddm-options")) {
 									return deserializeDDMFormFieldOptions(
 										serializedDDMFormFieldProperty);
 								}
@@ -220,8 +207,9 @@ public class DDMFormTemplateContextToDDMForm {
 									String serializedDDMFormFieldProperty)
 								throws PortalException {
 
-								JSONArray jsonArray = jsonFactory.createJSONArray(
-									serializedDDMFormFieldProperty);
+								JSONArray jsonArray =
+									jsonFactory.createJSONArray(
+										serializedDDMFormFieldProperty);
 
 								if (jsonArray.length() == 0) {
 									return "";
@@ -267,17 +255,22 @@ public class DDMFormTemplateContextToDDMForm {
 									jsonFactory.createJSONObject(
 										serializedDDMFormFieldProperty);
 
+								for (Locale availableLocale :
+										availableLocales) {
 
-								for (Locale availableLocale : availableLocales) {
 									String valueString = jsonObject.getString(
-										LocaleUtil.toLanguageId(availableLocale), null);
+										LocaleUtil.toLanguageId(
+											availableLocale),
+										null);
 
 									if (valueString == null) {
 										valueString = jsonObject.getString(
-											LocaleUtil.toLanguageId(defaultLocale));
+											LocaleUtil.toLanguageId(
+												defaultLocale));
 									}
 
-									localizedValue.addString(availableLocale, valueString);
+									localizedValue.addString(
+										availableLocale, valueString);
 								}
 
 								return localizedValue;
@@ -289,17 +282,23 @@ public class DDMFormTemplateContextToDDMForm {
 								DDMFormFieldOptions ddmFormFieldOptions =
 									new DDMFormFieldOptions();
 
-								for (Locale availableLocale : availableLocales) {
+								for (Locale availableLocale :
+										availableLocales) {
+
 									JSONArray jsonArray =
 										jsonObject.getJSONArray(
-											LocaleUtil.toLanguageId(availableLocale));
+											LocaleUtil.toLanguageId(
+												availableLocale));
 
 									if (jsonArray == null) {
 										jsonArray = jsonObject.getJSONArray(
-											LocaleUtil.toLanguageId(defaultLocale));
+											LocaleUtil.toLanguageId(
+												defaultLocale));
 									}
 
-									for (int i = 0; i < jsonArray.length(); i++) {
+									int length = jsonArray.length();
+
+									for (int i = 0; i < length; i++) {
 										JSONObject jsonObject2 =
 											jsonArray.getJSONObject(i);
 
@@ -310,10 +309,8 @@ public class DDMFormTemplateContextToDDMForm {
 									}
 								}
 
-
 								ddmFormFieldOptions.setDefaultLocale(
 									defaultLocale);
-
 
 								return ddmFormFieldOptions;
 							}
@@ -331,6 +328,26 @@ public class DDMFormTemplateContextToDDMForm {
 
 		return ddmForm;
 	}
+
+	protected List<DDMFormRule> getDDMFormRules(String rules)
+		throws PortalException {
+
+		if (Validator.isNull(rules) || Objects.equals("[]", rules)) {
+			return Collections.emptyList();
+		}
+
+		List<DDLFormRule> ddlFormRules = ddlFormRuleDeserializer.deserialize(
+			rules);
+
+		return ddlFormRulesToDDMFormRulesConverter.convert(ddlFormRules);
+	}
+
+	@Reference
+	protected DDLFormRuleDeserializer ddlFormRuleDeserializer;
+
+	@Reference
+	protected DDLFormRuleToDDMFormRuleConverter
+		ddlFormRulesToDDMFormRulesConverter;
 
 	@Reference
 	protected JSONFactory jsonFactory;

@@ -62,7 +62,8 @@ public class DDMFormTemplateContextToDDMFormValues {
 			serializedDDMFormTemplateContext);
 
 		DDMFormTemplateJSONContextVisitor ddmFormTemplateContextVisitor =
-			new DDMFormTemplateJSONContextVisitor(jsonObject.getJSONArray("pages"));
+			new DDMFormTemplateJSONContextVisitor(
+				jsonObject.getJSONArray("pages"));
 
 		ddmFormTemplateContextVisitor.onVisitField(
 			new Consumer<JSONObject>() {

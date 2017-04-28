@@ -381,19 +381,19 @@ AUI.add(
 						var localizedTitles = instance.get('localizedTitles');
 						var localizedDescriptions = instance.get('localizedDescriptions');
 
-						if(!localizedTitles[activePageNumber-1]) {
+						if (!localizedTitles[activePageNumber-1]) {
 							localizedTitles[activePageNumber-1] = {};
 						}
 
-						if(!localizedDescriptions[activePageNumber-1]) {
+						if (!localizedDescriptions[activePageNumber-1]) {
 							localizedDescriptions[activePageNumber-1] = {};
 						}
 
-						if(!localizedTitles[activePageNumber-1][editingLanguageId]) {
+						if (!localizedTitles[activePageNumber-1][editingLanguageId]) {
 							localizedTitles[activePageNumber-1][editingLanguageId] = localizedTitles[activePageNumber-1][defaultLanguageId] || '';
 						}
 
-						if(!localizedDescriptions[activePageNumber-1][editingLanguageId]) {
+						if (!localizedDescriptions[activePageNumber-1][editingLanguageId]) {
 							localizedDescriptions[activePageNumber-1][editingLanguageId] = localizedDescriptions[activePageNumber-1][defaultLanguageId] || '';
 						}
 					},
@@ -919,17 +919,17 @@ AUI.add(
 
 						var successPageSettings = instance.get('successPageSettings');
 
-						if(!successPageSettings.body[editingLanguageId]) {
+						if (!successPageSettings.body[editingLanguageId]) {
 							var strings = instance.get('strings');
 
-							if(successPageSettings.body[defaultLanguageId]) {
+							if (successPageSettings.body[defaultLanguageId]) {
 								successPageSettings.body[editingLanguageId] = A.clone(successPageSettings.body[defaultLanguageId]);
 							}
 							else {
 								successPageSettings.body[editingLanguageId] = strings.defaultContent;
 							}
 
-							if(successPageSettings.title[defaultLanguageId]) {
+							if (successPageSettings.title[defaultLanguageId]) {
 								successPageSettings.title[editingLanguageId] = A.clone(successPageSettings.title[defaultLanguageId]);
 							}
 							else {
