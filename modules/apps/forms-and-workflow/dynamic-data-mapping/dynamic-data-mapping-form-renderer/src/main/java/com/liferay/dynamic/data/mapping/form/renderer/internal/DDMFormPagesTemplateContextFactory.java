@@ -181,10 +181,9 @@ public class DDMFormPagesTemplateContextFactory {
 
 		LocalizedValue description = ddmFormLayoutPage.getDescription();
 
+		pageTemplateContext.put("description", description.getString(_locale));
 		pageTemplateContext.put(
 			"localizedDescription", serializeLocalizedValue(description));
-		pageTemplateContext.put(
-			"description", description.getString(_locale));
 
 		pageTemplateContext.put("enabled", isPageEnabled(pageIndex));
 
@@ -201,24 +200,11 @@ public class DDMFormPagesTemplateContextFactory {
 
 		LocalizedValue title = ddmFormLayoutPage.getTitle();
 
-		pageTemplateContext.put("localizedTitle", serializeLocalizedValue(title));
+		pageTemplateContext.put(
+			"localizedTitle", serializeLocalizedValue(title));
 		pageTemplateContext.put("title", title.getString(_locale));
 
 		return pageTemplateContext;
-	}
-
-	protected Map<String, String> serializeLocalizedValue(
-		LocalizedValue localizedValue) {
-
-		Map<String , String> map = new HashMap<>();
-
-		for (Map.Entry<Locale, String> entry :
-				localizedValue.getValues().entrySet()) {
-
-			map.put(LocaleUtil.toLanguageId(entry.getKey()), entry.getValue());
-		}
-
-		return map;
 	}
 
 	protected List<Object> createRowsTemplateContext(
@@ -296,6 +282,20 @@ public class DDMFormPagesTemplateContextFactory {
 				ddmFormFieldsMap,
 				ddmFormFieldValue.getNestedDDMFormFieldValues());
 		}
+	}
+
+	protected Map<String, String> serializeLocalizedValue(
+		LocalizedValue localizedValue) {
+
+		Map<String, String> map = new HashMap<>();
+
+		for (Map.Entry<Locale, String> entry :
+				localizedValue.getValues().entrySet()) {
+
+			map.put(LocaleUtil.toLanguageId(entry.getKey()), entry.getValue());
+		}
+
+		return map;
 	}
 
 	private DDMFormEvaluationResult _createDDMFormEvaluationResult() {

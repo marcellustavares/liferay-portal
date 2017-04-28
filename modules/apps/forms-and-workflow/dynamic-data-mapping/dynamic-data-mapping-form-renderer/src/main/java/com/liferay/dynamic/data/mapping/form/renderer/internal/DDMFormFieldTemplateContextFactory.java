@@ -496,9 +496,9 @@ public class DDMFormFieldTemplateContextFactory {
 			ddmFormFieldTemplateContext, "localizable");
 
 		if (localizable) {
-			Map<String, String> serializedValue = new HashMap<String, String>();
+			Map<String, String> serializedValue = new HashMap<>();
 
-			for (Locale locale :value.getAvailableLocales()) {
+			for (Locale locale : value.getAvailableLocales()) {
 				serializedValue.put(
 					LanguageUtil.getLanguageId(locale),
 					value.getString(locale));

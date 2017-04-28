@@ -93,6 +93,7 @@ public class TextLocalizableDDMFormFieldTemplateContextContributor
 
 			for (Map.Entry<Locale, String> entry : values.entrySet()) {
 				String languageId = LanguageUtil.getLanguageId(entry.getKey());
+
 				localizedValues.put(languageId, entry.getValue());
 			}
 

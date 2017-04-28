@@ -86,7 +86,7 @@ public interface GridDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "ddm-options", label = "%columns", required = true,
-		type = "options", properties = {"localizable=true"}
+		type = "options"
 	)
 	public DDMFormFieldOptions columns();
 
@@ -100,7 +100,7 @@ public interface GridDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "ddm-options", label = "%rows", required = true,
-		type = "options", properties = {"localizable=true"}
+		type = "options"
 	)
 	public DDMFormFieldOptions rows();
 

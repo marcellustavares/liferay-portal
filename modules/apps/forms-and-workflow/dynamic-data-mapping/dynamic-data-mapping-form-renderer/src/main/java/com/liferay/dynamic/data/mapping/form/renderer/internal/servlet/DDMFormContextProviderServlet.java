@@ -70,8 +70,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 			DDMFormTemplateContextProcessor
 				ddmFormPagesTemplateContextProcessor =
 					new DDMFormTemplateContextProcessor(
-						_jsonFactory.createJSONObject(
-								serializedFormContext));
+						_jsonFactory.createJSONObject(serializedFormContext));
 
 			DDMForm ddmForm = ddmFormPagesTemplateContextProcessor.getDDMForm();
 

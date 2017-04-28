@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
@@ -137,17 +136,18 @@ public class DDMFormTemplateContextProcessor {
 
 		// nested fields
 
-		JSONArray nestedFieldsJSONArray =
-			fieldJSONObject.getJSONArray("nestedFields");
+		JSONArray nestedFieldsJSONArray = fieldJSONObject.getJSONArray(
+			"nestedFields");
 
 		if (nestedFieldsJSONArray != null) {
 			for (int i = 0; i < nestedFieldsJSONArray.length(); i++) {
-				JSONObject nestedFieldJSONObject = nestedFieldsJSONArray.getJSONObject(i);
+				JSONObject nestedFieldJSONObject =
+					nestedFieldsJSONArray.getJSONObject(i);
 
-				ddmFormField.addNestedDDMFormField(createDDMFormField(nestedFieldJSONObject));
+				ddmFormField.addNestedDDMFormField(
+					createDDMFormField(nestedFieldJSONObject));
 			}
 		}
-
 
 		return ddmFormField;
 	}
@@ -195,20 +195,26 @@ public class DDMFormTemplateContextProcessor {
 	}
 
 	protected void process() {
-//		JSONArray jsonArray = _ddmFormTemplateContextJSONObject.getJSONArray(
-//			"availableLanguageIds");
-//
-//		for (int i = 0; i < jsonArray.length(); i++) {
-//			_ddmForm.addAvailableLocale(
-//				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
-//		}
-//
-//		Locale defaultLocale = LocaleUtil.fromLanguageId(
-//			_ddmFormTemplateContextJSONObject.getString("defaultLanguageId"));
+		//		JSONArray jsonArray =
 
-//		_ddmForm.setDefaultLocale();
+		// _ddmFormTemplateContextJSONObject.getJSONArray(
 
-		JSONArray rules =  _ddmFormTemplateContextJSONObject.getJSONArray("rules");
+		//			"availableLanguageIds");
+		//
+		//		for (int i = 0; i < jsonArray.length(); i++) {
+		//			_ddmForm.addAvailableLocale(
+		//				LocaleUtil.fromLanguageId(jsonArray.getString(i)));
+		//		}
+		//
+		//		Locale defaultLocale = LocaleUtil.fromLanguageId(
+		//			_ddmFormTemplateContextJSONObject.getString(
+
+		// "defaultLanguageId"));
+
+		//		_ddmForm.setDefaultLocale();
+
+		JSONArray rules = _ddmFormTemplateContextJSONObject.getJSONArray(
+			"rules");
 
 		for (int i = 0; i < rules.length(); i++) {
 			JSONObject jsonObject = rules.getJSONObject(i);
@@ -221,7 +227,8 @@ public class DDMFormTemplateContextProcessor {
 				actions.add(actionsJSONArray.getString(j));
 			}
 
-			DDMFormRule ddmFormRule = new DDMFormRule(jsonObject.getString("condition"), actions);
+			DDMFormRule ddmFormRule = new DDMFormRule(
+				jsonObject.getString("condition"), actions);
 
 			_ddmForm.addDDMFormRule(ddmFormRule);
 		}

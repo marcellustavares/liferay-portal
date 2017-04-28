@@ -36,7 +36,6 @@ import java.util.Map;
  */
 public class OptionsDDMFormFieldContextHelper {
 
-	private DDMForm _ddmForm;
 	public OptionsDDMFormFieldContextHelper(
 		JSONFactory jsonFactory, DDMFormField ddmFormField, String value) {
 
@@ -51,14 +50,15 @@ public class OptionsDDMFormFieldContextHelper {
 		if (Validator.isNull(_value)) {
 			List<Object> list = new ArrayList<>();
 
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 
-			map.put("value", "Option");
 			map.put("label", "Option");
+			map.put("value", "Option");
 
 			list.add(map);
 
-			localizedValue.put(LocaleUtil.toLanguageId(_ddmForm.getDefaultLocale()), list);
+			localizedValue.put(
+				LocaleUtil.toLanguageId(_ddmForm.getDefaultLocale()), list);
 
 			return localizedValue;
 		}
@@ -68,7 +68,7 @@ public class OptionsDDMFormFieldContextHelper {
 
 			Iterator<String> itr = jsonObject.keys();
 
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				String languageId = itr.next();
 
 				JSONArray jsonArray = jsonObject.getJSONArray(languageId);
@@ -86,9 +86,7 @@ public class OptionsDDMFormFieldContextHelper {
 					list.add(optionMap);
 				}
 
-
 				localizedValue.put(languageId, list);
-
 			}
 
 			return localizedValue;
@@ -103,6 +101,7 @@ public class OptionsDDMFormFieldContextHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		OptionsDDMFormFieldContextHelper.class);
 
+	private final DDMForm _ddmForm;
 	private final JSONFactory _jsonFactory;
 	private final String _value;
 
