@@ -76,6 +76,7 @@ AUI.add(
 						context: A.clone(context),
 						enableEvaluations: instance.get('enableEvaluations'),
 						fieldName: instance.get('fieldName'),
+//						parent: instance.get('parent'),
 						portletNamespace: instance.get('portletNamespace'),
 						repeatable: instance.get('repeatable'),
 						repeatedIndex: repetitions.length,

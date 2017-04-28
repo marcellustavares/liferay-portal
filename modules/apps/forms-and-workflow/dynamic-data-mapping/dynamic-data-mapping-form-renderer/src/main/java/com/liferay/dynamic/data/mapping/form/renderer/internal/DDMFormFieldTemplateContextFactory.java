@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRendererConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
@@ -135,6 +136,17 @@ public class DDMFormFieldTemplateContextFactory {
 			"localizable", ddmFormField.isLocalizable());
 		ddmFormFieldTemplateContext.put(
 			"visibilityExpression", ddmFormField.getVisibilityExpression());
+
+		Map<String, String> validation = new HashMap<>();
+
+		DDMFormFieldValidation ddmFormFieldValidation =
+			ddmFormField.getDDMFormFieldValidation();
+
+		validation.put(
+			"errorMessage", ddmFormFieldValidation.getErrorMessage());
+		validation.put("expression", ddmFormFieldValidation.getExpression());
+
+		ddmFormFieldTemplateContext.put("validation", validation);
 
 		setDDMFormFieldTemplateContextName(
 			ddmFormFieldTemplateContext, ddmFormFieldParameterName);
