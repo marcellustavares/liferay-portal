@@ -11,6 +11,8 @@ AUI.add(
 
 		var MINUTE = 60000;
 
+		var STR_UNTITLED_FORM = Liferay.Language.get('untitled-form');
+
 		var TPL_BUTTON_SPINNER = '<span aria-hidden="true"><span class="icon-spinner icon-spin"></span></span>';
 
 		var STR_TRANSLATION_MANAGER = 'translationManager';
@@ -227,11 +229,24 @@ AUI.add(
 							defaultLanguageId: translationManager.defaultLocale,
 							description: instance.get('localizedDescription'),
 							pages: instance.layoutVisitor.getPages(),
-							name: instance.get('localizedName'),
+							name: instance._getLocalizedName(),
 							successPageSettings: pageManager.get('successPageSettings'),
 							paginationMode: pageManager.get('mode'),
 							rules: ruleBuilder.get('rules')
 						};
+					},
+
+					_getLocalizedName: function() {
+						var instance = this;
+
+						var defaultLanguageId = instance.get('defaultLanguageId');
+						var localizedName = instance.get('localizedName');
+
+						if (!localizedName[defaultLanguageId]) {
+							localizedName[defaultLanguageId] = STR_UNTITLED_FORM;
+						}
+
+						return localizedName;
 					},
 
 					isEmpty: function() {
@@ -347,14 +362,8 @@ AUI.add(
 						var instance = this;
 
 						var state = instance.getState();
-						
+
 						var defaultLanguageId = instance.get('defaultLanguageId');
-						
-						var name = state.name;
-						
-						if(!name[defaultLanguageId]) {
-							name[defaultLanguageId] = Liferay.Language.get('untitled-form');
-						}
 
 						instance.one('#description').val(JSON.stringify(state.description));
 						instance.one('#name').val(JSON.stringify(state.name));
@@ -572,9 +581,9 @@ AUI.add(
 						var instance = this;
 
 						var formObject = A.QueryString.parse(formString);
-						
+
 						var state = instance.getState();
-						
+
 						formObject[instance.ns('name')] = JSON.stringify(state.name);
 
 						formString = A.QueryString.stringify(formObject);

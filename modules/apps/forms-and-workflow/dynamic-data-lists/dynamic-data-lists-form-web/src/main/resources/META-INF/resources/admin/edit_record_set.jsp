@@ -134,7 +134,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<h1>
 					<liferay-ui:input-editor
 						autoCreate="<%= false %>"
-						contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(name, themeDisplay.getLanguageId())) %>"
+						contents="<%= HtmlUtil.escape(ddlFormAdminDisplayContext.getFormName()) %>"
 						cssClass="ddl-form-name"
 						editorName="alloyeditor"
 						name="nameEditor"
@@ -148,7 +148,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<h5>
 					<liferay-ui:input-editor
 						autoCreate="<%= false %>"
-						contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>"
+						contents="<%= HtmlUtil.escape(ddlFormAdminDisplayContext.getFormDescription()) %>"
 						cssClass="ddl-form-description h5"
 						editorName="alloyeditor"
 						name="descriptionEditor"
@@ -279,8 +279,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 									new Liferay.DDL.Portlet(
 										{
 											context: <%= ddlFormAdminDisplayContext.getFormBuilderContext() %>,
-											localizedDescription: <%= ddlFormAdminDisplayContext.getFormDescription() %>,
-											localizedName: <%= ddlFormAdminDisplayContext.getFormName() %>,
+											localizedDescription: <%= ddlFormAdminDisplayContext.getFormLocalizedDescription() %>,
+											localizedName: <%= ddlFormAdminDisplayContext.getFormLocalizedName() %>,
 											defaultLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
 											editingLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
 											editForm: event.form,
