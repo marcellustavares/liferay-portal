@@ -12,16 +12,8 @@ AUI.add(
 						value: []
 					},
 
-					getDataProviderParametersSettingsURL: {
-						value: ''
-					},
-
 					getDataProviders: {
 						value: []
-					},
-
-					getFunctionsURL: {
-						value: ''
 					},
 
 					pages: {
@@ -68,7 +60,6 @@ AUI.add(
 									action: act,
 									boundingBox: container,
 									fields: instance.get('fields'),
-									getDataProviderParametersSettingsURL: instance.get('getDataProviderParametersSettingsURL'),
 									getDataProviders: instance.get('getDataProviders'),
 									index: index,
 									options: instance.get('dataProviders')
@@ -80,7 +71,6 @@ AUI.add(
 								{
 									action: act,
 									boundingBox: container,
-									getFunctionsURL: instance.get('getFunctionsURL'),
 									index: index,
 									options: instance.get('fields')
 								}

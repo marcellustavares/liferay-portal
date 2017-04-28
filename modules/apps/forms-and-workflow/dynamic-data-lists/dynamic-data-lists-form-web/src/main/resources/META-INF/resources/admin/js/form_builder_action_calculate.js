@@ -18,10 +18,6 @@ AUI.add(
 						value: ''
 					},
 
-					getFunctionsURL: {
-						value: ''
-					},
-
 					index: {
 						value: ''
 					},
@@ -72,7 +68,7 @@ AUI.add(
 						calculateContainer.setHTML(instance._getRuleContainerTemplate());
 
 						A.io.request(
-							instance.get('getFunctionsURL'),
+							Settings.getFunctionsURL,
 							{
 								method: 'GET',
 								on: {

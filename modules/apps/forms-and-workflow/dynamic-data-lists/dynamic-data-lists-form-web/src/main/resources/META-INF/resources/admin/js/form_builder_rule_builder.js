@@ -20,6 +20,10 @@ AUI.add(
 					formBuilder: {
 						value: null
 					},
+					
+					roles: {
+						value: []
+					},
 
 					rules: {
 						setter: '_setRules',
@@ -206,9 +210,8 @@ AUI.add(
 									contentBox: instance.get('contentBox'),
 									fields: instance.getFields(),
 									getDataProviders: instance._dataProviders,
-									getFunctionsURL: instance.get('getFunctionsURL'),
-									getRoles: instance.get('getRoles'),
-									pages: instance.getPages()
+									pages: instance.getPages(),
+									roles: instance.get('roles')
 								}
 							);
 						}
@@ -401,11 +404,11 @@ AUI.add(
 					_getUserRoles: function() {
 						var instance = this;
 
-						var roles = instance.get('getRoles');
+						var roles = instance.get('roles');
 
 						if (!roles.length) {
 							A.io.request(
-								instance.get('getRolesURL'),
+								Settings.getRolesURL,
 								{
 									method: 'GET',
 									on: {
@@ -497,7 +500,7 @@ AUI.add(
 							);
 						}
 
-						instance.set('getRoles', roles);
+						instance.set('roles', roles);
 					},
 
 					_renderCards: function(rules) {

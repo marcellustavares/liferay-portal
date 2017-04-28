@@ -16,11 +16,7 @@ AUI.add(
 						value: []
 					},
 
-					getFunctionsURL: {
-						value: ''
-					},
-
-					getRoles: {
+					roles: {
 						value: []
 					},
 
@@ -78,7 +74,6 @@ AUI.add(
 								bubbleTargets: [instance],
 								fields: instance.get('fields'),
 								getDataProviders: instance.get('getDataProviders'),
-								getFunctionsURL: instance.get('getFunctionsURL'),
 								pages: instance.get('pages')
 							}
 						);

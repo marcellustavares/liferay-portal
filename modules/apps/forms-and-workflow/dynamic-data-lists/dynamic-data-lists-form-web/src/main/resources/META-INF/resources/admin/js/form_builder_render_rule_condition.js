@@ -715,7 +715,7 @@ AUI.add(
 
 				if (secondOperandType) {
 					if (operator === 'belongs-to') {
-						options = instance.get('getRoles');
+						options = instance.get('roles');
 					}
 					else {
 						options = [
