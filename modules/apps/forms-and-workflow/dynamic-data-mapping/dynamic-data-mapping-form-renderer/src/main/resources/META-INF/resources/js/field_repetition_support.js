@@ -50,7 +50,7 @@ AUI.add(
 
 				instance._removeCurrentFieldFromRepetitionList();
 
-				instance._syncOtherRepeatableFields();
+				//instance._syncOtherRepeatableFields();
 			},
 
 			copy: function() {

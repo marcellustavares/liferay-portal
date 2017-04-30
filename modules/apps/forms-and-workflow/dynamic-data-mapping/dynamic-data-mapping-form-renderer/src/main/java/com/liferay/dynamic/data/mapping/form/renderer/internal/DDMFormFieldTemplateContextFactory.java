@@ -142,9 +142,12 @@ public class DDMFormFieldTemplateContextFactory {
 		DDMFormFieldValidation ddmFormFieldValidation =
 			ddmFormField.getDDMFormFieldValidation();
 
-		validation.put(
-			"errorMessage", ddmFormFieldValidation.getErrorMessage());
-		validation.put("expression", ddmFormFieldValidation.getExpression());
+		if (ddmFormFieldValidation != null) {
+			validation.put(
+				"errorMessage", ddmFormFieldValidation.getErrorMessage());
+			validation.put(
+				"expression", ddmFormFieldValidation.getExpression());
+		}
 
 		ddmFormFieldTemplateContext.put("validation", validation);
 
