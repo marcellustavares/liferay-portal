@@ -225,8 +225,8 @@ AUI.add(
 						var translationManager = instance.get('translationManager');
 
 						return {
-							availableLanguageIds: translationManager.availableLocales,
-							defaultLanguageId: translationManager.defaultLocale,
+							availableLanguageIds: translationManager.get('availableLocales'),
+							defaultLanguageId: translationManager.get('defaultLocale'),
 							description: instance.get('localizedDescription'),
 							pages: instance.layoutVisitor.getPages(),
 							name: instance._getLocalizedName(),

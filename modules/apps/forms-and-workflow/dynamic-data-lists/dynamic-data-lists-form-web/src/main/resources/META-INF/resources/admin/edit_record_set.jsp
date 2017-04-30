@@ -45,9 +45,9 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 </portlet:actionURL>
 
 <div class="hide portlet-forms" id="<portlet:namespace />formContainer">
-	<liferay-frontend:translation-manager
+	<aui:translation-manager
 		availableLocales="<%= availableLocales %>"
-		componentId='<%= renderResponse.getNamespace() + "translationManager" %>'
+		changeableDefaultLanguage="<%= false %>"
 		defaultLanguageId="<%= defaultLanguageId %>"
 		id="translationManager"
 	/>
