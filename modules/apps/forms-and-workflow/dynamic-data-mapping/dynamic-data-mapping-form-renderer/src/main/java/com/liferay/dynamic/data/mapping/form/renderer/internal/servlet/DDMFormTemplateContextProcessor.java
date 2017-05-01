@@ -30,11 +30,10 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
-import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Marcellus Tavares
@@ -119,16 +118,10 @@ public class DDMFormTemplateContextProcessor {
 				JSONObject jsonObject = optionsJSONArray.getJSONObject(j);
 
 				String value = jsonObject.getString("value");
+				String label = jsonObject.getString("label");
 
-				Iterator<String> itr = jsonObject.keys();
-
-				while (itr.hasNext()) {
-					String languageId = itr.next();
-
-					ddmFormFieldOptions.addOptionLabel(
-						value, LocaleUtil.fromLanguageId(languageId),
-						jsonObject.getString(languageId));
-				}
+				//TODO fix this hard coded locale
+				ddmFormFieldOptions.addOptionLabel(value, Locale.US, label);
 			}
 
 			ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
