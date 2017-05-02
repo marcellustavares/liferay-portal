@@ -26,10 +26,8 @@
  *
  * @param containerId
  * @param context
- * @param definition
  * @param evaluatorURL
  * @param fieldTypes
- * @param layout
  * @param portletNamespace
  * @param readOnly
  */
@@ -47,9 +45,7 @@
 						{lb}
 							container: '#{$containerId}',
 							context: {$context|noAutoescape},
-							definition: {$definition|noAutoescape},
 							evaluatorURL: '{$evaluatorURL}',
-							layout: {$layout|noAutoescape},
 							portletNamespace: '{$portletNamespace}',
 							readOnly: {$readOnly}
 						{rb}

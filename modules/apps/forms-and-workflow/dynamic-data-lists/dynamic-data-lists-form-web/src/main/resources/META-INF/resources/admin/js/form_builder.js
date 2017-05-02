@@ -11,6 +11,8 @@ AUI.add(
 
 		var Lang = A.Lang;
 
+		var Settings = Liferay.DDL.Settings;
+
 		var CSS_FIELD = A.getClassName('form', 'builder', 'field');
 
 		var CSS_FORM_BUILDER_TABS = A.getClassName('form', 'builder', 'tabs');
@@ -36,19 +38,8 @@ AUI.add(
 						}
 					},
 
-					defaultLanguageId: {
-						value: themeDisplay.getDefaultLanguageId()
-					},
-
-					definition: {
-						validator: Lang.isObject
-					},
-
 					deserializer: {
 						valueFn: '_valueDeserializer'
-					},
-
-					evaluatorURL: {
 					},
 
 					fieldTypes: {
@@ -56,25 +47,28 @@ AUI.add(
 						valueFn: '_valueFieldTypes'
 					},
 
-					getFieldTypeSettingFormContextURL: {
-						validator: Lang.isString,
-						value: ''
-					},
-
 					layouts: {
 						valueFn: '_valueLayouts'
 					},
 
-					pagesJSON: {
-						validator: Array.isArray,
-						value: []
+					context: {
+						value: {}
 					},
 
-					portletNamespace: {
+					pageManager: {
+						value:{}
 					},
 
 					recordSetId: {
 						value: 0
+					},
+
+					defaultLanguageId: {
+						value: themeDisplay.getDefaultLanguageId()
+					},
+
+					editingLanguageId:{
+						value: themeDisplay.getDefaultLanguageId()
 					},
 
 					strings: {
@@ -89,10 +83,6 @@ AUI.add(
 							removeRowModal: Liferay.Language.get('you-will-also-delete-fields-with-this-row-are-you-sure-you-want-delete-it')
 						},
 						writeOnce: true
-					},
-
-					successPage: {
-						value: {}
 					},
 
 					visitor: {
@@ -124,7 +114,8 @@ AUI.add(
 							boundingBox.delegate('click', A.bind('_afterFieldClick', instance), '.' + CSS_FIELD, instance),
 							instance.after('liferay-ddl-form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
 							instance.after('render', instance._afterFormBuilderRender, instance),
-							instance.after(instance._afterRemoveField, instance, 'removeField')
+							instance.after(instance._afterRemoveField, instance, 'removeField'),
+							instance.after('editingLanguageIdChange', instance._afterEditingLanguageIdChange)
 						];
 					},
 
@@ -166,15 +157,16 @@ AUI.add(
 					confirmCancelFieldChanges: function(field, fieldContext, fieldSettingsPanel) {
 						var instance = this;
 
-						field.set('context', fieldContext);
-
-						field.render();
-
 						var settingForm = fieldSettingsPanel.settingsForm;
 
 						settingForm.set('context', fieldSettingsPanel._previousFormContext);
 
-						settingForm.render();
+						field.set('context', fieldContext);
+						field.set('context.settingsContet', fieldContext);
+
+						field.render();
+
+//						settingForm.render();
 					},
 
 					contains: function(field) {
@@ -203,10 +195,7 @@ AUI.add(
 								fieldType.get('defaultConfig'),
 								{
 									builder: instance,
-									defaultLanguageId: instance.get('defaultLanguageId'),
 									evaluatorURL: instance.get('evaluatorURL'),
-									getFieldTypeSettingFormContextURL: instance.get('getFieldTypeSettingFormContextURL'),
-									portletNamespace: instance.get('portletNamespace'),
 									readOnly: true
 								},
 								config
@@ -282,6 +271,19 @@ AUI.add(
 						return field;
 					},
 
+					isEditMode: function() {
+						var instance = this;
+
+						var translating = instance.get('defaultLanguageId') !== instance.get('editingLanguageId');
+
+						if (instance.get('recordSetId') > 0 || translating) {
+							return true;
+						}
+						else {
+							return false;
+						}
+					},
+
 					findTypeOfField: function(field) {
 						var instance = this;
 
@@ -347,6 +349,20 @@ AUI.add(
 								);
 							}
 						);
+					},
+
+					_afterEditingLanguageIdChange: function(event) {
+						var instance = this;
+
+						instance.eachFields(function(field) {
+							field.set('locale', event.newVal);
+
+							field.saveSettings();
+						});
+
+						var pageManager = instance.get('pageManager');
+
+						pageManager.set('editingLanguageId', event.newVal);
 					},
 
 					_afterActivePageNumberChange: function(event) {
@@ -467,14 +483,22 @@ AUI.add(
 
 						var contentBox = instance.get('contentBox');
 
+						var deserializer = instance.get('deserializer');
+
+						var layouts = instance.get('layouts');
+
 						if (!instance._pageManager) {
 							instance._pageManager = new Liferay.DDL.FormBuilderPagesManager(
 								A.merge(
 									{
 										builder: instance,
+										localizedDescriptions: deserializer.get('descriptions'),
+										localizedTitles: deserializer.get('titles'),
+										editingLanguageId: instance.get('editingLanguageId'),
+										defaultLanguageId: instance.get('defaultLanguageId'),
 										mode: 'wizard',
 										pageHeader: contentBox.one('.' + CSS_PAGE_HEADER),
-										pagesQuantity: instance.get('layouts').length,
+										pagesQuantity: layouts.length,
 										paginationContainer: contentBox.one('.' + CSS_PAGES),
 										tabviewContainer: contentBox.one('.' + CSS_FORM_BUILDER_TABS)
 									},
@@ -482,7 +506,9 @@ AUI.add(
 								)
 							);
 
-							instance._pageManager.setSuccessPage(instance.get('definition').successPage);
+							instance._pageManager.setSuccessPage(instance.get('context').successPage);
+
+							instance.set('pageManager', instance._pageManager);
 						}
 
 						return instance._pageManager;
@@ -509,11 +535,16 @@ AUI.add(
 					_insertField: function(field) {
 						var instance = this;
 
+						//fix this, placeholder as blank is required for text or undefined
+						// side effect of localizable placeholder
 						var newFieldDefaultContext = {
-							portletNamespace: instance.get('portletNamespace'),
+							portletNamespace: Settings.portletNamespace,
 							readOnly: true,
 							showLabel: true,
+							label: '',
 							type: field.get('type'),
+							value: '',
+							placeholder: '',
 							visible: true
 						};
 
@@ -613,12 +644,7 @@ AUI.add(
 					_renderPages: function() {
 						var instance = this;
 
-						var deserializer = instance.get('deserializer');
-
 						var pages = instance.get('pages');
-
-						pages.set('descriptions', deserializer.get('descriptions'));
-						pages.set('titles', deserializer.get('titles'));
 
 						pages._uiSetActivePageNumber(pages.get('activePageNumber'));
 					},
@@ -728,8 +754,7 @@ AUI.add(
 
 						return new Liferay.DDL.LayoutDeserializer(
 							{
-								builder: instance,
-								definition: instance.get('definition')
+								builder: instance
 							}
 						);
 					},
@@ -755,7 +780,6 @@ AUI.add(
 								draggable: false,
 								fieldTypes: instance.get('fieldTypes'),
 								modal: true,
-								portletNamespace: instance.get('portletNamespace'),
 								resizable: false,
 								strings: strings,
 								visible: false
@@ -772,7 +796,9 @@ AUI.add(
 
 						var deserializer = instance.get('deserializer');
 
-						deserializer.set('pages', instance.get('pagesJSON'));
+						var context = instance.get('context');
+
+						deserializer.set('pages', context.pages);
 
 						return deserializer.deserialize();
 					},
