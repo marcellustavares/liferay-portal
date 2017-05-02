@@ -38,7 +38,9 @@ AUI.add(
 					item.getRepeatedSiblings().forEach(addToQueue);
 				};
 
-				instance.get('fields').forEach(addSiblingsToQueue);
+				var fields = instance.get('fields') || [];
+
+				fields.forEach(addSiblingsToQueue);
 
 				while (queue.size() > 0) {
 					var field = queue.next();

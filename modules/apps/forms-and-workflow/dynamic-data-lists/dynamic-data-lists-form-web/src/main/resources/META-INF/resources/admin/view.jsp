@@ -112,5 +112,3 @@ portletURL.setParameter("displayStyle", displayStyle);
 </c:if>
 
 <%@ include file="/admin/export_record_set.jspf" %>
-
-<aui:script use="liferay-ddl-portlet"></aui:script>

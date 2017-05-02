@@ -29,7 +29,6 @@ AUI.add(
 						var instance = this;
 
 						instance._eventHandlers.push(
-							instance.after('*:valueChange', instance._afterFieldValueChange),
 							instance.after('render', instance._afterSettingsFormRender),
 							instance.on('*:addOption', instance._afterAddOption),
 							instance.on('*:removeOption', instance.alignModal)
@@ -64,33 +63,30 @@ AUI.add(
 
 						var optionsField = event.target;
 
-						var field = instance.get('field');
+						event.option.transient = true;
 
-						var builder = field.get('builder');
-
-						var definition = builder.get('definition');
-
-						var searchResults = RendererUtil.searchFieldsByKey(definition, field.get('fieldName'), 'fieldName');
-
-						if (searchResults.length) {
-							var definitionOptions = searchResults[0].options || [];
-
-							optionsField.eachOption(
-								function(option) {
-									var existingOption = definitionOptions.find(
-										function(definitionOption) {
-											return definitionOption.value === option.get('key');
-										}
-									);
-
-									option.set('keyInputEnabled', !existingOption);
-								}
-							);
-						}
+						optionsField.eachOption(
+							function(option) {
+								option.set('keyInputEnabled', option.transient);
+							}
+						);
 					},
 
-					_afterFieldValueChange: function() {
+					_afterFieldValueChange: function(event) {
 						var instance = this;
+
+						var field = event.target;
+						var formBuilderField = instance.get('field');
+
+						var localizedValue = field.get('context.localizedValue');
+
+						if (localizedValue) {
+							var locale = formBuilderField.get('locale');
+
+							localizedValue[locale] = event.newVal;
+						}
+
+						formBuilderField.set('context.settingsContext', instance.get('context'));
 
 						instance._saveSettings();
 					},
@@ -104,27 +100,100 @@ AUI.add(
 					_afterSettingsFormRender: function() {
 						var instance = this;
 
-						var editModeValue = instance.get('editMode');
+						instance._createSettingsFormEventHandlers();
+						instance._createAutocompleElements();
 
-						var labelField = instance.getField('label');
+						instance._updateFormFieldProperties();
 
-						var nameField = instance.getField('name');
-
-						(new A.EventHandle(instance._fieldEventHandlers)).detach();
-
-						instance._fieldEventHandlers.push(
-							labelField.on('keyChange', A.bind('_onLabelFieldKeyChange', instance)),
-							labelField.after(A.bind('_afterLabelFieldNormalizeKey', instance), labelField, 'normalizeKey')
+						instance._eventHandlers.push(
+							instance.after('*:valueChange', instance._afterFieldValueChange)
 						);
+					},
 
-						labelField.set('key', nameField.getValue());
-						labelField.set('keyInputEnabled', editModeValue);
-						labelField.set('generationLocked', !editModeValue);
+					_updateFormFieldProperties: function() {
+						var instance = this;
 
-						if (instance.get('field').get('type') === 'text') {
+						instance._updateTypeField();
+						instance._updateLabelField();
+						instance._updateOptionsFields();
+					},
+
+					_updateOptionsField: function(optionsField) {
+						var instance = this;
+
+						var editMode = instance.get('editMode');
+
+						if (editMode) {
+							optionsField.set('sortable', false);
+							optionsField.set('editable', false);
+						}
+					},
+
+					_updateOptionsFields: function() {
+						var instance = this;
+
+						instance.eachField(function(field) {
+							var type = field.get('type');
+
+							if (type === 'options') {
+								instance._updateOptionsField(field);
+							}
+						});
+					},
+
+					_createAutocompleElements: function() {
+						var instance = this;
+
+						var formBuilderFieldType = instance._getFormBuilderFieldType();
+
+						if (formBuilderFieldType === 'text') {
 							instance._createAutocompleteButton();
 							instance._createAutocompleteContainer();
 						}
+					},
+
+					_updateLabelField: function() {
+						var instance = this;
+
+						var editMode = instance.get('editMode');
+
+						var labelField = instance.getField('label');
+						var nameField = instance.getField('name');
+
+						labelField.set('key', nameField.getValue());
+						labelField.set('keyInputEnabled', !editMode);
+						labelField.set('generationLocked', editMode);
+					},
+
+					_updateTypeField: function() {
+						var instance = this;
+
+						var typeField = instance.getField('type');
+
+						typeField.set('value', instance._getFormBuilderFieldType());
+					},
+
+					_getFormBuilderFieldType: function() {
+						var instance = this;
+
+						var formBuilderField = instance.get('field');
+
+						return formBuilderField.get('type');
+					},
+
+					_createSettingsFormEventHandlers: function() {
+						var instance = this;
+
+						var labelField = instance.getField('label');
+
+						var fieldEventHandlers = new A.EventHandle(instance._fieldEventHandlers);
+
+						fieldEventHandlers.detach();
+
+						instance._fieldEventHandlers.push(
+							labelField.on('keyChange', A.bind('_onLabelFieldChange', instance)),
+							labelField.after(A.bind('_afterLabelFieldNormalizeKey', instance), labelField, 'normalizeKey')
+						);
 					},
 
 					_afterTabViewSelectionChange: function() {
@@ -169,10 +238,12 @@ AUI.add(
 
 						tabView.get('panelNode').append(emptyPageNode);
 
-						sidebarBody.one('.autocomplete-body').append(dataSourceTypeContainer);
-						sidebarBody.one('.autocomplete-body').append(ddmDataProviderInstanceIdContainer);
-						sidebarBody.one('.autocomplete-body').append(ddmDataProviderInstanceOutputContainer);
-						sidebarBody.one('.autocomplete-body').append(optionsContainer);
+						var autocompleteBody = sidebarBody.one('.autocomplete-body');
+
+						autocompleteBody.append(dataSourceTypeContainer);
+						autocompleteBody.append(ddmDataProviderInstanceIdContainer);
+						autocompleteBody.append(ddmDataProviderInstanceOutputContainer);
+						autocompleteBody.append(optionsContainer);
 
 						sidebarBody.one('.autocomplete-header-back').on('click', A.bind('_onClickAutocompleteHeaderBack', instance));
 						tabView.after('selectionChange', A.bind('_afterTabViewSelectionChange', instance));
@@ -278,12 +349,19 @@ AUI.add(
 						instance._syncModeToggler();
 					},
 
-					_onLabelFieldKeyChange: function(event) {
+					_onLabelFieldChange: function(event) {
 						var instance = this;
 
 						var nameField = instance.getField('name');
 
-						nameField.setValue(event.newVal);
+						var formBuilderField = instance.get('field');
+
+						var locale = formBuilderField.get('locale');
+
+						if (locale === themeDisplay.getDefaultLanguageId()) {
+							nameField.set('value', event.newVal);
+							formBuilderField.set('context.fieldName', event.newVal);
+						}
 
 						instance._saveSettings();
 					},
@@ -307,7 +385,7 @@ AUI.add(
 
 						var field = instance.get('field');
 
-						field.saveSettings(instance);
+						field.saveSettings();
 					},
 
 					_showLastActivatedPage: function() {

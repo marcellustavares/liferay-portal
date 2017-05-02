@@ -68,12 +68,16 @@ AUI.add(
 
 						var buttonContainer = instance.get('boundingBox').one('.' + CSS_CALCULATOR_ADD_FIELD_CONTANIER);
 
+						var context = {
+							options: instance.get('options')
+						};
+
 						var select = new Liferay.DDM.Field.Select(
 							{
 								after: {
 									valueChange: A.bind(instance._afterSelectValueChange, instance)
 								},
-								options: instance.get('options'),
+								context: context,
 								triggers: [
 									instance.get('boundingBox').one('.' + CSS_CALCULATOR_ADD_FIELD)
 								]
@@ -90,12 +94,16 @@ AUI.add(
 
 						var operatorsListContainer = instance.get('boundingBox').one('.container-list-advanced-operators');
 
+						var context = {
+							options: instance.get('advancedOperators')
+						};
+
 						var select = new Liferay.DDM.Field.Select(
 							{
 								after: {
 									valueChange: A.bind(instance._afterSelectValueChange, instance)
 								},
-								options: instance.get('functions'),
+								context: context,
 								triggers: [instance.get('boundingBox').one('.' + CSS_CALCULATOR_ADD_OPERATOR)]
 							}
 						);
