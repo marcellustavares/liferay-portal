@@ -59,6 +59,18 @@ public class DDMFormFieldFactoryHelper {
 		com.liferay.dynamic.data.mapping.model.DDMFormField ddmFormField =
 			new com.liferay.dynamic.data.mapping.model.DDMFormField(name, type);
 
+		ddmFormField.setDataType(getDDMFormFieldDataType());
+		ddmFormField.setDDMFormFieldOptions(getDDMFormFieldOptions());
+		ddmFormField.setDDMFormFieldValidation(getDDMFormFieldValidation());
+		ddmFormField.setLabel(getDDMFormFieldLabel());
+		ddmFormField.setLocalizable(isDDMFormFieldLocalizable());
+		ddmFormField.setPredefinedValue(getDDMFormFieldPredefinedValue());
+		ddmFormField.setRepeatable(isDDMFormFieldRepeatable());
+		ddmFormField.setRequired(isDDMFormFieldRequired());
+		ddmFormField.setTip(getDDMFormFieldTip());
+		ddmFormField.setVisibilityExpression(
+			getDDMFormFieldVisibilityExpression());
+
 		Map<String, Object> properties = getProperties();
 
 		for (Map.Entry<String, Object> entry : properties.entrySet()) {
@@ -71,18 +83,6 @@ public class DDMFormFieldFactoryHelper {
 
 			ddmFormField.setProperty(key, value);
 		}
-
-		ddmFormField.setDataType(getDDMFormFieldDataType());
-		ddmFormField.setDDMFormFieldOptions(getDDMFormFieldOptions());
-		ddmFormField.setDDMFormFieldValidation(getDDMFormFieldValidation());
-		ddmFormField.setLabel(getDDMFormFieldLabel());
-		ddmFormField.setLocalizable(isDDMFormFieldLocalizable());
-		ddmFormField.setPredefinedValue(getDDMFormFieldPredefinedValue());
-		ddmFormField.setRepeatable(isDDMFormFieldRepeatable());
-		ddmFormField.setRequired(isDDMFormFieldRequired());
-		ddmFormField.setTip(getDDMFormFieldTip());
-		ddmFormField.setVisibilityExpression(
-			getDDMFormFieldVisibilityExpression());
 
 		if (Objects.equals(type, "fieldset")) {
 			com.liferay.dynamic.data.mapping.model.DDMForm nestedDDMForm =

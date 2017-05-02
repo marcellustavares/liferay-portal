@@ -33,6 +33,7 @@ import javax.portlet.RenderRequest;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.powermock.api.mockito.PowerMockito;
@@ -51,6 +52,7 @@ public class DDLFormDisplayContextTest extends PowerMockito {
 		setUpPortalUtil();
 	}
 
+	@Ignore
 	@Test
 	public void testDDMFormRenderingContextLocaleIsSiteLocale() {
 		DDMForm ddmForm = createDDMForm(LocaleUtil.BRAZIL);
