@@ -286,7 +286,7 @@ public class DDLFormAdminDisplayContextTest extends PowerMockito {
 			mock(DDMFormRuleToDDLFormRuleConverter.class),
 			mock(DDMFormValuesFactory.class), mock(DDMFormValuesMerger.class),
 			mock(DDMStructureLocalService.class), mock(JSONFactory.class),
-			mock(StorageEngine.class), mock(WorkflowEngineManager.class));
+			mock(StorageEngine.class), mock(WorkflowEngineManager.class), null);
 	}
 
 	protected void setUpLanguageUtil() {
