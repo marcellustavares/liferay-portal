@@ -28,6 +28,10 @@ String name = BeanParamUtil.getString(recordSet, request, "name");
 String description = BeanParamUtil.getString(recordSet, request, "description");
 boolean showPublishModal = ParamUtil.getBoolean(request, "showPublishModal");
 
+String defaultLanguageId = LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault());
+
+Locale[] availableLocales = ddlFormAdminDisplayContext.getAvailableLocales();
+
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
@@ -41,6 +45,13 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 </portlet:actionURL>
 
 <div class="hide portlet-forms" id="<portlet:namespace />formContainer">
+	<aui:translation-manager
+		availableLocales="<%= availableLocales %>"
+		changeableDefaultLanguage="<%= false %>"
+		defaultLanguageId="<%= defaultLanguageId %>"
+		id="translationManager"
+	/>
+
 	<aui:nav-bar cssClass="collapse-basic-search" id="toolbar" markupView="lexicon">
 		<aui:nav cssClass="navbar-nav">
 			<aui:nav-item id="showForm" label="Builder" selected="<%= true %>" />
@@ -58,7 +69,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<aui:input name="groupId" type="hidden" value="<%= groupId %>" />
 		<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
 		<aui:input name="saveAndPublish" type="hidden" value="<%= true %>" />
-		<aui:input name="serializedSettingsDDMFormValues" type="hidden" value="" />
+		<aui:input name="serializedSettingsContext" type="hidden" value="" />
 
 		<liferay-ui:error exception="<%= DDMFormLayoutValidationException.class %>" message="please-enter-a-valid-form-layout" />
 
@@ -123,7 +134,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<h1>
 					<liferay-ui:input-editor
 						autoCreate="<%= false %>"
-						contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(name, themeDisplay.getLanguageId())) %>"
+						contents="<%= HtmlUtil.escape(ddlFormAdminDisplayContext.getFormName()) %>"
 						cssClass="ddl-form-name"
 						editorName="alloyeditor"
 						name="nameEditor"
@@ -137,7 +148,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				<h5>
 					<liferay-ui:input-editor
 						autoCreate="<%= false %>"
-						contents="<%= HtmlUtil.escape(LocalizationUtil.getLocalization(description, themeDisplay.getLanguageId())) %>"
+						contents="<%= HtmlUtil.escape(ddlFormAdminDisplayContext.getFormDescription()) %>"
 						cssClass="ddl-form-description h5"
 						editorName="alloyeditor"
 						name="descriptionEditor"
@@ -151,9 +162,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		</aui:fieldset>
 
 		<aui:fieldset cssClass="container-fluid-1280 ddl-form-builder-app">
-			<aui:input name="definition" type="hidden" />
-			<aui:input name="layout" type="hidden" />
-			<aui:input name="rules" type="hidden" />
+			<aui:input name="serializedContext" type="hidden" />
 
 			<div id="<portlet:namespace />formBuilder"></div>
 			<div id="<portlet:namespace />ruleBuilder"></div>
@@ -224,6 +233,23 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 		<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="getRoles" var="getRoles" />
 
 		<aui:script>
+			Liferay.namespace('DDL').Settings = {
+				autosaveInterval: '<%= ddlFormAdminDisplayContext.getAutosaveInterval() %>',
+				autosaveURL: '<%= autoSaveRecordSetURL.toString() %>',
+				evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
+				functionsMetadata: <%= ddlFormAdminDisplayContext.getSerializedDDMExpressionFunctionsMetadata() %>,
+				getDataProviderInstancesURL: '<%= getDataProviderInstancesURL.toString() %>',
+				getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
+				getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
+				getFunctionsURL: '<%= getFunctions.toString() %>',
+				getRolesURL: '<%= getRoles.toString() %>',
+				publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
+				portletNamespace: '<portlet:namespace />',
+				restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
+				rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
+				sharedFormURL: '<%= ddlFormAdminDisplayContext.getSharedFormURL() %>'
+			};
+
 			var initHandler = Liferay.after(
 				'form:registered',
 				function(event) {
@@ -246,38 +272,21 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							window,
 							'<portlet:namespace />init',
 							function() {
-								var definition = <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>;
-
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
 
 								Liferay.component(
 									'formPortlet',
 									new Liferay.DDL.Portlet(
 										{
-											availableLanguageIds: definition.availableLanguageIds,
-											autosaveInterval: '<%= ddlFormAdminDisplayContext.getAutosaveInterval() %>',
-											autosaveURL: '<%= autoSaveRecordSetURL.toString() %>',
-											defaultLanguageId: definition.defaultLanguageId,
-											definition: definition,
-											description: '<%= HtmlUtil.escapeJS(description) %>',
+											context: <%= ddlFormAdminDisplayContext.getFormBuilderContext() %>,
+											localizedDescription: <%= ddlFormAdminDisplayContext.getFormLocalizedDescription() %>,
+											localizedName: <%= ddlFormAdminDisplayContext.getFormLocalizedName() %>,
+											defaultLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
+											editingLanguageId: '<%= ddlFormAdminDisplayContext.getDefaultLanguageId() %>',
 											editForm: event.form,
-											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
-											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
-											functionsMetadata: <%= ddlFormAdminDisplayContext.getSerializedDDMExpressionFunctionsMetadata() %>,
-											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
-											getDataProviderInstancesURL: '<%= getDataProviderInstancesURL.toString() %>',
-											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
-											getFieldTypeSettingFormContextURL: '<%= getFieldSettingsDDMFormContext.toString() %>',
-											getFunctionsURL: '<%= getFunctions.toString() %>',
-											getRolesURL: '<%= getRoles.toString() %>',
-											layout: <%= ddlFormAdminDisplayContext.getSerializedDDMFormLayout() %>,
-											name: '<%= HtmlUtil.escapeJS(name) %>',
 											namespace: '<portlet:namespace />',
-											publishRecordSetURL: '<%= publishRecordSetURL.toString() %>',
 											recordSetId: <%= recordSetId %>,
-											restrictedFormURL: '<%= ddlFormAdminDisplayContext.getRestrictedFormURL() %>',
-											rules: <%= ddlFormAdminDisplayContext.getSerializedDDMFormRules() %>,
-											sharedFormURL: '<%= ddlFormAdminDisplayContext.getSharedFormURL() %>'
+											translationManager: Liferay.component('<portlet:namespace />translationManager')
 										}
 									)
 								);
