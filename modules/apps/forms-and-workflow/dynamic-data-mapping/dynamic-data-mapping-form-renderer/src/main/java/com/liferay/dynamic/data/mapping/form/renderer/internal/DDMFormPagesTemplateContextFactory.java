@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -181,6 +182,8 @@ public class DDMFormPagesTemplateContextFactory {
 		LocalizedValue description = ddmFormLayoutPage.getDescription();
 
 		pageTemplateContext.put("description", description.getString(_locale));
+		pageTemplateContext.put(
+			"localizedDescription", getLocalizedValueMap(description));
 
 		pageTemplateContext.put("enabled", isPageEnabled(pageIndex));
 
@@ -197,6 +200,7 @@ public class DDMFormPagesTemplateContextFactory {
 
 		LocalizedValue title = ddmFormLayoutPage.getTitle();
 
+		pageTemplateContext.put("localizedTitle", getLocalizedValueMap(title));
 		pageTemplateContext.put("title", title.getString(_locale));
 
 		return pageTemplateContext;
@@ -225,6 +229,22 @@ public class DDMFormPagesTemplateContextFactory {
 				ddFormLayoutRow.getDDMFormLayoutColumns()));
 
 		return rowTemplateContext;
+	}
+
+	protected Map<String, String> getLocalizedValueMap(
+		LocalizedValue localizedValue) {
+
+		Map<String, String> map = new HashMap<>();
+
+		Map<Locale, String> values = localizedValue.getValues();
+
+		for (Map.Entry<Locale, String> entry : values.entrySet()) {
+			String languageId = LocaleUtil.toLanguageId(entry.getKey());
+
+			map.put(languageId, entry.getValue());
+		}
+
+		return map;
 	}
 
 	protected boolean isPageEnabled(int pageIndex) {
