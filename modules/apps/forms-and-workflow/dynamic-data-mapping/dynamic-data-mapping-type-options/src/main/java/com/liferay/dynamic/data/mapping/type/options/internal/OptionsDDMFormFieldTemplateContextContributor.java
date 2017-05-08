@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,11 @@ public class OptionsDDMFormFieldTemplateContextContributor
 				ddmFormField.getProperty("allowEmptyOptions")));
 		parameters.put(
 			"value", getValue(ddmFormField, ddmFormFieldRenderingContext));
+		
+		parameters.put(
+			 "defaultLanguageId",
+	 			LocaleUtil.toLanguageId(
+	 				ddmFormField.getDDMForm().getDefaultLocale()));
 
 		return parameters;
 	}

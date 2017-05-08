@@ -120,7 +120,7 @@ AUI.add(
 							expression = Lang.sub(
 								selectedValidation.template,
 								{
-									name: nameField && nameField.getValue() || '',
+									name: nameField && nameField.get('value') || '',
 									parameter: instance._getParameterValue()
 								}
 							);

@@ -67,12 +67,9 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		String portletNamespace) {
 
 		try {
-			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 			DDMFormRenderingContext ddmFormRenderingContext =
 				createDDMFormRenderingContext(
-					request, response, themeDisplay.getLocale(),
+					request, response, Locale.US,
 					portletNamespace);
 
 			DDMFormTemplateContextProcessor ddmFormTemplateContextProcessor =
@@ -83,7 +80,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 
 			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 
-			_prepareThreadLocal(themeDisplay.getLocale());
+			_prepareThreadLocal(Locale.US);
 
 			DDMForm ddmForm = ddmFormTemplateContextProcessor.getDDMForm();
 
