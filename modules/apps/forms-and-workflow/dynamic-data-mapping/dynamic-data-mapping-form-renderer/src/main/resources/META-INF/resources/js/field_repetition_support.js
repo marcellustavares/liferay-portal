@@ -241,7 +241,7 @@ AUI.add(
 					field.render();
 
 					field.setValue(value);
-				}				
+				}
 			},
 
 			_valueRepetitions: function() {

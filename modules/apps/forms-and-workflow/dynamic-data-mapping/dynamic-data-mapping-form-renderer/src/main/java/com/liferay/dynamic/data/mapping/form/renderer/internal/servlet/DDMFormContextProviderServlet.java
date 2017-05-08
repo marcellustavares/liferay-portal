@@ -28,11 +28,9 @@ import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 
@@ -69,8 +67,7 @@ public class DDMFormContextProviderServlet extends HttpServlet {
 		try {
 			DDMFormRenderingContext ddmFormRenderingContext =
 				createDDMFormRenderingContext(
-					request, response, Locale.US,
-					portletNamespace);
+					request, response, Locale.US, portletNamespace);
 
 			DDMFormTemplateContextProcessor ddmFormTemplateContextProcessor =
 				createDDMFormTemplateContextProcessor(request);
