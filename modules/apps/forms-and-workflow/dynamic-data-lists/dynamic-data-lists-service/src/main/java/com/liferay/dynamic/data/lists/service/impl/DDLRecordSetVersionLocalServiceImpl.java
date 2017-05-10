@@ -43,6 +43,11 @@ public class DDLRecordSetVersionLocalServiceImpl
 	}
 
 	@Override
+	public List<DDLRecordSetVersion> findByG_C(long groupId, long companyId) {
+		return ddlRecordSetVersionPersistence.findByG_C(groupId, companyId);
+	}
+
+	@Override
 	public DDLRecordSetVersion getLatestRecordSetVersion(long recordSetId)
 		throws PortalException {
 

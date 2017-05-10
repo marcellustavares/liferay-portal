@@ -17,8 +17,10 @@ package com.liferay.dynamic.data.lists.internal.exportimport.data.handler;
 import com.liferay.dynamic.data.lists.exportimport.staged.model.repository.DDLRecordStagedModelRepository;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
+import com.liferay.dynamic.data.lists.model.DDLRecordVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
+import com.liferay.dynamic.data.lists.service.DDLRecordVersionLocalService;
 import com.liferay.dynamic.data.mapping.exportimport.content.processor.DDMFormValuesExportImportContentProcessor;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONSerializer;
@@ -116,6 +118,16 @@ public class DDLRecordStagedModelDataHandler
 		StagedModelDataHandlerUtil.exportReferenceStagedModel(
 			portletDataContext, record, record.getRecordSet(),
 			PortletDataContext.REFERENCE_TYPE_STRONG);
+
+		List<DDLRecordVersion> recordVersions =
+			_ddlRecordVersionLocalService.getRecordVersions(
+				record.getRecordId());
+
+		for (DDLRecordVersion recordVersion : recordVersions) {
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, record, recordVersion,
+				PortletDataContext.REFERENCE_TYPE_STRONG);
+		}
 
 		Element recordElement = portletDataContext.getExportDataElement(record);
 
@@ -261,6 +273,13 @@ public class DDLRecordStagedModelDataHandler
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDLRecordVersionLocalService(
+		DDLRecordVersionLocalService ddlRecordVersionLocalService) {
+
+		_ddlRecordVersionLocalService = ddlRecordVersionLocalService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMFormValuesExportImportContentProcessor(
 		DDMFormValuesExportImportContentProcessor
 			ddmFormValuesExportImportContentProcessor) {
@@ -316,6 +335,7 @@ public class DDLRecordStagedModelDataHandler
 
 	private DDLRecordSetLocalService _ddlRecordSetLocalService;
 	private DDLRecordStagedModelRepository _ddlRecordStagedModelRepository;
+	private DDLRecordVersionLocalService _ddlRecordVersionLocalService;
 	private DDMFormValuesExportImportContentProcessor
 		_ddmFormValuesExportImportContentProcessor;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;

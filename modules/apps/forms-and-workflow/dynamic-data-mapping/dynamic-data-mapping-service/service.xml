@@ -288,7 +288,7 @@
 			<finder-column name="structureId" />
 		</finder>
 	</entity>
-	<entity local-service="true" name="DDMStructureVersion" remote-service="true">
+	<entity local-service="true" name="DDMStructureVersion" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -304,6 +304,7 @@
 		<column name="userId" type="long" />
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
 
@@ -319,6 +320,7 @@
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
 		<column name="statusDate" type="Date" />
+		<column name="lastPublishDate" type="Date" />
 
 		<!-- Finder methods -->
 

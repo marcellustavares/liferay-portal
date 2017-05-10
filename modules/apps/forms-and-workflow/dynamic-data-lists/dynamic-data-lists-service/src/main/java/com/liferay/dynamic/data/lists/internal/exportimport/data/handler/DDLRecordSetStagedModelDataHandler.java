@@ -17,7 +17,9 @@ package com.liferay.dynamic.data.lists.internal.exportimport.data.handler;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetConstants;
 import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
+import com.liferay.dynamic.data.lists.model.DDLRecordSetVersion;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
+import com.liferay.dynamic.data.lists.service.DDLRecordSetVersionLocalService;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -108,6 +110,16 @@ public class DDLRecordSetStagedModelDataHandler
 	protected void doExportStagedModel(
 			PortletDataContext portletDataContext, DDLRecordSet recordSet)
 		throws Exception {
+
+		List<DDLRecordSetVersion> recordSetVersions =
+			_ddlRecordSetVersionLocalService.getRecordSetVersions(
+				recordSet.getRecordSetId());
+
+		for (DDLRecordSetVersion recordSetVersion : recordSetVersions) {
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, recordSet, recordSetVersion,
+				PortletDataContext.REFERENCE_TYPE_STRONG);
+		}
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
@@ -244,6 +256,13 @@ public class DDLRecordSetStagedModelDataHandler
 	}
 
 	@Reference(unbind = "-")
+	protected void setDDLRecordSetVersionLocalService(
+		DDLRecordSetVersionLocalService ddlRecordSetVersionLocalService) {
+
+		_ddlRecordSetVersionLocalService = ddlRecordSetVersionLocalService;
+	}
+
+	@Reference(unbind = "-")
 	protected void setDDMFormValuesJSONDeserializer(
 		DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer) {
 
@@ -261,6 +280,7 @@ public class DDLRecordSetStagedModelDataHandler
 	}
 
 	private DDLRecordSetLocalService _ddlRecordSetLocalService;
+	private DDLRecordSetVersionLocalService _ddlRecordSetVersionLocalService;
 	private DDMFormValuesJSONDeserializer _ddmFormValuesJSONDeserializer;
 	private StagedModelRepository<DDLRecordSet> _stagedModelRepository;
 

@@ -56,12 +56,14 @@ create unique index IX_C9A0402C on DDMStructureLayout (uuid_[$COLUMN_LENGTH:75$]
 create unique index IX_E43143A3 on DDMStructureLink (classNameId, classPK, structureId);
 
 create table DDMStructureVersion (
+	uuid_ VARCHAR(75) null,
 	structureVersionId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
 	userName VARCHAR(75) null,
 	createDate DATE null,
+	modifiedDate DATE null,
 	structureId LONG,
 	version VARCHAR(75) null,
 	parentStructureId LONG,
@@ -73,7 +75,8 @@ create table DDMStructureVersion (
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
-	statusDate DATE null
+	statusDate DATE null,
+	lastPublishDate DATE null
 );
 
 create index IX_17B3C96C on DDMStructureVersion (structureId, status);

@@ -109,7 +109,7 @@
 		<reference entity="User" package-path="com.liferay.portal" />
 		<reference entity="WorkflowDefinitionLink" package-path="com.liferay.portal" />
 	</entity>
-	<entity local-service="true" name="DDLRecordSetVersion" remote-service="true">
+	<entity local-service="true" name="DDLRecordSetVersion" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -125,6 +125,7 @@
 		<column name="userId" type="long" />
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
 
@@ -138,11 +139,16 @@
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
 		<column name="statusDate" type="Date" />
+		<column name="lastPublishDate" type="Date" />
 
 		<!-- Finder methods -->
 
 		<finder name="RecordSetId" return-type="Collection">
 			<finder-column name="recordSetId" />
+		</finder>
+		<finder name="G_C" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="companyId" />
 		</finder>
 		<finder name="RS_V" return-type="DDLRecordSetVersion" unique="true">
 			<finder-column name="recordSetId" />
@@ -153,7 +159,7 @@
 			<finder-column name="status" />
 		</finder>
 	</entity>
-	<entity local-service="true" name="DDLRecordVersion" remote-service="true">
+	<entity local-service="true" name="DDLRecordVersion" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -169,6 +175,7 @@
 		<column name="userId" type="long" />
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
 
@@ -182,11 +189,16 @@
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
 		<column name="statusDate" type="Date" />
+		<column name="lastPublishDate" type="Date" />
 
 		<!-- Finder methods -->
 
 		<finder name="RecordId" return-type="Collection">
 			<finder-column name="recordId" />
+		</finder>
+		<finder name="G_C" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="companyId" />
 		</finder>
 		<finder name="R_R" return-type="Collection">
 			<finder-column name="recordSetId" />
