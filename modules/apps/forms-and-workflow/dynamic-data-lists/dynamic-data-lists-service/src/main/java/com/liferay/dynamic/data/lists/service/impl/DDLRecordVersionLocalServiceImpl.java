@@ -34,6 +34,11 @@ import java.util.List;
 public class DDLRecordVersionLocalServiceImpl
 	extends DDLRecordVersionLocalServiceBaseImpl {
 
+	@Override
+	public List<DDLRecordVersion> findByG_C(long groupId, long companyId) {
+		return ddlRecordVersionPersistence.findByG_C(groupId, companyId);
+	}
+
 	/**
 	 * Returns the record's latest record version.
 	 *
@@ -88,6 +93,11 @@ public class DDLRecordVersionLocalServiceImpl
 		throws PortalException {
 
 		return ddlRecordVersionPersistence.findByR_V(recordId, version);
+	}
+
+	@Override
+	public List<DDLRecordVersion> getRecordVersions(long recordId) {
+		return ddlRecordVersionPersistence.findByRecordId(recordId);
 	}
 
 	/**
