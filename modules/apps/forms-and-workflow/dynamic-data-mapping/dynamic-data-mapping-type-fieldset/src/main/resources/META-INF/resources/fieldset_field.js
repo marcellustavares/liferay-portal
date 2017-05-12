@@ -12,6 +12,7 @@ AUI.add(
 				ATTRS: {
 					nestedFields: {
 						setter: '_setNestedFields',
+						state: true,
 						validator: Array.isArray,
 						value: []
 					},
@@ -150,6 +151,7 @@ AUI.add(
 						var nestedFieldContext = A.merge(
 							config,
 							{
+								context: A.clone(config),
 								fieldName: Util.getFieldNameFromQualifiedName(config.name),
 								parent: instance,
 								portletNamespace: instance.get('portletNamespace'),
