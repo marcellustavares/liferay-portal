@@ -59,7 +59,7 @@ if (goog.DEBUG) {
 
 
 ddm.badge_item = function(opt_data, opt_ignored) {
-  return '<li><span class="badge badge-default badge-sm multiple-badge">' + soy.$$escapeHtml(opt_data.label) + '<a class="trigger-badge-item-close" data-badge-value="' + soy.$$escapeHtmlAttribute(opt_data.value) + '" href="javascript:void(0)">' + soy.$$filterNoAutoescape(opt_data.badgeCloseIcon) + '</a></span></li>';
+  return '<li><span class="badge badge-default badge-sm multiple-badge" data-original-title="' + soy.$$escapeHtmlAttribute(opt_data.label) + '" title="' + soy.$$escapeHtmlAttribute(opt_data.label) + '">' + soy.$$escapeHtml(opt_data.label) + '<a class="trigger-badge-item-close" data-badge-value="' + soy.$$escapeHtmlAttribute(opt_data.value) + '" href="javascript:void(0)">' + soy.$$filterNoAutoescape(opt_data.badgeCloseIcon) + '</a></span></li>';
 };
 if (goog.DEBUG) {
   ddm.badge_item.soyTemplateName = 'ddm.badge_item';
@@ -76,11 +76,11 @@ if (goog.DEBUG) {
 
 ddm.hidden_select = function(opt_data, opt_ignored) {
   var output = '<select class="form-control hide" dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" id="' + soy.$$escapeHtmlAttribute(opt_data.name) + '" name="' + soy.$$escapeHtmlAttribute(opt_data.name) + '" ' + ((opt_data.multiple) ? 'multiple size="' + soy.$$escapeHtmlAttribute(opt_data.options.length) + '"' : '') + '>' + ((! opt_data.readOnly) ? '<option dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" disabled ' + ((opt_data.value.length == 0) ? 'selected' : '') + ' value="">' + soy.$$escapeHtml(opt_data.strings.chooseAnOption) + '</option>' : '');
-  var optionList138 = opt_data.options;
-  var optionListLen138 = optionList138.length;
-  for (var optionIndex138 = 0; optionIndex138 < optionListLen138; optionIndex138++) {
-    var optionData138 = optionList138[optionIndex138];
-    output += ddm.select_hidden_options({dir: opt_data.dir, option: optionData138, values: opt_data.value});
+  var optionList142 = opt_data.options;
+  var optionListLen142 = optionList142.length;
+  for (var optionIndex142 = 0; optionIndex142 < optionListLen142; optionIndex142++) {
+    var optionData142 = optionList142[optionIndex142];
+    output += ddm.select_hidden_options({dir: opt_data.dir, option: optionData142, values: opt_data.value});
   }
   output += '</select>';
   return output;
@@ -92,16 +92,16 @@ if (goog.DEBUG) {
 
 ddm.select_hidden_options = function(opt_data, opt_ignored) {
   var output = '';
-  var selected__soy142 = '';
+  var selected__soy146 = '';
   if (opt_data.values) {
-    var currentValueList148 = opt_data.values;
-    var currentValueListLen148 = currentValueList148.length;
-    for (var currentValueIndex148 = 0; currentValueIndex148 < currentValueListLen148; currentValueIndex148++) {
-      var currentValueData148 = currentValueList148[currentValueIndex148];
-      selected__soy142 += (currentValueData148.value == opt_data.option.value) ? 'selected' : '';
+    var currentValueList152 = opt_data.values;
+    var currentValueListLen152 = currentValueList152.length;
+    for (var currentValueIndex152 = 0; currentValueIndex152 < currentValueListLen152; currentValueIndex152++) {
+      var currentValueData152 = currentValueList152[currentValueIndex152];
+      selected__soy146 += (currentValueData152.value == opt_data.option.value) ? 'selected' : '';
     }
   }
-  output += '<option dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" ' + soy.$$filterHtmlAttributes(selected__soy142) + ' value="' + soy.$$escapeHtmlAttribute(opt_data.option.value) + '">' + soy.$$escapeHtml(opt_data.option.label) + '</option>';
+  output += '<option dir="' + soy.$$escapeHtmlAttribute(opt_data.dir) + '" ' + soy.$$filterHtmlAttributes(selected__soy146) + ' value="' + soy.$$escapeHtmlAttribute(opt_data.option.value) + '">' + soy.$$escapeHtml(opt_data.option.label) + '</option>';
   return output;
 };
 if (goog.DEBUG) {
@@ -111,20 +111,24 @@ if (goog.DEBUG) {
 
 ddm.select_options = function(opt_data, opt_ignored) {
   var output = '';
-  var optionList191 = opt_data.options;
-  var optionListLen191 = optionList191.length;
-  for (var optionIndex191 = 0; optionIndex191 < optionListLen191; optionIndex191++) {
-    var optionData191 = optionList191[optionIndex191];
-    var selected__soy160 = '';
-    if (opt_data.value) {
-      var currentValueList166 = opt_data.value;
-      var currentValueListLen166 = currentValueList166.length;
-      for (var currentValueIndex166 = 0; currentValueIndex166 < currentValueListLen166; currentValueIndex166++) {
-        var currentValueData166 = currentValueList166[currentValueIndex166];
-        selected__soy160 += (currentValueData166.value == optionData191.value) ? 'selected' : '';
+  if (opt_data.options.length > 0) {
+    var optionList197 = opt_data.options;
+    var optionListLen197 = optionList197.length;
+    for (var optionIndex197 = 0; optionIndex197 < optionListLen197; optionIndex197++) {
+      var optionData197 = optionList197[optionIndex197];
+      var selected__soy166 = '';
+      if (opt_data.value) {
+        var currentValueList172 = opt_data.value;
+        var currentValueListLen172 = currentValueList172.length;
+        for (var currentValueIndex172 = 0; currentValueIndex172 < currentValueListLen172; currentValueIndex172++) {
+          var currentValueData172 = currentValueList172[currentValueIndex172];
+          selected__soy166 += (currentValueData172.value == optionData197.value) ? 'selected' : '';
+        }
       }
+      output += '<li class="select-option-item ' + ((selected__soy166) ? 'option-selected' : '') + '" data-option-index="' + soy.$$escapeHtmlAttribute(optionIndex197) + '" data-option-selected="' + ((selected__soy166) ? 'true' : '') + '" data-option-value="' + soy.$$escapeHtmlAttribute(optionData197.value) + '">' + ((opt_data.multiple) ? '<input type="checkbox" value="" ' + ((selected__soy166) ? 'checked' : '') + '>' : '') + '<span>' + soy.$$escapeHtml(optionData197.label) + '</span></li>';
     }
-    output += '<li class="select-option-item ' + ((selected__soy160) ? 'option-selected' : '') + '" data-option-index="' + soy.$$escapeHtmlAttribute(optionIndex191) + '" data-option-selected="' + ((selected__soy160) ? 'true' : '') + '" data-option-value="' + soy.$$escapeHtmlAttribute(optionData191.value) + '">' + ((opt_data.multiple) ? '<input type="checkbox" value="" ' + ((selected__soy160) ? 'checked' : '') + '>' : '') + '<span>' + soy.$$escapeHtml(optionData191.label) + '</span></li>';
+  } else {
+    output += '<li class="no-results-list"><span>' + soy.$$escapeHtml(opt_data.strings.emptyList) + '</span></li>';
   }
   return output;
 };

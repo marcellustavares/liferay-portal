@@ -168,6 +168,17 @@ AUI.add(
 
 				var container = instance.get('container');
 
+				var paginatedNode = container.one('.lfr-ddm-form-paginated');
+
+				if (container.inDoc() && paginatedNode) {
+					instance.paginated = new Renderer.Paginated(
+						{
+							boundingBox: paginatedNode,
+							srcNode: paginatedNode.one('> ul')
+						}
+					).render();
+				}
+
 				var wizardNode = container.one('.lfr-ddm-form-wizard');
 
 				if (container.inDoc() && wizardNode) {
@@ -192,6 +203,8 @@ AUI.add(
 
 				if (controls) {
 					instance._syncPaginationControlsUI();
+
+					instance._syncPaginatedUI(event.prevVal, event.newVal);
 					instance._syncWizardUI(event.prevVal, event.newVal);
 				}
 
@@ -320,6 +333,23 @@ AUI.add(
 				}
 			},
 
+			_syncPaginatedUI: function(prevPage, currentPage) {
+				var instance = this;
+
+				var paginated = instance.paginated;
+
+				if (paginated) {
+					if (currentPage > prevPage) {
+						paginated.complete(prevPage - 1);
+					}
+					else {
+						paginated.clear(prevPage - 1);
+					}
+
+					paginated.activate(currentPage - 1);
+				}
+			},
+
 			_syncWizardUI: function(prevPage, currentPage) {
 				var instance = this;
 
@@ -340,7 +370,7 @@ AUI.add(
 			_valuePagesState: function() {
 				var instance = this;
 
-				return instance.get('layout').pages;
+				return instance.get('context').pages;
 			}
 		};
 
@@ -348,6 +378,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-pagination', 'liferay-ddm-form-renderer-wizard']
+		requires: ['aui-pagination', 'liferay-ddm-form-renderer-paginated', 'liferay-ddm-form-renderer-wizard']
 	}
 );

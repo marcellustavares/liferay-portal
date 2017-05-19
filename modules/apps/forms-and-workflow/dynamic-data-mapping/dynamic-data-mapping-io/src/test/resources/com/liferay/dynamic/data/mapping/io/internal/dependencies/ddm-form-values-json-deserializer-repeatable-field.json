@@ -4,7 +4,7 @@
 	"fieldValues": [
 		{
 			"instanceId": "jhtr",
-			"name": "Text6513",
+			"name": "Text",
 			"value": {
 				"en_US": "Name 0",
 				"pt_BR": "Nome 0"
@@ -12,7 +12,7 @@
 		},
 		{
 			"instanceId": "plwu",
-			"name": "Text6513",
+			"name": "Text",
 			"value": {
 				"en_US": "Name 1",
 				"pt_BR": "Nome 1"
@@ -20,7 +20,7 @@
 		},
 		{
 			"instanceId": "pkqa",
-			"name": "Text6513",
+			"name": "Text",
 			"value": {
 				"en_US": "Name 2",
 				"pt_BR": "Nome 2"

@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal;
 
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContextFactory;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderInvoker;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderRequest;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
@@ -97,12 +95,9 @@ public class DDMFormFieldOptionsFactoryImpl
 			String ddmDataProviderInstanceId = GetterUtil.getString(
 				ddmFormField.getProperty("ddmDataProviderInstanceId"));
 
-			DDMDataProviderContext ddmDataProviderContext =
-				ddmDataProviderContextFactory.create(ddmDataProviderInstanceId);
-
 			DDMDataProviderRequest ddmDataProviderRequest =
 				new DDMDataProviderRequest(
-					ddmDataProviderContext,
+					ddmDataProviderInstanceId,
 					ddmFormFieldRenderingContext.getHttpServletRequest());
 
 			ddmDataProviderRequest.queryString(
@@ -143,9 +138,6 @@ public class DDMFormFieldOptionsFactoryImpl
 
 		return ddmFormFieldOptions;
 	}
-
-	@Reference
-	protected DDMDataProviderContextFactory ddmDataProviderContextFactory;
 
 	@Reference
 	protected DDMDataProviderInvoker ddmDataProviderInvoker;

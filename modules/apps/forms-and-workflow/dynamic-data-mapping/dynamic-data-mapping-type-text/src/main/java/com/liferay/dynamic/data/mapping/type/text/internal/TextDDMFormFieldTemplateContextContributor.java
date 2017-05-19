@@ -78,7 +78,7 @@ public class TextDDMFormFieldTemplateContextContributor
 		List<Object> options = getOptions(
 			ddmFormFieldOptions, ddmFormFieldRenderingContext.getLocale());
 
-		parameters.put("autocomplete", !options.isEmpty());
+		parameters.put("autocompleteEnabled", !options.isEmpty());
 		parameters.put("options", options);
 
 		return parameters;

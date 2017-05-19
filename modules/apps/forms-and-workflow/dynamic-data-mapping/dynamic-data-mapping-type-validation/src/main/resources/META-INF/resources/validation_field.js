@@ -27,8 +27,8 @@ AUI.add(
 						value: {
 							email: Liferay.Language.get('email'),
 							errorMessageGoesHere: Liferay.Language.get('error-message-goes-here'),
-							validation: Liferay.Language.get('validation'),
-							url: Liferay.Language.get('url')
+							url: Liferay.Language.get('url'),
+							validation: Liferay.Language.get('validation')
 						}
 					},
 
@@ -57,10 +57,10 @@ AUI.add(
 
 						instance._eventHandlers.push(
 							instance.after('valueChange', A.bind('_afterValueChange', instance)),
-							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), '.enable-validation'),
-							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), 'select'),
+							instance.bindContainerEvent('change', A.bind('_setErrorMessage', instance), '.message-input'),
 							instance.bindContainerEvent('change', A.bind('_setParameterValue', instance), '.parameter-input'),
-							instance.bindContainerEvent('change', A.bind('_setErrorMessage', instance), '.message-input')
+							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), '.enable-validation'),
+							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), 'select')
 						);
 					},
 
@@ -120,7 +120,7 @@ AUI.add(
 							expression = Lang.sub(
 								selectedValidation.template,
 								{
-									name: nameField && nameField.getValue() || '',
+									name: nameField && nameField.get('value') || '',
 									parameter: instance._getParameterValue()
 								}
 							);

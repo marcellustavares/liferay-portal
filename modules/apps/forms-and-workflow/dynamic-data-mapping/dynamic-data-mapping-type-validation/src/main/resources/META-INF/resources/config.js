@@ -6,8 +6,8 @@
 			groups: {
 				'field-validation': {
 					base: MODULE_PATH + '/',
-					filter: LiferayAUI.getFilterConfig(),
 					combine: Liferay.AUI.getCombine(),
+					filter: LiferayAUI.getFilterConfig(),
 					modules: {
 						'liferay-ddm-form-field-validation': {
 							condition: {

@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -70,10 +69,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 		Document document, DDMStructure ddmStructure,
 		DDMFormValues ddmFormValues) {
 
-		long groupId = GetterUtil.getLong(
-			document.get(com.liferay.portal.kernel.search.Field.GROUP_ID));
-
-		Set<Locale> locales = LanguageUtil.getAvailableLocales(groupId);
+		Set<Locale> locales = ddmFormValues.getAvailableLocales();
 
 		Fields fields = toFields(ddmStructure, ddmFormValues);
 

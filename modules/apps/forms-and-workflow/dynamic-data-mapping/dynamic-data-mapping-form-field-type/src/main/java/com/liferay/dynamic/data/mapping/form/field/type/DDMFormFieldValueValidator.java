@@ -15,15 +15,14 @@
 package com.liferay.dynamic.data.mapping.form.field.type;
 
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 
 /**
  * @author Marcellus Tavares
  */
 public interface DDMFormFieldValueValidator {
 
-	public void validate(
-			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue)
+	public void validate(DDMFormField ddmFormField, Value value)
 		throws DDMFormFieldValueValidationException;
 
 }

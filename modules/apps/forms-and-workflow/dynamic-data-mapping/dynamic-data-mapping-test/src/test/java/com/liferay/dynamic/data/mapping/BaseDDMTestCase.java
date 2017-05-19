@@ -19,14 +19,10 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeSettings;
 import com.liferay.dynamic.data.mapping.internal.util.DDMImpl;
-import com.liferay.dynamic.data.mapping.io.DDMFormFieldJSONObjectTransformer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
-import com.liferay.dynamic.data.mapping.io.internal.DDMFormFieldJSONObjectTransformerImpl;
-import com.liferay.dynamic.data.mapping.io.internal.DDMFormFieldToJSONObjectTransformer;
 import com.liferay.dynamic.data.mapping.io.internal.DDMFormJSONDeserializerImpl;
 import com.liferay.dynamic.data.mapping.io.internal.DDMFormJSONSerializerImpl;
-import com.liferay.dynamic.data.mapping.io.internal.JSONObjectToDDMFormFieldTransformer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
@@ -471,36 +467,6 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 		return valuesMap;
 	}
 
-	protected DDMFormFieldJSONObjectTransformer
-			getDDMFormFieldJSONObjectTransformer()
-		throws Exception {
-
-		DDMFormFieldJSONObjectTransformer ddmFormFieldJSONObjectTransformer =
-			new DDMFormFieldJSONObjectTransformerImpl();
-
-		java.lang.reflect.Field field = ReflectionUtil.getDeclaredField(
-			DDMFormFieldJSONObjectTransformerImpl.class,
-			"ddmFormFieldToJSONObjectTransformer");
-
-		field.set(
-			ddmFormFieldJSONObjectTransformer,
-			new DDMFormFieldToJSONObjectTransformer(
-				getMockedDDMFormFieldTypeServicesTracker(),
-				new JSONFactoryImpl()));
-
-		field = ReflectionUtil.getDeclaredField(
-			DDMFormFieldJSONObjectTransformerImpl.class,
-			"jsonObjectToDDMFormFieldTransformer");
-
-		field.set(
-			ddmFormFieldJSONObjectTransformer,
-			new JSONObjectToDDMFormFieldTransformer(
-				getMockedDDMFormFieldTypeServicesTracker(),
-				new JSONFactoryImpl()));
-
-		return ddmFormFieldJSONObjectTransformer;
-	}
-
 	protected DDMFormFieldTypeServicesTracker
 		getMockedDDMFormFieldTypeServicesTracker() {
 
@@ -594,38 +560,39 @@ public abstract class BaseDDMTestCase extends PowerMockito {
 
 	protected void setUpDDMFormJSONDeserializer() throws Exception {
 
-		// DDM form field JSON transformer
+		// DDM form field type services tracker
 
 		java.lang.reflect.Field field = ReflectionUtil.getDeclaredField(
 			DDMFormJSONDeserializerImpl.class,
-			"ddmFormFieldJSONObjectTransformer");
+			"_ddmFormFieldTypeServicesTracker");
 
 		field.set(
-			ddmFormJSONDeserializer, getDDMFormFieldJSONObjectTransformer());
+			ddmFormJSONDeserializer,
+			getMockedDDMFormFieldTypeServicesTracker());
 
 		// JSON factory
 
 		field = ReflectionUtil.getDeclaredField(
-			DDMFormJSONDeserializerImpl.class, "jsonFactory");
+			DDMFormJSONDeserializerImpl.class, "_jsonFactory");
 
 		field.set(ddmFormJSONDeserializer, new JSONFactoryImpl());
 	}
 
 	protected void setUpDDMFormJSONSerializer() throws Exception {
 
-		// DDM form field JSON converter
+		// DDM form field type services tracker
 
 		java.lang.reflect.Field field = ReflectionUtil.getDeclaredField(
 			DDMFormJSONSerializerImpl.class,
-			"ddmFormFieldJSONObjectTransformer");
+			"_ddmFormFieldTypeServicesTracker");
 
 		field.set(
-			ddmFormJSONSerializer, getDDMFormFieldJSONObjectTransformer());
+			ddmFormJSONSerializer, getMockedDDMFormFieldTypeServicesTracker());
 
 		// JSON factory
 
 		field = ReflectionUtil.getDeclaredField(
-			DDMFormJSONSerializerImpl.class, "jsonFactory");
+			DDMFormJSONSerializerImpl.class, "_jsonFactory");
 
 		field.set(ddmFormJSONSerializer, new JSONFactoryImpl());
 	}

@@ -5,6 +5,8 @@ AUI.add(
 
 		var Renderer = Liferay.DDM.Renderer;
 
+		var Util = Renderer.Util;
+
 		var FieldTypes = Renderer.FieldTypes;
 
 		var SELECTOR_REPEAT_BUTTONS = '.lfr-ddm-form-field-repeatable-add-button, .lfr-ddm-form-field-repeatable-delete-button';
@@ -73,6 +75,7 @@ AUI.add(
 				var config = A.merge(
 					context,
 					{
+						context: A.clone(context),
 						enableEvaluations: instance.get('enableEvaluations'),
 						fieldName: instance.get('fieldName'),
 						parent: instance.get('parent'),
@@ -85,7 +88,10 @@ AUI.add(
 					}
 				);
 
-				config.context = A.clone(context);
+				var newInstanceId = Util.generateInstanceId(8);
+
+				config.context.instanceId = newInstanceId;
+				config.instanceId = newInstanceId;
 
 				delete config.context.name;
 				delete config.context.value;
@@ -229,16 +235,18 @@ AUI.add(
 			_syncRepeatableField: function(field) {
 				var instance = this;
 
-				var repeatedSiblings = instance.getRepeatedSiblings();
+				if (field.get('rendered')) {
+					var repeatedSiblings = instance.getRepeatedSiblings();
 
-				var value = field.getValue();
+					var value = field.getValue();
 
-				field.set('repeatedIndex', repeatedSiblings.indexOf(field));
-				field.set('repetitions', repeatedSiblings);
+					field.set('repeatedIndex', repeatedSiblings.indexOf(field));
+					field.set('repetitions', repeatedSiblings);
 
-				field.setValue(value);
+					field.render();
 
-				field.render();
+					field.setValue(value);
+				}
 			},
 
 			_valueRepetitions: function() {

@@ -160,7 +160,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 		try {
 			ddmFormFieldValueValidator.validate(
-				ddmFormField, ddmFormFieldValue);
+				ddmFormField, ddmFormFieldValue.getValue());
 		}
 		catch (Exception e) {
 			throw new MustSetValidValue(ddmFormField.getName(), e);

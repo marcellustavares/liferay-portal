@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceLink;
 import com.liferay.dynamic.data.mapping.service.base.DDMDataProviderInstanceLinkLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -25,7 +23,6 @@ import java.util.List;
 /**
  * @author Marcellus Tavares
  */
-@ProviderType
 public class DDMDataProviderInstanceLinkLocalServiceImpl
 	extends DDMDataProviderInstanceLinkLocalServiceBaseImpl {
 

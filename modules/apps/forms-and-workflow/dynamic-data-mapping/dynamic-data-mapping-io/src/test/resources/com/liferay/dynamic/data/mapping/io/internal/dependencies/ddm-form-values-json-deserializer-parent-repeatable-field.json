@@ -4,10 +4,10 @@
 	"fieldValues": [
 		{
 			"instanceId": "baht",
-			"name": "Separator7211",
+			"name": "Separator",
 			"nestedFieldValues": [
 				{
-					"name": "Text_Box6748",
+					"name": "Text",
 					"value": {
 						"en_US": "Content 0",
 						"pt_BR": "Conteudo 0"
@@ -17,10 +17,10 @@
 		},
 		{
 			"instanceId": "ywhr",
-			"name": "Separator7211",
+			"name": "Separator",
 			"nestedFieldValues": [
 				{
-					"name": "Text_Box6748",
+					"name": "Text",
 					"value": {
 						"en_US": "Content 1",
 						"pt_BR": "Conteudo 1"
@@ -30,10 +30,10 @@
 		},
 		{
 			"instanceId": "mahr",
-			"name": "Separator7211",
+			"name": "Separator",
 			"nestedFieldValues": [
 				{
-					"name": "Text_Box6748",
+					"name": "Text",
 					"value": {
 						"en_US": "Content 2",
 						"pt_BR": "Conteudo 2"

@@ -272,7 +272,7 @@ describe(
 		describe(
 			'.closeList()',
 			function() {
-				it(
+				xit(
 					'should close the list after click in document',
 					function(done) {
 						selectField = createSelectField();
@@ -293,7 +293,7 @@ describe(
 					}
 				);
 
-				it(
+				xit(
 					'should remove the focus class when closed',
 					function(done) {
 						selectField = createSelectField();
@@ -341,7 +341,7 @@ describe(
 		describe(
 			'.clickItem()',
 			function() {
-				it(
+				xit(
 					'should click item and select its value',
 					function() {
 						selectField = createSelectField(
@@ -362,7 +362,7 @@ describe(
 					}
 				);
 
-				it(
+				xit(
 					'should remove badge item if click in an item already selected',
 					function(done) {
 						selectField = createSelectField(
@@ -409,7 +409,7 @@ describe(
 		describe(
 			'.clickBadgeItem()',
 			function() {
-				it(
+				xit(
 					'should be an empty array in the value attribute when the last badge is removed',
 					function(done) {
 						selectField = createSelectField(

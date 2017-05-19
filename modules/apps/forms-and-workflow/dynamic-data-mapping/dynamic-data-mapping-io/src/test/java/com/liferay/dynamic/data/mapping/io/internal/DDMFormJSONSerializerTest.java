@@ -18,13 +18,15 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeSettings;
-import com.liferay.dynamic.data.mapping.io.DDMFormFieldJSONObjectTransformer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormFieldTypeSettingsTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.util.ReflectionUtil;
+
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,22 +94,6 @@ public class DDMFormJSONSerializerTest extends BaseDDMFormSerializerTestCase {
 		return new DDMFormSuccessPageSettings("Body Text", "Title Text", true);
 	}
 
-	protected DDMFormFieldJSONObjectTransformer
-		getDDMFormFieldJSONObjectConverter() {
-
-		DDMFormFieldJSONObjectTransformerImpl
-			ddmFormFieldJSONObjectTransformerImpl =
-				new DDMFormFieldJSONObjectTransformerImpl();
-
-		ddmFormFieldJSONObjectTransformerImpl.
-			ddmFormFieldToJSONObjectTransformer =
-				new DDMFormFieldToJSONObjectTransformer(
-					getMockedDDMFormFieldTypeServicesTracker(),
-					new JSONFactoryImpl());
-
-		return ddmFormFieldJSONObjectTransformerImpl;
-	}
-
 	protected DDMFormFieldTypeServicesTracker
 		getMockedDDMFormFieldTypeServicesTracker() {
 
@@ -151,15 +137,22 @@ public class DDMFormJSONSerializerTest extends BaseDDMFormSerializerTestCase {
 	}
 
 	protected void setUpDDMFormJSONSerializer() throws Exception {
-		DDMFormJSONSerializerImpl ddmFormJSONSerializerImpl =
-			new DDMFormJSONSerializerImpl();
 
-		ddmFormJSONSerializerImpl.ddmFormFieldJSONObjectTransformer =
-			getDDMFormFieldJSONObjectConverter();
+		// DDM form field type services tracker
 
-		ddmFormJSONSerializerImpl.jsonFactory = new JSONFactoryImpl();
+		Field field = ReflectionUtil.getDeclaredField(
+			DDMFormJSONSerializerImpl.class,
+			"_ddmFormFieldTypeServicesTracker");
 
-		_ddmFormJSONSerializer = ddmFormJSONSerializerImpl;
+		field.set(
+			_ddmFormJSONSerializer, getMockedDDMFormFieldTypeServicesTracker());
+
+		// JSON factory
+
+		field = ReflectionUtil.getDeclaredField(
+			DDMFormJSONSerializerImpl.class, "_jsonFactory");
+
+		field.set(_ddmFormJSONSerializer, new JSONFactoryImpl());
 	}
 
 	protected void setUpDefaultDDMFormFieldType() {
@@ -180,7 +173,8 @@ public class DDMFormJSONSerializerTest extends BaseDDMFormSerializerTestCase {
 		);
 	}
 
-	private DDMFormJSONSerializer _ddmFormJSONSerializer;
+	private final DDMFormJSONSerializer _ddmFormJSONSerializer =
+		new DDMFormJSONSerializerImpl();
 
 	@Mock
 	private DDMFormFieldType _defaultDDMFormFieldType;

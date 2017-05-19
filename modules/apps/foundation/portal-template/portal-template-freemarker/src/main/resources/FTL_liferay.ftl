@@ -11,18 +11,21 @@ LPS-30525.
 	css_main_file = ""
 	is_signed_in = false
 	js_main_file = ""
+	is_setup_complete = false
 />
+
+<#if user??>
+	<#assign is_setup_complete = user.isSetupComplete() />
+</#if>
 
 <#if themeDisplay??>
 	<#assign css_main_file = htmlUtil.escape(portalUtil.getStaticResourceURL(request, "${themeDisplay.getPathThemeCss()}/main.css")) />
 	<#assign is_signed_in = themeDisplay.isSignedIn() />
 	<#assign js_main_file = htmlUtil.escape(portalUtil.getStaticResourceURL(request, "${themeDisplay.getPathThemeJavaScript()}/main.js")) />
-</#if>
 
-<#assign is_setup_complete = false />
-
-<#if user??>
-	<#assign is_setup_complete = user.isSetupComplete() />
+	<#if !is_setup_complete>
+		<#assign is_setup_complete = themeDisplay.isImpersonated() />
+	</#if>
 </#if>
 
 <#function max x y>
@@ -52,7 +55,7 @@ LPS-30525.
 </#macro>
 
 <#macro control_menu>
-	<#if themeDisplay.isImpersonated() || (is_setup_complete && is_signed_in)>
+	<#if is_setup_complete && is_signed_in>
 		<@liferay_product_navigation["control-menu"] />
 	</#if>
 </#macro>
@@ -134,7 +137,7 @@ ${languageUtil.format(locale, key, arguments)}</#macro>
 </#macro>
 
 <#macro user_personal_bar>
-	<#if themeDisplay.isImpersonated() || is_setup_complete || !is_signed_in>
+	<#if is_setup_complete || !is_signed_in>
 		<@liferay_portlet["runtime"]
 			portletProviderAction=portletProviderAction.VIEW
 			portletProviderClassName="com.liferay.admin.kernel.util.PortalUserPersonalBarApplicationType$UserPersonalBar"

@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMStructureVersionServiceBaseImpl;
 import com.liferay.dynamic.data.mapping.service.permission.DDMStructurePermission;
@@ -28,7 +26,6 @@ import java.util.List;
 /**
  * @author Pablo Carvalho
  */
-@ProviderType
 public class DDMStructureVersionServiceImpl
 	extends DDMStructureVersionServiceBaseImpl {
 

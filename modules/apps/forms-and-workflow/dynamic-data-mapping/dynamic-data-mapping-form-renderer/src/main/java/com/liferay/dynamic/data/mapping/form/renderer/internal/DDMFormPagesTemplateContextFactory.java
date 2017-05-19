@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,6 +184,12 @@ public class DDMFormPagesTemplateContextFactory {
 		pageTemplateContext.put("description", description.getString(_locale));
 
 		pageTemplateContext.put("enabled", isPageEnabled(pageIndex));
+		pageTemplateContext.put(
+			"localizedDescription", getLocalizedValueMap(description));
+
+		LocalizedValue title = ddmFormLayoutPage.getTitle();
+
+		pageTemplateContext.put("localizedTitle", getLocalizedValueMap(title));
 
 		pageTemplateContext.put(
 			"rows",
@@ -194,8 +201,6 @@ public class DDMFormPagesTemplateContextFactory {
 
 		pageTemplateContext.put(
 			"showRequiredFieldsWarning", showRequiredFieldsWarning);
-
-		LocalizedValue title = ddmFormLayoutPage.getTitle();
 
 		pageTemplateContext.put("title", title.getString(_locale));
 
@@ -225,6 +230,22 @@ public class DDMFormPagesTemplateContextFactory {
 				ddFormLayoutRow.getDDMFormLayoutColumns()));
 
 		return rowTemplateContext;
+	}
+
+	protected Map<String, String> getLocalizedValueMap(
+		LocalizedValue localizedValue) {
+
+		Map<String, String> map = new HashMap<>();
+
+		Map<Locale, String> values = localizedValue.getValues();
+
+		for (Map.Entry<Locale, String> entry : values.entrySet()) {
+			String languageId = LocaleUtil.toLanguageId(entry.getKey());
+
+			map.put(languageId, entry.getValue());
+		}
+
+		return map;
 	}
 
 	protected boolean isPageEnabled(int pageIndex) {
@@ -285,9 +306,9 @@ public class DDMFormPagesTemplateContextFactory {
 				new DDMFormEvaluatorContext(_ddmForm, _ddmFormValues, _locale);
 
 			ddmFormEvaluatorContext.addProperty(
-				"request", _ddmFormRenderingContext.getHttpServletRequest());
-			ddmFormEvaluatorContext.addProperty(
 				"groupId", _ddmFormRenderingContext.getGroupId());
+			ddmFormEvaluatorContext.addProperty(
+				"request", _ddmFormRenderingContext.getHttpServletRequest());
 
 			return _ddmFormEvaluator.evaluate(ddmFormEvaluatorContext);
 		}

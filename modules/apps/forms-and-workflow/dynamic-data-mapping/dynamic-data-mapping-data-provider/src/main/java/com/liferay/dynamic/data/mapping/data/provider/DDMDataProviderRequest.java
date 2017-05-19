@@ -25,15 +25,19 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMDataProviderRequest {
 
 	public DDMDataProviderRequest(
-		DDMDataProviderContext ddmDataProviderContext,
+		String ddmDataProviderInstanceId,
 		HttpServletRequest httpServletRequest) {
 
-		_ddmDataProviderContext = ddmDataProviderContext;
+		_ddmDataProviderInstanceId = ddmDataProviderInstanceId;
 		_httpServletRequest = httpServletRequest;
 	}
 
 	public DDMDataProviderContext getDDMDataProviderContext() {
 		return _ddmDataProviderContext;
+	}
+
+	public String getDDMDataProviderInstanceId() {
+		return _ddmDataProviderInstanceId;
 	}
 
 	public HttpServletRequest getHttpServletRequest() {
@@ -56,7 +60,14 @@ public class DDMDataProviderRequest {
 		_parameters.put(name, value);
 	}
 
-	private final DDMDataProviderContext _ddmDataProviderContext;
+	public void setDDMDataProviderContext(
+		DDMDataProviderContext ddmDataProviderContext) {
+
+		_ddmDataProviderContext = ddmDataProviderContext;
+	}
+
+	private DDMDataProviderContext _ddmDataProviderContext;
+	private final String _ddmDataProviderInstanceId;
 	private final HttpServletRequest _httpServletRequest;
 	private final Map<String, String> _parameters = new HashMap<>();
 

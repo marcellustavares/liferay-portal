@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureVersionException;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -33,7 +31,6 @@ import java.util.List;
 /**
  * @author Pablo Carvalho
  */
-@ProviderType
 public class DDMStructureVersionLocalServiceImpl
 	extends DDMStructureVersionLocalServiceBaseImpl {
 

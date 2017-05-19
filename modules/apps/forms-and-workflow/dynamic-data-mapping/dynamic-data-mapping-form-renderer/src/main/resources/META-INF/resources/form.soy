@@ -26,10 +26,8 @@
  *
  * @param containerId
  * @param context
- * @param definition
  * @param evaluatorURL
  * @param fieldTypes
- * @param layout
  * @param portletNamespace
  * @param readOnly
  */
@@ -47,9 +45,7 @@
 						{lb}
 							container: '#{$containerId}',
 							context: {$context|noAutoescape},
-							definition: {$definition|noAutoescape},
 							evaluatorURL: '{$evaluatorURL}',
-							layout: {$layout|noAutoescape},
 							portletNamespace: '{$portletNamespace}',
 							readOnly: {$readOnly}
 						{rb}
@@ -137,7 +133,7 @@
  * @param submitLabel
  * @param strings
  */
-{template .paginated_form autoescape="deprecated-contextual"}
+{template .wizard_form autoescape="deprecated-contextual"}
 	<div class="lfr-ddm-form-container" id="{$containerId}">
 		<div class="lfr-ddm-form-content">
 			{if length($pages) > 1}
@@ -178,6 +174,71 @@
 					</div>
 				{/foreach}
 			</div>
+		</div>
+
+		<div class="lfr-ddm-form-pagination-controls">
+			<button class="btn btn-lg btn-primary hide lfr-ddm-form-pagination-prev" type="button">
+				<i class="icon-angle-left"></i> {$strings.previous}
+			</button>
+
+			<button class="btn btn-lg btn-primary{if length($pages) == 1} hide{/if} lfr-ddm-form-pagination-next pull-right" type="button">
+				{$strings.next} <i class="icon-angle-right"></i>
+			</button>
+
+			{if $showSubmitButton}
+				<button class="btn btn-lg btn-primary{if length($pages) > 1} hide{/if} lfr-ddm-form-submit pull-right" disabled type="submit">{$submitLabel}</button>
+			{/if}
+		</div>
+	</div>
+{/template}
+
+/**
+ * Prints a form with pagination.
+ *
+ * @param containerId
+ * @param pages
+ * @param requiredFieldsWarningMessageHTML
+ * @param showSubmitButton
+ * @param submitLabel
+ * @param strings
+ */
+{template .paginated_form autoescape="deprecated-contextual"}
+	<div class="lfr-ddm-form-container" id="{$containerId}">
+		<div class="lfr-ddm-form-content">
+			<div class="lfr-ddm-form-pages">
+				{foreach $page in $pages}
+					<div class="{if isFirst($page)}active{/if} lfr-ddm-form-page">
+						{if $page.title}
+							<h3 class="lfr-ddm-form-page-title">{$page.title|noAutoescape}</h3>
+						{/if}
+
+						{if $page.description}
+							<h4 class="lfr-ddm-form-page-description">{$page.description|noAutoescape}</h4>
+						{/if}
+
+						{call ddm.required_warning_message data="all"}
+							{param showRequiredFieldsWarning: $page.showRequiredFieldsWarning /}
+							{param requiredFieldsWarningMessageHTML: $requiredFieldsWarningMessageHTML /}
+						{/call}
+
+						{call ddm.form_rows data="all"}
+							{param rows: $page.rows /}
+						{/call}
+					</div>
+				{/foreach}
+			</div>
+
+			{if length($pages) > 1}
+				<div class="lfr-ddm-form-paginated">
+					<ul class="pagination pagination-content">
+						{foreach $page in $pages}
+							<li {if isFirst($page)}class="active"{/if}>
+								<a href="#">{index($page) + 1}</a>
+							</li>
+						{/foreach}
+					</ul>
+				</div>
+			{/if}
 		</div>
 
 		<div class="lfr-ddm-form-pagination-controls">

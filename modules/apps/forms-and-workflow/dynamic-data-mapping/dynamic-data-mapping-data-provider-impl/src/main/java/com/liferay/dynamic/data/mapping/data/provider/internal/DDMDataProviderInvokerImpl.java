@@ -17,14 +17,26 @@ package com.liferay.dynamic.data.mapping.data.provider.internal;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContextContributor;
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderException;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderInvoker;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderRequest;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
+import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse.Status;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
+import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,38 +48,49 @@ import org.osgi.service.component.annotations.Reference;
 public class DDMDataProviderInvokerImpl implements DDMDataProviderInvoker {
 
 	public DDMDataProviderResponse invoke(
-			DDMDataProviderRequest ddmDataProviderRequest)
-		throws DDMDataProviderException {
-
-		addDDMDataProviderContextParameters(ddmDataProviderRequest);
-
-		DDMDataProvider ddmDataProvider = getDDMDataProvider(
-			ddmDataProviderRequest.getDDMDataProviderContext());
-
-		return ddmDataProvider.getData(ddmDataProviderRequest);
-	}
-
-	protected void addDDMDataProviderContextParameters(
 		DDMDataProviderRequest ddmDataProviderRequest) {
 
-		DDMDataProviderContext ddmDataProviderContext =
-			ddmDataProviderRequest.getDDMDataProviderContext();
+		try {
+			String ddmDataProviderInstanceId =
+				ddmDataProviderRequest.getDDMDataProviderInstanceId();
 
-		if (ddmDataProviderContext.getType() == null) {
-			return;
+			Optional<DDMDataProviderInstance> ddmDataProviderInstanceOptional =
+				fetchDDMDataProviderInstance(ddmDataProviderInstanceId);
+
+			setDDMDataProviderRequestAttributes(
+				ddmDataProviderRequest, ddmDataProviderInstanceOptional);
+
+			DDMDataProvider ddmDataProvider = getDDMDataProvider(
+				ddmDataProviderInstanceId, ddmDataProviderInstanceOptional);
+
+			return ddmDataProvider.getData(ddmDataProviderRequest);
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to invoke DDM Data Provider instance ID " +
+						ddmDataProviderRequest.getDDMDataProviderInstanceId(),
+					e);
+			}
+
+			if (e instanceof PrincipalException) {
+				return DDMDataProviderResponse.error(Status.UNAUTHORIZED);
+			}
 		}
 
-		// Backwards compatibility
+		return DDMDataProviderResponse.error(Status.INTERNAL_SERVER_ERROR);
+	}
 
-		ddmDataProviderRequest.queryString(
-			ddmDataProviderContext.getParameters());
+	protected void addDDMDataProviderRequestParameters(
+		DDMDataProviderRequest ddmDataProviderRequest,
+		DDMDataProviderInstance ddmDataProviderInstance) {
 
 		// Context Contributors
 
 		List<DDMDataProviderContextContributor>
 			ddmDataProviderContextContributors =
 				ddmDataProviderTracker.getDDMDataProviderContextContributors(
-					ddmDataProviderContext.getType());
+					ddmDataProviderInstance.getType());
 
 		for (DDMDataProviderContextContributor
 				ddmDataProviderContextContributor :
@@ -85,20 +108,102 @@ public class DDMDataProviderInvokerImpl implements DDMDataProviderInvoker {
 		}
 	}
 
-	protected DDMDataProvider getDDMDataProvider(
-		DDMDataProviderContext ddmDataProviderContext) {
+	protected DDMDataProviderContext createDDMDataProviderContext(
+		DDMDataProviderInstance ddmDataProviderInstance) {
 
-		String type = ddmDataProviderContext.getType();
+		try {
+			DDMDataProvider ddmDataProvider =
+				ddmDataProviderTracker.getDDMDataProvider(
+					ddmDataProviderInstance.getType());
 
-		if (type == null) {
-			return ddmDataProviderTracker.getDDMDataProviderByInstanceId(
-				ddmDataProviderContext.getDDMDataProviderInstanceId());
+			DDMForm ddmForm = DDMFormFactory.create(
+				ddmDataProvider.getSettings());
+
+			DDMFormValues ddmFormValues =
+				ddmFormValuesJSONDeserializer.deserialize(
+					ddmForm, ddmDataProviderInstance.getDefinition());
+
+			return new DDMDataProviderContext(ddmFormValues);
+		}
+		catch (PortalException pe) {
+			throw new IllegalStateException(pe);
+		}
+	}
+
+	protected Optional<DDMDataProviderInstance> fetchDDMDataProviderInstance(
+			String ddmDataProviderInstanceId)
+		throws PortalException {
+
+		DDMDataProviderInstance ddmDataProviderInstance =
+			ddmDataProviderInstanceService.fetchDataProviderInstanceByUuid(
+				ddmDataProviderInstanceId);
+
+		if ((ddmDataProviderInstance == null) &&
+			Validator.isNumber(ddmDataProviderInstanceId)) {
+
+			ddmDataProviderInstance =
+				ddmDataProviderInstanceService.fetchDataProviderInstance(
+					Long.valueOf(ddmDataProviderInstanceId));
 		}
 
-		return ddmDataProviderTracker.getDDMDataProvider(type);
+		return Optional.ofNullable(ddmDataProviderInstance);
+	}
+
+	protected DDMDataProvider getDDMDataProvider(
+		String ddmDataProviderInstanceId,
+		Optional<DDMDataProviderInstance> ddmDataProviderInstanceOptional) {
+
+		Optional<DDMDataProvider> ddmDataProviderTypeOptional =
+			ddmDataProviderInstanceOptional.map(
+				ddmDataProviderInstance ->
+					ddmDataProviderTracker.getDDMDataProvider(
+						ddmDataProviderInstance.getType()));
+
+		return ddmDataProviderTypeOptional.orElseGet(
+			() -> ddmDataProviderTracker.getDDMDataProviderByInstanceId(
+				ddmDataProviderInstanceId));
+	}
+
+	protected void setDDMDataProviderRequestAttributes(
+		DDMDataProviderRequest ddmDataProviderRequest,
+		Optional<DDMDataProviderInstance> ddmDataProviderInstanceOptional) {
+
+		ddmDataProviderInstanceOptional.ifPresent(
+			ddmDataProviderInstance -> {
+				addDDMDataProviderRequestParameters(
+					ddmDataProviderRequest, ddmDataProviderInstance);
+
+				setDDMDataProviderRequestContext(
+					ddmDataProviderRequest, ddmDataProviderInstance);
+			});
+	}
+
+	protected void setDDMDataProviderRequestContext(
+		DDMDataProviderRequest ddmDataProviderRequest,
+		DDMDataProviderInstance ddmDataProviderInstance) {
+
+		DDMDataProviderContext ddmDataProviderContext =
+			createDDMDataProviderContext(ddmDataProviderInstance);
+
+		ddmDataProviderRequest.setDDMDataProviderContext(
+			ddmDataProviderContext);
+
+		// Backwards compatibility
+
+		ddmDataProviderContext.addParameters(
+			ddmDataProviderRequest.getParameters());
 	}
 
 	@Reference
+	protected DDMDataProviderInstanceService ddmDataProviderInstanceService;
+
+	@Reference
 	protected DDMDataProviderTracker ddmDataProviderTracker;
+
+	@Reference
+	protected DDMFormValuesJSONDeserializer ddmFormValuesJSONDeserializer;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMDataProviderInvokerImpl.class);
 
 }

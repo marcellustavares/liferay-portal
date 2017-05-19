@@ -91,7 +91,12 @@ public interface TextDDMFormFieldTypeSettings
 	public String dataSourceType();
 
 	@DDMFormField(
-		label = "%choose-a-data-provider", type = "select",
+		label = "%choose-a-data-provider",
+		properties = {
+			"dataSourceType=data-provider",
+			"ddmDataProviderInstanceId=getDataProviderInstances"
+		},
+		type = "select",
 		visibilityExpression = "equals(dataSourceType, \"data-provider\")"
 	)
 	public long ddmDataProviderInstanceId();

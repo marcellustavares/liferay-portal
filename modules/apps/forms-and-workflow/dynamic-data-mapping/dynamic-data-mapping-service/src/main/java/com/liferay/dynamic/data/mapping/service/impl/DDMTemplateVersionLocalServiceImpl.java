@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateVersionException;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMTemplateVersionLocalServiceBaseImpl;
@@ -30,7 +28,6 @@ import java.util.List;
 /**
  * @author Marcellus Tavares
  */
-@ProviderType
 public class DDMTemplateVersionLocalServiceImpl
 	extends DDMTemplateVersionLocalServiceBaseImpl {
 

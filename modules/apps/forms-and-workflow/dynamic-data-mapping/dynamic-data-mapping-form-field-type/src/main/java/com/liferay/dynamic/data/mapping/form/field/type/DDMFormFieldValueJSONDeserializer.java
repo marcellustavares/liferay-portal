@@ -12,22 +12,16 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.io;
-
-import aQute.bnd.annotation.ProviderType;
+package com.liferay.dynamic.data.mapping.form.field.type;
 
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.dynamic.data.mapping.model.Value;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-@ProviderType
-public interface DDMFormFieldJSONObjectTransformer {
+public interface DDMFormFieldValueJSONDeserializer {
 
-	public JSONObject transform(DDMFormField ddmFormField);
-
-	public DDMFormField transform(JSONObject jsonObject) throws PortalException;
+	public Value deserialize(DDMFormField ddmFormField, String serializedValue);
 
 }

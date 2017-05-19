@@ -286,6 +286,15 @@
 			li:hover {
 				background-color: #F7FAFA;
 			}
+
+			.no-results-list {
+				color: rgba(134, 156, 173, 0.4);
+				cursor: default;
+
+				&:hover {
+					background-color: #FFF;
+				}
+			}
 		}
 	}
 

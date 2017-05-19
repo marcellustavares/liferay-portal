@@ -12,17 +12,16 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.data.provider;
+package com.liferay.dynamic.data.mapping.form.field.type;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.Value;
 
 /**
- * @author Marcellus Tavares
+ * @author Leonardo Barros
  */
-@ProviderType
-public interface DDMDataProviderContextFactory {
+public interface DDMFormFieldValueJSONSerializer {
 
-	public DDMDataProviderContext create(String ddmDataProviderInstanceId)
-		throws DDMDataProviderException;
+	public Object serialize(DDMFormField ddmFormField, Value value);
 
 }

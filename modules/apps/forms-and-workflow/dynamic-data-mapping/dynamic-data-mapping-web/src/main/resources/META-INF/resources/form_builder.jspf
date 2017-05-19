@@ -233,6 +233,7 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 			availableFields: availableFields,
 			boundingBox: '#<portlet:namespace />formBuilder',
 			enableEditing: false,
+			fieldNameEditionDisabled: <%= (structure != null) && (DDMStorageLinkLocalServiceUtil.getStructureStorageLinksCount(structure.getStructureId()) > 0) %>,
 
 			<c:if test="<%= Validator.isNotNull(fieldsJSONArrayString) %>">
 				fields: <%= fieldsJSONArrayString %>,

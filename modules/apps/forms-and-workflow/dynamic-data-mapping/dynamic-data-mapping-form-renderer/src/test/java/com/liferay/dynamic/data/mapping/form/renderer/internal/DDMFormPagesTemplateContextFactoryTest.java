@@ -72,8 +72,8 @@ public class DDMFormPagesTemplateContextFactoryTest {
 
 	@Before
 	public void setUp() {
-		setUpResourceBundleLoaderUtil();
 		setUpLanguageUtil();
+		setUpResourceBundleLoaderUtil();
 	}
 
 	@Test

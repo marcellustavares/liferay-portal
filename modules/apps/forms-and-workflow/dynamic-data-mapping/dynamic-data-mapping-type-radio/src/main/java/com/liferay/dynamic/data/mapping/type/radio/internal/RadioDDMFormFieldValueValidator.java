@@ -19,7 +19,6 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueValidat
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.Value;
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -45,8 +44,7 @@ public class RadioDDMFormFieldValueValidator
 	implements DDMFormFieldValueValidator {
 
 	@Override
-	public void validate(
-			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue)
+	public void validate(DDMFormField ddmFormField, Value value)
 		throws DDMFormFieldValueValidationException {
 
 		DDMFormFieldOptions ddmFormFieldOptions =
@@ -65,8 +63,6 @@ public class RadioDDMFormFieldValueValidator
 			throw new DDMFormFieldValueValidationException(
 				"Options must contain at least one alternative");
 		}
-
-		Value value = ddmFormFieldValue.getValue();
 
 		Map<Locale, String> selectedValues = value.getValues();
 

@@ -15,9 +15,12 @@
 package com.liferay.dynamic.data.mapping.io.internal;
 
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -51,12 +54,22 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 	public void testDeserializationWithParentRepeatableField()
 		throws Exception {
 
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		DDMFormField separatorDDMFormField =
+			DDMFormTestUtil.createSeparatorDDMFormField("Separator", true);
+
+		separatorDDMFormField.addNestedDDMFormField(
+			DDMFormTestUtil.createLocalizableTextDDMFormField("Text"));
+
+		ddmForm.addDDMFormField(separatorDDMFormField);
+
 		String serializedDDMFormValues = read(
 			"ddm-form-values-json-deserializer-parent-repeatable-field.json");
 
 		DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				null, serializedDDMFormValues);
+				ddmForm, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();
@@ -85,12 +98,17 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 	@Test
 	public void testDeserializationWithRepeatableField() throws Exception {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createTextDDMFormField("Text", true, true, false));
+
 		String serializedDDMFormValues = read(
 			"ddm-form-values-json-deserializer-repeatable-field.json");
 
 		DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				null, serializedDDMFormValues);
+				ddmForm, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();
@@ -106,12 +124,46 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 	@Test
 	public void testDeserializationWithSimpleFields() throws Exception {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Boolean", "Boolean", "checkbox", "boolean", true, false,
+				false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Documents_and_Media", "Documents_and_Media",
+				"document-library", "string", true, false, false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Geolocation", "Geolocation", "geolocation", "string", true,
+				false, false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"HTML", "HTML", "html", "string", true, false, false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Image", "Image", "image", "string", true, false, false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Link_to_Page", "Link to Page", "link_to_page", "string", true,
+				false, false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Select", "Select", "select", "string", true, false, false));
+
 		String serializedDDMFormValues = read(
 			"ddm-form-values-json-deserializer-test-data.json");
 
 		DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				null, serializedDDMFormValues);
+				ddmForm, serializedDDMFormValues);
 
 		testAvailableLocales(ddmFormValues);
 		testDefaultLocale(ddmFormValues);
@@ -133,12 +185,24 @@ public class DDMFormValuesJSONDeserializerTest extends BaseDDMTestCase {
 
 	@Test
 	public void testDeserializationWithUnlocalizableField() throws Exception {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Boolean", "Boolean", "checkbox", "boolean", false, false,
+				false));
+
+		ddmForm.addDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"Documents_and_Media", "Documents_and_Media",
+				"document-library", "string", false, false, false));
+
 		String serializedDDMFormValues = read(
 			"ddm-form-values-json-deserializer-unlocalizable-fields.json");
 
 		DDMFormValues ddmFormValues =
 			_ddmFormValuesJSONDeserializer.deserialize(
-				null, serializedDDMFormValues);
+				ddmForm, serializedDDMFormValues);
 
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();

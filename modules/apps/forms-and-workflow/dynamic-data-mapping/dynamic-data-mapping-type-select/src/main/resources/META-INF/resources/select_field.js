@@ -51,7 +51,8 @@ AUI.add(
 						value: {
 							chooseAnOption: Liferay.Language.get('choose-an-option'),
 							chooseOptions: Liferay.Language.get('choose-options'),
-							dynamicallyLoadedData: Liferay.Language.get('dynamically-loaded-data')
+							dynamicallyLoadedData: Liferay.Language.get('dynamically-loaded-data'),
+							emptyList: Liferay.Language.get('empty-list')
 						}
 					},
 
@@ -82,10 +83,20 @@ AUI.add(
 
 						instance._open = false;
 
+						instance._createBadgeTooltip();
+
 						instance._eventHandlers.push(
 							A.one('doc').after('click', A.bind(instance._afterClickOutside, instance)),
 							instance.bindContainerEvent('click', instance._handleContainerClick, '.' + CSS_FORM_FIELD_CONTAINER)
 						);
+					},
+
+					destructor: function() {
+						var instance = this;
+
+						if (instance._tooltip) {
+							instance._tooltip.destroy();
+						}
 					},
 
 					cleanSelect: function() {
@@ -259,6 +270,20 @@ AUI.add(
 						}
 
 						instance._preventDocumentClick = false;
+					},
+
+					_createBadgeTooltip: function() {
+						var instance = this;
+
+						instance._tooltip = new A.TooltipDelegate(
+							{
+								position: 'bottom',
+								trigger: '.multiple-badge-list .multiple-badge',
+								triggerHideEvent: ['blur', 'mouseleave'],
+								triggerShowEvent: ['focus', 'mouseover'],
+								visible: false
+							}
+						);
 					},
 
 					_getContextValue: function() {
@@ -509,6 +534,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddm-form-field-select', 'liferay-ddm-form-field-select-search-support', 'liferay-ddm-form-renderer-field']
+		requires: ['aui-tooltip', 'liferay-ddm-form-field-select', 'liferay-ddm-form-field-select-search-support', 'liferay-ddm-form-renderer-field']
 	}
 );

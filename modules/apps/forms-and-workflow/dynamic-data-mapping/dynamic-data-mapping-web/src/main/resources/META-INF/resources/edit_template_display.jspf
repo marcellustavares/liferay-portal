@@ -53,7 +53,7 @@ if (Validator.isNotNull(scriptContent)) {
 
 							ResourceBundleLoader resourceBundleLoader = ResourceBundleLoaderUtil.getResourceBundleLoaderByBundleSymbolicName(bundle.getSymbolicName());
 
-							ResourceBundle templateHandlerResourceBundle = resourceBundleLoader.loadResourceBundle(LocaleUtil.toLanguageId(locale));
+							ResourceBundle templateHandlerResourceBundle = resourceBundleLoader.loadResourceBundle(locale);
 
 							for (TemplateVariableGroup templateVariableGroup : templateVariableGroups.values()) {
 								if (templateVariableGroup.isEmpty()) {

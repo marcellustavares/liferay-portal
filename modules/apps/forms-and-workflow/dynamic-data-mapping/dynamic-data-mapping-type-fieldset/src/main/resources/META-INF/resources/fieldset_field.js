@@ -1,6 +1,8 @@
 AUI.add(
 	'liferay-ddm-form-field-fieldset',
 	function(A) {
+		var Lang = A.Lang;
+
 		var Renderer = Liferay.DDM.Renderer;
 
 		var FieldSetUtil = Liferay.DDM.Field.FieldSetUtil;
@@ -10,8 +12,14 @@ AUI.add(
 		var FieldSetField = A.Component.create(
 			{
 				ATTRS: {
+					context: {
+						getter: '_getContext',
+						value: {}
+					},
+
 					nestedFields: {
 						setter: '_setNestedFields',
+						state: true,
 						validator: Array.isArray,
 						value: []
 					},
@@ -22,6 +30,10 @@ AUI.add(
 
 					type: {
 						value: 'fieldset'
+					},
+
+					valid: {
+						getter: '_getValid'
 					}
 				},
 
@@ -46,9 +58,19 @@ AUI.add(
 
 						config.context.nestedFields.forEach(
 							function(field) {
-								delete field.instanceId;
 								delete field.name;
-								delete field.value;
+
+								field.instanceId = Util.generateInstanceId(8);
+
+								if (Lang.isArray(field.value)) {
+									field.value = [];
+								}
+								else if (Lang.isObject(field.value)) {
+									field.value = {};
+								}
+								else {
+									field.value = '';
+								}
 							}
 						);
 
@@ -150,6 +172,7 @@ AUI.add(
 						var nestedFieldContext = A.merge(
 							config,
 							{
+								context: A.clone(config),
 								fieldName: Util.getFieldNameFromQualifiedName(config.name),
 								parent: instance,
 								portletNamespace: instance.get('portletNamespace'),
@@ -158,6 +181,28 @@ AUI.add(
 						);
 
 						return new FieldSetNestedField(nestedFieldContext);
+					},
+
+					_getContext: function(context) {
+						var instance = this;
+
+						if (context && context.nestedFields) {
+							context.nestedFields.forEach(
+								function(fieldContext) {
+									var field = instance.getField(fieldContext.fieldName, fieldContext.instanceId);
+
+									if (field) {
+										A.mix(fieldContext, field.get('context'), true);
+									}
+								}
+							);
+						}
+
+						return context;
+					},
+
+					_getValid: function() {
+						return true;
 					},
 
 					_setNestedFields: function(nestedFields) {

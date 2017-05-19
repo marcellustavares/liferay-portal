@@ -114,7 +114,7 @@
  */
 {template .badge_item autoescape="deprecated-contextual"}
 	<li>
-		<span class="badge badge-default badge-sm multiple-badge">
+		<span class="badge badge-default badge-sm multiple-badge" data-original-title="{$label}" title="{$label}">
 			{$label}
 			<a class="trigger-badge-item-close" data-badge-value="{$value}" href="javascript:void(0)">{$badgeCloseIcon|noAutoescape}</a>
 		</span>
@@ -196,27 +196,36 @@
  *
  * @param multiple
  * @param options
+ * @param strings
  * @param value
  */
 {template .select_options autoescape="deprecated-contextual"}
-	{foreach $option in $options}
-		{let $selected}
-			{if $value}
-				{foreach $currentValue in $value}
-					{if $currentValue.value == $option.value}
-						selected
-					{/if}
-				{/foreach}
-			{/if}
-		{/let}
+	{if length($options) > 0}
+		{foreach $option in $options}
+			{let $selected}
+				{if $value}
+					{foreach $currentValue in $value}
+						{if $currentValue.value == $option.value}
+							selected
+						{/if}
+					{/foreach}
+				{/if}
+			{/let}
 
-		<li class="select-option-item {if $selected}option-selected{/if}" data-option-index="{index($option)}" data-option-selected="{if $selected}true{/if}" data-option-value="{$option.value}">
-			{if $multiple}
-				<input type="checkbox" value="" {if $selected}checked{/if}>
-			{/if}
+			<li class="select-option-item {if $selected}option-selected{/if}" data-option-index="{index($option)}" data-option-selected="{if $selected}true{/if}" data-option-value="{$option.value}">
+				{if $multiple}
+					<input type="checkbox" value="" {if $selected}checked{/if}>
+				{/if}
+				<span>
+					{$option.label}
+				</span>
+			</li>
+		{/foreach}
+	{else}
+		<li class="no-results-list">
 			<span>
-				{$option.label}
+				{$strings.emptyList}
 			</span>
 		</li>
-	{/foreach}
+	{/if}
 {/template}

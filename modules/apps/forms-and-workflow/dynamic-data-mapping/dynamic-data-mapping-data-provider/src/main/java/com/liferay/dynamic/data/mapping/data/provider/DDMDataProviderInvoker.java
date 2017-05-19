@@ -20,7 +20,6 @@ package com.liferay.dynamic.data.mapping.data.provider;
 public interface DDMDataProviderInvoker {
 
 	public DDMDataProviderResponse invoke(
-			DDMDataProviderRequest ddmDataProviderRequest)
-		throws DDMDataProviderException;
+		DDMDataProviderRequest ddmDataProviderRequest);
 
 }

@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ReflectionUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.PortalImpl;
 
@@ -350,7 +351,7 @@ public class DDMFormTemplateContextFactoryTest extends PowerMockito {
 
 		// Paginated form
 
-		ddmFormLayout.setPaginationMode(DDMFormLayout.WIZARD_MODE);
+		ddmFormLayout.setPaginationMode(StringPool.BLANK);
 
 		templateContext = _ddmFormTemplateContextFactory.create(
 			DDMFormTestUtil.createDDMForm(), ddmFormLayout,
@@ -358,6 +359,17 @@ public class DDMFormTemplateContextFactoryTest extends PowerMockito {
 
 		Assert.assertEquals(
 			"ddm.paginated_form", templateContext.get("templateNamespace"));
+
+		// Wizard form
+
+		ddmFormLayout.setPaginationMode(DDMFormLayout.WIZARD_MODE);
+
+		templateContext = _ddmFormTemplateContextFactory.create(
+			DDMFormTestUtil.createDDMForm(), ddmFormLayout,
+			new DDMFormRenderingContext());
+
+		Assert.assertEquals(
+			"ddm.wizard_form", templateContext.get("templateNamespace"));
 	}
 
 	protected void setDeclaredField(

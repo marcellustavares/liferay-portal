@@ -55,7 +55,7 @@ AUI.add(
 						return columns.map(A.bind('_visitColumn', instance));
 					},
 
-					_visitField: function(field) {
+					_visitField: function(field, fields) {
 						var instance = this;
 
 						var fieldHandler = instance.get('fieldHandler');
@@ -66,7 +66,7 @@ AUI.add(
 					_visitFields: function(fields) {
 						var instance = this;
 
-						return fields.map(A.bind('_visitField', instance));
+						return fields.map(A.rbind('_visitField', instance, fields));
 					},
 
 					_visitPage: function(page) {

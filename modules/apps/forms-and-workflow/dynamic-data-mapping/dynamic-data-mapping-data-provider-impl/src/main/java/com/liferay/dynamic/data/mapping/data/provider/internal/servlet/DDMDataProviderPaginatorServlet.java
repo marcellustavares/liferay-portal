@@ -14,8 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.data.provider.internal.servlet;
 
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContext;
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderContextFactory;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderInvoker;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderRequest;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
@@ -123,11 +121,8 @@ public class DDMDataProviderPaginatorServlet extends HttpServlet {
 		List<Map<String, String>> dataProviderResult = new ArrayList<>();
 
 		try {
-			DDMDataProviderContext ddmDataProviderContext =
-				_ddmDataProviderContextFactory.create(dataProviderInstanceUUID);
-
 			DDMDataProviderRequest ddmDataProviderRequest =
-				new DDMDataProviderRequest(ddmDataProviderContext, request);
+				new DDMDataProviderRequest(dataProviderInstanceUUID, request);
 
 			addParametersFromRequest(ddmDataProviderRequest, request);
 
@@ -185,9 +180,6 @@ public class DDMDataProviderPaginatorServlet extends HttpServlet {
 		DDMDataProviderPaginatorServlet.class);
 
 	private static final long serialVersionUID = 1L;
-
-	@Reference
-	private DDMDataProviderContextFactory _ddmDataProviderContextFactory;
 
 	@Reference
 	private DDMDataProviderInvoker _ddmDataProviderInvoker;

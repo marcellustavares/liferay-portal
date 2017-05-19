@@ -47,7 +47,7 @@ public class CallFunctionTest {
 			"field0", Arrays.asList(ddmFormFieldEvaluationResult));
 
 		CallFunction callFunction = new CallFunction(
-			null, null, ddmFormFieldEvaluationResults, null, null);
+			null, ddmFormFieldEvaluationResults, null, null);
 
 		List<KeyValuePair> keyValuePairs = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class CallFunctionTest {
 			"field0", Arrays.asList(ddmFormFieldEvaluationResult));
 
 		CallFunction callFunction = new CallFunction(
-			null, null, ddmFormFieldEvaluationResults, null, null);
+			null, ddmFormFieldEvaluationResults, null, null);
 
 		List<KeyValuePair> keyValuePairs = new ArrayList<>();
 

@@ -18,7 +18,6 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeSettings;
-import com.liferay.dynamic.data.mapping.io.DDMFormFieldJSONObjectTransformer;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -28,6 +27,9 @@ import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormFieldTypeSettingsTestUtil;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.ReflectionUtil;
+
+import java.lang.reflect.Field;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,22 +63,6 @@ public class DDMFormJSONDeserializerTest
 		throws PortalException {
 
 		return _ddmFormJSONDeserializer.deserialize(serializedDDMForm);
-	}
-
-	protected DDMFormFieldJSONObjectTransformer
-		getDDMFormFieldJSONObjectTransformer() {
-
-		DDMFormFieldJSONObjectTransformerImpl
-			ddmFormFieldJSONObjectConverterImpl =
-				new DDMFormFieldJSONObjectTransformerImpl();
-
-		ddmFormFieldJSONObjectConverterImpl.
-			jsonObjectToDDMFormFieldTransformer =
-				new JSONObjectToDDMFormFieldTransformer(
-					getMockedDDMFormFieldTypeServicesTracker(),
-					new JSONFactoryImpl());
-
-		return ddmFormFieldJSONObjectConverterImpl;
 	}
 
 	@Override
@@ -132,15 +118,23 @@ public class DDMFormJSONDeserializerTest
 	}
 
 	protected void setUpDDMFormJSONDeserializer() throws Exception {
-		DDMFormJSONDeserializerImpl ddmFormJSONDeserializerImpl =
-			new DDMFormJSONDeserializerImpl();
 
-		ddmFormJSONDeserializerImpl.jsonFactory = new JSONFactoryImpl();
+		// DDM form field type services tracker
 
-		ddmFormJSONDeserializerImpl.ddmFormFieldJSONObjectTransformer =
-			getDDMFormFieldJSONObjectTransformer();
+		Field field = ReflectionUtil.getDeclaredField(
+			DDMFormJSONDeserializerImpl.class,
+			"_ddmFormFieldTypeServicesTracker");
 
-		_ddmFormJSONDeserializer = ddmFormJSONDeserializerImpl;
+		field.set(
+			_ddmFormJSONDeserializer,
+			getMockedDDMFormFieldTypeServicesTracker());
+
+		// JSON factory
+
+		field = ReflectionUtil.getDeclaredField(
+			DDMFormJSONDeserializerImpl.class, "_jsonFactory");
+
+		field.set(_ddmFormJSONDeserializer, new JSONFactoryImpl());
 	}
 
 	protected void setUpDefaultDDMFormFieldType() {
@@ -215,7 +209,8 @@ public class DDMFormJSONDeserializerTest
 		Assert.assertEquals("false", ddmFormField.getVisibilityExpression());
 	}
 
-	private DDMFormJSONDeserializer _ddmFormJSONDeserializer;
+	private final DDMFormJSONDeserializer _ddmFormJSONDeserializer =
+		new DDMFormJSONDeserializerImpl();
 
 	@Mock
 	private DDMFormFieldType _defaultDDMFormFieldType;

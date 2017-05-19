@@ -74,7 +74,8 @@ public abstract class BaseDDMFormFieldOptionsValidationTestCase {
 		DDMFormFieldValueValidator ddmFormFieldValueValidator =
 			getDDMFormFieldValueValidator();
 
-		ddmFormFieldValueValidator.validate(ddmFormField, ddmFormFieldValue);
+		ddmFormFieldValueValidator.validate(
+			ddmFormField, ddmFormFieldValue.getValue());
 	}
 
 	@Test(expected = DDMFormFieldValueValidationException.class)
@@ -102,7 +103,8 @@ public abstract class BaseDDMFormFieldOptionsValidationTestCase {
 		DDMFormFieldValueValidator ddmFormFieldValueValidator =
 			getDDMFormFieldValueValidator();
 
-		ddmFormFieldValueValidator.validate(ddmFormField, ddmFormFieldValue);
+		ddmFormFieldValueValidator.validate(
+			ddmFormField, ddmFormFieldValue.getValue());
 	}
 
 	@Test(expected = DDMFormFieldValueValidationException.class)
@@ -125,7 +127,8 @@ public abstract class BaseDDMFormFieldOptionsValidationTestCase {
 		DDMFormFieldValueValidator ddmFormFieldValueValidator =
 			getDDMFormFieldValueValidator();
 
-		ddmFormFieldValueValidator.validate(ddmFormField, ddmFormFieldValue);
+		ddmFormFieldValueValidator.validate(
+			ddmFormField, ddmFormFieldValue.getValue());
 	}
 
 	protected abstract DDMFormFieldValueValidator

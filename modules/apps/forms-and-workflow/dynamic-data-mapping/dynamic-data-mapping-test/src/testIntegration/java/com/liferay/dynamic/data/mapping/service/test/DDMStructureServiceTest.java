@@ -42,7 +42,6 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.AdvancedPermissionChecker;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.List;
@@ -346,11 +345,7 @@ public class DDMStructureServiceTest extends BaseDDMServiceTestCase {
 			PermissionThreadLocal.getPermissionChecker();
 
 		PermissionThreadLocal.setPermissionChecker(
-			new AdvancedPermissionChecker() {
-				{
-					init(_siteAdminUser);
-				}
-			});
+			PermissionCheckerFactoryUtil.create(_siteAdminUser));
 	}
 
 	protected void setUpPrincipalThreadLocal() throws Exception {
