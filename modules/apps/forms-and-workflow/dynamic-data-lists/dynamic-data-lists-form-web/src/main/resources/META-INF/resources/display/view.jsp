@@ -118,64 +118,99 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 					</aui:form>
 				</div>
 
-				<c:if test="<%= ddlFormDisplayContext.isAutosaveEnabled() %>">
-					<aui:script use="aui-base">
-						var <portlet:namespace />intervalId;
-						var <portlet:namespace />form;
+				<c:choose>
+					<c:when test="<%= ddlFormDisplayContext.isAutosaveEnabled() %>">
+						<aui:script use="aui-base">
+							var <portlet:namespace />intervalId;
+							var <portlet:namespace />form;
 
-						<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="addRecord" var="autoSaveRecordURL">
-							<portlet:param name="autoSave" value="<%= Boolean.TRUE.toString() %>" />
-						</liferay-portlet:resourceURL>
+							<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="addRecord" var="autoSaveRecordURL">
+								<portlet:param name="autoSave" value="<%= Boolean.TRUE.toString() %>" />
+							</liferay-portlet:resourceURL>
 
-						function <portlet:namespace />autoSave() {
-							A.io.request('<%= autoSaveRecordURL.toString() %>',
-								{
-									data: {
-										<portlet:namespace />recordSetId: <%= recordSetId %>,
-										<portlet:namespace />serializedDDMFormValues: JSON.stringify(<portlet:namespace />form.toJSON())
-									},
-									method: 'POST'
-								}
-							);
-						}
-
-						function <portlet:namespace />startAutoSave() {
-							if (<portlet:namespace />intervalId) {
-								clearInterval(<portlet:namespace />intervalId);
-							}
-
-							<portlet:namespace />intervalId = setInterval(<portlet:namespace />autoSave, 60000);
-						}
-
-						function <portlet:namespace />clearPortletHandlers(event) {
-							if (<portlet:namespace />intervalId) {
-								clearInterval(<portlet:namespace />intervalId);
-							}
-
-							Liferay.detach('destroyPortlet', <portlet:namespace />clearPortletHandlers);
-						};
-
-						<portlet:namespace />form = Liferay.component('<%= ddlFormDisplayContext.getContainerId() %>DDMForm');
-
-						if (<portlet:namespace />form) {
-							<portlet:namespace />startAutoSave();
-						}
-						else {
-							Liferay.after(
-								Liferay.namespace('DDM').Form + ':render',
-								function(event) {
-									<portlet:namespace />form = Liferay.component(event.containerId + 'DDMForm');
-
-									if (<portlet:namespace />form) {
-										<portlet:namespace />startAutoSave();
+							function <portlet:namespace />autoSave() {
+								A.io.request('<%= autoSaveRecordURL.toString() %>',
+									{
+										data: {
+											<portlet:namespace />recordSetId: <%= recordSetId %>,
+											<portlet:namespace />serializedDDMFormValues: JSON.stringify(<portlet:namespace />form.toJSON())
+										},
+										method: 'POST'
 									}
-								}
-							);
-						}
+								);
+							}
 
-						Liferay.on('destroyPortlet', <portlet:namespace />clearPortletHandlers);
-					</aui:script>
-				</c:if>
+							function <portlet:namespace />startAutoSave() {
+								if (<portlet:namespace />intervalId) {
+									clearInterval(<portlet:namespace />intervalId);
+								}
+
+								<portlet:namespace />intervalId = setInterval(<portlet:namespace />autoSave, 60000);
+							}
+
+							function <portlet:namespace />clearPortletHandlers(event) {
+								if (<portlet:namespace />intervalId) {
+									clearInterval(<portlet:namespace />intervalId);
+								}
+
+								Liferay.detach('destroyPortlet', <portlet:namespace />clearPortletHandlers);
+							};
+
+							<portlet:namespace />form = Liferay.component('<%= ddlFormDisplayContext.getContainerId() %>DDMForm');
+
+							if (<portlet:namespace />form) {
+								<portlet:namespace />startAutoSave();
+							}
+							else {
+								Liferay.after(
+									Liferay.namespace('DDM').Form + ':render',
+									function(event) {
+										<portlet:namespace />form = Liferay.component(event.containerId + 'DDMForm');
+
+										if (<portlet:namespace />form) {
+											<portlet:namespace />startAutoSave();
+										}
+									}
+								);
+							}
+
+							Liferay.on('destroyPortlet', <portlet:namespace />clearPortletHandlers);
+						</aui:script>
+					</c:when>
+					<c:otherwise>
+						<aui:script use="aui-base">
+							var <portlet:namespace />intervalId;
+
+							function <portlet:namespace />startAutoExtendSession() {
+								if (<portlet:namespace />intervalId) {
+									clearInterval(<portlet:namespace />intervalId);
+								}
+
+								var tenSeconds = 10000;
+
+								var time = Liferay.Session.get('sessionLength') || tenSeconds;
+
+								<portlet:namespace />intervalId = setInterval(<portlet:namespace />extendSession, (time/2) );
+							}
+
+							function <portlet:namespace />extendSession() {
+								Liferay.Session.extend();
+							}
+
+							function <portlet:namespace />clearPortletHandlers(event) {
+								if (<portlet:namespace />intervalId) {
+									clearInterval(<portlet:namespace />intervalId);
+								}
+
+								Liferay.detach('destroyPortlet', <portlet:namespace />clearPortletHandlers);
+							};
+
+							Liferay.on('destroyPortlet', <portlet:namespace />clearPortletHandlers);
+
+							<portlet:namespace />startAutoExtendSession();
+						</aui:script>
+					</c:otherwise>
+				</c:choose>>
 			</c:when>
 			<c:otherwise>
 				<div class="alert alert-warning">
