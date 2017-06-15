@@ -33,6 +33,8 @@ import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
@@ -73,6 +75,7 @@ public class DDMFormValuesFactoryTest extends PowerMockito {
 		setUpJSONFactoryUtil();
 		setUpLocaleThreadLocal();
 		setUpLocaleUtil();
+		setUpPortalUtil();
 	}
 
 	@After
@@ -988,6 +991,12 @@ public class DDMFormValuesFactoryTest extends PowerMockito {
 		).thenReturn(
 			LocaleUtil.US
 		);
+	}
+
+	protected void setUpPortalUtil() {
+		PortalUtil portalUtil = new PortalUtil();
+
+		portalUtil.setPortal(mock(Portal.class));
 	}
 
 	private final DDMFormValuesFactory _ddmFormValuesFactory =
