@@ -16,180 +16,135 @@ package com.liferay.portal.portlet.bridge.soy.internal;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.template.Template;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCCommand;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCCommandCache;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.HtmlImpl;
 
-import java.io.Writer;
+import java.net.URL;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Marcellus Tavares
  */
+@PrepareForTest(FrameworkUtil.class)
+@RunWith(PowerMockRunner.class)
 public class SoyPortletHelperTest {
 
 	@Before
-	public void setUp() {
-		setUpHtmlUtil();
+	public void setUpFrameworkUtil() {
 		setUpJSONFactoryUtil();
+
+		PowerMockito.spy(FrameworkUtil.class);
 	}
 
-	@Test
-	public void testgetPortletJavaScriptWithBundleWithoutPackageFile()
-		throws Exception {
-
-		String portletJavaScript = getPortletJavaScript(_mockBundle, "View");
-
-		Assert.assertEquals(StringPool.BLANK, portletJavaScript);
-	}
-
-	@Test
-	public void testgetPortletJavaScriptWithBundleWithPackageFile()
-		throws Exception {
-
-		Bundle bundle = getBundleWithPackageFile();
-
-		String portletJavaScript = getPortletJavaScript(bundle, "View");
-
-		Assert.assertNotEquals(StringPool.BLANK, portletJavaScript);
-	}
-
-	@Test
-	public void testgetRequiredModulesWithBundleWithPackageFile()
-		throws Exception {
-
-		Bundle bundle = getBundleWithPackageFile();
-
-		SoyPortletHelper soyPortletHelper = new SoyPortletHelper(bundle);
-
-		Set<String> expectedRequiredModules = new HashSet<>();
-
-		expectedRequiredModules.add("SampleModuleName/View.soy");
-
-		Set<String> actualRequiredModules = soyPortletHelper.getRequiredModules(
-			"View", Collections.<String>emptySet());
-
-		Assert.assertEquals(expectedRequiredModules, actualRequiredModules);
-	}
-
-	@Test
-	public void testTemplateNamespace() throws Exception {
-		String path = "View";
-
-		SoyPortletHelper soyPortletHelper = new SoyPortletHelper(_mockBundle);
-
-		Assert.assertEquals(
-			path.concat(".render"),
-			soyPortletHelper.getTemplateNamespace(path));
-	}
-
-	protected Bundle getBundleWithPackageFile() {
-		Bundle bundle = (Bundle)ProxyUtil.newProxyInstance(
-			Bundle.class.getClassLoader(), new Class<?>[] {Bundle.class},
-			new InvocationHandler() {
-
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args)
-					throws NoSuchMethodException {
-
-					if (method.equals(
-							Bundle.class.getMethod("getEntry", String.class)) &&
-						"package.json".equals(args[0])) {
-
-						return SoyPortletHelperTest.class.getResource(
-							"dependencies/package.json");
-					}
-
-					return null;
-				}
-
-			});
-
-		return bundle;
-	}
-
-	protected String getPortletJavaScript(Bundle bundle, String path)
-		throws Exception {
-
-		SoyPortletHelper soyPortletHelper = new SoyPortletHelper(bundle);
-
-		Template template = new MockTemplate();
-
-		String portletJavaScript = soyPortletHelper.getPortletJavaScript(
-			template, path, StringUtil.randomString(),
-			Collections.<String>emptySet());
-
-		return portletJavaScript;
-	}
-
-	protected void setUpHtmlUtil() {
+	@Before
+	public void setUpHtmlUtil() {
 		HtmlUtil htmlUtil = new HtmlUtil();
 
 		htmlUtil.setHtml(new HtmlImpl());
 	}
 
-	protected void setUpJSONFactoryUtil() {
+	@Before
+	public void setUpJSONFactoryUtil() {
 		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
 
 		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
 	}
 
-	private final Bundle _mockBundle = (Bundle)ProxyUtil.newProxyInstance(
-		Bundle.class.getClassLoader(), new Class<?>[] {Bundle.class},
-		new InvocationHandler() {
+	private Bundle _mockBundleWithoutPackage() {
+		Bundle bundle = Mockito.mock(Bundle.class);
 
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) {
-				return null;
+		Mockito.when(
+			bundle.getEntry("package.json")
+		).then(
+			new Answer<URL>() {
+
+				public URL answer(InvocationOnMock invocationOnMock) {
+					return null;
+				}
+
 			}
+		);
 
-		});
+		return bundle;
+	}
 
-	private static class MockTemplate
-		extends HashMap<String, Object> implements Template {
+	private Bundle _mockBundleWithPackageFile(final String packageFile) {
+		Bundle bundle = Mockito.mock(Bundle.class);
 
-		@Override
-		public void doProcessTemplate(Writer writer) {
-		}
+		Mockito.when(
+			bundle.getEntry(Matchers.endsWith("package.json"))
+		).then(
+			new Answer<URL>() {
 
-		@Override
-		public Object get(String key) {
-			return super.get(key);
-		}
+				public URL answer(InvocationOnMock invocationOnMock) {
+					return SoyPortletHelperTest.class.getResource(
+						"dependencies/" + packageFile);
+				}
 
-		@Override
-		public String[] getKeys() {
-			Set<String> keys = keySet();
+			}
+		);
 
-			return keys.toArray(new String[keys.size()]);
-		}
+		return bundle;
+	}
 
-		@Override
-		public void prepare(HttpServletRequest request) {
-		}
+	private MVCCommandCache _mockEmptyMVCCommandCache() {
+		MVCCommandCache mvcCommandCache = Mockito.mock(MVCCommandCache.class);
 
-		@Override
-		public void processTemplate(Writer writer) {
-		}
+		Mockito.when(
+			mvcCommandCache.getMVCCommand(Matchers.anyString())
+		).then(
+			new Answer<MVCCommand>() {
 
+				public MVCCommand answer(InvocationOnMock invocationOnMock)
+					throws Throwable {
+
+					return MVCRenderCommand.EMPTY;
+				}
+
+			}
+		);
+
+		return mvcCommandCache;
+	}
+
+	private MVCCommandCache _mockMVCCommandCacheWithSingleCommand(
+		Bundle bundle, final String controllerName) {
+
+		MVCCommandCache mvcCommandCache = Mockito.mock(MVCCommandCache.class);
+
+		final MVCRenderCommand mvcRenderCommand = Mockito.mock(
+			MVCRenderCommand.class);
+
+		Mockito.when(
+			mvcCommandCache.getMVCCommand(controllerName)
+		).thenReturn(
+			mvcRenderCommand
+		);
+
+		Mockito.when(
+			FrameworkUtil.getBundle(mvcRenderCommand.getClass())
+		).thenReturn(
+			bundle
+		);
+
+		return mvcCommandCache;
 	}
 
 }

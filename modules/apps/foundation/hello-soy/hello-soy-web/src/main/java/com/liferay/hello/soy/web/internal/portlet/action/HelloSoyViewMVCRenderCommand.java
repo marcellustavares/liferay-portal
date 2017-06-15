@@ -16,6 +16,9 @@ package com.liferay.hello.soy.web.internal.portlet.action;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.template.Template;
+import com.liferay.portal.kernel.util.ReleaseInfo;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import javax.portlet.PortletURL;
@@ -30,11 +33,12 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=hello_soy_portlet", "mvc.command.name=Navigation"
+		"javax.portlet.name=hello_soy_portlet", "mvc.command.name=View",
+		"mvc.command.name=/"
 	},
 	service = MVCRenderCommand.class
 )
-public class HelloSoyNavigationExampleMVCRenderCommand
+public class HelloSoyViewMVCRenderCommand
 	implements MVCRenderCommand {
 
 	@Override
@@ -44,13 +48,20 @@ public class HelloSoyNavigationExampleMVCRenderCommand
 		Template template = (Template)renderRequest.getAttribute(
 			WebKeys.TEMPLATE);
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		template.put("layouts", themeDisplay.getLayouts());
+
 		PortletURL navigationURL = renderResponse.createRenderURL();
 
-		navigationURL.setParameter("mvcRenderCommandName", "View");
+		navigationURL.setParameter("mvcRenderCommandName", "Navigation");
 
 		template.put("navigationURL", navigationURL.toString());
 
-		return "Navigation";
+		template.put("releaseInfo", ReleaseInfo.getReleaseInfo());
+
+		return "View";
 	}
 
 }
