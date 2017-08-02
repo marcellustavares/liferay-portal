@@ -16,17 +16,27 @@ package com.liferay.portal.portlet.bridge.soy.internal;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONSerializer;
+import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
+import com.liferay.portal.kernel.portlet.Route;
+import com.liferay.portal.kernel.portlet.Router;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCCommandCache;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.io.InputStream;
+
 import java.net.URL;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletException;
 
@@ -45,23 +55,34 @@ public class SoyPortletHelper {
 	 * @param mvcRenderCommandCache The MVCCommandCache used by this helper.
 	 */
 	public SoyPortletHelper(
-			Bundle bundle, MVCCommandCache mvcRenderCommandCache)
+			Bundle bundle, MVCCommandCache mvcRenderCommandCache,
+			FriendlyURLMapper friendlyURLMapper)
 		throws Exception {
 
 		_bundle = bundle;
 		_mvcRenderCommandCache = mvcRenderCommandCache;
+		_friendlyURLMapper = friendlyURLMapper;
+
+		_jsonSerializer = JSONFactoryUtil.createJSONSerializer();
+		_routerJavaScriptTPL = getRouterJavaScriptTPL();
 	}
 
 	/**
-	 * Returns the JavaScript module name given a path. The returned module definition string can be input to the the
-	 * AMD Loader, for example.
+	 * Returns the JavaScript module name given a path. The returned module
+	 * definition string can be input to the the AMD Loader, for example.
 	 *
-	 * @param mvcCommandName The mvcCommandName of the View being requested.
-	 * @throws Exception
+	 * @param  mvcCommandName The mvcCommandName of the View being requested.
 	 * @return The JavaScript module name.
+	 * @throws Exception
 	 */
 	public String getJavaScriptLoaderModule(String mvcCommandName)
 		throws Exception {
+
+		String loaderModule = _javaScriptLoaderModulesMap.get(mvcCommandName);
+
+		if (loaderModule != null) {
+			return loaderModule;
+		}
 
 		String controllerName = getJavaScriptControllerName(mvcCommandName);
 
@@ -75,60 +96,96 @@ public class SoyPortletHelper {
 			packageName = packageName.concat(StringPool.SLASH);
 		}
 
-		return packageName.concat(controllerName);
+		loaderModule = packageName.concat(controllerName);
+
+		_javaScriptLoaderModulesMap.put(mvcCommandName, loaderModule);
+
+		return loaderModule;
 	}
 
-	/**
-	 * Returns the template namespace for a given path.
-	 *
-	 * @param path The path to be used.
-	 * @return 	The path concatenated with the string ".render".
-	 */
-	public String getTemplateNamespace(String path) {
-		return path.concat(".render");
+	public String getRouterJavaScript(
+			String elementId, String portletId, String portletNamespace,
+			String portletWrapperId, Template template)
+		throws Exception {
+
+		Set<String> mvcRenderCommandNames = getMVCRenderCommandNames();
+
+		String mvcRenderCommandNamesString = _jsonSerializer.serialize(
+			mvcRenderCommandNames);
+
+		template.remove("element");
+
+		String contextString = _jsonSerializer.serializeDeep(template);
+
+		List<Map<String, Object>> friendlyURLRoutes = getFriendlyURLRoutes();
+
+		String friendlyURLRoutesString = _jsonSerializer.serializeDeep(
+			friendlyURLRoutes);
+
+		return StringUtil.replace(
+			_routerJavaScriptTPL,
+			new String[] {
+				"$ELEMENT_ID", "$MVC_RENDER_COMMAND_NAMES", "$PORTLET_ID",
+				"$PORTLET_NAMESPACE", "$PORTLET_WRAPPER_ID", "$CONTEXT",
+				"$FRIENDLY_URL_ROUTES", "$FRIENDLY_URL_MAPPING",
+				"$FRIENDLY_URL_PREFIX"
+			},
+			new String[] {
+				elementId, mvcRenderCommandNamesString, portletId,
+				portletNamespace, portletWrapperId, contextString,
+				friendlyURLRoutesString, getFriendlyURLMapping(),
+				String.valueOf(isCheckMappingWithPrefix())
+			});
 	}
 
-	/**
-	 * Returns the {@code Bundle} for a given path.
-	 *
-	 * @param mvcCommandName The {@code MVCCommand} name for which to retreive the {@code Bundle}.
-	 * @throws PortletException
-	 * @return A {@code Bundle} for the specified {@code MVCCommand}.
-	 */
-	protected Bundle getMVCCommandBundle(String mvcCommandName)
-		throws PortletException {
+	public String serializeTemplate(Template template) {
+		return _jsonSerializer.serializeDeep(template);
+	}
 
-		MVCCommand mvcRenderCommand;
-
-		if (Validator.isNull(mvcCommandName)) {
-			mvcRenderCommand = MVCRenderCommand.EMPTY;
-		}
-		else {
-			mvcRenderCommand = _mvcRenderCommandCache.getMVCCommand(
-				mvcCommandName);
+	protected String getFriendlyURLMapping() {
+		if (_friendlyURLMapper == null) {
+			return StringPool.BLANK;
 		}
 
-		if (mvcRenderCommand == MVCRenderCommand.EMPTY) {
-			return _bundle;
+		return _friendlyURLMapper.getMapping();
+	}
+
+	protected List<Map<String, Object>> getFriendlyURLRoutes() {
+		List<Map<String, Object>> routesMapping = new ArrayList<>();
+
+		if (_friendlyURLMapper != null) {
+			Router router = _friendlyURLMapper.getRouter();
+
+			List<Route> routes = router.getRoutes();
+
+			for (Route route : routes) {
+				Map<String, Object> mapping = new HashMap<>();
+
+				mapping.put(
+					"implicitParameters", route.getImplicitParameters());
+				mapping.put("pattern", route.getPattern());
+
+				routesMapping.add(mapping);
+			}
 		}
 
-		return FrameworkUtil.getBundle(mvcRenderCommand.getClass());
+		return routesMapping;
 	}
 
 	/**
 	 * Returns the JavaScript controller name for given {@code MVCCommand} name.
-	 * For example:
-	 * If a JavaScript resource matching the controller name of the {@code MVCCommand} is found, this method will return its
-	 * name. If not, it will return the name of the Soy resource matching the controller name.
+	 * For example: If a JavaScript resource matching the controller name of the
+	 * {@code MVCCommand} is found, this method will return its name. If not, it
+	 * will return the name of the Soy resource matching the controller name.
 	 *
-	 * @param mvcCommandName The {@code MVCCommand} name .
+	 * @param  mvcCommandName The {@code MVCCommand} name .
 	 * @return The JavaScript controller name.
 	 * @throws PortletException
 	 */
 	protected String getJavaScriptControllerName(String mvcCommandName)
 		throws PortletException {
 
-		String controllerName = _controllersMap.get(mvcCommandName);
+		String controllerName = _javaScriptLoaderModulesMap.get(mvcCommandName);
 
 		if (controllerName != null) {
 			return controllerName;
@@ -145,16 +202,17 @@ public class SoyPortletHelper {
 		controllerName = StringUtil.replace(
 			filePath, _RESOURCES_PATH, StringPool.BLANK);
 
-		_controllersMap.put(mvcCommandName, controllerName);
+		_javaScriptLoaderModulesMap.put(mvcCommandName, controllerName);
 
 		return controllerName;
 	}
 
 	/**
-	 * Returns the JavaScript controller file path for a given {@code Bundle} MVC Command name.
+	 * Returns the JavaScript controller file path for a given {@code Bundle}
+	 * MVC Command name.
 	 *
-	 * @param bundle The {@code Bundle} in which to find the controller file.
-	 * @param mvcCommandName The MVC command name.
+	 * @param  bundle The {@code Bundle} in which to find the controller file.
+	 * @param  mvcCommandName The MVC command name.
 	 * @return The JavaScript controller file path.
 	 * @throws PortletException
 	 */
@@ -192,24 +250,17 @@ public class SoyPortletHelper {
 	/**
 	 * Return the JavaScript package name for a given path.
 	 *
-	 * @param   path The path of the {@code Bundle} to get the JavaScript
-	 * 				 package from.
-	 * @return       The JavaScript package name found in the given {@Bundle}.
-	 *
+	 * @param  path The path of the {@code Bundle} to get the JavaScript package
+	 *         from.
+	 * @return The JavaScript package name found in the given {@Bundle}.
 	 * @throws Exception
 	 */
 	protected String getJavaScriptPackageName(String path) throws Exception {
-		Bundle bundle = getMVCCommandBundle(path);
+		JSONObject jsonObject = getPackageJSONObject(path);
 
-		URL url = bundle.getEntry("package.json");
-
-		if (url == null) {
+		if (jsonObject == null) {
 			return null;
 		}
-
-		String json = StringUtil.read(url.openStream());
-
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
 		String moduleName = jsonObject.getString("name");
 
@@ -226,10 +277,79 @@ public class SoyPortletHelper {
 		return moduleName.concat(StringPool.AT).concat(moduleVersion);
 	}
 
+	/**
+	 * Returns the {@code Bundle} for a given path.
+	 *
+	 * @param  mvcCommandName The {@code MVCCommand} name for which to retreive
+	 *         the {@code Bundle}.
+	 * @return A {@code Bundle} for the specified {@code MVCCommand}.
+	 * @throws PortletException
+	 */
+	protected Bundle getMVCCommandBundle(String mvcCommandName)
+		throws PortletException {
+
+		MVCCommand mvcRenderCommand;
+
+		if (Validator.isNull(mvcCommandName)) {
+			mvcRenderCommand = MVCRenderCommand.EMPTY;
+		}
+		else {
+			mvcRenderCommand = _mvcRenderCommandCache.getMVCCommand(
+				mvcCommandName);
+		}
+
+		if (mvcRenderCommand == MVCRenderCommand.EMPTY) {
+			return _bundle;
+		}
+
+		return FrameworkUtil.getBundle(mvcRenderCommand.getClass());
+	}
+
+	protected Set<String> getMVCRenderCommandNames() {
+		MVCCommandCache mvcRenderCommandCache = _mvcRenderCommandCache;
+
+		return mvcRenderCommandCache.getMVCCommandNames();
+	}
+
+	protected JSONObject getPackageJSONObject(String path) throws Exception {
+		Bundle bundle = getMVCCommandBundle(path);
+
+		URL url = bundle.getEntry("package.json");
+
+		if (url == null) {
+			return null;
+		}
+
+		String json = StringUtil.read(url.openStream());
+
+		return JSONFactoryUtil.createJSONObject(json);
+	}
+
+	protected String getRouterJavaScriptTPL() throws Exception {
+		Class<?> clazz = getClass();
+
+		InputStream inputStream = clazz.getResourceAsStream(
+			"dependencies/router.js.tpl");
+
+		return StringUtil.read(inputStream);
+	}
+
+	protected boolean isCheckMappingWithPrefix() {
+		if (_friendlyURLMapper == null) {
+			return false;
+		}
+
+		return _friendlyURLMapper.isCheckMappingWithPrefix();
+	}
+
 	private static final String _RESOURCES_PATH = "/META-INF/resources";
 
 	private final Bundle _bundle;
-	private final Map<String, String> _controllersMap = new HashMap<>();
+	private final FriendlyURLMapper _friendlyURLMapper;
+	private final Map<String, String> _javaScriptLoaderModulesMap =
+		new HashMap<>();
+	private final JSONSerializer _jsonSerializer;
 	private final MVCCommandCache _mvcRenderCommandCache;
+	private final String _routerJavaScriptTPL;
 
 }

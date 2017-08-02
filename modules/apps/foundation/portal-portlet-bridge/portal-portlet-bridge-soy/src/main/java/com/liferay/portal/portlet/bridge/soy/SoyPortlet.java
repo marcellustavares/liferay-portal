@@ -46,7 +46,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.portlet.bridge.soy.internal.SoyPortletHelper;
 import com.liferay.portal.portlet.bridge.soy.internal.SoyPortletRequestFactory;
-import com.liferay.portal.portlet.bridge.soy.internal.SoyPortletRouterHelper;
 import com.liferay.portal.template.soy.utils.SoyContext;
 import com.liferay.portal.template.soy.utils.SoyTemplateResourcesProvider;
 import com.liferay.portlet.ActionRequestImpl;
@@ -86,7 +85,8 @@ import org.osgi.framework.FrameworkUtil;
 public class SoyPortlet extends MVCPortlet {
 
 	/**
-	 * @deprecated As of 3.2.0, use {@link SoyPortlet#init(PortletConfig)}} instead
+	 * @deprecated As of 3.2.0, use {@link SoyPortlet#init(PortletConfig)}}
+	 *             instead
 	 */
 	@Deprecated
 	@Override
@@ -95,7 +95,6 @@ public class SoyPortlet extends MVCPortlet {
 	}
 
 	/**
-	 * @throws PorletException
 	 * @see MVCPortlet
 	 */
 	@Override
@@ -111,13 +110,10 @@ public class SoyPortlet extends MVCPortlet {
 		try {
 			MVCCommandCache mvcRenderCommandCache = getRenderMVCCommandCache();
 
+			FriendlyURLMapper friendlyURLMapper = _getFriendlyURLMapper();
+
 			_soyPortletHelper = new SoyPortletHelper(
-				_bundle, mvcRenderCommandCache);
-
-			FriendlyURLMapper friendlyURLMapper = getFriendlyURLMapper();
-
-			_metalPortletHelper = new SoyPortletRouterHelper(
-				mvcRenderCommandCache, friendlyURLMapper);
+				_bundle, mvcRenderCommandCache, friendlyURLMapper);
 		}
 		catch (Exception e) {
 			throw new PortletException(e);
@@ -125,8 +121,6 @@ public class SoyPortlet extends MVCPortlet {
 	}
 
 	/**
-	 * @throws IOExcpetion
-	 * @throws PorletException
 	 * @see MVCPortlet
 	 */
 	@Override
@@ -150,50 +144,43 @@ public class SoyPortlet extends MVCPortlet {
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws IOException, PortletException {
 
-		HttpServletResponse response = PortalUtil.getHttpServletResponse(
-			resourceResponse);
-
-		Portlet portlet = getPortlet();
+		HttpServletResponse httpServletResponse =
+			PortalUtil.getHttpServletResponse(resourceResponse);
 
 		try {
-			if (isProcessAction(resourceRequest)) {
+			if (_isProcessAction(resourceRequest)) {
 				_callProcessAction(
-					resourceRequest, resourceResponse, response, portlet);
+					resourceRequest, resourceResponse, httpServletResponse,
+					_getPortlet());
 
 				return;
 			}
-			else {
-				if (callResourceMethod(resourceRequest, resourceResponse)) {
-					return;
-				}
 
-				_callRender(resourceRequest, resourceResponse, portlet);
-
-				prepareTemplate(resourceRequest, resourceResponse);
-
-				response.setContentType(ContentTypes.APPLICATION_JSON);
-
-				Template template = getTemplate(resourceRequest);
-
-				ServletResponseUtil.write(
-					response, _metalPortletHelper.serializeTemplate(template));
+			if (callResourceMethod(resourceRequest, resourceResponse)) {
+				return;
 			}
+
+			_callRender(resourceRequest, resourceResponse, _getPortlet());
+
+			_prepareTemplate(resourceRequest, resourceResponse);
+
+			httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
+
+			Template template = getTemplate(resourceRequest);
+
+			ServletResponseUtil.write(
+				httpServletResponse,
+				_soyPortletHelper.serializeTemplate(template));
 		}
 		catch (Exception e) {
 			_log.error("Error on the Serve Resource Phase", e);
 		}
 	}
 
-	protected FriendlyURLMapper getFriendlyURLMapper() {
-		Portlet portlet = getPortlet();
-
-		return portlet.getFriendlyURLMapperInstance();
-	}
-
 	/**
-	 * @deprecated As of 3.1.0
-	 * @param path
+	 * @param      path
 	 * @return
+	 * @deprecated As of 3.1.0
 	 */
 	@Deprecated
 	protected Set<String> getJavaScriptRequiredModules(String path) {
@@ -225,29 +212,8 @@ public class SoyPortlet extends MVCPortlet {
 		return path;
 	}
 
-	protected Portlet getPortlet() {
-		LiferayPortletConfig liferayPortletConfig =
-			(LiferayPortletConfig)_portletConfig;
-
-		return liferayPortletConfig.getPortlet();
-	}
-
-	protected String getPortletComponentId(String portletNamespace) {
-		return portletNamespace.concat("PortletComponent");
-	}
-
-	protected String getPortletWrapperId(String portletNamespace) {
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(portletNamespace);
-		sb.append(StringPool.UNDERLINE);
-		sb.append("SoyWrapper");
-
-		return sb.toString();
-	}
-
 	/**
-	 * @param portletResponse
+	 * @param  portletResponse
 	 * @return
 	 * @throws IOException
 	 */
@@ -269,34 +235,35 @@ public class SoyPortlet extends MVCPortlet {
 	}
 
 	/**
-	 * @param portletRequest
+	 * @param  portletRequest
 	 * @return
 	 * @throws PortletException
 	 */
 	protected Template getTemplate(PortletRequest portletRequest)
 		throws PortletException {
 
-		if (_template == null) {
-			try {
-				_template = _createTemplate();
-			}
-			catch (TemplateException te) {
-				throw new PortletException("Unable to create template", te);
-			}
+		Template template = (Template)portletRequest.getAttribute(
+			WebKeys.TEMPLATE);
+
+		if (template != null) {
+			return template;
 		}
 
-		return _template;
+		try {
+			return _createTemplate();
+		}
+		catch (TemplateException te) {
+			throw new PortletException("Unable to create template", te);
+		}
 	}
 
 	/**
-	 * @param namespace
-	 * @param portletRequest
-	 * @param portletResponse
-	 * @param lifecycle
+	 * @param  portletRequest
+	 * @param  portletResponse
+	 * @param  lifecycle
 	 * @throws IOException
 	 * @throws PortletException
-	 *
-	 * @see MVCPortlet
+	 * @see    MVCPortlet
 	 */
 	@Override
 	protected void include(
@@ -307,7 +274,7 @@ public class SoyPortlet extends MVCPortlet {
 		try {
 			Writer writer = getResponseWriter(portletResponse);
 
-			prepareTemplate(portletRequest, portletResponse);
+			_prepareTemplate(portletRequest, portletResponse);
 
 			_writeTemplate(portletRequest, portletResponse, writer);
 
@@ -324,67 +291,15 @@ public class SoyPortlet extends MVCPortlet {
 		}
 	}
 
-	protected boolean isProcessAction(PortletRequest portletRequest) {
-		int original_p_p_lifecycle = ParamUtil.getInteger(
-			portletRequest, "original_p_p_lifecycle");
-
-		if (original_p_p_lifecycle == 1) {
-			return true;
-		}
-
-		return false;
-	}
-
 	protected void populateJavaScriptTemplateContext(
 		Template template, String portletNamespace) {
 
-		String portletComponentId = getPortletComponentId(portletNamespace);
+		String portletComponentId = _getPortletComponentId(portletNamespace);
 
 		template.put(
-			"element", "#" + getPortletWrapperId(portletNamespace) + " > div");
+			"element", "#" + _getPortletWrapperId(portletNamespace) + " > div");
 
 		template.put("id", portletComponentId);
-	}
-
-	protected void prepareTemplate(
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws Exception {
-
-		MultiSessionMessages.add(
-			portletRequest,
-			SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-
-		Template template = getTemplate(portletRequest);
-
-		String path = getPath(portletRequest, portletResponse);
-
-		String controllerPath = _soyPortletHelper.getJavaScriptLoaderModule(
-			path);
-
-		template.put("controllerPath", controllerPath);
-
-		template.put(
-			TemplateConstants.NAMESPACE,
-			_soyPortletHelper.getTemplateNamespace(path));
-
-		if (propagateRequestParameters) {
-			propagateRequestParameters(portletRequest);
-		}
-
-		HttpServletRequest httpServletRequest =
-			PortalUtil.getHttpServletRequest(portletRequest);
-
-		template.prepare(httpServletRequest);
-
-		String portletNamespace = portletResponse.getNamespace();
-
-		populateJavaScriptTemplateContext(template, portletNamespace);
-
-		MultiSessionMessages.clear(portletRequest);
-
-		SessionErrors.clear(portletRequest);
-
-		SessionMessages.clear(portletRequest);
 	}
 
 	protected void propagateRequestParameters(PortletRequest portletRequest)
@@ -418,7 +333,8 @@ public class SoyPortlet extends MVCPortlet {
 	protected boolean propagateRequestParameters;
 
 	/**
-	 * @deprecated As of 3.1.0, use {@link SoyPortlet#getTemplate(PortletRequest)}} instead
+	 * @deprecated As of 3.1.0, use {@link
+	 *             SoyPortlet#getTemplate(PortletRequest)}} instead
 	 */
 	@Deprecated
 	protected Template template;
@@ -463,8 +379,6 @@ public class SoyPortlet extends MVCPortlet {
 			soyPortletRequestFactory.createRenderRequest(
 				resourceRequest, resourceResponse);
 
-		renderRequestImpl.getParameterMap();
-
 		RenderResponse renderResponse =
 			soyPortletRequestFactory.createRenderResponse(
 				renderRequestImpl, resourceResponse);
@@ -487,11 +401,25 @@ public class SoyPortlet extends MVCPortlet {
 			getMVCPathAttributeName(renderResponse.getNamespace()), path);
 	}
 
+	private void _clearSessionMessages(PortletRequest portletRequest) {
+		MultiSessionMessages.clear(portletRequest);
+
+		SessionErrors.clear(portletRequest);
+
+		SessionMessages.clear(portletRequest);
+	}
+
 	private Template _createTemplate() throws TemplateException {
 		List<TemplateResource> templateResources = _getTemplateResources();
 
 		return TemplateManagerUtil.getTemplate(
 			TemplateConstants.LANG_TYPE_SOY, templateResources, false);
+	}
+
+	private FriendlyURLMapper _getFriendlyURLMapper() {
+		Portlet portlet = _getPortlet();
+
+		return portlet.getFriendlyURLMapperInstance();
 	}
 
 	private MVCRenderCommand _getMVCRenderCommand(String mvcRenderCommandName) {
@@ -501,33 +429,57 @@ public class SoyPortlet extends MVCPortlet {
 			mvcRenderCommandName);
 	}
 
+	private Portlet _getPortlet() {
+		LiferayPortletConfig liferayPortletConfig =
+			(LiferayPortletConfig)_portletConfig;
+
+		return liferayPortletConfig.getPortlet();
+	}
+
+	private String _getPortletComponentId(String portletNamespace) {
+		return portletNamespace.concat("PortletComponent");
+	}
+
+	private String _getPortletWrapperId(String portletNamespace) {
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(portletNamespace);
+		sb.append(StringPool.UNDERLINE);
+		sb.append("SoyWrapper");
+
+		return sb.toString();
+	}
+
 	/**
-	 * Collects all the template resources needed for the portlet. It will include template resources from different
-	 * MVCCommands linked to the portlet.
+	 * Collects all the template resources needed for the portlet. It will
+	 * include template resources from different MVCCommands linked to the
+	 * portlet.
 	 *
 	 * @throws TemplateException
 	 */
 	private List<TemplateResource> _getTemplateResources()
 		throws TemplateException {
 
-		if (_templateResources == null) {
-			_templateResources =
+		if (_templateResources != null) {
+			return _templateResources;
+		}
+
+		_templateResources =
+			SoyTemplateResourcesProvider.getBundleTemplateResources(
+				_bundle, templatePath);
+
+		MVCCommandCache mvcCommandCache = getRenderMVCCommandCache();
+
+		for (String mvcCommandName : mvcCommandCache.getMVCCommandNames()) {
+			MVCCommand mvcCommand = _getMVCRenderCommand(mvcCommandName);
+
+			Bundle bundle = FrameworkUtil.getBundle(mvcCommand.getClass());
+
+			List<TemplateResource> mvcCommandTemplateResources =
 				SoyTemplateResourcesProvider.getBundleTemplateResources(
-					_bundle, templatePath);
+					bundle, templatePath);
 
-			MVCCommandCache mvcCommandCache = getRenderMVCCommandCache();
-
-			for (String mvcCommandName : mvcCommandCache.getMVCCommandNames()) {
-				MVCCommand mvcCommand = _getMVCRenderCommand(mvcCommandName);
-
-				Bundle bundle = FrameworkUtil.getBundle(mvcCommand.getClass());
-
-				List<TemplateResource> mvcCommandTemplateResources =
-					SoyTemplateResourcesProvider.getBundleTemplateResources(
-						bundle, templatePath);
-
-				_templateResources.addAll(mvcCommandTemplateResources);
-			}
+			_templateResources.addAll(mvcCommandTemplateResources);
 		}
 
 		return _templateResources;
@@ -540,12 +492,58 @@ public class SoyPortlet extends MVCPortlet {
 		return GetterUtil.getBoolean(request.getHeader("X-PJAX"));
 	}
 
+	private boolean _isProcessAction(PortletRequest portletRequest) {
+		int original_p_p_lifecycle = ParamUtil.getInteger(
+			portletRequest, "original_p_p_lifecycle");
+
+		if (original_p_p_lifecycle == 1) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private void _prepareTemplate(
+			PortletRequest portletRequest, PortletResponse portletResponse)
+		throws Exception {
+
+		MultiSessionMessages.add(
+			portletRequest,
+			SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+
+		Template template = getTemplate(portletRequest);
+
+		String path = getPath(portletRequest, portletResponse);
+
+		template.put(
+			"javaScriptLoaderModule",
+			_soyPortletHelper.getJavaScriptLoaderModule(path));
+
+		String templateNamespace = path.concat(".render");
+
+		template.put(TemplateConstants.NAMESPACE, templateNamespace);
+
+		if (propagateRequestParameters) {
+			propagateRequestParameters(portletRequest);
+		}
+
+		HttpServletRequest httpServletRequest =
+			PortalUtil.getHttpServletRequest(portletRequest);
+
+		template.prepare(httpServletRequest);
+
+		populateJavaScriptTemplateContext(
+			template, portletResponse.getNamespace());
+
+		_clearSessionMessages(portletRequest);
+	}
+
 	/**
 	 * Writes the JavaScript for the portlet.
 	 *
-	 * @param portletRequest
-	 * @param portletResponse
-	 * @param writer
+	 * @param  portletRequest
+	 * @param  portletResponse
+	 * @param  writer
 	 * @throws Exception
 	 */
 	private void _writeJavaScript(
@@ -555,17 +553,17 @@ public class SoyPortlet extends MVCPortlet {
 
 		String portletNamespace = portletResponse.getNamespace();
 
-		String portletComponentId = getPortletComponentId(portletNamespace);
+		String portletComponentId = _getPortletComponentId(portletNamespace);
 
 		String portletId = PortalUtil.getPortletId(portletRequest);
 
-		String portletWrapperId = getPortletWrapperId(portletNamespace);
+		String portletWrapperId = _getPortletWrapperId(portletNamespace);
 
 		Template template = getTemplate(portletRequest);
 
 		ScriptData scriptData = new ScriptData();
 
-		String portletJavaScript = _metalPortletHelper.getRouterJavaScript(
+		String portletJavaScript = _soyPortletHelper.getRouterJavaScript(
 			portletComponentId, portletId, portletNamespace, portletWrapperId,
 			template);
 
@@ -580,9 +578,9 @@ public class SoyPortlet extends MVCPortlet {
 	/**
 	 * Writes the template HTML output for the portlet.
 	 *
-	 * @param portletRequest
-	 * @param portletResponse
-	 * @param writer
+	 * @param  portletRequest
+	 * @param  portletResponse
+	 * @param  writer
 	 * @throws Exception
 	 */
 	private void _writeTemplate(
@@ -593,7 +591,7 @@ public class SoyPortlet extends MVCPortlet {
 		String portletNamespace = portletResponse.getNamespace();
 
 		writer.write("<div id=\"");
-		writer.write(getPortletWrapperId(portletNamespace));
+		writer.write(_getPortletWrapperId(portletNamespace));
 		writer.write("\">");
 
 		Template template = getTemplate(portletRequest);
@@ -606,10 +604,8 @@ public class SoyPortlet extends MVCPortlet {
 	private static final Log _log = LogFactoryUtil.getLog(SoyPortlet.class);
 
 	private Bundle _bundle;
-	private SoyPortletRouterHelper _metalPortletHelper;
 	private PortletConfig _portletConfig;
 	private SoyPortletHelper _soyPortletHelper;
-	private Template _template;
 	private List<TemplateResource> _templateResources;
 
 }

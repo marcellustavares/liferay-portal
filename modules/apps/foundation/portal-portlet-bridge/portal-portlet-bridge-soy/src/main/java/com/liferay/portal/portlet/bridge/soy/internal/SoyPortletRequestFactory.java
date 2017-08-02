@@ -101,17 +101,14 @@ public class SoyPortletRequestFactory {
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)actionRequestImpl.getAttribute(WebKeys.THEME_DISPLAY);
 
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(
-			actionRequestImpl);
+		HttpServletResponse httpServletResponse =
+			PortalUtil.getHttpServletResponse(resourceResponse);
 
-		HttpServletResponse response = PortalUtil.getHttpServletResponse(
-			resourceResponse);
-
-		User user = PortalUtil.getUser(request);
+		User user = PortalUtil.getUser(actionRequestImpl);
 
 		return ActionResponseFactory.create(
-			actionRequestImpl, response, _portlet.getPortletId(), user,
-			themeDisplay.getLayout(), actionRequestImpl.getWindowState(),
+			actionRequestImpl, httpServletResponse, _portlet.getPortletId(),
+			user, themeDisplay.getLayout(), actionRequestImpl.getWindowState(),
 			actionRequestImpl.getPortletMode());
 	}
 
@@ -119,18 +116,18 @@ public class SoyPortletRequestFactory {
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(
-			resourceRequest);
+		HttpServletRequest httpServletRequest =
+			PortalUtil.getHttpServletRequest(resourceRequest);
 
-		ServletContext servletContext = (ServletContext)request.getAttribute(
-			WebKeys.CTX);
+		ServletContext servletContext =
+			(ServletContext)httpServletRequest.getAttribute(WebKeys.CTX);
 
 		InvokerPortlet invokerPortlet = PortletInstanceFactoryUtil.create(
 			_portlet, servletContext);
 
 		PortletPreferencesIds portletPreferencesIds =
 			PortletPreferencesFactoryUtil.getPortletPreferencesIds(
-				request, _portlet.getPortletId());
+				httpServletRequest, _portlet.getPortletId());
 
 		PortletPreferences portletPreferences =
 			PortletPreferencesLocalServiceUtil.getStrictPreferences(
@@ -145,11 +142,12 @@ public class SoyPortletRequestFactory {
 			WebKeys.THEME_DISPLAY);
 
 		RenderRequestImpl renderRequestImpl = RenderRequestFactory.create(
-			request, _portlet, invokerPortlet, portletContext,
+			httpServletRequest, _portlet, invokerPortlet, portletContext,
 			resourceRequest.getWindowState(), resourceRequest.getPortletMode(),
 			portletPreferences, themeDisplay.getPlid());
 
-		renderRequestImpl.setPortletRequestDispatcherRequest(request);
+		renderRequestImpl.setPortletRequestDispatcherRequest(
+			httpServletRequest);
 
 		renderRequestImpl.setAttribute(
 			_ORIGINAL_PARAMETERS_MAP, resourceRequest.getParameterMap());
@@ -167,11 +165,11 @@ public class SoyPortletRequestFactory {
 			ResourceResponse resourceResponse)
 		throws Exception {
 
-		HttpServletResponse response = PortalUtil.getHttpServletResponse(
-			resourceResponse);
+		HttpServletResponse httpServletResponse =
+			PortalUtil.getHttpServletResponse(resourceResponse);
 
 		return RenderResponseFactory.create(
-			renderRequestImpl, response, _portlet.getPortletId(),
+			renderRequestImpl, httpServletResponse, _portlet.getPortletId(),
 			_portlet.getCompanyId());
 	}
 
