@@ -141,14 +141,17 @@ import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.HttpMethods;
+import com.liferay.portal.kernel.servlet.HttpSessionWrapper;
 import com.liferay.portal.kernel.servlet.NonSerializableObjectRequestWrapper;
 import com.liferay.portal.kernel.servlet.PersistentHttpServletRequestWrapper;
 import com.liferay.portal.kernel.servlet.PortalMessages;
+import com.liferay.portal.kernel.servlet.PortalSessionContext;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
 import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.servlet.PortletServlet;
 import com.liferay.portal.kernel.servlet.ServletContextUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.filters.compoundsessionid.CompoundSessionIdSplitterUtil;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -1378,7 +1381,7 @@ public class PortalImpl implements Portal {
 			layout.isTypeControlPanel());
 
 		if (PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 2) {
-			StringBundler sb = new StringBundler();
+			StringBundler sb = new StringBundler(4);
 
 			sb.append(groupFriendlyURL);
 			sb.append(
@@ -5505,6 +5508,23 @@ public class PortalImpl implements Portal {
 			return url;
 		}
 
+		// LPS-73785
+
+		if (CompoundSessionIdSplitterUtil.hasSessionDelimiter()) {
+			HttpSession httpSession = PortalSessionContext.get(sessionId);
+
+			if (httpSession != null) {
+				while (httpSession instanceof HttpSessionWrapper) {
+					HttpSessionWrapper httpSessionWrapper =
+						(HttpSessionWrapper)httpSession;
+
+					httpSession = httpSessionWrapper.getWrappedSession();
+				}
+
+				sessionId = httpSession.getId();
+			}
+		}
+
 		x = url.indexOf(CharPool.QUESTION);
 
 		if (x != -1) {
@@ -6019,7 +6039,7 @@ public class PortalImpl implements Portal {
 
 		DB db = DBManagerUtil.getDB();
 
-		Object[] customSqlValues = new Object[] {
+		Object[] customSqlValues = {
 			getClassNameId(Group.class), getClassNameId(Layout.class),
 			getClassNameId(Organization.class), getClassNameId(Role.class),
 			getClassNameId(Team.class), getClassNameId(User.class),
@@ -8251,11 +8271,20 @@ public class PortalImpl implements Portal {
 			String defaultLocalePath = _buildI18NPath(
 				siteDefaultLocale.getLanguage(), siteDefaultLocale);
 
-			canonicalURLSuffix = canonicalURL.substring(
-				pos + defaultLocalePath.length());
+			int canonicalURLSuffixPos = defaultLocalePath.length() + pos;
+
+			if (canonicalURLSuffixPos >= canonicalURL.length()) {
+				canonicalURLSuffix = StringPool.BLANK;
+			}
+			else {
+				canonicalURLSuffix = canonicalURL.substring(
+					canonicalURLSuffixPos + 1);
+			}
 		}
 
 		for (Locale locale : availableLocales) {
+			String alternateURL = canonicalURL;
+			String alternateURLSuffix = canonicalURLSuffix;
 			String languageId = LocaleUtil.toLanguageId(locale);
 
 			if (replaceFriendlyURL) {
@@ -8277,25 +8306,25 @@ public class PortalImpl implements Portal {
 				}
 
 				if (friendlyURL != null) {
-					canonicalURLSuffix = StringUtil.replaceFirst(
-						canonicalURLSuffix, layout.getFriendlyURL(),
+					alternateURLSuffix = StringUtil.replaceFirst(
+						alternateURLSuffix, layout.getFriendlyURL(),
 						friendlyURL);
 				}
 
-				canonicalURL = canonicalURLPrefix.concat(canonicalURLSuffix);
+				alternateURL = canonicalURLPrefix.concat(alternateURLSuffix);
 			}
 
 			if (siteDefaultLocale.equals(locale) &&
 				(PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE != 2)) {
 
-				alternateURLs.put(locale, canonicalURL);
+				alternateURLs.put(locale, alternateURL);
 			}
 			else {
 				alternateURLs.put(
 					locale,
 					canonicalURLPrefix.concat(
 						_buildI18NPath(languageId, locale)).concat(
-							canonicalURLSuffix));
+							alternateURLSuffix));
 			}
 		}
 

@@ -1221,16 +1221,11 @@ public class HttpImpl implements Http {
 
 	@Override
 	public String shortenURL(String url, int count) {
-		StringBundler sb = new StringBundler();
-
-		int index = url.indexOf(CharPool.QUESTION);
-
-		if (index > 0) {
-			sb.append(url.substring(0, index));
-			sb.append(CharPool.QUESTION);
-
-			url = url.substring(index + 1);
+		if (count == 0) {
+			return null;
 		}
+
+		StringBundler sb = new StringBundler();
 
 		String[] params = StringUtil.split(url, CharPool.AMPERSAND);
 
@@ -1241,10 +1236,6 @@ public class HttpImpl implements Http {
 				param.contains("_returnToFullPageURL=") ||
 				param.startsWith("redirect")) {
 
-				if (count == 0) {
-					continue;
-				}
-
 				int pos = param.indexOf(CharPool.EQUAL);
 
 				String qName = param.substring(0, pos);
@@ -1252,7 +1243,7 @@ public class HttpImpl implements Http {
 				String redirect = param.substring(pos + 1);
 
 				try {
-					redirect = URLCodec.decodeURL(redirect, StringPool.UTF8);
+					redirect = decodeURL(redirect);
 				}
 				catch (IllegalArgumentException iae) {
 					if (_log.isDebugEnabled()) {
@@ -1263,19 +1254,27 @@ public class HttpImpl implements Http {
 					continue;
 				}
 
-				sb.append(qName);
-				sb.append(StringPool.EQUAL);
-				sb.append(URLCodec.encodeURL(shortenURL(redirect, count - 1)));
-				sb.append(CharPool.AMPERSAND);
+				String newURL = shortenURL(redirect, count - 1);
+
+				if (newURL != null) {
+					newURL = URLCodec.encodeURL(newURL);
+
+					sb.append(qName);
+					sb.append(StringPool.EQUAL);
+					sb.append(newURL);
+
+					if (i < (params.length - 1)) {
+						sb.append(StringPool.AMPERSAND);
+					}
+				}
 			}
 			else {
 				sb.append(param);
-				sb.append(CharPool.AMPERSAND);
-			}
-		}
 
-		if (sb.index() > 0) {
-			sb.setIndex(sb.index() - 1);
+				if (i < (params.length - 1)) {
+					sb.append(StringPool.AMPERSAND);
+				}
+			}
 		}
 
 		return sb.toString();

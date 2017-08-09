@@ -1835,6 +1835,45 @@ attribute in Ivy `<dependency>` elements.
 ### Changed
 - Update the [Liferay Gradle Plugins] dependency to version 3.4.18.
 
+## 5.0.2 - 2017-08-03
+
+### Changed
+- [LPS-73935]: Update the [Liferay Gradle Plugins] dependency to version 3.4.19.
+
+## 5.0.3 - 2017-08-04
+
+### Changed
+- [LPS-74034]: Update the [Liferay Gradle Plugins] dependency to version 3.4.20.
+
+## 5.0.4 - 2017-08-07
+
+### Added
+- [LPS-74054]: Fail snapshot release task if the project is being published from
+a release branch.
+
+## 5.0.5 - 2017-08-07
+
+### Changed
+- [LPS-74063]: Update the [Liferay Gradle Plugins] dependency to version 3.4.21.
+
+## 5.0.6 - 2017-08-07
+
+### Added
+- [LPS-73955]: Enhance project inclusion logic based on the values of the
+`build.profile` system property and the `liferay.releng.public` project
+property:
+	- if the `liferay.releng.public` project property is `false`, include all
+	projects containing either a `.lfrbuild-[build.profile]` or a
+	`.lfrbuild-[build.profile]-private` marker file
+	- otherwise, include all projects containing either a
+	`.lfrbuild-[build.profile]` or a `.lfrbuild-[build.profile]-public` marker
+	file
+
+## 5.0.7 - 2017-08-08
+
+### Changed
+- [LPS-74092]: Update the [Liferay Gradle Plugins] dependency to version 3.4.22.
+
 [Find Security Bugs]: https://github.com/liferay/liferay-portal/tree/master/modules/third-party/com-h3xstream-findsecbugs
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -2030,6 +2069,12 @@ attribute in Ivy `<dependency>` elements.
 [LPS-73807]: https://issues.liferay.com/browse/LPS-73807
 [LPS-73818]: https://issues.liferay.com/browse/LPS-73818
 [LPS-73855]: https://issues.liferay.com/browse/LPS-73855
+[LPS-73935]: https://issues.liferay.com/browse/LPS-73935
+[LPS-73955]: https://issues.liferay.com/browse/LPS-73955
+[LPS-74034]: https://issues.liferay.com/browse/LPS-74034
+[LPS-74054]: https://issues.liferay.com/browse/LPS-74054
+[LPS-74063]: https://issues.liferay.com/browse/LPS-74063
+[LPS-74092]: https://issues.liferay.com/browse/LPS-74092
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981
