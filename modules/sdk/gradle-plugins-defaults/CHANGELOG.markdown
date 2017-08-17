@@ -1894,12 +1894,56 @@ property:
 ### Changed
 - [LPS-73967]: Update the [Liferay Gradle Plugins] dependency to version 3.4.26.
 
-## 5.0.12 - 2017-08-11
+## 5.0.12 - 2017-08-12
 
 ### Changed
 - [LPS-74126]: Update the [Liferay Gradle Plugins] dependency to version 3.4.27.
 
+## 5.0.13 - 2017-08-15
+
+### Changed
+- [LPS-74155]: Update the [Liferay Gradle Plugins] dependency to version 3.4.28.
+
+## 5.0.14 - 2017-08-15
+
+### Changed
+- [LPS-74139]: Update the [Liferay Gradle Plugins] dependency to version 3.4.29.
+
+## 5.0.15 - 2017-08-15
+
+### Changed
+- [LPS-74126]: Update the [Liferay Gradle Plugins] dependency to version 3.4.30.
+
+## 5.0.16 - 2017-08-15
+
+### Added
+- [LPS-71285]: Apply and configure version 0.3.11 of the [Gradle License Report]
+plugin in OSGi and Ant plugin projects if the system property
+`license.report.enabled` is `true`. The purpose is to generate a `versions.xml`
+file containing information about dependencies:
+	- declared in the `compileInclude` configuration of an OSGi project.
+	- declared in the `provided` configuration of an OSGi projects, but for
+	which the `bnd.bnd` file of the project includes a `-includeresource` or
+	`Include-Resource` property.
+	- declared in the `ivy.xml` file of an Ant plugin project.
+- [LPS-71285]: Add the ability to overwrite the default destination directory of
+the `versions.xml` file by setting the system property
+`license.report.output.dir`.
+
+## 5.0.17 - 2017-08-16
+
+### Changed
+- [LPS-74139]: Update the [Liferay Gradle Plugins] dependency to version 3.4.31.
+
+## 5.0.18 - 2017-08-16
+
+### Added
+- [LPS-74210]: Add the ability to set one or more `-Xlint` compiler arguments by
+setting the system property `[task name].lint` (where `[task name]` is the name
+of the `JavaCompile` task to configure).
+
 [Find Security Bugs]: https://github.com/liferay/liferay-portal/tree/master/modules/third-party/com-h3xstream-findsecbugs
+[Gradle License Report]: https://github.com/jk1/Gradle-License-Report
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
 [Liferay Gradle Plugins App Javadoc Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-app-javadoc-builder
@@ -2032,6 +2076,7 @@ property:
 [LPS-71222]: https://issues.liferay.com/browse/LPS-71222
 [LPS-71224]: https://issues.liferay.com/browse/LPS-71224
 [LPS-71264]: https://issues.liferay.com/browse/LPS-71264
+[LPS-71285]: https://issues.liferay.com/browse/LPS-71285
 [LPS-71303]: https://issues.liferay.com/browse/LPS-71303
 [LPS-71331]: https://issues.liferay.com/browse/LPS-71331
 [LPS-71354]: https://issues.liferay.com/browse/LPS-71354
@@ -2104,6 +2149,8 @@ property:
 [LPS-74092]: https://issues.liferay.com/browse/LPS-74092
 [LPS-74104]: https://issues.liferay.com/browse/LPS-74104
 [LPS-74126]: https://issues.liferay.com/browse/LPS-74126
+[LPS-74155]: https://issues.liferay.com/browse/LPS-74155
+[LPS-74210]: https://issues.liferay.com/browse/LPS-74210
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981
