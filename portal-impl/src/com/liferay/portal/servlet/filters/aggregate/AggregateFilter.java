@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.BrowserSniffer;
+import com.liferay.portal.kernel.servlet.BrowserSnifferUtil;
 import com.liferay.portal.kernel.servlet.BufferCacheServletResponse;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.PortalWebResourceConstants;
@@ -140,6 +141,12 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 						urlConnection.getInputStream());
 				}
 				else {
+					int queryPos = importFileName.indexOf(CharPool.QUESTION);
+
+					if (queryPos != -1) {
+						importFileName = importFileName.substring(0, queryPos);
+					}
+
 					ServletPaths importFileServletPaths = servletPaths.down(
 						importFileName);
 
@@ -370,7 +377,8 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 
 		if (cacheDataFile.exists() &&
 			(cacheDataFile.lastModified() >=
-				URLUtil.getLastModifiedTime(resourceURL))) {
+				URLUtil.getLastModifiedTime(resourceURL)) &&
+			!_isLegacyIe(request)) {
 
 			if (cacheContentTypeFile.exists()) {
 				String contentType = FileUtil.read(cacheContentTypeFile);
@@ -393,7 +401,9 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 
 			response.setContentType(ContentTypes.TEXT_CSS);
 
-			FileUtil.write(cacheContentTypeFile, ContentTypes.TEXT_CSS);
+			if (!_isLegacyIe(request)) {
+				FileUtil.write(cacheContentTypeFile, ContentTypes.TEXT_CSS);
+			}
 		}
 		else if (resourcePath.endsWith(_JAVASCRIPT_EXTENSION)) {
 			if (_log.isInfoEnabled()) {
@@ -514,7 +524,14 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 			resourcePath, requestURI, _servletContext);
 
 		if (PortalWebResourcesUtil.hasContextPath(requestURI)) {
-			resourcePathRoot = "/";
+			resourcePathRoot = PortalWebResourcesUtil.stripContextPath(
+				cssServletContext, resourcePath);
+
+			resourcePathRoot = ServletPaths.getParentPath(resourcePathRoot);
+
+			if (resourcePathRoot.equals(StringPool.BLANK)) {
+				resourcePathRoot = "/";
+			}
 		}
 		else {
 			resourcePathRoot = ServletPaths.getParentPath(resourcePath);
@@ -523,6 +540,11 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 		URLConnection urlConnection = resourceURL.openConnection();
 
 		String content = StringUtil.read(urlConnection.getInputStream());
+
+		if (_isLegacyIe(request)) {
+			return getCssContent(
+				request, response, cssServletContext, resourcePath, content);
+		}
 
 		content = aggregateCss(
 			new ServletPaths(cssServletContext, resourcePathRoot), content);
@@ -575,6 +597,16 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 				ServletResponseUtil.write(response, (String)minifiedContent);
 			}
 		}
+	}
+
+	private boolean _isLegacyIe(HttpServletRequest request) {
+		if (BrowserSnifferUtil.isIe(request) &&
+			(BrowserSnifferUtil.getMajorVersion(request) < 10)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final String _BASE_URL = "@base_url@";

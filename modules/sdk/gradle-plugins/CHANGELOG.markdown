@@ -2110,13 +2110,67 @@ to version 2.0.50.
 - [LPS-73967]: Update the [Liferay Source Formatter] dependency to version
 1.0.439.
 
-## 3.4.27 - 2017-08-11
+## 3.4.27 - 2017-08-12
 
 ### Changed
-
 - [LPS-74126]: Update the [Liferay CSS Builder] dependency to version 1.1.0.
 - [LPS-74126]: Update the [Liferay Gradle Plugins CSS Builder] dependency to
 version 2.1.0.
+
+## 3.4.28 - 2017-08-15
+
+### Changed
+- [LPS-74139]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.51.
+- [LPS-74139]: Update the [Liferay Source Formatter] dependency to version
+1.0.440.
+- [LPS-74155]: Update the [Liferay Gradle Plugins Service Builder] dependency
+to version 1.0.46.
+- [LPS-74155]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.162.
+
+## 3.4.29 - 2017-08-15
+
+### Changed
+- [LPS-74139]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.52.
+- [LPS-74139]: Update the [Liferay Source Formatter] dependency to version
+1.0.441.
+
+## 3.4.30 - 2017-08-15
+
+### Changed
+- [LPS-74126]: Update the [Liferay CSS Builder] dependency to version 1.1.1.
+- [LPS-74126]: Update the [Liferay Gradle Plugins CSS Builder] dependency to
+version 2.1.1.
+
+## 3.4.31 - 2017-08-16
+
+### Changed
+- [LPS-74139]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.53.
+- [LPS-74139]: Update the [Liferay Source Formatter] dependency to version
+1.0.442.
+
+## 3.4.32 - 2017-08-17
+
+### Changed
+- [LPS-74222]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.54.
+- [LPS-74222]: Update the [Liferay Source Formatter] dependency to version
+1.0.443.
+
+## 3.4.33 - 2017-08-18
+
+### Changed
+- [LPS-74126]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.0.55.
+- [LPS-74126]: Update the [Liferay Source Formatter] dependency to version
+1.0.444.
+- [LPS-74155]: Update the [Liferay Gradle Plugins Service Builder] dependency
+to version 1.0.47.
+- [LPS-74155]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.163.
 
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Alloy Taglib]: https://github.com/liferay/alloy-taglibs
@@ -2306,4 +2360,7 @@ version 2.1.0.
 [LPS-74092]: https://issues.liferay.com/browse/LPS-74092
 [LPS-74104]: https://issues.liferay.com/browse/LPS-74104
 [LPS-74126]: https://issues.liferay.com/browse/LPS-74126
+[LPS-74139]: https://issues.liferay.com/browse/LPS-74139
+[LPS-74155]: https://issues.liferay.com/browse/LPS-74155
+[LPS-74222]: https://issues.liferay.com/browse/LPS-74222
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

@@ -35,35 +35,12 @@ public class WeDeployAuthAppLocalServiceWrapper
 	}
 
 	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _weDeployAuthAppLocalService.getActionableDynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
-		return _weDeployAuthAppLocalService.dynamicQuery();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		return _weDeployAuthAppLocalService.getIndexableActionableDynamicQuery();
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp addWeDeployAuthApp(
+		long userId, java.lang.String name, java.lang.String redirectURI,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _weDeployAuthAppLocalService.deletePersistedModel(persistedModel);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _weDeployAuthAppLocalService.getPersistedModel(primaryKeyObj);
+		return _weDeployAuthAppLocalService.addWeDeployAuthApp(userId, name,
+			redirectURI, serviceContext);
 	}
 
 	/**
@@ -76,15 +53,6 @@ public class WeDeployAuthAppLocalServiceWrapper
 	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp addWeDeployAuthApp(
 		com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp weDeployAuthApp) {
 		return _weDeployAuthAppLocalService.addWeDeployAuthApp(weDeployAuthApp);
-	}
-
-	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp addWeDeployAuthApp(
-		long userId, java.lang.String name, java.lang.String redirectURI,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _weDeployAuthAppLocalService.addWeDeployAuthApp(userId, name,
-			redirectURI, serviceContext);
 	}
 
 	/**
@@ -100,15 +68,13 @@ public class WeDeployAuthAppLocalServiceWrapper
 	}
 
 	/**
-	* Deletes the we deploy auth app from the database. Also notifies the appropriate model listeners.
-	*
-	* @param weDeployAuthApp the we deploy auth app
-	* @return the we deploy auth app that was removed
+	* @throws PortalException
 	*/
 	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp deleteWeDeployAuthApp(
-		com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp weDeployAuthApp) {
-		return _weDeployAuthAppLocalService.deleteWeDeployAuthApp(weDeployAuthApp);
+	public com.liferay.portal.kernel.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.kernel.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _weDeployAuthAppLocalService.deletePersistedModel(persistedModel);
 	}
 
 	/**
@@ -125,63 +91,21 @@ public class WeDeployAuthAppLocalServiceWrapper
 		return _weDeployAuthAppLocalService.deleteWeDeployAuthApp(weDeployAuthAppId);
 	}
 
-	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp fetchWeDeployAuthApp(
-		java.lang.String redirectURI, java.lang.String clientId) {
-		return _weDeployAuthAppLocalService.fetchWeDeployAuthApp(redirectURI,
-			clientId);
-	}
-
-	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp fetchWeDeployAuthApp(
-		long weDeployAuthAppId) {
-		return _weDeployAuthAppLocalService.fetchWeDeployAuthApp(weDeployAuthAppId);
-	}
-
 	/**
-	* Returns the we deploy auth app with the primary key.
-	*
-	* @param weDeployAuthAppId the primary key of the we deploy auth app
-	* @return the we deploy auth app
-	* @throws PortalException if a we deploy auth app with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp getWeDeployAuthApp(
-		long weDeployAuthAppId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _weDeployAuthAppLocalService.getWeDeployAuthApp(weDeployAuthAppId);
-	}
-
-	/**
-	* Updates the we deploy auth app in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Deletes the we deploy auth app from the database. Also notifies the appropriate model listeners.
 	*
 	* @param weDeployAuthApp the we deploy auth app
-	* @return the we deploy auth app that was updated
+	* @return the we deploy auth app that was removed
 	*/
 	@Override
-	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp updateWeDeployAuthApp(
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp deleteWeDeployAuthApp(
 		com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp weDeployAuthApp) {
-		return _weDeployAuthAppLocalService.updateWeDeployAuthApp(weDeployAuthApp);
+		return _weDeployAuthAppLocalService.deleteWeDeployAuthApp(weDeployAuthApp);
 	}
 
-	/**
-	* Returns the number of we deploy auth apps.
-	*
-	* @return the number of we deploy auth apps
-	*/
 	@Override
-	public int getWeDeployAuthAppsCount() {
-		return _weDeployAuthAppLocalService.getWeDeployAuthAppsCount();
-	}
-
-	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
-	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
-		return _weDeployAuthAppLocalService.getOSGiServiceIdentifier();
+	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
+		return _weDeployAuthAppLocalService.dynamicQuery();
 	}
 
 	/**
@@ -239,23 +163,6 @@ public class WeDeployAuthAppLocalServiceWrapper
 	}
 
 	/**
-	* Returns a range of all the we deploy auth apps.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.security.wedeploy.auth.model.impl.WeDeployAuthAppModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of we deploy auth apps
-	* @param end the upper bound of the range of we deploy auth apps (not inclusive)
-	* @return the range of we deploy auth apps
-	*/
-	@Override
-	public java.util.List<com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp> getWeDeployAuthApps(
-		int start, int end) {
-		return _weDeployAuthAppLocalService.getWeDeployAuthApps(start, end);
-	}
-
-	/**
 	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
@@ -280,6 +187,99 @@ public class WeDeployAuthAppLocalServiceWrapper
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return _weDeployAuthAppLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
+	}
+
+	@Override
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp fetchWeDeployAuthApp(
+		long weDeployAuthAppId) {
+		return _weDeployAuthAppLocalService.fetchWeDeployAuthApp(weDeployAuthAppId);
+	}
+
+	@Override
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp fetchWeDeployAuthApp(
+		java.lang.String redirectURI, java.lang.String clientId) {
+		return _weDeployAuthAppLocalService.fetchWeDeployAuthApp(redirectURI,
+			clientId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return _weDeployAuthAppLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return _weDeployAuthAppLocalService.getIndexableActionableDynamicQuery();
+	}
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	@Override
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _weDeployAuthAppLocalService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _weDeployAuthAppLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	/**
+	* Returns the we deploy auth app with the primary key.
+	*
+	* @param weDeployAuthAppId the primary key of the we deploy auth app
+	* @return the we deploy auth app
+	* @throws PortalException if a we deploy auth app with the primary key could not be found
+	*/
+	@Override
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp getWeDeployAuthApp(
+		long weDeployAuthAppId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _weDeployAuthAppLocalService.getWeDeployAuthApp(weDeployAuthAppId);
+	}
+
+	/**
+	* Returns a range of all the we deploy auth apps.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.security.wedeploy.auth.model.impl.WeDeployAuthAppModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param start the lower bound of the range of we deploy auth apps
+	* @param end the upper bound of the range of we deploy auth apps (not inclusive)
+	* @return the range of we deploy auth apps
+	*/
+	@Override
+	public java.util.List<com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp> getWeDeployAuthApps(
+		int start, int end) {
+		return _weDeployAuthAppLocalService.getWeDeployAuthApps(start, end);
+	}
+
+	/**
+	* Returns the number of we deploy auth apps.
+	*
+	* @return the number of we deploy auth apps
+	*/
+	@Override
+	public int getWeDeployAuthAppsCount() {
+		return _weDeployAuthAppLocalService.getWeDeployAuthAppsCount();
+	}
+
+	/**
+	* Updates the we deploy auth app in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param weDeployAuthApp the we deploy auth app
+	* @return the we deploy auth app that was updated
+	*/
+	@Override
+	public com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp updateWeDeployAuthApp(
+		com.liferay.portal.security.wedeploy.auth.model.WeDeployAuthApp weDeployAuthApp) {
+		return _weDeployAuthAppLocalService.updateWeDeployAuthApp(weDeployAuthApp);
 	}
 
 	@Override
