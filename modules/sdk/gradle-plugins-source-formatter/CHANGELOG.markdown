@@ -931,8 +931,8 @@ another task with the same name is being executed in a parent project.
 - [LPS-74314]: Add the property `showStatusUpdates` to `FormatSourceTask`.
 
 ### Changed
-- [LPS-74314]: Change the default value of the property `showDocumentation` in
-`FormatSourceTask` to `false`.
+- [LPS-74314]: Change the default value of the `FormatSourceTask`'s
+`showDocumentation` property to `false`.
 - [LPS-74314]: Update the [Liferay Source Formatter] dependency to version
 1.0.446.
 
@@ -947,6 +947,30 @@ another task with the same name is being executed in a parent project.
 ### Changed
 - [LPS-72705]: Update the [Liferay Source Formatter] dependency to version
 1.0.448.
+
+## 2.1.3 - 2017-08-28
+
+### Changed
+- [LPS-72705]: Update the [Liferay Source Formatter] dependency to version
+1.0.449.
+
+## 2.1.4 - 2017-08-29
+
+### Changed
+- [LPS-72705]: Update the [Liferay Source Formatter] dependency to version
+1.0.450.
+
+## 2.1.5 - 2017-08-29
+
+### Changed
+- [LPS-74433]: Update the [Liferay Source Formatter] dependency to version
+1.0.451.
+
+## 2.1.6 - 2017-08-31
+
+### Changed
+- [LPS-72705]: Update the [Liferay Source Formatter] dependency to version
+1.0.452.
 
 [Liferay Source Formatter]: https://github.com/liferay/liferay-portal/tree/master/modules/util/source-formatter
 [LPS-52675]: https://issues.liferay.com/browse/LPS-52675
@@ -1000,3 +1024,4 @@ another task with the same name is being executed in a parent project.
 [LPS-74269]: https://issues.liferay.com/browse/LPS-74269
 [LPS-74314]: https://issues.liferay.com/browse/LPS-74314
 [LPS-74328]: https://issues.liferay.com/browse/LPS-74328
+[LPS-74433]: https://issues.liferay.com/browse/LPS-74433

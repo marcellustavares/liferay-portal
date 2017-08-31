@@ -229,6 +229,10 @@ public class SourceFormatter {
 
 		_printProgressStatusMessage("Initializing checks...");
 
+		_progressStatusThread.setDaemon(true);
+		_progressStatusThread.setName(
+			"Source Formatter Progress Status Thread");
+
 		_progressStatusThread.start();
 
 		_sourceProcessors.add(new BNDSourceProcessor());
@@ -295,6 +299,9 @@ public class SourceFormatter {
 			Thread.sleep(20);
 		}
 
+		_progressStatusQueue.put(
+			new ProgressStatusUpdate(ProgressStatus.SOURCE_FORMAT_COMPLETED));
+
 		if (ee1 != null) {
 			throw ee1;
 		}
@@ -318,9 +325,6 @@ public class SourceFormatter {
 				throw _firstSourceMismatchException;
 			}
 		}
-
-		_progressStatusQueue.put(
-			new ProgressStatusUpdate(ProgressStatus.SOURCE_FORMAT_COMPLETED));
 	}
 
 	public List<String> getModifiedFileNames() {

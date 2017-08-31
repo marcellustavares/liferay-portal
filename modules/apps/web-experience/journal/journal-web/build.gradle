@@ -35,3 +35,7 @@ dependencies {
 	provided project(":apps:web-experience:journal:journal-api")
 	provided project(":apps:web-experience:journal:journal-service")
 }
+
+node {
+	nodeVersion = "8.4.0"
+}

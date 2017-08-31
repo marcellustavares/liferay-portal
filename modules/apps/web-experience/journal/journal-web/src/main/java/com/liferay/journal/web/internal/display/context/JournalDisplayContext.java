@@ -1285,6 +1285,11 @@ public class JournalDisplayContext {
 
 		searchContext.setAttribute("head", !showVersions);
 		searchContext.setAttribute("params", params);
+
+		if (!showVersions) {
+			searchContext.setAttribute("showNonindexable", Boolean.TRUE);
+		}
+
 		searchContext.setEnd(end);
 		searchContext.setFolderIds(folderIds);
 		searchContext.setStart(start);

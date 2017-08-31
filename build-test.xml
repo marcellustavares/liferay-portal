@@ -1646,6 +1646,42 @@ sendPasswordCaptchaEnabled=&quot;false&quot;</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="prepare-custom-properties">
+		<attribute name="custom.properties" />
+		<sequential>
+			<property name="propertyName" value="" />
+
+			<for delimiter="${line.separator}" list="@{custom.properties}" param="property">
+				<sequential>
+					<propertyregex
+						global="true"
+						input="@{property}"
+						override="true"
+						property="propertyName"
+						regexp="=.*"
+						replace=""
+					/>
+
+					<if>
+						<resourcecontains resource="portal-impl/src/portal-ext.properties" substring="${propertyName}" />
+						<then>
+							<replaceregexp file="portal-impl/src/portal-ext.properties"
+								match="${propertyName}=.*"
+								replace="@{property}"
+								byline="true"
+							/>
+						</then>
+						<else>
+							<echo append="true" file="portal-impl/src/portal-ext.properties">
+
+@{property}</echo>
+						</else>
+					</if>
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="prepare-database-jndi">
 		<sequential>
 			<if>
@@ -5071,6 +5107,69 @@ go]]></replacevalue>
 		<delete dir="/tmp/sprite" />
 	</target>
 
+	<target name="deploy-data-creators">
+		<get-testcase-property property.name="data.creator.includes" />
+
+		<if>
+			<isset property="data.creator.includes" />
+			<then>
+				<var name="modules.apps.dir" value="modules/apps" />
+
+				<for list="${data.creator.includes}" parallel="true" param="data.creator.name">
+					<sequential>
+						<if>
+							<os family="unix" />
+							<then>
+								<exec executable="/bin/bash" outputproperty="@{data.creator.name}.path">
+									<arg value="-c" />
+									<arg value="find ${modules.apps.dir} -name @{data.creator.name}" />
+								</exec>
+							</then>
+							<else>
+								<exec executable="cmd" outputproperty="@{data.creator.name}.path">
+									<arg value="/c" />
+									<arg value="dir /b /s /on /ad @{data.creator.name} 2>nul" />
+								</exec>
+							</else>
+						</if>
+						<echo message="Found: ${@{data.creator.name}.path}" />
+					</sequential>
+				</for>
+
+				<for list="${data.creator.includes}" param="data.creator.name">
+					<sequential>
+						<dirname file="${@{data.creator.name}.path}" property="@{data.creator.name}.gradle.dir" />
+						<if>
+							<available file="${@{data.creator.name}.gradle.dir}/settings.gradle" />
+							<then>
+								<move file="${@{data.creator.name}.gradle.dir}/settings.gradle" tofile="${@{data.creator.name}.gradle.dir}/settings" />
+							</then>
+						</if>
+					</sequential>
+				</for>
+
+				<for list="${data.creator.includes}" parallel="true" param="data.creator.name">
+					<sequential>
+						<gradle-execute dir="${@{data.creator.name}.path}" task="deploy">
+							<arg value="clean" />
+						</gradle-execute>
+					</sequential>
+				</for>
+
+				<for list="${data.creator.includes}" param="data.creator.name">
+					<sequential>
+						<if>
+							<available file="${@{data.creator.name}.gradle.dir}/settings" />
+							<then>
+								<move file="${@{data.creator.name}.gradle.dir}/settings" tofile="${@{data.creator.name}.gradle.dir}/settings.gradle" />
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</then>
+		</if>
+	</target>
+
 	<target name="deploy-extra-apps">
 		<get-testcase-property property.name="extraapps.plugins.includes" />
 
@@ -6436,9 +6535,7 @@ web.server.display.node=true</echo>
 		<if>
 			<isset property="custom.properties" />
 			<then>
-				<echo append="true" file="portal-impl/src/portal-ext.properties">
-
-${custom.properties}</echo>
+				<prepare-custom-properties custom.properties="${custom.properties}" />
 			</then>
 		</if>
 
