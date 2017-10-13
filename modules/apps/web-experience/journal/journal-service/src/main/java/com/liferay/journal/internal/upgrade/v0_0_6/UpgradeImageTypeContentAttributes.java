@@ -85,7 +85,7 @@ public class UpgradeImageTypeContentAttributes extends UpgradeProcess {
 				"select elInstanceId from JournalArticleImage where " +
 					"articleImageId = ?")) {
 
-			ps.setString(1, articleImageId);
+			ps.setLong(1, Long.valueOf(articleImageId));
 
 			ResultSet rs = ps.executeQuery();
 

@@ -362,11 +362,24 @@ public class PollsQuestionLocalServiceImpl
 			return question;
 		}
 
-		int oldChoicesCount = pollsChoicePersistence.countByQuestionId(
+		List<PollsChoice> oldChoices = pollsChoicePersistence.findByQuestionId(
 			questionId);
 
-		if (oldChoicesCount > choices.size()) {
-			throw new QuestionChoiceException();
+		if (oldChoices.size() > choices.size()) {
+			List<String> choiceNames = new ArrayList<>(choices.size());
+
+			for (PollsChoice choice : choices) {
+				choiceNames.add(choice.getName());
+			}
+
+			for (PollsChoice oldChoice : oldChoices) {
+				if (!choiceNames.contains(oldChoice.getName())) {
+					pollsVotePersistence.removeByChoiceId(
+						oldChoice.getChoiceId());
+
+					pollsChoicePersistence.remove(oldChoice);
+				}
+			}
 		}
 
 		for (PollsChoice choice : choices) {

@@ -38,21 +38,24 @@ public class UpgradeJournalArticleImage extends UpgradeProcess {
 	protected void updateJournalArticleImagesInstanceId() throws Exception {
 		try (LoggingTimer loggingTimer = new LoggingTimer();
 			PreparedStatement ps1 = connection.prepareStatement(
-				"select articleImageId from JournalArticleImage where " +
-					"(elInstanceId = '' or elInstanceId is null)");
+				"select articleId, elName from JournalArticleImage where " +
+					"(elInstanceId = '' or elInstanceId is null) group by " +
+						"articleId, elName");
 			ResultSet rs = ps1.executeQuery()) {
 
 			try (PreparedStatement ps2 =
 					AutoBatchPreparedStatementUtil.autoBatch(
 						connection.prepareStatement(
 							"update JournalArticleImage set elInstanceId = ? " +
-								"where articleImageId = ?"))) {
+								"where articleId = ? and elName = ?"))) {
 
 				while (rs.next()) {
-					String articleImageId = rs.getString(1);
+					String articleId = rs.getString(1);
+					String elName = rs.getString(2);
 
 					ps2.setString(1, StringUtil.randomString(4));
-					ps2.setString(2, articleImageId);
+					ps2.setString(2, articleId);
+					ps2.setString(3, elName);
 
 					ps2.addBatch();
 				}
