@@ -16,6 +16,7 @@ package com.liferay.portal.analytics.internal.messaging;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.liferay.analytics.java.client.AnalyticsEventsMessage;
 import com.liferay.portal.analytics.constants.AnalyticsDestinationNames;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
@@ -30,9 +31,15 @@ public class AnalyticsMessagingListener extends BaseMessageListener {
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
+		AnalyticsEventsMessage analyticsEventsMessage =
+			(AnalyticsEventsMessage)message.getPayload();
+
+		System.out.println("Message received "  + analyticsEventsMessage);
+
+		//_analyticsClient.sendAnalytics(analyticsEventsMessage);
 	}
 
-	private static final AnalyticsClient _analyticsClient =
-		new AnalyticsClient();
+//	private static final AnalyticsClient _analyticsClient =
+//		new AnalyticsClient();
 
 }
