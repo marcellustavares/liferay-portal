@@ -1,6 +1,13 @@
 Bundle-Name: Liferay Analytics Java Client
 Bundle-SymbolicName: com.liferay.analytics.java.client
 Bundle-Version: 1.0.0
-Export-Package: com.liferay.analytics.java.client
+Export-Package:\
+	com.liferay.analytics.java.client,\
+	com.fasterxml.jackson.annotation
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title: Analytics
+Import-Package:\
+	!javax.inject.*,\
+	!jersey.repackaged.com.google.common.*,\
+	!org.glassfish.*,\
+	*

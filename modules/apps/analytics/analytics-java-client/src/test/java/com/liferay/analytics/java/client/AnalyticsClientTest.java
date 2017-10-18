@@ -68,10 +68,10 @@ public class AnalyticsClientTest {
 
 		analyticsEventsMessage.setMessageFormat("AT");
 
-		Response response = _analyticsClient.sendAnalytics(
-			analyticsEventsMessage);
-
-		Assert.assertEquals(HttpStatus.SC_OK, response.getStatus());
+//		Response response = _analyticsClient.sendAnalytics(
+//			analyticsEventsMessage);
+//
+//		Assert.assertEquals(HttpStatus.SC_OK, response.getStatus());
 	}
 
 	private final AnalyticsClient _analyticsClient = new AnalyticsClient();

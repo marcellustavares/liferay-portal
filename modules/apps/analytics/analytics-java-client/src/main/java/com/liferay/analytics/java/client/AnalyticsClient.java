@@ -20,14 +20,13 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * @author Eduardo Garcia
  */
 public class AnalyticsClient {
 
-	public Response sendAnalytics(
+	public void sendAnalytics(
 		AnalyticsEventsMessage analyticsEventMessage) {
 
 		WebTarget webTarget = _client.target(_ANALYTICS_GATEWAY_URL);
@@ -35,7 +34,7 @@ public class AnalyticsClient {
 		Invocation.Builder request = webTarget.request(
 			MediaType.APPLICATION_JSON);
 
-		return request.post(
+		request.post(
 			Entity.entity(analyticsEventMessage, MediaType.APPLICATION_JSON));
 	}
 
