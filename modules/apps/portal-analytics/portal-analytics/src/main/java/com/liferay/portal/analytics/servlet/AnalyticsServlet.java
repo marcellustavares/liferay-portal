@@ -52,9 +52,9 @@ public class AnalyticsServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException, ServletException {
 
-		BufferedReader reader = req.getReader();
+		int statusCode = HttpServletResponse.SC_OK;
 
-		String payload = reader.lines().collect(Collectors.joining());
+		String payload = _getMessage(req);
 
 		if ((payload != null) && !payload.isEmpty()) {
 			JSONDeserializer<AnalyticsEventsMessage> messageDeserializer =
@@ -64,15 +64,32 @@ public class AnalyticsServlet extends HttpServlet {
 				messageDeserializer.deserialize(
 					payload, AnalyticsEventsMessage.class);
 
+			if (analyticsMessage.getEvents().isEmpty()) {
+				resp.sendError(
+					HttpServletResponse.SC_BAD_REQUEST,
+					"No events in Analytics Message");
+				return;
+			}
+
 			Message message = new Message();
 
 			message.setPayload(analyticsMessage);
 
 			MessageBusUtil.sendMessage(
 				AnalyticsDestinationNames.ANALYTICS, message);
+
+			resp.setStatus(HttpServletResponse.SC_CREATED);
+
+			statusCode = HttpServletResponse.SC_CREATED;
 		}
 
-		resp.setStatus(200);
+		resp.setStatus(statusCode);
+	}
+
+	private String _getMessage(HttpServletRequest request) throws IOException {
+		BufferedReader reader = request.getReader();
+
+		return reader.lines().collect(Collectors.joining());
 	}
 
 	private static final long serialVersionUID = 1L;
