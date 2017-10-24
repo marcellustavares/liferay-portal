@@ -42,7 +42,7 @@ import org.osgi.service.component.annotations.Component;
 	property = {
 		"osgi.http.whiteboard.context.path=/",
 		"osgi.http.whiteboard.servlet.name=com.liferay.portal.analytics.servlet.AnalyticsServlet",
-		"osgi.http.whiteboard.servlet.pattern=/analytics/*"
+		"osgi.http.whiteboard.servlet.pattern=/analytics/message"
 	},
 	service = Servlet.class
 )
