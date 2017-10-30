@@ -55,7 +55,7 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 				<portlet:actionURL name="addRecord" var="addRecordActionURL" />
 
 				<div class="portlet-forms">
-					<aui:form action="<%= addRecordActionURL %>" data-DDLRecordSetId="<%= recordSetId %>" method="post" name="fm">
+					<aui:form action="<%= addRecordActionURL %>" data-formId="<%= recordSetId %>" data-DDLRecordSetId="<%= recordSetId %>" method="post" name="fm">
 
 						<%
 						String redirectURL = ddlFormDisplayContext.getRedirectURL();
@@ -169,6 +169,8 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 
 							if (<portlet:namespace />form) {
 								<portlet:namespace />startAutoSave();
+
+								Liferay.fire('ddmFormView', {formId: <%= recordSetId %>});
 							}
 							else {
 								Liferay.after(
@@ -178,6 +180,8 @@ long recordSetId = ddlFormDisplayContext.getRecordSetId();
 
 										if (<portlet:namespace />form) {
 											<portlet:namespace />startAutoSave();
+
+											Liferay.fire('ddmFormView', {formId: <%= recordSetId %>});
 										}
 									}
 								);
