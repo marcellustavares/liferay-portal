@@ -32,6 +32,16 @@ String displayStyle = siteNavigationAdminDisplayContext.getDisplayStyle();
 			portletURL="<%= siteNavigationAdminDisplayContext.getPortletURL() %>"
 			selectedDisplayStyle="<%= siteNavigationAdminDisplayContext.getDisplayStyle() %>"
 		/>
+
+		<c:if test="<%= siteNavigationAdminDisplayContext.isShowAddButton() %>">
+			<portlet:renderURL var="addSiteNavigationMenuURL">
+				<portlet:param name="mvcPath" value="/edit_site_navigation_menu.jsp" />
+			</portlet:renderURL>
+
+			<liferay-frontend:add-menu inline="<%= true %>">
+				<liferay-frontend:add-menu-item id="addNavigationMenuMenuItem" title='<%= LanguageUtil.get(request, "add-menu") %>' url="<%= addSiteNavigationMenuURL %>" />
+			</liferay-frontend:add-menu>
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-filters>
@@ -86,7 +96,6 @@ String displayStyle = siteNavigationAdminDisplayContext.getDisplayStyle();
 			<c:choose>
 				<c:when test='<%= displayStyle.equals("descriptive") %>'>
 					<liferay-ui:search-container-column-user
-						cssClass="user-icon-lg"
 						showDetails="<%= false %>"
 						userId="<%= siteNavigationMenu.getUserId() %>"
 					/>
@@ -130,7 +139,7 @@ String displayStyle = siteNavigationAdminDisplayContext.getDisplayStyle();
 						>
 							<liferay-frontend:vertical-card-sticker-bottom>
 								<liferay-ui:user-portrait
-									cssClass="sticker sticker-bottom user-icon-lg"
+									cssClass="sticker sticker-bottom"
 									userId="<%= siteNavigationMenu.getUserId() %>"
 								/>
 							</liferay-frontend:vertical-card-sticker-bottom>
@@ -173,29 +182,19 @@ String displayStyle = siteNavigationAdminDisplayContext.getDisplayStyle();
 	</liferay-ui:search-container>
 </aui:form>
 
-<c:if test="<%= siteNavigationAdminDisplayContext.isShowAddButton() %>">
-	<portlet:renderURL var="addSiteNavigationMenuURL">
-		<portlet:param name="mvcPath" value="/edit_site_navigation_menu.jsp" />
-	</portlet:renderURL>
-
-	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item id="addNavigationMenuMenuItem" title='<%= LanguageUtil.get(request, "add-menu") %>' url="<%= addSiteNavigationMenuURL %>" />
-	</liferay-frontend:add-menu>
-</c:if>
-
 <portlet:actionURL name="/navigation_menu/add_site_navigation_menu" var="addSiteNavigationMenuURL">
 	<portlet:param name="mvcPath" value="/edit_site_navigation_menu.jsp" />
 	<portlet:param name="redirect" value="<%= currentURL %>" />
 </portlet:actionURL>
 
-<aui:script require="metal-dom/src/all/dom as dom" sandbox="<%= true %>">
+<aui:script require="metal-dom/src/all/dom as dom,frontend-js-web/liferay/modal/commands/OpenSimpleInputModal.es as modalCommands" sandbox="<%= true %>">
 	var addNavigationMenuClickHandler = dom.on(
 		'#<portlet:namespace />addNavigationMenuMenuItem',
 		'click',
 		function(event) {
 			event.preventDefault();
 
-			Liferay.Util.openSimpleInputModal(
+			modalCommands.openSimpleInputModal(
 				{
 					dialogTitle: '<liferay-ui:message key="add-menu" />',
 					formSubmitURL: '<%= addSiteNavigationMenuURL %>',
@@ -218,7 +217,7 @@ String displayStyle = siteNavigationAdminDisplayContext.getDisplayStyle();
 
 			event.preventDefault();
 
-			Liferay.Util.openSimpleInputModal(
+			modalCommands.openSimpleInputModal(
 				{
 					dialogTitle: '<liferay-ui:message key="rename-site-navigation-menu" />',
 					formSubmitURL: data.formSubmitUrl,

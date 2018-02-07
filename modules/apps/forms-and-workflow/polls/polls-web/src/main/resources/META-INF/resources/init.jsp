@@ -27,6 +27,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.petra.string.CharPool" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.polls.constants.PollsPortletKeys" %><%@
 page import="com.liferay.polls.constants.PollsWebKeys" %><%@
 page import="com.liferay.polls.exception.DuplicateVoteException" %><%@
@@ -42,11 +43,11 @@ page import="com.liferay.polls.model.PollsVote" %><%@
 page import="com.liferay.polls.service.PollsChoiceLocalServiceUtil" %><%@
 page import="com.liferay.polls.service.PollsQuestionLocalServiceUtil" %><%@
 page import="com.liferay.polls.service.PollsVoteLocalServiceUtil" %><%@
-page import="com.liferay.polls.service.permission.PollsQuestionPermissionChecker" %><%@
-page import="com.liferay.polls.service.permission.PollsResourcePermissionChecker" %><%@
 page import="com.liferay.polls.web.internal.portlet.action.EditQuestionMVCActionCommand" %><%@
 page import="com.liferay.polls.web.internal.portlet.display.context.PollsDisplayContext" %><%@
 page import="com.liferay.polls.web.internal.portlet.util.PollsUtil" %><%@
+page import="com.liferay.polls.web.internal.security.permission.resource.PollsPermission" %><%@
+page import="com.liferay.polls.web.internal.security.permission.resource.PollsQuestionPermission" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.DisplayTerms" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
@@ -66,7 +67,6 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
-page import="com.liferay.portal.kernel.util.StringPool" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@

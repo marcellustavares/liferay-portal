@@ -48,27 +48,29 @@ String yearParamId = namespace + HtmlUtil.getAUICompatibleId(yearParam);
 
 Calendar calendar = CalendarFactoryUtil.getCalendar(yearValue, monthValue, dayValue);
 
-String mask = _MASK_MDY;
-String simpleDateFormatPattern = _SIMPLE_DATE_FORMAT_PATTERN_MDY;
+String mask = _MASK_YMD;
+String simpleDateFormatPattern = _SIMPLE_DATE_FORMAT_PATTERN_HTML5;
 
-if (BrowserSnifferUtil.isMobile(request)) {
-	simpleDateFormatPattern = _SIMPLE_DATE_FORMAT_PATTERN_HTML5;
-}
-else {
+if (!BrowserSnifferUtil.isMobile(request)) {
 	DateFormat shortDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 
 	SimpleDateFormat shortDateFormatSimpleDateFormat = (SimpleDateFormat)shortDateFormat;
 
-	String shortDateFormatSimpleDateFormatPattern = shortDateFormatSimpleDateFormat.toPattern();
+	simpleDateFormatPattern = shortDateFormatSimpleDateFormat.toPattern();
 
-	if (shortDateFormatSimpleDateFormatPattern.indexOf("y") == 0) {
-		mask = _MASK_YMD;
-		simpleDateFormatPattern = _SIMPLE_DATE_FORMAT_PATTERN_YMD;
-	}
-	else if (shortDateFormatSimpleDateFormatPattern.indexOf("d") == 0) {
-		mask = _MASK_DMY;
-		simpleDateFormatPattern = _SIMPLE_DATE_FORMAT_PATTERN_DMY;
-	}
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("yyyy", "yy");
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("MM", "M");
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("dd", "d");
+
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("yy", "yyyy");
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("M", "MM");
+	simpleDateFormatPattern = simpleDateFormatPattern.replaceAll("d", "dd");
+
+	mask = simpleDateFormatPattern;
+
+	mask = mask.replaceAll("yyyy", "%Y");
+	mask = mask.replaceAll("MM", "%m");
+	mask = mask.replaceAll("dd", "%d");
 }
 
 String dayAbbreviation = LanguageUtil.get(resourceBundle, "day-abbreviation");
@@ -117,6 +119,13 @@ else {
 	<input <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= dayParamId %>" name="<%= namespace + HtmlUtil.escapeAttribute(dayParam) %>" type="hidden" value="<%= dayValue %>" />
 	<input <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= monthParamId %>" name="<%= namespace + HtmlUtil.escapeAttribute(monthParam) %>" type="hidden" value="<%= monthValue %>" />
 	<input <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= yearParamId %>" name="<%= namespace + HtmlUtil.escapeAttribute(yearParam) %>" type="hidden" value="<%= yearValue %>" />
+
+	<%
+	DateFormat shortDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+
+	SimpleDateFormat shortDateFormatSimpleDateFormat = (SimpleDateFormat)shortDateFormat;
+	%>
+
 </span>
 
 <c:if test="<%= nullable && !required && !showDisableCheckbox %>">
@@ -233,20 +242,17 @@ else {
 							var date = A.DataType.Date.parse(newSelection);
 							var invalidNumber = isNaN(newSelection);
 
-							if (invalidNumber && !nullable) {
+							if ((invalidNumber && !nullable) || (invalidNumber && !date && nullable && newSelection)) {
 								event.newSelection[0] = new Date();
 							}
-							else if (invalidNumber && !date && nullable) {
-								var selection = new Date();
 
-								if (!newSelection) {
-									selection = '';
-								}
+							var updatedVal = '';
 
-								event.newSelection[0] = selection;
+							if (event.newSelection[0]) {
+								updatedVal = event.newSelection[0];
 							}
 
-							datePicker.updateValue(event.newSelection[0]);
+							datePicker.updateValue(updatedVal);
 						}
 					},
 					popover: {
@@ -318,17 +324,7 @@ else {
 </aui:script>
 
 <%!
-private static final String _SIMPLE_DATE_FORMAT_PATTERN_DMY = "dd/MM/yyyy";
-
 private static final String _SIMPLE_DATE_FORMAT_PATTERN_HTML5 = "yyyy-MM-dd";
-
-private static final String _SIMPLE_DATE_FORMAT_PATTERN_MDY = "MM/dd/yyyy";
-
-private static final String _SIMPLE_DATE_FORMAT_PATTERN_YMD = "yyyy/MM/dd";
-
-private static final String _MASK_DMY = "%d/%m/%Y";
-
-private static final String _MASK_MDY = "%m/%d/%Y";
 
 private static final String _MASK_YMD = "%Y/%m/%d";
 %>

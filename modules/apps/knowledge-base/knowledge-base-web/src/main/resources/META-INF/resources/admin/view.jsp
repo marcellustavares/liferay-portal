@@ -94,6 +94,8 @@ if (parentResourcePrimKey != KBFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 				portletURL="<%= displayStyleURL %>"
 				selectedDisplayStyle="descriptive"
 			/>
+
+			<liferay-util:include page="/admin/add_button.jsp" servletContext="<%= application %>" />
 		</liferay-frontend:management-bar-buttons>
 
 		<%
@@ -275,7 +277,6 @@ if (parentResourcePrimKey != KBFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 							%>
 
 							<liferay-ui:search-container-column-user
-								cssClass="user-icon-lg"
 								showDetails="<%= false %>"
 								userId="<%= kbArticle.getUserId() %>"
 							/>
@@ -340,8 +341,6 @@ if (parentResourcePrimKey != KBFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 		</aui:form>
 	</div>
 </div>
-
-<liferay-util:include page="/admin/add_button.jsp" servletContext="<%= application %>" />
 
 <aui:script>
 	function <portlet:namespace />deleteEntries() {

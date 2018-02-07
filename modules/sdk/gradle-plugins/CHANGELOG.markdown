@@ -3397,10 +3397,78 @@ to version 2.3.70.
 - [LPS-77186]: Update the [Liferay Source Formatter] dependency to version
 1.0.541.
 
-## 3.5.96 - 2018-01-24
+## 3.5.96 - 2018-01-25
+
+### Changed
+- [LPS-77143]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.71.
+- [LPS-77143]: Update the [Liferay Source Formatter] dependency to version
+1.0.542.
+
+## 3.5.97 - 2018-01-25
 
 ### Changed
 - [LPS-77423]: Set the default Node.js version to 8.9.4.
+
+## 3.5.98 - 2018-01-26
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.72.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.543.
+
+## 3.5.99 - 2018-01-29
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.73.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.544.
+
+## 3.5.100 - 2018-01-30
+
+### Changed
+- [LPS-77630]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.74.
+- [LPS-77630]: Update the [Liferay Source Formatter] dependency to version
+1.0.545.
+
+## 3.5.101 - 2018-01-31
+
+### Changed
+- [LPS-77630]: Update the [Liferay Source Formatter] dependency to version
+1.0.546.
+
+## 3.6.0 - 2018-02-01
+
+### Added
+- [LPS-77350]: Configure Bnd to copy the `service.xml` file from the root
+directory of the project to the `META-INF` directory of the JAR file.
+- [LPS-77350]: Set the Bnd instruction `-liferay-service-xml` to
+`"service.xml,*/service.xml"` by default.
+
+### Changed
+- [LPS-77350]: Update the [Liferay Ant BND] dependency to version 2.0.43.
+
+## 3.6.1 - 2018-02-05
+
+### Changed
+- [LPS-77795]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.75.
+- [LPS-77795]: Update the [Liferay Source Formatter] dependency to version
+1.0.547.
+
+## 3.6.2 - 2018-02-06
+
+### Changed
+- [LPS-77836]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.76.
+- [LPS-77836]: Update the [Liferay Source Formatter] dependency to version
+1.0.548.
+
+### Fixed
+- [LPS-77350]: Avoid silently ignoring `Include-Resource` Bnd headers.
 
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Alloy Taglib]: https://github.com/liferay/alloy-taglibs
@@ -3691,10 +3759,14 @@ to version 2.3.70.
 [LPS-76954]: https://issues.liferay.com/browse/LPS-76954
 [LPS-76957]: https://issues.liferay.com/browse/LPS-76957
 [LPS-77111]: https://issues.liferay.com/browse/LPS-77111
+[LPS-77143]: https://issues.liferay.com/browse/LPS-77143
 [LPS-77186]: https://issues.liferay.com/browse/LPS-77186
 [LPS-77250]: https://issues.liferay.com/browse/LPS-77250
 [LPS-77305]: https://issues.liferay.com/browse/LPS-77305
-[LPS-77400]: https://issues.liferay.com/browse/LPS-77400
+[LPS-77350]: https://issues.liferay.com/browse/LPS-77350
 [LPS-77402]: https://issues.liferay.com/browse/LPS-77402
 [LPS-77423]: https://issues.liferay.com/browse/LPS-77423
+[LPS-77630]: https://issues.liferay.com/browse/LPS-77630
+[LPS-77795]: https://issues.liferay.com/browse/LPS-77795
+[LPS-77836]: https://issues.liferay.com/browse/LPS-77836
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

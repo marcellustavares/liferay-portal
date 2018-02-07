@@ -810,7 +810,7 @@
 	</command>
 
 	<command name="RestoreBlogsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="quarantine" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2211,6 +2211,8 @@
 		</execute>
 
 		<execute macro="Button#clickPublish" />
+
+		<execute function="Pause" locator1="30000" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />

@@ -20,6 +20,7 @@
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -98,6 +99,7 @@ page import="com.liferay.portal.kernel.model.UserGroup" %><%@
 page import="com.liferay.portal.kernel.model.UserGroupGroupRole" %><%@
 page import="com.liferay.portal.kernel.model.UserGroupRole" %><%@
 page import="com.liferay.portal.kernel.model.Website" %><%@
+page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %><%@
 page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %><%@
 page import="com.liferay.portal.kernel.portlet.PortalPreferences" %><%@
 page import="com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil" %><%@
@@ -219,6 +221,8 @@ InitDisplayContext initDisplayContext = new InitDisplayContext(request, portletN
 
 boolean filterManageableOrganizations = initDisplayContext.isFilterManageableOrganizations();
 boolean filterManageableUserGroups = initDisplayContext.isFilterManageableUserGroups();
+
+UserDisplayContext userDisplayContext = new UserDisplayContext(request, initDisplayContext);
 %>
 
 <%@ include file="/init-ext.jsp" %>

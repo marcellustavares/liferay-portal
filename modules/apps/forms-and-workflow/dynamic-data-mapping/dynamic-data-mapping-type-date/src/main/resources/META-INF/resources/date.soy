@@ -34,12 +34,6 @@
 	<div class="{$formGroupClass}" data-fieldname="{$name}">
 		{if $showLabel}
 			{let $labelAttributes kind="attributes"}
-				class="control-label
-					{if $readOnly}
-						{sp}disabled
-					{/if}
-				"
-
 				for="{$name}"
 			{/let}
 
@@ -51,7 +45,9 @@
 				{/if}
 			</label>
 
-			<p class="liferay-ddm-form-field-tip">{$tip ?: ''}</p>
+			{if $tip}
+				<span class="form-text">{$tip}</span>
+			{/if}
 		{/if}
 
 		{let $displayValue: $formattedValue ? $formattedValue : $predefinedValue /}
@@ -69,7 +65,7 @@
 				{/if}
 
 				{if $readOnly}
-					readonly
+					disabled
 				{/if}
 
 				maxlength="10"
