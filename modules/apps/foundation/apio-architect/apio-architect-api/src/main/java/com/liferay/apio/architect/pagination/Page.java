@@ -16,9 +16,11 @@ package com.liferay.apio.architect.pagination;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.apio.architect.operation.Operation;
 import com.liferay.apio.architect.uri.Path;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,27 +31,28 @@ import java.util.Optional;
  * @author Carlos Sierra Andrés
  * @author Jorge Ferrer
  * @param  <T> the model's type
- * @review
  */
 @ProviderType
 public class Page<T> {
 
 	public Page(
-		Class<T> modelClass, PageItems<T> pageItems, Pagination pagination) {
+		String resourceName, PageItems<T> pageItems, Pagination pagination,
+		List<Operation> operations) {
 
-		this(modelClass, pageItems, pagination, null);
+		this(resourceName, pageItems, pagination, null, operations);
 	}
 
 	public Page(
-		Class<T> modelClass, PageItems<T> pageItems, Pagination pagination,
-		Path path) {
+		String resourceName, PageItems<T> pageItems, Pagination pagination,
+		Path path, List<Operation> operations) {
 
-		_modelClass = modelClass;
+		_resourceName = resourceName;
 		_items = pageItems.getItems();
 		_itemsPerPage = pagination.getItemsPerPage();
 		_pageNumber = pagination.getPageNumber();
 		_totalCount = pageItems.getTotalCount();
 		_path = path;
+		_operations = operations;
 	}
 
 	/**
@@ -80,12 +83,12 @@ public class Page<T> {
 	}
 
 	/**
-	 * Returns the page's model class.
+	 * Returns the list of operations for the page.
 	 *
-	 * @return the page's model class
+	 * @return the list of operations
 	 */
-	public Class<T> getModelClass() {
-		return _modelClass;
+	public List<Operation> getOperations() {
+		return _operations;
 	}
 
 	/**
@@ -105,6 +108,15 @@ public class Page<T> {
 	 */
 	public Optional<Path> getPathOptional() {
 		return Optional.ofNullable(_path);
+	}
+
+	/**
+	 * Returns the resource's name.
+	 *
+	 * @return the resource's name
+	 */
+	public String getResourceName() {
+		return _resourceName;
 	}
 
 	/**
@@ -147,9 +159,10 @@ public class Page<T> {
 
 	private final Collection<T> _items;
 	private final int _itemsPerPage;
-	private final Class<T> _modelClass;
+	private final List<Operation> _operations;
 	private final int _pageNumber;
 	private final Path _path;
+	private final String _resourceName;
 	private final int _totalCount;
 
 }

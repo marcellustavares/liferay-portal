@@ -21,7 +21,7 @@ String tabs1 = ParamUtil.getString(request, "tabs1", "structures");
 
 String redirect = ParamUtil.getString(request, "redirect");
 
-long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName));
+long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
 
 boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
@@ -174,20 +174,3 @@ if (ddmDisplay.getTitle(locale) != null) {
 		</liferay-ui:search-container>
 	</div>
 </aui:form>
-
-<c:if test="<%= ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) && DDMStructurePermission.containsAddStruturePermission(permissionChecker, groupId, scopeClassNameId) %>">
-	<liferay-portlet:renderURL var="viewStructuresURL">
-		<portlet:param name="mvcPath" value="/view.jsp" />
-		<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-	</liferay-portlet:renderURL>
-
-	<liferay-portlet:renderURL var="addStructureURL">
-		<portlet:param name="mvcPath" value="/edit_structure.jsp" />
-		<portlet:param name="redirect" value="<%= viewStructuresURL %>" />
-		<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-	</liferay-portlet:renderURL>
-
-	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add") %>' url="<%= addStructureURL %>" />
-	</liferay-frontend:add-menu>
-</c:if>

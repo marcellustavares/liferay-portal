@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -26,6 +27,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.document.library.kernel.model.DLFileEntry" %><%@
+page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.JSPNavigationItemList" %><%@
 page import="com.liferay.ip.geocoder.IPGeocoder" %><%@
 page import="com.liferay.ip.geocoder.IPInfo" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
@@ -49,16 +51,16 @@ page import="com.liferay.portal.kernel.util.PrefsPropsUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.sync.constants.SyncAdminPortletKeys" %><%@
 page import="com.liferay.sync.constants.SyncConstants" %><%@
 page import="com.liferay.sync.constants.SyncDeviceConstants" %><%@
 page import="com.liferay.sync.constants.SyncPermissionsConstants" %><%@
+page import="com.liferay.sync.constants.SyncPortletKeys" %><%@
 page import="com.liferay.sync.exception.OAuthPortletUndeployedException" %><%@
 page import="com.liferay.sync.model.SyncDevice" %><%@
 page import="com.liferay.sync.oauth.helper.SyncOAuthHelperUtil" %><%@
 page import="com.liferay.sync.service.SyncDeviceLocalServiceUtil" %><%@
 page import="com.liferay.sync.service.configuration.SyncServiceConfigurationKeys" %><%@
-page import="com.liferay.sync.service.configuration.SyncServiceConfigurationValues" %><%@
+page import="com.liferay.sync.web.internal.configuration.SyncServiceConfigurationValues" %><%@
 page import="com.liferay.sync.web.internal.constants.SyncWebKeys" %>
 
 <%@ page import="java.util.ArrayList" %><%@

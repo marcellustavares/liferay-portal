@@ -16,26 +16,25 @@ package com.liferay.fragment.entry.processor.editable;
 
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
 import com.liferay.fragment.exception.FragmentEntryContentException;
+import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessor;
-import com.liferay.fragment.util.HtmlParserUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.Node;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.kernel.xml.XPath;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -47,37 +46,41 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  */
 @Component(
 	immediate = true,
-	property = {"fragment.entry.processor.priority:Integer=1"},
+	property = {"fragment.entry.processor.priority:Integer=2"},
 	service = FragmentEntryProcessor.class
 )
 public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 
 	@Override
-	public String processFragmentEntryHTML(String html, JSONObject jsonObject)
+	public String processFragmentEntryLinkHTML(
+			FragmentEntryLink fragmentEntryLink, String html)
 		throws PortalException {
 
-		Document document = _htmlParserUtil.parse(html);
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+			fragmentEntryLink.getEditableValues());
 
-		XPath editableXPath = SAXReaderUtil.createXPath("//lfr-editable");
+		Document document = _getDocument(html);
 
-		for (Node editableNode : editableXPath.selectNodes(document)) {
-			Element element = (Element)editableNode;
-
+		for (Element element : document.select("lfr-editable")) {
 			EditableElementParser editableElementParser =
-				_editableElementParsers.get(element.attributeValue("type"));
+				_editableElementParsers.get(element.attr("type"));
 
 			if (editableElementParser == null) {
 				continue;
 			}
 
-			String id = element.attributeValue("id");
+			String id = element.attr("id");
+
+			if (!jsonObject.has(id)) {
+				continue;
+			}
 
 			editableElementParser.replace(element, jsonObject.getString(id));
 		}
 
-		Element rootElement = document.getRootElement();
+		Element bodyElement = document.body();
 
-		return rootElement.asXML();
+		return bodyElement.html();
 	}
 
 	@Reference(
@@ -105,25 +108,34 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 
 	@Override
 	public void validateFragmentEntryHTML(String html) throws PortalException {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			"content.Language", getClass());
+		_validateDuplicatedIds(html);
+		_validateEmptyIds(html);
+	}
 
-		Document document = _htmlParserUtil.parse(html);
+	private Document _getDocument(String html) {
+		Document document = Jsoup.parseBodyFragment(html);
 
-		XPath uniqueXPath = SAXReaderUtil.createXPath("//*[@id]");
+		Document.OutputSettings outputSettings = new Document.OutputSettings();
 
-		List<Node> uniqueNodes = uniqueXPath.selectNodes(document);
+		outputSettings.prettyPrint(false);
 
-		Stream<Node> uniqueNodesStream = uniqueNodes.stream();
+		document.outputSettings(outputSettings);
+
+		return document;
+	}
+
+	private void _validateDuplicatedIds(String html)
+		throws FragmentEntryContentException {
+
+		Document document = _getDocument(html);
+
+		Elements elements = document.getElementsByTag("lfr-editable");
+
+		Stream<Element> uniqueNodesStream = elements.stream();
 
 		Map<String, Long> idsMap = uniqueNodesStream.collect(
 			Collectors.groupingBy(
-				node -> {
-					Element element = (Element)node;
-
-					return element.attributeValue("id");
-				},
-				Collectors.counting()));
+				element -> element.attr("id"), Collectors.counting()));
 
 		Collection<String> ids = idsMap.keySet();
 
@@ -132,28 +144,28 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 		idsStream = idsStream.filter(id -> idsMap.get(id) > 1);
 
 		if (idsStream.count() > 0) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", getClass());
+
 			throw new FragmentEntryContentException(
 				LanguageUtil.get(
 					resourceBundle,
 					"you-must-define-an-unique-id-for-each-editable-element"));
 		}
+	}
 
-		XPath editableXPath = SAXReaderUtil.createXPath("//lfr-editable");
+	private void _validateEmptyIds(String html)
+		throws FragmentEntryContentException {
 
-		List<Node> editableNodes = editableXPath.selectNodes(document);
+		Document document = _getDocument(html);
 
-		Stream<Node> editableNodesStream = editableNodes.stream();
+		for (Element element : document.getElementsByTag("lfr-editable")) {
+			if (element.hasAttr("id")) {
+				continue;
+			}
 
-		if (!editableNodesStream.allMatch(
-				node -> {
-					Element element = (Element)node;
-
-					if (Validator.isNotNull(element.attributeValue("id"))) {
-						return true;
-					}
-
-					return false;
-				})) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", getClass());
 
 			throw new FragmentEntryContentException(
 				LanguageUtil.get(
@@ -164,8 +176,5 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 
 	private final Map<String, EditableElementParser> _editableElementParsers =
 		new HashMap<>();
-
-	@Reference
-	private HtmlParserUtil _htmlParserUtil;
 
 }

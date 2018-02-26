@@ -19,14 +19,14 @@ import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
-import com.liferay.exportimport.portlet.preferences.processor.capability.ReferencedStagedModelImporterCapability;
+import com.liferay.petra.string.StringPool;
+import com.liferay.polls.constants.PollsConstants;
 import com.liferay.polls.constants.PollsPortletKeys;
 import com.liferay.polls.exception.NoSuchQuestionException;
 import com.liferay.polls.internal.exportimport.data.handler.PollsPortletDataHandler;
 import com.liferay.polls.model.PollsChoice;
 import com.liferay.polls.model.PollsQuestion;
 import com.liferay.polls.model.PollsVote;
-import com.liferay.polls.service.permission.PollsResourcePermissionChecker;
 import com.liferay.polls.service.persistence.PollsQuestionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.util.List;
 import java.util.Map;
@@ -63,8 +62,7 @@ public class PollsDisplayExportImportPortletPreferencesProcessor
 
 	@Override
 	public List<Capability> getImportCapabilities() {
-		return ListUtil.toList(
-			new Capability[] {_referencedStagedModelImporterCapability});
+		return ListUtil.toList(new Capability[] {_capability});
 	}
 
 	@Override
@@ -103,7 +101,7 @@ public class PollsDisplayExportImportPortletPreferencesProcessor
 
 		try {
 			portletDataContext.addPortletPermissions(
-				PollsResourcePermissionChecker.RESOURCE_NAME);
+				PollsConstants.RESOURCE_NAME);
 		}
 		catch (PortalException pe) {
 			throw new PortletDataException(
@@ -138,7 +136,7 @@ public class PollsDisplayExportImportPortletPreferencesProcessor
 
 		try {
 			portletDataContext.importPortletPermissions(
-				PollsResourcePermissionChecker.RESOURCE_NAME);
+				PollsConstants.RESOURCE_NAME);
 		}
 		catch (PortalException pe) {
 			throw new PortletDataException(
@@ -168,19 +166,10 @@ public class PollsDisplayExportImportPortletPreferencesProcessor
 		return portletPreferences;
 	}
 
-	@Reference(unbind = "-")
-	protected void setReferencedStagedModelImporterCapability(
-		ReferencedStagedModelImporterCapability
-			referencedStagedModelImporterCapability) {
-
-		_referencedStagedModelImporterCapability =
-			referencedStagedModelImporterCapability;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		PollsDisplayExportImportPortletPreferencesProcessor.class);
 
-	private ReferencedStagedModelImporterCapability
-		_referencedStagedModelImporterCapability;
+	@Reference(target = "(name=ReferencedStagedModelImporter)")
+	private Capability _capability;
 
 }

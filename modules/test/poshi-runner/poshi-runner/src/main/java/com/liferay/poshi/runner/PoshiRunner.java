@@ -57,7 +57,7 @@ public class PoshiRunner {
 	public static List<String> getList() throws Exception {
 		PoshiRunnerContext.readFiles();
 
-		List<String> classCommandNames = new ArrayList<>();
+		List<String> namespacedClassCommandNames = new ArrayList<>();
 
 		List<String> testNames = Arrays.asList(
 			PropsValues.TEST_NAME.split("\\s*,\\s*"));
@@ -65,50 +65,64 @@ public class PoshiRunner {
 		for (String testName : testNames) {
 			PoshiRunnerValidation.validate(testName);
 
+			String namespace =
+				PoshiRunnerGetterUtil.
+					getNamespaceFromNamespacedClassCommandName(testName);
+
 			if (testName.contains("#")) {
-				classCommandNames.add(testName);
+				String classCommandName =
+					PoshiRunnerGetterUtil.
+						getClassCommandNameFromNamespacedClassCommandName(
+							testName);
+
+				namespacedClassCommandNames.add(
+					namespace + "." + classCommandName);
 			}
 			else {
-				String className = testName;
+				String className =
+					PoshiRunnerGetterUtil.
+						getClassNameFromNamespacedClassCommandName(testName);
 
 				Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
-					className);
+					className, namespace);
 
 				List<Element> commandElements = rootElement.elements("command");
 
 				for (Element commandElement : commandElements) {
-					classCommandNames.add(
-						className + "#" +
+					namespacedClassCommandNames.add(
+						namespace + "." + className + "#" +
 							commandElement.attributeValue("name"));
 				}
 			}
 		}
 
-		return classCommandNames;
+		return namespacedClassCommandNames;
 	}
 
-	public PoshiRunner(String classCommandName) throws Exception {
-		_testClassCommandName = classCommandName;
+	public PoshiRunner(String namespacedClassCommandName) throws Exception {
+		_testNamespacedClassCommandName = namespacedClassCommandName;
 
-		_testClassName = PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-			_testClassCommandName);
+		_testNamespacedClassName =
+			PoshiRunnerGetterUtil.
+				getNamespacedClassNameFromNamespacedClassCommandName(
+					_testNamespacedClassCommandName);
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		System.out.println();
 		System.out.println("###");
-		System.out.println("### " + _testClassCommandName);
+		System.out.println("### " + _testNamespacedClassCommandName);
 		System.out.println("###");
 		System.out.println();
 
-		PoshiRunnerContext.setTestCaseCommandName(_testClassCommandName);
-		PoshiRunnerContext.setTestCaseName(_testClassName);
+		PoshiRunnerContext.setTestCaseNamespacedClassCommandName(
+			_testNamespacedClassCommandName);
 
 		PoshiRunnerVariablesUtil.clear();
 
 		try {
-			XMLLoggerHandler.generateXMLLog(_testClassCommandName);
+			XMLLoggerHandler.generateXMLLog(_testNamespacedClassCommandName);
 
 			LoggerUtil.startLogger();
 
@@ -193,11 +207,26 @@ public class PoshiRunner {
 	public Retry retry = new Retry(
 		3, TimeoutException.class, UnreachableBrowserException.class);
 
-	private void _runClassCommandName(String classCommandName)
+	private void _runCommand() throws Exception {
+		CommandLoggerHandler.logNamespacedClassCommandName(
+			_testNamespacedClassCommandName);
+
+		_runNamespacedClassCommandName(_testNamespacedClassCommandName);
+	}
+
+	private void _runNamespacedClassCommandName(
+			String namespacedClassCommandName)
 		throws Exception {
 
+		String className =
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
+				namespacedClassCommandName);
+		String namespace =
+			PoshiRunnerGetterUtil.getNamespaceFromNamespacedClassCommandName(
+				namespacedClassCommandName);
+
 		Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
-			_testClassName);
+			className, namespace);
 
 		List<Element> varElements = rootElement.elements("var");
 
@@ -207,12 +236,17 @@ public class PoshiRunner {
 
 		PoshiRunnerVariablesUtil.pushCommandMap(true);
 
+		String classCommandName =
+			PoshiRunnerGetterUtil.
+				getClassCommandNameFromNamespacedClassCommandName(
+					namespacedClassCommandName);
+
 		Element commandElement = PoshiRunnerContext.getTestCaseCommandElement(
-			classCommandName);
+			classCommandName, namespace);
 
 		if (commandElement != null) {
 			PoshiRunnerStackTraceUtil.startStackTrace(
-				classCommandName, "test-case");
+				namespacedClassCommandName, "test-case");
 
 			XMLLoggerHandler.updateStatus(commandElement, "pending");
 
@@ -224,30 +258,26 @@ public class PoshiRunner {
 		}
 	}
 
-	private void _runCommand() throws Exception {
-		CommandLoggerHandler.logClassCommandName(_testClassCommandName);
-
-		_runClassCommandName(_testClassCommandName);
-	}
-
 	private void _runSetUp() throws Exception {
-		CommandLoggerHandler.logClassCommandName(_testClassName + "#set-up");
+		CommandLoggerHandler.logNamespacedClassCommandName(
+			_testNamespacedClassName + "#set-up");
 
 		SummaryLoggerHandler.startMajorSteps();
 
-		_runClassCommandName(_testClassName + "#set-up");
+		_runNamespacedClassCommandName(_testNamespacedClassName + "#set-up");
 	}
 
 	private void _runTearDown() throws Exception {
-		CommandLoggerHandler.logClassCommandName(_testClassName + "#tear-down");
+		CommandLoggerHandler.logNamespacedClassCommandName(
+			_testNamespacedClassName + "#tear-down");
 
 		SummaryLoggerHandler.startMajorSteps();
 
-		_runClassCommandName(_testClassName + "#tear-down");
+		_runNamespacedClassCommandName(_testNamespacedClassName + "#tear-down");
 	}
 
-	private final String _testClassCommandName;
-	private final String _testClassName;
+	private final String _testNamespacedClassCommandName;
+	private final String _testNamespacedClassName;
 
 	private class Retry implements TestRule {
 

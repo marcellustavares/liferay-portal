@@ -152,7 +152,7 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -497,6 +497,28 @@
 			<var name="webContentContent" value="Web Content Content" />
 			<var name="webContentStatus" value="Approved" />
 			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+	</command>
+
+	<command name="publishWorkflowDefinition">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Workflow" />
+		</execute>
+
+		<execute macro="Workflow#viewDefinitionUnpublished">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
+		</execute>
+
+		<execute macro="Workflow#publishExistingWorkflowDefinition">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
+		</execute>
+
+		<execute macro="Navigator#gotoBack" />
+
+		<execute macro="Workflow#viewDefinitionPublished">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
 		</execute>
 	</command>
 
@@ -877,13 +899,13 @@
 			<var name="key_dmDocumentSize" value="22KB" />
 		</execute>
 
-		<execute macro="Navigator#gotoPage">
+		<!-- <execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="Message Boards Body" />
 			<var name="threadSubject" value="Message Boards Subject" />
@@ -892,7 +914,7 @@
 		<execute macro="MessageboardsThread#viewPG">
 			<var name="threadBody" value="Message Boards Body" />
 			<var name="threadSubject" value="Message Boards Subject" />
-		</execute>
+		</execute> -->
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki" />

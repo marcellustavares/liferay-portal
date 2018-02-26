@@ -35,6 +35,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>LIST_GROUP_ITEM_CHECKBOX</td>
+	<td>//li[contains(@class,'list-group-item')][div[normalize-space()='${key_pageName}']]//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>LIST_GROUP_ITEM_ELLIPSIS_ICON</td>
 	<td>//li[contains(@class,'list-group-item')][div[normalize-space()='${key_pageName}']]//button[*[name()='svg'][contains(@class,'icon-ellipsis-v')]]</td>
 	<td></td>
@@ -42,6 +47,11 @@
 <tr>
 	<td>LIST_GROUP_ITEM_PLUS_ICON</td>
 	<td>//li[contains(@class,'list-group-item')][div[normalize-space()='${key_pageName}']]//a[*[name()='svg'][contains(@class,'icon-plus')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LIST_GROUP_ITEM_ROW_ENTRY</td>
+	<td>xpath=(//li[contains(@class,'list-group-item')])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -178,11 +188,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>PAGE_TREE_PAGE_EDIT_COG</td>
-	<td>xpath=(//a[contains(@id,'layoutsTree_layout_')])[1]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>PAGE_TREE_PAGE_SPECIFIC_PAGE</td>
 	<td>//a[span[contains(.,'${key_page}')]]</td>
 	<td></td>
@@ -195,11 +200,6 @@
 <tr>
 	<td>PAGE_TREE_PAGE_LINK</td>
 	<td>//div[@class='list-group-item']//span/a[@title='${key_page}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>PAGE_TREE_PAGE_EDIT_COG</td>
-	<td>//a[contains(@class,'tree-edit') and contains(.,'${key_page}')]</td>
 	<td></td>
 </tr>
 <tr>

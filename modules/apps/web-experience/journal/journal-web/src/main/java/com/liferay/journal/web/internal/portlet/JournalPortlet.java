@@ -73,6 +73,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.diff.CompareVersionsException;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -105,13 +106,13 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.RSSUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.rss.util.RSSUtil;
 import com.liferay.trash.TrashHelper;
 import com.liferay.trash.kernel.service.TrashEntryService;
 import com.liferay.trash.util.TrashWebKeys;
@@ -1295,6 +1296,7 @@ public class JournalPortlet extends MVCPortlet {
 			cause instanceof LocaleException ||
 			cause instanceof MaxAddMenuFavItemsException ||
 			cause instanceof StorageFieldRequiredException ||
+			cause instanceof SystemException ||
 			super.isSessionErrorException(cause)) {
 
 			return true;

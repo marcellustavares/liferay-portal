@@ -19,7 +19,9 @@
 		</execute>
 
 		<execute macro="SitePages#addPublicPage">
+			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Message Boards Page" />
+			<var name="sitePageType" value="Empty Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -312,7 +314,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>
@@ -456,7 +458,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="MB Thread Message Body" />
 			<var name="threadSubject" value="MB Thread Message Subject" />
 		</execute>

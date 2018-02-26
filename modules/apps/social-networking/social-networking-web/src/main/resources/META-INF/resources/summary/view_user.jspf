@@ -22,7 +22,6 @@
 
 		<aui:col cssClass="user-container">
 			<liferay-ui:user-portrait
-				imageCssClass="user-icon-lg"
 				userId="<%= user2.getUserId() %>"
 			/>
 
@@ -180,7 +179,7 @@
 
 									<c:if test="<%= enableRSS %>">
 										<span class="rss-icon">
-											<liferay-ui:rss
+											<liferay-rss:rss
 												delta="<%= rssDelta %>"
 												displayStyle="<%= rssDisplayStyle %>"
 												feedType="<%= rssFeedType %>"
@@ -219,7 +218,7 @@
 
 									<c:if test="<%= enableRSS %>">
 										<span class="rss-icon">
-											<liferay-ui:rss
+											<liferay-rss:rss
 												delta="<%= rssDelta %>"
 												displayStyle="<%= rssDisplayStyle %>"
 												feedType="<%= rssFeedType %>"

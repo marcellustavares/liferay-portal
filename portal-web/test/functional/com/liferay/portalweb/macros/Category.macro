@@ -97,15 +97,6 @@
 			</then>
 		</if>
 
-		<if>
-			<isset var="parentCategory" />
-			<then>
-				<execute macro="AssetCategorization#addCategory">
-					<var name="categoryName" value="${parentCategory}" />
-				</execute>
-			</then>
-		</if>
-
 		<execute macro="PortletEntry#save" />
 	</command>
 
@@ -115,8 +106,8 @@
 			<var name="rowEntry" value="${categoryName}" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Properties" />
+		<execute macro="Navigator#gotoNavUnderline">
+			<var name="navUnderline" value="Properties" />
 		</execute>
 
 		<var name="i" value="0" />
@@ -140,7 +131,7 @@
 					<then>
 						<var method="MathUtil#sum('${i}', '1')" name="i" />
 						<var name="key_pathNumber" value="${pathNumber}" />
-						<var method="MathUtil#sum('${pathNumber}', '2')" name="pathNumber" />
+						<var method="MathUtil#sum('${pathNumber}', '1')" name="pathNumber" />
 
 						<execute function="Type" locator1="CategoriesEditCategory#PROPERTIES_KEY_FIELD" value1="${propertiesKeyField} ${i}" />
 						<execute function="Type" locator1="CategoriesEditCategory#PROPERTIES_VALUE_FIELD" value1="${propertiesValueField} ${i}" />
@@ -244,8 +235,8 @@
 			<var name="key_menuItem" value="Edit" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Properties" />
+		<execute macro="Navigator#gotoNavUnderline">
+			<var name="navUnderline" value="Properties" />
 		</execute>
 
 		<var name="key_rowIndexNumber" value="2" />
@@ -308,8 +299,8 @@
 			<var name="key_menuItem" value="Edit" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Properties" />
+		<execute macro="Navigator#gotoNavUnderline">
+			<var name="navUnderline" value="Properties" />
 		</execute>
 
 		<execute function="Type" locator1="CategoriesEditCategory#PROPERTIES_KEY_FIELD_1" value1="${propertiesKeyFieldEdit}" />
@@ -360,8 +351,8 @@
 			<var name="key_menuItem" value="Edit" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Properties" />
+		<execute macro="Navigator#gotoNavUnderline">
+			<var name="navUnderline" value="Properties" />
 		</execute>
 
 		<if>

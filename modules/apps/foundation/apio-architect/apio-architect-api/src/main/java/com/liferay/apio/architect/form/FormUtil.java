@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
@@ -40,13 +41,13 @@ public class FormUtil {
 
 	/**
 	 * Returns a field form consumer that tries to extract a boolean from the
-	 * body and store it in the provided {@code T} instance. If the field is not
-	 * a boolean, a {@link BadRequestException} is thrown.
+	 * HTTP request body and store it in the provided {@code T} instance. If the
+	 * field isn't a boolean, a {@code javax.ws.rs.BadRequestException} is
+	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a field form consumer for optional strings
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Boolean> getOptionalBoolean(
 		Map<String, Object> body, T t) {
@@ -56,14 +57,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that tries to extract a date from the body
-	 * and store it in the provided {@code T} instance. If the field is not an
-	 * ISO-8601 date, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that tries to extract a date from the HTTP
+	 * request body and store it in the provided {@code T} instance. If the
+	 * field isn't an ISO-8601 date, a {@code javax.ws.rs.BadRequestException}
+	 * is thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for optional dates
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Date> getOptionalDate(
 		Map<String, Object> body, T t) {
@@ -72,14 +73,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that tries to extract a double number from
-	 * the body and store it in the provided {@code T} instance. If the field is
-	 * not a double, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that tries to extract a double from the
+	 * HTTP request body and store it in the provided {@code T} instance. If the
+	 * field isn't a double, a {@code javax.ws.rs.BadRequestException} is
+	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a field form consumer for optional double numbers
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Double> getOptionalDouble(
 		Map<String, Object> body, T t) {
@@ -89,14 +90,12 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a stream containing the optional {@code FormField} extracted from
-	 * a map.
+	 * Returns a stream that contains the optional {@code FormField} extracted
+	 * from a map whose keys are the {@code FormField} names.
 	 *
-	 * @param  map the map whose keys are the {@code FormField} names
-	 * @param  fieldType the {@code FieldType} of the fields of this map
-	 * @return a stream containing the optional {@code FormField} extracted from
-	 *         the map
-	 * @review
+	 * @param  map the map
+	 * @param  fieldType the {@code FieldType} of the map's fields
+	 * @return the stream
 	 */
 	public static Stream<FormField> getOptionalFormFieldStream(
 		Map<String, ?> map, FieldType fieldType) {
@@ -105,14 +104,13 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that tries to extract a long number from
-	 * the body and store it in the provided {@code T} instance. If the field is
-	 * not a long, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that tries to extract a long from the HTTP
+	 * request body and store it in the provided {@code T} instance. If the
+	 * field isn't a long, a {@code javax.ws.rs.BadRequestException} is thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a field form consumer for optional long numbers
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Long> getOptionalLong(
 		Map<String, Object> body, T t) {
@@ -122,13 +120,13 @@ public class FormUtil {
 
 	/**
 	 * Returns a field form consumer that tries to extract a string from the
-	 * body and store it in the provided {@code T} instance. If the field is not
-	 * a string, a {@link BadRequestException} is thrown.
+	 * HTTP request body and store it in the provided {@code T} instance. If the
+	 * field isn't a string, a {@code javax.ws.rs.BadRequestException} is
+	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a field form consumer for optional strings
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, String> getOptionalString(
 		Map<String, Object> body, T t) {
@@ -138,14 +136,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that extracts a boolean from the body and
-	 * store it in the provided {@code T} instance. If the field is not found,
-	 * or it is not a boolean, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that extracts a boolean from the HTTP
+	 * request body and stores it in the provided {@code T} instance. If the
+	 * field isn't found, or it isn't a boolean, a {@code BadRequestException}
+	 * is thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for required booleans
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Boolean> getRequiredBoolean(
 		Map<String, Object> body, T t) {
@@ -155,14 +153,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that extracts a date from the body and
-	 * store it in the provided {@code T} instance. If the field is not found,
-	 * or it is not an ISO-8601 date, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that extracts a date from the HTTP request
+	 * body and stores it in the provided {@code T} instance. If the field isn't
+	 * found, or it isn't an ISO-8601 date, a {@code BadRequestException} is
+	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for required dates
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Date> getRequiredDate(
 		Map<String, Object> body, T t) {
@@ -171,15 +169,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that extracts a double number from the body
-	 * and store it in the provided {@code T} instance. If the field is not
-	 * found, or it is not a double number, a {@link BadRequestException} is
+	 * Returns a field form consumer that extracts a double from the HTTP
+	 * request body and stores it in the provided {@code T} instance. If the
+	 * field isn't found, or it isn't a double, a {@code BadRequestException} is
 	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for required double numbers
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Double> getRequiredDouble(
 		Map<String, Object> body, T t) {
@@ -189,14 +186,12 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a stream containing the required {@code FormField} extracted from
-	 * a map.
+	 * Returns a stream that contains the required {@code FormField} extracted
+	 * from a map whose keys are the {@code FormField} names.
 	 *
-	 * @param  map the map whose keys are the {@code FormField} names
-	 * @param  fieldType the {@code FieldType} of the fields of this map
-	 * @return a stream containing the required {@code FormField} extracted from
-	 *         the map
-	 * @review
+	 * @param  map the map
+	 * @param  fieldType the {@code FieldType} of the map's fields
+	 * @return the stream
 	 */
 	public static Stream<FormField> getRequiredFormFieldStream(
 		Map<String, ?> map, FieldType fieldType) {
@@ -205,15 +200,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that extracts a long number from the body
-	 * and store it in the provided {@code T} instance. If the field is not
-	 * found, or it is not a long number, a {@link BadRequestException} is
+	 * Returns a field form consumer that extracts a long from the HTTP request
+	 * body and stores it in the provided {@code T} instance. If the field isn't
+	 * found, or it isn't a long, a {@code javax.ws.rs.BadRequestException} is
 	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for required long numbers
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Long> getRequiredLong(
 		Map<String, Object> body, T t) {
@@ -222,14 +216,14 @@ public class FormUtil {
 	}
 
 	/**
-	 * Returns a field form consumer that extracts a string from the body and
-	 * store it in the provided {@code T} instance. If the field is not found,
-	 * or it is not a string, a {@link BadRequestException} is thrown.
+	 * Returns a field form consumer that extracts a string from the HTTP
+	 * request body and stores it in the provided {@code T} instance. If the
+	 * field isn't found, or it isn't a string, a {@code BadRequestException} is
+	 * thrown.
 	 *
 	 * @param  body the HTTP request body
 	 * @param  t the form values store
-	 * @return a date field form consumer for required strings
-	 * @review
+	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, String> getRequiredString(
 		Map<String, Object> body, T t) {
@@ -277,16 +271,7 @@ public class FormUtil {
 		Map<String, Object> body, String key, boolean required,
 		Consumer<Double> consumer) {
 
-		_getField(
-			body, key, required,
-			value -> {
-				if (!(value instanceof Double)) {
-					throw new BadRequestException(
-						"Field \"" + key + "\" should be a double number");
-				}
-
-				consumer.accept((Double)value);
-			});
+		_getNumber(body, key, required, Number::doubleValue, consumer);
 	}
 
 	private static void _getField(
@@ -315,15 +300,22 @@ public class FormUtil {
 		Map<String, Object> body, String key, boolean required,
 		Consumer<Long> consumer) {
 
+		_getNumber(body, key, required, Number::longValue, consumer);
+	}
+
+	private static <T extends Number> void _getNumber(
+		Map<String, Object> body, String key, boolean required,
+		Function<Number, T> function, Consumer<T> consumer) {
+
 		_getField(
 			body, key, required,
 			value -> {
-				if (!(value instanceof Long)) {
+				if (!(value instanceof Number)) {
 					throw new BadRequestException(
-						"Field \"" + key + "\" should be a long number");
+						"Field \"" + key + "\" should be a number");
 				}
 
-				consumer.accept((Long)value);
+				consumer.accept(function.apply((Number)value));
 			});
 	}
 

@@ -93,6 +93,7 @@ page import="com.liferay.portal.kernel.model.LayoutConstants" %><%@
 page import="com.liferay.portal.kernel.model.LayoutSet" %><%@
 page import="com.liferay.portal.kernel.model.LayoutType" %><%@
 page import="com.liferay.portal.kernel.model.LayoutTypePortlet" %><%@
+page import="com.liferay.portal.kernel.model.ModelHintsUtil" %><%@
 page import="com.liferay.portal.kernel.model.Portlet" %><%@
 page import="com.liferay.portal.kernel.model.Ticket" %><%@
 page import="com.liferay.portal.kernel.model.TicketConstants" %><%@
@@ -154,6 +155,7 @@ page import="com.liferay.taglib.search.ResultRow" %>
 page import="java.text.Format" %>
 
 <%@ page import="java.util.ArrayList" %><%@
+page import="java.util.Arrays" %><%@
 page import="java.util.Calendar" %><%@
 page import="java.util.Collections" %><%@
 page import="java.util.Date" %><%@

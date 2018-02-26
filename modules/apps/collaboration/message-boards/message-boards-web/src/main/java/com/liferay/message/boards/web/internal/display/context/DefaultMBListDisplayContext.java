@@ -15,9 +15,10 @@
 package com.liferay.message.boards.web.internal.display.context;
 
 import com.liferay.message.boards.display.context.MBListDisplayContext;
-import com.liferay.message.boards.kernel.model.MBMessage;
-import com.liferay.message.boards.kernel.service.MBCategoryServiceUtil;
-import com.liferay.message.boards.kernel.service.MBThreadServiceUtil;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.service.MBCategoryServiceUtil;
+import com.liferay.message.boards.service.MBThreadServiceUtil;
+import com.liferay.message.boards.settings.MBGroupServiceSettings;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -35,10 +36,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portlet.messageboards.MBGroupServiceSettings;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -177,36 +178,45 @@ public class DefaultMBListDisplayContext implements MBListDisplayContext {
 
 			calendar.add(Calendar.DATE, -offset);
 
+			boolean includeAnonymous = false;
+
+			if (groupThreadsUserId == themeDisplay.getUserId()) {
+				includeAnonymous = true;
+			}
+
 			searchContainer.setTotal(
 				MBThreadServiceUtil.getGroupThreadsCount(
 					themeDisplay.getScopeGroupId(), groupThreadsUserId,
-					calendar.getTime(), WorkflowConstants.STATUS_APPROVED));
+					calendar.getTime(), includeAnonymous,
+					WorkflowConstants.STATUS_APPROVED));
 			searchContainer.setResults(
 				MBThreadServiceUtil.getGroupThreads(
 					themeDisplay.getScopeGroupId(), groupThreadsUserId,
-					calendar.getTime(), WorkflowConstants.STATUS_APPROVED,
+					calendar.getTime(), includeAnonymous,
+					WorkflowConstants.STATUS_APPROVED,
 					searchContainer.getStart(), searchContainer.getEnd()));
 		}
 		else if (isShowMyPosts()) {
-			long groupThreadsUserId = ParamUtil.getLong(
-				_request, "groupThreadsUserId");
+			searchContainer.setEmptyResultsMessage("you-do-not-have-any-posts");
 
-			if (themeDisplay.isSignedIn()) {
-				groupThreadsUserId = themeDisplay.getUserId();
+			if (!themeDisplay.isSignedIn()) {
+				searchContainer.setTotal(0);
+				searchContainer.setResults(Collections.emptyList());
+
+				return;
 			}
 
 			int status = WorkflowConstants.STATUS_ANY;
 
 			searchContainer.setTotal(
 				MBThreadServiceUtil.getGroupThreadsCount(
-					themeDisplay.getScopeGroupId(), groupThreadsUserId,
+					themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
 					status));
 			searchContainer.setResults(
 				MBThreadServiceUtil.getGroupThreads(
-					themeDisplay.getScopeGroupId(), groupThreadsUserId, status,
-					searchContainer.getStart(), searchContainer.getEnd()));
-
-			searchContainer.setEmptyResultsMessage("you-do-not-have-any-posts");
+					themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
+					status, searchContainer.getStart(),
+					searchContainer.getEnd()));
 		}
 		else {
 			int status = WorkflowConstants.STATUS_APPROVED;

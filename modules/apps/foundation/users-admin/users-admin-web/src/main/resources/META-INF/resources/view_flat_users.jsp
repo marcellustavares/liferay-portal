@@ -93,6 +93,14 @@ boolean showRestoreButton = (searchTerms.getStatus() != WorkflowConstants.STATUS
 			orderColumns='<%= new String[] {"first-name", "last-name", "screen-name"} %>'
 			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
 		/>
+
+		<li>
+			<aui:form action="<%= portletURL.toString() %>" name="searchFm">
+				<aui:input name="navigation" type="hidden" value='<%= ParamUtil.getString(request, "navigation") %>' />
+
+				<liferay-ui:input-search markupView="lexicon" />
+			</aui:form>
+		</li>
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-buttons>
@@ -101,6 +109,22 @@ boolean showRestoreButton = (searchTerms.getStatus() != WorkflowConstants.STATUS
 			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
 			selectedDisplayStyle="<%= displayStyle %>"
 		/>
+
+		<c:if test="<%= hasAddUserPermission %>">
+			<liferay-frontend:add-menu inline="<%= true %>">
+				<portlet:renderURL var="viewUsersURL">
+					<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />
+					<portlet:param name="usersListView" value="<%= usersListView %>" />
+				</portlet:renderURL>
+
+				<portlet:renderURL var="addUserURL">
+					<portlet:param name="mvcRenderCommandName" value="/users_admin/edit_user" />
+					<portlet:param name="redirect" value="<%= viewUsersURL %>" />
+				</portlet:renderURL>
+
+				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "user") %>' url="<%= addUserURL.toString() %>" />
+			</liferay-frontend:add-menu>
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-action-buttons>
@@ -341,19 +365,3 @@ boolean showRestoreButton = (searchTerms.getStatus() != WorkflowConstants.STATUS
 		<liferay-ui:search-iterator displayStyle="<%= displayStyle %>" markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
-
-<c:if test="<%= hasAddUserPermission %>">
-	<liferay-frontend:add-menu>
-		<portlet:renderURL var="viewUsersURL">
-			<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />
-			<portlet:param name="usersListView" value="<%= usersListView %>" />
-		</portlet:renderURL>
-
-		<portlet:renderURL var="addUserURL">
-			<portlet:param name="mvcRenderCommandName" value="/users_admin/edit_user" />
-			<portlet:param name="redirect" value="<%= viewUsersURL %>" />
-		</portlet:renderURL>
-
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "user") %>' url="<%= addUserURL.toString() %>" />
-	</liferay-frontend:add-menu>
-</c:if>

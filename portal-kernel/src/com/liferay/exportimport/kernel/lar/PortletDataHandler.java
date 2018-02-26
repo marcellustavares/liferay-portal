@@ -14,8 +14,8 @@
 
 package com.liferay.exportimport.kernel.lar;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.util.StringPool;
 
 import javax.portlet.PortletPreferences;
 
@@ -255,7 +255,7 @@ public interface PortletDataHandler {
 	}
 
 	public default boolean isSupportsDataStrategyMirrorWithOverwriting() {
-		return true;
+		return false;
 	}
 
 	public void prepareManifestSummary(PortletDataContext portletDataContext)

@@ -77,7 +77,7 @@ import com.liferay.journal.util.impl.JournalUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.xml.XMLUtil;
-import com.liferay.portal.kernel.comment.CommentManagerUtil;
+import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -1195,7 +1195,7 @@ public class JournalArticleLocalServiceImpl
 
 			// Comment
 
-			CommentManagerUtil.deleteDiscussion(
+			_commentManager.deleteDiscussion(
 				JournalArticle.class.getName(), article.getResourcePrimKey());
 
 			// Content searches
@@ -3969,7 +3969,7 @@ public class JournalArticleLocalServiceImpl
 		// Comment
 
 		if (isArticleCommentsEnabled(article.getCompanyId())) {
-			CommentManagerUtil.moveDiscussionToTrash(
+			_commentManager.moveDiscussionToTrash(
 				JournalArticle.class.getName(), article.getResourcePrimKey());
 		}
 
@@ -4175,7 +4175,7 @@ public class JournalArticleLocalServiceImpl
 		// Comment
 
 		if (isArticleCommentsEnabled(article.getCompanyId())) {
-			CommentManagerUtil.restoreDiscussionFromTrash(
+			_commentManager.restoreDiscussionFromTrash(
 				JournalArticle.class.getName(), article.getResourcePrimKey());
 		}
 
@@ -7743,14 +7743,7 @@ public class JournalArticleLocalServiceImpl
 
 		String articleTitle = article.getTitle(serviceContext.getLanguageId());
 
-		if (Validator.isNotNull(article.getLayoutUuid())) {
-			articleURL = getURLViewInContext(article, serviceContext);
-		}
-		else {
-			articleURL = buildArticleURL(
-				articleURL, article.getGroupId(), article.getFolderId(),
-				article.getArticleId());
-		}
+		articleURL = getURLViewInContext(article, serviceContext);
 
 		if (action.equals("add") &&
 			journalGroupServiceConfiguration.emailArticleAddedEnabled()) {
@@ -8956,6 +8949,9 @@ public class JournalArticleLocalServiceImpl
 
 	@ServiceReference(type = AttachmentContentUpdater.class)
 	private AttachmentContentUpdater _attachmentContentUpdater;
+
+	@ServiceReference(type = CommentManager.class)
+	private CommentManager _commentManager;
 
 	@ServiceReference(type = JournalFileUploadsConfiguration.class)
 	private JournalFileUploadsConfiguration _journalFileUploadsConfiguration;

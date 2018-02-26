@@ -69,6 +69,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FEED</td>
+	<td>//a[contains(.,'Feed')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FORGOT_PASSWORD</td>
+	<td>//a[contains(.,'Forgot Password')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>GUEST</td>
 	<td>//div[@class='navigation']/ul/li/a/span[contains(.,'Guest')]</td>
 	<td></td>

@@ -29,7 +29,9 @@
 		</execute>
 
 		<execute macro="SitePages#addPublicPage">
+			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Staging Test Page" />
+			<var name="sitePageType" value="Empty Page" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -281,6 +283,7 @@
 		</execute>
 
 		<execute macro="Staging#schedulePublishToLivePG">
+			<var name="checkContentNameList" value="Calendar" />
 			<var name="scheduleTitleName" value="Staging Schedule Title" />
 		</execute>
 

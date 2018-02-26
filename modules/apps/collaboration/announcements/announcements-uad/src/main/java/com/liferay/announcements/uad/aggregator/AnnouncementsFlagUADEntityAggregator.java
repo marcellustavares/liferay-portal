@@ -42,10 +42,16 @@ public class AnnouncementsFlagUADEntityAggregator
 	extends BaseAnnouncementsUADEntityAggregator {
 
 	@Override
-	public List<UADEntity> getUADEntities(long userId) {
+	public int count(long userId) {
+		return (int)_announcementsFlagLocalService.dynamicQueryCount(
+			_getDynamicQuery(userId));
+	}
+
+	@Override
+	public List<UADEntity> getUADEntities(long userId, int start, int end) {
 		List<AnnouncementsFlag> announcementsFlags =
 			_announcementsFlagLocalService.dynamicQuery(
-				_getDynamicQuery(userId));
+				_getDynamicQuery(userId), start, end);
 
 		List<UADEntity> uadEntities = new ArrayList<>(
 			announcementsFlags.size());
@@ -71,8 +77,8 @@ public class AnnouncementsFlagUADEntityAggregator
 	}
 
 	private DynamicQuery _getDynamicQuery(long userId) {
-		return _uadDynamicQueryHelper.getDynamicQuery(
-			_announcementsFlagLocalService::dynamicQuery,
+		return _uadDynamicQueryHelper.addDynamicQueryCriteria(
+			_announcementsFlagLocalService.dynamicQuery(),
 			AnnouncementsUADConstants.USER_ID_FIELD_NAMES_ANNOUNCEMENTS_FLAG,
 			userId);
 	}

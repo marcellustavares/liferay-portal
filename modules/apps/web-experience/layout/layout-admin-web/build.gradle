@@ -1,3 +1,6 @@
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
 configJSModules {
 	include "**/*.js*"
 }
@@ -31,7 +34,6 @@ dependencies {
 	provided project(":apps:web-experience:asset:asset-display-api")
 	provided project(":apps:web-experience:asset:asset-taglib")
 	provided project(":apps:web-experience:export-import:export-import-api")
-	provided project(":apps:web-experience:export-import:export-import-service")
 	provided project(":apps:web-experience:fragment:fragment-api")
 	provided project(":apps:web-experience:html-preview:html-preview-api")
 	provided project(":apps:web-experience:journal:journal-api")
@@ -40,4 +42,6 @@ dependencies {
 	provided project(":apps:web-experience:layout:layout-item-selector-api")
 	provided project(":apps:web-experience:layout:layout-page-template-api")
 	provided project(":apps:web-experience:layout:layout-page-template-service")
+
+	soyCompile project(":apps:web-experience:layout:layout-taglib")
 }

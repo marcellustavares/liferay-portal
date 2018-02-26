@@ -32,12 +32,12 @@ public class PoshiRunnerGetterUtilTest extends TestCase {
 	@Test
 	public void testGetClassNameFromClassCommandName() {
 		String className =
-			PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
 				"PortalSmoke#Smoke");
 
 		Assert.assertEquals(
-			"getClassNameFromClassCommandName is failing", "PortalSmoke",
-			className);
+			"getClassNameFromNamespacedClassCommandName is failing",
+			"PortalSmoke", className);
 	}
 
 	@Test
@@ -61,18 +61,19 @@ public class PoshiRunnerGetterUtilTest extends TestCase {
 	@Test
 	public void testGetCommandNameFromClassCommandName() {
 		String commandName =
-			PoshiRunnerGetterUtil.getCommandNameFromClassCommandName(
-				"MathUtil#add(1,2)");
+			PoshiRunnerGetterUtil.getCommandNameFromNamespacedClassCommandName(
+				"Click#clickAt");
 
 		Assert.assertEquals(
-			"getCommandNameFromClassCommandName is failing", "add",
-			commandName);
+			"getCommandNameFromNamespacedClassCommandName is failing",
+			"clickAt", commandName);
 
-		commandName = PoshiRunnerGetterUtil.getCommandNameFromClassCommandName(
-			"Page#addPG");
+		commandName =
+			PoshiRunnerGetterUtil.getCommandNameFromNamespacedClassCommandName(
+				"Page#addPG");
 
 		Assert.assertEquals(
-			"getCommandNameFromClassCommandName is failing", "addPG",
+			"getCommandNameFromNamespacedClassCommandName is failing", "addPG",
 			commandName);
 	}
 

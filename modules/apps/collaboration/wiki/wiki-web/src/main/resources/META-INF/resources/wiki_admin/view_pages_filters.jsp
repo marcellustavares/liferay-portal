@@ -21,6 +21,8 @@ WikiNode node = (WikiNode)request.getAttribute(WikiWebKeys.WIKI_NODE);
 
 String navigation = ParamUtil.getString(request, "navigation", "all-pages");
 
+String keywords = ParamUtil.getString(request, "keywords");
+
 String orderByCol = GetterUtil.getString((String)request.getAttribute("view_pages.jsp-orderByCol"));
 String orderByType = GetterUtil.getString((String)request.getAttribute("view_pages.jsp-orderByType"));
 
@@ -35,18 +37,32 @@ Map<String, String> orderColumns = new HashMap<String, String>();
 
 orderColumns.put("modifiedDate", "modified-date");
 orderColumns.put("title", "title");
+
+WikiURLHelper wikiURLHelper = new WikiURLHelper(wikiRequestHelper, renderResponse, wikiGroupServiceConfiguration);
 %>
 
-<liferay-frontend:management-bar-navigation
-	navigationKeys='<%= new String[] {"all-pages", "draft-pages", "frontpage", "orphan-pages", "recent-changes"} %>'
-	portletURL="<%= PortletURLUtil.clone(portletURL, liferayPortletResponse) %>"
-/>
-
-<c:if test='<%= navigation.equals("all-pages") %>'>
-	<liferay-frontend:management-bar-sort
-		orderByCol="<%= orderByCol %>"
-		orderByType="<%= orderByType %>"
-		orderColumns="<%= orderColumns %>"
-		portletURL="<%= portletURL %>"
+<c:if test="<%= Validator.isNull(keywords) %>">
+	<liferay-frontend:management-bar-navigation
+		navigationKeys='<%= new String[] {"all-pages", "draft-pages", "frontpage", "orphan-pages", "recent-changes"} %>'
+		portletURL="<%= PortletURLUtil.clone(portletURL, liferayPortletResponse) %>"
 	/>
+
+	<c:if test='<%= navigation.equals("all-pages") %>'>
+		<liferay-frontend:management-bar-sort
+			orderByCol="<%= orderByCol %>"
+			orderByType="<%= orderByType %>"
+			orderColumns="<%= orderColumns %>"
+			portletURL="<%= portletURL %>"
+		/>
+	</c:if>
 </c:if>
+
+<li>
+	<aui:form action="<%= wikiURLHelper.getSearchURL() %>" method="get" name="searchFm">
+		<liferay-portlet:renderURLParams portletURL="<%= wikiURLHelper.getSearchURL() %>" />
+		<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+		<aui:input name="nodeId" type="hidden" value="<%= node.getNodeId() %>" />
+
+		<liferay-ui:input-search id="keywords1" markupView="lexicon" />
+	</aui:form>
+</li>

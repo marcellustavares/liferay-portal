@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.suggest;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.suggest.NGramHolder;
 import com.liferay.portal.kernel.search.suggest.NGramHolderBuilder;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.InputStream;
 
@@ -81,14 +81,16 @@ public abstract class BaseGenericSpellCheckIndexWriter
 
 		Document document = createDocument();
 
+		document.addKeyword(keywordFieldName, keywords);
+
 		document.addKeyword(Field.COMPANY_ID, companyId);
 		document.addKeyword(Field.GROUP_ID, groupId);
 		document.addKeyword(Field.LANGUAGE_ID, languageId);
 		document.addKeyword(Field.PRIORITY, String.valueOf(weight));
-		document.addKeyword(Field.SPELL_CHECK_WORD, true);
-		document.addKeyword(keywordFieldName, keywords);
 		document.addKeyword(Field.TYPE, typeFieldValue);
-		document.addKeyword(Field.UID, getUID(companyId, languageId, keywords));
+		document.addKeyword(
+			Field.UID,
+			getUID(companyId, keywordFieldName, languageId, keywords));
 
 		NGramHolderBuilder nGramHolderBuilder = getNGramHolderBuilder();
 

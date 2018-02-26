@@ -18,7 +18,6 @@ import static org.osgi.service.component.annotations.ReferenceCardinality.AT_LEA
 import static org.osgi.service.component.annotations.ReferencePolicyOption.GREEDY;
 
 import com.liferay.apio.architect.documentation.Documentation;
-import com.liferay.apio.architect.error.ApioDeveloperError;
 import com.liferay.apio.architect.error.ApioDeveloperError.MustHaveDocumentationMessageMapper;
 import com.liferay.apio.architect.language.Language;
 import com.liferay.apio.architect.message.json.DocumentationMessageMapper;
@@ -41,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,22 +106,23 @@ public class DocumentationMessageBodyWriter
 			).httpServletRequest(
 				_httpServletRequest
 			).serverURL(
-				getServerURL()
+				_providerManager.provideMandatory(
+					_httpServletRequest, ServerURL.class)
 			).embedded(
 				_providerManager.provideOptional(
-					Embedded.class, _httpServletRequest
+					_httpServletRequest, Embedded.class
 				).orElse(
 					__ -> false
 				)
 			).fields(
 				_providerManager.provideOptional(
-					Fields.class, _httpServletRequest
+					_httpServletRequest, Fields.class
 				).orElse(
 					__ -> string -> true
 				)
 			).language(
 				_providerManager.provideOptional(
-					Language.class, _httpServletRequest
+					_httpServletRequest, Language.class
 				).orElse(
 					Locale::getDefault
 				)
@@ -169,20 +168,6 @@ public class DocumentationMessageBodyWriter
 		).orElseThrow(
 			() -> new MustHaveDocumentationMessageMapper(mediaTypeString)
 		);
-	}
-
-	/**
-	 * Returns the server URL, or throws a {@link
-	 * ApioDeveloperError.MustHaveProvider} developer error.
-	 *
-	 * @return the server URL
-	 */
-	protected ServerURL getServerURL() {
-		Optional<ServerURL> optional = _providerManager.provideOptional(
-			ServerURL.class, _httpServletRequest);
-
-		return optional.orElseThrow(
-			() -> new ApioDeveloperError.MustHaveProvider(ServerURL.class));
 	}
 
 	@Reference(cardinality = AT_LEAST_ONE, policyOption = GREEDY)

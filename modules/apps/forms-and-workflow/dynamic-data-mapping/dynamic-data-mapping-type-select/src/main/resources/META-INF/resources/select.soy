@@ -61,7 +61,7 @@
 					{/if}
 				{/if}
 
-				<div class="form-control select-field-trigger" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}">
+				<div class="form-control select-field-trigger" {if $dir}dir="{$dir}"{/if} id="{$name}" name="{$name}" {if $readOnly} disabled{/if}>
 					{if $multiple}
 						{if $displayValue}
 							<ul class="multiple-badge-list">
@@ -121,6 +121,7 @@
 									<a class="" href="javascript:;">{$selectSearchIcon}</a>
 								{/if}
 							</div>
+
 							<input autocomplete="off" class="drop-chosen-search" placeholder="{$strings.search}" type="text">
 						</div>
 						{call .select_options data="all" /}
@@ -144,7 +145,7 @@
 		{foreach $currentValue in $value}
 			{if $option.value == $currentValue}
 				<li>
-					<span class="badge badge-default badge-sm multiple-badge" data-original-title="{$option.label}" title="{$option.label}">
+					<span class="badge badge-primary badge-sm multiple-badge" data-original-title="{$option.label}" title="{$option.label}">
 						{$option.label}
 						{if not $readOnly}
 							<a class="trigger-badge-item-close" data-badge-value="{$option.value}" href="javascript:void(0)">{$badgeCloseIcon}</a>
@@ -163,11 +164,10 @@
 {template .select_label}
 	{@param name: string}
 	{@param? label: string}
-	{@param? readOnly: bool}
 	{@param? required: bool}
 	{@param? tip: string}
 
-	<label class="control-label{$readOnly ? ' disabled' : ''}" for="{$name}">
+	<label for="{$name}">
 		{$label}
 
 		{if $required}
@@ -175,7 +175,9 @@
 		{/if}
 	</label>
 
-	<p class="liferay-ddm-form-field-tip">{$tip ? $tip: ''}</p>
+	{if $tip}
+		<span class="form-text">{$tip}</span>
+	{/if}
 {/template}
 
 /**
@@ -234,18 +236,34 @@
 	{@param? multiple: bool}
 
 	<ul class="dropdown-menu dropdown-visible results-chosen">
-		{if length($options) > 0}
-			<div class="inline-scroller">
-				{call .plot_dropdown_rows}
-					{param fixed: false /}
-					{param multiple: $multiple /}
-					{param options: $options /}
-					{param value: $value /}
-				{/call}
-			</div>
-		{/if}
-		{if $fixedOptions}
-			{if length($options) > 0 and length($fixedOptions) > 0}
+		{if not $fixedOptions or (length($fixedOptions) == 0)}
+			{if length($options) == 0}
+				<li class="no-results-list">
+					<span>
+						{$strings.emptyList}
+					</span>
+				</li>
+			{else}
+				<div class="inline-scroller">
+					{call .plot_dropdown_rows}
+						{param fixed: false /}
+						{param multiple: $multiple /}
+						{param options: $options /}
+						{param value: $value /}
+					{/call}
+				</div>
+			{/if}
+		{else}
+			{if length($options) > 0}
+				<div class="inline-scroller">
+					{call .plot_dropdown_rows}
+						{param fixed: false /}
+						{param multiple: $multiple /}
+						{param options: $options /}
+						{param value: $value /}
+					{/call}
+				</div>
+
 				<div class="dropdown-divider"></div>
 			{/if}
 			{call .plot_dropdown_rows}
@@ -254,13 +272,6 @@
 				{param options: $fixedOptions /}
 				{param value: $value /}
 			{/call}
-		{/if}
-		{if length($options) == 0}
-			<li class="no-results-list">
-				<span>
-					{$strings.emptyList}
-				</span>
-			</li>
 		{/if}
 	</ul>
 {/template}

@@ -48,6 +48,10 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 		<c:if test="<%= !search %>">
 			<liferay-util:include page="/document_library/display_style_buttons.jsp" servletContext="<%= application %>" />
 		</c:if>
+
+		<c:if test="<%= portletName.equals(DLPortletKeys.DOCUMENT_LIBRARY_ADMIN) %>">
+			<liferay-util:include page="/document_library/add_button.jsp" servletContext="<%= application %>" />
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<%
@@ -133,6 +137,27 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 				orderColumns="<%= orderColumns %>"
 				portletURL="<%= sortURL %>"
 			/>
+		</c:if>
+
+		<c:if test="<%= dlPortletInstanceSettingsHelper.isShowSearch() %>">
+			<li>
+				<liferay-portlet:renderURL varImpl="searchURL">
+					<portlet:param name="mvcRenderCommandName" value="/document_library/search" />
+					<portlet:param name="repositoryId" value="<%= String.valueOf(repositoryId) %>" />
+					<portlet:param name="searchRepositoryId" value="<%= String.valueOf(repositoryId) %>" />
+					<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
+					<portlet:param name="searchFolderId" value="<%= String.valueOf(folderId) %>" />
+					<portlet:param name="showRepositoryTabs" value="<%= (folderId == 0) ? Boolean.TRUE.toString() : Boolean.FALSE.toString() %>" />
+					<portlet:param name="showSearchInfo" value="<%= Boolean.TRUE.toString() %>" />
+				</liferay-portlet:renderURL>
+
+				<aui:form action="<%= searchURL.toString() %>" method="get" name="searchFm">
+					<liferay-portlet:renderURLParams varImpl="searchURL" />
+					<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+
+					<liferay-ui:input-search markupView="lexicon" />
+				</aui:form>
+			</li>
 		</c:if>
 	</liferay-frontend:management-bar-filters>
 

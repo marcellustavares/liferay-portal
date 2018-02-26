@@ -48,6 +48,10 @@ PortletURL portletURL = userItemSelectorViewDisplayContext.getPortletURL();
 			orderColumns='<%= new String[] {"first-name", "last-name", "screen-name"} %>'
 			portletURL="<%= portletURL %>"
 		/>
+
+		<li>
+			<liferay-item-selector:search />
+		</li>
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
 

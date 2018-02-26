@@ -29,8 +29,7 @@ import com.liferay.apio.architect.uri.Path;
  * </p>
  *
  * @author Alejandro Hernández
- * @param  <T> the type of the identifier to map
- * @review
+ * @param  <T> the identifier type to map
  */
 @ConsumerType
 public interface PathIdentifierMapper<T> {
@@ -46,10 +45,10 @@ public interface PathIdentifierMapper<T> {
 	/**
 	 * Converts an identifier to its corresponding path.
 	 *
+	 * @param  name the resource's name
 	 * @param  t the identifier
-	 * @param  modelClass the class of the model identified by the identifier
 	 * @return the corresponding path
 	 */
-	public <U> Path map(T t, Class<U> modelClass);
+	public Path map(String name, T t);
 
 }

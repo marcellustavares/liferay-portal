@@ -14,12 +14,14 @@
 
 package com.liferay.portal.upgrade.v6_2_0;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.petra.xml.XMLUtil;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -27,7 +29,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Attribute;
@@ -212,6 +213,7 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 
 		updateStructures();
 		updateTemplates();
+		upgradeURLTitle();
 
 		updateAssetEntryClassTypeId();
 
@@ -788,6 +790,108 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 		}
 
 		return PortletPreferencesFactoryUtil.toXML(preferences);
+	}
+
+	protected void upgradeURLTitle() throws Exception {
+		try (LoggingTimer loggingTimer = new LoggingTimer();
+			PreparedStatement ps1 = connection.prepareStatement(
+				"select distinct groupId, articleId, urlTitle from " +
+					"JournalArticle");
+			ResultSet rs = ps1.executeQuery()) {
+
+			Map<String, String> processedArticleIds = new HashMap<>();
+
+			try (PreparedStatement ps2 =
+					AutoBatchPreparedStatementUtil.autoBatch(
+						connection.prepareStatement(
+							"update JournalArticle set urlTitle = ? where " +
+								"urlTitle = ?"))) {
+
+				while (rs.next()) {
+					long groupId = rs.getLong("groupId");
+					String articleId = rs.getString("articleId");
+					String urlTitle = GetterUtil.getString(
+						rs.getString("urlTitle"));
+
+					String normalizedURLTitle =
+						FriendlyURLNormalizerUtil.
+							normalizeWithPeriodsAndSlashes(urlTitle);
+
+					if (urlTitle.equals(normalizedURLTitle)) {
+						continue;
+					}
+
+					normalizedURLTitle = _getUniqueUrlTitle(
+						groupId, articleId, normalizedURLTitle,
+						processedArticleIds);
+
+					ps2.setString(1, normalizedURLTitle);
+					ps2.setString(2, urlTitle);
+
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
+			}
+		}
+	}
+
+	private String _getUniqueUrlTitle(
+			long groupId, String articleId, String urlTitle,
+			Map<String, String> processedArticleIds)
+		throws Exception {
+
+		for (int i = 1;; i++) {
+			String key = groupId + StringPool.UNDERLINE + urlTitle;
+
+			String processedArticleId = processedArticleIds.get(key);
+
+			if (((processedArticleId == null) ||
+				 processedArticleId.equals(articleId)) &&
+				_isValidUrlTitle(groupId, articleId, urlTitle)) {
+
+				processedArticleIds.put(key, articleId);
+
+				return urlTitle;
+			}
+
+			String suffix = StringPool.DASH + i;
+
+			String prefix = urlTitle;
+
+			if (urlTitle.length() > suffix.length()) {
+				prefix = urlTitle.substring(
+					0, urlTitle.length() - suffix.length());
+			}
+
+			urlTitle = prefix + suffix;
+		}
+	}
+
+	private boolean _isValidUrlTitle(
+			long groupId, String articleId, String urlTitle)
+		throws Exception {
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select count(*) from JournalArticle where groupId = ? and " +
+					"urlTitle = ? and articleId != ?")) {
+
+			ps.setLong(1, groupId);
+			ps.setString(2, urlTitle);
+			ps.setString(3, articleId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					int count = rs.getInt(1);
+
+					if (count > 0) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
 	}
 
 	private static final int _DDM_STRUCTURE_TYPE_DEFAULT = 0;

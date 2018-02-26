@@ -41,7 +41,11 @@
 			<var name="panelHeading" value="Attachments" />
 		</execute>
 
-		<execute function="UploadCommonFile" locator1="MessageBoardsEditMessage#ATTACHMENTS_BROWSE_FIELD" value1="${mbAttachmentFile}" />
+		<execute function="AssertClick" locator1="Button#SELECT_FILES" value1="Select Files" />
+
+		<var name="key_attachmentFileName" value="${mbAttachmentFile}" />
+
+		<execute function="SikuliUploadCommonFile" locator1="OS#FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${mbAttachmentFile}" />
 
 		<execute macro="PortletEntry#publish" />
 	</command>
@@ -57,7 +61,11 @@
 			<var name="panelHeading" value="Attachments" />
 		</execute>
 
-		<execute function="UploadCommonFile" locator1="MessageBoardsEditMessage#ATTACHMENTS_FILE_FIELD_1" value1="${mbThreadAttachment}" />
+		<execute function="AssertClick" locator1="Button#SELECT_FILES" value1="Select Files" />
+
+		<var name="key_attachmentFileName" value="${mbThreadAttachment}" />
+
+		<execute function="SikuliUploadCommonFile" locator1="OS#FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${mbThreadAttachment}" />
 
 		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -162,7 +170,11 @@
 			<var name="panelHeading" value="Attachments" />
 		</execute>
 
-		<execute function="UploadCommonFile" locator1="MessageBoardsEditMessage#ATTACHMENTS_FILE_FIELD_1" value1="${mbThreadAttachment}" />
+		<execute function="AssertClick" locator1="Button#SELECT_FILES" value1="Select Files" />
+
+		<var name="key_attachmentFileName" value="${mbThreadAttachment}" />
+
+		<execute function="SikuliUploadCommonFile" locator1="OS#FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${mbThreadAttachment}" />
 
 		<execute macro="Button#clickPublish" />
 
@@ -490,7 +502,7 @@
 	</command>
 
 	<command name="gotoPG">
-		<var name="key_postsNumber" value="${postCount}" />
+		<var name="key_repliesCount" value="${replyCount}" />
 		<var name="key_threadSubject" value="${threadSubject}" />
 		<var name="key_userName" value="${lastPostUserName}" />
 
@@ -501,7 +513,7 @@
 			</then>
 			<else>
 				<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_POSTS" value1="${postCount} Post" />
+				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_REPLIES" value1="${replyCount} Reply" />
 				<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_LAST_POST" value1="${lastPostUserName}" />
 
 				<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
@@ -665,7 +677,7 @@
 		<execute macro="PortletEntry#clickMoveToRecycleBin" />
 
 		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
-		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads nor categories." />
+		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads or categories." />
 	</command>
 
 	<command name="previewAddPG">
@@ -823,13 +835,17 @@
 		<execute function="AssertClick" locator1="Button#ADVANCED_REPLY" value1="Advanced Reply" />
 
 		<if>
-			<condition function="IsNotVisible" locator1="MessageBoardsEditMessage#ATTACHMENTS_FILE_FIELD_1" />
+			<condition function="IsNotVisible" locator1="Button#SELECT_FILES" />
 			<then>
 				<execute function="AssertClick" locator1="Panel#ENTRY_ATTACHMENTS" value1="Attachments" />
 			</then>
 		</if>
 
-		<execute function="UploadCommonFile" locator1="MessageBoardsEditMessage#ATTACHMENTS_FILE_FIELD_1" value1="${mbThreadAttachment}" />
+		<execute function="AssertClick" locator1="Button#SELECT_FILES" value1="Select Files" />
+
+		<var name="key_attachmentFileName" value="${mbThreadAttachment}" />
+
+		<execute function="SikuliUploadCommonFile" locator1="OS#FILE_DIALOG_BOX_FILE_NAME_FIELD_PNG" value1="${mbThreadAttachment}" />
 
 		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
 
@@ -1022,9 +1038,9 @@
 
 		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_LAST_POST" value1="${userName}" />
 
-		<var name="key_postsNumber" value="${postsNumber}" />
+		<var name="key_repliesCount" value="${replyCount}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_POSTS" value1="${postsNumber}" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_REPLIES" value1="${replyCount}" />
 		<execute function="AssertElementPresent" locator1="MessageBoards#THREAD_LIST_VIEWS" />
 		<execute function="AssertElementPresent" locator1="MessageBoards#THREAD_LIST_ACTIONS" />
 
@@ -1047,12 +1063,12 @@
 		<var name="key_threadSubject" value="${threadSubject}" />
 		<var name="key_userName" value="${userName}" />
 
-		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads nor categories." />
+		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads or categories." />
 		<execute function="AssertTextNotPresent" value1="${threadSubject}" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_CHECKBOX" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_THREAD" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_LAST_POST" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_POSTS" />
+		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_REPLIES" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_VIEWS" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_ACTIONS" />
 	</command>
@@ -1166,7 +1182,7 @@
 	<command name="viewNoPG">
 		<var name="key_threadSubject" value="${threadSubject}" />
 
-		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads nor categories." />
+		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads or categories." />
 		<execute function="AssertTextNotPresent" value1="${threadSubject}" />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_LIST_THREAD"  />
 		<execute function="AssertElementNotPresent" locator1="MessageBoards#THREAD_TABLE_STARTED_BY" />
@@ -1291,14 +1307,14 @@
 	</command>
 
 	<command name="viewReplyPG">
-		<var name="key_postsNumber" value="${postCount}" />
+		<var name="key_repliesCount" value="${replyCount}" />
 		<var name="key_threadBody" value="${threadBody}" />
 		<var name="key_threadSubject" value="${threadSubject}" />
 		<var name="key_userName" value="${userName}" />
 
 		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
 		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_LAST_POST" value1="${userName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_POSTS" value1="${postCount} Post" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_REPLIES" value1="${replyCount} Reply" />
 
 		<if>
 			<equals arg1="${guestReply}" arg2="true" />
@@ -1354,12 +1370,12 @@
 	</command>
 
 	<command name="viewReplyWithUpvote">
-		<var name="key_postsNumber" value="${postCount}" />
+		<var name="key_repliesCount" value="${replyCount}" />
 		<var name="key_threadBody" value="${threadBody}" />
 		<var name="key_threadSubject" value="${threadSubject}" />
 		<var name="key_userName" value="${userName}" />
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_POSTS" value1="${postCount} Posts" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_REPLIES" value1="${replyCount} Posts" />
 
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
 
@@ -1387,7 +1403,7 @@
 		<var name="key_userName" value="${userName}" />
 
 		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
-		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_TABLE_POSTS" value1="2 Posts" />
+		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_TABLE_POSTS" value1="2 Replies" />
 
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
 
@@ -1405,12 +1421,12 @@
 			<var name="pageName" value="${pageName}" />
 		</execute>
 
-		<var name="key_postsNumber" value="1" />
+		<var name="key_repliesCount" value="1" />
 		<var name="key_threadBody" value="${threadReplyBody}" />
 		<var name="key_threadSubject" value="${threadSplitSubject}" />
 
 		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSplitSubject}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_POSTS" value1="1" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoards#THREAD_LIST_REPLIES" value1="1" />
 
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSplitSubject}" />
 

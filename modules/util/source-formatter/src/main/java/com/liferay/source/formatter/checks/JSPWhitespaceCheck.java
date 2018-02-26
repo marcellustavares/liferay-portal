@@ -15,10 +15,10 @@
 package com.liferay.source.formatter.checks;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.regex.Matcher;
@@ -136,8 +136,19 @@ public class JSPWhitespaceCheck extends WhitespaceCheck {
 					line = StringUtil.replace(line, "%>", " %>");
 				}
 
-				if (line.contains("<%=") && !line.contains("<%= ")) {
-					line = StringUtil.replace(line, "<%=", "<%= ");
+				int pos = -1;
+
+				while (true) {
+					pos = line.indexOf("<%=", pos + 1);
+
+					if ((pos == -1) || (pos + 3) == line.length()) {
+						break;
+					}
+
+					if (line.charAt(pos + 3) != CharPool.SPACE) {
+						line = StringUtil.replaceFirst(
+							line, "<%=", "<%= ", pos);
+					}
 				}
 
 				if (trimmedLine.startsWith(StringPool.DOUBLE_SLASH) ||

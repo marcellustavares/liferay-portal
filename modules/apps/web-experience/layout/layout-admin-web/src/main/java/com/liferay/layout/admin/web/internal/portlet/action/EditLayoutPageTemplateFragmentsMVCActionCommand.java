@@ -17,7 +17,6 @@ package com.liferay.layout.admin.web.internal.portlet.action;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -51,22 +50,24 @@ public class EditLayoutPageTemplateFragmentsMVCActionCommand
 		throws Exception {
 
 		long layoutPageTemplateEntryId = ParamUtil.getLong(
-			actionRequest, "layoutPageTemplateEntryId");
+			actionRequest, "classPK");
+
 		long[] fragmentIds = ParamUtil.getLongValues(
 			actionRequest, "fragmentIds");
+		String editableValues = ParamUtil.getString(
+			actionRequest, "editableValues");
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
 
 		_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
-			layoutPageTemplateEntryId, fragmentIds, serviceContext);
+			layoutPageTemplateEntryId, fragmentIds, editableValues,
+			serviceContext);
 
 		hideDefaultSuccessMessage(actionRequest);
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
 		JSONPortletResponseUtil.writeJSON(
-			actionRequest, actionResponse, jsonObject);
+			actionRequest, actionResponse, JSONFactoryUtil.createJSONObject());
 	}
 
 	@Reference

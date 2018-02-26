@@ -19,6 +19,7 @@
 	<%
 	String randomNamespace = PortalUtil.generateRandomKey(request, "portlet_document_library_view_file_entry_preview") + StringPool.UNDERLINE;
 
+	boolean emptyPreview = false;
 	int previewFileCount = 0;
 	String previewFileURL = null;
 	String[] previewFileURLs = null;
@@ -51,21 +52,32 @@
 		}
 
 		if (hasAudio) {
+			emptyPreview = true;
 			previewFileURLs = new String[PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS.length];
 
 			for (int i = 0; i < PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS.length; i++) {
-				previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS[i]);
+				if (AudioProcessorUtil.getPreviewFileSize(fileVersion, PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS[i]) > 0) {
+					emptyPreview = false;
+					previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_AUDIO_CONTAINERS[i]);
+				}
 			}
 		}
 		else if (hasVideo) {
+			emptyPreview = true;
+
 			if (PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS.length > 0) {
 				previewFileURLs = new String[PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS.length];
 
 				for (int i = 0; i < PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS.length; i++) {
-					previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS[i]);
+					if (VideoProcessorUtil.getPreviewFileSize(fileVersion, PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS[i]) > 0) {
+						emptyPreview = false;
+						previewFileURLs[i] = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, previewQueryString + "&type=" + PropsValues.DL_FILE_ENTRY_PREVIEW_VIDEO_CONTAINERS[i]);
+					}
 				}
 			}
 			else {
+				emptyPreview = false;
+
 				previewFileURLs = new String[1];
 
 				previewFileURLs[0] = videoThumbnailURL;
@@ -94,6 +106,11 @@
 	%>
 
 	<c:choose>
+		<c:when test="<%= emptyPreview %>">
+			<div class="alert alert-info">
+				<liferay-ui:message arguments="<%= fileEntry.getTitle() %>" key="cannot-generate-preview-for-x" />
+			</div>
+		</c:when>
 		<c:when test="<%= previewFileCount == 0 %>">
 			<c:choose>
 				<c:when test="<%= !DLProcessorRegistryUtil.isPreviewableSize(fileVersion) && (AudioProcessorUtil.isAudioSupported(fileVersion.getMimeType()) || ImageProcessorUtil.isImageSupported(fileVersion.getMimeType()) || PDFProcessorUtil.isDocumentSupported(fileVersion.getMimeType()) || VideoProcessorUtil.isVideoSupported(fileVersion.getMimeType())) %>">

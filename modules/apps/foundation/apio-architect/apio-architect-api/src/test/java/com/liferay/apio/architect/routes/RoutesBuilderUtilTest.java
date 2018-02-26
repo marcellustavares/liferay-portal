@@ -21,11 +21,12 @@ import static com.liferay.apio.architect.routes.RoutesTestUtil.PROVIDE_FUNCTION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import com.liferay.apio.architect.error.ApioDeveloperError.MustHaveProvider;
 import com.liferay.apio.architect.language.Language;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import javax.ws.rs.NotFoundException;
 
 import org.junit.Test;
 
@@ -49,20 +50,20 @@ public class RoutesBuilderUtilTest {
 		}
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testFiveParameterProvideConsumerMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testFiveParameterProvideConsumerMethodFailsIfNoProvider() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			Boolean.class,
 			string -> aLong -> integer -> aBoolean -> {
 				throw new AssertionError("This lambda should not be called");
 			});
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testFiveParameterProvideMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testFiveParameterProvideMethodFailsIfNoProvider() {
 		provide(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			Boolean.class, Float.class,
 			string -> aLong -> integer -> aBoolean -> list -> {
 				throw new AssertionError("This lambda should not be called");
@@ -72,7 +73,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testFiveParameterProvideMethodProvides() {
 		String result = provide(
-			PROVIDE_FUNCTION, null, String.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, String.class, Long.class, Integer.class,
 			Boolean.class, Float.class,
 			string -> aLong -> integer -> aBoolean -> aFloat -> {
 				assertThat(string, is("Apio"));
@@ -87,10 +88,10 @@ public class RoutesBuilderUtilTest {
 		assertThat(result, is("The result"));
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testFourParameterProvideConsumerMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testFourParameterProvideConsumerMethodFailsIfNoProvider() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			Boolean.class,
 			string -> aLong -> integer -> aBoolean -> {
 				throw new AssertionError("This lambda should not be called");
@@ -100,7 +101,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testFourParameterProvideConsumerMethodProvides() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, String.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, String.class, Long.class, Integer.class,
 			Boolean.class,
 			string -> aLong -> integer -> aBoolean -> {
 				assertThat(string, is("Apio"));
@@ -110,10 +111,10 @@ public class RoutesBuilderUtilTest {
 			});
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testFourParameterProvideMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testFourParameterProvideMethodFailsIfNoProvider() {
 		provide(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			Boolean.class,
 			string -> aLong -> integer -> aBoolean -> {
 				throw new AssertionError("This lambda should not be called");
@@ -123,7 +124,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testFourParameterProvideMethodProvides() {
 		String result = provide(
-			PROVIDE_FUNCTION, null, String.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, String.class, Long.class, Integer.class,
 			Boolean.class,
 			string -> aLong -> integer -> aBoolean -> {
 				assertThat(string, is("Apio"));
@@ -137,10 +138,10 @@ public class RoutesBuilderUtilTest {
 		assertThat(result, is("The result"));
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testOneParameterProvideConsumerMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testOneParameterProvideConsumerMethodFailsIfNoProvider() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, Language.class,
+			PROVIDE_FUNCTION, Language.class,
 			string -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -149,14 +150,14 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testOneParameterProvideConsumerMethodProvides() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, String.class,
+			PROVIDE_FUNCTION, String.class,
 			string -> assertThat(string, is("Apio")));
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testOneParameterProvideMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testOneParameterProvideMethodFailsIfNoProvider() {
 		provide(
-			PROVIDE_FUNCTION, null, Language.class,
+			PROVIDE_FUNCTION, Language.class,
 			string -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -165,7 +166,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testOneParameterProvideMethodProvides() {
 		String result = provide(
-			PROVIDE_FUNCTION, null, String.class,
+			PROVIDE_FUNCTION, String.class,
 			string -> {
 				assertThat(string, is("Apio"));
 
@@ -175,10 +176,10 @@ public class RoutesBuilderUtilTest {
 		assertThat(result, is("The result"));
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testThreeParameterProvideConsumerMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testThreeParameterProvideConsumerMethodFailsIfNoProvider() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			string -> aLong -> integer -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -187,7 +188,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testThreeParameterProvideConsumerMethodProvides() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, String.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, String.class, Long.class, Integer.class,
 			string -> aLong -> integer -> {
 				assertThat(string, is("Apio"));
 				assertThat(aLong, is(42L));
@@ -195,10 +196,10 @@ public class RoutesBuilderUtilTest {
 			});
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testThreeParameterProvideMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testThreeParameterProvideMethodFailsIfNoProvider() {
 		provide(
-			PROVIDE_FUNCTION, null, Language.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, Language.class, Long.class, Integer.class,
 			string -> aLong -> integer -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -207,7 +208,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testThreeParameterProvideMethodProvides() {
 		String result = provide(
-			PROVIDE_FUNCTION, null, String.class, Long.class, Integer.class,
+			PROVIDE_FUNCTION, String.class, Long.class, Integer.class,
 			string -> aLong -> integer -> {
 				assertThat(string, is("Apio"));
 				assertThat(aLong, is(42L));
@@ -219,10 +220,10 @@ public class RoutesBuilderUtilTest {
 		assertThat(result, is("The result"));
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testTwoParameterProvideConsumerMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testTwoParameterProvideConsumerMethodFailsIfNoProvider() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, Language.class, Long.class,
+			PROVIDE_FUNCTION, Language.class, Long.class,
 			string -> aLong -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -231,17 +232,17 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testTwoParameterProvideConsumerMethodProvides() {
 		provideConsumer(
-			PROVIDE_FUNCTION, null, String.class, Long.class,
+			PROVIDE_FUNCTION, String.class, Long.class,
 			string -> aLong -> {
 				assertThat(string, is("Apio"));
 				assertThat(aLong, is(42L));
 			});
 	}
 
-	@Test(expected = MustHaveProvider.class)
-	public void testTwoParameterProvideMethodFailsIfOptionalEmpty() {
+	@Test(expected = NotFoundException.class)
+	public void testTwoParameterProvideMethodFailsIfNoProvider() {
 		provide(
-			PROVIDE_FUNCTION, null, Language.class, Long.class,
+			PROVIDE_FUNCTION, Language.class, Long.class,
 			string -> aLong -> {
 				throw new AssertionError("This lambda should not be called");
 			});
@@ -250,7 +251,7 @@ public class RoutesBuilderUtilTest {
 	@Test
 	public void testTwoParameterProvideMethodProvides() {
 		String result = provide(
-			PROVIDE_FUNCTION, null, String.class, Long.class,
+			PROVIDE_FUNCTION, String.class, Long.class,
 			string -> aLong -> {
 				assertThat(string, is("Apio"));
 				assertThat(aLong, is(42L));

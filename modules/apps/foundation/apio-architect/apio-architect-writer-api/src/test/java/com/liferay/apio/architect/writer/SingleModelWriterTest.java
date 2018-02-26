@@ -35,19 +35,19 @@ public class SingleModelWriterTest {
 	public void testWriterReturnsEmptyIfNoRepresentorOrPathIsFound() {
 		SingleModelWriter<String> singleModelWriter = SingleModelWriter.create(
 			builder -> builder.singleModel(
-				new SingleModel<>("Apio", String.class)
+				new SingleModel<>("Apio", "", Collections.emptyList())
 			).modelMessageMapper(
 				() -> "mediaType"
 			).pathFunction(
-				(identifier, identifierClass, modelClass) -> Optional.empty()
+				(resourceName, identifier) -> Optional.empty()
 			).resourceNameFunction(
 				__ -> Optional.empty()
 			).representorFunction(
 				__ -> Optional.empty()
 			).requestInfo(
 				null
-			).operationsFunction(
-				__ -> Collections.emptyList()
+			).singleModelFunction(
+				(o, aClass) -> Optional.empty()
 			).build());
 
 		Optional<String> optional = singleModelWriter.write();

@@ -14,55 +14,79 @@
 
 package com.liferay.apio.architect.wiring.osgi.internal.manager;
 
+import static com.liferay.apio.architect.wiring.osgi.util.GenericUtil.getGenericTypeArgumentTry;
+
+import com.liferay.apio.architect.error.ApioDeveloperError.MustHavePathIdentifierMapper;
+import com.liferay.apio.architect.functional.Try;
+import com.liferay.apio.architect.identifier.Identifier;
+import com.liferay.apio.architect.unsafe.Unsafe;
 import com.liferay.apio.architect.uri.Path;
 import com.liferay.apio.architect.uri.mapper.PathIdentifierMapper;
-import com.liferay.apio.architect.wiring.osgi.internal.manager.base.SimpleBaseManager;
+import com.liferay.apio.architect.wiring.osgi.internal.manager.base.ClassNameBaseManager;
 import com.liferay.apio.architect.wiring.osgi.manager.PathIdentifierMapperManager;
+import com.liferay.apio.architect.wiring.osgi.manager.representable.IdentifierClassManager;
 
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Alejandro Hernández
  */
 @Component(immediate = true)
 public class PathIdentifierMapperManagerImpl
-	extends SimpleBaseManager<PathIdentifierMapper>
+	extends ClassNameBaseManager<PathIdentifierMapper>
 	implements PathIdentifierMapperManager {
 
 	public PathIdentifierMapperManagerImpl() {
-		super(PathIdentifierMapper.class);
+		super(PathIdentifierMapper.class, 0);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T> Optional<T> map(Class<T> clazz, Path path) {
-		Optional<PathIdentifierMapper> optional = getServiceOptional(clazz);
+	public boolean hasPathIdentifierMapper(String name) {
+		return _getPathIdentifierMapperTry(name).isSuccess();
+	}
 
-		return optional.map(
-			pathIdentifierMapper ->
-				(PathIdentifierMapper<T>)pathIdentifierMapper
-		).map(
-			pathIdentifierMapper -> pathIdentifierMapper.map(path)
+	@Override
+	public <T> T mapToIdentifierOrFail(Path path) {
+		Try<PathIdentifierMapper<T>> pathIdentifierMapperTry =
+			_getPathIdentifierMapperTry(path.getName());
+
+		return pathIdentifierMapperTry.map(
+			service -> service.map(path)
+		).orElseThrow(
+			() -> new MustHavePathIdentifierMapper(path)
 		);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T, U> Optional<Path> map(
-		T identifier, Class<?> identifierClass, Class<U> modelClass) {
+	public <T> Optional<Path> mapToPath(String name, T identifier) {
+		Try<PathIdentifierMapper<T>> pathIdentifierMapperTry =
+			_getPathIdentifierMapperTry(name);
 
-		Optional<PathIdentifierMapper> optional = getServiceOptional(
-			identifierClass);
+		return pathIdentifierMapperTry.map(
+			service -> service.map(name, identifier)
+		).toOptional();
+	}
 
-		return optional.map(
-			pathIdentifierMapper ->
-				(PathIdentifierMapper<T>)pathIdentifierMapper
+	private <T> Try<PathIdentifierMapper<T>> _getPathIdentifierMapperTry(
+		String name) {
+
+		Try<String> stringTry = Try.success(name);
+
+		return stringTry.mapOptional(
+			_identifierClassManager::getIdentifierClassOptional
+		).flatMap(
+			clazz -> getGenericTypeArgumentTry(clazz, Identifier.class, 0)
+		).mapOptional(
+			this::getServiceOptional
 		).map(
-			pathIdentifierMapper ->
-				pathIdentifierMapper.map(identifier, modelClass)
+			Unsafe::unsafeCast
 		);
 	}
+
+	@Reference
+	private IdentifierClassManager _identifierClassManager;
 
 }

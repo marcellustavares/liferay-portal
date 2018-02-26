@@ -217,12 +217,8 @@
 			<var name="parentPageName" value="Home" />
 		</execute>
 
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="rowEntry" value="Blog Page" />
-		</execute>
-
 		<execute macro="Page#addPageTranslations">
+			<var name="page" value="Blog Page" />
 			<var name="pageTranslation" value="es_ES" />
 			<var name="pageTranslationName" value="Blog Página" />
 		</execute>
@@ -364,7 +360,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -386,7 +382,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>

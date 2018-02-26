@@ -15,12 +15,12 @@
 package com.liferay.source.formatter;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ArgumentsUtil;
 import com.liferay.portal.tools.GitException;
@@ -509,7 +509,8 @@ public class SourceFormatter {
 			"sourcechecks-suppressions.xml", _allFileNames,
 			_sourceFormatterExcludes, _portalSource, _subrepository);
 
-		return SuppressionsLoader.loadSuppressions(suppressionsFiles);
+		return SuppressionsLoader.loadSuppressions(
+			_sourceFormatterArgs.getBaseDirName(), suppressionsFiles);
 	}
 
 	private void _init() throws Exception {

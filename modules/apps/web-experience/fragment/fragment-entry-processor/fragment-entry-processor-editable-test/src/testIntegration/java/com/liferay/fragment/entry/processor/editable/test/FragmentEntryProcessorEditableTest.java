@@ -17,8 +17,10 @@ package com.liferay.fragment.entry.processor.editable.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentCollectionServiceUtil;
+import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryServiceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -30,11 +32,17 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
+
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,26 +80,47 @@ public class FragmentEntryProcessorEditableTest {
 				_group.getGroupId(), "Fragment Collection", StringPool.BLANK,
 				serviceContext);
 
-		byte[] testFileBytes = FileUtil.getBytes(
-			getClass(), "dependencies/fragment_entry.html");
-
 		FragmentEntry fragmentEntry = FragmentEntryServiceUtil.addFragmentEntry(
 			_group.getGroupId(), fragmentCollection.getFragmentCollectionId(),
-			"Fragment Entry", null, new String(testFileBytes), null,
-			WorkflowConstants.STATUS_APPROVED, serviceContext);
+			"Fragment Entry", null, _getFileAsString("fragment_entry.html"),
+			null, WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+		FragmentEntryLink fragmentEntryLink =
+			FragmentEntryLinkLocalServiceUtil.createFragmentEntryLink(0);
+
+		fragmentEntryLink.setHtml(fragmentEntry.getHtml());
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		jsonObject.put("editable_img", "sample.jpg");
 		jsonObject.put("editable_text", "test");
 
-		byte[] testResultFileBytes = FileUtil.getBytes(
-			getClass(), "dependencies/processed_fragment_entry.html");
+		fragmentEntryLink.setEditableValues(jsonObject.toString());
+
+		Document document = Jsoup.parseBodyFragment(
+			_getFileAsString("processed_fragment_entry.html"));
+
+		Document.OutputSettings outputSettings = new Document.OutputSettings();
+
+		outputSettings.prettyPrint(false);
+
+		document.outputSettings(outputSettings);
+
+		Element bodyElement = document.body();
 
 		Assert.assertEquals(
-			_fragmentEntryProcessorRegistry.processFragmentEntryHTML(
-				fragmentEntry.getHtml(), jsonObject),
-			new String(testResultFileBytes));
+			bodyElement.html(),
+			_fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(
+				fragmentEntryLink));
+	}
+
+	private String _getFileAsString(String fileName) throws IOException {
+		Class<?> clazz = getClass();
+
+		return StringUtil.read(
+			clazz.getClassLoader(),
+			"com/liferay/fragment/entry/processor/editable/test/dependencies/" +
+				fileName);
 	}
 
 	@Inject

@@ -14,7 +14,7 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.taglib.BaseValidatorTagSupport;
 
 import java.util.Calendar;
@@ -114,6 +114,8 @@ public class InputDateTag extends BaseValidatorTagSupport {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_autoFocus = false;
 		_cssClass = null;
 		_dateTogglerCheckboxLabel = null;

@@ -14,18 +14,25 @@
 
 package com.liferay.fragment.web.internal.portlet.util;
 
+import com.liferay.fragment.exception.DuplicateFragmentCollectionKeyException;
+import com.liferay.fragment.exception.DuplicateFragmentEntryKeyException;
+import com.liferay.fragment.exception.FragmentCollectionNameException;
 import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
+import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.service.FragmentEntryService;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipReader;
 
 import javax.portlet.ActionRequest;
@@ -40,7 +47,7 @@ import org.osgi.service.component.annotations.Reference;
 public class ImportUtil {
 
 	public void importFragmentCollections(
-			ActionRequest actionRequest, ZipReader zipReader)
+			ActionRequest actionRequest, ZipReader zipReader, boolean overwrite)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
@@ -49,44 +56,67 @@ public class ImportUtil {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
 
-		String definition = zipReader.getEntryAsString(
-			"/fragment_collections/definition.xml");
+		for (String entry : zipReader.getEntries()) {
+			if (!_isFragmentCollection(entry)) {
+				continue;
+			}
 
-		Document document = SAXReaderUtil.read(definition);
+			String collectionPath = entry.substring(
+				0, entry.lastIndexOf(CharPool.SLASH));
 
-		Element rootElement = document.getRootElement();
+			String fragmentCollectionKey = collectionPath.substring(
+				collectionPath.lastIndexOf(CharPool.SLASH) + 1);
 
-		for (Element fragmentCollectionElement :
-				rootElement.elements("fragment-collection")) {
+			String fragmentCollectionName = fragmentCollectionKey;
 
-			String path =
-				"/fragment_collections/" + fragmentCollectionElement.getText();
+			String fragmentCollectionDescription = StringPool.BLANK;
 
-			String fragmentCollectionDefinition = zipReader.getEntryAsString(
-				path + "/definition.xml");
+			String collectionJSON = zipReader.getEntryAsString(entry);
 
-			Document fragmentCollectionDocument = SAXReaderUtil.read(
-				fragmentCollectionDefinition);
+			if (Validator.isNotNull(collectionJSON)) {
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+					collectionJSON);
 
-			Element fragmentCollectionRootElement =
-				fragmentCollectionDocument.getRootElement();
+				fragmentCollectionName = jsonObject.getString("name");
+				fragmentCollectionDescription = jsonObject.getString(
+					"description");
+			}
+
+			if (Validator.isNull(fragmentCollectionName)) {
+				throw new FragmentCollectionNameException();
+			}
 
 			FragmentCollection fragmentCollection =
-				_fragmentCollectionService.addFragmentCollection(
-					themeDisplay.getScopeGroupId(),
-					fragmentCollectionRootElement.elementText("name"),
-					fragmentCollectionRootElement.elementText("description"),
-					serviceContext);
+				_fragmentCollectionLocalService.fetchFragmentCollection(
+					themeDisplay.getScopeGroupId(), fragmentCollectionKey);
+
+			if (fragmentCollection == null) {
+				fragmentCollection =
+					_fragmentCollectionService.addFragmentCollection(
+						themeDisplay.getScopeGroupId(), fragmentCollectionKey,
+						fragmentCollectionName, fragmentCollectionDescription,
+						serviceContext);
+			}
+			else if (overwrite && (fragmentCollection != null)) {
+				_fragmentCollectionService.updateFragmentCollection(
+					fragmentCollection.getFragmentCollectionId(),
+					fragmentCollectionName, fragmentCollectionDescription);
+			}
+			else {
+				throw new DuplicateFragmentCollectionKeyException(
+					fragmentCollectionKey);
+			}
 
 			importFragmentEntries(
 				actionRequest, zipReader,
-				fragmentCollection.getFragmentCollectionId(), path);
+				fragmentCollection.getFragmentCollectionId(), collectionPath,
+				overwrite);
 		}
 	}
 
 	public void importFragmentEntries(
 			ActionRequest actionRequest, ZipReader zipReader,
-			long fragmentCollectionId, String path)
+			long fragmentCollectionId, String path, boolean overwrite)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
@@ -95,46 +125,86 @@ public class ImportUtil {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
 
-		String definition = zipReader.getEntryAsString(
-			path + "/fragment_entries/definition.xml");
+		for (String entry : zipReader.getEntries()) {
+			if (!entry.startsWith(path) || !_isFragmentEntry(entry)) {
+				continue;
+			}
 
-		Document document = SAXReaderUtil.read(definition);
+			String fragmentEntryPath = entry.substring(
+				0, entry.lastIndexOf(CharPool.SLASH));
 
-		Element rootElement = document.getRootElement();
+			String fragmentEntryKey = fragmentEntryPath.substring(
+				fragmentEntryPath.lastIndexOf(CharPool.SLASH) + 1);
 
-		for (Element fragmentEntry : rootElement.elements("fragment-entry")) {
-			StringBundler sb = new StringBundler(4);
+			String fragmentEntryName = fragmentEntryKey;
 
-			sb.append(path);
-			sb.append("/fragment_entries/");
-			sb.append(fragmentEntry.getText());
-			sb.append("/definition.xml");
+			String fragmentCssPath = fragmentEntryPath + "/src/index.css";
+			String fragmentHtmlPath = fragmentEntryPath + "/src/index.html";
+			String fragmentJsPath = fragmentEntryPath + "/src/index.js";
 
-			String fragmentEntryDefinition = zipReader.getEntryAsString(
-				sb.toString());
+			String fragmentJSON = zipReader.getEntryAsString(entry);
 
-			Document fragmentEntryDocument = SAXReaderUtil.read(
-				fragmentEntryDefinition);
+			if (Validator.isNotNull(fragmentJSON)) {
+				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+					fragmentJSON);
 
-			Element fragmentEntryRootElement =
-				fragmentEntryDocument.getRootElement();
+				fragmentEntryName = jsonObject.getString("name");
+				fragmentCssPath = jsonObject.getString("cssPath");
+				fragmentHtmlPath = jsonObject.getString("htmlPath");
+				fragmentJsPath = jsonObject.getString("jsPath");
+			}
 
-			String css = zipReader.getEntryAsString(
-				fragmentEntryRootElement.elementText("css-path"));
-			String html = zipReader.getEntryAsString(
-				fragmentEntryRootElement.elementText("html-path"));
-			String js = zipReader.getEntryAsString(
-				fragmentEntryRootElement.elementText("js-path"));
+			FragmentEntry fragmentEntry =
+				_fragmentEntryLocalService.fetchFragmentEntry(
+					themeDisplay.getScopeGroupId(), fragmentEntryKey);
 
-			_fragmentEntryService.addFragmentEntry(
-				themeDisplay.getScopeGroupId(), fragmentCollectionId,
-				fragmentEntryRootElement.elementText("name"), css, html, js,
-				WorkflowConstants.STATUS_APPROVED, serviceContext);
+			if (fragmentEntry == null) {
+				_fragmentEntryService.addFragmentEntry(
+					themeDisplay.getScopeGroupId(), fragmentCollectionId,
+					fragmentEntryKey, fragmentEntryName,
+					zipReader.getEntryAsString(fragmentCssPath),
+					zipReader.getEntryAsString(fragmentHtmlPath),
+					zipReader.getEntryAsString(fragmentJsPath),
+					WorkflowConstants.STATUS_APPROVED, serviceContext);
+			}
+			else if (overwrite && (fragmentEntry != null)) {
+				_fragmentEntryService.updateFragmentEntry(
+					fragmentEntry.getFragmentEntryId(), fragmentEntryName,
+					zipReader.getEntryAsString(fragmentCssPath),
+					zipReader.getEntryAsString(fragmentHtmlPath),
+					zipReader.getEntryAsString(fragmentJsPath),
+					WorkflowConstants.STATUS_APPROVED, serviceContext);
+			}
+			else {
+				throw new DuplicateFragmentEntryKeyException(fragmentEntryKey);
+			}
 		}
 	}
 
+	private boolean _isFragmentCollection(String entry) {
+		if (entry.endsWith("collection.json")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isFragmentEntry(String entry) {
+		if (entry.endsWith("fragment.json")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Reference
+	private FragmentCollectionLocalService _fragmentCollectionLocalService;
+
 	@Reference
 	private FragmentCollectionService _fragmentCollectionService;
+
+	@Reference
+	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 	@Reference
 	private FragmentEntryService _fragmentEntryService;

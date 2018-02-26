@@ -14,7 +14,7 @@
 
 package com.liferay.asset.categories.admin.web.internal.portlet;
 
-import com.liferay.asset.categories.admin.web.configuration.AssetCategoriesAdminWebConfiguration;
+import com.liferay.asset.categories.admin.web.internal.configuration.AssetCategoriesAdminWebConfiguration;
 import com.liferay.asset.categories.admin.web.internal.constants.AssetCategoriesAdminPortletKeys;
 import com.liferay.asset.categories.admin.web.internal.constants.AssetCategoriesAdminWebKeys;
 import com.liferay.asset.category.property.model.AssetCategoryProperty;
@@ -80,13 +80,14 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	configurationPid = "com.liferay.asset.categories.admin.web.configuration.AssetCategoriesAdminWebConfiguration",
+	configurationPid = "com.liferay.asset.categories.admin.web.internal.configuration.AssetCategoriesAdminWebConfiguration",
 	immediate = true,
 	property = {
 		"com.liferay.portlet.css-class-wrapper=portlet-asset-category-admin",
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.icon=/icons/asset_category_admin.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
+		"com.liferay.portlet.preferences-unique-per-layout=false",
 		"com.liferay.portlet.private-request-attributes=false",
 		"com.liferay.portlet.private-session-attributes=false",
 		"com.liferay.portlet.render-weight=50",

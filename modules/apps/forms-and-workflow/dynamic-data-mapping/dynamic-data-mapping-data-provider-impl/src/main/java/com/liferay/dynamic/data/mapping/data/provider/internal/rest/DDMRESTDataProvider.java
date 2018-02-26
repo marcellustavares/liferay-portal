@@ -29,7 +29,6 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
-import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.KeyValuePair;
@@ -268,7 +267,8 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 
 		HttpResponse httpResponse = httpRequest.send();
 
-		DocumentContext documentContext = JsonPath.parse(httpResponse.body());
+		DocumentContext documentContext = JsonPath.parse(
+			httpResponse.bodyText());
 
 		DDMDataProviderResponse ddmDataProviderResponse =
 			createDDMDataProviderResponse(
@@ -276,8 +276,8 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 				ddmRESTDataProviderSettings);
 
 		if (ddmRESTDataProviderSettings.cacheable()) {
-			PortalCacheHelperUtil.putWithoutReplicator(
-				_portalCache, cacheKey,
+			_portalCache.put(
+				cacheKey,
 				new DDMRESTDataProviderResult(ddmDataProviderResponse));
 		}
 

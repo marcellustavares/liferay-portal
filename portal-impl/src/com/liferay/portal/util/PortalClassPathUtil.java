@@ -17,7 +17,9 @@ package com.liferay.portal.util;
 import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.petra.process.ProcessConfig;
 import com.liferay.petra.process.ProcessConfig.Builder;
+import com.liferay.petra.process.ProcessLog.Level;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -26,7 +28,6 @@ import com.liferay.portal.kernel.util.ClassLoaderUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLCodec;
 
@@ -62,7 +63,31 @@ public class PortalClassPathUtil {
 			_portalProcessConfig.getBootstrapClassPath());
 
 		builder.setBootstrapClassPath(classpath);
-
+		builder.setProcessLogConsumer(
+			processLog -> {
+				if (Level.DEBUG == processLog.getLevel()) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else if (Level.INFO == processLog.getLevel()) {
+					if (_log.isInfoEnabled()) {
+						_log.info(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else if (Level.WARN == processLog.getLevel()) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							processLog.getMessage(), processLog.getThrowable());
+					}
+				}
+				else {
+					_log.error(
+						processLog.getMessage(), processLog.getThrowable());
+				}
+			});
 		builder.setReactClassLoader(PortalClassLoaderUtil.getClassLoader());
 		builder.setRuntimeClassPath(classpath);
 

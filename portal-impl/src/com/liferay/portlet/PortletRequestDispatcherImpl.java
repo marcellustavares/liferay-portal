@@ -15,6 +15,7 @@
 package com.liferay.portlet;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
@@ -26,7 +27,6 @@ import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.servlet.DynamicServletRequestUtil;
@@ -75,8 +75,9 @@ public class PortletRequestDispatcherImpl
 
 		_requestDispatcher = requestDispatcher;
 		_named = named;
-		_liferayPortletContext = (LiferayPortletContext)portletContext;
 		_path = path;
+
+		_liferayPortletContext = (LiferayPortletContext)portletContext;
 
 		_portlet = _liferayPortletContext.getPortlet();
 	}
@@ -85,10 +86,10 @@ public class PortletRequestDispatcherImpl
 		RequestDispatcher requestDispatcher, String path) {
 
 		_requestDispatcher = requestDispatcher;
-		_named = false;
-		_liferayPortletContext = null;
 		_path = path;
 
+		_named = false;
+		_liferayPortletContext = null;
 		_portlet = null;
 	}
 

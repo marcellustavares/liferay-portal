@@ -1,0 +1,36 @@
+{namespace FragmentEntryLink}
+
+/**
+ * FragmentEntryLink
+ */
+{template .render}
+	{@param spritemap: string}
+	{@param? _handleFragmentRemoveButtonClick: any}
+	{@param? content: html}
+	{@param? name: string}
+
+	<div class="fragment-entry-link-wrapper">
+		<div class="fragment-entry-link-control subnav subnav-primary">
+			<div class="container">
+				<span class="subnav-item">
+					{$name ?: ''}
+				</span>
+				<span class="subnav-item">
+					<button class="btn btn-small btn-unstyled" data-onclick="{$_handleFragmentRemoveButtonClick}">
+						<svg class="lexicon-icon collapse-icon-open">
+							<use xlink:href="{$spritemap}#times"></use>
+						</svg>
+					</button>
+				</span>
+			</div>
+		</div>
+
+		{if not $content or $content == ''}
+			<div class="loading-animation"></div>
+		{else}
+			<div ref="content">
+				{$content}
+			</div>
+		{/if}
+	</div>
+{/template}

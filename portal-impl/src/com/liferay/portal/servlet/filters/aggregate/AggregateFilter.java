@@ -15,6 +15,7 @@
 package com.liferay.portal.servlet.filters.aggregate;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,7 +35,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -386,6 +386,12 @@ public class AggregateFilter extends IgnoreModuleRequestFilter {
 				String contentType = FileUtil.read(cacheContentTypeFile);
 
 				response.setContentType(contentType);
+			}
+			else if (resourcePath.endsWith(_CSS_EXTENSION)) {
+				response.setContentType(ContentTypes.TEXT_CSS);
+			}
+			else if (resourcePath.endsWith(_JAVASCRIPT_EXTENSION)) {
+				response.setContentType(ContentTypes.TEXT_JAVASCRIPT);
 			}
 
 			return cacheDataFile;

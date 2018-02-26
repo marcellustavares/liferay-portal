@@ -14,6 +14,8 @@
 
 package com.liferay.apio.architect.error;
 
+import com.liferay.apio.architect.uri.Path;
+
 /**
  * Represents the errors that can occur while using Apio. Each error is a nested
  * error subclass.
@@ -72,10 +74,10 @@ public class ApioDeveloperError extends Error {
 	 */
 	public static class MustHaveMessageMapper extends ApioDeveloperError {
 
-		public MustHaveMessageMapper(String mediaType, Class<?> modelClass) {
+		public MustHaveMessageMapper(String mediaType, String name) {
 			super(
-				"Media type " + mediaType + " and model class " +
-					modelClass.getName() + " does not have a message mapper");
+				"Media type " + mediaType + " and name " + name + " does not " +
+					"have a message mapper");
 		}
 
 	}
@@ -87,8 +89,8 @@ public class ApioDeveloperError extends Error {
 	public static class MustHavePathIdentifierMapper
 		extends ApioDeveloperError {
 
-		public MustHavePathIdentifierMapper(Class<?> identifier) {
-			super(identifier + " identifier does not have a path mapper");
+		public MustHavePathIdentifierMapper(Path path) {
+			super(path.asURI() + " path does not have a valid path mapper");
 		}
 
 	}
@@ -109,20 +111,6 @@ public class ApioDeveloperError extends Error {
 	}
 
 	/**
-	 * Represents the error the developer should throw when a provider is
-	 * missing.
-	 */
-	public static class MustHaveProvider extends ApioDeveloperError {
-
-		public MustHaveProvider(Class<?> modelClass) {
-			super(
-				"Model class " + modelClass.getName() +
-					" does not have a provider");
-		}
-
-	}
-
-	/**
 	 * Represents the error the developer should throw when a generic container
 	 * has an invalid generic type.
 	 */
@@ -131,35 +119,6 @@ public class ApioDeveloperError extends Error {
 		public MustHaveValidGenericType(Class clazz) {
 			super(
 				"Class " + clazz.getName() + " must have a valid generic type");
-		}
-
-	}
-
-	/**
-	 * Represents the error the developer should throw when the identifier used
-	 * for a related collection isn't the same as the one required by the
-	 * collection.
-	 */
-	public static class MustUseSameIdentifier extends ApioDeveloperError {
-
-		public MustUseSameIdentifier(
-			Class<?> identifierClass, Class<?> collectionIdentifierClass) {
-
-			super(
-				identifierClass + " identifier must be " +
-					collectionIdentifierClass);
-		}
-
-	}
-
-	/**
-	 * Represents the error the developer should throw when a URI can't be
-	 * resolved.
-	 */
-	public static class UnresolvableURI extends ApioDeveloperError {
-
-		public UnresolvableURI(String className) {
-			super("Unable to resolve URI for model class " + className);
 		}
 
 	}

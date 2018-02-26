@@ -18,9 +18,9 @@ import com.liferay.bookmarks.model.BookmarksEntry;
 import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.bookmarks.uad.constants.BookmarksUADConstants;
 import com.liferay.bookmarks.uad.entity.BookmarksEntryUADEntity;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.user.associated.data.aggregator.BaseUADEntityAggregator;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
@@ -43,9 +43,16 @@ import org.osgi.service.component.annotations.Reference;
 public class BookmarksEntryUADEntityAggregator extends BaseUADEntityAggregator {
 
 	@Override
-	public List<UADEntity> getUADEntities(long userId) {
+	public int count(long userId) {
+		return (int)_bookmarksEntryLocalService.dynamicQueryCount(
+			_getDynamicQuery(userId));
+	}
+
+	@Override
+	public List<UADEntity> getUADEntities(long userId, int start, int end) {
 		List<BookmarksEntry> bookmarksEntries =
-			_bookmarksEntryLocalService.dynamicQuery(_getDynamicQuery(userId));
+			_bookmarksEntryLocalService.dynamicQuery(
+				_getDynamicQuery(userId), start, end);
 
 		List<UADEntity> uadEntities = new ArrayList<>(bookmarksEntries.size());
 
@@ -75,8 +82,8 @@ public class BookmarksEntryUADEntityAggregator extends BaseUADEntityAggregator {
 	}
 
 	private DynamicQuery _getDynamicQuery(long userId) {
-		return _uadDynamicQueryHelper.getDynamicQuery(
-			_bookmarksEntryLocalService::dynamicQuery,
+		return _uadDynamicQueryHelper.addDynamicQueryCriteria(
+			_bookmarksEntryLocalService.dynamicQuery(),
 			BookmarksUADConstants.USER_ID_FIELD_NAMES_BOOKMARKS_ENTRY, userId);
 	}
 

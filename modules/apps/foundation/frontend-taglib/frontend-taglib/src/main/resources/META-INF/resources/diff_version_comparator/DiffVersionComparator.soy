@@ -40,6 +40,7 @@
 					<div class="col-md-4">
 						{call .sourceSelector data="all" /}
 					</div>
+
 					<div class="col-md-8 diff-target-selector">
 						{call .targetSelector data="all" /}
 					</div>
@@ -63,6 +64,7 @@
 
 						{call .targetList data="all" /}
 					</div>
+
 					<div class="col-md-8">
 						{call .diff data="all" /}
 					</div>
@@ -89,6 +91,7 @@
 					<a data-onclick="handleCloseFilterClick_" href="javascript:;">
 						<svg class="lexicon-icon" focusable="false">
 							<use data-href="{$pathThemeImages}/lexicon/icons.svg#times" />
+
 							<title>close</title>
 						</svg>
 					</a>
@@ -212,6 +215,7 @@
 			<span>
 				<svg class="lexicon-icon" focusable="false">
 					<use data-href="{$pathThemeImages}/lexicon/icons.svg#search" />
+
 					<title>search</title>
 				</svg>
 			</span>
@@ -308,7 +312,7 @@
 						data-version="{$diffVersion.version}"
 					>
 						<div class="list-group-item-field">
-							<div class="user-icon-color-1 user-icon-lg user-icon user-icon-default">
+							<div class="user-icon-color-1 user-icon user-icon-default">
 								<span>{$diffVersion.userInitials}</span>
 							</div>
 						</div>

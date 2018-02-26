@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>ALERT</td>
+	<td>//div[contains(@class,'has-error')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ANSWER</td>
 	<td>//div[label[contains(.,'Answer')]]/input[@type='text']</td>
 	<td></td>
@@ -420,7 +425,7 @@
 </tr>
 <tr>
 	<td>SEO_HTML_TITLE</td>
-	<td>//div[contains(.,'HTML')]/span/input</td>
+	<td>//div[label[contains(.,'HTML')]]//input</td>
 	<td></td>
 </tr>
 <tr>

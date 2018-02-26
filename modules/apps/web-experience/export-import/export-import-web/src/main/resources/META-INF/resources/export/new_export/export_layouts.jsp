@@ -80,6 +80,12 @@ portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(portletURL.toString());
 
 renderResponse.setTitle(!configuredExport ? LanguageUtil.get(request, "new-custom-export") : LanguageUtil.format(request, "new-export-based-on-x", exportImportConfiguration.getName(), false));
+
+JSONArray blacklistCharJSONArray = JSONFactoryUtil.createJSONArray();
+
+for (String s : PropsValues.DL_CHAR_BLACKLIST) {
+	blacklistCharJSONArray.put(s);
+}
 %>
 
 <div class="container-fluid-1280">
@@ -128,10 +134,10 @@ renderResponse.setTitle(!configuredExport ? LanguageUtil.get(request, "new-custo
 				<aui:fieldset>
 					<c:choose>
 						<c:when test="<%= exportImportConfiguration == null %>">
-							<aui:input label="title" name="name" placeholder="process-name-placeholder" />
+							<aui:input label="title" maxlength='<%= ModelHintsUtil.getMaxLength(ExportImportConfiguration.class.getName(), "name") %>' name="name" placeholder="process-name-placeholder" />
 						</c:when>
 						<c:otherwise>
-							<aui:input label="title" name="name" value="<%= exportImportConfiguration.getName() %>" />
+							<aui:input label="title" maxlength='<%= ModelHintsUtil.getMaxLength(ExportImportConfiguration.class.getName(), "name") %>' name="name" value="<%= exportImportConfiguration.getName() %>" />
 						</c:otherwise>
 					</c:choose>
 				</aui:fieldset>
@@ -180,7 +186,9 @@ renderResponse.setTitle(!configuredExport ? LanguageUtil.get(request, "new-custo
 
 	Liferay.component('<portlet:namespace />ExportImportComponent', exportImport);
 
-	var form = A.one('#<portlet:namespace />fm1');
+	var liferayForm = Liferay.Form.get('<portlet:namespace />fm1');
+
+	var form = liferayForm.formNode;
 
 	form.on(
 		'submit',
@@ -199,6 +207,35 @@ renderResponse.setTitle(!configuredExport ? LanguageUtil.get(request, "new-custo
 			}
 		}
 	);
+
+	var oldFieldRules = liferayForm.get('fieldRules');
+
+	var fieldRules = [
+		{
+			body: function(val, fieldNode, ruleValue) {
+				var blacklistCharJSONArray = <%= blacklistCharJSONArray.toJSONString() %>;
+
+				for (var i = 0; i < blacklistCharJSONArray.length; i++) {
+					if (val.indexOf(blacklistCharJSONArray[i]) !== -1) {
+						return false;
+					}
+				};
+
+				return true;
+			},
+			custom: true,
+			errorMessage: '<%= LanguageUtil.get(request, "the-following-are-invalid-characters") + HtmlUtil.escapeJS(Arrays.toString(PropsValues.DL_CHAR_BLACKLIST)) %>',
+			fieldName: '<portlet:namespace />name',
+			validatorName: 'custom_pageTemplateNameValidator'
+		}
+	];
+
+	if (oldFieldRules) {
+		fieldRules = fieldRules.concat(oldFieldRules);
+	}
+
+	liferayForm.set('fieldRules', fieldRules);
+
 </aui:script>
 
 <aui:script>

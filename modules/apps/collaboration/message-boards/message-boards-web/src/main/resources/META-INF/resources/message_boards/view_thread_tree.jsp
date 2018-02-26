@@ -40,7 +40,6 @@ MBMessageDisplay messageDisplay = (MBMessageDisplay)request.getAttribute(WebKeys
 <c:if test="<%= (message.getMessageId() != selMessage.getMessageId()) || MBUtil.isViewableMessage(themeDisplay, message) %>">
 
 	<%
-	request.setAttribute("edit-message.jsp-showDeletedAttachmentsFileEntries", Boolean.TRUE);
 	request.setAttribute("edit-message.jsp-showPermanentLink", Boolean.TRUE);
 	request.setAttribute("edit-message.jsp-showRecentPosts", Boolean.TRUE);
 	request.setAttribute("edit_message.jsp-category", category);
@@ -90,7 +89,7 @@ MBMessageDisplay messageDisplay = (MBMessageDisplay)request.getAttribute(WebKeys
 	%>
 
 		<div class="card-tab message-container">
-			<liferay-util:include page="/message_boards/view_thread_tree.jsp" servletContext="<%= application %>" />
+			<liferay-util:include page="/message_boards/w.jsp" servletContext="<%= application %>" />
 		</div>
 
 	<%

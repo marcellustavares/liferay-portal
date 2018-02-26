@@ -32,6 +32,7 @@ List repositoryEntries = (List)request.getAttribute("liferay-item-selector:repos
 int repositoryEntriesCount = GetterUtil.getInteger(request.getAttribute("liferay-item-selector:repository-entry-browser:repositoryEntriesCount"));
 boolean showBreadcrumb = GetterUtil.getBoolean(request.getAttribute("liferay-item-selector:repository-entry-browser:showBreadcrumb"));
 boolean showDragAndDropZone = GetterUtil.getBoolean(request.getAttribute("liferay-item-selector:repository-entry-browser:showDragAndDropZone"));
+boolean showSearch = GetterUtil.getBoolean(request.getAttribute("liferay-item-selector:repository-entry-browser:showSearch"));
 String tabName = GetterUtil.getString(request.getAttribute("liferay-item-selector:repository-entry-browser:tabName"));
 PortletURL uploadURL = (PortletURL)request.getAttribute("liferay-item-selector:repository-entry-browser:uploadURL");
 
@@ -81,6 +82,12 @@ if (Validator.isNotNull(keywords)) {
 				orderColumns="<%= orderColumns %>"
 				portletURL="<%= sortURL %>"
 			/>
+
+			<c:if test="<%= showSearch %>">
+				<li>
+					<liferay-item-selector:search />
+				</li>
+			</c:if>
 		</liferay-frontend:management-bar-filters>
 	</liferay-frontend:management-bar>
 </c:if>
@@ -383,7 +390,7 @@ if (Validator.isNotNull(keywords)) {
 													title="<%= title %>"
 												>
 													<liferay-frontend:vertical-card-sticker-bottom>
-														<div class="sticker sticker-bottom <%= stickerCssClass %>">
+														<div class="sticker sticker-secondary sticker-bottom-left <%= stickerCssClass %>">
 															<%= fileExtensionSticker %>
 														</div>
 													</liferay-frontend:vertical-card-sticker-bottom>
@@ -466,7 +473,7 @@ if (Validator.isNotNull(keywords)) {
 										</c:when>
 										<c:when test="<%= (dlMimeTypeDisplayContext != null) && Validator.isNotNull(latestFileVersion.getExtension()) %>">
 											<liferay-ui:search-container-column-text>
-												<div class="sticker-default sticker-lg <%= dlMimeTypeDisplayContext.getCssClassFileMimeType(fileEntry.getMimeType()) %>">
+												<div class="sticker <%= dlMimeTypeDisplayContext.getCssClassFileMimeType(fileEntry.getMimeType()) %>">
 													<%= StringUtil.shorten(StringUtil.upperCase(latestFileVersion.getExtension()), 3, StringPool.BLANK) %>
 												</div>
 											</liferay-ui:search-container-column-text>

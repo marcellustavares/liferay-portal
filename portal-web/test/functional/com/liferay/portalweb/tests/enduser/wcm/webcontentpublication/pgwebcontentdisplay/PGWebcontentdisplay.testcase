@@ -331,7 +331,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Display Page" />
@@ -422,7 +422,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Web Content Page" />
@@ -530,7 +530,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Chinese (China)" />
-			<var name="locale" value="zh-CN" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -1046,7 +1045,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Chinese (China)" />
-			<var name="locale" value="zh-CN" />
 		</execute>
 
 		<execute macro="WebContent#addCP">

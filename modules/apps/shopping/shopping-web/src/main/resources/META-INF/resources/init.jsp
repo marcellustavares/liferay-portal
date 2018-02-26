@@ -19,6 +19,7 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/comment" prefix="liferay-comment" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -27,7 +28,8 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.petra.string.StringPool" %><%@
+<%@ page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.JSPNavigationItemList" %><%@
+page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker" %><%@
 page import="com.liferay.portal.kernel.dao.search.RowChecker" %><%@
@@ -147,13 +149,6 @@ page import="com.liferay.shopping.service.ShoppingItemPriceLocalServiceUtil" %><
 page import="com.liferay.shopping.service.ShoppingItemServiceUtil" %><%@
 page import="com.liferay.shopping.service.ShoppingOrderItemLocalServiceUtil" %><%@
 page import="com.liferay.shopping.service.ShoppingOrderLocalServiceUtil" %><%@
-page import="com.liferay.shopping.service.permission.ShoppingCategoryPermission" %><%@
-page import="com.liferay.shopping.service.permission.ShoppingItemPermission" %><%@
-page import="com.liferay.shopping.service.permission.ShoppingOrderPermission" %><%@
-page import="com.liferay.shopping.service.permission.ShoppingPermission" %><%@
-page import="com.liferay.shopping.util.CreditCard" %><%@
-page import="com.liferay.shopping.util.ShoppingUtil" %><%@
-page import="com.liferay.shopping.util.StateUtil" %><%@
 page import="com.liferay.shopping.util.comparator.CategoryItemNameComparator" %><%@
 page import="com.liferay.shopping.util.comparator.ItemNameComparator" %><%@
 page import="com.liferay.shopping.web.internal.dao.search.ShoppingResultRowSplitter" %><%@
@@ -162,6 +157,12 @@ page import="com.liferay.shopping.web.internal.search.CouponSearch" %><%@
 page import="com.liferay.shopping.web.internal.search.OrderDisplayTerms" %><%@
 page import="com.liferay.shopping.web.internal.search.OrderSearch" %><%@
 page import="com.liferay.shopping.web.internal.search.OrderSearchTerms" %><%@
+page import="com.liferay.shopping.web.internal.security.permission.resource.ShoppingCategoryPermission" %><%@
+page import="com.liferay.shopping.web.internal.security.permission.resource.ShoppingItemPermission" %><%@
+page import="com.liferay.shopping.web.internal.security.permission.resource.ShoppingOrderPermission" %><%@
+page import="com.liferay.shopping.web.internal.security.permission.resource.ShoppingPermission" %><%@
+page import="com.liferay.shopping.web.internal.util.ShoppingUtil" %><%@
+page import="com.liferay.shopping.web.internal.util.StateUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %>
 
 <%@ page import="java.text.Format" %><%@

@@ -145,7 +145,7 @@ task checkDocker() {
 
 				url.toURL().text
 
-				println("Portal startup finished")
+				println("Whiteboard startup finished")
 
 				break
 			}
@@ -185,6 +185,7 @@ task runDocker(type: Exec) {
 	commandLine 'docker', 'run',
 	'-e', "JACOCO_DIR=${rootDir}/build/jacoco",
 	'-e', "JAVA_OPTS=$javaOpts",
+	'-e', "LIFERAY_APIO_AUTH=${System.getenv('LIFERAY_APIO_AUTH')}",
 	'-e', "ROOT_DIR=${rootDir}",
 	'-p', '5005:5005',
 	'-p', '8080:8080',
