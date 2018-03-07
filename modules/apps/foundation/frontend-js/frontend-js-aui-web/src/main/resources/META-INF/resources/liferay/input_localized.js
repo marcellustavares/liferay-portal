@@ -213,24 +213,25 @@ AUI.add(
 
 						var inputLanguageValue = instance.getValue(languageId);
 
-						inputPlaceholder.val(inputLanguageValue);
-
-						inputPlaceholder.attr('dir', Liferay.Language.direction[languageId]);
-
 						instance._animate(inputPlaceholder, shouldFocus);
 						instance._clearFormValidator(inputPlaceholder);
 
 						instance._fillDefaultLanguage = !defaultLanguageValue;
 
+						instance.set('selected', parseInt(instance.get('items').indexOf(languageId)));
+
 						if (editor) {
 							editor.setHTML(inputLanguageValue);
+						}
+						else {
+							inputPlaceholder.val(inputLanguageValue);
+
+							inputPlaceholder.attr('dir', Liferay.Language.direction[languageId]);
 						}
 
 						instance._updateInputPlaceholderDescription(languageId);
 						instance._updateTrigger(languageId);
 						instance._updateSelectedItem(languageId);
-
-						instance.set('selected', parseInt(instance.get('items').indexOf(languageId)));
 					},
 
 					updateInputLanguage: function(value, languageId) {
@@ -494,7 +495,7 @@ AUI.add(
 							}
 						);
 
-						instance.get('inputBox').one('button').setHTML(triggerContent);
+						instance.get('inputBox').one('div.input-localized-content button').setHTML(triggerContent);
 					},
 
 					_animating: null,
