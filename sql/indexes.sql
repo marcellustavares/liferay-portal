@@ -187,6 +187,7 @@ create unique index IX_7162C27C on Layout (groupId, privateLayout, layoutId);
 create index IX_7399B71E on Layout (groupId, privateLayout, parentLayoutId, priority);
 create index IX_8CE8C0D9 on Layout (groupId, privateLayout, sourcePrototypeLayoutUuid[$COLUMN_LENGTH:75$]);
 create index IX_1A1B61D2 on Layout (groupId, privateLayout, type_[$COLUMN_LENGTH:75$]);
+create index IX_6EDC627B on Layout (groupId, type_[$COLUMN_LENGTH:75$]);
 create index IX_23922F7D on Layout (iconImageId);
 create index IX_B529BFD3 on Layout (layoutPrototypeUuid[$COLUMN_LENGTH:75$]);
 create index IX_3BC009C0 on Layout (privateLayout, iconImageId);
@@ -228,37 +229,6 @@ create index IX_D9FFCA84 on LayoutSetPrototype (uuid_[$COLUMN_LENGTH:75$], compa
 
 create index IX_77729718 on ListType (name[$COLUMN_LENGTH:75$], type_[$COLUMN_LENGTH:75$]);
 create index IX_2932DD37 on ListType (type_[$COLUMN_LENGTH:75$]);
-
-create index IX_D1642361 on MBCategory (categoryId, groupId, parentCategoryId, status);
-create index IX_E15A5DB5 on MBCategory (companyId, status);
-create index IX_C295DBEE on MBCategory (groupId, parentCategoryId, status);
-create index IX_DA84A9F7 on MBCategory (groupId, status);
-create index IX_13DF4E6D on MBCategory (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_F7D28C2F on MBCategory (uuid_[$COLUMN_LENGTH:75$], groupId);
-
-create index IX_F6687633 on MBMessage (classNameId, classPK, status);
-create index IX_1AD93C16 on MBMessage (companyId, status);
-create index IX_4257DB85 on MBMessage (groupId, categoryId, status);
-create index IX_CBFDBF0A on MBMessage (groupId, categoryId, threadId, answer);
-create index IX_385E123E on MBMessage (groupId, categoryId, threadId, status);
-create index IX_ED39AC98 on MBMessage (groupId, status);
-create index IX_377858D2 on MBMessage (groupId, userId, status);
-create index IX_9D7C3B23 on MBMessage (threadId, answer);
-create index IX_A7038CD7 on MBMessage (threadId, parentMessageId);
-create index IX_9DC8E57 on MBMessage (threadId, status);
-create index IX_4A4BB4ED on MBMessage (userId, classNameId, classPK, status);
-create index IX_3321F142 on MBMessage (userId, classNameId, status);
-create index IX_57CA9FEC on MBMessage (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_8D12316E on MBMessage (uuid_[$COLUMN_LENGTH:75$], groupId);
-
-create index IX_41F6DC8A on MBThread (categoryId, priority);
-create index IX_50F1904A on MBThread (groupId, categoryId, lastPostDate);
-create index IX_485F7E98 on MBThread (groupId, categoryId, status);
-create index IX_E1E7142B on MBThread (groupId, status);
-create index IX_AEDD9CB5 on MBThread (lastPostDate, priority);
-create index IX_CC993ECB on MBThread (rootMessageId);
-create index IX_F8CA2AB9 on MBThread (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_3A200B7B on MBThread (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_C28C72EC on MembershipRequest (groupId, statusId);
 create index IX_35AA8FA6 on MembershipRequest (groupId, userId, statusId);
@@ -328,7 +298,7 @@ create unique index IX_A2635F5C on Region (countryId, regionCode[$COLUMN_LENGTH:
 
 create unique index IX_8BD6BCA7 on Release_ (servletContextName[$COLUMN_LENGTH:75$]);
 
-create unique index IX_60C8634C on Repository (groupId, name[$COLUMN_LENGTH:75$], portletId[$COLUMN_LENGTH:200$]);
+create unique index IX_60C8634C on Repository (groupId, name[$COLUMN_LENGTH:200$], portletId[$COLUMN_LENGTH:200$]);
 create index IX_F543EA4 on Repository (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_11641E26 on Repository (uuid_[$COLUMN_LENGTH:75$], groupId);
 

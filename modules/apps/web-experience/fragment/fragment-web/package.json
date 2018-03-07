@@ -4,15 +4,20 @@
 		"metal-component": "^2.13.2",
 		"metal-debounce": "^2.0.0",
 		"metal-dom": "^2.13.2",
-		"metal-modal": "^2.0.5",
 		"metal-soy": "^2.13.2",
 		"metal-state": "^2.13.2",
 		"metal-uri": "^2.3.0"
 	},
 	"devDependencies": {
+		"check-source-formatting": "^2.0.4",
 		"liferay-module-config-generator": "^1.1.10",
 		"metal-cli": "^4.3.3"
 	},
 	"name": "fragment-web",
+	"scripts": {
+		"checkFormat": "npm run csf",
+		"csf": "csf src/**/*.js",
+		"format": "npm run csf -- -i"
+	},
 	"version": "1.0.0"
 }

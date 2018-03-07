@@ -14,23 +14,21 @@
 
 package com.liferay.apio.architect.message.json.ld.internal;
 
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonObjectWith;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonString;
+import static com.liferay.apio.architect.message.json.ld.internal.JSONLDTestUtil.IS_A_LINK_TO_HYDRA_PROFILE;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonObjectWith;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonString;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.liferay.apio.architect.message.json.DocumentationMessageMapper;
-import com.liferay.apio.architect.test.json.Conditions;
-import com.liferay.apio.architect.test.writer.MockDocumentationWriter;
+import com.liferay.apio.architect.test.util.json.Conditions;
+import com.liferay.apio.architect.test.util.writer.MockDocumentationWriter;
 
 import javax.ws.rs.core.HttpHeaders;
-
-import org.hamcrest.Matcher;
 
 import org.junit.Test;
 
@@ -50,15 +48,12 @@ public class JSONLDDocumentationMessageMapperTest {
 
 		Conditions.Builder builder = new Conditions.Builder();
 
-		Matcher<JsonElement> isAJsonStringWithTheContext = is(
-			aJsonString(equalTo("http://www.w3.org/ns/hydra/context.jsonld")));
-
 		Conditions conditions = builder.where(
-			"@context", isAJsonStringWithTheContext
+			"@context", IS_A_LINK_TO_HYDRA_PROFILE
 		).where(
 			"@id", is(aJsonString(equalTo("http://api.example.com/doc/")))
 		).where(
-			"@type", is(aJsonString(equalTo("ApiDocumentation")))
+			"@type", is(aJsonString(equalTo("hydra:ApiDocumentation")))
 		).where(
 			"description", is(aJsonString(equalTo("Description")))
 		).where(

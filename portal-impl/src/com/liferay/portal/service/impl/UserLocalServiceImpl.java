@@ -23,6 +23,7 @@ import com.liferay.mail.kernel.template.MailTemplateFactoryUtil;
 import com.liferay.petra.encryptor.Encryptor;
 import com.liferay.petra.encryptor.EncryptorException;
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheMapSynchronizeUtil;
@@ -126,7 +127,6 @@ import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -1112,12 +1112,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 		// Group
 
-		groupLocalService.addGroup(
-			user.getUserId(), GroupConstants.DEFAULT_PARENT_GROUP_ID,
-			User.class.getName(), user.getUserId(),
-			GroupConstants.DEFAULT_LIVE_GROUP_ID, (Map<Locale, String>)null,
-			null, 0, true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
-			StringPool.SLASH + screenName, false, true, null);
+		addGroup(user);
 
 		// Groups
 
@@ -1762,6 +1757,43 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		if (company.isStrangersVerify()) {
 			sendEmailAddressVerification(
 				user, user.getEmailAddress(), serviceContext);
+		}
+	}
+
+	/**
+	 * Sets the user's status to inactive. This will also deactivate their
+	 * personal site.
+	 *
+	 * @param userId the primary key of the user
+	 * @throws PortalException
+	 */
+	public void deactivateUser(long userId) throws PortalException {
+		deactivateUser(userId, true);
+	}
+
+	/**
+	 * Sets the user's status to inactive. Can also optionally deactivate the
+	 * user's personal site.
+	 *
+	 * @param userId the primary key of the user
+	 * @param deactivateSite whether the user's personal site should be
+	 *                       deactivated
+	 * @throws PortalException
+	 */
+	public void deactivateUser(long userId, boolean deactivateSite)
+		throws PortalException {
+
+		updateStatus(
+			userId, WorkflowConstants.STATUS_INACTIVE, new ServiceContext());
+
+		if (!deactivateSite) {
+			User user = getUser(userId);
+
+			Group group = user.getGroup();
+
+			group.setActive(true);
+
+			groupLocalService.updateGroup(group);
 		}
 	}
 
@@ -3027,6 +3059,26 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 	@Override
 	public User loadGetDefaultUser(long companyId) throws PortalException {
 		return userPersistence.findByC_DU(companyId, true);
+	}
+
+	/**
+	 * Deletes and re-creates the user's group.  This is useful for clearing all
+	 * personal data from the user's personal site, and essentially resets the
+	 * group back to the same state as when the user was first created.
+	 *
+	 * @param userId the primary key of the user
+	 * @throws PortalException
+	 */
+	public void resetUserGroup(long userId) throws PortalException {
+		User user = getUserById(userId);
+
+		if (user.isDefaultUser()) {
+			throw new RequiredUserException();
+		}
+
+		groupLocalService.deleteGroup(user.getGroup());
+
+		addGroup(user);
 	}
 
 	/**
@@ -5671,6 +5723,15 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 
 			userPersistence.addTeams(userId, userTeamIds);
 		}
+	}
+
+	protected void addGroup(User user) throws PortalException {
+		groupLocalService.addGroup(
+			user.getUserId(), GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			User.class.getName(), user.getUserId(),
+			GroupConstants.DEFAULT_LIVE_GROUP_ID, (Map<Locale, String>)null,
+			null, 0, true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
+			StringPool.SLASH + user.getScreenName(), false, true, null);
 	}
 
 	/**

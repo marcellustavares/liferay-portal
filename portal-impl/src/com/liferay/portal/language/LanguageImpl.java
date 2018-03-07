@@ -15,6 +15,7 @@
 package com.liferay.portal.language;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheMapSynchronizeUtil;
@@ -46,7 +47,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -1517,6 +1517,14 @@ public class LanguageImpl implements Language, Serializable {
 	}
 
 	@Override
+	public boolean isSameLanguage(Locale locale1, Locale locale2) {
+		String language1 = locale1.getLanguage();
+		String language2 = locale2.getLanguage();
+
+		return language1.equals(language2);
+	}
+
+	@Override
 	public String process(
 		ResourceBundle resourceBundle, Locale locale, String content) {
 
@@ -1610,8 +1618,12 @@ public class LanguageImpl implements Language, Serializable {
 			UnicodeProperties typeSettingsProperties =
 				group.getTypeSettingsProperties();
 
-			languageIds = StringUtil.split(
-				typeSettingsProperties.getProperty(PropsKeys.LOCALES));
+			String groupLanguageIds = typeSettingsProperties.getProperty(
+				PropsKeys.LOCALES);
+
+			if (groupLanguageIds != null) {
+				languageIds = StringUtil.split(groupLanguageIds);
+			}
 		}
 		catch (Exception e) {
 		}

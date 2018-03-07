@@ -217,12 +217,8 @@
 			<var name="parentPageName" value="Home" />
 		</execute>
 
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="rowEntry" value="Blog Page" />
-		</execute>
-
 		<execute macro="Page#addPageTranslations">
+			<var name="page" value="Blog Page" />
 			<var name="pageTranslation" value="es_ES" />
 			<var name="pageTranslationName" value="Blog Página" />
 		</execute>
@@ -364,7 +360,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -378,7 +374,9 @@
 
 		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
 		<execute macro="Portlet#viewTitle">
 			<var name="portletName" value="Message Boards" />
@@ -386,7 +384,7 @@
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="threadBody" value="This is the message boards thread." />
 			<var name="threadSubject" value="Thread" />
 		</execute>
@@ -413,7 +411,9 @@
 			<var name="userPassword" value="test" />
 		</execute>
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
 		<execute macro="PermissionsInline#gotoConfigurationPG" >
 			<var name="portletName" value="Polls Display" />
@@ -439,7 +439,9 @@
 
 		<execute macro="User#logoutPG" />
 
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/web/site-name/home" />
+		</execute>
 
 		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_1" value1="You do not have the roles required to access this portlet." />
 		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_2" value1="You do not have the roles required to access this portlet." />

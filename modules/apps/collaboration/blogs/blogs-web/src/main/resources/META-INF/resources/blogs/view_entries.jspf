@@ -14,59 +14,6 @@
  */
 --%>
 
-<c:if test="<%= BlogsPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_ENTRY) %>">
-	<div class="button-holder">
-		<portlet:renderURL var="editEntryURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
-			<portlet:param name="mvcRenderCommandName" value="/blogs/edit_entry" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-		</portlet:renderURL>
-
-		<aui:button href="<%= editEntryURL %>" icon="icon-plus" value="add-blog-entry" />
-	</div>
-</c:if>
-
-<div class="subscribe">
-	<c:if test="<%= blogsGroupServiceOverriddenConfiguration.enableRss() %>">
-		<liferay-ui:rss
-			delta="<%= GetterUtil.getInteger(blogsGroupServiceOverriddenConfiguration.rssDelta()) %>"
-			displayStyle="<%= blogsGroupServiceOverriddenConfiguration.rssDisplayStyle() %>"
-			feedType="<%= blogsGroupServiceOverriddenConfiguration.rssFeedType() %>"
-			url='<%= themeDisplay.getPathMain() + "/blogs/rss?p_l_id=" + plid + "&groupId=" + themeDisplay.getScopeGroupId() %>'
-		/>
-	</c:if>
-
-	<c:if test="<%= BlogsPermission.contains(permissionChecker, scopeGroupId, ActionKeys.SUBSCRIBE) && (blogsGroupServiceSettings.isEmailEntryAddedEnabled() || blogsGroupServiceSettings.isEmailEntryUpdatedEnabled()) %>">
-		<c:choose>
-			<c:when test="<%= SubscriptionLocalServiceUtil.isSubscribed(company.getCompanyId(), user.getUserId(), BlogsEntry.class.getName(), scopeGroupId) %>">
-				<portlet:actionURL name="/blogs/edit_entry" var="unsubscribeURL">
-					<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UNSUBSCRIBE %>" />
-					<portlet:param name="redirect" value="<%= currentURL %>" />
-				</portlet:actionURL>
-
-				<liferay-ui:icon
-					iconCssClass="icon-remove-sign"
-					label="<%= true %>"
-					message="unsubscribe"
-					url="<%= unsubscribeURL %>"
-				/>
-			</c:when>
-			<c:otherwise>
-				<portlet:actionURL name="/blogs/edit_entry" var="subscribeURL">
-					<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.SUBSCRIBE %>" />
-					<portlet:param name="redirect" value="<%= currentURL %>" />
-				</portlet:actionURL>
-
-				<liferay-ui:icon
-					iconCssClass="icon-ok-sign"
-					label="<%= true %>"
-					message="subscribe"
-					url="<%= subscribeURL %>"
-				/>
-			</c:otherwise>
-		</c:choose>
-	</c:if>
-</div>
-
 <liferay-asset:categorization-filter
 	assetType="entries"
 	portletURL="<%= portletURL %>"
@@ -86,53 +33,53 @@ List<BlogsEntry> blogsEntries = _convertToBlogEntries(results);
 %>
 
 <liferay-ddm:template-renderer className="<%= BlogsEntry.class.getName() %>" contextObjects="<%= contextObjects %>" displayStyle="<%= blogsPortletInstanceConfiguration.displayStyle() %>" displayStyleGroupId="<%= blogsPortletInstanceSettingsHelper.getDisplayStyleGroupId() %>" entries="<%= blogsEntries %>">
+	<div class="widget-mode-simple">
 
-	<%
-	long[] classPKs = ListUtil.toLongArray(blogsEntries, BlogsEntry.ENTRY_ID_ACCESSOR);
+		<%
+		long[] classPKs = ListUtil.toLongArray(blogsEntries, BlogsEntry.ENTRY_ID_ACCESSOR);
 
-	Map<Long, RatingsEntry> ratingsEntries = null;
-	Map<Long, RatingsStats> ratingsStats = RatingsStatsLocalServiceUtil.getStats(BlogsEntry.class.getName(), classPKs);
+		Map<Long, RatingsEntry> ratingsEntries = null;
+		Map<Long, RatingsStats> ratingsStats = RatingsStatsLocalServiceUtil.getStats(BlogsEntry.class.getName(), classPKs);
 
-	if (ratingsStats.isEmpty()) {
-		ratingsEntries = Collections.emptyMap();
-	}
-	else {
-		ratingsEntries = RatingsEntryLocalServiceUtil.getEntries(themeDisplay.getUserId(), BlogsEntry.class.getName(), classPKs);
-	}
-
-	int index = 0;
-
-	for (Object result : results) {
-		BlogsEntry entry = blogsEntries.get(index);
-
-		AssetEntry assetEntry = null;
-
-		if (result instanceof AssetEntry) {
-			assetEntry = (AssetEntry)result;
-
-			assetHelper.addLayoutTags(request, assetEntry.getTags());
+		if (ratingsStats.isEmpty()) {
+			ratingsEntries = Collections.emptyMap();
+		}
+		else {
+			ratingsEntries = RatingsEntryLocalServiceUtil.getEntries(themeDisplay.getUserId(), BlogsEntry.class.getName(), classPKs);
 		}
 
-		index++;
+		int index = 0;
 
-		request.setAttribute("view_entry_content.jsp-searchContainer", searchContainer);
+		for (Object result : results) {
+			BlogsEntry entry = blogsEntries.get(index);
 
-		request.setAttribute("view_entry_content.jsp-entry", entry);
+			AssetEntry assetEntry = null;
 
-		request.setAttribute("view_entry_content.jsp-assetEntry", assetEntry);
+			if (result instanceof AssetEntry) {
+				assetEntry = (AssetEntry)result;
 
-		request.setAttribute("view_entry_content.jsp-ratingsEntry", ratingsEntries.get(entry.getEntryId()));
-		request.setAttribute("view_entry_content.jsp-ratingsStats", ratingsStats.get(entry.getEntryId()));
-	%>
+				assetHelper.addLayoutTags(request, assetEntry.getTags());
+			}
 
-		<liferay-util:include page="/blogs/view_entry_content.jsp" servletContext="<%= application %>" />
+			index++;
 
-		<div class="separator"><!-- --></div>
+			request.setAttribute("view_entry_content.jsp-searchContainer", searchContainer);
 
-	<%
-	}
-	%>
+			request.setAttribute("view_entry_content.jsp-entry", entry);
 
+			request.setAttribute("view_entry_content.jsp-assetEntry", assetEntry);
+
+			request.setAttribute("view_entry_content.jsp-ratingsEntry", ratingsEntries.get(entry.getEntryId()));
+			request.setAttribute("view_entry_content.jsp-ratingsStats", ratingsStats.get(entry.getEntryId()));
+		%>
+
+			<liferay-util:include page="/blogs/view_entry_content.jsp" servletContext="<%= application %>" />
+
+		<%
+		}
+		%>
+
+	</div>
 </liferay-ddm:template-renderer>
 
 <liferay-ui:search-paginator searchContainer="<%= searchContainer %>" />

@@ -56,6 +56,10 @@
 
 .publish-popover-content {
 	display: none;
+
+	.arrow {
+		top: 40%;
+	}
 }
 
 .portlet-forms-admin {
@@ -261,7 +265,6 @@
 
 	.form-builder-layout {
 		margin: 0 auto;
-		padding-bottom: 20px;
 		width: auto;
 
 		.layout-builder-add-row-area {
@@ -383,19 +386,16 @@
 
 		.form-builder-controls-trigger {
 			margin: 0;
-			top: 18px;
+			top: 13px;
 		}
 	}
 
-	.form-control[readonly],
-	.form-control[disabled],
 	input[type='checkbox'],
 	input[type='radio'] {
 		background-color: transparent;
 		border-color: #869CAD;
 		color: initial;
 		cursor: default;
-		opacity: 1;
 	}
 
 	.layout-builder-move-target-label,

@@ -166,6 +166,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<description>Whether to show the search box. The default value is true.</description>
+			<name>showSearch</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<description>The title of the current dialog tab.</description>
 			<name>tabName</name>
 			<required>true</required>
@@ -177,5 +183,11 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+	</tag>
+	<tag>
+		<description>Creates a search box for child views.</description>
+		<name>search</name>
+		<tag-class>com.liferay.item.selector.taglib.servlet.taglib.SearchTag</tag-class>
+		<body-content>JSP</body-content>
 	</tag>
 </taglib>

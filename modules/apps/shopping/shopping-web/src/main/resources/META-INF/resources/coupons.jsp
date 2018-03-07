@@ -37,9 +37,7 @@ List coupons = ShoppingCouponServiceUtil.search(scopeGroupId, company.getCompany
 couponSearch.setResults(coupons);
 %>
 
-<liferay-util:include page="/tabs1.jsp" servletContext="<%= application %>">
-	<liferay-util:param name="showSearch" value="<%= Boolean.TRUE.toString() %>" />
-</liferay-util:include>
+<liferay-util:include page="/tabs1.jsp" servletContext="<%= application %>" />
 
 <liferay-frontend:management-bar
 	includeCheckBox="<%= true %>"
@@ -70,6 +68,18 @@ couponSearch.setResults(coupons);
 			navigationParam="active"
 			portletURL="<%= activeURL %>"
 		/>
+
+		<%
+		PortletURL searchURL = renderResponse.createRenderURL();
+
+		searchURL.setParameter("tabs1", "tabs1");
+		%>
+
+		<li>
+			<aui:form action="<%= searchURL.toString() %>" name="searchFm">
+				<liferay-ui:input-search markupView="lexicon" />
+			</aui:form>
+		</li>
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-buttons>
@@ -78,6 +88,15 @@ couponSearch.setResults(coupons);
 			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
 			selectedDisplayStyle="<%= displayStyle %>"
 		/>
+
+		<portlet:renderURL var="editCouponURL">
+			<portlet:param name="mvcRenderCommandName" value="/shopping/edit_coupon" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+		</portlet:renderURL>
+
+		<liferay-frontend:add-menu inline="<%= true %>">
+			<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-coupon") %>' url="<%= editCouponURL.toString() %>" />
+		</liferay-frontend:add-menu>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-action-buttons>
@@ -154,15 +173,6 @@ couponSearch.setResults(coupons);
 		<liferay-ui:search-iterator markupView="lexicon" />
 	</liferay-ui:search-container>
 </aui:form>
-
-<portlet:renderURL var="editCouponURL">
-	<portlet:param name="mvcRenderCommandName" value="/shopping/edit_coupon" />
-	<portlet:param name="redirect" value="<%= currentURL %>" />
-</portlet:renderURL>
-
-<liferay-frontend:add-menu>
-	<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-coupon") %>' url="<%= editCouponURL.toString() %>" />
-</liferay-frontend:add-menu>
 
 <aui:script>
 	$('#<portlet:namespace />deleteCoupons').on(

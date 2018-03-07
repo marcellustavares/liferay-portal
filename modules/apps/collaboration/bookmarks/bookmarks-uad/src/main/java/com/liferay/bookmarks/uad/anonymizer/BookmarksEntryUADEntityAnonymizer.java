@@ -29,6 +29,7 @@ import com.liferay.user.associated.data.exception.UADEntityException;
 import com.liferay.user.associated.data.util.UADAnonymizerHelper;
 import com.liferay.user.associated.data.util.UADDynamicQueryHelper;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -81,13 +82,13 @@ public class BookmarksEntryUADEntityAnonymizer extends BaseUADEntityAnonymizer {
 	}
 
 	@Override
-	public List<String> getEntityNonAnonymizableFieldNames() {
-		return null;
+	public List<String> getUADEntityNonanonymizableFieldNames() {
+		return Arrays.asList("description", "name", "url");
 	}
 
 	@Override
-	protected List<UADEntity> getUADEntities(long userId) {
-		return _uadEntityAggregator.getUADEntities(userId);
+	protected UADEntityAggregator getUADEntityAggregator() {
+		return _uadEntityAggregator;
 	}
 
 	private void _autoAnonymize(BookmarksEntry bookmarksEntry, long userId)
@@ -109,8 +110,8 @@ public class BookmarksEntryUADEntityAnonymizer extends BaseUADEntityAnonymizer {
 	}
 
 	private ActionableDynamicQuery _getActionableDynamicQuery(long userId) {
-		return _uadDynamicQueryHelper.getActionableDynamicQuery(
-			_bookmarksEntryLocalService::getActionableDynamicQuery,
+		return _uadDynamicQueryHelper.addActionableDynamicQueryCriteria(
+			_bookmarksEntryLocalService.getActionableDynamicQuery(),
 			BookmarksUADConstants.USER_ID_FIELD_NAMES_BOOKMARKS_ENTRY, userId);
 	}
 

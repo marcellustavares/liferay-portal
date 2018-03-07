@@ -15,13 +15,13 @@
 package com.liferay.petra.memory;
 
 import com.liferay.petra.memory.FinalizeManager.ReferenceFactory;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.GCUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
 import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.ThreadUtil;
 
 import java.lang.ref.Reference;
@@ -389,7 +389,7 @@ public class FinalizeManagerTest {
 
 	private static enum ReferenceType {
 
-		SOFT, PHANTOM, WEAK
+		PHANTOM, SOFT, WEAK
 
 	}
 

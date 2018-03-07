@@ -16,10 +16,10 @@ package com.liferay.portal.kernel.language;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
@@ -322,6 +322,10 @@ public class LanguageUtil {
 		throws PortalException {
 
 		return getLanguage().isInheritLocales(groupId);
+	}
+
+	public static boolean isSameLanguage(Locale locale1, Locale locale2) {
+		return getLanguage().isSameLanguage(locale1, locale2);
 	}
 
 	public static boolean isValidLanguageKey(Locale locale, String key) {

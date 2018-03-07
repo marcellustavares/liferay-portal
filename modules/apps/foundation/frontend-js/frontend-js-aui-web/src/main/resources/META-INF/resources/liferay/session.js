@@ -183,6 +183,16 @@ AUI.add(
 								{
 									autoLoad: false,
 									on: {
+										failure: function(event, id, obj) {
+											instance._expireIO = null;
+
+											A.setTimeout(
+												function() {
+													instance._getExpireIO().start();
+												},
+												1000
+											);
+										},
 										success: function(event, id, obj) {
 											Liferay.fire('sessionExpired');
 

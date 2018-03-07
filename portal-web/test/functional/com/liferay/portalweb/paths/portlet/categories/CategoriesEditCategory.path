@@ -14,16 +14,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>LOCALIZATION_NAME</td>
-	<td>//li[@data-value='${key_localizationName}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VOCABULARY_SELECT</td>
-	<td>//div[contains(@class,'select-wrapper')]/select</td>
-	<td></td>
-</tr>
-<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -87,11 +77,6 @@
 <tr>
 	<td>PROPERTIES_VALUE_FIELD_2</td>
 	<td>//input[contains(@id,'value2')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VOCABULARY_SELECT</td>
-	<td>//div[contains(@class,'select-wrapper')]/select</td>
 	<td></td>
 </tr>
 <tr>

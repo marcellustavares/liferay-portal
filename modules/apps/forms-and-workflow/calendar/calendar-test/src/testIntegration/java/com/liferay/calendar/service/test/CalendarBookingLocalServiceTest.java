@@ -35,6 +35,7 @@ import com.liferay.calendar.test.util.RecurrenceTestUtil;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.util.RecurrenceUtil;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
@@ -48,7 +49,6 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -1211,7 +1211,7 @@ public class CalendarBookingLocalServiceTest {
 		List<CalendarBooking> childCalendarBookings =
 			CalendarBookingLocalServiceUtil.getCalendarBookings(
 				invitedCalendar.getCalendarId(),
-				new int[] {CalendarBookingWorkflowConstants.STATUS_PENDING});
+				new int[] {WorkflowConstants.STATUS_PENDING});
 
 		Assert.assertEquals(
 			childCalendarBookings.toString(), 1, childCalendarBookings.size());
@@ -1250,8 +1250,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			childCalendarBooking.getParentCalendarBooking();
 
-		assertStatus(
-			calendarBooking, CalendarBookingWorkflowConstants.STATUS_PENDING);
+		assertStatus(calendarBooking, WorkflowConstants.STATUS_PENDING);
 
 		CalendarWorkflowTestUtil.completeWorkflow(_liveGroup);
 
@@ -1265,15 +1264,14 @@ public class CalendarBookingLocalServiceTest {
 
 		calendarBooking = childCalendarBooking.getParentCalendarBooking();
 
-		assertStatus(
-			calendarBooking, CalendarBookingWorkflowConstants.STATUS_APPROVED);
+		assertStatus(calendarBooking, WorkflowConstants.STATUS_APPROVED);
 
 		CalendarStagingTestUtil.publishLayouts(_liveGroup, true);
 
 		List<CalendarBooking> childCalendarBookings =
 			CalendarBookingLocalServiceUtil.getCalendarBookings(
 				invitedCalendar.getCalendarId(),
-				new int[] {CalendarBookingWorkflowConstants.STATUS_PENDING});
+				new int[] {WorkflowConstants.STATUS_PENDING});
 
 		Assert.assertEquals(
 			childCalendarBookings.toString(), 1, childCalendarBookings.size());
@@ -1317,8 +1315,7 @@ public class CalendarBookingLocalServiceTest {
 		CalendarBooking calendarBooking =
 			childCalendarBooking.getParentCalendarBooking();
 
-		assertStatus(
-			calendarBooking, CalendarBookingWorkflowConstants.STATUS_PENDING);
+		assertStatus(calendarBooking, WorkflowConstants.STATUS_PENDING);
 
 		childCalendarBooking =
 			CalendarBookingLocalServiceUtil.fetchCalendarBooking(
@@ -2913,7 +2910,7 @@ public class CalendarBookingLocalServiceTest {
 
 		invitedCalendarBooking = CalendarBookingLocalServiceUtil.updateStatus(
 			_user.getUserId(), invitedCalendarBooking,
-			CalendarBookingWorkflowConstants.STATUS_APPROVED, serviceContext);
+			WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		Map<Locale, String> titleMap = new HashMap<>();
 

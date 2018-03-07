@@ -20,8 +20,6 @@ import com.liferay.poshi.runner.PoshiRunnerStackTraceUtil;
 import com.liferay.poshi.runner.PoshiRunnerVariablesUtil;
 import com.liferay.poshi.runner.exception.PoshiRunnerLoggerException;
 import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
-import com.liferay.poshi.runner.selenium.WebDriverHelper;
-import com.liferay.poshi.runner.selenium.WebDriverUtil;
 import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
@@ -30,8 +28,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.dom4j.Element;
-
-import org.openqa.selenium.WebDriver;
 
 /**
  * @author Michael Hashimoto
@@ -68,14 +64,6 @@ public final class CommandLoggerHandler {
 
 	public static int getErrorLinkId() {
 		return _errorLinkId - 1;
-	}
-
-	public static void logClassCommandName(String classCommandName) {
-		LoggerElement dividerLineLoggerElement = _getDividerLineLoggerElement(
-			classCommandName);
-
-		_commandLogLoggerElement.addChildLoggerElement(
-			dividerLineLoggerElement);
 	}
 
 	public static void logExternalMethodCommand(
@@ -120,6 +108,16 @@ public final class CommandLoggerHandler {
 		catch (Throwable t) {
 			throw new PoshiRunnerLoggerException(t.getMessage(), t);
 		}
+	}
+
+	public static void logNamespacedClassCommandName(
+		String namespacedClassCommandName) {
+
+		LoggerElement dividerLineLoggerElement = _getDividerLineLoggerElement(
+			namespacedClassCommandName);
+
+		_commandLogLoggerElement.addChildLoggerElement(
+			dividerLineLoggerElement);
 	}
 
 	public static void logSeleniumCommand(
@@ -359,19 +357,21 @@ public final class CommandLoggerHandler {
 
 		sb.append(_getLineItemText("misc", "Running "));
 
-		String classCommandName = element.attributeValue("function");
+		String namespacedClassCommandName = element.attributeValue("function");
 
-		sb.append(_getLineItemText("command-name", classCommandName));
+		sb.append(_getLineItemText("command-name", namespacedClassCommandName));
 
-		String simpleClassCommandName =
-			PoshiRunnerGetterUtil.getSimpleClassCommandName(classCommandName);
+		String classCommandName =
+			PoshiRunnerGetterUtil.
+				getClassCommandNameFromNamespacedClassCommandName(
+					namespacedClassCommandName);
 
 		String className =
-			PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-				simpleClassCommandName);
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
+				classCommandName);
 
 		String namespace = PoshiRunnerStackTraceUtil.getCurrentNamespace(
-			classCommandName);
+			namespacedClassCommandName);
 
 		int functionLocatorCount = PoshiRunnerContext.getFunctionLocatorCount(
 			className, namespace);
@@ -627,17 +627,11 @@ public final class CommandLoggerHandler {
 		_functionLinkId++;
 	}
 
-	private static void _setHTMLSource() throws Exception {
-		WebDriver webDriver = WebDriverUtil.getWebDriver();
-
-		_htmlSource = webDriver.getPageSource();
-	}
-
 	private static void _takeScreenshot(String screenshotName, int errorLinkId)
 		throws Exception {
 
 		String testClassCommandName =
-			PoshiRunnerContext.getTestCaseCommandName();
+			PoshiRunnerContext.getTestCaseNamespacedClassCommandName();
 
 		testClassCommandName = StringUtil.replace(
 			testClassCommandName, "#", "_");
@@ -681,26 +675,11 @@ public final class CommandLoggerHandler {
 		}
 	}
 
-	private static void _writeWebPage(int errorLinkId) throws Exception {
-		String testClassCommandName =
-			PoshiRunnerContext.getTestCaseCommandName();
-
-		testClassCommandName = StringUtil.replace(
-			testClassCommandName, "#", "_");
-
-		WebDriverHelper.saveWebPage(
-			PoshiRunnerGetterUtil.getCanonicalPath(".") + "/test-results/" +
-				testClassCommandName + "/web-pages/index" + errorLinkId +
-					".html",
-			_htmlSource);
-	}
-
 	private static int _btnLinkId;
 	private static Element _commandElement;
 	private static LoggerElement _commandLogLoggerElement;
 	private static int _errorLinkId;
 	private static int _functionLinkId;
-	private static String _htmlSource;
 	private static LoggerElement _lineGroupLoggerElement;
 
 }

@@ -15,16 +15,17 @@
 package com.liferay.source.formatter.checks;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.SourceFormatterExcludes;
 import com.liferay.source.formatter.SourceFormatterMessage;
 import com.liferay.source.formatter.checks.util.SourceUtil;
+import com.liferay.source.formatter.util.CheckType;
 import com.liferay.source.formatter.util.FileUtil;
 import com.liferay.source.formatter.util.SourceFormatterUtil;
 
@@ -155,8 +156,8 @@ public abstract class BaseSourceCheck implements SourceCheck {
 
 		sourceFormatterMessages.add(
 			new SourceFormatterMessage(
-				fileName, message, "SourceCheck", clazz.getSimpleName(),
-				markdownFileName, lineCount));
+				fileName, message, CheckType.SOURCE_CHECK,
+				clazz.getSimpleName(), markdownFileName, lineCount));
 
 		_sourceFormatterMessagesMap.put(fileName, sourceFormatterMessages);
 	}

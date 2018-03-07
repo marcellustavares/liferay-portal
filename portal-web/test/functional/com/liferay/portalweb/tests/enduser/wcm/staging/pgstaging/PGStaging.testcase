@@ -533,7 +533,7 @@
 			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Staging Test Page" />
 			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Empty Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -618,6 +618,7 @@
 		<execute macro="Staging#gotoPublishToLive" />
 
 		<execute macro="Staging#configurePublishToLive">
+			<var name="checkContentNameList" value="Documents and Media" />
 			<var name="contentDeletion" value="true" />
 		</execute>
 
@@ -872,6 +873,7 @@
 
 		<execute macro="DMDocument#linkImage">
 			<var name="dmDocumentURL" value="${dmDocumentURL}" />
+			<var name="navTab" value="URL" />
 		</execute>
 
 		<execute macro="PortletEntry#publish" />
@@ -1006,7 +1008,7 @@
 			<var name="sitePagesVariationName" value="Test Site Pages Variation" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="Portlet#TITLE" value1="Web Content Display" />
+		<execute function="AssertElementNotPresent" locator1="Portlet#TITLE" />
 
 		<execute macro="Staging#changeSitePageVariationPG">
 			<var name="sitePagesVariationMenulistName" value="Test Site Pages Variation" />
@@ -1060,7 +1062,7 @@
 			<var name="pageVariationNameMenulistName" value="Main Variation" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="Portlet#TITLE" value1="Blogs" />
+		<execute function="AssertElementNotPresent" locator1="Portlet#TITLE" />
 
 		<execute macro="Staging#changePageVariationPG">
 			<var name="pageVariationName" value="Main Variation" />

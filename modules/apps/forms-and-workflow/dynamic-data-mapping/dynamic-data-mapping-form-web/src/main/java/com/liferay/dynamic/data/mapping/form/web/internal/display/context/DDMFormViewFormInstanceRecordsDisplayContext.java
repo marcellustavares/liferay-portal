@@ -14,9 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.form.web.internal.display.context;
 
+import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRenderer;
-import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormPortletKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.search.FormInstanceRecordSearch;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -29,6 +29,9 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalServic
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -41,11 +44,11 @@ import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Function;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -150,6 +153,24 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		return "list";
 	}
 
+	public List<NavigationItem> getNavigationItems() {
+		DDMFormInstance ddmFormInstance = getDDMFormInstance();
+
+		return new NavigationItemList() {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(true);
+						navigationItem.setHref(StringPool.BLANK);
+						navigationItem.setLabel(
+							HtmlUtil.escape(
+								ddmFormInstance.getName(
+									_renderRequest.getLocale())));
+					});
+			}
+		};
+	}
+
 	public String getOrderByCol() {
 		PortalPreferences portalPreferences =
 			PortletPreferencesFactoryUtil.getPortalPreferences(_renderRequest);
@@ -158,12 +179,12 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 
 		if (Validator.isNull(orderByCol)) {
 			orderByCol = portalPreferences.getValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
 				"view-entries-order-by-col", "modified-date");
 		}
 		else {
 			portalPreferences.setValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
 				"view-entries-order-by-col", orderByCol);
 		}
 
@@ -178,12 +199,12 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 
 		if (Validator.isNull(orderByType)) {
 			orderByType = portalPreferences.getValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
 				"view-entries-order-by-type", "asc");
 		}
 		else {
 			portalPreferences.setValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
 				"view-entries-order-by-type", orderByType);
 		}
 

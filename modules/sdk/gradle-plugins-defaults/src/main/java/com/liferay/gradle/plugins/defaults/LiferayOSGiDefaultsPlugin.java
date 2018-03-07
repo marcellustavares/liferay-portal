@@ -20,7 +20,6 @@ import aQute.bnd.version.Version;
 import com.liferay.gradle.plugins.LiferayBasePlugin;
 import com.liferay.gradle.plugins.LiferayOSGiPlugin;
 import com.liferay.gradle.plugins.baseline.BaselinePlugin;
-import com.liferay.gradle.plugins.baseline.BaselineTask;
 import com.liferay.gradle.plugins.cache.CacheExtension;
 import com.liferay.gradle.plugins.cache.CachePlugin;
 import com.liferay.gradle.plugins.cache.task.TaskCache;
@@ -32,6 +31,7 @@ import com.liferay.gradle.plugins.defaults.internal.PublishPluginDefaultsPlugin;
 import com.liferay.gradle.plugins.defaults.internal.WhipDefaultsPlugin;
 import com.liferay.gradle.plugins.defaults.internal.util.BackupFilesBuildAdapter;
 import com.liferay.gradle.plugins.defaults.internal.util.FileUtil;
+import com.liferay.gradle.plugins.defaults.internal.util.GitRepo;
 import com.liferay.gradle.plugins.defaults.internal.util.GitUtil;
 import com.liferay.gradle.plugins.defaults.internal.util.GradlePluginsDefaultsUtil;
 import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
@@ -301,7 +301,7 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 		final LiferayExtension liferayExtension = GradleUtil.getExtension(
 			project, LiferayExtension.class);
 
-		GitRepo gitRepo = _getGitRepo(project.getProjectDir());
+		final GitRepo gitRepo = GitRepo.getGitRepo(project.getProjectDir());
 		boolean privateProject = GradlePluginsDefaultsUtil.isPrivateProject(
 			project);
 		final boolean testProject = GradlePluginsDefaultsUtil.isTestProject(
@@ -449,7 +449,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 		_configureTaskTest(project);
 		_configureTaskTestIntegration(project);
 		_configureTaskTlddoc(project, portalRootDir);
-		_configureTasksBaseline(project);
 		_configureTasksCheckOSGiBundleState(project, liferayExtension);
 		_configureTasksFindBugs(project);
 		_configureTasksJavaCompile(project);
@@ -472,7 +471,7 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 				@Override
 				public void execute(JSTranspilerPlugin jsTranspilerPlugin) {
 					_configureConfigurationNoCrossRepoDependencies(
-						project,
+						project, gitRepo,
 						JSTranspilerPlugin.SOY_COMPILE_CONFIGURATION_NAME);
 				}
 
@@ -1294,7 +1293,8 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 						return content;
 					}
 
-					GitRepo contentGitRepo = _getGitRepo(file.getParentFile());
+					GitRepo contentGitRepo = GitRepo.getGitRepo(
+						file.getParentFile());
 
 					if ((contentGitRepo != null) && contentGitRepo.readOnly) {
 						return content;
@@ -1322,7 +1322,7 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 					String group, String replacement, String content,
 					File contentFile) {
 
-					GitRepo contentGitRepo = _getGitRepo(
+					GitRepo contentGitRepo = GitRepo.getGitRepo(
 						contentFile.getParentFile());
 
 					if ((contentGitRepo != null) && contentGitRepo.readOnly) {
@@ -2086,7 +2086,7 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 	}
 
 	private void _configureConfigurationNoCrossRepoDependencies(
-		final Project project, String name) {
+		final Project project, final GitRepo gitRepo, String name) {
 
 		Configuration configuration = GradleUtil.getConfiguration(
 			project, name);
@@ -2101,10 +2101,7 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 				public void execute(
 					ResolvableDependencies resolvableDependencies) {
 
-					File rootDir = GradleUtil.getRootDir(
-						project, _GIT_REPO_FILE_NAME);
-
-					if (rootDir == null) {
+					if (gitRepo == null) {
 						return;
 					}
 
@@ -2117,10 +2114,10 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 						Project dependencyProject =
 							projectDependency.getDependencyProject();
 
-						File dependencyRootDir = GradleUtil.getRootDir(
-							dependencyProject, _GIT_REPO_FILE_NAME);
+						GitRepo dependencyGitRepo = GitRepo.getGitRepo(
+							dependencyProject.getProjectDir());
 
-						if (!rootDir.equals(dependencyRootDir)) {
+						if (!gitRepo.dir.equals(dependencyGitRepo.dir)) {
 							throw new GradleException(
 								projectDependency + " in " + project +
 									" is not allowed to cross subrepository " +
@@ -2571,33 +2568,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 				portalTestConfiguration));
 	}
 
-	private void _configureTaskBaseline(BaselineTask baselineTask) {
-		Project project = baselineTask.getProject();
-
-		String reportLevel = GradleUtil.getProperty(
-			project, "baseline.jar.report.level", "standard");
-
-		boolean reportLevelIsDiff = reportLevel.equals("diff");
-		boolean reportLevelIsPersist = reportLevel.equals("persist");
-
-		if (reportLevelIsPersist && FileUtil.exists(project, "bnd.bnd")) {
-			baselineTask.setBndFile("bnd.bnd");
-		}
-
-		boolean reportDiff = false;
-
-		if (reportLevelIsDiff || reportLevelIsPersist) {
-			reportDiff = true;
-		}
-
-		baselineTask.setReportDiff(reportDiff);
-
-		boolean reportOnlyDirtyPackages = GradleUtil.getProperty(
-			project, "baseline.jar.report.only.dirty.packages", true);
-
-		baselineTask.setReportOnlyDirtyPackages(reportOnlyDirtyPackages);
-	}
-
 	private void _configureTaskBaselineSyncReleaseVersions(
 		Task task, final File versionOverrideFile) {
 
@@ -2887,10 +2857,26 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 	private void _configureTaskDeploy(
 		Project project, Copy deployDepenciesTask) {
 
-		Task deployTask = GradleUtil.getTask(
+		final Task deployTask = GradleUtil.getTask(
 			project, LiferayBasePlugin.DEPLOY_TASK_NAME);
 
 		deployTask.finalizedBy(deployDepenciesTask);
+
+		GradleUtil.withPlugin(
+			project, WSDDBuilderPlugin.class,
+			new Action<WSDDBuilderPlugin>() {
+
+				@Override
+				public void execute(WSDDBuilderPlugin wsddBuilderPlugin) {
+					if (FileUtil.exists(
+							deployTask.getProject(), ".lfrbuild-deploy-wsdd")) {
+
+						deployTask.dependsOn(
+							WSDDBuilderPlugin.BUILD_WSDD_TASK_NAME);
+					}
+				}
+
+			});
 	}
 
 	private void _configureTaskFindBugs(FindBugs findBugs) {
@@ -3194,21 +3180,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 					file);
 			}
 		}
-	}
-
-	private void _configureTasksBaseline(Project project) {
-		TaskContainer taskContainer = project.getTasks();
-
-		taskContainer.withType(
-			BaselineTask.class,
-			new Action<BaselineTask>() {
-
-				@Override
-				public void execute(BaselineTask baselineTask) {
-					_configureTaskBaseline(baselineTask);
-				}
-
-			});
 	}
 
 	private void _configureTasksCheckOSGiBundleState(
@@ -3582,34 +3553,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 		catch (IOException ioe) {
 			throw new UncheckedIOException(ioe);
 		}
-	}
-
-	private GitRepo _getGitRepo(File dir) {
-		dir = GradleUtil.getRootDir(dir, _GIT_REPO_FILE_NAME);
-
-		if (dir == null) {
-			return null;
-		}
-
-		String content;
-
-		try {
-			File file = new File(dir, _GIT_REPO_FILE_NAME);
-
-			content = new String(
-				Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-		}
-		catch (IOException ioe) {
-			throw new UncheckedIOException(ioe);
-		}
-
-		boolean readOnly = false;
-
-		if (content.contains("mode = pull")) {
-			readOnly = true;
-		}
-
-		return new GitRepo(dir, readOnly);
 	}
 
 	private File _getLibDir(Project project) {
@@ -4181,8 +4124,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 
 	private static final char _DEPENDENCY_KEY_SEPARATOR = '/';
 
-	private static final String _GIT_REPO_FILE_NAME = ".gitrepo";
-
 	private static final String _GROUP = "com.liferay";
 
 	private static final String _GROUP_PORTAL = "com.liferay.portal";
@@ -4230,18 +4171,6 @@ public class LiferayOSGiDefaultsPlugin implements Plugin<Project> {
 		_copyrightedExtensions.add("txt");
 		_copyrightedExtensions.add("vm");
 		_copyrightedExtensions.add("xml");
-	}
-
-	private static class GitRepo {
-
-		public GitRepo(File dir, boolean readOnly) {
-			this.dir = dir;
-			this.readOnly = readOnly;
-		}
-
-		public final File dir;
-		public final boolean readOnly;
-
 	}
 
 }

@@ -25,6 +25,7 @@ taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/flags" prefix="liferay-flags" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/rss" prefix="liferay-rss" %><%@
 taglib uri="http://liferay.com/tld/site" prefix="liferay-site" %><%@
 taglib uri="http://liferay.com/tld/soy" prefix="soy" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
@@ -45,11 +46,11 @@ page import="com.liferay.asset.kernel.model.ClassTypeField" %><%@
 page import="com.liferay.asset.kernel.model.ClassTypeReader" %><%@
 page import="com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil" %><%@
 page import="com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil" %><%@
+page import="com.liferay.asset.publisher.constants.AssetPublisherConstants" %><%@
+page import="com.liferay.asset.publisher.constants.AssetPublisherPortletKeys" %><%@
+page import="com.liferay.asset.publisher.constants.AssetPublisherWebKeys" %><%@
 page import="com.liferay.asset.publisher.web.configuration.AssetPublisherPortletInstanceConfiguration" %><%@
 page import="com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfiguration" %><%@
-page import="com.liferay.asset.publisher.web.constants.AssetPublisherConstants" %><%@
-page import="com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys" %><%@
-page import="com.liferay.asset.publisher.web.constants.AssetPublisherWebKeys" %><%@
 page import="com.liferay.asset.publisher.web.display.context.AssetEntryResult" %><%@
 page import="com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext" %><%@
 page import="com.liferay.asset.publisher.web.display.context.ItemSelectorViewDisplayContext" %><%@
@@ -106,7 +107,6 @@ page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
 page import="com.liferay.portal.kernel.util.MapUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
-page import="com.liferay.portal.kernel.util.RSSUtil" %><%@
 page import="com.liferay.portal.kernel.util.SetUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.TextFormatter" %><%@
@@ -114,6 +114,7 @@ page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearch" %><%@
+page import="com.liferay.rss.util.RSSUtil" %><%@
 page import="com.liferay.site.item.selector.criteria.SiteItemSelectorReturnType" %><%@
 page import="com.liferay.site.item.selector.criterion.SiteItemSelectorCriterion" %>
 

@@ -93,34 +93,6 @@ public class LayoutsAdminDisplayContext {
 			WebKeys.LAYOUT_DESCRIPTIONS, getLayoutDescriptions());
 	}
 
-	public String getAddLayoutURL() {
-		return getAddLayoutURL(LayoutConstants.DEFAULT_PLID, isPrivatePages());
-	}
-
-	public String getAddLayoutURL(long selPlid, Boolean privateLayout) {
-		PortletURL addLayoutURL = _liferayPortletResponse.createRenderURL();
-
-		addLayoutURL.setParameter("mvcPath", "/add_layout.jsp");
-		addLayoutURL.setParameter("redirect", _themeDisplay.getURLCurrent());
-		addLayoutURL.setParameter("backURL", _themeDisplay.getURLCurrent());
-		addLayoutURL.setParameter("groupId", String.valueOf(getSelGroupId()));
-
-		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
-
-		addLayoutURL.setParameter("portletResource", portletDisplay.getId());
-
-		if (selPlid >= LayoutConstants.DEFAULT_PLID) {
-			addLayoutURL.setParameter("selPlid", String.valueOf(selPlid));
-		}
-
-		if (privateLayout != null) {
-			addLayoutURL.setParameter(
-				"privateLayout", String.valueOf(privateLayout));
-		}
-
-		return addLayoutURL.toString();
-	}
-
 	public JSONArray getBreadcrumbEntriesJSONArray() throws PortalException {
 		JSONArray breadcrumbEntriesJSONArray =
 			JSONFactoryUtil.createJSONArray();
@@ -204,6 +176,24 @@ public class LayoutsAdminDisplayContext {
 		return copyApplicationsURL.toString();
 	}
 
+	public String getCopyLayoutURL(Layout layout) {
+		PortletURL copyLayoutURL = _liferayPortletResponse.createActionURL();
+
+		copyLayoutURL.setParameter(
+			ActionRequest.ACTION_NAME, "/layout/copy_layout");
+		copyLayoutURL.setParameter("groupId", String.valueOf(getGroupId()));
+		copyLayoutURL.setParameter(
+			"liveGroupId", String.valueOf(getLiveGroupId()));
+		copyLayoutURL.setParameter(
+			"stagingGroupId", String.valueOf(getStagingGroupId()));
+		copyLayoutURL.setParameter(
+			"privateLayout", String.valueOf(isPrivateLayout()));
+		copyLayoutURL.setParameter(
+			"layoutId", String.valueOf(layout.getLayoutId()));
+
+		return copyLayoutURL.toString();
+	}
+
 	public String getDeleteLayoutURL(Layout layout) {
 		PortletURL deleteLayoutURL = _liferayPortletResponse.createActionURL();
 
@@ -232,7 +222,24 @@ public class LayoutsAdminDisplayContext {
 	}
 
 	public String getEditLayoutURL(Layout layout) throws PortalException {
-		return PortalUtil.getLayoutFullURL(layout, _themeDisplay);
+		if (!Objects.equals(layout.getType(), "content")) {
+			return PortalUtil.getLayoutFullURL(layout, _themeDisplay);
+		}
+
+		PortletURL editLayoutURL = _liferayPortletResponse.createRenderURL();
+
+		editLayoutURL.setParameter("mvcPath", "/edit_content_layout.jsp");
+		editLayoutURL.setParameter("backURL", _themeDisplay.getURLCurrent());
+
+		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
+
+		editLayoutURL.setParameter("portletResource", portletDisplay.getId());
+
+		editLayoutURL.setParameter(
+			"groupId", String.valueOf(layout.getGroupId()));
+		editLayoutURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
+
+		return editLayoutURL.toString();
 	}
 
 	public Group getGroup() {
@@ -450,36 +457,20 @@ public class LayoutsAdminDisplayContext {
 		return orphanPortletsURL.toString();
 	}
 
-	public String getPagesName() {
-		if (_pagesName != null) {
-			return _pagesName;
+	public long getParentLayoutId() {
+		if (_parentLayoutId != null) {
+			return _parentLayoutId;
 		}
 
-		Group liveGroup = getLiveGroup();
+		_parentLayoutId = Long.valueOf(0);
 
-		if (liveGroup.isLayoutPrototype() || liveGroup.isLayoutSetPrototype() ||
-			liveGroup.isUserGroup()) {
+		Layout layout = getSelLayout();
 
-			_pagesName = "pages";
-		}
-		else if (isPrivateLayout()) {
-			if (liveGroup.isUser()) {
-				_pagesName = "my-dashboard";
-			}
-			else {
-				_pagesName = "private-pages";
-			}
-		}
-		else {
-			if (liveGroup.isUser()) {
-				_pagesName = "my-profile";
-			}
-			else {
-				_pagesName = "public-pages";
-			}
+		if (layout != null) {
+			_parentLayoutId = layout.getLayoutId();
 		}
 
-		return _pagesName;
+		return _parentLayoutId;
 	}
 
 	public String getPath(Layout layout, Locale locale) throws PortalException {
@@ -562,6 +553,20 @@ public class LayoutsAdminDisplayContext {
 	public String getSelectLayoutPageTemplateEntryURL(
 		long layoutPageTemplateCollectionId) {
 
+		return getSelectLayoutPageTemplateEntryURL(
+			layoutPageTemplateCollectionId, LayoutConstants.DEFAULT_PLID);
+	}
+
+	public String getSelectLayoutPageTemplateEntryURL(
+		long layoutPageTemplateCollectionId, long selPlid) {
+
+		return getSelectLayoutPageTemplateEntryURL(
+			layoutPageTemplateCollectionId, selPlid, "basic-pages");
+	}
+
+	public String getSelectLayoutPageTemplateEntryURL(
+		long layoutPageTemplateCollectionId, long selPlid, String selectedTab) {
+
 		PortletURL selectLayoutPageTemplateEntryURL =
 			_liferayPortletResponse.createRenderURL();
 
@@ -574,7 +579,7 @@ public class LayoutsAdminDisplayContext {
 		selectLayoutPageTemplateEntryURL.setParameter(
 			"groupId", String.valueOf(getSelGroupId()));
 		selectLayoutPageTemplateEntryURL.setParameter(
-			"selPlid", String.valueOf(getSelPlid()));
+			"selPlid", String.valueOf(selPlid));
 		selectLayoutPageTemplateEntryURL.setParameter(
 			"privateLayout", String.valueOf(isPrivatePages()));
 
@@ -582,6 +587,10 @@ public class LayoutsAdminDisplayContext {
 			selectLayoutPageTemplateEntryURL.setParameter(
 				"layoutPageTemplateCollectionId",
 				String.valueOf(layoutPageTemplateCollectionId));
+		}
+		else if (Validator.isNotNull(selectedTab)) {
+			selectLayoutPageTemplateEntryURL.setParameter(
+				"selectedTab", selectedTab);
 		}
 
 		return selectLayoutPageTemplateEntryURL.toString();
@@ -802,6 +811,18 @@ public class LayoutsAdminDisplayContext {
 			_themeDisplay.getPermissionChecker(), layout, ActionKeys.UPDATE);
 	}
 
+	public boolean showCopyLayoutAction(Layout layout) throws PortalException {
+		if (!isShowAddRootLayoutButton()) {
+			return false;
+		}
+
+		if (!layout.isTypePortlet()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public boolean showDeleteAction(Layout layout) throws PortalException {
 		if (StagingUtil.isIncomplete(layout)) {
 			return false;
@@ -874,11 +895,15 @@ public class LayoutsAdminDisplayContext {
 		if (showAddChildPageAction(layout)) {
 			jsonObject.put(
 				"addURL",
-				getAddLayoutURL(layout.getPlid(), layout.isPrivateLayout()));
+				getSelectLayoutPageTemplateEntryURL(0, layout.getPlid()));
 		}
 
 		if (showConfigureAction(layout)) {
 			jsonObject.put("configureURL", getConfigureLayoutURL(layout));
+		}
+
+		if (showCopyLayoutAction(layout)) {
+			jsonObject.put("copyLayoutURL", getCopyLayoutURL(layout));
 		}
 
 		if (showCopyApplicationsAction(layout)) {
@@ -903,9 +928,7 @@ public class LayoutsAdminDisplayContext {
 		return jsonObject;
 	}
 
-	private JSONObject _getBreadcrumbEntryJSONObject(long plid, String title)
-		throws PortalException {
-
+	private JSONObject _getBreadcrumbEntryJSONObject(long plid, String title) {
 		JSONObject breadcrumbEntryJSONObject =
 			JSONFactoryUtil.createJSONObject();
 
@@ -956,7 +979,7 @@ public class LayoutsAdminDisplayContext {
 		JSONArray layoutsJSONArray = JSONFactoryUtil.createJSONArray();
 
 		List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
-			getGroupId(), isPrivateLayout(), parentLayoutId, false,
+			getSelGroupId(), isPrivatePages(), parentLayoutId, false,
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS, _getOrderByComparator());
 
 		for (Layout layout : layouts) {
@@ -967,7 +990,7 @@ public class LayoutsAdminDisplayContext {
 			layoutJSONObject.put("active", _isActive(layout.getPlid()));
 
 			int childLayoutsCount = LayoutLocalServiceUtil.getLayoutsCount(
-				getGroup(), isPrivateLayout(), layout.getLayoutId());
+				getGroup(), isPrivatePages(), layout.getLayoutId());
 
 			layoutJSONObject.put("hasChild", childLayoutsCount > 0);
 
@@ -1039,7 +1062,7 @@ public class LayoutsAdminDisplayContext {
 	private String[] _navigationKeys;
 	private String _orderByCol;
 	private String _orderByType;
-	private String _pagesName;
+	private Long _parentLayoutId;
 	private Boolean _privateLayout;
 	private String _redirect;
 	private String _rootNodeName;

@@ -17,7 +17,6 @@
 <%
 String p_u_i_d = ParamUtil.getString(request, "p_u_i_d");
 int step = ParamUtil.getInteger(request, "step", 1);
-long siteGroupId = ParamUtil.getLong(request, "groupId", themeDisplay.getSiteGroupId());
 String displayStyle = ParamUtil.getString(request, "displayStyle", "list");
 String eventName = ParamUtil.getString(request, "eventName", liferayPortletResponse.getNamespace() + "selectSiteRole");
 String syncEntitiesEventName = ParamUtil.getString(request, "syncEntitiesEventName", liferayPortletResponse.getNamespace() + "syncSiteRoles");
@@ -27,7 +26,6 @@ User selUser = PortalUtil.getSelectedUser(request);
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("mvcPath", "/select_role.jsp");
-portletURL.setParameter("groupId", String.valueOf(siteGroupId));
 portletURL.setParameter("roleType", String.valueOf(RoleConstants.TYPE_SITE));
 
 if (selUser != null) {
@@ -58,17 +56,9 @@ if (step == 1) {
 portletURL.setParameter("step", String.valueOf(step));
 %>
 
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="site-roles" selected="<%= true %>" />
-	</aui:nav>
-
-	<aui:nav-bar-search>
-		<aui:form action="<%= portletURL.toString() %>" name="searchFm">
-			<liferay-ui:input-search markupView="lexicon" />
-		</aui:form>
-	</aui:nav-bar-search>
-</aui:nav-bar>
+<clay:navigation-bar
+	items='<%= roleDisplayContext.getSelectRoleNavigationItems("site-roles") %>'
+/>
 
 <liferay-frontend:management-bar>
 	<liferay-frontend:management-bar-buttons>
@@ -77,6 +67,12 @@ portletURL.setParameter("step", String.valueOf(step));
 				navigationKeys='<%= new String[] {"all"} %>'
 				portletURL="<%= PortletURLUtil.clone(portletURL, liferayPortletResponse) %>"
 			/>
+
+			<li>
+				<aui:form action="<%= portletURL.toString() %>" name="searchFm">
+					<liferay-ui:input-search markupView="lexicon" />
+				</aui:form>
+			</li>
 		</liferay-frontend:management-bar-filters>
 
 		<liferay-frontend:management-bar-display-buttons

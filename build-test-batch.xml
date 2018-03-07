@@ -1949,6 +1949,44 @@ app.server.type=@{app.server.type}]]></echo>
 		<antcall target="functional-bundle-wildfly-mysql56-jdk8" />
 	</target>
 
+	<target name="functional-bundle-tomcat-db2105-jdk8">
+		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
+
+		<run-functional-test
+			app.server.type="tomcat"
+			database.type="db2"
+			setup.proxy="false"
+			test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
+			test.fix.pack.base.url="${test.fix.pack.base.url}"
+			test.license.xml.url="${test.license.xml.url}"
+			test.plugin.zip.url="${test.plugin.zip.url}"
+			test.plugins.war.zip.url="${test.plugins.war.zip.url}"
+			test.portal.bundle.version="${test.portal.bundle.version}"
+			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
+			test.portal.lpkg.name="${test.portal.lpkg.name}"
+			test.sql.zip.url="${test.sql.zip.url}"
+		/>
+	</target>
+
+	<target name="functional-bundle-tomcat-hypersonic20-jdk8">
+		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
+
+		<run-functional-test
+			app.server.type="tomcat"
+			database.type="hypersonic"
+			setup.proxy="false"
+			test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
+			test.fix.pack.base.url="${test.fix.pack.base.url}"
+			test.license.xml.url="${test.license.xml.url}"
+			test.plugin.zip.url="${test.plugin.zip.url}"
+			test.plugins.war.zip.url="${test.plugins.war.zip.url}"
+			test.portal.bundle.version="${test.portal.bundle.version}"
+			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
+			test.portal.lpkg.name="${test.portal.lpkg.name}"
+			test.sql.zip.url="${test.sql.zip.url}"
+		/>
+	</target>
+
 	<target name="functional-bundle-tomcat-mariadb100-jdk8">
 		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
 
@@ -2187,8 +2225,16 @@ app.server.type=@{app.server.type}]]></echo>
 		<run-functional-test app.server.type="wildfly" database.type="mariadb" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-tomcat80-db2105-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="db2" />
+	</target>
+
 	<target name="functional-tomcat80-hypersonic20-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="hypersonic" />
+	</target>
+
+	<target name="functional-tomcat80-mariadb100-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="mariadb" />
 	</target>
 
 	<target name="functional-tomcat80-mysql55-jdk8">
@@ -2201,6 +2247,10 @@ app.server.type=@{app.server.type}]]></echo>
 
 	<target name="functional-tomcat80-mysql56-jdk8-quarantine">
 		<antcall target="functional-tomcat80-mysql56-jdk8" />
+	</target>
+
+	<target name="functional-tomcat80-oracle121-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="oracle" />
 	</target>
 
 	<target name="functional-tomcat80-postgresql94-jdk8">
@@ -3032,10 +3082,6 @@ ${output.content}</echo>
 	<target name="service-builder-jdk8">
 		<run-batch-test>
 			<test-action>
-				<gradle-execute dir="modules/util/portal-tools-service-builder" task="deploy">
-					<arg value="clean" />
-				</gradle-execute>
-
 				<record action="start" name="${project.dir}/build.services.output.txt" />
 
 				<ant dir="portal-impl" target="build-services" />
@@ -3095,6 +3141,24 @@ information. Make sure to commit in all build services results.
 		</run-batch-test>
 	</target>
 
+	<target name="source-format-current-branch-jdk8">
+		<run-batch-test>
+			<test-action>
+				<antcall target="compile" />
+
+				<ant dir="portal-impl" target="format-source-all">
+					<property name="format.current.branch" value="true" />
+					<property name="show.documentation" value="false" />
+					<property name="source.auto.fix" value="false" />
+					<property name="source.fail.on.error" value="true" />
+					<property name="source.print.errors" value="false" />
+					<property name="source.throw.exception" value="true" />
+					<property name="source.use.properties" value="false" />
+				</ant>
+			</test-action>
+		</run-batch-test>
+	</target>
+
 	<target name="source-format-jdk8">
 		<run-batch-test>
 			<test-action>
@@ -3118,7 +3182,7 @@ information. Make sure to commit in all build services results.
 					<property name="source.auto.fix" value="false" />
 					<property name="source.fail.on.error" value="true" />
 					<property if:true="${liferay.releng.public}" name="source.formatter.excludes" value="modules/private/**" />
-					<property name="source.print.errors" value="true" />
+					<property name="source.print.errors" value="false" />
 					<property name="source.throw.exception" value="true" />
 					<property name="source.use.properties" value="false" />
 				</ant>
@@ -3333,7 +3397,7 @@ information. Make sure to commit in all build services results.
 		<echo file="create-header.sql">use master
 dump transaction master with no_log
 go
-alter database master on master=500
+disk resize name="master", size="500m"
 go
 drop database lportal
 go

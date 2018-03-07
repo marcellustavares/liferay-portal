@@ -15,6 +15,7 @@
 package com.liferay.portlet;
 
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
@@ -24,7 +25,6 @@ import com.liferay.portal.kernel.portlet.Route;
 import com.liferay.portal.kernel.portlet.Router;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
@@ -55,8 +55,9 @@ public class FriendlyURLMapperTrackerImpl implements FriendlyURLMapperTracker {
 
 		Filter filter = registry.getFilter(
 			StringBundler.concat(
-				"(&(javax.portlet.name=", portlet.getPortletId(),
-				")(objectClass=", FriendlyURLMapper.class.getName(), "))"));
+				"(&(|(javax.portlet.name=", portlet.getPortletId(),
+				")(javax.portlet.name=", portlet.getPortletName(),
+				"))(objectClass=", FriendlyURLMapper.class.getName(), "))"));
 
 		_serviceTracker = registry.trackServices(
 			filter, new FriendlyURLMapperServiceTrackerCustomizer());

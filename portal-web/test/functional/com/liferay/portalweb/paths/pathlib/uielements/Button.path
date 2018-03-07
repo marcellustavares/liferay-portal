@@ -165,7 +165,7 @@
 </tr>
 <tr>
 	<td>BROWSE</td>
-	<td>//input[contains(@id,'fileName')]</td>
+	<td>//input[contains(@id,'file')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -196,11 +196,6 @@
 <tr>
 	<td>CHANGE</td>
 	<td>//button[contains(.,'Change')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>CHANGE_LOGO</td>
-	<td>//button[contains(@class,'edit-logo')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -459,6 +454,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>LOCALIZATION</td>
+	<td>//div[label[contains(.,'${key_fieldName}')]]//div[contains(@class,'localized')]//button</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MERGE</td>
 	<td>//button[contains(.,'Merge')]</td>
 	<td></td>
@@ -604,6 +604,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>REPORT</td>
+	<td>//button[contains(.,'Report')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RESET_CHANGES</td>
 	<td>//button[contains(.,'Reset Changes')]</td>
 	<td></td>
@@ -724,6 +729,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SEND_PASSWORD_RESET_LINK</td>
+	<td>//button[contains(.,'Send Password Reset Link')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SHARE</td>
 	<td>//button[contains(.,'Share')]</td>
 	<td></td>
@@ -755,7 +765,7 @@
 </tr>
 <tr>
 	<td>MODAL_CONTENT_SUBMIT</td>
-	<td>//div[@class='modal-content']//button[@type='submit']</td>
+	<td>//div[@class='modal-content']//button[contains(.,'Submit')]</td>
 	<td></td>
 </tr>
 <tr>

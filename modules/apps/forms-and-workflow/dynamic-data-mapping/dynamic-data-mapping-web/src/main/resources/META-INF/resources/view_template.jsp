@@ -19,7 +19,7 @@
 <%
 String tabs1 = ParamUtil.getString(request, "tabs1", "templates");
 
-long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName));
+long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
 long classNameId = ParamUtil.getLong(request, "classNameId");
 long classPK = ParamUtil.getLong(request, "classPK");
 
@@ -71,12 +71,12 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 	<portlet:param name="mvcPath" value="/view_template.jsp" />
 </portlet:renderURL>
 
-<liferay-util:include page="/template_search_bar.jsp" servletContext="<%= application %>">
+<liferay-util:include page="/template_navigation_bar.jsp" servletContext="<%= application %>" />
+
+<liferay-util:include page="/template_toolbar.jsp" servletContext="<%= application %>">
 	<liferay-util:param name="tabs1" value="<%= tabs1 %>" />
 	<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-	<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
-	<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
-	<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
+	<liferay-util:param name="searchContainerId" value="ddmTemplates" />
 </liferay-util:include>
 
 <c:if test="<%= showHeader %>">
@@ -102,10 +102,6 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 </c:if>
 
 <aui:form action="<%= viewTemplateURL.toString() %>" method="post" name="fm">
-	<liferay-util:include page="/template_toolbar.jsp" servletContext="<%= application %>">
-		<liferay-util:param name="searchContainerId" value="ddmTemplates" />
-	</liferay-util:include>
-
 	<aui:input name="tabs1" type="hidden" value="<%= tabs1 %>" />
 	<aui:input name="groupId" type="hidden" value="<%= String.valueOf(groupId) %>" />
 	<aui:input name="classNameId" type="hidden" value="<%= String.valueOf(classNameId) %>" />
@@ -255,12 +251,3 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 		</liferay-ui:search-container>
 	</div>
 </aui:form>
-
-<c:if test="<%= ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) %>">
-	<liferay-util:include page="/template_add_buttons.jsp" servletContext="<%= application %>">
-		<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-		<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
-		<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
-		<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
-	</liferay-util:include>
-</c:if>

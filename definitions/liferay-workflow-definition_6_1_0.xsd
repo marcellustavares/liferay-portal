@@ -130,6 +130,13 @@
 					<xs:sequence>
 						<xs:element name="script" type="xs:string" />
 						<xs:element name="script-language" type="script-language-type" />
+						<xs:element minOccurs="0" name="task-timers">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element maxOccurs="unbounded" name="task-timer" type="task-timer-complex-type" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
 						<xs:element ref="transitions" />
 					</xs:sequence>
 				</xs:extension>
@@ -330,8 +337,28 @@
 	</xs:group>
 	<xs:group name="task-timer-actions-group">
 		<xs:choice>
-			<xs:element name="timer-action" type="action-complex-type" />
-			<xs:element name="timer-notification" type="notification-complex-type" />
+			<xs:element name="timer-action">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="action-complex-type">
+							<xs:sequence>
+								<xs:element name="execution-type" type="task-execution-type" />
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="timer-notification">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="notification-complex-type">
+							<xs:sequence>
+								<xs:element name="execution-type" type="task-execution-type" />
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element minOccurs="0" name="reassignments">
 				<xs:complexType>
 					<xs:choice>

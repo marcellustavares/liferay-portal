@@ -9,6 +9,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="fragmentCollectionKey" type="String" />
 		<field name="name" type="String">
 			<validator name="required" />
 		</field>
@@ -25,6 +26,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="fragmentCollectionId" type="long" />
+		<field name="fragmentEntryKey" type="String" />
 		<field name="name" type="String">
 			<validator name="required" />
 		</field>
@@ -43,11 +45,24 @@
 		<field name="statusByUserName" type="String" />
 		<field name="statusDate" type="Date" />
 	</model>
-	<model name="com.liferay.fragment.model.FragmentEntryInstanceLink">
-		<field name="fragmentEntryInstanceLinkId" type="long" />
+	<model name="com.liferay.fragment.model.FragmentEntryLink">
+		<field name="fragmentEntryLinkId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="fragmentEntryId" type="long" />
-		<field name="layoutPageTemplateEntryId" type="long" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="css" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
+		<field name="html" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
+		<field name="js" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
+		<field name="editableValues" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
 		<field name="position" type="int" />
 	</model>
 </model-hints>

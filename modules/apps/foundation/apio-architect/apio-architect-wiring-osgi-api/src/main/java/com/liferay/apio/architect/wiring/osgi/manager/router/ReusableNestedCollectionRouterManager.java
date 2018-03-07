@@ -38,7 +38,7 @@ public interface ReusableNestedCollectionRouterManager {
 	 * @param  name the reusable nested collection resource's name
 	 * @return the nested collection routes
 	 */
-	public <T> Optional<NestedCollectionRoutes<T>>
+	public <T, S> Optional<NestedCollectionRoutes<T, S>>
 		getNestedCollectionRoutesOptional(String name);
 
 }

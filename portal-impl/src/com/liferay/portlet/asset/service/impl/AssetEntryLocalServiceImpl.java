@@ -27,6 +27,7 @@ import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.asset.kernel.validator.AssetEntryValidator;
 import com.liferay.asset.kernel.validator.AssetEntryValidatorExclusionRule;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -50,7 +51,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.asset.service.base.AssetEntryLocalServiceBaseImpl;
@@ -146,6 +146,11 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 	}
 
 	@Override
+	public AssetEntry fetchEntry(long classNameId, long classPK) {
+		return assetEntryPersistence.fetchByC_C(classNameId, classPK);
+	}
+
+	@Override
 	public AssetEntry fetchEntry(long groupId, String classUuid) {
 		return assetEntryPersistence.fetchByG_CU(groupId, classUuid);
 	}
@@ -154,7 +159,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 	public AssetEntry fetchEntry(String className, long classPK) {
 		long classNameId = classNameLocalService.getClassNameId(className);
 
-		return assetEntryPersistence.fetchByC_C(classNameId, classPK);
+		return assetEntryLocalService.fetchEntry(classNameId, classPK);
 	}
 
 	@Override
@@ -749,15 +754,6 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			entry.setPriority(priority.doubleValue());
 		}
 
-		// Categories
-
-		if (categoryIds != null) {
-			categoryIds = checkCategories(className, classPK, categoryIds);
-
-			assetEntryPersistence.setAssetCategories(
-				entry.getEntryId(), categoryIds);
-		}
-
 		// Tags
 
 		if ((tagNames != null) && (!entry.isNew() || (tagNames.length > 0))) {
@@ -837,7 +833,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			Double priority)
 		throws PortalException {
 
-		return updateEntry(
+		return assetEntryLocalService.updateEntry(
 			userId, groupId, createDate, modifiedDate, className, classPK,
 			classUuid, classTypeId, categoryIds, tagNames, true, visible,
 			startDate, endDate, null, expirationDate, mimeType, title,
@@ -868,7 +864,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			priorityDouble = priority.doubleValue();
 		}
 
-		return updateEntry(
+		return assetEntryLocalService.updateEntry(
 			userId, groupId, createDate, modifiedDate, className, classPK,
 			classUuid, classTypeId, categoryIds, tagNames, true, visible,
 			startDate, endDate, null, expirationDate, mimeType, title,
@@ -888,7 +884,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			classNameId, classPK);
 
 		if (entry != null) {
-			return updateEntry(
+			return assetEntryLocalService.updateEntry(
 				userId, groupId, entry.getCreateDate(), entry.getModifiedDate(),
 				className, classPK, entry.getClassUuid(),
 				entry.getClassTypeId(), categoryIds, tagNames,
@@ -900,7 +896,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 				entry.getWidth(), entry.getPriority());
 		}
 
-		return updateEntry(
+		return assetEntryLocalService.updateEntry(
 			userId, groupId, null, null, className, classPK, null, 0,
 			categoryIds, tagNames, true, true, null, null, null, null, null,
 			null, null, null, null, null, 0, 0, (Double)null);
@@ -916,7 +912,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			String className, long classPK, Date publishDate, boolean visible)
 		throws PortalException {
 
-		return updateEntry(
+		return assetEntryLocalService.updateEntry(
 			className, classPK, publishDate, null, true, visible);
 	}
 
@@ -931,7 +927,7 @@ public class AssetEntryLocalServiceImpl extends AssetEntryLocalServiceBaseImpl {
 			Date expirationDate, boolean visible)
 		throws PortalException {
 
-		return updateEntry(
+		return assetEntryLocalService.updateEntry(
 			className, classPK, publishDate, expirationDate, true, visible);
 	}
 

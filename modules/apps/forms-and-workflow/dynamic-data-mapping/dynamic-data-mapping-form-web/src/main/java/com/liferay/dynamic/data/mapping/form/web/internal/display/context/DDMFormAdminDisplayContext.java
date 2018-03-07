@@ -15,12 +15,12 @@
 package com.liferay.dynamic.data.mapping.form.web.internal.display.context;
 
 import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
+import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.form.web.configuration.DDMFormWebConfiguration;
-import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormPortletKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormWebKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.display.context.util.DDMFormAdminRequestHelper;
 import com.liferay.dynamic.data.mapping.form.web.internal.instance.lifecycle.AddDefaultSharedFormLayoutPortalInstanceLifecycleListener;
@@ -44,12 +44,16 @@ import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.dynamic.data.mapping.util.comparator.DDMFormInstanceCreateDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.DDMFormInstanceModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.DDMFormInstanceNameComparator;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -68,7 +72,6 @@ import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
@@ -381,6 +384,36 @@ public class DDMFormAdminDisplayContext {
 		return sb.toString();
 	}
 
+	public List<NavigationItem> getNavigationItems() {
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(
+			_renderRequest);
+
+		String currentTab = ParamUtil.getString(request, "currentTab", "forms");
+
+		return new NavigationItemList() {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(currentTab.equals("forms"));
+						navigationItem.setHref(
+							getPortletURL(), "currentTab", "forms");
+						navigationItem.setLabel(
+							LanguageUtil.get(request, "forms"));
+					});
+
+				add(
+					navigationItem -> {
+						navigationItem.setActive(
+							currentTab.equals("element-set"));
+						navigationItem.setHref(
+							getPortletURL(), "currentTab", "element-set");
+						navigationItem.setLabel(
+							LanguageUtil.get(request, "element-sets"));
+					});
+			}
+		};
+	}
+
 	public String getOrderByCol() {
 		return ParamUtil.getString(_renderRequest, "orderByCol", "create-date");
 	}
@@ -557,31 +590,41 @@ public class DDMFormAdminDisplayContext {
 		return isShowAddButton();
 	}
 
-	public boolean isShowCopyURLFormInstanceIcon(DDMFormInstance formInstance) {
+	public boolean isShowCopyURLFormInstanceIcon(DDMFormInstance formInstance)
+		throws PortalException {
+
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
 			ActionKeys.VIEW);
 	}
 
-	public boolean isShowDeleteFormInstanceIcon(DDMFormInstance formInstance) {
+	public boolean isShowDeleteFormInstanceIcon(DDMFormInstance formInstance)
+		throws PortalException {
+
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
 			ActionKeys.DELETE);
 	}
 
-	public boolean isShowEditFormInstanceIcon(DDMFormInstance formInstance) {
+	public boolean isShowEditFormInstanceIcon(DDMFormInstance formInstance)
+		throws PortalException {
+
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
 			ActionKeys.UPDATE);
 	}
 
-	public boolean isShowExportFormInstanceIcon(DDMFormInstance formInstance) {
+	public boolean isShowExportFormInstanceIcon(DDMFormInstance formInstance)
+		throws PortalException {
+
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
 			ActionKeys.VIEW);
 	}
 
-	public boolean isShowPermissionsIcon(DDMFormInstance formInstance) {
+	public boolean isShowPermissionsIcon(DDMFormInstance formInstance)
+		throws PortalException {
+
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
 			ActionKeys.PERMISSIONS);
@@ -600,7 +643,8 @@ public class DDMFormAdminDisplayContext {
 	}
 
 	public boolean isShowViewEntriesFormInstanceIcon(
-		DDMFormInstance formInstance) {
+			DDMFormInstance formInstance)
+		throws PortalException {
 
 		return DDMFormInstancePermission.contains(
 			formAdminRequestHelper.getPermissionChecker(), formInstance,
@@ -679,13 +723,13 @@ public class DDMFormAdminDisplayContext {
 
 		if (Validator.isNull(displayStyle)) {
 			displayStyle = portalPreferences.getValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
-				"display-style", formWebConfiguration.defaultDisplayView());
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN, "display-style",
+				formWebConfiguration.defaultDisplayView());
 		}
 		else if (ArrayUtil.contains(displayViews, displayStyle)) {
 			portalPreferences.setValue(
-				DDMFormPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
-				"display-style", displayStyle);
+				DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN, "display-style",
+				displayStyle);
 		}
 
 		if (!ArrayUtil.contains(displayViews, displayStyle)) {

@@ -12,7 +12,6 @@ dependencies {
 	provided group: "com.liferay", name: "com.liferay.osgi.service.tracker.collections", version: "2.0.0"
 	provided group: "com.liferay", name: "com.liferay.petra.lang", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.petra.string", version: "1.0.0"
-	provided group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
 	provided group: "com.liferay", name: "com.liferay.portal.upgrade", version: "2.0.0"
 	provided group: "com.liferay", name: "com.liferay.registry.api", version: "1.0.0"
 	provided group: "com.liferay", name: "com.liferay.upload.api", version: "1.0.0"
@@ -27,10 +26,15 @@ dependencies {
 	provided project(":apps:collaboration:document-library:document-library-api")
 	provided project(":apps:collaboration:flags:flags-taglib")
 	provided project(":apps:collaboration:message-boards:message-boards-api")
+	provided project(":apps:collaboration:message-boards:message-boards-service")
 	provided project(":apps:collaboration:subscription:subscription-api")
 	provided project(":apps:foundation:captcha:captcha-api")
+	provided project(":apps:foundation:frontend-taglib:frontend-taglib-clay")
+	provided project(":apps:static:portal-configuration:portal-configuration-metatype-api")
 	provided project(":apps:web-experience:asset:asset-api")
 	provided project(":apps:web-experience:asset:asset-taglib")
+	provided project(":apps:web-experience:rss:rss-api")
+	provided project(":apps:web-experience:rss:rss-taglib")
 	provided project(":apps:web-experience:trash:trash-api")
 	provided project(":apps:web-experience:trash:trash-taglib")
 }

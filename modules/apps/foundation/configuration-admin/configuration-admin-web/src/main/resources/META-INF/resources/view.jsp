@@ -39,7 +39,7 @@ if (keywords != null) {
 
 <clay:navigation-bar
 	inverted="<%= true %>"
-	items="<%= 
+	items="<%=
 		new JSPNavigationItemList(pageContext) {
 			{
 				List<String> configurationCategories = (List<String>)request.getAttribute(ConfigurationAdminWebKeys.CONFIGURATION_CATEGORIES);
@@ -49,7 +49,7 @@ if (keywords != null) {
 						add(
 							navigationItem -> {
 								navigationItem.setActive(curConfigurationCategory.equals(configurationCategory));
-								navigationItem.setHref(renderResponse.createRenderURL(), "configurationCategory", "curConfigurationCategory");
+								navigationItem.setHref(renderResponse.createRenderURL(), "configurationCategory", curConfigurationCategory);
 								navigationItem.setLabel(LanguageUtil.get(request, curConfigurationCategory));
 							});
 					}

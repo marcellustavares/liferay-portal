@@ -44,6 +44,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Knowledge Base Display Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -134,6 +142,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Blogs Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Blogs Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -155,7 +171,7 @@
 		</execute>
 
 		<execute macro="Blogs#enableSocialBookmarkSites">
-			<var name="socialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
+			<var name="enableSocialBookmarkSites" value="AddThis,Delicious,Digg,Evernote,LinkedIn,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -172,14 +188,18 @@
 		</execute>
 
 		<execute macro="Blogs#disableSocialBookmarkSites">
-			<var name="socialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
+			<var name="disableSocialBookmarkSites" value="Twitter,Facebook,AddThis,Delicious,Digg,Evernote,LinkedIn,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />
 		</execute>
 
-		<execute macro="BlogsEntry#viewDisabledSocialBookmarkSites" />
+		<for list="Twitter,Facebook,AddThis,Delicious,Digg,Evernote,LinkedIn,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" param="socialBookmarkSites" >
+			<execute macro="BlogsEntry#viewDisabledSocialBookmarkSites">
+				<var name="socialBookmarkSite" value="${socialBookmarkSites}" />
+			</execute>
+		</for>
 	</command>
 
 	<command name="ViewKBArticleWithAllSocialBookmarkSites" priority="3">
@@ -195,6 +215,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Knowledge Base Display Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Knowledge Base Display Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">

@@ -1,20 +1,19 @@
+Bundle-Activator: com.liferay.wsrp.internal.activator.WSRPServiceBundleActivator
 Bundle-Name: Liferay WSRP Service
 Bundle-SymbolicName: com.liferay.wsrp.service
-Bundle-Version: 1.1.10
-Export-Package:\
-	com.liferay.wsrp.model.impl,\
-	com.liferay.wsrp.util
+Bundle-Version: 2.0.1
 Import-Package:\
 	!junit.framework.*,\
 	\
 	!junit.textui.*,\
+	\
 	*
 Liferay-Releng-Module-Group-Description:
 Liferay-Releng-Module-Group-Title:
-Liferay-Require-SchemaVersion: 1.0.11
+Liferay-Require-SchemaVersion: 1.2.0
 Liferay-Service: true
 Web-ContextPath: /wsrp-service
 -includeresource:\
+	META-INF/=@oasis.names.tc.wsrp-[0-9]*.jar!/wsdl/*,\
 	@com.liferay.util.java-*.jar!/com/liferay/util/axis/*.class,\
-	@com.liferay.util.java-*.jar!/com/liferay/util/portlet/PortletProps.class,\
-	META-INF/=@oasis.names.tc.wsrp-[0-9]*.jar!/wsdl/*
+	@com.liferay.util.java-*.jar!/com/liferay/util/portlet/PortletProps.class

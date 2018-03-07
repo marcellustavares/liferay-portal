@@ -18,13 +18,13 @@ import com.liferay.announcements.constants.AnnouncementsPortletKeys;
 import com.liferay.announcements.kernel.model.AnnouncementsFlag;
 import com.liferay.announcements.uad.constants.AnnouncementsUADConstants;
 import com.liferay.announcements.uad.entity.AnnouncementsFlagUADEntity;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
 import com.liferay.user.associated.data.entity.UADEntity;
 import com.liferay.user.associated.data.exception.UADEntityException;
@@ -34,8 +34,6 @@ import com.liferay.user.associated.data.exporter.UADEntityExporter;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
-import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -77,8 +75,8 @@ public class AnnouncementsFlagUADEntityExporter extends BaseUADEntityExporter {
 	}
 
 	@Override
-	protected List<UADEntity> getUADEntities(long userId) {
-		return _uadEntityAggregator.getUADEntities(userId);
+	protected UADEntityAggregator getUADEntityAggregator() {
+		return _uadEntityAggregator;
 	}
 
 	private AnnouncementsFlag _getAnnouncementsFlag(UADEntity uadEntity)

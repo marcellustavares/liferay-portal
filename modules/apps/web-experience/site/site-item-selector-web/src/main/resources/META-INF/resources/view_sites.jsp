@@ -42,6 +42,12 @@ GroupSearch groupSearch = siteItemSelectorViewDisplayContext.getGroupSearch();
 					portletURL="<%= siteItemSelectorViewDisplayContext.getPortletURL() %>"
 				/>
 			</c:if>
+
+			<c:if test="<%= siteItemSelectorViewDisplayContext.isShowSearch() %>">
+				<li>
+					<liferay-item-selector:search />
+				</li>
+			</c:if>
 		</liferay-frontend:management-bar-filters>
 
 		<liferay-frontend:management-bar-display-buttons

@@ -255,6 +255,10 @@
 			<finder-column name="formInstanceVersion" />
 			<finder-column name="status" />
 		</finder>
+
+		<!-- References -->
+
+		<reference entity="DDMFormInstanceRecord" package-path="com.liferay.dynamic.data.mapping" />
 	</entity>
 	<entity local-service="true" name="DDMFormInstanceVersion" remote-service="true">
 
@@ -746,6 +750,7 @@
 		<exception>TemplateDuplicateTemplateKey</exception>
 		<exception>TemplateName</exception>
 		<exception>TemplateScript</exception>
+		<exception>TemplateSmallImageContent</exception>
 		<exception>TemplateSmallImageName</exception>
 		<exception>TemplateSmallImageSize</exception>
 	</exceptions>

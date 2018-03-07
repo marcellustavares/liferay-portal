@@ -25,6 +25,7 @@ import com.liferay.petra.process.ProcessCallable;
 import com.liferay.petra.process.ProcessChannel;
 import com.liferay.petra.process.ProcessException;
 import com.liferay.petra.process.ProcessExecutor;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.fabric.InputResource;
 import com.liferay.portal.fabric.OutputResource;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -41,7 +42,6 @@ import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemEnv;
 import com.liferay.portal.kernel.util.ThreadUtil;
@@ -378,7 +378,12 @@ public class VideoProcessorImpl
 				}
 			}
 			catch (Exception e) {
-				_log.error(e, e);
+				_log.error(
+					StringBundler.concat(
+						"Unable to process ",
+						String.valueOf(fileVersion.getFileVersionId()), " ",
+						fileVersion.getTitle(), "."),
+					e);
 			}
 
 			storeThumbnailImages(fileVersion, thumbnailTempFile);
@@ -548,7 +553,12 @@ public class VideoProcessorImpl
 			}
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			_log.error(
+				StringBundler.concat(
+					"Unable to process ",
+					String.valueOf(fileVersion.getFileVersionId()), " ",
+					fileVersion.getTitle(), "."),
+				e);
 		}
 
 		addFileToStore(

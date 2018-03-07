@@ -187,7 +187,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS">
 			<var name="key_rowEntry" value="WC Template Name" />
@@ -494,6 +494,7 @@
 
 		<execute macro="WebContent#uploadAudio">
 			<var name="dmDocumentURL" value="${dmDocumentURL}" />
+			<var name="navTab" value="URL" />
 		</execute>
 
 		<execute macro="PortletEntry#publish" />
@@ -587,7 +588,7 @@
 				<var name="structureName" value="Content List" />
 			</execute>
 
-			<execute macro="WebContentTemplates#save" />
+			<execute macro="DDLDataDefinition#save" />
 		</for>
 
 		<for list="Carousel Display,Thumbnail Display,Content List Display" param="templateName">
@@ -961,6 +962,7 @@
 	</command>
 
 	<command name="AddLocalizedWebContentViaSourceEditor" priority="5">
+		<property name="test.name.skip.portal.instance" value="WebcontentUsecase#AddLocalizedWebContentViaSourceEditor" />
 		<property name="testray.component.names" value="Training,Web Content Administration" />
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -1016,7 +1018,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Japanese (Japan)" />
-			<var name="locale" value="ja-JP" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -1058,7 +1059,7 @@
 		</execute>
 
 		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Space Program Academy of Continuing Education Dare to Dream out of this world Space Program 大学生涯教育 地球から、宇宙の果てへ" />
+			<var name="webContentContent" value="Space Program 大学生涯教育 地球から、宇宙の果てへ" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1077,7 +1078,7 @@
 			<var name="webContentContent" value="Space Program Academy of Continuing Education Dare to Dream out of this world" />
 		</execute>
 
-		<execute function="AssertTextNotPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="Space Program Academy of Continuing Education Dare to Dream out of this world Space Program 大学生涯教育 地球から、宇宙の果てへ" />
+		<execute function="AssertTextNotPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="Space Program 大学生涯教育 地球から、宇宙の果てへ" />
 	</command>
 
 	<command ignore="true" name="AddVideoViaWebContent" priority="4">
@@ -1132,6 +1133,7 @@
 
 		<execute macro="WebContent#uploadVideo">
 			<var name="dmDocumentURL" value="${dmDocumentURL}" />
+			<var name="navTab" value="URL" />
 		</execute>
 
 		<execute macro="PortletEntry#publish" />
@@ -1416,7 +1418,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1507,7 +1509,7 @@
 			<var name="structureName" value="Global Structure" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="WebContentTemplates#addRoleViewPermissions">
 			<var name="roles" value="Power User" />
@@ -1613,10 +1615,54 @@
 		</execute>
 	</command>
 
-	<command name="DeleteTemplateAndStructureWithReferencedWebContent" priority="4">
-		<property name="testray.component.names" value="Web Content Administration" />
+	<command name="AddWebContentWithPortletURL" priority="5">
+		<description message="This is a use case for LPS-70386." />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Web Content" />
+		</execute>
+
+		<execute macro="WebContentNavigator#gotoAddCP" />
+
+		<execute macro="WebContent#addCP">
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+
+		<execute macro="AlloyEditor#addSourceContent">
+			<var name="content"><![CDATA[<p><span><a href="http://localhost:8080/web/guest/home/-/testportlet">text</a></span></p>]]></var>
+		</execute>
+
+		<execute macro="PortletEntry#publish" />
+
+		<execute macro="WebContent#viewTitle">
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
 
 		<execute macro="Navigator#openURL" />
+
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Web Content Display" />
+		</execute>
+
+		<execute macro="WebContentDisplayPortlet#selectWebContent">
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute function="Click" locator1="WCD#WEB_CONTENT_TEXT_LINK_URL">
+			<var name="key_contentText" value="text" />
+		</execute>
+
+		<execute macro="Portlet#viewTitle">
+			<var name="portletName" value="testportlet" />
+		</execute>
+	</command>
+
+	<command name="DeleteTemplateAndStructureWithReferencedWebContent" priority="4">
+		<property name="testray.component.names" value="Web Content Administration" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
@@ -1641,8 +1687,6 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -1661,7 +1705,7 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1782,7 +1826,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1838,8 +1882,6 @@
 	<command name="EditContentWithTitleAndAllFieldsNull" priority="5">
 		<property name="testray.component.names" value="Training,Web Content Administration" />
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -1865,8 +1907,6 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -1887,7 +1927,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -1985,7 +2025,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2053,8 +2093,6 @@
 	<command name="EditWebContentTemplate" priority="4">
 		<property name="testray.component.names" value="Web Content Administration" />
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -2078,8 +2116,6 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -2099,7 +2135,7 @@
 			<var name="templateFieldNames" value="Text" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2121,7 +2157,7 @@
 			<var name="templateFieldNames" value="Text" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -2816,7 +2852,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="ProductMenu#gotoSite">
 			<var name="site" value="Child SiteName" />
@@ -3094,7 +3130,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
@@ -3142,7 +3178,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Spanish (Spain)" />
-			<var name="locale" value="es-ES" />
 		</execute>
 
 		<execute macro="FormFields#editText">
@@ -3156,7 +3191,7 @@
 		</execute>
 
 		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="en-US" />
+			<var name="language" value="English (United States)" />
 		</execute>
 
 		<execute macro="FormFields#viewTextValue">
@@ -3170,7 +3205,7 @@
 		</execute>
 
 		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="es-ES" />
+			<var name="language" value="Spanish (Spain)" />
 		</execute>
 
 		<execute macro="FormFields#viewTextValue">
@@ -3357,8 +3392,8 @@
 			<var name="panelHeading" value="Details" />
 		</execute>
 
-		<execute macro="WebContentStructures#addDescription">
-			<var name="structureDescription" value="WC Structure Description" />
+		<execute macro="PortletEntry#inputDescriptionTextInput">
+			<var name="description" value="WC Structure Description" />
 		</execute>
 
 		<execute macro="WebContentStructures#addLocalization">
@@ -3378,8 +3413,6 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="Navigator#openURL" />
-
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
 			<var name="panel" value="Site Administration" />
@@ -3394,7 +3427,7 @@
 			<var name="templateName" value="WC Template Name" />
 		</execute>
 
-		<execute macro="PortletEntry#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="WebContentTemplates#localizeTemplateName">
 			<var name="localization1Name" value="nom de la template de wc" />
@@ -3410,7 +3443,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -3443,7 +3476,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="French (France)" />
-			<var name="locale" value="fr-FR" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -3489,7 +3521,7 @@
 		<execute macro="IFrame#selectEditAssetFrame" />
 
 		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="fr-FR" />
+			<var name="language" value="France (Francaise)" />
 		</execute>
 
 		<execute macro="WebContent#viewCP">

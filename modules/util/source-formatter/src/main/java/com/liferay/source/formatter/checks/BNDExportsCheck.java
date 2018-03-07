@@ -15,9 +15,9 @@
 package com.liferay.source.formatter.checks;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.checks.util.BNDSourceUtil;
@@ -85,7 +85,7 @@ public class BNDExportsCheck extends BaseFileCheck {
 		}
 
 		if (fileName.endsWith("/test-bnd.bnd") ||
-			absolutePath.contains("-api/") ||
+			absolutePath.contains("-api/") || absolutePath.contains("-spi/") ||
 			absolutePath.contains("-taglib/") ||
 			absolutePath.contains("-test-util/") ||
 			!content.contains("Export-Package")) {

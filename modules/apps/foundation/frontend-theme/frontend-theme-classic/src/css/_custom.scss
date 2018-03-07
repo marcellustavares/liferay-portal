@@ -1,4 +1,5 @@
 @import "components/navbars";
+@import "components/widget";
 @import "portlet/portlet_decorators";
 @import "portlet/portlet_hello_world";
 
@@ -67,5 +68,26 @@ header {
 		@include media-query(null, $screen-xs-max) {
 			display: none;
 		}
+	}
+}
+
+.info-panel {
+	@include md {
+		bottom: 0;
+		position: absolute;
+		top: 0;
+
+		> .sidenav-menu {
+			bottom: 0;
+			position: absolute;
+			right: 0 !important;
+			top: 0;
+		}
+	}
+}
+
+.btn-group + .info-panel {
+	@include md {
+		top: auto;
 	}
 }

@@ -5,6 +5,7 @@
 				layoutcustomizationsettings: {
 					base: MODULE_PATH + '/',
 					combine: Liferay.AUI.getCombine(),
+					filter: Liferay.AUI.getFilterConfig(),
 					modules: {
 						'liferay-layout-customization-settings': {
 							path: 'js/layout_customization_settings.js',
@@ -14,7 +15,7 @@
 								'aui-overlay-mask-deprecated',
 								'liferay-portlet-base'
 							]
-						},
+						}
 					},
 					root: MODULE_PATH + '/'
 				}

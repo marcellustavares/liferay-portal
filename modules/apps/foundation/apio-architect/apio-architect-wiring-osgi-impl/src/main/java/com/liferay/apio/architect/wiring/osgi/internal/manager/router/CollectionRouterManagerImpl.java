@@ -14,24 +14,27 @@
 
 package com.liferay.apio.architect.wiring.osgi.internal.manager.router;
 
-import com.liferay.apio.architect.alias.ProvideFunction;
-import com.liferay.apio.architect.error.ApioDeveloperError.MustHaveValidGenericType;
+import static com.liferay.apio.architect.alias.ProvideFunction.curry;
+import static com.liferay.apio.architect.unsafe.Unsafe.unsafeCast;
+import static com.liferay.apio.architect.wiring.osgi.internal.manager.cache.ManagerCache.INSTANCE;
+
+import com.liferay.apio.architect.logger.ApioLogger;
 import com.liferay.apio.architect.router.CollectionRouter;
 import com.liferay.apio.architect.routes.CollectionRoutes;
 import com.liferay.apio.architect.routes.CollectionRoutes.Builder;
-import com.liferay.apio.architect.wiring.osgi.internal.manager.base.BaseManager;
+import com.liferay.apio.architect.routes.ItemRoutes;
+import com.liferay.apio.architect.wiring.osgi.internal.manager.base.ClassNameBaseManager;
 import com.liferay.apio.architect.wiring.osgi.manager.ProviderManager;
-import com.liferay.apio.architect.wiring.osgi.manager.representable.ModelClassManager;
 import com.liferay.apio.architect.wiring.osgi.manager.representable.NameManager;
 import com.liferay.apio.architect.wiring.osgi.manager.router.CollectionRouterManager;
+import com.liferay.apio.architect.wiring.osgi.manager.router.ItemRouterManager;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -40,71 +43,83 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true)
 public class CollectionRouterManagerImpl
-	extends BaseManager<CollectionRouter, CollectionRoutes>
+	extends ClassNameBaseManager<CollectionRouter>
 	implements CollectionRouterManager {
 
 	public CollectionRouterManagerImpl() {
-		super(CollectionRouter.class);
+		super(CollectionRouter.class, 1);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> Optional<CollectionRoutes<T>> getCollectionRoutesOptional(
 		String name) {
 
-		Optional<Class<T>> optional = _modelClassManager.getModelClassOptional(
-			name);
-
-		return optional.map(
-			Class::getName
-		).flatMap(
-			this::getServiceOptional
-		).map(
-			routes -> (CollectionRoutes<T>)routes
-		);
+		return INSTANCE.getCollectionRoutesOptional(
+			name, this::_computeCollectionRoutes);
 	}
 
 	@Override
 	public List<String> getResourceNames() {
-		Set<String> keys = getServiceTrackerMap().keySet();
-
-		Stream<String> stream = keys.stream();
-
-		return stream.map(
-			className -> _nameManager.getNameOptional(className)
-		).filter(
-			Optional::isPresent
-		).map(
-			Optional::get
-		).collect(
-			Collectors.toList()
-		);
+		return INSTANCE.getRootResourceNames(this::_computeCollectionRoutes);
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	protected CollectionRoutes map(
-		CollectionRouter collectionRouter,
-		ServiceReference<CollectionRouter> serviceReference,
-		Class<?> modelClass) {
+	private void _computeCollectionRoutes() {
+		Stream<String> stream = getKeyStream();
 
-		ProvideFunction provideFunction =
-			httpServletRequest -> clazz -> _providerManager.provideOptional(
-				clazz, httpServletRequest);
+		stream.forEach(
+			className -> {
+				Optional<String> nameOptional = _nameManager.getNameOptional(
+					className);
 
-		Optional<String> optional = _nameManager.getNameOptional(
-			modelClass.getName());
+				if (!nameOptional.isPresent()) {
+					_apioLogger.warning(
+						"Unable to find a name for class name " + className);
 
-		String name = optional.orElseThrow(
-			() -> new MustHaveValidGenericType(modelClass));
+					return;
+				}
 
-		Builder builder = new Builder<>(modelClass, name, provideFunction);
+				String name = nameOptional.get();
 
-		return collectionRouter.collectionRoutes(builder);
+				CollectionRouter<Object, ?> collectionRouter = unsafeCast(
+					serviceTrackerMap.getService(className));
+
+				Set<String> neededProviders = new TreeSet<>();
+
+				Builder<Object> builder = new Builder<>(
+					name, curry(_providerManager::provideMandatory),
+					neededProviders::add);
+
+				List<String> missingProviders =
+					_providerManager.getMissingProviders(neededProviders);
+
+				if (!missingProviders.isEmpty()) {
+					_apioLogger.warning(
+						"Missing providers for classes: " + missingProviders);
+
+					return;
+				}
+
+				Optional<ItemRoutes<Object, Object>> optional =
+					_itemRouterManager.getItemRoutesOptional(name);
+
+				if (!optional.isPresent()) {
+					_apioLogger.warning(
+						"Missing item router for resource with name " + name);
+
+					return;
+				}
+
+				INSTANCE.putRootResourceName(name);
+				INSTANCE.putCollectionRoutes(
+					name, collectionRouter.collectionRoutes(builder));
+			});
 	}
 
 	@Reference
-	private ModelClassManager _modelClassManager;
+	private ApioLogger _apioLogger;
+
+	@Reference
+	private ItemRouterManager _itemRouterManager;
 
 	@Reference
 	private NameManager _nameManager;

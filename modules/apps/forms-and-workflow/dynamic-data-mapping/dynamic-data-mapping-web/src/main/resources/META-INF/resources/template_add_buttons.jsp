@@ -19,7 +19,7 @@
 <%
 String toolbarItem = ParamUtil.getString(request, "toolbarItem");
 
-long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName));
+long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
 long classNameId = ParamUtil.getLong(request, "classNameId");
 long classPK = ParamUtil.getLong(request, "classPK");
 long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
@@ -27,7 +27,7 @@ long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
 String message = "add";
 %>
 
-<liferay-frontend:add-menu>
+<liferay-frontend:add-menu inline="<%= true %>">
 	<c:choose>
 		<c:when test="<%= classNameId == PortalUtil.getClassNameId(DDMStructure.class) %>">
 			<c:if test="<%= DDMTemplatePermission.containsAddTemplatePermission(permissionChecker, groupId, classNameId, scopeClassNameId) && (Validator.isNull(templateTypeValue) || templateTypeValue.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) %>">

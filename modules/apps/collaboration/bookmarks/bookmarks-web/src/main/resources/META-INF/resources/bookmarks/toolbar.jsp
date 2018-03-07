@@ -19,7 +19,7 @@
 <%
 String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 
-int total = GetterUtil.getInteger((String)request.getAttribute("view.jsp-total"));
+long folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folderId"));
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
@@ -34,7 +34,7 @@ portletURL.setParameter("tag", StringPool.BLANK);
 %>
 
 <liferay-frontend:management-bar
-	disabled="<%= total == 0 %>"
+	disabled="<%= BookmarksFolderServiceUtil.getFoldersAndEntriesCount(scopeGroupId, folderId) <= 0 %>"
 	includeCheckBox="<%= true %>"
 	searchContainerId="<%= searchContainerId %>"
 >
@@ -45,6 +45,10 @@ portletURL.setParameter("tag", StringPool.BLANK);
 		/>
 
 		<liferay-util:include page="/bookmarks/display_style_buttons.jsp" servletContext="<%= application %>" />
+
+		<c:if test="<%= portletName.equals(BookmarksPortletKeys.BOOKMARKS_ADMIN) %>">
+			<liferay-util:include page="/bookmarks/add_button.jsp" servletContext="<%= application %>" />
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-filters>
@@ -67,11 +71,6 @@ portletURL.setParameter("tag", StringPool.BLANK);
 
 		<c:if test="<%= bookmarksGroupServiceOverriddenConfiguration.showFoldersSearch() %>">
 			<li>
-
-				<%
-				long folderId = GetterUtil.getLong((String)request.getAttribute("view.jsp-folderId"));
-				%>
-
 				<liferay-portlet:renderURL varImpl="searchURL">
 					<portlet:param name="mvcRenderCommandName" value="/bookmarks/view" />
 					<portlet:param name="redirect" value="<%= currentURL %>" />

@@ -21,10 +21,10 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 
 FileEntry fileEntry = (FileEntry)row.getObject();
 
-MBMessage message = MBMessageAttachmentsUtil.getMessage(fileEntry.getFileEntryId());
+MBMessage message = MBMessageLocalServiceUtil.getFileEntryMessage(fileEntry.getFileEntryId());
 %>
 
-<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>">
 	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, scopeGroupId, message.getCategoryId(), ActionKeys.ADD_FILE) %>">
 		<portlet:actionURL name="/message_boards/edit_message_attachments" var="restoreEntryURL">
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />

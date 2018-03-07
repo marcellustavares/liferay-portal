@@ -23,7 +23,7 @@ boolean urlIsNotNull = Validator.isNotNull(url);
 <liferay-util:buffer var="linkContent">
 	<c:choose>
 		<c:when test="<%= Validator.isNotNull(icon) %>">
-			<aui:icon image="<%= icon %>" markupView="<%= markupView %>" />
+			<aui:icon cssClass="<%= iconCssClass %>" image="<%= icon %>" markupView="<%= markupView %>" />
 		</c:when>
 		<c:when test="<%= auiImage %>">
 			<aui:icon image="<%= image.substring(_AUI_PATH.length()) %>" />
@@ -91,7 +91,7 @@ boolean urlIsNotNull = Validator.isNotNull(url);
 	<c:otherwise>
 		<span class="<%= cssClass %>"
 			<c:if test="<%= !label && Validator.isNotNull(message) %>">
-				title="<liferay-ui:message key="<%= HtmlUtil.stripHtml(message) %>" />"
+				title="<liferay-ui:message escapeAttribute="<%= true %>" key="<%= HtmlUtil.stripHtml(message) %>" />"
 			</c:if>
 		>
 			<c:choose>

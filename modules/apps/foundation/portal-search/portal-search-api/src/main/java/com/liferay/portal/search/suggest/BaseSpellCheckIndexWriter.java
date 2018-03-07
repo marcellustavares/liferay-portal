@@ -15,6 +15,7 @@
 package com.liferay.portal.search.suggest;
 
 import com.liferay.petra.nio.CharsetEncoderUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -33,7 +34,6 @@ import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.InputStream;
@@ -203,13 +203,14 @@ public abstract class BaseSpellCheckIndexWriter
 	}
 
 	protected String getUID(
-		long companyId, String languageId, String word, String... parameters) {
+		long companyId, String keywordFieldName, String languageId, String word,
+		String... parameters) {
 
 		StringBundler uidSB = new StringBundler(5);
 
 		uidSB.append(String.valueOf(companyId));
 		uidSB.append(StringPool.UNDERLINE);
-		uidSB.append(Field.SPELL_CHECK_WORD);
+		uidSB.append(keywordFieldName);
 		uidSB.append(StringPool.UNDERLINE);
 
 		int length = 5;

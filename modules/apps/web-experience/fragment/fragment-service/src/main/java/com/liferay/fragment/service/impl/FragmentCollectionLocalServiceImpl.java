@@ -14,21 +14,23 @@
 
 package com.liferay.fragment.service.impl;
 
-import com.liferay.fragment.exception.DuplicateFragmentCollectionException;
+import com.liferay.fragment.exception.DuplicateFragmentCollectionKeyException;
 import com.liferay.fragment.exception.FragmentCollectionNameException;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.base.FragmentCollectionLocalServiceBaseImpl;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Jürgen Kappler
@@ -42,11 +44,32 @@ public class FragmentCollectionLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		return addFragmentCollection(
+			userId, groupId, StringPool.BLANK, name, description,
+			serviceContext);
+	}
+
+	@Override
+	public FragmentCollection addFragmentCollection(
+			long userId, long groupId, String fragmentCollectionKey,
+			String name, String description, ServiceContext serviceContext)
+		throws PortalException {
+
 		// Fragment collection
 
 		User user = userLocalService.getUser(userId);
 
-		validate(groupId, name);
+		if (Validator.isNull(fragmentCollectionKey)) {
+			fragmentCollectionKey = String.valueOf(
+				counterLocalService.increment());
+		}
+		else {
+			fragmentCollectionKey = _getFragmentCollectionKey(
+				fragmentCollectionKey);
+		}
+
+		validate(name);
+		validateFragmentCollectionKey(groupId, fragmentCollectionKey);
 
 		long fragmentCollectionId = counterLocalService.increment();
 
@@ -61,6 +84,7 @@ public class FragmentCollectionLocalServiceImpl
 			serviceContext.getCreateDate(new Date()));
 		fragmentCollection.setModifiedDate(
 			serviceContext.getModifiedDate(new Date()));
+		fragmentCollection.setFragmentCollectionKey(fragmentCollectionKey);
 		fragmentCollection.setName(name);
 		fragmentCollection.setDescription(description);
 
@@ -124,18 +148,24 @@ public class FragmentCollectionLocalServiceImpl
 	}
 
 	@Override
+	public FragmentCollection fetchFragmentCollection(
+		long groupId, String fragmentCollectionKey) {
+
+		return fragmentCollectionPersistence.fetchByG_FCK(
+			groupId, _getFragmentCollectionKey(fragmentCollectionKey));
+	}
+
+	@Override
 	public List<FragmentCollection> getFragmentCollections(
-			long groupId, int start, int end)
-		throws PortalException {
+		long groupId, int start, int end) {
 
 		return getFragmentCollections(groupId, start, end, null);
 	}
 
 	@Override
 	public List<FragmentCollection> getFragmentCollections(
-			long groupId, int start, int end,
-			OrderByComparator<FragmentCollection> orderByComparator)
-		throws PortalException {
+		long groupId, int start, int end,
+		OrderByComparator<FragmentCollection> orderByComparator) {
 
 		return fragmentCollectionPersistence.findByGroupId(
 			groupId, start, end, orderByComparator);
@@ -156,6 +186,14 @@ public class FragmentCollectionLocalServiceImpl
 	}
 
 	@Override
+	public String[] getTempFileNames(
+			long userId, long groupId, String folderName)
+		throws PortalException {
+
+		return TempFileEntryUtil.getTempFileNames(groupId, userId, folderName);
+	}
+
+	@Override
 	public FragmentCollection updateFragmentCollection(
 			long fragmentCollectionId, String name, String description)
 		throws PortalException {
@@ -164,9 +202,7 @@ public class FragmentCollectionLocalServiceImpl
 			fragmentCollectionPersistence.findByPrimaryKey(
 				fragmentCollectionId);
 
-		if (!Objects.equals(fragmentCollection.getName(), name)) {
-			validate(fragmentCollection.getGroupId(), name);
-		}
+		validate(name);
 
 		fragmentCollection.setModifiedDate(new Date());
 		fragmentCollection.setName(name);
@@ -177,18 +213,36 @@ public class FragmentCollectionLocalServiceImpl
 		return fragmentCollection;
 	}
 
-	protected void validate(long groupId, String name) throws PortalException {
+	protected void validate(String name) throws PortalException {
 		if (Validator.isNull(name)) {
-			throw new FragmentCollectionNameException(
-				"Name must not be null for group " + groupId);
+			throw new FragmentCollectionNameException("Name must not be null");
 		}
+	}
+
+	protected void validateFragmentCollectionKey(
+			long groupId, String fragmentCollectionKey)
+		throws PortalException {
+
+		fragmentCollectionKey = _getFragmentCollectionKey(
+			fragmentCollectionKey);
 
 		FragmentCollection fragmentCollection =
-			fragmentCollectionPersistence.fetchByG_N(groupId, name);
+			fragmentCollectionPersistence.fetchByG_FCK(
+				groupId, fragmentCollectionKey);
 
 		if (fragmentCollection != null) {
-			throw new DuplicateFragmentCollectionException(name);
+			throw new DuplicateFragmentCollectionKeyException();
 		}
+	}
+
+	private String _getFragmentCollectionKey(String fragmentCollectionKey) {
+		if (fragmentCollectionKey != null) {
+			fragmentCollectionKey = fragmentCollectionKey.trim();
+
+			return StringUtil.toUpperCase(fragmentCollectionKey);
+		}
+
+		return StringPool.BLANK;
 	}
 
 }

@@ -93,7 +93,7 @@
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Report Display" />
+			<var name="portletName" value="Reports Display" />
 		</execute>
 
 		<execute macro="ReportsDisplayPortlet#viewReportEntry">
@@ -238,7 +238,9 @@ Thanks,<br/>
 			<var name="subject" value="reports_admin_template_source_sample_class_name.pdf" />
 		</execute>
 
-		<execute function="Open" locator1="${portalURL}" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}" />
+		</execute>
 
 		<execute macro="Navigator#openURL" />
 
@@ -291,7 +293,7 @@ Thanks,<br/>
 		</execute>
 
 		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Report Display" />
+			<var name="portletName" value="Reports Display" />
 		</execute>
 
 		<execute macro="ReportsDisplayPortlet#viewReportEntry">

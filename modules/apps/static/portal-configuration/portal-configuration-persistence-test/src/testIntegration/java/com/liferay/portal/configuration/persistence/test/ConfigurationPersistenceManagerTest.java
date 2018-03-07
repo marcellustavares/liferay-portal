@@ -16,8 +16,7 @@ package com.liferay.portal.configuration.persistence.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.osgi.util.ServiceTrackerFactory;
-import com.liferay.portal.configuration.persistence.ConfigurationPersistenceManager;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.petra.string.StringPool;
 
 import java.io.IOException;
 
@@ -71,9 +70,12 @@ public class ConfigurationPersistenceManagerTest {
 
 	@Test
 	public void testConfigurationPersistenceManager() throws Exception {
+		Class<?> clazz = _persistenceManager.getClass();
+
 		Assert.assertEquals(
-			ConfigurationPersistenceManager.class,
-			_persistenceManager.getClass());
+			"com.liferay.portal.configuration.persistence.internal." +
+				"ConfigurationPersistenceManager",
+			clazz.getName());
 	}
 
 	@Test

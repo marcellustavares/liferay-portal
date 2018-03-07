@@ -17,9 +17,9 @@
 	{@param required: bool}
 	{@param showAsSwitcher: bool}
 	{@param showLabel: bool}
-	{@param? tip: string}
-	{@param visible: bool}
 	{@param value: ?}
+	{@param visible: bool}
+	{@param? tip: string}
 
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-checkbox" data-fieldname="{$name}">
 		{if $showAsSwitcher}
@@ -36,7 +36,6 @@
 				<span aria-hidden="true" class="toggle-switch-bar">
 					<span class="toggle-switch-handle"></span>
 				</span>
-
 				<span class="toggle-switch-text toggle-switch-text-right">
 					{if $showLabel}
 						{$label}
@@ -48,22 +47,31 @@
 				</span>
 			</label>
 
-			<p class="liferay-ddm-form-field-tip">{$tip ? $tip: ''}</p>
+			{if $tip}
+				<span class="form-text">{$tip}</span>
+			{/if}
 		{else}
-			<div class="checkbox">
+			<div class="custom-control custom-checkbox">
 				{if $showLabel}
 					<label for="{$name}">
 				{/if}
 
 				<input {if $value}checked{/if}
 					{if $readOnly}disabled{/if}
+					class="custom-control-input"
 					id="{$name}"
 					name="{$name}"
 					type="checkbox"
 					value="true"
 				/>
 
-				{if $showLabel} {$label} {/if}
+				{if $showLabel}
+					<span class="custom-control-label">
+						<span class="custom-control-label-text">
+							{$label}
+						</span>
+					</span>
+				{/if}
 
 				{if $showLabel}
 						{if $required}
@@ -74,7 +82,9 @@
 			</div>
 
 			{if $showLabel}
-				<p class="liferay-ddm-form-field-tip">{$tip ? $tip: ''}</p>
+				{if $tip}
+					<span class="form-text">{$tip}</span>
+				{/if}
 			{/if}
 		{/if}
 	</div>

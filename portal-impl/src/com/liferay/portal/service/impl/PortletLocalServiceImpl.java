@@ -19,6 +19,7 @@ import com.liferay.expando.kernel.model.CustomAttributesDisplay;
 import com.liferay.petra.content.ContentUtil;
 import com.liferay.petra.lang.ClassLoaderPool;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.application.type.ApplicationType;
 import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.configuration.Configuration;
@@ -61,7 +62,6 @@ import com.liferay.portal.kernel.scheduler.SchedulerEntryImpl;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.Trigger;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -75,7 +75,6 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -103,6 +102,7 @@ import com.liferay.registry.RegistryUtil;
 import com.liferay.registry.ServiceReference;
 import com.liferay.registry.ServiceTracker;
 import com.liferay.registry.ServiceTrackerCustomizer;
+import com.liferay.util.JS;
 
 import java.net.URL;
 
@@ -288,8 +288,6 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	@Override
 	@Skip
 	public void deployPortlet(Portlet portlet) throws Exception {
-		_checkValidPortletId(portlet.getPortletId());
-
 		PortletApp portletApp = portlet.getPortletApp();
 
 		_portletApps.put(portletApp.getServletContextName(), portletApp);
@@ -329,8 +327,6 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	public Portlet deployRemotePortlet(
 			Portlet portlet, String[] categoryNames, boolean eagerDestroy)
 		throws PortalException {
-
-		_checkValidPortletId(portlet.getPortletId());
 
 		ResourceActionsUtil.check(portlet);
 
@@ -2733,36 +2729,6 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 		return updatePortlet(companyId, portletId, roles, active);
 	}
 
-	private void _checkValidPortletId(String portletId)
-		throws PrincipalException {
-
-		for (int i = 0; i < portletId.length(); i++) {
-			char c = portletId.charAt(i);
-
-			if ((c >= CharPool.LOWER_CASE_A) && (c <= CharPool.LOWER_CASE_Z)) {
-				continue;
-			}
-
-			if ((c >= CharPool.UPPER_CASE_A) && (c <= CharPool.UPPER_CASE_Z)) {
-				continue;
-			}
-
-			if ((c >= CharPool.NUMBER_0) && (c <= CharPool.NUMBER_9)) {
-				continue;
-			}
-
-			if ((c == CharPool.POUND) || (c == CharPool.UNDERLINE)) {
-				continue;
-			}
-
-			if (_log.isWarnEnabled()) {
-				_log.warn("Invalid portlet ID " + portletId);
-			}
-
-			throw new PrincipalException("Invalid portlet ID " + portletId);
-		}
-	}
-
 	private boolean _isCustomPortletMode(String portletModeName) {
 		return PortalUtil.isCustomPortletMode(new PortletMode(portletModeName));
 	}
@@ -2836,6 +2802,8 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 				String rootPortletId = PortletIdCodec.decodePortletName(
 					portletId);
 
+				rootPortletId = JS.getSafeName(rootPortletId);
+
 				while (true) {
 					String[] friendlyURLMapperRootPortletIds =
 						_friendlyURLMapperRootPortletIds.get();
@@ -2866,7 +2834,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 					String rootPortletId = PortletIdCodec.decodePortletName(
 						portletIds[i]);
 
-					rootPortletIds[i] = rootPortletId;
+					rootPortletIds[i] = JS.getSafeName(rootPortletId);
 				}
 
 				while (true) {

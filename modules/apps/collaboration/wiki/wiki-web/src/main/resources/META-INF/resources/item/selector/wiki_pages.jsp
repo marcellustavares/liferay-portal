@@ -64,6 +64,14 @@ else {
 	}
 </style>
 
+<liferay-frontend:management-bar>
+	<liferay-frontend:management-bar-filters>
+		<li>
+			<liferay-item-selector:search />
+		</li>
+	</liferay-frontend:management-bar-filters>
+</liferay-frontend:management-bar>
+
 <div class="container-fluid-1280 lfr-item-viewer" id="<portlet:namespace />wikiPagesSelectorContainer">
 	<liferay-ui:search-container
 		id="wikiPagesSearchContainer"

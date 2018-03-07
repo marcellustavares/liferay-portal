@@ -6,6 +6,7 @@ create table FragmentCollection (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
+	fragmentCollectionKey VARCHAR(75) null,
 	name VARCHAR(75) null,
 	description STRING null
 );
@@ -19,6 +20,7 @@ create table FragmentEntry (
 	createDate DATE null,
 	modifiedDate DATE null,
 	fragmentCollectionId LONG,
+	fragmentEntryKey VARCHAR(75) null,
 	name VARCHAR(75) null,
 	css STRING null,
 	html STRING null,
@@ -30,10 +32,15 @@ create table FragmentEntry (
 	statusDate DATE null
 );
 
-create table FragmentEntryInstanceLink (
-	fragmentEntryInstanceLinkId LONG not null primary key,
+create table FragmentEntryLink (
+	fragmentEntryLinkId LONG not null primary key,
 	groupId LONG,
 	fragmentEntryId LONG,
-	layoutPageTemplateEntryId LONG,
+	classNameId LONG,
+	classPK LONG,
+	css STRING null,
+	html STRING null,
+	js STRING null,
+	editableValues STRING null,
 	position INTEGER
 );

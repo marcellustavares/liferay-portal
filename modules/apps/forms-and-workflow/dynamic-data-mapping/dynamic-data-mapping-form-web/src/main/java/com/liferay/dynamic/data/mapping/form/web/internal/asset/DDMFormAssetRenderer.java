@@ -26,13 +26,14 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
 import com.liferay.dynamic.data.mapping.service.permission.DDMFormInstancePermission;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Locale;
@@ -166,8 +167,15 @@ public class DDMFormAssetRenderer
 
 	@Override
 	public boolean hasViewPermission(PermissionChecker permissionChecker) {
-		return DDMFormInstancePermission.contains(
-			permissionChecker, _formInstance, ActionKeys.VIEW);
+		try {
+			return DDMFormInstancePermission.contains(
+				permissionChecker, _formInstance, ActionKeys.VIEW);
+		}
+		catch (PortalException pe) {
+			_log.error(pe, pe);
+		}
+
+		return false;
 	}
 
 	@Override

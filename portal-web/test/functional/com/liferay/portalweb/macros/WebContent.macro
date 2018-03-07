@@ -189,7 +189,7 @@
 		</execute>
 
 		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="${locale}" />
+			<var name="language" value="${language}" />
 		</execute>
 	</command>
 
@@ -713,7 +713,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Spanish (Spain)" />
-			<var name="locale" value="es-ES" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -723,7 +722,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="German (Germany)" />
-			<var name="locale" value="de-DE" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -733,7 +731,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="Finnish (Finland)" />
-			<var name="locale" value="fi-FI" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -822,6 +819,40 @@
 		<execute macro="RecycleBin#emptyCP" />
 
 		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Web Content" />
+		</execute>
+
+		<execute function="AssertTextNotPresent" value1="${webContentTitle}" />
+	</command>
+
+	<command name="deleteStagedCP">
+		<execute macro="WebContent#moveToRecycleBinCP">
+			<var name="assetType" value="Web Content Article" />
+			<var name="webContentTitle" value="${webContentTitle}" />
+			<var name="webContentTitleEscapeCharacter" value="${webContentTitleEscapeCharacter}" />
+		</execute>
+
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="${pageName}" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Content" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Recycle Bin" />
+		</execute>
+
+		<execute macro="RecycleBin#emptyCP" />
+
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="${pageName}" />
+			<var name="siteName" value="${siteName}" />
+		</execute>
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
@@ -1335,8 +1366,8 @@
 	</command>
 
 	<command name="selectLocale">
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="${locale}" />
+		<execute function="AssertClick" locator1="Translation#AVAILABLE_TRANSLATIONS_LINK" value1="${language}">
+			<var name="key_localizedLanguage" value="${language}" />
 		</execute>
 	</command>
 
@@ -1439,6 +1470,7 @@
 
 		<execute macro="ItemSelector#addFromURL">
 			<var name="imageSourceURL" value="${dmDocumentURL}" />
+			<var name="navTab" value="${navTab}" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="CKEditor#BODY_FIELD_IFRAME" />
@@ -1453,6 +1485,7 @@
 
 		<execute macro="ItemSelector#addFromURL">
 			<var name="imageSourceURL" value="${dmDocumentURL}" />
+			<var name="navTab" value="${navTab}" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="CKEditor#BODY_FIELD_IFRAME" />
@@ -1505,7 +1538,7 @@
 			<var name="panelHeading" value="Metadata" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="AssetCategorization#CATEGORY" value1="${categoryName}">
+		<execute function="AssertElementNotPresent" locator1="AssetCategorization#CATEGORY">
 			<var name="key_categoryName" value="${categoryName}" />
 		</execute>
 	</command>
@@ -1649,13 +1682,10 @@
 	</command>
 
 	<command name="viewDefaultLanguage">
-		<execute function="AssertTextEquals#assertPartialText" locator1="NavTab#TAB_LINK" value1="${locale}">
-			<var name="key_tab" value="${locale}" />
-		</execute>
+		<var name="key_localizedLanguage" value="${language}" />
 
-		<execute function="AssertElementNotPresent" locator1="NavTab#TAB_LINK">
-			<var name="key_tab" value="en-US" />
-		</execute>
+		<execute function="AssertElementNotPresent" locator1="Translation#AVAILABLE_TRANSLATIONS_LINK" />
+		<execute function="AssertTextEquals#assertPartialText" locator1="Translation#AVAILABLE_TRANSLATIONS_LINK" value1="${language}" />
 	</command>
 
 	<command name="viewDefaultPGViaWCD">
@@ -1708,7 +1738,7 @@
 	</command>
 
 	<command name="viewEditWCViaWCD">
-		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" />
 
 		<execute macro="WebContentNavigator#gotoArticleMenuPGViaWCD">
 			<var name="webContentTitle" value="${webContentTitle}" />
@@ -1813,7 +1843,7 @@
 	</command>
 
 	<command name="viewNoEditWCViaWCD">
-		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="${webContentContent}" />
+		<execute function="AssertElementPresent" locator1="WCD#WEB_CONTENT_CONTENT" />
 
 		<execute function="AssertElementNotPresent" locator1="Portlet#SPECIFIC_BORDERLESS_ELLIPSIS_ICON">
 			<var name="key_portletName" value="Web Content Display" />
@@ -1830,7 +1860,7 @@
 	</command>
 
 	<command name="viewNotPresentCP">
-		<execute function="AssertElementNotPresent" locator1="TextInput#TITLE" value1="${webContentTitle}" />
+		<execute function="AssertElementNotPresent" locator1="TextInput#TITLE" />
 	</command>
 
 	<command name="viewPageBreak">
@@ -2037,7 +2067,7 @@
 		</execute>
 
 		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="es-ES" />
+			<var name="language" value="Spanish (Spain)" />
 		</execute>
 
 		<execute function="AssertTextEquals" locator1="TextInput#TITLE" value1="${localizedTitle}" />

@@ -62,6 +62,10 @@ public class DropdownMenuTag extends BaseClayTag {
 		putValue("expanded", expanded);
 	}
 
+	public void setIcon(String icon) {
+		putValue("icon", icon);
+	}
+
 	public void setItems(Object items) {
 		putValue("items", items);
 	}
@@ -80,6 +84,10 @@ public class DropdownMenuTag extends BaseClayTag {
 
 	public void setStyle(String style) {
 		putValue("style", style);
+	}
+
+	public void setTriggerCssClasses(String triggerCssClasses) {
+		putValue("triggerClasses", triggerCssClasses);
 	}
 
 	public void setType(String type) {

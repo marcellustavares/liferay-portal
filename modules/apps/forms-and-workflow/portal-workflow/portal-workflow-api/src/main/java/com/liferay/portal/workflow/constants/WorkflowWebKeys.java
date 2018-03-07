@@ -33,10 +33,16 @@ public class WorkflowWebKeys {
 
 	public static final String WORKFLOW_JSP_STATE = "jsp_state";
 
+	public static final String WORKFLOW_NAVIGATION_DISPLAY_CONTEXT =
+		"WORKFLOW_NAVIGATION_DISPLAY_CONTEXT";
+
 	public static final String WORKFLOW_PORTLET_TABS = "WORKFLOW_PORTLET_TABS";
 
 	public static final String WORKFLOW_PREVIEW_BEFORE_RESTORE_STATE =
 		"previewBeforeRevert";
+
+	public static final String WORKFLOW_PUBLISH_DEFINITION_ACTION =
+		"WORKFLOW_PUBLISH_DEFINITION_ACTION";
 
 	public static final String WORKFLOW_SELECTED_PORTLET_TAB =
 		"WORKFLOW_PORTLET_TAB";
