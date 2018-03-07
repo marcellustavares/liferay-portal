@@ -19,6 +19,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Blogs Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Blogs Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -315,6 +323,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Blogs Page2" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Blogs Page2" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -619,6 +635,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Blogs Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Blogs Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -789,7 +813,7 @@
 	</command>
 
 	<command name="DeleteBlogsEntries" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="false" />
 
 		<for list="1,2,3" param="entryCount" >
 			<execute macro="Navigator#gotoPage">
@@ -876,7 +900,7 @@
 	</command>
 
 	<command name="EditBlogsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="false" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />
@@ -1124,7 +1148,7 @@
 	</command>
 
 	<command name="SaveBlogsEntryDraft" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="quarantine" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />
@@ -1198,6 +1222,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Search Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Search Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1251,6 +1283,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Search Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Search Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1304,6 +1344,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Search Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Search Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1357,6 +1405,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Search Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Search Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1424,10 +1480,7 @@
 			<var name="entryTitle" value="Blogs Entry Title" />
 		</execute>
 
-		<execute macro="BlogsEntryComment#subscribePG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		<execute macro="Comments#subscribePG" />
 
 		<execute macro="BlogsEntryComment#viewSubscribedPG" />
 	</command>
@@ -1447,10 +1500,10 @@
 		</execute>
 
 		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
+			<var name="userEmailAddress" value="userea@liferay.com" />
+			<var name="userFirstName" value="userfn" />
+			<var name="userLastName" value="userln" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -1461,7 +1514,7 @@
 
 		<execute macro="Role#assignRegRoleCP">
 			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn1" />
+			<var name="userScreenName" value="usersn" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1479,9 +1532,9 @@
 		</execute>
 
 		<execute macro="BlogsEntry#flagPG">
-			<var name="flagReason" value="Spam" />
+			<var name="flagReason" value="spam" />
 			<var name="siteName" value="${siteName}" />
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
+			<var name="userEmailAddress" value="userea@liferay.com" />
 		</execute>
 
 		<execute macro="MockMock#viewMail">
@@ -2128,7 +2181,9 @@
 			<var name="uploadFileName" value="Document_1.jpg" />
 		</execute>
 
-		<execute macro="PortletEntry#publish" />
+		<execute macro="Button#clickPublish" />
+
+		<execute function="Pause" locator1="30000" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Blogs Page" />

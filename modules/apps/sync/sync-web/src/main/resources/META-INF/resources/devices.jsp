@@ -53,6 +53,18 @@ portletURL.setParameter("delta", String.valueOf(delta));
 				orderColumns='<%= new String[] {"build", "last-seen", "name", "type"} %>'
 				portletURL="<%= PortletURLUtil.clone(portletURL, liferayPortletResponse) %>"
 			/>
+
+			<%
+			PortletURL searchURL = renderResponse.createRenderURL();
+
+			searchURL.setParameter("tabs1", tabs1);
+			%>
+
+			<li>
+				<aui:form action="<%= searchURL.toString() %>" name="searchFm">
+					<liferay-ui:input-search markupView="lexicon" placeholder='<%= LanguageUtil.get(request, "search") %>' />
+				</aui:form>
+			</li>
 		</liferay-frontend:management-bar-filters>
 	</c:if>
 </liferay-frontend:management-bar>
@@ -86,7 +98,7 @@ portletURL.setParameter("delta", String.valueOf(delta));
 
 			String portletId = (String)request.getAttribute(WebKeys.PORTLET_ID);
 
-			if (portletId.equals(SyncAdminPortletKeys.SYNC_ADMIN_PORTLET)) {
+			if (portletId.equals(SyncPortletKeys.SYNC_ADMIN_PORTLET)) {
 				syncDevices = SyncDeviceLocalServiceUtil.search(themeDisplay.getCompanyId(), keywords, searchContainer.getStart(), searchContainer.getEnd(), orderByComparator);
 			}
 			else {

@@ -23,6 +23,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.test.util.lar.BaseWorkflowedStagedModelDataHandlerTestCase;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.StagedModel;
@@ -35,7 +36,6 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -79,20 +79,6 @@ public class AMBlogsEntryStagedModelDataHandlerTest
 		_amImageConfigurationHelper.addAMImageConfigurationEntry(
 			stagingGroup.getCompanyId(), StringUtil.randomString(),
 			StringUtil.randomString(), StringUtil.randomString(), properties);
-	}
-
-	@Test(expected = Exception.class)
-	public void testExportFailsWithInvalidReferences() throws Exception {
-		int invalidFileEntryId = 9999999;
-
-		String content = _getImgTag(invalidFileEntryId);
-
-		BlogsEntry blogsEntry = _addBlogsEntry(content, _getServiceContext());
-
-		initExport();
-
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, blogsEntry);
 	}
 
 	@Test
@@ -154,6 +140,20 @@ public class AMBlogsEntryStagedModelDataHandlerTest
 
 		Assert.assertEquals(
 			blogsEntry.getContent(), importedEntry.getContent());
+	}
+
+	@Test
+	public void testExportSucceedsWithInvalidReferences() throws Exception {
+		int invalidFileEntryId = 9999999;
+
+		String content = _getImgTag(invalidFileEntryId);
+
+		BlogsEntry blogsEntry = _addBlogsEntry(content, _getServiceContext());
+
+		initExport();
+
+		StagedModelDataHandlerUtil.exportStagedModel(
+			portletDataContext, blogsEntry);
 	}
 
 	@Override

@@ -45,7 +45,6 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/forms-and-workflow/dynamic-data-lists/dynamic-data-lists-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/alloy/alloy-mvc" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/frontend-editor/frontend-editor-lang" />
-			<property name="allowedExportPackageDirName" value="modules/apps/foundation/frontend-js/frontend-js-loader-modules-extender" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/mobile-device-rules/mobile-device-rules-service" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/petra/petra-content" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/petra/petra-doulos" />
@@ -64,6 +63,7 @@
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache-provider" />
+			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-cache/portal-cache-ehcache-spi" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-configuration/portal-configuration-upgrade-util" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-portlet-bridge/portal-portlet-bridge-soy" />
 			<property name="allowedExportPackageDirName" value="modules/apps/foundation/portal-remote/portal-remote-soap-extender" />
@@ -181,6 +181,7 @@
 		<check name="JavaDeprecatedJavadocCheck" />
 		<check name="JavaDiamondOperatorCheck" />
 		<check name="JavaDeserializationSecurityCheck" />
+		<check name="JavaEmptyLineAfterSuperCallCheck" />
 		<check name="JavaEmptyLinesCheck" />
 		<check name="JavaExceptionCheck" />
 		<check name="JavaForLoopCheck" />
@@ -195,7 +196,31 @@
 		<check name="JavaLocalSensitiveComparisonCheck" />
 		<check name="JavaLongLinesCheck" />
 		<check name="JavaMetaOCDIdCheck" />
-		<check name="JavaPackagePathCheck" />
+		<check name="JavaPackagePathCheck">
+			<property name="allowedInternalPackageDirName" value="modules/apps/adaptive-media/adaptive-media-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/blogs/blogs-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/comment/comment-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/item-selector/item-selector-criteria-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/collaboration/wiki/wiki-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/captcha/captcha-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/organizations/organizations-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-mobile-device-recognition/portal-mobile-device-recognition-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-scripting/portal-scripting-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/portal-security-audit/portal-security-audit-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/roles/roles-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/user-groups-admin/user-groups-admin-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/users-admin/users-admin-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/foundation/users-admin/users-admin-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/knowledge-base/knowledge-base-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/journal/journal-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/layout/layout-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/portlet-configuration/portlet-configuration-icon-locator-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/portlet-configuration/portlet-configuration-toolbar-contributor-locator-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site-navigation/site-navigation-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site/site-api" />
+			<property name="allowedInternalPackageDirName" value="modules/apps/web-experience/site/site-item-selector-api" />
+			<property name="allowedInternalPackageDirName" value="modules/core/registry-api" />
+		</check>
 		<check name="JavaParameterAnnotationsCheck" />
 		<check name="JavaProcessCallableCheck" />
 		<check name="JavaRedundantConstructorCheck" />
@@ -251,6 +276,7 @@
 
 		<!-- Portal checks -->
 
+		<check name="JavaCleanUpMethodSuperCleanUpCheck" />
 		<check name="JavaCleanUpMethodVariablesCheck" />
 		<check name="JavaFinderCacheCheck" />
 		<check name="JavaFinderImplCustomSQLCheck" />
@@ -354,8 +380,10 @@
 		<check name="WhitespaceCheck" />
 	</source-processor>
 	<source-processor name="PropertiesSourceProcessor">
+		<check name="PropertiesCommentsCheck" />
 		<check name="PropertiesDefinitionKeysCheck" />
 		<check name="PropertiesDependenciesFileCheck" />
+		<check name="PropertiesImportedFilesContentCheck" />
 		<check name="PropertiesLanguageKeysCheck" />
 		<check name="PropertiesLiferayPluginPackageFileCheck" />
 		<check name="PropertiesLongLinesCheck" />
@@ -372,6 +400,7 @@
 		<check name="PropertiesServiceKeysCheck" />
 	</source-processor>
 	<source-processor name="SoySourceProcessor">
+		<check name="SoyEmptyLinesCheck" />
 		<check name="WhitespaceCheck" />
 	</source-processor>
 	<source-processor name="SQLSourceProcessor">

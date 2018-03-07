@@ -95,6 +95,8 @@ public class AssetTagsSelectorTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_addCallback = null;
 		_allowAddEntry = true;
 		_autoFocus = false;
@@ -169,7 +171,7 @@ public class AssetTagsSelectorTag extends IncludeTag {
 			}
 
 			portletURL.setParameter("eventName", getEventName());
-			portletURL.setParameter("selectedTags", "{selectedTags}");
+			portletURL.setParameter("selectedTagNames", "{selectedTagNames}");
 
 			portletURL.setWindowState(LiferayWindowState.POP_UP);
 

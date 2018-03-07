@@ -22,8 +22,6 @@ Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 
 LayoutType selLayoutType = selLayout.getLayoutType();
 
-String[] types = LayoutTypeControllerTracker.getTypes();
-
 Locale defaultLocale = LocaleUtil.getDefault();
 String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 %>
@@ -88,22 +86,12 @@ StringBuilder friendlyURLBase = new StringBuilder();
 	<c:when test="<%= !group.isLayoutPrototype() %>">
 		<aui:input name="name" />
 
-		<div class="form-group">
-			<aui:input helpMessage="if-enabled-this-page-does-not-show-up-in-the-navigation-menu" label="hide-from-navigation-menu" name="hidden" type="toggle-switch" value="<%= selLayout.isHidden() %>" />
-		</div>
-
 		<c:choose>
 			<c:when test="<%= selLayoutType.isURLFriendliable() %>">
 				<div class="form-group">
 					<label for="<portlet:namespace />friendlyURL"><liferay-ui:message key="friendly-url" /> <liferay-ui:icon-help message='<%= LanguageUtil.format(request, "for-example-x", "<em>/news</em>", false) %>' /></label>
 
-					<div class="input-group lfr-friendly-url-input-group">
-						<span class="input-group-addon" id="<portlet:namespace />urlBase">
-							<span class="input-group-constrain"><liferay-ui:message key="<%= StringUtil.shorten(friendlyURLBase.toString(), 40) %>" /></span>
-						</span>
-
-						<liferay-ui:input-localized defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>" name="friendlyURL" xml="<%= HttpUtil.decodeURL(selLayout.getFriendlyURLsXML()) %>" />
-					</div>
+					<liferay-ui:input-localized defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>" inputAddon="<%= friendlyURLBase.toString() %>" name="friendlyURL" xml="<%= HttpUtil.decodeURL(selLayout.getFriendlyURLsXML()) %>" />
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -156,37 +144,10 @@ StringBuilder friendlyURLBase = new StringBuilder();
 </c:if>
 
 <div class="<%= selLayout.isLayoutPrototypeLinkActive() ? "hide" : StringPool.BLANK %>" id="<portlet:namespace />typeOptions">
-	<aui:select name="type">
-
-		<%
-		for (String type : types) {
-			LayoutTypeController layoutTypeController = LayoutTypeControllerTracker.getLayoutTypeController(type);
-
-			if (!layoutTypeController.isInstanceable()) {
-				continue;
-			}
-
-			ResourceBundle layoutTypeResourceBundle = ResourceBundleUtil.getBundle("content.Language", locale, layoutTypeController.getClass());
-
-			Map<String, Object> data = new HashMap<String, Object>();
-
-			data.put("id", type);
-		%>
-
-			<aui:option disabled="<%= selLayout.isFirstParent() && !layoutTypeController.isFirstPageable() %>" label='<%= LanguageUtil.get(request, layoutTypeResourceBundle, "layout.types." + type) %>' selected="<%= selLayout.getType().equals(type) %>" value="<%= type %>" />
-
-		<%
-		}
-		%>
-
-	</aui:select>
-
-	<div id="<portlet:namespace />layoutTypeForm">
-		<liferay-util:include page="/layout_type_resources.jsp" servletContext="<%= application %>">
-			<liferay-util:param name="id" value="<%= selLayout.getType() %>" />
-			<liferay-util:param name="type" value="<%= selLayout.getType() %>" />
-		</liferay-util:include>
-	</div>
+	<liferay-util:include page="/layout_type_resources.jsp" servletContext="<%= application %>">
+		<liferay-util:param name="id" value="<%= selLayout.getType() %>" />
+		<liferay-util:param name="type" value="<%= selLayout.getType() %>" />
+	</liferay-util:include>
 </div>
 
 <aui:script>
@@ -195,17 +156,6 @@ StringBuilder friendlyURLBase = new StringBuilder();
 </aui:script>
 
 <aui:script sandbox="<%= true %>">
-	var friendlyURLBase = '<%= friendlyURLBase.toString() %>';
-
-	if (friendlyURLBase.length > 40) {
-		$('#<portlet:namespace />urlBase').on(
-			'mouseenter',
-			function(event) {
-				Liferay.Portal.ToolTip.show(event.currentTarget, friendlyURLBase);
-			}
-		);
-	}
-
 	$('#<portlet:namespace />layoutPrototypeLinkEnabled').on(
 		'change',
 		function(event) {
@@ -217,52 +167,6 @@ StringBuilder friendlyURLBase = new StringBuilder();
 
 			propagatableFields.prop('disabled', layoutPrototypeLinkChecked);
 			propagatableFields.toggleClass('disabled', layoutPrototypeLinkChecked);
-		}
-	);
-</aui:script>
-
-<aui:script use="aui-io-request,aui-parse-content">
-	var layoutTypeForm = A.one('#<portlet:namespace />layoutTypeForm');
-
-	layoutTypeForm.plug(A.Plugin.ParseContent);
-
-	A.one('#<portlet:namespace />type').on(
-		'change',
-		function(event) {
-			var currentTarget = event.currentTarget;
-
-			var type = currentTarget.val();
-
-			var index = currentTarget.get('selectedIndex');
-
-			var selectedOption = currentTarget.get('options').item(index);
-
-			var id = selectedOption.attr('data-id');
-
-			var data = Liferay.Util.ns(
-				'<portlet:namespace />',
-				{
-					id: id,
-					type: type
-				}
-			);
-
-			A.io.request(
-				'<liferay-portlet:resourceURL windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="mvcPath" value="/layout_type_resources.jsp" /></liferay-portlet:resourceURL>',
-				{
-					data: data,
-					on: {
-						failure: function() {
-							layoutTypeForm.html('<div class="alert alert-danger"><liferay-ui:message key="an-unexpected-error-occurred" /></div>');
-						},
-						success: function(event, id, obj) {
-							var responseData = this.get('responseData');
-
-							layoutTypeForm.setContent(responseData);
-						}
-					}
-				}
-			);
 		}
 	);
 </aui:script>

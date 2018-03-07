@@ -29,30 +29,38 @@ import java.util.Optional;
 public interface PathIdentifierMapperManager {
 
 	/**
+	 * Checks if a {@code PathIdentifierMapper} for a resource has been
+	 * published.
+	 *
+	 * @param  name the name of the resource
+	 * @return {@code true} if a {@code PathIdentifierMapper} for a resource is
+	 *         present
+	 * @review
+	 */
+	public boolean hasPathIdentifierMapper(String name);
+
+	/**
 	 * Converts a {@code Path} to its equivalent identifier of type {@code T},
 	 * if a valid {@link
 	 * com.liferay.apio.architect.uri.mapper.PathIdentifierMapper} can be found.
-	 * Returns {@code Optional#empty()} otherwise.
+	 * Throws a {@code MustHavePathIdentifierMapper} exception otherwise.
 	 *
-	 * @param  clazz the class of the desired identifier
 	 * @param  path the {@code Path}
-	 * @return the identifier, if a valid {@code PathIdentifierMapper} is
-	 *         present; {@code Optional#empty()} otherwise
+	 * @return the identifier
+	 * @review
 	 */
-	public <T> Optional<T> map(Class<T> clazz, Path path);
+	public <T> T mapToIdentifierOrFail(Path path);
 
 	/**
 	 * Converts an identifier to its equivalent {@code Path}, if a valid {@code
 	 * PathIdentifierMapper} can be found. Returns {@code Optional#empty()}
 	 * otherwise.
 	 *
+	 * @param  name the resource's name
 	 * @param  identifier the identifier
-	 * @param  identifierClass the class of the identifier
-	 * @param  modelClass the class of the model identified by the identifier
 	 * @return the {@code Path}, if a valid {@code PathIdentifierMapper} is
 	 *         present; {@code Optional#empty()} otherwise
 	 */
-	public <T, U> Optional<Path> map(
-		T identifier, Class<?> identifierClass, Class<U> modelClass);
+	public <T> Optional<Path> mapToPath(String name, T identifier);
 
 }

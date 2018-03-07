@@ -1,8 +1,6 @@
 AUI.add(
 	'liferay-journal-content',
 	function(A) {
-		var AArray = A.Array;
-
 		var Lang = A.Lang;
 
 		var STR_CLICK = 'click';
@@ -20,6 +18,8 @@ AUI.add(
 		var STR_STRINGS = 'strings';
 
 		var STR_TITLE_INPUT_LOCALIZED = 'titleInputLocalized';
+
+		var STR_TRANSLATION_MANAGER = 'translationManager';
 
 		var STR_URLS = 'urls';
 
@@ -72,6 +72,9 @@ AUI.add(
 					titleInputLocalized: {
 					},
 
+					translationManager: {
+					},
+
 					urls: {
 						validator: Lang.isObject,
 						value: {}
@@ -89,8 +92,6 @@ AUI.add(
 						var instance = this;
 
 						instance._bindUI();
-
-						instance._bindTranslationManager();
 
 						instance._renderUI();
 					},
@@ -144,29 +145,6 @@ AUI.add(
 						titleInputLocalized.selectFlag(editingLocale);
 					},
 
-					_bindTranslationManager: function() {
-						var instance = this;
-
-						var eventHandles = instance._eventHandles;
-
-						var translationManager = Liferay.component(instance.ns('translationManager'));
-
-						if (translationManager) {
-							eventHandles.push(
-								translationManager.on('deleteAvailableLocale', instance._afterDeletingAvailableLocale.bind(instance))
-							);
-
-							eventHandles.push(
-								translationManager.on('editingLocaleChange', instance._afterEditingLocaleChange.bind(instance))
-							);
-						}
-						else {
-							eventHandles.push(
-								Liferay.once(instance.ns('translationManager:registered'), instance._bindTranslationManager.bind(instance))
-							);
-						}
-					},
-
 					_bindUI: function() {
 						var instance = this;
 
@@ -201,6 +179,18 @@ AUI.add(
 						if (selectStructure) {
 							eventHandles.push(
 								selectStructure.on(STR_CLICK, instance._openDDMStructureSelector, instance)
+							);
+						}
+
+						var translationManager = instance.get(STR_TRANSLATION_MANAGER);
+
+						if (translationManager) {
+							eventHandles.push(
+								translationManager.after('deleteAvailableLocale', instance._afterDeletingAvailableLocale, instance)
+							);
+
+							eventHandles.push(
+								translationManager.after('editingLocaleChange', instance._afterEditingLocaleChange, instance)
 							);
 						}
 

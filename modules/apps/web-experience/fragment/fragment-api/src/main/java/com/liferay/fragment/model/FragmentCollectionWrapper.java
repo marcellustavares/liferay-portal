@@ -65,6 +65,7 @@ public class FragmentCollectionWrapper implements FragmentCollection,
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("fragmentCollectionKey", getFragmentCollectionKey());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 
@@ -113,6 +114,13 @@ public class FragmentCollectionWrapper implements FragmentCollection,
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		String fragmentCollectionKey = (String)attributes.get(
+				"fragmentCollectionKey");
+
+		if (fragmentCollectionKey != null) {
+			setFragmentCollectionKey(fragmentCollectionKey);
 		}
 
 		String name = (String)attributes.get("name");
@@ -181,6 +189,16 @@ public class FragmentCollectionWrapper implements FragmentCollection,
 	@Override
 	public long getFragmentCollectionId() {
 		return _fragmentCollection.getFragmentCollectionId();
+	}
+
+	/**
+	* Returns the fragment collection key of this fragment collection.
+	*
+	* @return the fragment collection key of this fragment collection
+	*/
+	@Override
+	public java.lang.String getFragmentCollectionKey() {
+		return _fragmentCollection.getFragmentCollectionKey();
 	}
 
 	/**
@@ -285,9 +303,9 @@ public class FragmentCollectionWrapper implements FragmentCollection,
 
 	@Override
 	public void populateZipWriter(
-		com.liferay.portal.kernel.zip.ZipWriter zipWriter, java.lang.String path)
+		com.liferay.portal.kernel.zip.ZipWriter zipWriter)
 		throws java.lang.Exception {
-		_fragmentCollection.populateZipWriter(zipWriter, path);
+		_fragmentCollection.populateZipWriter(zipWriter);
 	}
 
 	@Override
@@ -349,6 +367,16 @@ public class FragmentCollectionWrapper implements FragmentCollection,
 	@Override
 	public void setFragmentCollectionId(long fragmentCollectionId) {
 		_fragmentCollection.setFragmentCollectionId(fragmentCollectionId);
+	}
+
+	/**
+	* Sets the fragment collection key of this fragment collection.
+	*
+	* @param fragmentCollectionKey the fragment collection key of this fragment collection
+	*/
+	@Override
+	public void setFragmentCollectionKey(java.lang.String fragmentCollectionKey) {
+		_fragmentCollection.setFragmentCollectionKey(fragmentCollectionKey);
 	}
 
 	/**

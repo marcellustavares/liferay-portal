@@ -51,7 +51,12 @@
 <!--CHECKBOX-->
 <tr>
 	<td>CHECKBOX</td>
-	<td>//input[@type='checkbox' and contains(@id,'${key_fieldName}')]</td>
+	<td>//input[@type='checkbox' and contains(@id,'${key_fieldName}')] | //li[contains(.,'${key_fieldName}')]//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHECKBOX_LABEL</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label | //li[contains(.,'${key_fieldName}')]//label</td>
 	<td></td>
 </tr>
 <tr>
@@ -60,8 +65,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>CHECKBOX_LABEL</td>
-	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//label[contains(.,'${key_fieldLabel}')]</td>
+	<td>CHECKBOX_OPTION_LABEL</td>
+	<td>//label[contains(.,'${key_checkboxOption}')]/input[@type='checkbox' and contains(@name,'${key_fieldName}')]/../span</td>
 	<td></td>
 </tr>
 <tr>
@@ -93,7 +98,7 @@
 <!--HELP TEXT-->
 <tr>
 	<td>HELP_TEXT</td>
-	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//p[@class='liferay-ddm-form-field-tip'] | //div[contains(@data-fieldname,'${key_fieldName}')]/span</td>
+	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//p[@class='liferay-ddm-form-field-tip'] | //div[contains(@data-fieldname,'${key_fieldName}')]//span[contains(@class, 'form-text')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -185,8 +190,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>RADIO_OPTION_LABEL</td>
+	<td>//label[contains(.,'${key_radioOption}')]/input[@type='radio' and contains(@name,'${key_fieldName}')]/../span</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RADIO_OPTION_CHECKED</td>
-	<td>//label[contains(@class,'${key_radioOption}')]/input[@type='radio' and @checked="" and contains(@name,'${key_fieldName}')]</td>
+	<td>//label[contains(@*,'${key_radioOption}')]/input[@type='radio' and @checked="" and contains(@name,'${key_fieldName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -436,6 +446,12 @@
 <tr>
 	<td>UPLOAD_DOWNLOAD_ICON</td>
 	<td>//div[contains(@data-fieldname,'${key_fieldName}')]//a[@download='${key_uploadFileName}']</td>
+	<td></td>
+</tr>
+<!--CHANGE FIELD TYPE-->
+<tr>
+	<td>CHANGE_FIELD_TYPE_BUTTON</td>
+	<td>//button[contains(@id,'field-type-menu-content')]</td>
 	<td></td>
 </tr>
 </tbody>

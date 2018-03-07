@@ -23,6 +23,11 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 <liferay-ui:success key='<%= portletDisplay.getPortletName() + "layoutAdded" %>' message='<%= LanguageUtil.get(resourceBundle, "the-page-was-created-succesfully") %>' />
 <liferay-ui:success key='<%= portletDisplay.getPortletName() + "layoutUpdated" %>' message='<%= LanguageUtil.get(resourceBundle, "the-page-was-updated-succesfully") %>' />
 
+<liferay-ui:error
+	exception="<%= GroupInheritContentException.class %>"
+	message="this-page-cannot-be-deleted-and-cannot-have-child-pages-because-it-is-associated-to-a-site-template"
+/>
+
 <clay:navigation-bar
 	inverted="<%= true %>"
 	items="<%= layoutsAdminDisplayContext.getNavigationItems() %>"
@@ -50,6 +55,12 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 			portletURL="<%= layoutsAdminDisplayContext.getPortletURL() %>"
 			selectedDisplayStyle="<%= layoutsAdminDisplayContext.getDisplayStyle() %>"
 		/>
+
+		<c:if test="<%= layoutsAdminDisplayContext.isShowAddRootLayoutButton() %>">
+			<liferay-frontend:add-menu inline="<%= true %>">
+				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "select-template") %>' url="<%= layoutsAdminDisplayContext.getSelectLayoutPageTemplateEntryURL() %>" />
+			</liferay-frontend:add-menu>
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-filters>
@@ -91,7 +102,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 
 			<soy:template-renderer
 				context="<%= context %>"
-				module="layout-admin-web/js/Layout.es"
+				module="layout-admin-web/js/miller_columns/Layout.es"
 				templateNamespace="Layout.render"
 			/>
 		</c:when>
@@ -133,12 +144,6 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 		</c:otherwise>
 	</c:choose>
 </aui:form>
-
-<c:if test="<%= layoutsAdminDisplayContext.isShowAddRootLayoutButton() %>">
-	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "page") %>' url="<%= layoutsAdminDisplayContext.getAddLayoutURL() %>" />
-	</liferay-frontend:add-menu>
-</c:if>
 
 <aui:script sandbox="<%= true %>">
 	$('#<portlet:namespace />deleteSelectedPages').on(

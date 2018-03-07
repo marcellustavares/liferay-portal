@@ -77,11 +77,6 @@ public class OrganizationItemSelectorView
 	}
 
 	@Override
-	public boolean isShowSearch() {
-		return true;
-	}
-
-	@Override
 	public boolean isVisible(ThemeDisplay themeDisplay) {
 		return true;
 	}
@@ -129,7 +124,7 @@ public class OrganizationItemSelectorView
 	private Portal _portal;
 
 	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.users.admin.item.selector.web)"
+		target = "(osgi.web.symbolicname=com.liferay.organizations.item.selector.web)"
 	)
 	private ServletContext _servletContext;
 

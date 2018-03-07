@@ -169,10 +169,26 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page 1" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Site Page 1" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Site Page 2" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Site Page 2" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -272,7 +288,7 @@
 
 		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
 
-		<execute function="AssertElementPresent" locator1="Message#SUCCESS" value1="Your request completed successfully." />
+		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />
@@ -357,13 +373,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="SitePages#configurePage">
 			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Documents and Media Page" />
 			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Empty Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -522,13 +539,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="SitePages#configurePage">
 			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Documents and Media Page" />
 			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Empty Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -622,6 +640,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -886,6 +912,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -999,6 +1033,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1066,7 +1108,10 @@
 
 		<var method="selenium#getAttribute('//video@poster')" name="videoPreviewThumbnailLink" />
 
-		<execute function="Open" locator1="${videoPreviewThumbnailLink}" />
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${videoPreviewThumbnailLink}" />
+		</execute>
+
 		<execute function="Pause" locator1="1000" />
 
 		<execute function="AssertElementNotPresent" locator1="DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION">
@@ -1286,6 +1331,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1314,6 +1367,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1544,6 +1605,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1660,6 +1729,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1678,6 +1755,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page - Global" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page - Global" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1876,6 +1961,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -2071,13 +2164,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="SitePages#configurePage">
 			<var name="columnName" value="1 Column" />
 			<var name="pageName" value="Documents and Media Page" />
 			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Empty Page" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoSitePage">
@@ -2192,6 +2286,14 @@
 
 		<execute macro="SitePages#addPublicPage">
 			<var name="pageName" value="Documents and Media Page" />
+			<var name="sitePageType" value="Layout" />
+		</execute>
+
+		<execute macro="SitePages#configurePage">
+			<var name="columnName" value="1 Column" />
+			<var name="pageName" value="Documents and Media Page" />
+			<var name="privacy" value="Public" />
+			<var name="sitePageType" value="Layout" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">

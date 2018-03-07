@@ -23,20 +23,23 @@ import com.liferay.document.library.kernel.exception.DuplicateFileEntryException
 import com.liferay.document.library.kernel.exception.FileExtensionException;
 import com.liferay.document.library.kernel.exception.FileNameException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.message.boards.constants.MBCategoryConstants;
+import com.liferay.message.boards.constants.MBMessageConstants;
 import com.liferay.message.boards.constants.MBPortletKeys;
-import com.liferay.message.boards.kernel.exception.LockedThreadException;
-import com.liferay.message.boards.kernel.exception.MessageBodyException;
-import com.liferay.message.boards.kernel.exception.MessageSubjectException;
-import com.liferay.message.boards.kernel.exception.NoSuchMessageException;
-import com.liferay.message.boards.kernel.exception.RequiredMessageException;
-import com.liferay.message.boards.kernel.model.MBCategory;
-import com.liferay.message.boards.kernel.model.MBCategoryConstants;
-import com.liferay.message.boards.kernel.model.MBMessage;
-import com.liferay.message.boards.kernel.service.MBCategoryService;
-import com.liferay.message.boards.kernel.service.MBMessageLocalService;
-import com.liferay.message.boards.kernel.service.MBMessageService;
-import com.liferay.message.boards.kernel.service.MBThreadLocalService;
-import com.liferay.message.boards.kernel.service.MBThreadService;
+import com.liferay.message.boards.exception.LockedThreadException;
+import com.liferay.message.boards.exception.MessageBodyException;
+import com.liferay.message.boards.exception.MessageSubjectException;
+import com.liferay.message.boards.exception.NoSuchMessageException;
+import com.liferay.message.boards.exception.RequiredMessageException;
+import com.liferay.message.boards.model.MBCategory;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.service.MBCategoryService;
+import com.liferay.message.boards.service.MBMessageLocalService;
+import com.liferay.message.boards.service.MBMessageService;
+import com.liferay.message.boards.service.MBThreadLocalService;
+import com.liferay.message.boards.service.MBThreadService;
+import com.liferay.message.boards.settings.MBGroupServiceSettings;
 import com.liferay.message.boards.web.internal.upload.format.MBMessageFormatUploadHandler;
 import com.liferay.message.boards.web.internal.upload.format.MBMessageFormatUploadHandlerProvider;
 import com.liferay.message.boards.web.internal.util.MBAttachmentFileEntryReference;
@@ -57,6 +60,7 @@ import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -66,19 +70,17 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
-import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadRequestSizeException;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portlet.ActionResponseImpl;
-import com.liferay.portlet.messageboards.MBGroupServiceSettings;
-import com.liferay.portlet.messageboards.service.permission.MBMessagePermission;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -390,24 +392,8 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 			new ArrayList<>(5);
 
 		try {
-			UploadPortletRequest uploadPortletRequest =
-				_portal.getUploadPortletRequest(actionRequest);
-
-			for (int i = 1; i <= 5; i++) {
-				String fileName = uploadPortletRequest.getFileName(
-					"msgFile" + i);
-				InputStream inputStream = uploadPortletRequest.getFileAsStream(
-					"msgFile" + i);
-
-				if ((inputStream == null) || Validator.isNull(fileName)) {
-					continue;
-				}
-
-				ObjectValuePair<String, InputStream> inputStreamOVP =
-					new ObjectValuePair<>(fileName, inputStream);
-
-				inputStreamOVPs.add(inputStreamOVP);
-			}
+			List<FileEntry> tempFileEntries = _populateInputStreamOVPs(
+				actionRequest, messageId, inputStreamOVPs);
 
 			boolean question = ParamUtil.getBoolean(actionRequest, "question");
 
@@ -528,10 +514,15 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, "subscribe");
 
 			if (!preview && subscribe &&
-				MBMessagePermission.contains(
+				_messageModelResourcePermission.contains(
 					permissionChecker, message, ActionKeys.SUBSCRIBE)) {
 
 				_mbMessageService.subscribeMessage(message.getMessageId());
+			}
+
+			for (FileEntry tempFileEntry : tempFileEntries) {
+				TempFileEntryUtil.deleteTempFileEntry(
+					tempFileEntry.getFileEntryId());
 			}
 
 			return message;
@@ -592,6 +583,50 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 		return body;
 	}
 
+	private List<FileEntry> _populateInputStreamOVPs(
+			ActionRequest actionRequest, long messageId,
+			List<ObjectValuePair<String, InputStream>> inputStreamOVPs)
+		throws PortalException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		String[] selectedFileNames = ParamUtil.getParameterValues(
+			actionRequest, "selectedFileName");
+
+		List<FileEntry> tempFileEntries = new ArrayList<>();
+
+		for (String selectedFileName : selectedFileNames) {
+			FileEntry tempFileEntry = TempFileEntryUtil.getTempFileEntry(
+				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
+				MBMessageConstants.TEMP_FOLDER_NAME, selectedFileName);
+
+			tempFileEntries.add(tempFileEntry);
+
+			String originalSelectedFileName =
+				TempFileEntryUtil.getOriginalTempFileName(
+					tempFileEntry.getFileName());
+
+			String uniqueFileName = originalSelectedFileName;
+
+			if (messageId > 0) {
+				MBMessage message = _mbMessageService.getMessage(messageId);
+
+				uniqueFileName = DLUtil.getUniqueFileName(
+					tempFileEntry.getGroupId(),
+					message.getAttachmentsFolderId(), originalSelectedFileName);
+			}
+
+			ObjectValuePair<String, InputStream> inputStreamOVP =
+				new ObjectValuePair<>(
+					uniqueFileName, tempFileEntry.getContentStream());
+
+			inputStreamOVPs.add(inputStreamOVP);
+		}
+
+		return tempFileEntries;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditMessageMVCActionCommand.class);
 
@@ -619,6 +654,11 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private MBThreadService _mbThreadService;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.message.boards.model.MBMessage)"
+	)
+	private ModelResourcePermission<MBMessage> _messageModelResourcePermission;
 
 	@Reference
 	private Portal _portal;

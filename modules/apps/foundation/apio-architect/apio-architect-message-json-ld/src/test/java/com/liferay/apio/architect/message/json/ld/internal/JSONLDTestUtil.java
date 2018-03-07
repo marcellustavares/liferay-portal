@@ -14,12 +14,13 @@
 
 package com.liferay.apio.architect.message.json.ld.internal;
 
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonArrayThat;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonBoolean;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonInt;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonObjectWhere;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonObjectWith;
-import static com.liferay.apio.architect.test.json.JsonMatchers.aJsonString;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonArrayThat;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonBoolean;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonInt;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonObjectWhere;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonObjectWith;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.aJsonString;
+import static com.liferay.apio.architect.test.util.json.JsonMatchers.isAJsonArrayContaining;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.contains;
@@ -27,9 +28,9 @@ import static org.hamcrest.core.Is.is;
 
 import com.google.gson.JsonElement;
 
-import com.liferay.apio.architect.test.json.Conditions;
-import com.liferay.apio.architect.test.json.Conditions.Builder;
-import com.liferay.apio.architect.test.json.JsonMatchers;
+import com.liferay.apio.architect.test.util.json.Conditions;
+import com.liferay.apio.architect.test.util.json.Conditions.Builder;
+import com.liferay.apio.architect.test.util.json.JsonMatchers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +52,15 @@ import org.hamcrest.Matcher;
 public class JSONLDTestUtil {
 
 	/**
+	 * A {@link Matcher} that checks if a {@link JsonElement} is a link to
+	 * Hydra's profile.
+	 *
+	 * @review
+	 */
+	public static final Matcher<JsonElement> IS_A_LINK_TO_HYDRA_PROFILE =
+		isALinkTo("https://www.w3.org/ns/hydra/core#");
+
+	/**
 	 * A {@link Matcher} that checks if a field is a {@code {"@type" = " ID"}}
 	 * JSON Object.
 	 */
@@ -58,23 +68,21 @@ public class JSONLDTestUtil {
 		aJsonObjectWhere("@type", is(aJsonString(equalTo("@id")))));
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field is the JSON Object of
-	 * a {@code RootElement} with the provided ID.
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of a
+	 * {@code RootElement} that matches the provided ID.
 	 *
 	 * @param  id the ID of the {@code RootElement}
-	 * @param  addVocab {@code true} if the {@code @vocab} check must be added
-	 * @param  member {@code true} if this {@code RootElement} is added as a
+	 * @param  addVocab whether the {@code @vocab} check must be added
+	 * @param  member whether this {@code RootElement} is added as a
 	 *         collection's member
-	 * @return a matcher for a JSON Object of a {@code RootElement} with the
-	 *         provided ID
-	 * @review
+	 * @return the matcher
 	 */
 	public static Matcher<JsonElement> aRootElementJsonObjectWithId(
 		String id, boolean addVocab, boolean member) {
 
 		Builder builder = new Builder();
 
-		Builder step = builder.where(
+		Builder stepBuilder = builder.where(
 			"embedded2", IS_A_TYPE_ID_JSON_OBJECT
 		).where(
 			"linked1", IS_A_TYPE_ID_JSON_OBJECT
@@ -89,12 +97,14 @@ public class JSONLDTestUtil {
 		Conditions contextConditions = null;
 
 		if (addVocab) {
-			contextConditions = step.where(
-				"@vocab", is(aJsonString(equalTo("http://schema.org")))
+			contextConditions = stepBuilder.where(
+				"@vocab", is(aJsonString(equalTo("http://schema.org/")))
+			).where(
+				"hydra", IS_A_LINK_TO_HYDRA_PROFILE
 			).build();
 		}
 		else {
-			contextConditions = step.build();
+			contextConditions = stepBuilder.build();
 		}
 
 		Matcher<JsonElement> isAJsonObjectWithTheContext = is(
@@ -114,6 +124,10 @@ public class JSONLDTestUtil {
 			"boolean1", is(aJsonBoolean(true))
 		).where(
 			"boolean2", is(aJsonBoolean(false))
+		).where(
+			"booleanList1", isAJsonArrayContaining(true, true, false, false)
+		).where(
+			"booleanList2", isAJsonArrayContaining(true, false, true, false)
 		).where(
 			"date1", is(aJsonString(equalTo("2016-06-15T09:00Z")))
 		).where(
@@ -135,9 +149,17 @@ public class JSONLDTestUtil {
 		).where(
 			"localizedString2", is(aJsonString(equalTo("Translated 2")))
 		).where(
+			"nested1", isAJsonObjectWithTheFirstNested()
+		).where(
+			"nested2", isAJsonObjectWithTheSecondNested(id)
+		).where(
 			"number1", is(aJsonInt(equalTo(2017)))
 		).where(
 			"number2", is(aJsonInt(equalTo(42)))
+		).where(
+			"numberList1", isAJsonArrayContaining(1, 2, 3, 4, 5)
+		).where(
+			"numberList2", isAJsonArrayContaining(6, 7, 8, 9, 10)
 		).where(
 			"relatedCollection1",
 			isALinkTo("localhost/p/model/" + id + "/models")
@@ -148,6 +170,10 @@ public class JSONLDTestUtil {
 			"string1", is(aJsonString(equalTo("Live long and prosper")))
 		).where(
 			"string2", is(aJsonString(equalTo("Hypermedia")))
+		).where(
+			"stringList1", isAJsonArrayContaining("a", "b", "c", "d", "e")
+		).where(
+			"stringList2", isAJsonArrayContaining("f", "g", "h", "i", "j")
 		);
 
 		if (member) {
@@ -155,25 +181,24 @@ public class JSONLDTestUtil {
 		}
 
 		Conditions conditions = rootElementBuilder.where(
-			"operation", containsTheRootOperations()
+			"hydra:operation", containsTheRootOperations()
 		).build();
 
 		return aJsonObjectWith(conditions);
 	}
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field contains the {@code
+	 * Returns a {@code Matcher} that checks if the field contains the {@code
 	 * RootModel} operations.
 	 *
-	 * @return a matcher for a type JSON Array
-	 * @review
+	 * @return the matcher
 	 */
 	@SuppressWarnings("unchecked")
 	public static Matcher<? extends JsonElement> containsTheRootOperations() {
 		Builder builder = new Builder();
 
 		Conditions firstOperationConditions = builder.where(
-			"@id", is(aJsonString(equalTo("delete-operation")))
+			"@id", is(aJsonString(equalTo("_:delete-operation")))
 		).where(
 			"@type", is(aJsonString(equalTo("Operation")))
 		).where(
@@ -181,31 +206,28 @@ public class JSONLDTestUtil {
 		).build();
 
 		Conditions secondOperationConditions = builder.where(
-			"@id", is(aJsonString(equalTo("update-operation")))
+			"@id", is(aJsonString(equalTo("_:update-operation")))
 		).where(
 			"@type", is(aJsonString(equalTo("Operation")))
 		).where(
 			"expects", is(aJsonString(equalTo("localhost/f/u/r")))
 		).where(
-			"method", is(aJsonString(equalTo("UPDATE")))
+			"method", is(aJsonString(equalTo("PUT")))
 		).build();
 
-		Matcher<? super JsonElement> operation1 = is(
-			aJsonObjectWith(firstOperationConditions));
+		List<Matcher<? super JsonElement>> theOperations = Arrays.asList(
+			is(aJsonObjectWith(firstOperationConditions)),
+			is(aJsonObjectWith(secondOperationConditions)));
 
-		Matcher<? super JsonElement> operation2 = is(
-			aJsonObjectWith(secondOperationConditions));
-
-		return is(aJsonArrayThat(contains(operation1, operation2)));
+		return is(aJsonArrayThat(contains(theOperations)));
 	}
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field contains the provided
+	 * Returns a {@code Matcher} that checks if the field contains the provided
 	 * types as a JSON Array.
 	 *
-	 * @param  types the types to match
-	 * @return a matcher for a type JSON Array
-	 * @review
+	 * @param  types the types
+	 * @return the matcher
 	 */
 	public static Matcher<? extends JsonElement> containsTheTypes(
 		String... types) {
@@ -224,13 +246,12 @@ public class JSONLDTestUtil {
 	}
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field is a JSON Object of
-	 * the first embedded.
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of
+	 * the first embedded model.
 	 *
-	 * @param  member {@code true} if this {@code FirstEmbeddedModel} is added
-	 *         as a collection's member
-	 * @return a matcher for a JSON Object of the first embedded
-	 * @review
+	 * @param  member whether the {@code FirstEmbeddedModel} is added as a
+	 *         collection member
+	 * @return the matcher
 	 */
 	public static Matcher<JsonElement> isAJsonObjectWithTheFirstEmbedded(
 		boolean member) {
@@ -254,6 +275,8 @@ public class JSONLDTestUtil {
 		).where(
 			"boolean", is(aJsonBoolean(true))
 		).where(
+			"booleanList", isAJsonArrayContaining(true, false)
+		).where(
 			"embedded", isAJsonObjectWithTheSecondEmbedded()
 		).where(
 			"link", isALinkTo("www.liferay.com")
@@ -264,10 +287,14 @@ public class JSONLDTestUtil {
 		).where(
 			"number", is(aJsonInt(equalTo(42)))
 		).where(
+			"numberList", isAJsonArrayContaining(1, 2)
+		).where(
 			"relatedCollection",
 			isALinkTo("localhost/p/first-inner-model/first/models")
 		).where(
 			"string", is(aJsonString(equalTo("A string")))
+		).where(
+			"stringList", isAJsonArrayContaining("a", "b")
 		);
 
 		if (member) {
@@ -275,7 +302,7 @@ public class JSONLDTestUtil {
 		}
 
 		Matcher<? super JsonElement> anOperation = builder.where(
-			"@id", is(aJsonString(equalTo("delete-operation")))
+			"@id", is(aJsonString(equalTo("_:delete-operation")))
 		).where(
 			"@type", is(aJsonString(equalTo("Operation")))
 		).where(
@@ -283,18 +310,40 @@ public class JSONLDTestUtil {
 		).build();
 
 		Conditions conditions = firstEmbeddedBuilder.where(
-			"operation", is(aJsonArrayThat(contains(anOperation)))
+			"hydra:operation", is(aJsonArrayThat(contains(anOperation)))
 		).build();
 
 		return aJsonObjectWith(conditions);
 	}
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field is a JSON Object of
-	 * the second embedded.
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of
+	 * the first nested model.
 	 *
-	 * @return a matcher for a JSON Object of the second embedded
+	 * @return the matcher
 	 * @review
+	 */
+	public static Matcher<JsonElement> isAJsonObjectWithTheFirstNested() {
+		Builder builder = new Builder();
+
+		Conditions conditions = builder.where(
+			"@type", containsTheTypes("Type 3")
+		).where(
+			"number1", is(aJsonInt(equalTo(2017)))
+		).where(
+			"string1", is(aJsonString(equalTo("id 1")))
+		).where(
+			"string2", is(aJsonString(equalTo("string2")))
+		).build();
+
+		return aJsonObjectWith(conditions);
+	}
+
+	/**
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of
+	 * the second embedded model.
+	 *
+	 * @return the matcher
 	 */
 	public static Matcher<JsonElement> isAJsonObjectWithTheSecondEmbedded() {
 		Conditions.Builder builder = new Conditions.Builder();
@@ -318,6 +367,8 @@ public class JSONLDTestUtil {
 		).where(
 			"boolean", is(aJsonBoolean(false))
 		).where(
+			"booleanList", isAJsonArrayContaining(true)
+		).where(
 			"embedded", isALinkTo("localhost/p/third-inner-model/first")
 		).where(
 			"link", isALinkTo("community.liferay.com")
@@ -326,24 +377,86 @@ public class JSONLDTestUtil {
 		).where(
 			"number", is(aJsonInt(equalTo(2017)))
 		).where(
+			"numberList", isAJsonArrayContaining(1)
+		).where(
 			"relatedCollection",
 			isALinkTo("localhost/p/second-inner-model/first/models")
 		).where(
 			"string", is(aJsonString(equalTo("A string")))
+		).where(
+			"stringList", isAJsonArrayContaining("a")
 		).build();
 
 		return is(aJsonObjectWith(secondEmbeddedConditions));
 	}
 
 	/**
-	 * Returns a {@link Matcher} that checks if the field is a link to the
-	 * provided URL.
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of
+	 * the second nested model.
 	 *
-	 * @param  url the URL to match
-	 * @return a matcher for URL fields
+	 * @return the matcher
 	 * @review
 	 */
-	public static Matcher<? extends JsonElement> isALinkTo(String url) {
+	public static Matcher<JsonElement> isAJsonObjectWithTheSecondNested(
+		String id) {
+
+		Builder builder = new Builder();
+
+		Conditions secondNestedContextConditions = builder.where(
+			"linked3", IS_A_TYPE_ID_JSON_OBJECT
+		).where(
+			"bidirectionalModel3", IS_A_TYPE_ID_JSON_OBJECT
+		).where(
+			"relatedCollection3", IS_A_TYPE_ID_JSON_OBJECT
+		).build();
+
+		Conditions secondNestedConditions = builder.where(
+			"@context", is(aJsonObjectWith(secondNestedContextConditions))
+		).where(
+			"@type", containsTheTypes("Type 4")
+		).where(
+			"bidirectionalModel3",
+			isALinkTo("localhost/p/first-inner-model/" + id)
+		).where(
+			"linked3", isALinkTo("localhost/p/third-inner-model/fifth")
+		).where(
+			"nested3", isAJsonObjectWithTheThirdNested()
+		).where(
+			"number1", is(aJsonInt(equalTo(42)))
+		).where(
+			"relatedCollection3",
+			isALinkTo("localhost/p/model/" + id + "/models")
+		).where(
+			"string1", is(aJsonString(equalTo(id)))
+		).build();
+
+		return aJsonObjectWith(secondNestedConditions);
+	}
+
+	/**
+	 * Returns a {@code Matcher} that checks if the field is a JSON object of
+	 * the third nested model.
+	 *
+	 * @return the matcher
+	 * @review
+	 */
+	public static Conditions isAJsonObjectWithTheThirdNested() {
+		Builder builder = new Builder();
+
+		return builder.where(
+			"@type", containsTheTypes("Type 5")
+		).where(
+			"string1", is(aJsonString(equalTo("id 3")))
+		).build();
+	}
+
+	/**
+	 * Returns a {@code Matcher} that checks if the field is a link to the URL.
+	 *
+	 * @param  url the URL
+	 * @return the matcher
+	 */
+	public static Matcher<JsonElement> isALinkTo(String url) {
 		return is(aJsonString(equalTo(url)));
 	}
 

@@ -19,6 +19,10 @@ package com.liferay.shopping.constants;
  */
 public class ShoppingConstants {
 
+	public static final String RESOURCE_NAME = "com.liferay.shopping";
+
 	public static final String SERVICE_NAME = "com.liferay.portlet.shopping";
+
+	public static final int STOCK_QUANTITY_INFINITE_STOCK = -1;
 
 }

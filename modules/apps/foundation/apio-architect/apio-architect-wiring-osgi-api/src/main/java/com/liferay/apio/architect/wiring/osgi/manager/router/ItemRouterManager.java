@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.apio.architect.routes.ItemRoutes;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,15 +36,6 @@ public interface ItemRouterManager {
 	 * @param  name the item resource's name
 	 * @return the item routes
 	 */
-	public <T> Optional<ItemRoutes<T>> getItemRoutesOptional(String name);
-
-	/**
-	 * Returns the operations for the item resource's class.
-	 *
-	 * @param  modelClass the item resource's class
-	 * @return the list of operations
-	 * @review
-	 */
-	public <T> List getOperations(Class<T> modelClass);
+	public <T, S> Optional<ItemRoutes<T, S>> getItemRoutesOptional(String name);
 
 }

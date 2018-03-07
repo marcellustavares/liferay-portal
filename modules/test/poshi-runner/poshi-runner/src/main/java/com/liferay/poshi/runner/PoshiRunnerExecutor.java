@@ -276,8 +276,7 @@ public class PoshiRunnerExecutor {
 		XMLLoggerHandler.updateStatus(element, "pass");
 	}
 
-	public static void runFunctionCommandElement(
-			String classCommandName, Element commandElement)
+	public static void runFunctionCommandElement(Element commandElement)
 		throws Exception {
 
 		PoshiRunnerStackTraceUtil.setCurrentElement(commandElement);
@@ -312,23 +311,24 @@ public class PoshiRunnerExecutor {
 
 		PoshiRunnerStackTraceUtil.setCurrentElement(executeElement);
 
-		String classCommandName = executeElement.attributeValue("function");
+		String namespacedClassCommandName = executeElement.attributeValue(
+			"function");
 
-		String simpleClassCommandName =
-			PoshiRunnerGetterUtil.getSimpleClassCommandName(classCommandName);
+		String classCommandName =
+			PoshiRunnerGetterUtil.
+				getClassCommandNameFromNamespacedClassCommandName(
+					namespacedClassCommandName);
 
-		String className = simpleClassCommandName;
-
-		if (classCommandName.contains("#")) {
-			className = PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-				simpleClassCommandName);
-		}
+		String className =
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
+				classCommandName);
 
 		Exception exception = null;
 
 		int locatorCount = PoshiRunnerContext.getFunctionLocatorCount(
 			className,
-			PoshiRunnerStackTraceUtil.getCurrentNamespace(classCommandName));
+			PoshiRunnerStackTraceUtil.getCurrentNamespace(
+				namespacedClassCommandName));
 
 		for (int i = 1; i <= locatorCount; i++) {
 			String locator = executeElement.attributeValue("locator" + i);
@@ -343,13 +343,16 @@ public class PoshiRunnerExecutor {
 
 				if (matcher.find() && !locator.contains("/")) {
 					String pathClassName =
-						PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-							locator);
+						PoshiRunnerVariablesUtil.replaceCommandVars(
+							PoshiRunnerGetterUtil.
+								getClassNameFromNamespacedClassCommandName(
+									locator));
 
 					String locatorKey =
 						PoshiRunnerVariablesUtil.replaceCommandVars(
 							PoshiRunnerGetterUtil.
-								getCommandNameFromClassCommandName(locator));
+								getCommandNameFromNamespacedClassCommandName(
+									locator));
 
 					PoshiRunnerVariablesUtil.putIntoExecuteMap(
 						"locator-key" + i, locatorKey);
@@ -393,15 +396,16 @@ public class PoshiRunnerExecutor {
 		PoshiRunnerStackTraceUtil.pushStackTrace(executeElement);
 
 		Element commandElement = PoshiRunnerContext.getFunctionCommandElement(
-			simpleClassCommandName,
-			PoshiRunnerStackTraceUtil.getCurrentNamespace(classCommandName));
+			classCommandName,
+			PoshiRunnerStackTraceUtil.getCurrentNamespace(
+				namespacedClassCommandName));
 
 		try {
 			if (exception != null) {
 				throw exception;
 			}
 
-			runFunctionCommandElement(classCommandName, commandElement);
+			runFunctionCommandElement(commandElement);
 		}
 		catch (Throwable t) {
 			String warningMessage = _getWarningFromThrowable(t);
@@ -591,7 +595,7 @@ public class PoshiRunnerExecutor {
 	}
 
 	public static Map<String, String> runMacroCommandElement(
-			String classCommandName, Element commandElement)
+			Element commandElement)
 		throws Exception {
 
 		PoshiRunnerStackTraceUtil.setCurrentElement(commandElement);
@@ -633,19 +637,22 @@ public class PoshiRunnerExecutor {
 
 		XMLLoggerHandler.updateStatus(executeElement, "pending");
 
-		String classCommandName = executeElement.attributeValue(macroType);
+		String namespacedClassCommandName = executeElement.attributeValue(
+			macroType);
 
-		String simpleClassCommandName =
-			PoshiRunnerGetterUtil.getSimpleClassCommandName(classCommandName);
+		String classCommandName =
+			PoshiRunnerGetterUtil.
+				getClassCommandNameFromNamespacedClassCommandName(
+					namespacedClassCommandName);
 
 		String className =
-			PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-				simpleClassCommandName);
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
+				classCommandName);
 
 		PoshiRunnerStackTraceUtil.pushStackTrace(executeElement);
 
 		String namespace = PoshiRunnerStackTraceUtil.getCurrentNamespace(
-			classCommandName);
+			namespacedClassCommandName);
 
 		Element rootElement = PoshiRunnerContext.getMacroRootElement(
 			className, namespace);
@@ -669,11 +676,11 @@ public class PoshiRunnerExecutor {
 		SummaryLoggerHandler.startSummary(executeElement);
 
 		Element commandElement = PoshiRunnerContext.getMacroCommandElement(
-			simpleClassCommandName, namespace);
+			classCommandName, namespace);
 
 		try {
 			Map<String, String> macroReturns = runMacroCommandElement(
-				classCommandName, commandElement);
+				commandElement);
 
 			List<Element> returnElements = executeElement.elements("return");
 
@@ -928,23 +935,20 @@ public class PoshiRunnerExecutor {
 
 		XMLLoggerHandler.updateStatus(executeElement, "pending");
 
-		String classCommandName = executeElement.attributeValue("test-case");
-
-		String className =
-			PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-				classCommandName);
-
-		if (className.equals("super")) {
-			className = PoshiRunnerGetterUtil.getExtendedTestCaseName();
-
-			classCommandName = classCommandName.replaceFirst(
-				"super", className);
-		}
+		String namespacedClassCommandName = executeElement.attributeValue(
+			"test-case");
 
 		PoshiRunnerStackTraceUtil.pushStackTrace(executeElement);
 
+		String className =
+			PoshiRunnerGetterUtil.getClassNameFromNamespacedClassCommandName(
+				namespacedClassCommandName);
+		String namespace =
+			PoshiRunnerGetterUtil.getNamespaceFromNamespacedClassCommandName(
+				namespacedClassCommandName);
+
 		Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
-			className);
+			className, namespace);
 
 		List<Element> rootVarElements = rootElement.elements("var");
 
@@ -953,7 +957,7 @@ public class PoshiRunnerExecutor {
 		}
 
 		Element commandElement = PoshiRunnerContext.getTestCaseCommandElement(
-			classCommandName);
+			namespacedClassCommandName, namespace);
 
 		runTestCaseCommandElement(commandElement);
 
@@ -1078,16 +1082,16 @@ public class PoshiRunnerExecutor {
 				}
 			}
 			else if (element.attributeValue("method") != null) {
-				String classCommandName = element.attributeValue("method");
+				String methodName = element.attributeValue("method");
 
-				if (classCommandName.startsWith("TestPropsUtil")) {
-					classCommandName = classCommandName.replace(
+				if (methodName.startsWith("TestPropsUtil")) {
+					methodName = methodName.replace(
 						"TestPropsUtil", "PropsUtil");
 				}
 
 				try {
 					varValue = PoshiRunnerGetterUtil.getVarMethodValue(
-						classCommandName,
+						methodName,
 						PoshiRunnerStackTraceUtil.getCurrentNamespace());
 				}
 				catch (Exception e) {
@@ -1115,10 +1119,10 @@ public class PoshiRunnerExecutor {
 				varValue.toString());
 
 			if (matcher.find()) {
-				String method = matcher.group(2);
+				String methodName = matcher.group(2);
 				String variable = matcher.group(1);
 
-				if (method.equals("length()")) {
+				if (methodName.equals("length()")) {
 					if (PoshiRunnerVariablesUtil.containsKeyInCommandMap(
 							variable)) {
 
@@ -1133,7 +1137,7 @@ public class PoshiRunnerExecutor {
 					varValue = String.valueOf(variable.length());
 				}
 				else {
-					throw new Exception("No such method " + method);
+					throw new Exception("No such method " + methodName);
 				}
 			}
 		}
@@ -1144,9 +1148,7 @@ public class PoshiRunnerExecutor {
 
 			Matcher matcher = _variablePattern.matcher(replacedVarValue);
 
-			if (matcher.matches() &&
-				replacedVarValue.equals((String)varValue)) {
-
+			if (matcher.matches() && replacedVarValue.equals(varValue)) {
 				if (updateLoggerStatus) {
 					XMLLoggerHandler.updateStatus(element, "pass");
 				}

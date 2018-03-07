@@ -14,7 +14,6 @@
 
 package com.liferay.portal.workflow.web.internal.portlet.action;
 
-import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -43,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCActionCommand.class
 )
 public class UpdateWorkflowDefinitionLinkMVCActionCommand
-	extends BaseMVCActionCommand {
+	extends BaseWorkflowDefinitionMVCActionCommand {
 
 	@Override
 	protected void doProcessAction(
@@ -72,6 +71,8 @@ public class UpdateWorkflowDefinitionLinkMVCActionCommand
 				themeDisplay.getUserId(), themeDisplay.getCompanyId(), groupId,
 				className, 0, 0, workflowDefinition);
 		}
+
+		sendRedirect(actionRequest, actionResponse);
 	}
 
 	@Reference(unbind = "-")

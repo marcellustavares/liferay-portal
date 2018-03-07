@@ -20,6 +20,7 @@
 
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/comment" prefix="liferay-comment" %><%@
 taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
@@ -42,6 +43,7 @@ page import="com.liferay.asset.kernel.service.AssetVocabularyServiceUtil" %><%@
 page import="com.liferay.asset.kernel.service.persistence.AssetEntryQuery" %><%@
 page import="com.liferay.asset.util.AssetHelper" %><%@
 page import="com.liferay.document.library.constants.DLPortletKeys" %><%@
+page import="com.liferay.document.library.display.context.DLAdminDisplayContext" %><%@
 page import="com.liferay.document.library.display.context.DLEditFileEntryDisplayContext" %><%@
 page import="com.liferay.document.library.display.context.DLFilePicker" %><%@
 page import="com.liferay.document.library.display.context.DLViewFileEntryHistoryDisplayContext" %><%@
@@ -107,6 +109,11 @@ page import="com.liferay.document.library.web.internal.portlet.action.EditFileEn
 page import="com.liferay.document.library.web.internal.portlet.toolbar.contributor.DLPortletToolbarContributor" %><%@
 page import="com.liferay.document.library.web.internal.search.EntriesChecker" %><%@
 page import="com.liferay.document.library.web.internal.search.EntriesMover" %><%@
+page import="com.liferay.document.library.web.internal.security.permission.resource.DLFileEntryPermission" %><%@
+page import="com.liferay.document.library.web.internal.security.permission.resource.DLFileEntryTypePermission" %><%@
+page import="com.liferay.document.library.web.internal.security.permission.resource.DLFileShortcutPermission" %><%@
+page import="com.liferay.document.library.web.internal.security.permission.resource.DLFolderPermission" %><%@
+page import="com.liferay.document.library.web.internal.security.permission.resource.DLPermission" %><%@
 page import="com.liferay.document.library.web.internal.settings.DLPortletInstanceSettings" %><%@
 page import="com.liferay.document.library.web.internal.util.DLBreadcrumbUtil" %><%@
 page import="com.liferay.document.library.web.internal.util.DLFileEntryTypeUtil" %><%@
@@ -188,7 +195,6 @@ page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.service.ClassNameLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.GroupServiceUtil" %><%@
-page import="com.liferay.portal.kernel.service.PortletLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.service.ServiceContext" %><%@
 page import="com.liferay.portal.kernel.service.TicketLocalServiceUtil" %><%@
@@ -223,7 +229,6 @@ page import="com.liferay.portal.kernel.util.UnicodeFormatter" %><%@
 page import="com.liferay.portal.kernel.util.UnicodeProperties" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-page import="com.liferay.portal.kernel.webdav.WebDAVUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowDefinition" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowDefinitionManagerUtil" %><%@
@@ -235,11 +240,6 @@ page import="com.liferay.portal.upload.LiferayFileItem" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.portlet.documentlibrary.DLGroupServiceSettings" %><%@
 page import="com.liferay.portlet.documentlibrary.constants.DLConstants" %><%@
-page import="com.liferay.portlet.documentlibrary.service.permission.DLFileEntryPermission" %><%@
-page import="com.liferay.portlet.documentlibrary.service.permission.DLFileEntryTypePermission" %><%@
-page import="com.liferay.portlet.documentlibrary.service.permission.DLFileShortcutPermission" %><%@
-page import="com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission" %><%@
-page import="com.liferay.portlet.documentlibrary.service.permission.DLPermission" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearch" %><%@
 page import="com.liferay.portlet.usersadmin.search.GroupSearchTerms" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@

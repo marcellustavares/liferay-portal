@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -36,28 +37,24 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.rss.export.RSSExporter;
+import com.liferay.rss.model.SyndContent;
+import com.liferay.rss.model.SyndEntry;
+import com.liferay.rss.model.SyndFeed;
+import com.liferay.rss.model.SyndLink;
+import com.liferay.rss.model.SyndModelFactory;
 import com.liferay.rss.util.RSSUtil;
 import com.liferay.subscription.service.SubscriptionLocalService;
 import com.liferay.wiki.configuration.WikiGroupServiceOverriddenConfiguration;
 import com.liferay.wiki.constants.WikiConstants;
 import com.liferay.wiki.constants.WikiPortletKeys;
-import com.liferay.wiki.engine.impl.WikiEngineRenderer;
+import com.liferay.wiki.engine.WikiEngineRenderer;
 import com.liferay.wiki.exception.NoSuchPageException;
 import com.liferay.wiki.model.WikiNode;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.model.WikiPageConstants;
 import com.liferay.wiki.service.base.WikiPageServiceBaseImpl;
 import com.liferay.wiki.util.comparator.PageCreateDateComparator;
-
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.syndication.feed.synd.SyndLink;
-import com.sun.syndication.feed.synd.SyndLinkImpl;
-import com.sun.syndication.io.FeedException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -388,17 +385,31 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			feedURL, entryURL, attachmentURLPrefix, pages, false, null);
 	}
 
+	/**
+	 * @deprecated As of 2.0.0, replaced by {@link #getOrphans(WikiNode)}
+	 */
+	@Deprecated
 	@Override
 	public List<WikiPage> getOrphans(long groupId, long nodeId)
 		throws PortalException {
 
+		WikiNode node = wikiNodeLocalService.getNode(nodeId);
+
+		return getOrphans(node);
+	}
+
+	@Override
+	public List<WikiPage> getOrphans(WikiNode node) throws PortalException {
+		PermissionChecker permissionChecker = getPermissionChecker();
+
 		_wikiNodeModelResourcePermission.check(
-			getPermissionChecker(), nodeId, ActionKeys.VIEW);
+			permissionChecker, node, ActionKeys.VIEW);
 
 		List<WikiPage> pages = wikiPagePersistence.filterFindByG_N_H_S(
-			groupId, nodeId, true, WorkflowConstants.STATUS_APPROVED);
+			node.getGroupId(), node.getNodeId(), true,
+			WorkflowConstants.STATUS_APPROVED);
 
-		return wikiEngineRenderer.filterOrphans(pages);
+		return wikiPageLocalService.getOrphans(pages);
 	}
 
 	@Override
@@ -801,7 +812,7 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			Locale locale)
 		throws PortalException {
 
-		SyndFeed syndFeed = new SyndFeedImpl();
+		SyndFeed syndFeed = _syndModelFactory.createSyndFeed();
 
 		syndFeed.setDescription(description);
 
@@ -814,13 +825,13 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		StringBundler sb = new StringBundler(6);
 
 		for (WikiPage page : pages) {
-			SyndEntry syndEntry = new SyndEntryImpl();
+			SyndEntry syndEntry = _syndModelFactory.createSyndEntry();
 
 			String author = PortalUtil.getUserName(page);
 
 			syndEntry.setAuthor(author);
 
-			SyndContent syndContent = new SyndContentImpl();
+			SyndContent syndContent = _syndModelFactory.createSyndContent();
 
 			syndContent.setType(RSSUtil.ENTRY_TYPE_DEFAULT);
 
@@ -930,7 +941,7 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 
 		syndFeed.setLinks(syndLinks);
 
-		SyndLink syndLinkSelf = new SyndLinkImpl();
+		SyndLink syndLinkSelf = _syndModelFactory.createSyndLink();
 
 		syndLinks.add(syndLinkSelf);
 
@@ -941,12 +952,7 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 		syndFeed.setTitle(name);
 		syndFeed.setUri(feedURL);
 
-		try {
-			return RSSUtil.export(syndFeed);
-		}
-		catch (FeedException fe) {
-			throw new SystemException(fe);
-		}
+		return _rssExporter.export(syndFeed);
 	}
 
 	@ServiceReference(type = ConfigurationProvider.class)
@@ -968,5 +974,11 @@ public class WikiPageServiceImpl extends WikiPageServiceBaseImpl {
 			ModelResourcePermissionFactory.getInstance(
 				WikiPageServiceImpl.class, "_wikiPageModelResourcePermission",
 				WikiPage.class);
+
+	@ServiceReference(type = RSSExporter.class)
+	private RSSExporter _rssExporter;
+
+	@ServiceReference(type = SyndModelFactory.class)
+	private SyndModelFactory _syndModelFactory;
 
 }

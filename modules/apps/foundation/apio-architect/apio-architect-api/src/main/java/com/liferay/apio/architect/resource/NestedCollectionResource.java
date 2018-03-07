@@ -16,48 +16,59 @@ package com.liferay.apio.architect.resource;
 
 import aQute.bnd.annotation.ConsumerType;
 
+import com.liferay.apio.architect.identifier.Identifier;
 import com.liferay.apio.architect.router.NestedCollectionRouter;
 
 /**
- * Maps your domain models to resources that Apio can understand.
+ * Maps your domain models to nested collection resources that Apio can
+ * understand.
  *
  * <p>
- * Resources behave like an API so you must add the API's name via the {@link
+ * Resources behave like an API, so you must add the API's name via the {@link
  * #getName()} method.
  * </p>
  *
  * <p>
- * Representors created by the {@link
+ * The type param provided for the resource ID must be unique in the
+ * application.
+ * </p>
+ *
+ * <p>
+ * Representors created by the method {@link
  * #representor(com.liferay.apio.architect.representor.Representor.Builder)}
- * method hold all the information needed to write your domain models'
- * hypermedia representations.
+ * hold all the information needed to write your domain models' hypermedia
+ * representations.
  * </p>
  *
  * <p>
  * You can add the different supported routes for the collection resource via
- * the {@link
+ * the method {@link
  * #collectionRoutes(
- * com.liferay.apio.architect.routes.NestedCollectionRoutes.Builder)} method.
+ * com.liferay.apio.architect.routes.NestedCollectionRoutes.Builder)}.
  * </p>
  *
  * <p>
  * You can add the different supported routes for the single resource via the
  * {@link #itemRoutes(com.liferay.apio.architect.routes.ItemRoutes.Builder)}
- * (Routes.Builder)} method.
+ * method.
  * </p>
  *
  * @author Alejandro Hernández
  * @param  <T> the model's type
- * @param  <S> the model identifier's type ({@link Long}, {@link String}, etc.)
- * @param  <U> the parent model's type
- * @param  <V> the parent model identifier's type ({@link Long}, {@link String},
- *         etc.)
+ * @param  <S> the type of the model's identifier (e.g., {@code Long}, {@code
+ *         String}, etc.)
+ * @param  <U> the type of the resource's identifier. It must be a subclass of
+ *         {@code Identifier<S>}.
+ * @param  <V> the type of the parent model's identifier (e.g., {@code Long},
+ *         {@code String}, etc.)
+ * @param  <W> the type of the parent resource's identifier. It must be a
+ *         subclass of {@code Identifier<V>}.
  * @see    com.liferay.apio.architect.representor.Representor.Builder
  * @see    com.liferay.apio.architect.routes.ItemRoutes.Builder
  * @see    com.liferay.apio.architect.routes.NestedCollectionRoutes.Builder
- * @review
  */
 @ConsumerType
-public interface NestedCollectionResource<T, S, U, V>
-	extends ItemResource<T, S>, NestedCollectionRouter<T, U, V> {
+public interface NestedCollectionResource
+	<T, S, U extends Identifier<S>, V, W extends Identifier<V>>
+		extends ItemResource<T, S, U>, NestedCollectionRouter<T, U, V, W> {
 }

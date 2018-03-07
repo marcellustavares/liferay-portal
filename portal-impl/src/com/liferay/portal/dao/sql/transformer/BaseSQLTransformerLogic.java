@@ -14,7 +14,9 @@
 
 package com.liferay.portal.dao.sql.transformer;
 
+import com.liferay.portal.internal.dao.sql.transformer.SQLFunctionTransformer;
 import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.function.Function;
@@ -85,6 +87,14 @@ public abstract class BaseSQLTransformerLogic implements SQLTransformerLogic {
 			"CAST_TEXT\\((.+?)\\)", Pattern.CASE_INSENSITIVE);
 	}
 
+	protected Function<String, String> getConcatFunction() {
+		SQLFunctionTransformer sqlFunctionTransformer =
+			new SQLFunctionTransformer(
+				"CONCAT(", StringPool.BLANK, " + ", StringPool.BLANK);
+
+		return sqlFunctionTransformer::transform;
+	}
+
 	protected Function<String, String> getInstrFunction() {
 		Pattern pattern = getInstrPattern();
 
@@ -110,6 +120,48 @@ public abstract class BaseSQLTransformerLogic implements SQLTransformerLogic {
 
 	protected Function<String, String> getLengthFunction() {
 		return (String sql) -> StringUtil.replace(sql, "LENGTH(", "LEN(");
+	}
+
+	protected Function<String, String> getLowerFunction() {
+		return (String sql) -> {
+			int x = sql.indexOf(_LOWER_OPEN);
+
+			if (x == -1) {
+				return sql;
+			}
+
+			StringBuilder sb = new StringBuilder(sql.length());
+
+			int y = 0;
+
+			while (true) {
+				sb.append(sql.substring(y, x));
+
+				y = sql.indexOf(_LOWER_CLOSE, x);
+
+				if (y == -1) {
+					sb.append(sql.substring(x));
+
+					break;
+				}
+
+				sb.append(sql.substring(x + _LOWER_OPEN.length(), y));
+
+				y++;
+
+				x = sql.indexOf(_LOWER_OPEN, y);
+
+				if (x == -1) {
+					sb.append(sql.substring(y));
+
+					break;
+				}
+			}
+
+			sql = sb.toString();
+
+			return sql;
+		};
 	}
 
 	protected Function<String, String> getModFunction() {
@@ -174,6 +226,10 @@ public abstract class BaseSQLTransformerLogic implements SQLTransformerLogic {
 	protected void setFunctions(Function... functions) {
 		_functions = functions;
 	}
+
+	private static final String _LOWER_CLOSE = StringPool.CLOSE_PARENTHESIS;
+
+	private static final String _LOWER_OPEN = "lower(";
 
 	private final DB _db;
 	private Function[] _functions;

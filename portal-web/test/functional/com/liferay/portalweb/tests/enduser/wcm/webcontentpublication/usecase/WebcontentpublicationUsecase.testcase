@@ -179,7 +179,7 @@
 		</execute>
 
 		<for list="Home,Documents and Media,News" param="sitePageName">
-			<execute function="AssertElementPresent" locator1="Home#PAGE" value1="${sitePageName}">
+			<execute function="AssertElementPresent" locator1="Home#PAGE">
 				<var name="key_pageName" value="${sitePageName}" />
 			</execute>
 		</for>
@@ -189,7 +189,7 @@
 		</execute>
 
 		<for list="Documents and Media,News" param="sitePageName">
-			<execute function="AssertElementNotPresent" locator1="Home#PAGE" value1="${sitePageName}">
+			<execute function="AssertElementNotPresent" locator1="Home#PAGE">
 				<var name="key_pageName" value="${sitePageName}" />
 			</execute>
 		</for>
@@ -266,7 +266,7 @@
 			<var name="assetTitle" value="WC WebContent Title" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="SignIn#PORTLET_TITLE" value1="Sign" />
+		<execute function="AssertElementNotPresent" locator1="SignIn#PORTLET_TITLE" />
 
 		<execute macro="Navigator#gotoSpecificURLPage">
 			<var name="pageName" value="Web Content Page" />
@@ -459,7 +459,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="German (Germany)" />
-			<var name="locale" value="de-DE" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -469,7 +468,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="French (France)" />
-			<var name="locale" value="fr-FR" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -868,7 +866,7 @@
 			<var name="templateFieldNames" value="Boolean,Date,Decimal,Documents and Media,HTML,Image,Integer,Link to Page,Number,Radio,Select,Text,Text Box" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -910,7 +908,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="German (Germany)" />
-			<var name="locale" value="de-DE" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -963,7 +960,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="German (Germany)" />
-			<var name="locale" value="de-DE" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -1016,7 +1012,6 @@
 
 		<execute macro="WebContent#addLocale">
 			<var name="language" value="German (Germany)" />
-			<var name="locale" value="de-DE" />
 		</execute>
 
 		<execute macro="WebContent#addCP">
@@ -1146,7 +1141,7 @@
 			<var name="templateLanguage" value="ftl" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Content" />

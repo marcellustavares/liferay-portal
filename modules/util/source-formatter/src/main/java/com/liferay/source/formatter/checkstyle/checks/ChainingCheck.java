@@ -16,6 +16,7 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
 
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
@@ -26,7 +27,6 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Hugo Huijser
@@ -302,21 +302,25 @@ public class ChainingCheck extends BaseCheck {
 			nameAST = dotAST.findFirstToken(TokenTypes.IDENT);
 		}
 
-		String classOrVariableName = nameAST.getText();
+		if (nameAST != null) {
+			String classOrVariableName = nameAST.getText();
 
-		for (String allowedClassName : _allowedClassNames) {
-			if (classOrVariableName.matches(allowedClassName)) {
-				return true;
-			}
-		}
-
-		Set<String> variableTypeNames = DetailASTUtil.getVariableTypeNames(
-			detailAST, classOrVariableName);
-
-		for (String variableTypeName : variableTypeNames) {
-			for (String allowedVariableTypeName : _allowedVariableTypeNames) {
-				if (variableTypeName.matches(allowedVariableTypeName)) {
+			for (String allowedClassName : _allowedClassNames) {
+				if (classOrVariableName.matches(allowedClassName)) {
 					return true;
+				}
+			}
+
+			String variableTypeName = DetailASTUtil.getVariableTypeName(
+				methodCallAST, classOrVariableName);
+
+			if (Validator.isNotNull(variableTypeName)) {
+				for (String allowedVariableTypeName :
+						_allowedVariableTypeNames) {
+
+					if (variableTypeName.matches(allowedVariableTypeName)) {
+						return true;
+					}
 				}
 			}
 		}

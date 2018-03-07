@@ -285,7 +285,7 @@
 		</execute>
 
 		<execute macro="Staging#configurePublishToLive">
-			<var name="checkAllContent" value="true" />
+			<var name="checkContentNameList" value="Blogs" />
 			<var name="checkPageName" value="Public Pages" />
 		</execute>
 
@@ -295,7 +295,7 @@
 		</execute>
 
 		<execute macro="Staging#publishToLivePublishTemplate">
-			<var name="publishTemplateName" value="Publish Template Name" />
+			<var name="publishTemplateName" value="Publish Template Name Edit" />
 			<var name="siteName" value="Site Name" />
 		</execute>
 
@@ -1118,6 +1118,7 @@
 
 		<execute macro="Staging#configurePublishToLive">
 			<var name="contentDateRange" value="All" />
+			<var name="mainContent" value="Documents and Media" />
 			<var name="uncheckContentNameList" value="Documents and Media" />
 			<var name="uncheckSubContent" value="Web Content" />
 		</execute>

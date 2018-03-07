@@ -25,6 +25,7 @@ import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
@@ -104,7 +105,6 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -1280,6 +1280,18 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		return groupPersistence.findByC_P_S_I(
 			companyId, parentGroupId, site, inheritContent);
+	}
+
+	@Override
+	public List<Group> getGroups(
+		long companyId, long parentGroupId, boolean site, int start, int end) {
+
+		if (parentGroupId == GroupConstants.ANY_PARENT_GROUP_ID) {
+			return groupPersistence.findByC_S(companyId, site, start, end);
+		}
+
+		return groupPersistence.findByC_P_S(
+			companyId, parentGroupId, site, start, end);
 	}
 
 	@Override

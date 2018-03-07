@@ -15,16 +15,17 @@
 package com.liferay.portal.servlet;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -161,11 +162,41 @@ public class I18nServlet extends HttpServlet {
 
 		String i18nLanguageCode = i18nLanguageId;
 
-		if ((locale == null) || Validator.isNull(locale.getCountry())) {
+		Locale siteDefaultLocale = null;
 
-			// Locales must contain the country code
+		try {
+			int[] friendlyURLIndices = PortalUtil.getGroupFriendlyURLIndex(
+				path);
 
-			locale = LanguageUtil.getLocale(i18nLanguageCode);
+			String friendlyURL = path.substring(
+				friendlyURLIndices[0], friendlyURLIndices[1]);
+
+			Group siteGroup = GroupLocalServiceUtil.getFriendlyURLGroup(
+				(Long)request.getAttribute(WebKeys.COMPANY_ID), friendlyURL);
+
+			siteDefaultLocale = PortalUtil.getSiteDefaultLocale(siteGroup);
+
+			if (!LanguageUtil.isSameLanguage(locale, siteDefaultLocale)) {
+				siteDefaultLocale = LanguageUtil.getLocale(
+					siteGroup.getGroupId(), locale.getLanguage());
+			}
+		}
+		catch (Exception e) {
+			siteDefaultLocale = LocaleUtil.getDefault();
+
+			if (!LanguageUtil.isSameLanguage(locale, siteDefaultLocale)) {
+				siteDefaultLocale = LanguageUtil.getLocale(
+					locale.getLanguage());
+			}
+		}
+
+		String siteDefaultLanguageId = LanguageUtil.getLanguageId(
+			siteDefaultLocale);
+
+		if (siteDefaultLanguageId.startsWith(i18nLanguageId)) {
+			locale = siteDefaultLocale;
+
+			i18nPath = StringPool.SLASH + locale.getLanguage();
 		}
 
 		if (locale != null) {
@@ -180,7 +211,7 @@ public class I18nServlet extends HttpServlet {
 			return null;
 		}
 
-		String redirect = _appendQueryString(request, path);
+		String redirect = path;
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Redirect " + redirect);
@@ -193,9 +224,23 @@ public class I18nServlet extends HttpServlet {
 	protected I18nData getI18nData(Locale locale) {
 		String languageId = LocaleUtil.toLanguageId(locale);
 
+		String i18nPath = StringPool.SLASH + languageId;
+
+		Locale defaultLocale = LocaleUtil.getDefault();
+
+		if (LocaleUtil.equals(defaultLocale, locale)) {
+			i18nPath = StringPool.SLASH + defaultLocale.getLanguage();
+		}
+		else if (!LanguageUtil.isSameLanguage(defaultLocale, locale)) {
+			defaultLocale = LanguageUtil.getLocale(locale.getLanguage());
+
+			if (LocaleUtil.equals(defaultLocale, locale)) {
+				i18nPath = StringPool.SLASH + defaultLocale.getLanguage();
+			}
+		}
+
 		return new I18nData(
-			StringPool.SLASH + languageId, locale.getLanguage(), languageId,
-			StringPool.SLASH);
+			i18nPath, locale.getLanguage(), languageId, StringPool.SLASH);
 	}
 
 	protected class I18nData {
@@ -264,21 +309,6 @@ public class I18nServlet extends HttpServlet {
 		private final String _languageId;
 		private final String _path;
 
-	}
-
-	private String _appendQueryString(HttpServletRequest request, String path) {
-		String queryString = request.getQueryString();
-
-		if (Validator.isNull(queryString)) {
-			queryString = (String)request.getAttribute(
-				JavaConstants.JAVAX_SERVLET_FORWARD_QUERY_STRING);
-		}
-
-		if (Validator.isNotNull(queryString)) {
-			return path.concat(StringPool.QUESTION).concat(queryString);
-		}
-
-		return path;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(I18nServlet.class);

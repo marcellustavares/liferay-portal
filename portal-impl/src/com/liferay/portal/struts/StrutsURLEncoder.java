@@ -15,6 +15,7 @@
 package com.liferay.portal.struts;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.portlet.WindowStateFactory;
 import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -95,10 +95,12 @@ public class StrutsURLEncoder implements URLEncoder {
 
 		_contextPath = contextPath;
 		_mainPath = mainPath;
-		_setServletMapping(servletMapping);
 		_liferayPortletURL = liferayPortletURL;
+
 		_windowState = liferayPortletURL.getWindowState();
 		_portletMode = liferayPortletURL.getPortletMode();
+
+		_setServletMapping(servletMapping);
 	}
 
 	@Override

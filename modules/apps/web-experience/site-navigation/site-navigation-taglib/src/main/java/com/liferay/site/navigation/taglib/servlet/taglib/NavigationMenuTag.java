@@ -19,9 +19,12 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManagerUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.NavItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
@@ -35,8 +38,10 @@ import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,19 +73,36 @@ public class NavigationMenuTag extends IncludeTag {
 			return EVAL_PAGE;
 		}
 
-		List<NavItem> navItems = getMenuItems(request);
+		List<NavItem> branchNavItems = null;
+		List<NavItem> navItems = null;
+
+		try {
+			if (_siteNavigationMenuId > 0) {
+				branchNavItems = Collections.emptyList();
+
+				navItems = getMenuItems();
+			}
+			else {
+				branchNavItems = getBranchNavItems(request);
+
+				navItems = getNavItems(branchNavItems);
+			}
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
 
 		HttpServletResponse response =
 			(HttpServletResponse)pageContext.getResponse();
 
 		Map<String, Object> contextObjects = new HashMap<>();
 
-		contextObjects.put("branchNavItems", new ArrayList<NavItem>());
+		contextObjects.put("branchNavItems", branchNavItems);
 		contextObjects.put("displayDepth", _displayDepth);
-		contextObjects.put("expandedLevels", _expandedLevels);
+		contextObjects.put("includedLayouts", _expandedLevels);
 		contextObjects.put("preview", _preview);
-		contextObjects.put("rootItemLevel", _rootItemLevel);
-		contextObjects.put("rootItemType", _rootItemType);
+		contextObjects.put("rootLayoutLevel", _rootItemLevel);
+		contextObjects.put("rootLayoutType", _rootItemType);
 
 		String result = portletDisplayTemplate.renderDDMTemplate(
 			request, response, portletDisplayDDMTemplate, navItems,
@@ -120,7 +142,7 @@ public class NavigationMenuTag extends IncludeTag {
 		_preview = preview;
 	}
 
-	public void setRootItemId(long rootItemId) {
+	public void setRootItemId(String rootItemId) {
 		_rootItemId = rootItemId;
 	}
 
@@ -138,6 +160,8 @@ public class NavigationMenuTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
+		super.cleanUp();
+
 		_ddmTemplateGroupId = 0;
 		_ddmTemplateKey = null;
 		_displayDepth = 0;
@@ -145,8 +169,40 @@ public class NavigationMenuTag extends IncludeTag {
 		_preview = false;
 		_rootItemLevel = 1;
 		_rootItemType = "absolute";
-		_rootItemId = 0;
+		_rootItemId = null;
 		_siteNavigationMenuId = 0;
+	}
+
+	protected List<NavItem> getBranchNavItems(HttpServletRequest request)
+		throws PortalException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		Layout layout = themeDisplay.getLayout();
+
+		if (layout.isRootLayout()) {
+			return Collections.singletonList(
+				new NavItem(request, themeDisplay, layout, null));
+		}
+
+		List<Layout> ancestorLayouts = layout.getAncestors();
+
+		List<NavItem> navItems = new ArrayList<>(ancestorLayouts.size() + 1);
+
+		ListIterator<Layout> listIterator = ancestorLayouts.listIterator(
+			ancestorLayouts.size());
+
+		while (listIterator.hasPrevious()) {
+			Layout ancestorLayout = listIterator.previous();
+
+			navItems.add(
+				new NavItem(request, themeDisplay, ancestorLayout, null));
+		}
+
+		navItems.add(new NavItem(request, themeDisplay, layout, null));
+
+		return navItems;
 	}
 
 	protected String getDisplayStyle() {
@@ -169,20 +225,75 @@ public class NavigationMenuTag extends IncludeTag {
 		return themeDisplay.getScopeGroupId();
 	}
 
-	protected List<NavItem> getMenuItems(HttpServletRequest request)
-		throws PortalException {
+	protected List<NavItem> getMenuItems() throws PortalException {
+		long parentSiteNavigationMenuItemId = GetterUtil.getLong(_rootItemId);
+
+		return _getMenuItems(parentSiteNavigationMenuItemId);
+	}
+
+	protected List<NavItem> getNavItems(List<NavItem> branchNavItems)
+		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		return getNavItems(
-			_siteNavigationMenuId, _rootItemId, request, themeDisplay);
+		List<NavItem> navItems = new ArrayList<>();
+
+		NavItem rootNavItem = null;
+
+		if (_rootItemType.equals("relative")) {
+			if ((_rootItemLevel >= 0) &&
+				(_rootItemLevel < branchNavItems.size())) {
+
+				rootNavItem = branchNavItems.get(_rootItemLevel);
+			}
+		}
+		else if (_rootItemType.equals("absolute")) {
+			if (_rootItemLevel == 0) {
+				navItems = NavItem.fromLayouts(request, themeDisplay, null);
+			}
+			else if (branchNavItems.size() >= _rootItemLevel) {
+				rootNavItem = branchNavItems.get(_rootItemLevel - 1);
+			}
+		}
+		else if (_rootItemType.equals("select")) {
+			Layout layout = themeDisplay.getLayout();
+
+			if (Validator.isNotNull(_rootItemId)) {
+				Layout rootLayout =
+					LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
+						_rootItemId, layout.getGroupId(),
+						layout.isPrivateLayout());
+
+				rootNavItem = new NavItem(
+					request, themeDisplay, rootLayout, null);
+			}
+			else {
+				navItems = NavItem.fromLayouts(request, themeDisplay, null);
+			}
+		}
+
+		if (rootNavItem != null) {
+			navItems = rootNavItem.getChildren();
+		}
+
+		return navItems;
 	}
 
-	protected List<NavItem> getNavItems(
-			long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
-			HttpServletRequest request, ThemeDisplay themeDisplay)
+	@Override
+	protected String getPage() {
+		return _PAGE;
+	}
+
+	@Override
+	protected void setAttributes(HttpServletRequest request) {
+	}
+
+	private List<NavItem> _getMenuItems(long parentSiteNavigationMenuItemId)
 		throws PortalException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
 		List<NavItem> navItems = new ArrayList<>();
 
@@ -193,10 +304,8 @@ public class NavigationMenuTag extends IncludeTag {
 		for (SiteNavigationMenuItem siteNavigationMenuItem :
 				siteNavigationMenuItems) {
 
-			List<NavItem> children = getNavItems(
-				siteNavigationMenuId,
-				siteNavigationMenuItem.getSiteNavigationMenuItemId(), request,
-				themeDisplay);
+			List<NavItem> children = _getMenuItems(
+				siteNavigationMenuItem.getSiteNavigationMenuItemId());
 
 			SiteNavigationMenuItemType siteNavigationMenuItemType =
 				ServletContextUtil.getSiteNavigationMenuItemType(
@@ -216,15 +325,6 @@ public class NavigationMenuTag extends IncludeTag {
 		return navItems;
 	}
 
-	@Override
-	protected String getPage() {
-		return _PAGE;
-	}
-
-	@Override
-	protected void setAttributes(HttpServletRequest request) {
-	}
-
 	private static final String _PAGE = "/navigation/page.jsp";
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -235,7 +335,7 @@ public class NavigationMenuTag extends IncludeTag {
 	private int _displayDepth;
 	private String _expandedLevels = "auto";
 	private boolean _preview;
-	private long _rootItemId;
+	private String _rootItemId;
 	private int _rootItemLevel = 1;
 	private String _rootItemType = "absolute";
 	private long _siteNavigationMenuId;

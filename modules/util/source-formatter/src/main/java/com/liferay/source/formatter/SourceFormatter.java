@@ -15,12 +15,12 @@
 package com.liferay.source.formatter;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ArgumentsUtil;
 import com.liferay.portal.tools.GitException;
@@ -28,8 +28,8 @@ import com.liferay.portal.tools.GitUtil;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.checks.configuration.ConfigurationLoader;
 import com.liferay.source.formatter.checks.configuration.SourceCheckConfiguration;
-import com.liferay.source.formatter.checks.configuration.SourceChecksSuppressions;
 import com.liferay.source.formatter.checks.configuration.SourceFormatterConfiguration;
+import com.liferay.source.formatter.checks.configuration.SourceFormatterSuppressions;
 import com.liferay.source.formatter.checks.configuration.SuppressionsLoader;
 import com.liferay.source.formatter.checks.util.SourceUtil;
 import com.liferay.source.formatter.util.CheckType;
@@ -501,15 +501,16 @@ public class SourceFormatter {
 		return properties;
 	}
 
-	private SourceChecksSuppressions _getSourceChecksSuppressions()
+	private SourceFormatterSuppressions _getSourceFormatterSuppressions()
 		throws Exception {
 
 		List<File> suppressionsFiles = SourceFormatterUtil.getSuppressionsFiles(
-			_sourceFormatterArgs.getBaseDirName(),
-			"sourcechecks-suppressions.xml", _allFileNames,
-			_sourceFormatterExcludes, _portalSource, _subrepository);
+			_sourceFormatterArgs.getBaseDirName(), _allFileNames,
+			_sourceFormatterExcludes, "checkstyle-suppressions.xml",
+			"sourcechecks-suppressions.xml");
 
-		return SuppressionsLoader.loadSuppressions(suppressionsFiles);
+		return SuppressionsLoader.loadSuppressions(
+			_sourceFormatterArgs.getBaseDirName(), suppressionsFiles);
 	}
 
 	private void _init() throws Exception {
@@ -554,13 +555,13 @@ public class SourceFormatter {
 
 		_projectPathPrefix = _getProjectPathPrefix();
 
-		_sourceChecksSuppressions = _getSourceChecksSuppressions();
+		_sourceFormatterSuppressions = _getSourceFormatterSuppressions();
 
 		_sourceFormatterConfiguration = ConfigurationLoader.loadConfiguration(
 			"sourcechecks.xml");
 
 		if (_sourceFormatterArgs.isShowDebugInformation()) {
-			DebugUtil.addCheckNames(CheckType.SOURCECHECK, _getCheckNames());
+			DebugUtil.addCheckNames(CheckType.SOURCE_CHECK, _getCheckNames());
 		}
 	}
 
@@ -666,11 +667,12 @@ public class SourceFormatter {
 		sourceProcessor.setProgressStatusQueue(_progressStatusQueue);
 		sourceProcessor.setProjectPathPrefix(_projectPathPrefix);
 		sourceProcessor.setPropertiesMap(_propertiesMap);
-		sourceProcessor.setSourceChecksSuppressions(_sourceChecksSuppressions);
 		sourceProcessor.setSourceFormatterArgs(_sourceFormatterArgs);
 		sourceProcessor.setSourceFormatterConfiguration(
 			_sourceFormatterConfiguration);
 		sourceProcessor.setSourceFormatterExcludes(_sourceFormatterExcludes);
+		sourceProcessor.setSourceFormatterSuppressions(
+			_sourceFormatterSuppressions);
 		sourceProcessor.setSubrepository(_subrepository);
 
 		sourceProcessor.format();
@@ -799,12 +801,12 @@ public class SourceFormatter {
 
 	private String _projectPathPrefix;
 	private Map<String, Properties> _propertiesMap = new HashMap<>();
-	private SourceChecksSuppressions _sourceChecksSuppressions;
 	private final SourceFormatterArgs _sourceFormatterArgs;
 	private SourceFormatterConfiguration _sourceFormatterConfiguration;
 	private SourceFormatterExcludes _sourceFormatterExcludes;
 	private final Set<SourceFormatterMessage> _sourceFormatterMessages =
 		new ConcurrentSkipListSet<>();
+	private SourceFormatterSuppressions _sourceFormatterSuppressions;
 	private volatile List<SourceMismatchException> _sourceMismatchExceptions =
 		new ArrayList<>();
 	private List<SourceProcessor> _sourceProcessors = new ArrayList<>();

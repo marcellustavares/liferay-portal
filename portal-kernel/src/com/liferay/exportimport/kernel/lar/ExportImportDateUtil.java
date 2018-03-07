@@ -20,7 +20,7 @@ import static com.liferay.exportimport.kernel.configuration.ExportImportConfigur
 import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_IMPORT_PORTLET;
 import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_PUBLISH_LAYOUT_LOCAL;
 import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_PUBLISH_LAYOUT_REMOTE;
-import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_PUBLISH_PORTLET;
+import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_PUBLISH_PORTLET_LOCAL;
 import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_SCHEDULED_PUBLISH_LAYOUT_LOCAL;
 import static com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants.TYPE_SCHEDULED_PUBLISH_LAYOUT_REMOTE;
 
@@ -28,6 +28,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -46,7 +47,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -483,7 +483,9 @@ public class ExportImportDateUtil {
 
 			return RANGE_FROM_LAST_PUBLISH_DATE;
 		}
-		else if (exportImportConfiguration.getType() == TYPE_PUBLISH_PORTLET) {
+		else if (exportImportConfiguration.getType() ==
+					TYPE_PUBLISH_PORTLET_LOCAL) {
+
 			return RANGE_FROM_LAST_PUBLISH_DATE;
 		}
 		else if (exportImportConfiguration.getType() ==

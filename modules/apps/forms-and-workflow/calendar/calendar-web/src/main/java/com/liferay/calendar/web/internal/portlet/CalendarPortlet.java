@@ -36,30 +36,28 @@ import com.liferay.calendar.model.CalendarNotificationTemplateConstants;
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.notification.NotificationTemplateType;
 import com.liferay.calendar.notification.NotificationType;
-import com.liferay.calendar.notification.impl.NotificationTemplateContextFactory;
 import com.liferay.calendar.recurrence.Frequency;
 import com.liferay.calendar.recurrence.PositionalWeekday;
 import com.liferay.calendar.recurrence.Recurrence;
 import com.liferay.calendar.recurrence.RecurrenceSerializer;
 import com.liferay.calendar.recurrence.Weekday;
-import com.liferay.calendar.search.CalendarSearcher;
 import com.liferay.calendar.service.CalendarBookingLocalService;
 import com.liferay.calendar.service.CalendarBookingService;
 import com.liferay.calendar.service.CalendarLocalService;
 import com.liferay.calendar.service.CalendarNotificationTemplateService;
 import com.liferay.calendar.service.CalendarResourceService;
 import com.liferay.calendar.service.CalendarService;
-import com.liferay.calendar.util.CalendarResourceUtil;
-import com.liferay.calendar.util.CalendarUtil;
 import com.liferay.calendar.util.JCalendarUtil;
-import com.liferay.calendar.util.RSSUtil;
 import com.liferay.calendar.util.RecurrenceUtil;
 import com.liferay.calendar.util.comparator.CalendarBookingStartTimeComparator;
 import com.liferay.calendar.web.internal.constants.CalendarWebKeys;
 import com.liferay.calendar.web.internal.display.context.CalendarDisplayContext;
 import com.liferay.calendar.web.internal.upgrade.CalendarWebUpgrade;
+import com.liferay.calendar.web.internal.util.CalendarResourceUtil;
+import com.liferay.calendar.web.internal.util.CalendarUtil;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQLUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -77,10 +75,10 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -105,7 +103,6 @@ import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
@@ -115,6 +112,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.util.comparator.UserFirstNameComparator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.rss.util.RSSUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -254,13 +252,6 @@ public class CalendarPortlet extends MVCPortlet {
 		writeJSON(actionRequest, actionResponse, jsonObject);
 	}
 
-	@Override
-	public void init() throws PortletException {
-		super.init();
-
-		NotificationTemplateContextFactory.setPortletConfig(getPortletConfig());
-	}
-
 	public void invokeTransition(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -326,54 +317,6 @@ public class CalendarPortlet extends MVCPortlet {
 		}
 
 		super.render(renderRequest, renderResponse);
-	}
-
-	@Override
-	public void serveResource(
-			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
-		throws PortletException {
-
-		try {
-			String resourceID = resourceRequest.getResourceID();
-
-			if (resourceID.equals("calendar")) {
-				serveCalendar(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("calendarBookingInvitees")) {
-				serveCalendarBookingInvitees(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("calendarBookings")) {
-				serveCalendarBookings(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("calendarBookingsRSS")) {
-				serveCalendarBookingsRSS(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("calendarRenderingRules")) {
-				serveCalendarRenderingRules(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("calendarResources")) {
-				serveCalendarResources(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("currentTime")) {
-				serveCurrentTime(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("exportCalendar")) {
-				serveExportCalendar(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("hasExclusiveCalendarBooking")) {
-				serveHasExclusiveCalendarBooking(
-					resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("resourceCalendars")) {
-				serveResourceCalendars(resourceRequest, resourceResponse);
-			}
-			else {
-				serveUnknownResource(resourceRequest, resourceResponse);
-			}
-		}
-		catch (Exception e) {
-			throw new PortletException(e);
-		}
 	}
 
 	public void updateCalendar(
@@ -694,6 +637,58 @@ public class CalendarPortlet extends MVCPortlet {
 			}
 
 			calendarsSet.add(calendar);
+		}
+	}
+
+	@Override
+	protected boolean callResourceMethod(
+			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws PortletException {
+
+		try {
+			String resourceID = resourceRequest.getResourceID();
+
+			if (resourceID.equals("calendar")) {
+				serveCalendar(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("calendarBookingInvitees")) {
+				serveCalendarBookingInvitees(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("calendarBookings")) {
+				serveCalendarBookings(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("calendarBookingsRSS")) {
+				serveCalendarBookingsRSS(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("calendarRenderingRules")) {
+				serveCalendarRenderingRules(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("calendarResources")) {
+				serveCalendarResources(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("currentTime")) {
+				serveCurrentTime(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("exportCalendar")) {
+				serveExportCalendar(resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("hasExclusiveCalendarBooking")) {
+				serveHasExclusiveCalendarBooking(
+					resourceRequest, resourceResponse);
+			}
+			else if (resourceID.equals("resourceCalendars")) {
+				serveResourceCalendars(resourceRequest, resourceResponse);
+			}
+			else if (!super.callResourceMethod(
+						resourceRequest, resourceResponse)) {
+
+				serveUnknownResource(resourceRequest, resourceResponse);
+			}
+
+			return true;
+		}
+		catch (Exception e) {
+			throw new PortletException(e);
 		}
 	}
 
@@ -1234,9 +1229,7 @@ public class CalendarPortlet extends MVCPortlet {
 		searchContext.setStart(0);
 		searchContext.setUserId(themeDisplay.getUserId());
 
-		Indexer<?> indexer = CalendarSearcher.getInstance();
-
-		return indexer.search(searchContext);
+		return _baseSearcher.search(searchContext);
 	}
 
 	protected void serveCalendar(
@@ -1354,7 +1347,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 		long timeInterval = GetterUtil.getLong(
 			portletPreferences.getValue("rssTimeInterval", StringPool.BLANK),
-			RSSUtil.TIME_INTERVAL_DEFAULT);
+			Time.WEEK);
 
 		long startTime = System.currentTimeMillis();
 
@@ -1392,9 +1385,9 @@ public class CalendarPortlet extends MVCPortlet {
 		long[] calendarIds = ParamUtil.getLongValues(
 			resourceRequest, "calendarIds");
 		int[] statuses = {
-			CalendarBookingWorkflowConstants.STATUS_APPROVED,
+			WorkflowConstants.STATUS_APPROVED,
 			CalendarBookingWorkflowConstants.STATUS_MAYBE,
-			CalendarBookingWorkflowConstants.STATUS_PENDING
+			WorkflowConstants.STATUS_PENDING
 		};
 		long startTime = ParamUtil.getLong(resourceRequest, "startTime");
 		long endTime = ParamUtil.getLong(resourceRequest, "endTime");
@@ -1820,8 +1813,7 @@ public class CalendarPortlet extends MVCPortlet {
 
 				_calendarBookingLocalService.updateStatus(
 					childCalendarBooking.getUserId(), childCalendarBooking,
-					CalendarBookingWorkflowConstants.STATUS_PENDING,
-					serviceContext);
+					WorkflowConstants.STATUS_PENDING, serviceContext);
 			}
 		}
 
@@ -1830,6 +1822,11 @@ public class CalendarPortlet extends MVCPortlet {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CalendarPortlet.class);
+
+	@Reference(
+		target = "(model.class.name=com.liferay.calendar.model.Calendar)"
+	)
+	private BaseSearcher _baseSearcher;
 
 	private CalendarBookingLocalService _calendarBookingLocalService;
 	private CalendarBookingService _calendarBookingService;

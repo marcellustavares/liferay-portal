@@ -115,7 +115,7 @@
 
 		<execute macro="WebContentNavigator#gotoManageStructures" />
 
-		<execute function="AssertElementNotPresent" locator1="Message#ERROR" value1="Structures is temporarily unavailable" />
+		<execute function="AssertElementNotPresent" locator1="Message#ERROR" />
 
 		<execute macro="WebContentStructures#addCP">
 			<var name="structureDescription" value="WC Structure Description" />
@@ -152,7 +152,7 @@
 			<var name="structureName" value="WC Structure Name" />
 		</execute>
 
-		<execute macro="WebContentTemplates#save" />
+		<execute macro="DDLDataDefinition#save" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -500,6 +500,28 @@
 		</execute>
 	</command>
 
+	<command name="publishWorkflowDefinition">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Workflow" />
+		</execute>
+
+		<execute macro="Workflow#viewDefinitionUnpublished">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
+		</execute>
+
+		<execute macro="Workflow#publishExistingWorkflowDefinition">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
+		</execute>
+
+		<execute macro="Navigator#gotoBack" />
+
+		<execute macro="Workflow#viewDefinitionPublished">
+			<var name="workflowDefinitionTitle" value="New Workflow Definition Draft" />
+		</execute>
+	</command>
+
 	<command name="reindexSearches">
 		<execute macro="Navigator#openURL" />
 
@@ -586,9 +608,9 @@
 			<var name="pageName" value="Asset Publisher" />
 		</execute>
 
-		<var name="key_portletName" value="Asset Publisher" />
-
-		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Asset Publisher" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Asset Publisher">
+			<var name="key_portletName" value="Asset Publisher" />
+		</execute>
 
 		<execute macro="WebContent#viewPGViaAP">
 			<var name="webContentContent" value="Web Content Content" />
@@ -694,24 +716,12 @@
 			<var name="portlet" value="App Manager" />
 		</execute>
 
-		<execute macro="Search#searchCP">
-			<var name="searchTerm" value="Drools" />
-		</execute>
-
 		<execute macro="AppManager#viewAppCP">
-			<var name="appName" value="Liferay Drools" />
-		</execute>
-
-		<execute macro="AppManager#viewAppCP">
-			<var name="appName" value="Liferay Portal Rules Engine Drools" />
-		</execute>
-
-		<execute macro="AppManager#viewStatus">
 			<var name="appName" value="Liferay Drools" />
 			<var name="appStatus" value="Active" />
 		</execute>
 
-		<execute macro="AppManager#viewStatus">
+		<execute macro="AppManager#viewAppCP">
 			<var name="appName" value="Liferay Portal Rules Engine Drools" />
 			<var name="appStatus" value="Active" />
 		</execute>
@@ -732,9 +742,9 @@
 			<var name="pageName" value="Nested Portlets" />
 		</execute>
 
-		<var name="key_portletName" value="Nested Applications" />
-
-		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Nested Applications" />
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Nested Applications">
+			<var name="key_portletName" value="Nested Applications" />
+		</execute>
 
 		<execute function="AssertTextNotEquals" locator1="Message#INFO" value1="Drag applications below to nest them." />
 
@@ -816,7 +826,7 @@
 			<var name="pageName" value="Polls" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="Message#INFO" value1="Please configure this portlet to make it visible to all users" />
+		<execute function="AssertElementNotPresent" locator1="Message#INFO" />
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Polls" />
@@ -840,6 +850,29 @@
 			<var name="pollsQuestionTotalVotes" value="1" />
 			<var name="pollsQuestionVoteCount" value="1" />
 			<var name="pollsQuestionVotePercent" value="100%" />
+		</execute>
+	</command>
+
+	<command name="viewStagingNestedPortlets">
+		<execute macro="Navigator#gotoStagedSitePage">
+			<var name="pageName" value="Staging Test Page" />
+			<var name="siteName" value="Staging Site" />
+		</execute>
+
+		<execute function="AssertTextEquals" locator1="Portlet#TITLE" value1="Nested Applications">
+			<var name="key_portletName" value="Nested Applications" />
+		</execute>
+
+		<execute function="AssertElementNotPresent" locator1="Message#INFO" />
+
+		<execute macro="NestedPortlets#viewPG">
+			<var name="portletColumnNumberTo" value="1" />
+			<var name="portletName" value="Web Content Display" />
+		</execute>
+
+		<execute macro="NestedPortlets#viewPG">
+			<var name="portletColumnNumberTo" value="1" />
+			<var name="portletName" value="Blogs" />
 		</execute>
 	</command>
 
@@ -877,13 +910,13 @@
 			<var name="key_dmDocumentSize" value="22KB" />
 		</execute>
 
-		<execute macro="Navigator#gotoPage">
+		<!-- <execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Message Boards" />
 		</execute>
 
 		<execute macro="MessageboardsThread#gotoPG">
 			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
+			<var name="replyCount" value="1" />
 			<var name="startedByUserName" value="Test Test" />
 			<var name="threadBody" value="Message Boards Body" />
 			<var name="threadSubject" value="Message Boards Subject" />
@@ -892,7 +925,7 @@
 		<execute macro="MessageboardsThread#viewPG">
 			<var name="threadBody" value="Message Boards Body" />
 			<var name="threadSubject" value="Message Boards Subject" />
-		</execute>
+		</execute> -->
 
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Wiki" />

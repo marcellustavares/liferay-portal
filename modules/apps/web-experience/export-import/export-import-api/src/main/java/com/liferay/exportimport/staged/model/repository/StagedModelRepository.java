@@ -40,7 +40,9 @@ public interface StagedModelRepository<T extends StagedModel> {
 	public void deleteStagedModels(PortletDataContext portletDataContext)
 		throws PortalException;
 
-	public T fetchMissingReference(String uuid, long groupId);
+	public default T fetchMissingReference(String uuid, long groupId) {
+		return null;
+	}
 
 	public T fetchStagedModelByUuidAndGroupId(String uuid, long groupId);
 
@@ -50,9 +52,10 @@ public interface StagedModelRepository<T extends StagedModel> {
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		PortletDataContext portletDataContext);
 
-	public void restoreStagedModel(
+	public default void restoreStagedModel(
 			PortletDataContext portletDataContext, T stagedModel)
-		throws PortletDataException;
+		throws PortletDataException {
+	}
 
 	public T saveStagedModel(T stagedModel) throws PortalException;
 

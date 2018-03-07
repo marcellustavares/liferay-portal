@@ -19,6 +19,14 @@
 		<execute function="AssertClick" locator1="Button#DONE" value1="Done" />
 	</command>
 
+	<command name="clickInstall">
+		<execute function="AssertClick" locator1="Button#SUBMIT" value1="Install" />
+	</command>
+
+	<command name="clickNext">
+		<execute function="AssertClick" locator1="Button#NEXT" value1="Next" />
+	</command>
+
 	<command name="clickPublish">
 		<execute function="ScrollWebElementIntoView" locator1="Button#PUBLISH" />
 
@@ -39,6 +47,10 @@
 
 	<command name="clickSubmitForPublication">
 		<execute function="AssertClick" locator1="Button#SUBMIT_FOR_PUBLICATION" value1="Submit for Publication" />
+	</command>
+
+	<command name="clickSubmitLocalized">
+		<execute function="AssertClick" locator1="Button#SUBMIT" value1="${buttonName}" />
 	</command>
 
 	<command name="clickUpdate">

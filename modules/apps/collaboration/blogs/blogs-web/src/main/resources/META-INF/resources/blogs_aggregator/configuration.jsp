@@ -87,9 +87,9 @@ if (organizationId > 0) {
 										uri: '<%= selectOrganizationURL.toString() %>'
 									},
 									function(event) {
-										document.<portlet:namespace />fm.<portlet:namespace />organizationId.value = event.organizationid;
+										document.<portlet:namespace />fm.<portlet:namespace />organizationId.value = event.entityid;
 
-										document.getElementById('<portlet:namespace />organizationName').value = event.name;
+										document.getElementById('<portlet:namespace />organizationName').value = event.entityname;
 
 										Liferay.Util.toggleDisabled('#<portlet:namespace />removeOrganizationButton', false);
 									}
@@ -142,7 +142,7 @@ if (organizationId > 0) {
 					</aui:select>
 
 					<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
-						<liferay-ui:rss-settings
+						<liferay-rss:rss-settings
 							delta="<%= rssDelta %>"
 							displayStyle="<%= rssDisplayStyle %>"
 							enabled="<%= enableRSS %>"

@@ -2,7 +2,7 @@ package ${packagePath}.model.impl;
 
 import ${apiPackagePath}.model.${entity.name};
 
-<#if entity.hasLocalService() && entity.hasColumns()>
+<#if entity.hasLocalService() && entity.hasEntityColumns()>
 	import ${apiPackagePath}.service.${entity.name}LocalServiceUtil;
 
 	import com.liferay.portal.kernel.exception.PortalException;
@@ -44,7 +44,7 @@ public abstract class ${entity.name}BaseImpl extends ${entity.name}ModelImpl imp
 	 * Never modify or reference this class directly. All methods that expect a ${entity.humanName} model instance should use the {@link ${entity.name}} interface instead.
 	 */
 
-	<#if entity.hasLocalService() && entity.hasColumns()>
+	<#if entity.hasLocalService() && entity.hasEntityColumns()>
 		@Override
 		public void persist() {
 			if (this.isNew()) {
@@ -56,9 +56,9 @@ public abstract class ${entity.name}BaseImpl extends ${entity.name}ModelImpl imp
 		}
 
 		<#if entity.isTreeModel()>
-			<#assign pkColumn = entity.getPKList()?first />
+			<#assign pkEntityColumn = entity.PKEntityColumns?first />
 
-			<#if entity.hasColumn("parent" + pkColumn.methodName)>
+			<#if entity.hasEntityColumn("parent" + pkEntityColumn.methodName)>
 				@Override
 				@SuppressWarnings("unused")
 				public String buildTreePath() throws PortalException {
@@ -69,7 +69,7 @@ public abstract class ${entity.name}BaseImpl extends ${entity.name}ModelImpl imp
 					while (${entity.varName} != null) {
 						${entity.varNames}.add(${entity.varName});
 
-						${entity.varName} = ${entity.name}LocalServiceUtil.fetch${entity.name}(${entity.varName}.getParent${pkColumn.methodName}());
+						${entity.varName} = ${entity.name}LocalServiceUtil.fetch${entity.name}(${entity.varName}.getParent${pkEntityColumn.methodName}());
 					}
 
 					StringBundler sb = new StringBundler(${entity.varNames}.size() * 2 + 1);
@@ -79,7 +79,7 @@ public abstract class ${entity.name}BaseImpl extends ${entity.name}ModelImpl imp
 					for (int i = ${entity.varNames}.size() - 1; i >= 0; i--) {
 						${entity.varName} = ${entity.varNames}.get(i);
 
-						sb.append(${entity.varName}.get${entity.PKList[0].methodName}());
+						sb.append(${entity.varName}.get${entity.PKEntityColumns[0].methodName}());
 						sb.append("/");
 					}
 

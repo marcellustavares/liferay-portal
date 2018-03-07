@@ -286,11 +286,6 @@
 		float: right;
 	}
 
-	.subscribe {
-		margin-bottom: 1.5em;
-		text-align: right;
-	}
-
 	.taglib-asset-links {
 		h2 .icon-link {
 			display: none;
@@ -396,13 +391,5 @@
 
 	.separator {
 		border-color: transparent;
-	}
-
-	.reading-time:before {
-		content: " - "
-	}
-
-	:empty + .reading-time-wrapper > .reading-time:before {
-		content: ""
 	}
 }

@@ -127,8 +127,7 @@ public class DDMFormFieldTemplateContextFactory {
 			ddmFormFieldTemplateContext, ddmFormFieldValue.getName());
 		setDDMFormFieldTemplateContextInstanceId(
 			ddmFormFieldTemplateContext, ddmFormFieldValue.getInstanceId());
-		setDDMFormFieldTemplateContextLocale(
-			ddmFormFieldTemplateContext, "locale", _locale);
+		setDDMFormFieldTemplateContextLocale(ddmFormFieldTemplateContext);
 		setDDMFormFieldTemplateContextLocalizedValue(
 			ddmFormFieldTemplateContext, "label", ddmFormField.getLabel());
 		setDDMFormFieldTemplateContextLocalizable(
@@ -408,11 +407,10 @@ public class DDMFormFieldTemplateContextFactory {
 	}
 
 	protected void setDDMFormFieldTemplateContextLocale(
-		Map<String, Object> ddmFormFieldTemplateContext, String propertyName,
-		Locale locale) {
+		Map<String, Object> ddmFormFieldTemplateContext) {
 
 		ddmFormFieldTemplateContext.put(
-			propertyName, LocaleUtil.toLanguageId(locale));
+			"locale", LocaleUtil.toLanguageId(_locale));
 	}
 
 	protected void setDDMFormFieldTemplateContextLocalizable(

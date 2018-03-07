@@ -15,9 +15,8 @@
 package com.liferay.user.associated.data.anonymizer;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.user.associated.data.entity.UADEntity;
-
-import java.util.List;
+import com.liferay.user.associated.data.aggregator.UADEntityAggregator;
+import com.liferay.user.associated.data.util.UADEntityChunkedCommandUtil;
 
 /**
  * @author William Newbury
@@ -26,18 +25,16 @@ public abstract class BaseUADEntityAnonymizer implements UADEntityAnonymizer {
 
 	@Override
 	public void autoAnonymizeAll(long userId) throws PortalException {
-		for (UADEntity uadEntity : getUADEntities(userId)) {
-			autoAnonymize(uadEntity);
-		}
+		UADEntityChunkedCommandUtil.executeChunkedCommand(
+			userId, getUADEntityAggregator(), this::autoAnonymize);
 	}
 
 	@Override
 	public void deleteAll(long userId) throws PortalException {
-		for (UADEntity uadEntity : getUADEntities(userId)) {
-			delete(uadEntity);
-		}
+		UADEntityChunkedCommandUtil.executeChunkedCommand(
+			userId, getUADEntityAggregator(), this::delete);
 	}
 
-	protected abstract List<UADEntity> getUADEntities(long userId);
+	protected abstract UADEntityAggregator getUADEntityAggregator();
 
 }

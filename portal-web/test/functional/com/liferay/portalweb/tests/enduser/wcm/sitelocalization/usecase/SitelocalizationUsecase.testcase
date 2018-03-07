@@ -83,7 +83,7 @@
 
 		<execute macro="Page#viewPageLocalization">
 			<var name="category" value="Navigation" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
+			<var name="defaultSiteLanguageKey" value="es-es" />
 			<var name="menuItem" value="Configure" />
 			<var name="page" value="Language Test Page" />
 			<var name="portlet" value="Site Pages" />
@@ -581,7 +581,7 @@
 
 		<execute macro="Page#viewPageLocalization">
 			<var name="category" value="Navegación" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
+			<var name="defaultSiteLanguageKey" value="es-es" />
 			<var name="menuItem" value="Configurar" />
 			<var name="page" value="Site Page 1" />
 			<var name="portlet" value="Páginas del sitio web" />
@@ -594,7 +594,7 @@
 
 		<execute macro="Page#viewPageLocalization">
 			<var name="category" value="Navegación" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
+			<var name="defaultSiteLanguageKey" value="es-es" />
 			<var name="menuItem" value="Configurar" />
 			<var name="page" value="Site Page 2" />
 			<var name="portlet" value="Páginas del sitio web" />
@@ -681,6 +681,66 @@
 		<execute macro="LanguagePortlet#selectLanguagePG">
 			<var name="language" value="English (United States)" />
 		</execute>
+	</command>
+
+	<command name="RedirectLocalizedFriendlyURL" priority="4">
+		<description message="This is a use case for LPS-59345" />
+
+		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#RedirectLocalizedFriendlyURL" />
+
+		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Sites" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Sites" />
+		</execute>
+
+		<execute macro="Site#addBlankCP">
+			<var name="siteName" value="Site Name" />
+		</execute>
+
+		<execute macro="Site#configureCurrentLanguagesCP">
+			<var name="currentSiteLanguages" value="English (United States),Hungarian (Hungary)" />
+			<var name="defaultSiteLanguage" value="English (United States)" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Navigation" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Site Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="Language Page" />
+		</execute>
+
+		<execute macro="SitePages#gotoPageMenuItem">
+			<var name="menuItem" value="Configure" />
+			<var name="pageName" value="Language Page" />
+		</execute>
+
+		<execute macro="Page#addFriendlyURLLocalizedPG">
+			<var name="friendlyUrlLocalized" value="hu_HU" />
+			<var name="localizedFriendlyURL" value="/teszt" />
+		</execute>
+
+		<execute macro="Page#addFriendlyURLLocalizedPG">
+			<var name="friendlyUrlLocalized" value="en_US" />
+			<var name="localizedFriendlyURL" value="/test" />
+		</execute>
+
+		<execute macro="Page#hideFromNavigationMenu" />
+
+		<execute macro="User#logoutPG" />
+
+		<execute macro="Navigator#openSpecificURL">
+			<var name="url" value="${portalURL}/hu/web/site-name/test" />
+		</execute>
+
+		<execute macro="Alert#closePortalLocalizationWarning" />
+
+		<execute function="AssertLocation" value1="${portalURL}/hu/web/site-name/teszt" />
 	</command>
 
 	<command name="SiteTemplateLocalization" priority="5">
@@ -996,15 +1056,16 @@
 			<var name="portlet" value="Páginas del sitio web" />
 		</execute>
 
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
+		<execute macro="SitePages#gotoPageMenuItem">
 			<var name="menuItem" value="Configurar" />
-			<var name="rowEntry" value="Site Page Name" />
+			<var name="pageName" value="Site Page Name" />
 		</execute>
 
 		<execute macro="Page#viewFriendlyURLLanguageOptionsPG">
 			<var name="assertUnavailableLanguages" value="true" />
-			<var name="currentLanguageList" value="FRIENDLY_URL_PORTUGUESE_BRAZIL,FRIENDLY_URL_SPANISH_SPAIN" />
-			<var name="unavailableLanguageList" value="FRIENDLY_URL_ENGLISH_UNITED_STATES" />
+			<var name="currentLanguageList" value="es_ES,pt_BR" />
+			<var name="fieldName" value="Nombre" />
+			<var name="unavailableLanguageList" value="en_US" />
 		</execute>
 	</command>
 </definition>

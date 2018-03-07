@@ -14,55 +14,60 @@
 
 package com.liferay.dynamic.data.mapping.service.permission;
 
-import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
+import com.liferay.dynamic.data.mapping.constants.DDMConstants;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.PortletProvider;
-import com.liferay.portal.kernel.portlet.PortletProviderUtil;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.BaseResourcePermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.ResourcePermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
  */
 @Component(
 	immediate = true,
-	property = {"resource.name=" + DDMFormPermission.RESOURCE_NAME},
+	property = {"resource.name=" + DDMConstants.RESOURCE_NAME},
 	service = ResourcePermissionChecker.class
 )
 public class DDMFormPermission extends BaseResourcePermissionChecker {
 
-	public static final String RESOURCE_NAME =
-		"com.liferay.dynamic.data.mapping";
+	public static final String RESOURCE_NAME = DDMConstants.RESOURCE_NAME;
 
 	public static void check(
 			PermissionChecker permissionChecker, long groupId, String actionId)
 		throws PortalException {
 
-		if (!contains(permissionChecker, groupId, actionId)) {
-			throw new PrincipalException.MustHavePermission(
-				permissionChecker, RESOURCE_NAME, groupId, actionId);
-		}
+		_portletResourcePermission.check(permissionChecker, groupId, actionId);
 	}
 
 	public static boolean contains(
 		PermissionChecker permissionChecker, long groupId, String actionId) {
 
-		String portletId = PortletProviderUtil.getPortletId(
-			DDMFormInstance.class.getName(), PortletProvider.Action.EDIT);
-
-		return contains(
-			permissionChecker, RESOURCE_NAME, portletId, groupId, actionId);
+		return _portletResourcePermission.contains(
+			permissionChecker, groupId, actionId);
 	}
 
 	@Override
 	public Boolean checkResource(
 		PermissionChecker permissionChecker, long classPK, String actionId) {
 
-		return contains(permissionChecker, classPK, actionId);
+		return _portletResourcePermission.contains(
+			permissionChecker, classPK, actionId);
 	}
+
+	@Reference(
+		target = "(resource.name=" + DDMConstants.RESOURCE_NAME + ")",
+		unbind = "-"
+	)
+	protected void setPortletResourcePermission(
+		PortletResourcePermission portletResourcePermission) {
+
+		_portletResourcePermission = portletResourcePermission;
+	}
+
+	private static PortletResourcePermission _portletResourcePermission;
 
 }

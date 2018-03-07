@@ -319,6 +319,10 @@ public class StagedLayoutSetStagedModelDataHandler
 
 		checkLayoutSetPrototypeLayouts(portletDataContext, modifiedLayouts);
 
+		// Show site name
+
+		updateShowSiteName(portletDataContext, importedStagedLayoutSet);
+
 		// Last merge time
 
 		updateLastMergeTime(portletDataContext, modifiedLayouts);
@@ -478,11 +482,9 @@ public class StagedLayoutSetStagedModelDataHandler
 			_layoutSetBranchLocalService.fetchLayoutSetBranch(
 				layoutSetBranchId);
 
-		ThemeExporter themeExporter = ThemeExporter.getInstance();
-
 		if (layoutSetBranch != null) {
 			try {
-				themeExporter.exportTheme(portletDataContext, layoutSetBranch);
+				_themeExporter.exportTheme(portletDataContext, layoutSetBranch);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -495,7 +497,7 @@ public class StagedLayoutSetStagedModelDataHandler
 		}
 		else {
 			try {
-				themeExporter.exportTheme(portletDataContext, stagedLayoutSet);
+				_themeExporter.exportTheme(portletDataContext, stagedLayoutSet);
 			}
 			catch (Exception e) {
 				if (_log.isWarnEnabled()) {
@@ -547,10 +549,8 @@ public class StagedLayoutSetStagedModelDataHandler
 		PortletDataContext portletDataContext,
 		StagedLayoutSet stagedLayoutSet) {
 
-		ThemeImporter themeImporter = ThemeImporter.getInstance();
-
 		try {
-			themeImporter.importTheme(portletDataContext, stagedLayoutSet);
+			_themeImporter.importTheme(portletDataContext, stagedLayoutSet);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -700,6 +700,35 @@ public class StagedLayoutSetStagedModelDataHandler
 		}
 	}
 
+	protected void updateShowSiteName(
+			PortletDataContext portletDataContext,
+			StagedLayoutSet importedLayoutSet)
+		throws PortalException {
+
+		LayoutSet layoutSet = _layoutSetLocalService.getLayoutSet(
+			portletDataContext.getGroupId(),
+			portletDataContext.isPrivateLayout());
+
+		UnicodeProperties importedSettingsProperties =
+			importedLayoutSet.getSettingsProperties();
+
+		boolean showSiteName = GetterUtil.getBoolean(
+			importedSettingsProperties.getProperty(Sites.SHOW_SITE_NAME));
+
+		UnicodeProperties settingsProperties =
+			layoutSet.getSettingsProperties();
+
+		String mergeFailFriendlyURLLayouts = settingsProperties.getProperty(
+			Sites.MERGE_FAIL_FRIENDLY_URL_LAYOUTS);
+
+		if (Validator.isNull(mergeFailFriendlyURLLayouts)) {
+			settingsProperties.setProperty(
+				Sites.SHOW_SITE_NAME, String.valueOf(showSiteName));
+
+			_layoutSetLocalService.updateLayoutSet(layoutSet);
+		}
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		StagedLayoutSetStagedModelDataHandler.class);
 
@@ -728,6 +757,12 @@ public class StagedLayoutSetStagedModelDataHandler
 	@Reference
 	private StagedLayoutSetStagedModelRepository
 		_stagedLayoutSetStagedModelRepository;
+
+	@Reference
+	private ThemeExporter _themeExporter;
+
+	@Reference
+	private ThemeImporter _themeImporter;
 
 	private class UpdateLayoutSetLastPublishDateCallable
 		implements Callable<Void> {

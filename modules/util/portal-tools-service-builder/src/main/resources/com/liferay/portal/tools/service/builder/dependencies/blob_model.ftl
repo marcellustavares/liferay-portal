@@ -17,26 +17,26 @@ public class ${entity.name}${column.methodName}BlobModel {
 	public ${entity.name}${column.methodName}BlobModel() {
 	}
 
-	<#assign pkColumn = entity.getPKList()?first />
+	<#assign pkEntityColumn = entity.PKEntityColumns?first />
 
 	public ${entity.name}${column.methodName}BlobModel(
-		${pkColumn.type} ${pkColumn.name}) {
+		${pkEntityColumn.type} ${pkEntityColumn.name}) {
 
-		_${pkColumn.name} = ${pkColumn.name};
+		_${pkEntityColumn.name} = ${pkEntityColumn.name};
 	}
 
 	public ${entity.name}${column.methodName}BlobModel(
-		${pkColumn.type} ${pkColumn.name}, Blob ${column.name}Blob) {
+		${pkEntityColumn.type} ${pkEntityColumn.name}, Blob ${column.name}Blob) {
 
-		_${pkColumn.name} = ${pkColumn.name};
+		_${pkEntityColumn.name} = ${pkEntityColumn.name};
 		_${column.name}Blob = ${column.name}Blob;
 	}
 
-	public ${entity.PKClassName} get${pkColumn.methodName}() {
+	public ${entity.PKClassName} get${pkEntityColumn.methodName}() {
 		return _${entity.PKVarName};
 	}
 
-	public void set${pkColumn.methodName}(${entity.PKClassName} ${entity.PKVarName}) {
+	public void set${pkEntityColumn.methodName}(${entity.PKClassName} ${entity.PKVarName}) {
 		_${entity.PKVarName} = ${entity.PKVarName};
 	}
 
@@ -51,7 +51,7 @@ public class ${entity.name}${column.methodName}BlobModel {
 	<#if entity.hasCompoundPK()>
 		private ${entity.PKClassName} _${entity.PKVarName};
 	<#else>
-		private ${pkColumn.type} _${pkColumn.name};
+		private ${pkEntityColumn.type} _${pkEntityColumn.name};
 	</#if>
 
 	private Blob _${column.name}Blob;

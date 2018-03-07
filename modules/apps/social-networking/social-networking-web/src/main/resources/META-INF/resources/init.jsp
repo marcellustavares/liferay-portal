@@ -21,6 +21,8 @@
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/rss" prefix="liferay-rss" %><%@
+taglib uri="http://liferay.com/tld/social-activities" prefix="liferay-social-activities" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
@@ -29,7 +31,7 @@ page import="com.liferay.blogs.service.BlogsStatsUserLocalService" %><%@
 page import="com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil" %><%@
 page import="com.liferay.ip.geocoder.IPGeocoder" %><%@
 page import="com.liferay.ip.geocoder.IPInfo" %><%@
-page import="com.liferay.message.boards.kernel.model.MBMessage" %><%@
+page import="com.liferay.message.boards.model.MBMessage" %><%@
 page import="com.liferay.message.boards.service.MBStatsUserLocalServiceUtil" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
@@ -56,12 +58,12 @@ page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.PrefsPropsUtil" %><%@
-page import="com.liferay.portal.kernel.util.RSSUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.kernel.util.comparator.UserLoginDateComparator" %><%@
 page import="com.liferay.portal.kernel.webserver.WebServerServletTokenUtil" %><%@
 page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %><%@
+page import="com.liferay.rss.util.RSSUtil" %><%@
 page import="com.liferay.social.kernel.model.SocialActivity" %><%@
 page import="com.liferay.social.kernel.model.SocialRelationConstants" %><%@
 page import="com.liferay.social.kernel.model.SocialRequestConstants" %><%@

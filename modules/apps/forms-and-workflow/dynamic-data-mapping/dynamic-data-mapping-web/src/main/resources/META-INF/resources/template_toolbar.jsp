@@ -19,8 +19,11 @@
 <%
 String mvcPath = ParamUtil.getString(request, "mvcPath", "/view_template.jsp");
 
+String tabs1 = ParamUtil.getString(request, "tabs1", "templates");
+
 long templateId = ParamUtil.getLong(request, "templateId");
 
+long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
 long classNameId = ParamUtil.getLong(request, "classNameId");
 long classPK = ParamUtil.getLong(request, "classPK");
 
@@ -64,12 +67,40 @@ portletURL.setParameter("keywords", keywords);
 			orderColumns='<%= new String[] {"modified-date", "id"} %>'
 			portletURL="<%= portletURL %>"
 		/>
+
+		<li>
+			<portlet:renderURL var="searchURL">
+				<portlet:param name="mvcPath" value="<%= mvcPath %>" />
+				<portlet:param name="tabs1" value="<%= tabs1 %>" />
+				<portlet:param name="templateId" value="<%= String.valueOf(templateId) %>" />
+				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+				<portlet:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
+				<portlet:param name="classPK" value="<%= String.valueOf(classPK) %>" />
+				<portlet:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
+				<portlet:param name="eventName" value="<%= eventName %>" />
+			</portlet:renderURL>
+
+			<aui:form action="<%= searchURL.toString() %>" method="post" name="searchForm">
+				<liferay-util:include page="/template_search.jsp" servletContext="<%= application %>" />
+			</aui:form>
+		</li>
 	</liferay-frontend:management-bar-filters>
 
 	<c:if test="<%= includeCheckBox %>">
 		<liferay-frontend:management-bar-action-buttons>
 			<liferay-frontend:management-bar-button href='<%= "javascript:" + renderResponse.getNamespace() + "deleteTemplates();" %>' icon="trash" label="delete" />
 		</liferay-frontend:management-bar-action-buttons>
+	</c:if>
+
+	<c:if test="<%= ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) %>">
+		<liferay-frontend:management-bar-buttons>
+			<liferay-util:include page="/template_add_buttons.jsp" servletContext="<%= application %>">
+				<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+				<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
+				<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
+				<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
+			</liferay-util:include>
+		</liferay-frontend:management-bar-buttons>
 	</c:if>
 </liferay-frontend:management-bar>
 

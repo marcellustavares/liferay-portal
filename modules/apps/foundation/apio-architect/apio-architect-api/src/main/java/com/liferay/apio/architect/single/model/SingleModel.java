@@ -14,19 +14,24 @@
 
 package com.liferay.apio.architect.single.model;
 
+import com.liferay.apio.architect.operation.Operation;
+
+import java.util.List;
+
 /**
- * Provides a wrapper for a model. This avoids problems related to the Java
- * generics system.
+ * Provides a wrapper for a model.
  *
  * @author Alejandro Hernández
  * @param  <T> the model's type
- * @review
  */
 public class SingleModel<T> {
 
-	public SingleModel(T model, Class<T> modelClass) {
+	public SingleModel(
+		T model, String resourceName, List<Operation> operations) {
+
 		_model = model;
-		_modelClass = modelClass;
+		_resourceName = resourceName;
+		_operations = operations;
 	}
 
 	/**
@@ -39,15 +44,25 @@ public class SingleModel<T> {
 	}
 
 	/**
-	 * Returns the model class.
+	 * Returns the list of operations for the model.
 	 *
-	 * @return the model class
+	 * @return the list of operations
 	 */
-	public Class<T> getModelClass() {
-		return _modelClass;
+	public List<Operation> getOperations() {
+		return _operations;
+	}
+
+	/**
+	 * Returns the resource's name.
+	 *
+	 * @return the resource's name
+	 */
+	public String getResourceName() {
+		return _resourceName;
 	}
 
 	private final T _model;
-	private final Class<T> _modelClass;
+	private final List<Operation> _operations;
+	private final String _resourceName;
 
 }

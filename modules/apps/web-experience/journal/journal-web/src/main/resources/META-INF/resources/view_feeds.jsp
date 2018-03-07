@@ -48,19 +48,21 @@ portletDisplay.setURLBack(redirect);
 renderResponse.setTitle(LanguageUtil.get(request, "feeds"));
 %>
 
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="feeds" selected="<%= true %>" />
-	</aui:nav>
-
-	<c:if test="<%= (feedsCount > 0) || searchTerms.isSearch() %>">
-		<aui:nav-bar-search>
-			<aui:form action="<%= portletURL.toString() %>" method="post" name="searchFm">
-				<liferay-ui:input-search markupView="lexicon" />
-			</aui:form>
-		</aui:nav-bar-search>
-	</c:if>
-</aui:nav-bar>
+<clay:navigation-bar
+	inverted="<%= true %>"
+	items="<%=
+		new JSPNavigationItemList(pageContext) {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(true);
+						navigationItem.setHref(StringPool.BLANK);
+						navigationItem.setLabel(LanguageUtil.get(request, "feeds"));
+					});
+			}
+		}
+	%>"
+/>
 
 <liferay-frontend:management-bar
 	disabled="<%= (feedsCount <= 0) && !searchTerms.isSearch() %>"
@@ -85,6 +87,14 @@ renderResponse.setTitle(LanguageUtil.get(request, "feeds"));
 			orderColumns='<%= new String[] {"name", "id"} %>'
 			portletURL="<%= iteratorURL %>"
 		/>
+
+		<c:if test="<%= (feedsCount > 0) || searchTerms.isSearch() %>">
+			<li>
+				<aui:form action="<%= portletURL.toString() %>" method="post" name="searchFm">
+					<liferay-ui:input-search markupView="lexicon" />
+				</aui:form>
+			</li>
+		</c:if>
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-buttons>
@@ -93,6 +103,17 @@ renderResponse.setTitle(LanguageUtil.get(request, "feeds"));
 			portletURL="<%= PortletURLUtil.clone(portletURL, renderResponse) %>"
 			selectedDisplayStyle="<%= displayStyle %>"
 		/>
+
+		<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_FEED) %>">
+			<portlet:renderURL var="editFeedURL">
+				<portlet:param name="mvcPath" value="/edit_feed.jsp" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
+			</portlet:renderURL>
+
+			<liferay-frontend:add-menu inline="<%= true %>">
+				<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-feed") %>' url="<%= editFeedURL %>" />
+			</liferay-frontend:add-menu>
+		</c:if>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-action-buttons>
@@ -209,21 +230,13 @@ renderResponse.setTitle(LanguageUtil.get(request, "feeds"));
 	</liferay-ui:search-container>
 </aui:form>
 
-<aui:script>
-	function <portlet:namespace />deleteFeeds() {
-		if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-the-selected-feeds") %>')) {
-			submitForm(document.<portlet:namespace />fm);
+<aui:script sandbox="<%= true %>">
+	$('#<portlet:namespace />deleteFeeds').on(
+		'click',
+		function() {
+			if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-the-selected-feeds") %>')) {
+				submitForm(document.<portlet:namespace />fm);
+			}
 		}
-	}
+	);
 </aui:script>
-
-<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_FEED) %>">
-	<portlet:renderURL var="editFeedURL">
-		<portlet:param name="mvcPath" value="/edit_feed.jsp" />
-		<portlet:param name="redirect" value="<%= currentURL %>" />
-	</portlet:renderURL>
-
-	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-feed") %>' url="<%= editFeedURL %>" />
-	</liferay-frontend:add-menu>
-</c:if>

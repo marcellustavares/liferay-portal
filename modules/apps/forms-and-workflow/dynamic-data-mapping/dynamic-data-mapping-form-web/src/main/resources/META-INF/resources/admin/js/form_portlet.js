@@ -394,6 +394,26 @@ AUI.add(
 						}
 					},
 
+					_addFieldButton: function() {
+						var instance = this;
+
+						var ruleButton = A.one('.lfr-ddm-add-rule');
+
+						if (ruleButton) {
+							ruleButton.replaceClass('lfr-ddm-add-rule', 'lfr-ddm-add-field');
+						}
+					},
+
+					_addRuleButton: function() {
+						var instance = this;
+
+						var addButton = A.one('.lfr-ddm-add-field');
+
+						if (addButton) {
+							addButton.replaceClass('lfr-ddm-add-field', 'lfr-ddm-add-rule');
+						}
+					},
+
 					_afterAutosave: function(event) {
 						var instance = this;
 
@@ -456,33 +476,34 @@ AUI.add(
 									{
 										after: {
 											success: function(event, id, xhr) {
-												var requestURL = this.get('uri');
-												var responseURL = xhr.responseURL;
+												var responseData = this.get('responseData');
 
-												if (requestURL !== responseURL) {
-													window.location.reload();
-												}
-												else {
-													var responseData = this.get('responseData');
+												instance._defineIds(responseData);
 
-													instance._defineIds(responseData);
+												instance.savedState = state;
 
-													instance.savedState = state;
+												instance.fire(
+													'autosave',
+													{
+														modifiedDate: responseData.modifiedDate
+													}
+												);
 
-													instance.fire(
-														'autosave',
-														{
-															modifiedDate: responseData.modifiedDate
-														}
-													);
-
-													callback.call();
-												}
+												callback.call();
 											}
 										},
 										data: formData,
 										dataType: 'JSON',
-										method: 'POST'
+										method: 'POST',
+										on: {
+											failure: function(event, id, xhr) {
+												var sessionStatus = Liferay.Session.get('sessionState');
+
+												if (sessionStatus === 'expired' || xhr.status === 401) {
+													window.location.reload();
+												}
+											}
+										}
 									}
 								);
 							}
@@ -569,13 +590,19 @@ AUI.add(
 						return formString;
 					},
 
+					_getFormInstanceId: function() {
+						var instance = this;
+
+						return instance.byId('formInstanceId').val();
+					},
+
 					_getLocalizedName: function() {
 						var instance = this;
 
 						var defaultLanguageId = instance.get('defaultLanguageId');
 						var localizedName = instance.get('localizedName');
 
-						if (!localizedName[defaultLanguageId]) {
+						if (!localizedName[defaultLanguageId].trim()) {
 							localizedName[defaultLanguageId] = instance._isFormView() ? STR_UNTITLED_FORM : STR_UNTITLED_ELEMENT_SET;
 						}
 
@@ -594,12 +621,6 @@ AUI.add(
 						var instance = this;
 
 						return window[instance.ns('nameEditor')];
-					},
-
-					_getFormInstanceId: function() {
-						var instance = this;
-
-						return instance.byId('formInstanceId').val();
 					},
 
 					_handlePublishAction: function() {
@@ -713,6 +734,8 @@ AUI.add(
 						instance._hideRuleBuilder();
 
 						instance._showFormBuilder();
+
+						instance._addFieldButton();
 					},
 
 					_onNameEditorChange: function(event) {
@@ -744,6 +767,7 @@ AUI.add(
 						instance._autosave(
 							function() {
 								var publishedValue = instance.get('published');
+
 								var newPublishedValue = !publishedValue;
 
 								var payload = instance.ns(
@@ -758,29 +782,30 @@ AUI.add(
 									{
 										after: {
 											success: function(event, id, xhr) {
-												var requestURL = this.get('uri');
-												var responseURL = xhr.responseURL;
+												instance.set('published', newPublishedValue);
 
-												if (requestURL !== responseURL) {
-													window.location.reload();
+												instance.syncInputValues();
+
+												if (newPublishedValue) {
+													instance._handlePublishAction();
 												}
 												else {
-													instance.set('published', newPublishedValue);
-
-													instance.syncInputValues();
-
-													if (newPublishedValue) {
-														instance._handlePublishAction();
-													}
-													else {
-														instance._handleUnpublishAction();
-													}
+													instance._handleUnpublishAction();
 												}
 											}
 										},
 										data: payload,
 										dataType: 'JSON',
-										method: 'POST'
+										method: 'POST',
+										on: {
+											failure: function(event, id, xhr) {
+												var sessionStatus = Liferay.Session.get('sessionState');
+
+												if (sessionStatus === 'expired' || xhr.status === 401) {
+													window.location.reload();
+												}
+											}
+										}
 									}
 								);
 							}
@@ -814,6 +839,8 @@ AUI.add(
 						instance._hideFormBuilder();
 
 						instance._showRuleBuilder();
+
+						instance._addRuleButton();
 					},
 
 					_onSaveButtonClick: function(event) {

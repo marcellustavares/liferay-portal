@@ -155,6 +155,8 @@ module.framework.properties.osgi.console=11312</echo>
 			<if>
 				<not>
 					<or>
+						<equals arg1="${database.type}" arg2="auroramysql" />
+						<equals arg1="${database.type}" arg2="aurorapostgresql" />
 						<equals arg1="${database.type}" arg2="db2" />
 						<equals arg1="${database.type}" arg2="hypersonic" />
 						<equals arg1="${database.type}" arg2="mariadb" />
@@ -166,7 +168,7 @@ module.framework.properties.osgi.console=11312</echo>
 					</or>
 				</not>
 				<then>
-					<fail>Please set "database.type" to one of the following:${line.separator}db2, hypersonic, mariadb, mysql, oracle, postgresql, sqlserver, sybase.</fail>
+					<fail>Please set "database.type" to one of the following:${line.separator}auroramysql, aurorapostgresql, db2, hypersonic, mariadb, mysql, oracle, postgresql, sqlserver, sybase.</fail>
 				</then>
 			</if>
 		</sequential>
@@ -734,13 +736,15 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 			<var name="poshi.class.name" unset="true" />
 
+			<get-test-namespace />
 			<get-test-simple-class-name />
 
 			<beanshell>
 				<![CDATA[
+					String testNamespace = project.getProperty("test.namespace");
 					String testSimpleClassName = project.getProperty("test.simple.class.name");
 
-					String poshiClassName = testSimpleClassName.substring(0, testSimpleClassName.length() - 8);
+					String poshiClassName = testNamespace + "." + testSimpleClassName.replaceAll("TestCase$", "");
 
 					project.setProperty("poshi.class.name", poshiClassName);
 				]]>
@@ -857,6 +861,9 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 			<beanshell>
 				<![CDATA[
+					import java.util.regex.Matcher;
+					import java.util.regex.Pattern;
+
 					import org.apache.tools.ant.DirectoryScanner;
 
 					String poshiClassName = project.getProperty("poshi.class.name");
@@ -879,12 +886,18 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 						String fileName = fileNames[0];
 
-						int x = fileName.indexOf("/test/functional/") + 17;
+						Pattern pattern = Pattern.compile("/test/functional/(?<className>\\S+)");
 
-						String className = fileName.substring(x);
+						Matcher matcher = pattern.matcher(fileName);
+
+						if (!matcher.find()) {
+							throw new RuntimeException("Unable to find className in " + fileName);
+						}
+
+						String className = matcher.group("className");
 
 						className = className.replaceAll("/", ".");
-						className = className.replaceAll(".testcase", "TestCase");
+						className = className.replaceAll("\\.testcase", "TestCase");
 
 						project.setProperty("test.class.name", className);
 					}
@@ -905,18 +918,22 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 			<beanshell>
 				<![CDATA[
+					import java.util.regex.Matcher;
+					import java.util.regex.Pattern;
+
 					String testClass = project.getProperty("test.class");
 
-					int x = testClass.indexOf("#");
+					Pattern pattern = Pattern.compile("((?<namespace>\\w+)\\.)?(?<className>\\w+)(#(?<commandName>(\\w+(-\\w+)*|\\$\\{\\w+\\}|\\w+)*))?");
 
-					if (x != -1) {
-						int y = testClass.length();
+					Matcher matcher = pattern.matcher(testClass);
 
-						if (testClass.contains(",")) {
-							y = testClass.indexOf(",");
-						}
+					if (!matcher.find()) {
+						throw new Exception("Invalid test class name: " + testClass);
+					}
 
-						String testMethodName = testClass.substring(x + 1, y);
+					String testMethodName = matcher.group("commandName");
+
+					if (testMethodName != null) {
 
 						if (!testMethodName.startsWith("test")) {
 							testMethodName = "test" + testMethodName;
@@ -924,6 +941,39 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 						project.setProperty("test.method.name", testMethodName);
 					}
+				]]>
+			</beanshell>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="get-test-namespace">
+		<sequential>
+			<fail message="Please set the property ${test.class}." unless="test.class" />
+
+			<var name="test.namespace" unset="true" />
+
+			<beanshell>
+				<![CDATA[
+					import java.util.regex.Matcher;
+					import java.util.regex.Pattern;
+
+					String testClass = project.getProperty("test.class");
+
+					Pattern pattern = Pattern.compile("((?<namespace>\\w+)\\.)?(?<className>\\w+)(#(?<commandName>(\\w+(-\\w+)*|\\$\\{\\w+\\}|\\w+)*))?");
+
+					Matcher matcher = pattern.matcher(testClass);
+
+					if (!matcher.find()) {
+						throw new Exception("Invalid test class name: " + testClass);
+					}
+
+					String testNamespace = matcher.group("namespace");
+
+					if (testNamespace == null) {
+						testNamespace = project.getProperty("test.poshi.runner.default.namespace");
+					}
+
+					project.setProperty("test.namespace", testNamespace);
 				]]>
 			</beanshell>
 		</sequential>
@@ -937,15 +987,20 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 			<beanshell>
 				<![CDATA[
+					import java.util.regex.Matcher;
+					import java.util.regex.Pattern;
+
 					String testClass = project.getProperty("test.class");
 
-					String testSimpleClassName = testClass;
+					Pattern pattern = Pattern.compile("((?<namespace>\\w+)\\.)?(?<className>\\w+)(\\#(?<commandName>(\\w+(\\-\\w+)*|\\$\\{\\w+\\}|\\w+)*))?");
 
-					if (testClass.contains("#")) {
-						int x = testClass.indexOf("#");
+					Matcher matcher = pattern.matcher(testClass);
 
-						testSimpleClassName =  testClass.substring(0, x);
+					if (!matcher.find()) {
+						throw new Exception("Invalid test class name: " + testClass);
 					}
+
+					String testSimpleClassName = matcher.group("className");
 
 					if (!testSimpleClassName.endsWith("TestCase")) {
 						testSimpleClassName = testSimpleClassName + "TestCase";
@@ -1054,6 +1109,7 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 					</if>
 
 					<get-test-method-name />
+					<get-test-namespace />
 					<get-test-simple-class-name />
 
 					<beanshell>
@@ -1061,10 +1117,13 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 							String propertyName = project.getProperty("property.name");
 							String propertyValueDefault = project.getProperty("property.value.default");
 							String testMethodName = project.getProperty("test.method.name");
+							String testNamespace = project.getProperty("test.namespace");
 							String testSimpleClassName = project.getProperty("test.simple.class.name");
 
 							StringBuilder sb = new StringBuilder();
 
+							sb.append(testNamespace);
+							sb.append(".");
 							sb.append(testSimpleClassName);
 							sb.append(".");
 							sb.append(testMethodName);
@@ -1076,6 +1135,8 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 							if (propertyValue == null) {
 								sb = new StringBuilder();
 
+								sb.append(testNamespace);
+								sb.append(".");
 								sb.append(testSimpleClassName);
 								sb.append(".");
 								sb.append("all");
@@ -1486,7 +1547,7 @@ war.path=${app.server.weblogic.portal.dir}/</echo>
 			<if>
 				<equals arg1="${test.poshi.runner.local.release}" arg2="true" />
 				<then>
-					<gradle-execute dir="modules/test/poshi-runner/poshi-runner" task="deploy" />
+					<gradle-execute dir="${test.poshi.runner.src.dir}" task="deploy" />
 				</then>
 			</if>
 
@@ -1887,6 +1948,55 @@ sendPasswordCaptchaEnabled=&quot;false&quot;</echo>
 			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config">additionalConfigurations=&quot;cluster.routing.allocation.disk.threshold_enabled:\ false&#xa;cluster.service.slow_task_logging_threshold:\ 1800s&#xa;index.indexing.slowlog.threshold.index.warn:\ 1800s&#xa;index.search.slowlog.threshold.fetch.warn:\ 1800s&#xa;index.search.slowlog.threshold.query.warn:\ 1800s&#xa;monitor.jvm.gc.old.warn:\ 1800s&#xa;monitor.jvm.gc.young.warn:\ 1800s&#xa;threadpool.bulk.size:\ 1&#xa;threadpool.fetch_shard_started.size:\ 1&#xa;threadpool.fetch_shard_store.size:\ 1&#xa;threadpool.flush.size:\ 1&#xa;threadpool.force_merge.size:\ 1&#xa;threadpool.generic.size:\ 1&#xa;threadpool.get.size:\ 1&#xa;threadpool.index.size:\ 1&#xa;threadpool.listener.size:\ 1&#xa;threadpool.management.size:\ 1&#xa;threadpool.percolate.size:\ 1&#xa;threadpool.refresh.size:\ 1&#xa;threadpool.search.size:\ 1&#xa;threadpool.snapshot.size:\ 1&#xa;threadpool.suggest.size:\ 1&#xa;threadpool.warmer.size:\ 1&#xa;transport.local.workers:\ 1&quot;
 httpEnabled=B&quot;false&quot;
 logExceptionsOnly=B&quot;false&quot;</echo>
+
+			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration.config">additionalConfigurations=&quot;cluster.routing.allocation.disk.threshold_enabled:\ false&#xa;cluster.service.slow_task_logging_threshold:\ 1800s&#xa;monitor.jvm.gc.overhead.warn:\ 90&quot;
+httpEnabled=B&quot;false&quot;
+logExceptionsOnly=B&quot;false&quot;</echo>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prepare-gecko-driver">
+		<sequential>
+			<if>
+				<os family="mac" />
+				<then>
+					<property name="selenium.gecko.driver.archive" value="geckodriver-v${selenium.gecko.driver.version}-macos.tar.gz" />
+				</then>
+				<elseif>
+					<os family="unix" />
+					<then>
+						<property name="selenium.gecko.driver.archive" value="geckodriver-v${selenium.gecko.driver.version}-linux32.tar.gz" />
+					</then>
+				</elseif>
+				<elseif>
+					<os family="windows" />
+					<then>
+						<property name="selenium.gecko.driver.archive" value="geckodriver-v${selenium.gecko.driver.version}-win32.zip" />
+					</then>
+				</elseif>
+				<else>
+					<then>
+						<fail message="Operating system is not supported." />
+					</then>
+				</else>
+			</if>
+
+			<mirrors-get
+				dest="tools/selenium/${selenium.gecko.driver.archive}"
+				src="https://github.com/mozilla/geckodriver/releases/download/v${selenium.gecko.driver.version}/${selenium.gecko.driver.archive}"
+			/>
+
+			<if>
+				<os family="unix" />
+				<then>
+					<untar compression="gzip" dest="tools/selenium" src="tools/selenium/${selenium.gecko.driver.archive}" />
+
+					<chmod file="tools/selenium/geckodriver" perm="a+x" />
+				</then>
+				<else>
+					<unzip dest="tools/selenium" src="tools/selenium/${selenium.gecko.driver.archive}" />
+				</else>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -3937,6 +4047,39 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 									<http url="http://localhost:${test.app.server.leading.port.number}080/web/guest" />
 								</not>
 							</waitfor>
+
+							<if>
+								<equals arg1="${app.server.type}" arg2="wildfly" />
+								<then>
+									<retry retrycount="10">
+										<sequential>
+											<execute>
+												<![CDATA[
+													jps > jps_output
+												]]>
+											</execute>
+
+											<trycatch property="shutdown.error">
+												<try>
+													<if>
+														<resourcecontains resource="jps_output" substring="jboss-modules.jar" />
+														<then>
+															<fail />
+														</then>
+													</if>
+												</try>
+												<catch>
+													<sleep seconds="5" />
+
+													<fail message="Server failed to fully shut down." />
+												</catch>
+											</trycatch>
+										</sequential>
+									</retry>
+
+									<delete file="jps_output" />
+								</then>
+							</if>
 						</else>
 					</if>
 
@@ -4613,6 +4756,9 @@ go]]></replacevalue>
 					<include name="**/TEST-*.xml" />
 				</fileset>
 				<fileset dir="util-java/test-results" erroronmissingdir="false">
+					<include name="**/TEST-*.xml" />
+				</fileset>
+				<fileset dir="util-taglib/test-results" erroronmissingdir="false">
 					<include name="**/TEST-*.xml" />
 				</fileset>
 			</path>
@@ -5858,6 +6004,9 @@ go]]></replacevalue>
 					<fileset dir="util-java/test-results" erroronmissingdir="false">
 						<include name="**/TEST-*.xml" />
 					</fileset>
+					<fileset dir="util-taglib/test-results" erroronmissingdir="false">
+						<include name="**/TEST-*.xml" />
+					</fileset>
 				</copy>
 			</then>
 		</if>
@@ -6297,6 +6446,9 @@ go]]></replacevalue>
 				<fileset dir="util-java/test-results" erroronmissingdir="false">
 					<include name="**/TEST-*.xml" />
 				</fileset>
+				<fileset dir="util-taglib/test-results" erroronmissingdir="false">
+					<include name="**/TEST-*.xml" />
+				</fileset>
 				<fileset dir="${blade.samples.dir}/liferay-workspace/tests" erroronmissingdir="false">
 					<include name="**/TEST-*.xml" />
 				</fileset>
@@ -6704,11 +6856,7 @@ memory.scheduler.org.quartz.threadPool.threadCount=1
 
 persisted.scheduler.org.quartz.threadPool.threadCount=1
 
-virtual.hosts.default.site.name=
-
-axis.servlet.hosts.allowed=
-
-tunnel.servlet.hosts.allowed=</echo>
+virtual.hosts.default.site.name=</echo>
 
 		<if>
 			<equals arg1="${database.type}" arg2="oracle" />
@@ -7017,6 +7165,41 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 				value="verify.frequency=1"
 			/>
 		</replace>
+	</target>
+
+	<target name="prepare-portal-ssl">
+		<if>
+			<equals arg1="${app.server.type}" arg2="tomcat" />
+			<then>
+				<if>
+					<os family="unix" />
+					<then>
+						<exec dir="${app.server.parent.dir}" executable="/bin/bash">
+							<arg value="-c" />
+							<arg value="keytool -genkey -alias tomcat -dname CN=localhost -keyalg RSA -keypass liferay -storepass liferay -keystore keystore.jks" />
+						</exec>
+					</then>
+					<elseif>
+						<os family="windows" />
+						<then>
+							<exec dir="${app.server.parent.dir}" executable="cmd">
+								<arg value="/c" />
+								<arg value="keytool -genkey -alias tomcat -dname CN=localhost -keyalg RSA -keypass liferay -storepass liferay -keystore keystore.jks" />
+							</exec>
+						</then>
+					</elseif>
+				</if>
+
+				<replace
+					file="${app.server.dir}/conf/server.xml"
+					token="&lt;Service name=&quot;Catalina&quot;&gt;"
+					value="&lt;Service name=&quot;Catalina&quot;&gt;${line.separator}    &lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;${line.separator}           maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;${line.separator}           clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot; keystoreFile=&quot;${app.server.parent.dir}/keystore.jks&quot; keystorePass=&quot;liferay&quot; /&gt;"
+				/>
+			</then>
+			<else>
+				<fail message="Enabling SSL for ${app.server.type} is not supported." />
+			</else>
+		</if>
 	</target>
 
 	<target name="prepare-portlet-ext-properties">
@@ -7585,6 +7768,21 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		</if>
 
 		<if>
+			<and>
+				<equals arg1="${browser.firefox.version}" arg2="52.0" />
+				<equals arg1="${browser.type}" arg2="firefox" />
+			</and>
+			<then>
+				<prepare-gecko-driver />
+
+				<echo append="true" file="${test.ext.properties.file}">
+					selenium.executable.dir.name=${selenium.executable.dir.name}
+					selenium.gecko.driver.executable=${selenium.gecko.driver.executable}
+				</echo>
+			</then>
+		</if>
+
+		<if>
 			<equals arg1="${browser.type}" arg2="internetexplorer" />
 			<then>
 				<prepare-ie-driver />
@@ -7617,221 +7815,61 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 	</target>
 
 	<target name="prepare-selenium-database-properties">
-		<if>
-			<isset property="database.db2.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.db2.driver=${database.db2.driver}
-				</echo>
-			</then>
-		</if>
+		<for list="${database.types}" param="database.type">
+			<sequential>
+				<if>
+					<isset property="database.@{database.type}.driver" />
+					<then>
+						<local name="database.driver" />
 
-		<if>
-			<isset property="database.db2.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.db2.password=${database.db2.password}
-				</echo>
-			</then>
-		</if>
+						<propertycopy from="database.@{database.type}.driver" name="database.driver" />
 
-		<if>
-			<isset property="database.db2.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.db2.url=${database.db2.url}
-				</echo>
-			</then>
-		</if>
+						<echo append="true" file="${test.ext.properties.file}">
+							database.@{database.type}.driver=${database.driver}
+						</echo>
+					</then>
+				</if>
 
-		<if>
-			<isset property="database.db2.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.db2.username=${database.db2.username}
-				</echo>
-			</then>
-		</if>
+				<if>
+					<isset property="database.@{database.type}.password" />
+					<then>
+						<local name="database.password" />
 
-		<if>
-			<isset property="database.hypersonic.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.hypersonic.driver=${database.hypersonic.driver}
-				</echo>
-			</then>
-		</if>
+						<propertycopy from="database.@{database.type}.password" name="database.password" />
 
-		<if>
-			<isset property="database.hypersonic.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.hypersonic.password=${database.hypersonic.password}
-				</echo>
-			</then>
-		</if>
+						<echo append="true" file="${test.ext.properties.file}">
+							database.@{database.type}.password=${database.password}
+						</echo>
+					</then>
+				</if>
 
-		<if>
-			<isset property="database.hypersonic.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.hypersonic.url=${database.hypersonic.url}
-				</echo>
-			</then>
-		</if>
+				<if>
+					<isset property="database.@{database.type}.url" />
+					<then>
+						<local name="database.url" />
 
-		<if>
-			<isset property="database.hypersonic.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.hypersonic.username=${database.hypersonic.username}
-				</echo>
-			</then>
-		</if>
+						<propertycopy from="database.@{database.type}.url" name="database.url" />
 
-		<if>
-			<isset property="database.mysql.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.mysql.driver=${database.mysql.driver}
-				</echo>
-			</then>
-		</if>
+						<echo append="true" file="${test.ext.properties.file}">
+							database.@{database.type}.url=${database.url}
+						</echo>
+					</then>
+				</if>
 
-		<if>
-			<isset property="database.mysql.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.mysql.password=${database.mysql.password}
-				</echo>
-			</then>
-		</if>
+				<if>
+					<isset property="database.@{database.type}.username" />
+					<then>
+						<local name="database.username" />
 
-		<if>
-			<isset property="database.mysql.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.mysql.url=${database.mysql.url}
-				</echo>
-			</then>
-		</if>
+						<propertycopy from="database.@{database.type}.username" name="database.username" />
 
-		<if>
-			<isset property="database.mysql.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.mysql.username=${database.mysql.username}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.oracle.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.oracle.driver=${database.oracle.driver}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.oracle.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.oracle.password=${database.oracle.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.oracle.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.oracle.url=${database.oracle.url}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.oracle.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.oracle.username=${database.oracle.username}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.postgresql.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.postgresql.driver=${database.postgresql.driver}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.postgresql.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.postgresql.password=${database.postgresql.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.postgresql.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.postgresql.url=${database.postgresql.url}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.postgresql.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.postgresql.username=${database.postgresql.username}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.sybase.driver" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.sybase.driver=${database.sybase.driver}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.sybase.password" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.sybase.password=${database.sybase.password}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.sybase.url" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.sybase.url=${database.sybase.url}
-				</echo>
-			</then>
-		</if>
-
-		<if>
-			<isset property="database.sybase.username" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					database.sybase.username=${database.sybase.username}
-				</echo>
-			</then>
-		</if>
+						<echo append="true" file="${test.ext.properties.file}">
+							database.@{database.type}.username=${database.username}
+						</echo>
+					</then>
+				</if>
+			</sequential>
+		</for>
 
 		<if>
 			<isset property="database.type" />
@@ -9894,38 +9932,7 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		<if>
 			<equals arg1="${portal.ssl.enabled}" arg2="true" />
 			<then>
-				<if>
-					<equals arg1="${app.server.type}" arg2="tomcat" />
-					<then>
-						<if>
-							<os family="unix" />
-							<then>
-								<exec dir="${app.server.parent.dir}" executable="/bin/bash">
-									<arg value="-c" />
-									<arg value="keytool -genkey -alias tomcat -dname CN=localhost -keyalg RSA -keypass liferay -storepass liferay -keystore keystore.jks" />
-								</exec>
-							</then>
-							<elseif>
-								<os family="windows" />
-								<then>
-									<exec dir="${app.server.parent.dir}" executable="cmd">
-										<arg value="/c" />
-										<arg value="keytool -genkey -alias tomcat -dname CN=localhost -keyalg RSA -keypass liferay -storepass liferay -keystore keystore.jks" />
-									</exec>
-								</then>
-							</elseif>
-						</if>
-
-						<replace
-							file="${app.server.dir}/conf/server.xml"
-							token="&lt;Service name=&quot;Catalina&quot;&gt;"
-							value="&lt;Service name=&quot;Catalina&quot;&gt;${line.separator}    &lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;${line.separator}           maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;${line.separator}           clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot; keystoreFile=&quot;${app.server.parent.dir}/keystore.jks&quot; keystorePass=&quot;liferay&quot; /&gt;"
-						/>
-					</then>
-					<else>
-						<fail message="Enabling SSL for ${app.server.type} is not supported." />
-					</else>
-				</if>
+				<antcall target="prepare-portal-ssl" />
 			</then>
 		</if>
 
@@ -10389,13 +10396,6 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			<then>
 				<print-file file.name="${elasticsearch.dir}/logs/LiferayElasticsearchCluster.log" />
 
-				<get
-					dest="${elasticsearch.dir}/logs/LiferayElasticsearchClusterMappings.log"
-					src="http://localhost:9200/_all/_mapping?pretty"
-				/>
-
-				<print-file file.name="${elasticsearch.dir}/logs/LiferayElasticsearchClusterMappings.log" />
-
 				<ant antfile="build-test-elasticsearch.xml" target="stop-elasticsearch" />
 			</then>
 		</if>
@@ -10405,6 +10405,8 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		<if>
 			<equals arg1="${solr.enabled}" arg2="true" />
 			<then>
+				<print-file file.name="${solr.dir}/server/logs/solr.log" />
+
 				<ant antfile="build-test-solr.xml" target="stop-solr-core" />
 			</then>
 		</if>
@@ -10530,6 +10532,8 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		<ant dir="portal-impl" inheritAll="false" target="test-unit" />
 
 		<ant dir="util-java" inheritAll="false" target="test-unit" />
+
+		<ant dir="util-taglib" inheritAll="false" target="test-unit" />
 	</target>
 
 	<target name="uninstall-patches">

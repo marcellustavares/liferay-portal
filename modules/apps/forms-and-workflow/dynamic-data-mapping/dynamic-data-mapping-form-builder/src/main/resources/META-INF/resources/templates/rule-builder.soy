@@ -4,7 +4,6 @@
  * Prints the DDM form rule builder cotainer.
  */
 {template .render}
-	{@param plusIcon: html}
 	{@param strings: [ruleBuilder: string]}
 
 	<div class="form-builder-rule-builder-container">
@@ -12,13 +11,6 @@
 
 		<div class="liferay-ddm-form-rule-rules-list-container"></div>
 
-		<div class="form-builder-rule-builder-add-rule-container">
-			<div class="btn-action-secondary btn-bottom-right dropdown form-builder-rule-builder-add-rule-button">
-				<button class="btn btn-primary form-builder-rule-builder-add-rule-button-icon" type="button">
-					{$plusIcon}
-				</button>
-			</div>
-		</div>
 	</div>
 {/template}
 
@@ -57,6 +49,7 @@
 
 								{if not isLast($condition)}
 									<br />
+
 									<b> {$strings[$rule.logicOperator]} </b>
 								{/if}
 							{/foreach}
@@ -74,6 +67,7 @@
 							{/foreach}
 						</p>
 					</div>
+
 					<div class="list-group-item-field">
 						<div class="card-col-field">
 							<div class="dropdown dropdown-action">
@@ -85,6 +79,7 @@
 										<a href="javascript:;">{$strings.delete}</a>
 									</li>
 								</ul>
+
 								<a class="dropdown-toggle icon-monospaced" data-toggle="dropdown" href="#1">
 									{$kebab}
 								</a>

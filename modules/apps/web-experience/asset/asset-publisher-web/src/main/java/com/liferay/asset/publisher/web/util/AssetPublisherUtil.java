@@ -28,9 +28,9 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
+import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherPortletInstanceConfiguration;
 import com.liferay.asset.publisher.web.configuration.AssetPublisherWebConfiguration;
-import com.liferay.asset.publisher.web.constants.AssetPublisherPortletKeys;
 import com.liferay.asset.publisher.web.display.context.AssetEntryResult;
 import com.liferay.asset.publisher.web.display.context.AssetPublisherDisplayContext;
 import com.liferay.asset.util.AssetEntryQueryProcessor;
@@ -386,7 +386,7 @@ public class AssetPublisherUtil {
 			long scopeGroupId, int max, boolean checkPermission)
 		throws PortalException {
 
-		return null;
+		return Collections.emptyList();
 	}
 
 	public static List<AssetEntry> getAssetEntries(
@@ -443,14 +443,18 @@ public class AssetPublisherUtil {
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassName(assetEntryType);
 
-			String portletId = assetRendererFactory.getPortletId();
+			String portletId = null;
+
+			if (assetRendererFactory != null) {
+				portletId = assetRendererFactory.getPortletId();
+			}
 
 			AssetEntry assetEntry = null;
 
 			for (long groupId : groupIds) {
 				Group group = _groupLocalService.fetchGroup(groupId);
 
-				if (group.isStagingGroup() &&
+				if ((portletId != null) && group.isStagingGroup() &&
 					!group.isStagedPortlet(portletId)) {
 
 					groupId = group.getLiveGroupId();
@@ -480,6 +484,16 @@ public class AssetPublisherUtil {
 				AssetRendererFactoryRegistryUtil.
 					getAssetRendererFactoryByClassName(
 						assetEntry.getClassName());
+
+			if (assetRendererFactory == null) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"No asset renderer factory associated with " +
+							assetEntry.getClassName());
+				}
+
+				continue;
+			}
 
 			AssetRenderer<?> assetRenderer =
 				assetRendererFactory.getAssetRenderer(
