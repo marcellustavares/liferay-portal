@@ -15,6 +15,7 @@
 package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.petra.string.CharPool;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.checkstyle.util.DetailASTUtil;
@@ -39,15 +40,19 @@ public class ChainingCheck extends BaseCheck {
 	}
 
 	public void setAllowedClassNames(String allowedClassNames) {
-		_allowedClassNames = StringUtil.split(allowedClassNames);
+		_allowedClassNames = ArrayUtil.append(
+			_allowedClassNames, StringUtil.split(allowedClassNames));
 	}
 
 	public void setAllowedMethodNames(String allowedMethodNames) {
-		_allowedMethodNames = StringUtil.split(allowedMethodNames);
+		_allowedMethodNames = ArrayUtil.append(
+			_allowedMethodNames, StringUtil.split(allowedMethodNames));
 	}
 
 	public void setAllowedVariableTypeNames(String allowedVariableTypeNames) {
-		_allowedVariableTypeNames = StringUtil.split(allowedVariableTypeNames);
+		_allowedVariableTypeNames = ArrayUtil.append(
+			_allowedVariableTypeNames,
+			StringUtil.split(allowedVariableTypeNames));
 	}
 
 	@Override
@@ -305,6 +310,10 @@ public class ChainingCheck extends BaseCheck {
 		if (nameAST != null) {
 			String classOrVariableName = nameAST.getText();
 
+			if (_isLambdaVariable(methodCallAST, classOrVariableName)) {
+				return true;
+			}
+
 			for (String allowedClassName : _allowedClassNames) {
 				if (classOrVariableName.matches(allowedClassName)) {
 					return true;
@@ -383,6 +392,30 @@ public class ChainingCheck extends BaseCheck {
 			}
 
 			parentAST = parentAST.getParent();
+		}
+
+		return false;
+	}
+
+	private boolean _isLambdaVariable(
+		DetailAST methodCallAST, String variableName) {
+
+		DetailAST parentAST = methodCallAST.getParent();
+
+		while (parentAST != null) {
+			if (parentAST.getType() != TokenTypes.LAMBDA) {
+				parentAST = parentAST.getParent();
+
+				continue;
+			}
+
+			DetailAST nameAST = parentAST.findFirstToken(TokenTypes.IDENT);
+
+			if ((nameAST != null) && variableName.equals(nameAST.getText())) {
+				return true;
+			}
+
+			return false;
 		}
 
 		return false;

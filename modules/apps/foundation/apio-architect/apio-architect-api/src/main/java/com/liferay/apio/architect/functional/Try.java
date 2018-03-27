@@ -14,8 +14,9 @@
 
 package com.liferay.apio.architect.functional;
 
+import com.liferay.apio.architect.consumer.throwable.ThrowableConsumer;
 import com.liferay.apio.architect.exception.FalsePredicateException;
-import com.liferay.apio.architect.function.ThrowableFunction;
+import com.liferay.apio.architect.function.throwable.ThrowableFunction;
 import com.liferay.apio.architect.supplier.ThrowableSupplier;
 
 import java.io.Closeable;
@@ -182,13 +183,33 @@ public abstract class Try<T> {
 		ThrowableFunction<? super T, Try<S>> function);
 
 	/**
+	 * Applies {@code failureConsumer} if this is a {@code Failure}, or {@code
+	 * successConsumer} if this is a {@code Success}.
+	 *
+	 * <p>
+	 * If {@code successConsumer} throws an {@code Exception}, this method
+	 * returns the result of applying {@code failureConsumer} to the new {@code
+	 * Exception}.
+	 * </p>
+	 *
+	 * @param  failureConsumer the consumer to apply when this {@code Try} is a
+	 *         {@code Failure}
+	 * @param  successConsumer the consumer to apply when this {@code Try} is a
+	 *         {@code Success}
+	 * @review
+	 */
+	public abstract void fold(
+		Consumer<Exception> failureConsumer,
+		ThrowableConsumer<T> successConsumer);
+
+	/**
 	 * Returns the value that results from applying {@code failureFunction} if
 	 * this is a {@code Failure}, or {@code successFunction} if this is a {@code
 	 * Success}.
 	 *
 	 * <p>
 	 * If {@code successFunction} throws an {@code Exception}, this method
-	 * returns the result of applying {@code successFunction} to the new {@code
+	 * returns the result of applying {@code failureFunction} to the new {@code
 	 * Exception}.
 	 * </p>
 	 *
@@ -457,6 +478,16 @@ public abstract class Try<T> {
 		}
 
 		@Override
+		public void fold(
+			Consumer<Exception> failureConsumer,
+			ThrowableConsumer<T> successConsumer) {
+
+			Objects.requireNonNull(failureConsumer);
+
+			failureConsumer.accept(_exception);
+		}
+
+		@Override
 		public <S> S fold(
 			Function<Exception, S> failureFunction,
 			ThrowableFunction<T, S> successFunction) {
@@ -630,11 +661,28 @@ public abstract class Try<T> {
 		}
 
 		@Override
+		public void fold(
+			Consumer<Exception> failureConsumer,
+			ThrowableConsumer<T> successConsumer) {
+
+			Objects.requireNonNull(successConsumer);
+			Objects.requireNonNull(failureConsumer);
+
+			try {
+				successConsumer.accept(_value);
+			}
+			catch (Exception e) {
+				failureConsumer.accept(e);
+			}
+		}
+
+		@Override
 		public <S> S fold(
 			Function<Exception, S> failureFunction,
 			ThrowableFunction<T, S> successFunction) {
 
 			Objects.requireNonNull(successFunction);
+			Objects.requireNonNull(failureFunction);
 
 			try {
 				return successFunction.apply(_value);

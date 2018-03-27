@@ -242,6 +242,7 @@ public class Representor<T, S> {
 			Supplier<List<RelatedCollection<?>>> relatedCollectionsSupplier) {
 
 			_relatedCollectionBiConsumer = relatedCollectionBiConsumer;
+
 			_representor = new Representor<>(
 				identifierClass, relatedCollectionsSupplier);
 		}

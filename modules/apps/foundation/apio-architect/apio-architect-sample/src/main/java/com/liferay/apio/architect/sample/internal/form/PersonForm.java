@@ -19,19 +19,18 @@ import com.liferay.apio.architect.form.Form;
 import java.util.Date;
 
 /**
- * Instances of this class represent the values extracted from a person form.
+ * Represents the values extracted from a person form.
  *
  * @author Alejandro Hernández
- * @review
  */
 public class PersonForm {
 
 	/**
-	 * Builds a {@code Form} that generates {@code PersonForm} depending on the
-	 * HTTP body.
+	 * Builds and returns a {@link Form} that generates {@code PersonForm} that
+	 * depends on the HTTP body.
 	 *
 	 * @param  formBuilder the {@code Form} builder
-	 * @return a person form
+	 * @return the {@code PersonForm}
 	 */
 	public static Form<PersonForm> buildForm(
 		Form.Builder<PersonForm> formBuilder) {
@@ -60,70 +59,63 @@ public class PersonForm {
 	}
 
 	/**
-	 * Returns the person's address
+	 * Returns the person's address.
 	 *
 	 * @return the person's address
-	 * @review
 	 */
 	public String getAddress() {
 		return _address;
 	}
 
 	/**
-	 * Returns the person's birthday date
+	 * Returns the person's birthdate.
 	 *
-	 * @return the person's birthday date
-	 * @review
+	 * @return the person's birthdate
 	 */
 	public Date getBirthDate() {
 		return new Date(_birthDate.getTime());
 	}
 
 	/**
-	 * Returns the person's email
+	 * Returns the person's email.
 	 *
 	 * @return the person's email
-	 * @review
 	 */
 	public String getEmail() {
 		return _email;
 	}
 
 	/**
-	 * Returns the person's family name
+	 * Returns the person's family name.
 	 *
 	 * @return the person's family name
-	 * @review
 	 */
 	public String getFamilyName() {
 		return _familyName;
 	}
 
 	/**
-	 * Returns the person's given name
+	 * Returns the person's given name.
 	 *
 	 * @return the person's given name
-	 * @review
 	 */
 	public String getGivenName() {
 		return _givenName;
 	}
 
 	/**
-	 * Returns the person's image
+	 * Returns the person's image.
 	 *
 	 * @return the person's image
-	 * @review
 	 */
 	public String getImage() {
 		return _image;
 	}
 
 	/**
-	 * Returns the person's job title
+	 * Returns the person's job title.
 	 *
 	 * @return the person's job title
-	 * @review
 	 */
 	public String getJobTitle() {
 		return _jobTitle;

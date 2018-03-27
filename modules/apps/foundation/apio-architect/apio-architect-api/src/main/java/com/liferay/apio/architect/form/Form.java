@@ -17,21 +17,25 @@ package com.liferay.apio.architect.form;
 import static com.liferay.apio.architect.form.FieldType.BOOLEAN;
 import static com.liferay.apio.architect.form.FieldType.DATE;
 import static com.liferay.apio.architect.form.FieldType.DOUBLE;
+import static com.liferay.apio.architect.form.FieldType.FILE;
 import static com.liferay.apio.architect.form.FieldType.LONG;
 import static com.liferay.apio.architect.form.FieldType.STRING;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalBoolean;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalDate;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalDouble;
+import static com.liferay.apio.architect.form.FormUtil.getOptionalFile;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalFormFieldStream;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalLong;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalString;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredBoolean;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredDate;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredDouble;
+import static com.liferay.apio.architect.form.FormUtil.getRequiredFile;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredFormFieldStream;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredLong;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredString;
 
+import com.liferay.apio.architect.file.BinaryFile;
 import com.liferay.apio.architect.language.Language;
 
 import java.util.Collections;
@@ -47,7 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Holds information about an operation's form. The {@link #get(Map)} method
+ * Holds information about an operation's form. The {@link #get(Body)} method
  * method uses the HTTP request body to extract the form values as detailed in
  * the {@link Builder}.
  *
@@ -68,17 +72,19 @@ public class Form<T> {
 	 * @param  body the HTTP request body
 	 * @return the form's information in a class of type {@code T}
 	 */
-	public T get(Map<String, Object> body) {
+	public T get(Body body) {
 		T t = _supplier.get();
 
 		_optionalBooleans.forEach(getOptionalBoolean(body, t));
 		_optionalDates.forEach(getOptionalDate(body, t));
 		_optionalDoubles.forEach(getOptionalDouble(body, t));
+		_optionalFiles.forEach(getOptionalFile(body, t));
 		_optionalLongs.forEach(getOptionalLong(body, t));
 		_optionalStrings.forEach(getOptionalString(body, t));
 		_requiredBooleans.forEach(getRequiredBoolean(body, t));
 		_requiredDates.forEach(getRequiredDate(body, t));
 		_requiredDoubles.forEach(getRequiredDouble(body, t));
+		_requiredFiles.forEach(getRequiredFile(body, t));
 		_requiredLongs.forEach(getRequiredLong(body, t));
 		_requiredStrings.forEach(getRequiredString(body, t));
 
@@ -106,11 +112,13 @@ public class Form<T> {
 			getOptionalFormFieldStream(_optionalBooleans, BOOLEAN),
 			getOptionalFormFieldStream(_optionalDates, DATE),
 			getOptionalFormFieldStream(_optionalDoubles, DOUBLE),
+			getOptionalFormFieldStream(_optionalFiles, FILE),
 			getOptionalFormFieldStream(_optionalLongs, LONG),
 			getOptionalFormFieldStream(_optionalStrings, STRING),
 			getRequiredFormFieldStream(_requiredBooleans, BOOLEAN),
 			getRequiredFormFieldStream(_requiredDates, DATE),
 			getRequiredFormFieldStream(_requiredDoubles, DOUBLE),
+			getRequiredFormFieldStream(_requiredFiles, FILE),
 			getRequiredFormFieldStream(_requiredLongs, LONG),
 			getRequiredFormFieldStream(_requiredStrings, STRING));
 
@@ -282,6 +290,30 @@ public class Form<T> {
 			}
 
 			/**
+			 * Requests an optional file from the HTTP request body.
+			 *
+			 * <p>
+			 * This method calls the provided consumer with the store instance
+			 * (provided with the {@link ConstructorStep#constructor(Supplier)}
+			 * method) and the field value, if the field is present. A {@code
+			 * javax.ws.rs.BadRequestException} is thrown if the field is found
+			 * but it isn't a file.
+			 * </p>
+			 *
+			 * @param  key the field's key
+			 * @param  biConsumer the consumer to call if the field is found
+			 * @return the updated builder
+			 */
+			public FieldStep addOptionalFile(
+				String key, BiConsumer<T, BinaryFile> biConsumer) {
+
+				_form._optionalFiles.put(
+					key, t -> binaryFile -> biConsumer.accept(t, binaryFile));
+
+				return this;
+			}
+
+			/**
 			 * Requests an optional long from the HTTP request body.
 			 *
 			 * <p>
@@ -402,6 +434,30 @@ public class Form<T> {
 			}
 
 			/**
+			 * Requests a mandatory file from the HTTP request body.
+			 *
+			 * <p>
+			 * This method calls the provided consumer with the store instance
+			 * (provided with the {@link ConstructorStep#constructor(Supplier)}
+			 * method) and the field value. A {@code
+			 * javax.ws.rs.BadRequestException} is thrown if the field isn't
+			 * found, or it's found but it isn't a file.
+			 * </p>
+			 *
+			 * @param  key the field's key
+			 * @param  biConsumer the consumer to call
+			 * @return the updated builder
+			 */
+			public FieldStep addRequiredFile(
+				String key, BiConsumer<T, BinaryFile> biConsumer) {
+
+				_form._requiredFiles.put(
+					key, t -> binaryFile -> biConsumer.accept(t, binaryFile));
+
+				return this;
+			}
+
+			/**
 			 * Requests a mandatory long from the HTTP request body.
 			 *
 			 * <p>
@@ -476,6 +532,8 @@ public class Form<T> {
 		new HashMap<>();
 	private final Map<String, Function<T, Consumer<Double>>> _optionalDoubles =
 		new HashMap<>();
+	private final Map<String, Function<T, Consumer<BinaryFile>>>
+		_optionalFiles = new HashMap<>();
 	private final Map<String, Function<T, Consumer<Long>>> _optionalLongs =
 		new HashMap<>();
 	private final Map<String, Function<T, Consumer<String>>> _optionalStrings =
@@ -486,6 +544,8 @@ public class Form<T> {
 		new HashMap<>();
 	private final Map<String, Function<T, Consumer<Double>>> _requiredDoubles =
 		new HashMap<>();
+	private final Map<String, Function<T, Consumer<BinaryFile>>>
+		_requiredFiles = new HashMap<>();
 	private final Map<String, Function<T, Consumer<Long>>> _requiredLongs =
 		new HashMap<>();
 	private final Map<String, Function<T, Consumer<String>>> _requiredStrings =

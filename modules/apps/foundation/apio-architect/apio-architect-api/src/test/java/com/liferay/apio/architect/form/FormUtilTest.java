@@ -20,18 +20,19 @@ import static com.liferay.apio.architect.form.FieldType.BOOLEAN;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalBoolean;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalDate;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalDouble;
+import static com.liferay.apio.architect.form.FormUtil.getOptionalFile;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalFormFieldStream;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalLong;
 import static com.liferay.apio.architect.form.FormUtil.getOptionalString;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredBoolean;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredDate;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredDouble;
+import static com.liferay.apio.architect.form.FormUtil.getRequiredFile;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredFormFieldStream;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredLong;
 import static com.liferay.apio.architect.form.FormUtil.getRequiredString;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -39,6 +40,12 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 
 import com.liferay.apio.architect.alias.form.FieldFormBiConsumer;
+import com.liferay.apio.architect.file.BinaryFile;
+import com.liferay.apio.architect.functional.Try;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +55,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
@@ -79,7 +87,7 @@ public class FormUtilTest {
 		List<Boolean> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getOptionalBoolean(emptyMap(), list);
+			getOptionalBoolean(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
 
@@ -87,37 +95,11 @@ public class FormUtilTest {
 	}
 
 	@Test
-	public void testGetOptionalBooleanExtractsBoolean() {
-		List<Boolean> list = new ArrayList<>();
-
-		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getOptionalBoolean(singletonMap("boolean", true), list);
-
-		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
-
-		assertThat(list, hasSize(1));
-
-		Boolean aBoolean = list.get(0);
-
-		assertThat(aBoolean, is(true));
-	}
-
-	@Test(expected = BadRequestException.class)
-	public void testGetOptionalBooleanFailsIfNotABoolean() {
-		List<Boolean> list = new ArrayList<>();
-
-		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getOptionalBoolean(singletonMap("boolean", "Apio"), list);
-
-		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
-	}
-
-	@Test
 	public void testGetOptionalDateDoesNotFailIfNotPresent() {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getOptionalDate(emptyMap(), list);
+			getOptionalDate(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 
@@ -129,7 +111,7 @@ public class FormUtilTest {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getOptionalDate(singletonMap("date", "2017-04-03T18:36Z"), list);
+			getOptionalDate(_valueBody("2017-04-03T18:36Z"), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 
@@ -145,7 +127,7 @@ public class FormUtilTest {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getOptionalDate(singletonMap("date", "2017-04-03"), list);
+			getOptionalDate(_valueBody("2017-04-03"), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 	}
@@ -155,7 +137,7 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getOptionalDouble(emptyMap(), list);
+			getOptionalDouble(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
 
@@ -167,7 +149,7 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getOptionalDouble(singletonMap("double", 42.3D), list);
+			getOptionalDouble(_valueBody("42.3"), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
 
@@ -183,9 +165,54 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getOptionalDouble(singletonMap("double", "Apio"), list);
+			getOptionalDouble(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
+	}
+
+	@Test
+	public void testGetOptionalFileDoesNotFailIfNotPresent() {
+		List<BinaryFile> list = new ArrayList<>();
+
+		FieldFormBiConsumer<List<BinaryFile>, BinaryFile> fieldFormBiConsumer =
+			getOptionalFile(__ -> Optional.empty(), list);
+
+		fieldFormBiConsumer.accept("file", fileList -> fileList::add);
+
+		assertThat(list, is(empty()));
+	}
+
+	@Test
+	public void testGetOptionalFileExtractsBoolean() {
+		List<Boolean> list = new ArrayList<>();
+
+		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
+			getOptionalBoolean(_valueBody("true"), list);
+
+		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
+
+		assertThat(list, hasSize(1));
+
+		Boolean aBoolean = list.get(0);
+
+		assertThat(aBoolean, is(true));
+	}
+
+	@Test
+	public void testGetOptionalFileExtractsFile() {
+		List<BinaryFile> list = new ArrayList<>();
+
+		FieldFormBiConsumer<List<BinaryFile>, BinaryFile> fieldFormBiConsumer =
+			getOptionalFile(_fileBody(), list);
+
+		fieldFormBiConsumer.accept("file", fileList -> fileList::add);
+
+		assertThat(list, hasSize(1));
+
+		BinaryFile binaryFile = list.get(0);
+
+		assertThat(_readBinaryFile(binaryFile), is("content"));
+		assertThat(binaryFile.getMimeType(), is("type"));
 	}
 
 	@Test
@@ -210,7 +237,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getOptionalLong(emptyMap(), list);
+			getOptionalLong(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 
@@ -222,7 +249,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getOptionalLong(singletonMap("long", 42L), list);
+			getOptionalLong(_valueBody("42"), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 
@@ -238,7 +265,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getOptionalLong(singletonMap("long", "Apio"), list);
+			getOptionalLong(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 	}
@@ -248,7 +275,7 @@ public class FormUtilTest {
 		List<String> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getOptionalString(emptyMap(), list);
+			getOptionalString(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
 
@@ -260,7 +287,7 @@ public class FormUtilTest {
 		List<String> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getOptionalString(singletonMap("string", "Apio"), list);
+			getOptionalString(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
 
@@ -271,22 +298,12 @@ public class FormUtilTest {
 		assertThat(string, is("Apio"));
 	}
 
-	@Test(expected = BadRequestException.class)
-	public void testGetOptionalStringFailsIfNotAString() {
-		List<String> list = new ArrayList<>();
-
-		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getOptionalString(singletonMap("string", 42), list);
-
-		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
-	}
-
 	@Test
 	public void testGetRequiredBooleanExtractsBoolean() {
 		List<Boolean> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getRequiredBoolean(singletonMap("boolean", true), list);
+			getRequiredBoolean(_valueBody("true"), list);
 
 		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
 
@@ -298,21 +315,11 @@ public class FormUtilTest {
 	}
 
 	@Test(expected = BadRequestException.class)
-	public void testGetRequiredBooleanFailsIfNotABoolean() {
-		List<Boolean> list = new ArrayList<>();
-
-		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getRequiredBoolean(singletonMap("boolean", "Apio"), list);
-
-		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
-	}
-
-	@Test(expected = BadRequestException.class)
 	public void testGetRequiredBooleanFailsIfNotPresent() {
 		List<Boolean> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Boolean>, Boolean> fieldFormBiConsumer =
-			getRequiredBoolean(emptyMap(), list);
+			getRequiredBoolean(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("boolean", booleanList -> booleanList::add);
 	}
@@ -322,7 +329,7 @@ public class FormUtilTest {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getRequiredDate(singletonMap("date", "2017-04-03T18:36Z"), list);
+			getRequiredDate(_valueBody("2017-04-03T18:36Z"), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 
@@ -338,7 +345,7 @@ public class FormUtilTest {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getRequiredDate(singletonMap("date", "2017-04-03"), list);
+			getRequiredDate(_valueBody("2017-04-03"), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 	}
@@ -348,7 +355,7 @@ public class FormUtilTest {
 		List<Date> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Date>, Date> fieldFormBiConsumer =
-			getRequiredDate(emptyMap(), list);
+			getRequiredDate(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("date", dateList -> dateList::add);
 	}
@@ -358,7 +365,7 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getRequiredDouble(singletonMap("double", 42.3D), list);
+			getRequiredDouble(_valueBody("42.3"), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
 
@@ -374,7 +381,7 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getRequiredDouble(singletonMap("double", "Apio"), list);
+			getRequiredDouble(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
 	}
@@ -384,9 +391,36 @@ public class FormUtilTest {
 		List<Double> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Double>, Double> fieldFormBiConsumer =
-			getRequiredDouble(emptyMap(), list);
+			getRequiredDouble(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("double", doubleList -> doubleList::add);
+	}
+
+	@Test
+	public void testGetRequiredFileExtractsFile() {
+		List<BinaryFile> list = new ArrayList<>();
+
+		FieldFormBiConsumer<List<BinaryFile>, BinaryFile> fieldFormBiConsumer =
+			getRequiredFile(_fileBody(), list);
+
+		fieldFormBiConsumer.accept("file", fileList -> fileList::add);
+
+		assertThat(list, hasSize(1));
+
+		BinaryFile binaryFile = list.get(0);
+
+		assertThat(_readBinaryFile(binaryFile), is("content"));
+		assertThat(binaryFile.getMimeType(), is("type"));
+	}
+
+	@Test(expected = BadRequestException.class)
+	public void testGetRequiredFileFailsIfNotPresent() {
+		List<BinaryFile> list = new ArrayList<>();
+
+		FieldFormBiConsumer<List<BinaryFile>, BinaryFile> fieldFormBiConsumer =
+			getRequiredFile(__ -> Optional.empty(), list);
+
+		fieldFormBiConsumer.accept("file", fileList -> fileList::add);
 	}
 
 	@Test
@@ -411,7 +445,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getRequiredLong(singletonMap("long", 42L), list);
+			getRequiredLong(_valueBody("42"), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 
@@ -427,7 +461,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getRequiredLong(singletonMap("long", "Apio"), list);
+			getRequiredLong(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 	}
@@ -437,7 +471,7 @@ public class FormUtilTest {
 		List<Long> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<Long>, Long> fieldFormBiConsumer =
-			getRequiredLong(emptyMap(), list);
+			getRequiredLong(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("long", longList -> longList::add);
 	}
@@ -447,7 +481,7 @@ public class FormUtilTest {
 		List<String> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getRequiredString(singletonMap("string", "Apio"), list);
+			getRequiredString(_valueBody("Apio"), list);
 
 		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
 
@@ -459,23 +493,32 @@ public class FormUtilTest {
 	}
 
 	@Test(expected = BadRequestException.class)
-	public void testGetRequiredStringFailsIfNotAString() {
-		List<String> list = new ArrayList<>();
-
-		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getRequiredString(singletonMap("string", 42), list);
-
-		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
-	}
-
-	@Test(expected = BadRequestException.class)
 	public void testGetRequiredStringFailsIfNotPresent() {
 		List<String> list = new ArrayList<>();
 
 		FieldFormBiConsumer<List<String>, String> fieldFormBiConsumer =
-			getRequiredString(emptyMap(), list);
+			getRequiredString(__ -> Optional.empty(), list);
 
 		fieldFormBiConsumer.accept("string", stringList -> stringList::add);
+	}
+
+	private static Body _fileBody() {
+		BinaryFile binaryFile = new BinaryFile(
+			new ByteArrayInputStream("content".getBytes(UTF_8)), 0L, "type");
+
+		return Body.create(
+			__ -> Optional.empty(), __ -> Optional.of(binaryFile));
+	}
+
+	private static Body _valueBody(String string) {
+		return __ -> Optional.of(string);
+	}
+
+	private String _readBinaryFile(BinaryFile binaryFile) {
+		return Try.fromFallibleWithResources(
+			() -> new BufferedReader(new InputStreamReader(
+				binaryFile.getInputStream())),
+			BufferedReader::readLine).getUnchecked();
 	}
 
 }

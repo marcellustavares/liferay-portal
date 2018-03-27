@@ -14,6 +14,9 @@
 
 package com.liferay.apio.architect.sample.internal.model;
 
+import static java.util.Calendar.YEAR;
+import static java.util.concurrent.TimeUnit.DAYS;
+
 import com.github.javafaker.Address;
 import com.github.javafaker.DateAndTime;
 import com.github.javafaker.Faker;
@@ -27,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +44,40 @@ import java.util.stream.Stream;
 public class PersonModel {
 
 	/**
+	 * Computes the fake data for this model class.
+	 */
+	public static void compute() {
+		if (!_personModels.isEmpty()) {
+			return;
+		}
+
+		for (long index = 0; index < 10; index++) {
+			Faker faker = new Faker();
+
+			Address address = faker.address();
+
+			Internet internet = faker.internet();
+
+			DateAndTime dateAndTime = faker.date();
+
+			Calendar calendar = Calendar.getInstance();
+
+			calendar.add(YEAR, -21);
+
+			Date birthDate = dateAndTime.past(10000, DAYS, calendar.getTime());
+
+			Name name = faker.name();
+
+			PersonModel personModel = new PersonModel(
+				address.fullAddress(), internet.avatar(), birthDate,
+				internet.safeEmailAddress(), name.firstName(), name.title(),
+				name.lastName(), _count.get());
+
+			_personModels.put(_count.getAndIncrement(), personModel);
+		}
+	}
+
+	/**
 	 * Adds a new person.
 	 *
 	 * @param  address the person's address
@@ -53,73 +89,51 @@ public class PersonModel {
 	 * @param  lastName the person's last name
 	 * @return the new person
 	 */
-	public static PersonModel addPerson(
+	public static PersonModel create(
 		String address, String avatar, Date birthDate, String email,
 		String firstName, String jobTitle, String lastName) {
 
-		long personId = _count.incrementAndGet();
-
 		PersonModel personModel = new PersonModel(
 			address, avatar, birthDate, email, firstName, jobTitle, lastName,
-			personId);
+			_count.get());
 
-		_persons.put(personId, personModel);
+		_personModels.put(_count.getAndIncrement(), personModel);
 
 		return personModel;
 	}
 
 	/**
-	 * Compute the fake data for this model class.
+	 * Returns the person that matches the specified ID, if that person exists;
+	 * returns {@code Optional#empty()} otherwise.
 	 *
-	 * @review
+	 * @param  id the person's ID
+	 * @return the person, if present; {@code Optional#empty()} otherwise
 	 */
-	public static void computePersonModels() {
-		for (long personId = 0; personId < 10; personId++) {
-			Faker faker = new Faker();
+	public static Optional<PersonModel> get(long id) {
+		PersonModel personModel = _personModels.get(id);
 
-			Address address = faker.address();
-
-			Internet internet = faker.internet();
-
-			DateAndTime dateAndTime = faker.date();
-
-			Calendar calendar = Calendar.getInstance();
-
-			calendar.add(Calendar.YEAR, -21);
-
-			Date birthDate = dateAndTime.past(
-				10000, TimeUnit.DAYS, calendar.getTime());
-
-			Name name = faker.name();
-
-			PersonModel personModel = new PersonModel(
-				address.fullAddress(), internet.avatar(), birthDate,
-				internet.safeEmailAddress(), name.firstName(), name.title(),
-				name.lastName(), personId);
-
-			_persons.put(personId, personModel);
-		}
+		return Optional.ofNullable(personModel);
 	}
 
 	/**
-	 * Deletes a person that matches the specified ID.
+	 * Returns the total number of persons.
 	 *
-	 * @param personId the person's ID
+	 * @return the total number of persons
 	 */
-	public static void deletePerson(long personId) {
-		_persons.remove(personId);
+	public static int getCount() {
+		return _personModels.size();
 	}
 
 	/**
-	 * Returns the page of persons, as specified by the page's start and end
+	 * Returns a page of persons, as specified by the page's start and end
 	 * positions.
 	 *
 	 * @param  start the page's start position
 	 * @param  end the page's end position
 	 * @return the page of persons
 	 */
-	public static List<PersonModel> getPeople(int start, int end) {
-		Collection<PersonModel> personModels = _persons.values();
+	public static List<PersonModel> getPage(int start, int end) {
+		Collection<PersonModel> personModels = _personModels.values();
 
 		Stream<PersonModel> stream = personModels.stream();
 
@@ -133,30 +147,17 @@ public class PersonModel {
 	}
 
 	/**
-	 * Returns the total number of persons.
+	 * Deletes a person that matches the specified ID.
 	 *
-	 * @return the total number of persons
+	 * @param id the person's ID
 	 */
-	public static int getPeopleCount() {
-		return _persons.size();
+	public static void remove(long id) {
+		_personModels.remove(id);
 	}
 
 	/**
-	 * Returns the person that matches the specified ID, if that person exists.
-	 * Returns {@code Optional#empty()} otherwise.
-	 *
-	 * @param  personId the person's ID
-	 * @return the person, if present; {@code Optional#empty()} otherwise
-	 */
-	public static Optional<PersonModel> getPerson(long personId) {
-		PersonModel personModel = _persons.get(personId);
-
-		return Optional.ofNullable(personModel);
-	}
-
-	/**
-	 * Updates the person that matches the specified ID, if that person exists.
-	 * Returns {@code Optional#empty()} otherwise.
+	 * Updates the person that matches the specified ID, if that person exists;
+	 * returns {@code Optional#empty()} otherwise.
 	 *
 	 * @param  address the person's address
 	 * @param  avatar the person's avatar
@@ -165,15 +166,15 @@ public class PersonModel {
 	 * @param  firstName the person's first name
 	 * @param  jobTitle the person's job title
 	 * @param  lastName the person's last name
-	 * @param  personId the person's ID
+	 * @param  id the person's ID
 	 * @return the updated person, if present; {@code Optional#empty()}
 	 *         otherwise
 	 */
-	public static Optional<PersonModel> updatePerson(
+	public static Optional<PersonModel> update(
 		String address, String avatar, Date birthDate, String email,
-		String firstName, String jobTitle, String lastName, long personId) {
+		String firstName, String jobTitle, String lastName, long id) {
 
-		PersonModel personModel = _persons.get(personId);
+		PersonModel personModel = _personModels.get(id);
 
 		if (personModel == null) {
 			return Optional.empty();
@@ -181,9 +182,9 @@ public class PersonModel {
 
 		personModel = new PersonModel(
 			avatar, address, birthDate, email, firstName, jobTitle, lastName,
-			personId);
+			id);
 
-		_persons.put(personId, personModel);
+		_personModels.put(id, personModel);
 
 		return Optional.of(personModel);
 	}
@@ -243,6 +244,15 @@ public class PersonModel {
 	}
 
 	/**
+	 * Returns the person's ID.
+	 *
+	 * @return the person's ID
+	 */
+	public long getId() {
+		return _id;
+	}
+
+	/**
 	 * Returns the person's job title.
 	 *
 	 * @return the person's job title
@@ -260,18 +270,9 @@ public class PersonModel {
 		return _lastName;
 	}
 
-	/**
-	 * Returns the person's ID.
-	 *
-	 * @return the person's ID
-	 */
-	public long getPersonId() {
-		return _personId;
-	}
-
 	private PersonModel(
 		String address, String avatar, Date birthDate, String email,
-		String firstName, String jobTitle, String lastName, long personId) {
+		String firstName, String jobTitle, String lastName, long id) {
 
 		_address = address;
 		_avatar = avatar;
@@ -280,11 +281,11 @@ public class PersonModel {
 		_firstName = firstName;
 		_jobTitle = jobTitle;
 		_lastName = lastName;
-		_personId = personId;
+		_id = id;
 	}
 
-	private static final AtomicLong _count = new AtomicLong(9);
-	private static final Map<Long, PersonModel> _persons =
+	private static final AtomicLong _count = new AtomicLong(0);
+	private static final Map<Long, PersonModel> _personModels =
 		new ConcurrentHashMap<>();
 
 	private final String _address;
@@ -292,8 +293,8 @@ public class PersonModel {
 	private final Date _birthDate;
 	private final String _email;
 	private final String _firstName;
+	private final long _id;
 	private final String _jobTitle;
 	private final String _lastName;
-	private final long _personId;
 
 }

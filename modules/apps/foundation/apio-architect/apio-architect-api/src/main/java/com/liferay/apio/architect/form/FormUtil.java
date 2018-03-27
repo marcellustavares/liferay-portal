@@ -17,10 +17,14 @@ package com.liferay.apio.architect.form;
 import static com.liferay.apio.architect.date.DateTransformer.asDate;
 
 import com.liferay.apio.architect.alias.form.FieldFormBiConsumer;
+import com.liferay.apio.architect.file.BinaryFile;
 import com.liferay.apio.architect.functional.Try;
+
+import java.text.NumberFormat;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,7 +54,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Boolean> getOptionalBoolean(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getBoolean(
 			body, key, false, function.apply(t));
@@ -67,7 +71,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Date> getOptionalDate(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getDate(body, key, false, function.apply(t));
 	}
@@ -83,10 +87,25 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Double> getOptionalDouble(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getDouble(
 			body, key, false, function.apply(t));
+	}
+
+	/**
+	 * Returns a field form consumer that tries to extract a file from the HTTP
+	 * request body and store it in the provided {@code T} instance. If the
+	 * field isn't a file, a {@code javax.ws.rs.BadRequestException} is thrown.
+	 *
+	 * @param  body the HTTP request body
+	 * @param  t the form values store
+	 * @return the field form consumer
+	 */
+	public static <T> FieldFormBiConsumer<T, BinaryFile> getOptionalFile(
+		Body body, T t) {
+
+		return (key, function) -> _getFile(body, key, false, function.apply(t));
 	}
 
 	/**
@@ -113,7 +132,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Long> getOptionalLong(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getLong(body, key, false, function.apply(t));
 	}
@@ -129,7 +148,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, String> getOptionalString(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getString(
 			body, key, false, function.apply(t));
@@ -146,7 +165,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Boolean> getRequiredBoolean(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getBoolean(
 			body, key, true, function.apply(t));
@@ -163,7 +182,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Date> getRequiredDate(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getDate(body, key, true, function.apply(t));
 	}
@@ -179,10 +198,25 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Double> getRequiredDouble(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getDouble(
 			body, key, true, function.apply(t));
+	}
+
+	/**
+	 * Returns a field form consumer that extracts a file from the HTTP request
+	 * body and stores it in the provided {@code T} instance. If the field isn't
+	 * found, or it isn't a file, a {@code BadRequestException} is thrown.
+	 *
+	 * @param  body the HTTP request body
+	 * @param  t the form values store
+	 * @return the field form consumer
+	 */
+	public static <T> FieldFormBiConsumer<T, BinaryFile> getRequiredFile(
+		Body body, T t) {
+
+		return (key, function) -> _getFile(body, key, true, function.apply(t));
 	}
 
 	/**
@@ -210,7 +244,7 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, Long> getRequiredLong(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getLong(body, key, true, function.apply(t));
 	}
@@ -226,37 +260,37 @@ public class FormUtil {
 	 * @return the field form consumer
 	 */
 	public static <T> FieldFormBiConsumer<T, String> getRequiredString(
-		Map<String, Object> body, T t) {
+		Body body, T t) {
 
 		return (key, function) -> _getString(
 			body, key, true, function.apply(t));
 	}
 
 	private static void _getBoolean(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<Boolean> consumer) {
+		Body body, String key, boolean required, Consumer<Boolean> consumer) {
 
 		_getField(
 			body, key, required,
-			value -> {
-				if (!(value instanceof Boolean)) {
-					throw new BadRequestException(
-						"Field \"" + key + "\" should be a boolean");
-				}
-
-				consumer.accept((Boolean)value);
-			});
+			value -> consumer.accept(Boolean.valueOf(value)));
 	}
 
 	private static void _getDate(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<Date> consumer) {
+		Body body, String key, boolean required, Consumer<Date> consumer) {
 
-		String message =
-			"Field \"" + key + "\" should be a string date in ISO-8601 format";
+		StringBuilder stringBuilder = new StringBuilder();
+
+		String message = stringBuilder.append(
+			"Field \""
+		).append(
+			key
+		).append(
+			"\" should be a string date in ISO-8601 format: "
+		).append(
+			"yyyy-MM-dd'T'HH:mm'Z'"
+		).toString();
 
 		_getString(
-			body, key, required, message,
+			body, key, required,
 			string -> {
 				Try<Date> dateTry = asDate(string);
 
@@ -268,18 +302,32 @@ public class FormUtil {
 	}
 
 	private static void _getDouble(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<Double> consumer) {
+		Body body, String key, boolean required, Consumer<Double> consumer) {
 
 		_getNumber(body, key, required, Number::doubleValue, consumer);
 	}
 
 	private static void _getField(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<Object> consumer) {
+		Body body, String key, boolean required, Consumer<String> consumer) {
 
-		if (body.containsKey(key)) {
-			consumer.accept(body.get(key));
+		Optional<String> optional = body.getValueOptional(key);
+
+		if (optional.isPresent()) {
+			consumer.accept(optional.get());
+		}
+		else if (required) {
+			throw new BadRequestException("Field \"" + key + "\" is required");
+		}
+	}
+
+	private static void _getFile(
+		Body body, String key, boolean required,
+		Consumer<BinaryFile> consumer) {
+
+		Optional<BinaryFile> optional = body.getFileOptional(key);
+
+		if (optional.isPresent()) {
+			consumer.accept(optional.get());
 		}
 		else if (required) {
 			throw new BadRequestException("Field \"" + key + "\" is required");
@@ -297,50 +345,38 @@ public class FormUtil {
 	}
 
 	private static void _getLong(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<Long> consumer) {
+		Body body, String key, boolean required, Consumer<Long> consumer) {
 
 		_getNumber(body, key, required, Number::longValue, consumer);
 	}
 
 	private static <T extends Number> void _getNumber(
-		Map<String, Object> body, String key, boolean required,
-		Function<Number, T> function, Consumer<T> consumer) {
+		Body body, String key, boolean required, Function<Number, T> function,
+		Consumer<T> consumer) {
 
 		_getField(
 			body, key, required,
 			value -> {
-				if (!(value instanceof Number)) {
-					throw new BadRequestException(
-						"Field \"" + key + "\" should be a number");
-				}
+				Try<String> stringTry = Try.success(value);
 
-				consumer.accept(function.apply((Number)value));
+				stringTry.map(
+					NumberFormat.getInstance()::parse
+				).map(
+					function::apply
+				).fold(
+					__ -> {
+						throw new BadRequestException(
+							"Field \"" + key + "\" should be a number");
+					},
+					consumer::accept
+				);
 			});
 	}
 
 	private static void _getString(
-		Map<String, Object> body, String key, boolean required,
-		Consumer<String> consumer) {
+		Body body, String key, boolean required, Consumer<String> consumer) {
 
-		_getString(
-			body, key, required, "Field \"" + key + "\" should be a string",
-			consumer);
-	}
-
-	private static void _getString(
-		Map<String, Object> body, String key, boolean required, String message,
-		Consumer<String> consumer) {
-
-		_getField(
-			body, key, required,
-			value -> {
-				if (!(value instanceof String)) {
-					throw new BadRequestException(message);
-				}
-
-				consumer.accept((String)value);
-			});
+		_getField(body, key, required, consumer);
 	}
 
 	private FormUtil() {

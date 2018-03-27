@@ -17,8 +17,11 @@ package com.liferay.apio.architect.form;
 import static com.liferay.apio.architect.form.FieldType.BOOLEAN;
 import static com.liferay.apio.architect.form.FieldType.DATE;
 import static com.liferay.apio.architect.form.FieldType.DOUBLE;
+import static com.liferay.apio.architect.form.FieldType.FILE;
 import static com.liferay.apio.architect.form.FieldType.LONG;
 import static com.liferay.apio.architect.form.FieldType.STRING;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static java.util.Collections.emptyList;
 
@@ -30,8 +33,14 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 
+import com.liferay.apio.architect.file.BinaryFile;
 import com.liferay.apio.architect.form.Form.Builder;
+import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.language.Language;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -39,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
@@ -81,6 +91,8 @@ public class FormTest {
 			"date1", (map, date) -> map.put("d1", date)
 		).addOptionalDouble(
 			"double1", (map, aDouble) -> map.put("do1", aDouble)
+		).addOptionalFile(
+			"file1", (map, binaryFile) -> map.put("f1", binaryFile)
 		).addOptionalLong(
 			"long1", (map, aLong) -> map.put("l1", aLong)
 		).addOptionalString(
@@ -91,6 +103,8 @@ public class FormTest {
 			"date2", (map, date) -> map.put("d2", date)
 		).addRequiredDouble(
 			"double2", (map, aDouble) -> map.put("do2", aDouble)
+		).addRequiredFile(
+			"file2", (map, binaryFile) -> map.put("f2", binaryFile)
 		).addRequiredLong(
 			"long2", (map, aLong) -> map.put("l2", aLong)
 		).addRequiredString(
@@ -106,18 +120,20 @@ public class FormTest {
 
 		List<FormField> formFields = form.getFormFields();
 
-		assertThat(formFields, hasSize(10));
+		assertThat(formFields, hasSize(12));
 		assertThat(
 			formFields,
 			contains(
 				new FormField("boolean1", false, BOOLEAN),
 				new FormField("date1", false, DATE),
 				new FormField("double1", false, DOUBLE),
+				new FormField("file1", false, FILE),
 				new FormField("long1", false, LONG),
 				new FormField("string1", false, STRING),
 				new FormField("boolean2", true, BOOLEAN),
 				new FormField("date2", true, DATE),
 				new FormField("double2", true, DOUBLE),
+				new FormField("file2", true, FILE),
 				new FormField("long2", true, LONG),
 				new FormField("string2", true, STRING)));
 
@@ -126,7 +142,7 @@ public class FormTest {
 
 		Map<String, Object> map = form.get(_body);
 
-		assertThat(map.size(), is(10));
+		assertThat(map.size(), is(12));
 		assertThat(map, hasEntry(equalTo("b1"), equalTo(true)));
 		assertThat(map, hasEntry(equalTo("b2"), equalTo(false)));
 		assertThat(
@@ -139,6 +155,16 @@ public class FormTest {
 		assertThat(map, hasEntry(equalTo("do2"), equalTo(25.2D)));
 		assertThat(map, hasEntry(equalTo("s1"), equalTo("Apio")));
 		assertThat(map, hasEntry(equalTo("s2"), equalTo("Hypermedia")));
+
+		BinaryFile binaryFile1 = (BinaryFile)map.get("f1");
+
+		assertThat(_readBinaryFile(binaryFile1), is("Input Stream 1"));
+		assertThat(binaryFile1.getMimeType(), is("mimetype1"));
+
+		BinaryFile binaryFile2 = (BinaryFile)map.get("f2");
+
+		assertThat(_readBinaryFile(binaryFile2), is("Input Stream 2"));
+		assertThat(binaryFile2.getMimeType(), is("mimetype2"));
 	}
 
 	@Test
@@ -165,23 +191,6 @@ public class FormTest {
 
 		assertThat(map.size(), is(1));
 		assertThat(map, hasEntry(equalTo("s1"), equalTo("Apio")));
-	}
-
-	@Test(expected = BadRequestException.class)
-	public void testFormFailsIfOptionalBooleanIsNotBoolean() {
-		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
-
-		Form<Map<String, Object>> form = builder.title(
-			__ -> "title"
-		).description(
-			__ -> "description"
-		).constructor(
-			HashMap::new
-		).addOptionalBoolean(
-			"long1", (map, string) -> map.put("l1", string)
-		).build();
-
-		form.get(_body);
 	}
 
 	@Test(expected = BadRequestException.class)
@@ -236,40 +245,6 @@ public class FormTest {
 	}
 
 	@Test(expected = BadRequestException.class)
-	public void testFormFailsIfOptionalStringIsNotString() {
-		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
-
-		Form<Map<String, Object>> form = builder.title(
-			__ -> "title"
-		).description(
-			__ -> "description"
-		).constructor(
-			HashMap::new
-		).addOptionalString(
-			"long1", (map, string) -> map.put("l1", string)
-		).build();
-
-		form.get(_body);
-	}
-
-	@Test(expected = BadRequestException.class)
-	public void testFormFailsIfRequiredBooleanIsNotBoolean() {
-		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
-
-		Form<Map<String, Object>> form = builder.title(
-			__ -> "title"
-		).description(
-			__ -> "description"
-		).constructor(
-			HashMap::new
-		).addRequiredBoolean(
-			"long1", (map, string) -> map.put("l1", string)
-		).build();
-
-		form.get(_body);
-	}
-
-	@Test(expected = BadRequestException.class)
 	public void testFormFailsIfRequiredDateIsNotDate() {
 		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
 
@@ -304,7 +279,7 @@ public class FormTest {
 	}
 
 	@Test(expected = BadRequestException.class)
-	public void testFormFailsIfRequiredIsNotPresent() {
+	public void testFormFailsIfRequiredFileIsNotPresent() {
 		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
 
 		Form<Map<String, Object>> form = builder.title(
@@ -313,10 +288,10 @@ public class FormTest {
 			__ -> "description"
 		).constructor(
 			HashMap::new
-		).addRequiredString(
-			"string1", (map, string) -> map.put("s1", string)
-		).addRequiredString(
-			"string3", (map, string) -> map.put("s2", string)
+		).addRequiredFile(
+			"file1", (map, string) -> map.put("f1", string)
+		).addRequiredFile(
+			"file3", (map, string) -> map.put("f3", string)
 		).build();
 
 		form.get(_body);
@@ -340,7 +315,7 @@ public class FormTest {
 	}
 
 	@Test(expected = BadRequestException.class)
-	public void testFormFailsIfRequiredStringIsNotString() {
+	public void testFormFailsIfRequiredStringIsNotPresent() {
 		Builder<Map<String, Object>> builder = new Builder<>(emptyList());
 
 		Form<Map<String, Object>> form = builder.title(
@@ -350,25 +325,56 @@ public class FormTest {
 		).constructor(
 			HashMap::new
 		).addRequiredString(
-			"long1", (map, string) -> map.put("l1", string)
+			"string1", (map, string) -> map.put("s1", string)
+		).addRequiredString(
+			"string3", (map, string) -> map.put("s2", string)
 		).build();
 
 		form.get(_body);
 	}
 
-	private final Map<String, Object> _body = new HashMap<String, Object>() {
-		{
-			put("boolean1", true);
-			put("boolean2", false);
-			put("date1", "2016-06-15T09:00Z");
-			put("date2", "2017-04-03T18:36Z");
-			put("double1", 3.5D);
-			put("double2", 25.2D);
-			put("long1", 42L);
-			put("long2", 2017L);
-			put("string1", "Apio");
-			put("string2", "Hypermedia");
-		}
-	};
+	private String _readBinaryFile(BinaryFile binaryFile) {
+		return Try.fromFallibleWithResources(
+			() -> new BufferedReader(new InputStreamReader(
+				binaryFile.getInputStream())),
+			BufferedReader::readLine).getUnchecked();
+	}
+
+	private static final Body _body;
+
+	static {
+		Map<String, String> values = new HashMap<String, String>() {
+			{
+				put("boolean1", "true");
+				put("boolean2", "false");
+				put("date1", "2016-06-15T09:00Z");
+				put("date2", "2017-04-03T18:36Z");
+				put("double1", "3.5");
+				put("double2", "25.2");
+				put("long1", "42");
+				put("long2", "2017");
+				put("string1", "Apio");
+				put("string2", "Hypermedia");
+			}
+		};
+
+		BinaryFile binaryFile1 = new BinaryFile(
+			new ByteArrayInputStream("Input Stream 1".getBytes(UTF_8)), 0L,
+			"mimetype1");
+		BinaryFile binaryFile2 = new BinaryFile(
+			new ByteArrayInputStream("Input Stream 2".getBytes(UTF_8)), 0L,
+			"mimetype2");
+
+		Map<String, BinaryFile> files = new HashMap<String, BinaryFile>() {
+			{
+				put("file1", binaryFile1);
+				put("file2", binaryFile2);
+			}
+		};
+
+		_body = Body.create(
+			key -> Optional.ofNullable(values.get(key)),
+			key -> Optional.ofNullable(files.get(key)));
+	}
 
 }
