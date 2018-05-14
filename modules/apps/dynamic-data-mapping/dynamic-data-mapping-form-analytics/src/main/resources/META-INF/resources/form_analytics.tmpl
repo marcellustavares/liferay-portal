@@ -32,22 +32,6 @@ Liferay.on(
 );
 
 Liferay.on(
-	'ddmFieldStartedFilling', function(event) {
-		if (window.Analytics) {
-			Analytics.send(
-				'fieldStarted',
-				'Forms',
-				{
-					fieldName: event.fieldName,
-					formId: event.formId,
-					page: event.page
-				}
-			);
-		}
-	}
-);
-
-Liferay.on(
 	'ddmFieldValidationError', function(event) {
 		if (window.Analytics) {
 			Analytics.send(
@@ -55,7 +39,8 @@ Liferay.on(
 				'Forms',
 				{
 					fieldName: event.fieldName,
-					formId: event.formId
+					formId: event.formId,
+					page: event.page
 				}
 			);
 		}

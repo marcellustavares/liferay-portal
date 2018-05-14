@@ -150,7 +150,12 @@ AUI.add(
 
 						instance.validate(
 							function(hasErrors) {
-								if (!hasErrors) {
+								if (hasErrors) {
+									Liferay.fire('ddmFormValidationError', {
+										formId: instance.getFormId()
+									});
+								}
+								else {
 									var formNode = instance.getFormNode();
 
 									instance.showLoadingFeedback();

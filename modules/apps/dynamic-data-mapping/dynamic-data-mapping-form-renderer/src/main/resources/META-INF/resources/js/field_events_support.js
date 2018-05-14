@@ -86,16 +86,6 @@ AUI.add(
 
 				if (!instance.get('startedFilling')) {
 					instance.set('startedFilling', true);
-
-					var root = instance.getRoot();
-
-					if (root) {
-						Liferay.fire("ddmFieldStartedFilling", {
-							fieldName: instance.get("fieldName"),
-							formId: root.getFormId(),
-							page: root.getCurrentPage() || 1
-						});
-					}
 				}
 			},
 
@@ -122,7 +112,7 @@ AUI.add(
 						fieldName: instance.get("fieldName"),
 						focusDuration: (now - (instance.get('fieldFocusDate') || now)),
 						formId: root.getFormId(),
-						page: root.getCurrentPage() || 1
+						page: root.getCurrentPage() - 1
 					});
 				}
 			},
