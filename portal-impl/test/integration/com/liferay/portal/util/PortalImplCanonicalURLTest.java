@@ -402,16 +402,13 @@ public class PortalImplCanonicalURLTest {
 
 		themeDisplay.setSecure(secure);
 
-		String port = null;
+		int serverPort = Http.HTTP_PORT;
 
 		int index = portalDomain.indexOf(CharPool.COLON);
 
-		int serverPort = Http.HTTP_PORT;
-
 		if (index != -1) {
-			port = portalDomain.substring(index + 1);
-
-			serverPort = GetterUtil.getIntegerStrict(port);
+			serverPort = GetterUtil.getIntegerStrict(
+				portalDomain.substring(index + 1));
 		}
 
 		themeDisplay.setServerPort(serverPort);
@@ -483,12 +480,8 @@ public class PortalImplCanonicalURLTest {
 
 		int index = portalDomain.indexOf(CharPool.COLON);
 
-		int serverPort = Http.HTTP_PORT;
-
 		if (index != -1) {
 			port = portalDomain.substring(index + 1);
-
-			serverPort = GetterUtil.getIntegerStrict(port);
 		}
 
 		String completeURL = generateURL(
