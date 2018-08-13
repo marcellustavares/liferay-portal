@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
-import com.liferay.portal.kernel.security.pacl.permission.PortalSocketPermission;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -38,6 +37,7 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.InetAddressUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xmlrpc.Fault;
@@ -79,7 +79,7 @@ import org.powermock.reflect.Whitebox;
 @PrepareForTest(
 	{
 		BlogsEntryLocalServiceUtil.class, BlogsUtil.class,
-		PingbackMethodImpl.class, PortalSocketPermission.class,
+		InetAddressUtil.class, PingbackMethodImpl.class,
 		PortletLocalServiceUtil.class, PortletProviderUtil.class,
 		PropsValues.class, ServiceTrackerCollections.class,
 		UserLocalServiceUtil.class
@@ -457,8 +457,6 @@ public class PingbackMethodImplTest extends PowerMockito {
 		whenHttpURLToString(
 			"<body><a href='http://" + _TARGET_URI + "'>" + _EXCERPT_BODY +
 				"</a></body>");
-
-		mockStatic(PortalSocketPermission.class, Mockito.RETURNS_DEFAULTS);
 
 		HttpUtil httpUtil = new HttpUtil();
 

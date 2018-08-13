@@ -14,7 +14,6 @@
 
 package com.liferay.portal.kernel.security.permission;
 
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 
 /**
@@ -23,39 +22,41 @@ import com.liferay.portal.kernel.util.ServiceProxyFactory;
  */
 public class InlineSQLHelperUtil {
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static InlineSQLHelper getInlineSQLHelper() {
-		PortalRuntimePermission.checkGetBeanProperty(InlineSQLHelperUtil.class);
-
 		return _inlineSQLPermission;
 	}
 
 	public static boolean isEnabled() {
-		return getInlineSQLHelper().isEnabled();
+		return _inlineSQLPermission.isEnabled();
 	}
 
 	public static boolean isEnabled(long groupId) {
-		return getInlineSQLHelper().isEnabled(groupId);
+		return _inlineSQLPermission.isEnabled(groupId);
 	}
 
 	public static boolean isEnabled(long companyId, long groupId) {
-		return getInlineSQLHelper().isEnabled(companyId, groupId);
+		return _inlineSQLPermission.isEnabled(companyId, groupId);
 	}
 
 	public static boolean isEnabled(long[] groupIds) {
-		return getInlineSQLHelper().isEnabled(groupIds);
+		return _inlineSQLPermission.isEnabled(groupIds);
 	}
 
 	public static String replacePermissionCheck(
 		String sql, String className, String classPKField) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField);
 	}
 
 	public static String replacePermissionCheck(
 		String sql, String className, String classPKField, long groupId) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, groupId);
 	}
 
@@ -63,14 +64,14 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, long groupId,
 		String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, groupId, bridgeJoin);
 	}
 
 	public static String replacePermissionCheck(
 		String sql, String className, String classPKField, long[] groupIds) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, groupIds);
 	}
 
@@ -78,14 +79,14 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, long[] groupIds,
 		String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, groupIds, bridgeJoin);
 	}
 
 	public static String replacePermissionCheck(
 		String sql, String className, String classPKField, String userIdField) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField);
 	}
 
@@ -93,7 +94,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		long groupId) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, groupId);
 	}
 
@@ -101,7 +102,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		long groupId, String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, groupId, bridgeJoin);
 	}
 
@@ -109,7 +110,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		long[] groupIds) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, groupIds);
 	}
 
@@ -117,7 +118,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		long[] groupIds, String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, groupIds, bridgeJoin);
 	}
 
@@ -125,7 +126,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, bridgeJoin);
 	}
 
@@ -133,7 +134,7 @@ public class InlineSQLHelperUtil {
 		String sql, String className, String classPKField, String userIdField,
 		String groupIdField, long[] groupIds, String bridgeJoin) {
 
-		return getInlineSQLHelper().replacePermissionCheck(
+		return _inlineSQLPermission.replacePermissionCheck(
 			sql, className, classPKField, userIdField, groupIdField, groupIds,
 			bridgeJoin);
 	}

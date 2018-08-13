@@ -17,6 +17,7 @@ package com.liferay.nested.portlets.web.internal.portlet;
 import com.liferay.nested.portlets.web.internal.constants.NestedPortletsPortletKeys;
 import com.liferay.nested.portlets.web.internal.constants.NestedPortletsWebKeys;
 import com.liferay.nested.portlets.web.internal.display.context.NestedPortletsDisplayContext;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -33,7 +34,6 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -73,7 +73,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Nested Portlets",
 		"javax.portlet.expiration-cache=0",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + NestedPortletsPortletKeys.NESTED_PORTLETS,
 		"javax.portlet.resource-bundle=content.Language",

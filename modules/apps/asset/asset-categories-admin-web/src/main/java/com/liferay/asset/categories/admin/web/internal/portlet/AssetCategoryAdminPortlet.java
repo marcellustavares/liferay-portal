@@ -38,6 +38,7 @@ import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
@@ -52,7 +53,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -93,7 +93,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.render-weight=50",
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Asset Category Admin",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN,
 		"javax.portlet.resource-bundle=content.Language",
@@ -385,8 +385,7 @@ public class AssetCategoryAdminPortlet extends MVCPortlet {
 			classTypePKs[i] = ParamUtil.getLong(
 				actionRequest,
 				StringBundler.concat(
-					"subtype", String.valueOf(classNameIds[i]), "-classNameId",
-					String.valueOf(index)),
+					"subtype", classNameIds[i], "-classNameId", index),
 				AssetCategoryConstants.ALL_CLASS_TYPE_PK);
 
 			if (classTypePKs[i] != -1) {

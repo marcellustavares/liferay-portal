@@ -10,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -4161,7 +4161,7 @@
 	</command>
 
 	<command name="ImportLAR" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="Navigator#openURL" />
 
@@ -4469,7 +4469,7 @@
 		<var name="character20"><![CDATA[|]]></var>
 		<var name="character21"><![CDATA[;]]></var>
 		<var name="character22"><![CDATA[:]]></var>
-		<var name="character23"><![CDATA[']]></var>
+		<var name="character23" value="'" />
 		<var name="character24"><![CDATA["]]></var>
 		<var name="character25"><![CDATA[>]]></var>
 		<var name="character26"><![CDATA[<]]></var>

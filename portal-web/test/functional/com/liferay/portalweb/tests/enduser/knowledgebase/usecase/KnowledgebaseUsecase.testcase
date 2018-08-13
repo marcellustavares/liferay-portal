@@ -11,7 +11,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -198,7 +198,7 @@
 	</command>
 
 	<command name="DeleteConfiguredKBFolder" priority="5">
-		<property name="portal.acceptance" value="false" />
+		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -763,11 +763,11 @@
 			<var name="pageName" value="Knowledge Base Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Child" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetSummary" value="Knowledge Base Child Article Content" />
 			<var name="searchAssetTitle" value="Knowledge Base Child Article Title" />
 			<var name="searchAssetType" value="Knowledge Base Article" />
@@ -841,11 +841,11 @@
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Knowledge" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetSummary" value="Knowledge Base Article 2 Content" />
 			<var name="searchAssetTitle" value="Knowledge Base Article 2 Title" />
 			<var name="searchAssetType" value="Knowledge Base Article" />
@@ -888,11 +888,11 @@
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Knowledge" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetSummary" value="Knowledge Base Article Content" />
 			<var name="searchAssetTitle" value="Knowledge Base Article Title" />
 			<var name="searchAssetType" value="Knowledge Base Article" />
@@ -936,11 +936,11 @@
 			<var name="pageName" value="Knowledge Base Display Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Knowledge Base" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetSummary" value="Knowledge Base Article's Content" />
 			<var name="searchAssetTitle" value="Knowledge Base Article" />
 			<var name="searchAssetType" value="Knowledge Base Article" />
@@ -948,7 +948,7 @@
 	</command>
 
 	<command name="ViewChildArticleViaUserDefinedFriendlyURL" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Build" />
@@ -2352,7 +2352,7 @@
 		<property name="test.smtp.server.enabled" value="true" />
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -3228,7 +3228,7 @@
 	</command>
 
 	<command name="ViewUnchangedKBArticleTitleViaLocalizedPage" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Sites" />

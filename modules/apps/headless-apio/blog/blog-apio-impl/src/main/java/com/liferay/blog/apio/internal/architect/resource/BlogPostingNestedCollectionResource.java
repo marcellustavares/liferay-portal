@@ -24,7 +24,6 @@ import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.model.AssetTagModel;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.blog.apio.architect.identifier.BlogPostingIdentifier;
 import com.liferay.blog.apio.internal.architect.form.BlogPostingForm;
@@ -45,6 +44,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.vocabulary.apio.architect.identifier.VocabularyIdentifier;
 
 import java.util.List;
 
@@ -107,7 +107,7 @@ public class BlogPostingNestedCollectionResource
 		).identifier(
 			BlogsEntry::getEntryId
 		).addBidirectionalModel(
-			"interactionService", "blogPosts", ContentSpaceIdentifier.class,
+			"contentSpace", "blogPosts", ContentSpaceIdentifier.class,
 			BlogsEntry::getGroupId
 		).addDate(
 			"dateCreated", BlogsEntry::getCreateDate
@@ -126,17 +126,23 @@ public class BlogPostingNestedCollectionResource
 			"image", MediaObjectIdentifier.class,
 			BlogsEntry::getCoverImageFileEntryId
 		).addRelatedCollection(
+			"categories", CategoryIdentifier.class
+		).addRelatedCollection(
 			"comments", CommentIdentifier.class
 		).addRelatedCollection(
-			"categories", CategoryIdentifier.class
+			"vocabularyAssignment", VocabularyIdentifier.class
 		).addString(
 			"alternativeHeadline", BlogsEntry::getSubtitle
 		).addString(
 			"articleBody", BlogsEntry::getContent
 		).addString(
+			"caption", BlogsEntry::getCoverImageCaption
+		).addString(
 			"description", BlogsEntry::getDescription
 		).addString(
 			"fileFormat", blogsEntry -> "text/html"
+		).addString(
+			"friendlyUrlPath", BlogsEntry::getUrlTitle
 		).addString(
 			"headline", BlogsEntry::getTitle
 		).addStringList(
@@ -160,17 +166,18 @@ public class BlogPostingNestedCollectionResource
 		return _blogsEntryLocalService.addEntry(
 			userId, blogPostingForm.getHeadline(),
 			blogPostingForm.getAlternativeHeadline(),
-			blogPostingForm.getSemanticUrl(), blogPostingForm.getDescription(),
-			blogPostingForm.getArticleBody(), blogPostingForm.getDisplayDate(),
-			true, true, new String[0], blogPostingForm.getImageCaption(),
-			imageSelector, null, serviceContext);
+			blogPostingForm.getFriendlyURLPath(),
+			blogPostingForm.getDescription(), blogPostingForm.getArticleBody(),
+			blogPostingForm.getDisplayDate(), true, true, new String[0],
+			blogPostingForm.getImageCaption(), imageSelector, null,
+			serviceContext);
 	}
 
 	private List<String> _getBlogsEntryAssetTags(BlogsEntry blogsEntry) {
 		List<AssetTag> assetTags = _assetTagLocalService.getTags(
 			BlogsEntry.class.getName(), blogsEntry.getEntryId());
 
-		return ListUtil.toList(assetTags, AssetTagModel::getName);
+		return ListUtil.toList(assetTags, AssetTag::getName);
 	}
 
 	private PageItems<BlogsEntry> _getPageItems(
@@ -203,10 +210,11 @@ public class BlogPostingNestedCollectionResource
 		return _blogsEntryLocalService.updateEntry(
 			userId, blogsEntryId, blogPostingForm.getHeadline(),
 			blogPostingForm.getAlternativeHeadline(),
-			blogPostingForm.getSemanticUrl(), blogPostingForm.getDescription(),
-			blogPostingForm.getArticleBody(), blogPostingForm.getDisplayDate(),
-			true, true, new String[0], blogPostingForm.getImageCaption(),
-			imageSelector, null, serviceContext);
+			blogPostingForm.getFriendlyURLPath(),
+			blogPostingForm.getDescription(), blogPostingForm.getArticleBody(),
+			blogPostingForm.getDisplayDate(), true, true, new String[0],
+			blogPostingForm.getImageCaption(), imageSelector, null,
+			serviceContext);
 	}
 
 	@Reference

@@ -19,6 +19,8 @@ AUI.add(
 				var instance = this;
 
 				AArray.invoke(instance.get('fields'), 'destroy');
+
+				instance.set('fields', []);
 			},
 
 			appendChild: function(field) {
@@ -27,7 +29,7 @@ AUI.add(
 				instance.insert(0, field);
 			},
 
-			eachField: function(fn, flat) {
+			eachNestedField: function(fn, flat) {
 				var instance = this;
 
 				var queue = new A.Queue();
@@ -88,7 +90,7 @@ AUI.add(
 
 				var field;
 
-				instance.eachField(
+				instance.eachNestedField(
 					function(item) {
 						if (item.get('fieldName') === name) {
 							field = item;
@@ -112,7 +114,7 @@ AUI.add(
 
 				var fields = [];
 
-				instance.eachField(
+				instance.eachNestedField(
 					function(field) {
 						fields.push(field);
 					},

@@ -3,6 +3,7 @@
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
 	<property name="ignore.errors" value="Plugin security management is not enabled. Enable a security manager, then restart." />
+	<property name="testray.component.names" value="Workflow" />
 	<property name="testray.main.component.name" value="Upgrades FW" />
 
 	<set-up>
@@ -21,18 +22,41 @@
 		</execute>
 	</set-up>
 
-	<command name="ViewWorkflowArchive612" priority="5">
-		<property name="data.archive.type" value="data-archive-workflow" />
-		<property name="portal.version" value="6.1.2" />
+	<command name="SubmitAndApproveWorkflowAfterUpgrade621015" priority="5">
+		<property name="data.archive.type" value="data-archive-portal" />
+		<property name="portal.version" value="6.2.10.15" />
 
-		<execute macro="Upgrade#approveWorkflow" />
+		<execute macro="Upgrade#submitNewWorkflow" />
 	</command>
 
-	<command name="ViewWorkflowArchive6130" priority="5">
-		<property name="data.archive.type" value="data-archive-workflow" />
-		<property name="portal.version" value="6.1.30" />
+	<command name="SubmitAndApproveWorkflowAfterUpgrade621021" priority="5">
+		<property name="data.archive.type" value="data-archive-portal" />
+		<property name="portal.version" value="6.2.10.21" />
 
-		<execute macro="Upgrade#approveWorkflow" />
+		<execute macro="Upgrade#submitNewWorkflow" />
+	</command>
+
+	<command name="SubmitAndApproveWorkflowAfterUpgrade625" priority="5">
+		<property name="data.archive.type" value="data-archive-portal" />
+		<property name="database.types" value="mariadb,mysql,postgresql" />
+		<property name="portal.version" value="6.2.5" />
+
+		<execute macro="Upgrade#submitNewWorkflow" />
+	</command>
+
+	<command name="SubmitAndApproveWorkflowAfterUpgrade70106" priority="5">
+		<property name="data.archive.type" value="data-archive-portal" />
+		<property name="portal.version" value="7.0.10.6" />
+
+		<execute macro="Upgrade#submitNewWorkflow" />
+	</command>
+
+	<command name="SubmitAndApproveWorkflowAfterUpgrade704" priority="5">
+		<property name="data.archive.type" value="data-archive-portal" />
+		<property name="database.types" value="mariadb,mysql,postgresql" />
+		<property name="portal.version" value="7.0.4" />
+
+		<execute macro="Upgrade#submitNewWorkflow" />
 	</command>
 
 	<command name="ViewWorkflowArchive621015" priority="5">
@@ -55,6 +79,7 @@
 
 	<command name="ViewWorkflowArchive625" priority="5">
 		<property name="data.archive.type" value="data-archive-workflow" />
+		<property name="database.types" value="mariadb,mysql,postgresql" />
 		<property name="portal.version" value="6.2.5" />
 
 		<execute macro="Upgrade#approveWorkflow" />
@@ -71,6 +96,7 @@
 
 	<command name="ViewWorkflowArchive704" priority="5">
 		<property name="data.archive.type" value="data-archive-workflow" />
+		<property name="database.types" value="mariadb,mysql,postgresql" />
 		<property name="portal.version" value="7.0.4" />
 
 		<execute macro="Upgrade#approveWorkflow" />

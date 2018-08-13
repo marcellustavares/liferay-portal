@@ -427,7 +427,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			// Default admin
 
-			if (userPersistence.countByCompanyId(companyId) == 1) {
+			if (userPersistence.countByCompanyId(companyId) == 0) {
 				String emailAddress =
 					PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
 
@@ -1345,16 +1345,6 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 		accountLocalService.deleteAccount(company.getAccountId());
 
-		// Organizations
-
-		DeleteOrganizationActionableDynamicQuery
-			deleteOrganizationActionableDynamicQuery =
-				new DeleteOrganizationActionableDynamicQuery();
-
-		deleteOrganizationActionableDynamicQuery.setCompanyId(companyId);
-
-		deleteOrganizationActionableDynamicQuery.performActions();
-
 		// Groups
 
 		DeleteGroupActionableDynamicQuery deleteGroupActionableDynamicQuery =
@@ -1418,6 +1408,16 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			});
 
 		layoutSetPrototypeActionableDynamicQuery.performActions();
+
+		// Organizations
+
+		DeleteOrganizationActionableDynamicQuery
+			deleteOrganizationActionableDynamicQuery =
+				new DeleteOrganizationActionableDynamicQuery();
+
+		deleteOrganizationActionableDynamicQuery.setCompanyId(companyId);
+
+		deleteOrganizationActionableDynamicQuery.performActions();
 
 		// Roles
 
@@ -1737,7 +1737,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 						throws PortalException {
 
 						if (!PortalUtil.isSystemGroup(group.getGroupKey()) &&
-							!group.isCompany()) {
+							!group.isCompany() && !group.isStagingGroup()) {
 
 							deleteGroup(group);
 						}

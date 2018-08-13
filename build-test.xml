@@ -1066,30 +1066,38 @@ war.path=${app.server.portal.dir}/</echo>
 		<attribute default="${app.server.parent.dir}/patching-tool" name="patching.tool.dir" />
 
 		<sequential>
-			<local name="hotfix.build.version" />
-			<local name="hotfix.portal.version" />
 			<local name="patch.requirements" />
 
 			<get-patch-requirements patch.file.zip.url="@{hotfix.file.zip.url}" />
 
-			<propertyregex
-				input="@{hotfix.file.zip.url}"
-				property="hotfix.build.version"
-				regexp=".+/hotfix/liferay-hotfix-\d+-(\d)(\d)(\d\d).zip"
-				replace="\1\2\3"
-			/>
+			<if>
+				<not>
+					<equals arg1="${patch.requirements}" arg2="" />
+				</not>
+				<then>
+					<local name="hotfix.build.version" />
+					<local name="hotfix.portal.version" />
 
-			<propertyregex
-				input="@{hotfix.file.zip.url}"
-				property="hotfix.portal.version"
-				regexp=".+/hotfix/liferay-hotfix-\d+-(\d)(\d)(\d\d).zip"
-				replace="\1.\2.\3"
-			/>
+					<propertyregex
+						input="@{hotfix.file.zip.url}"
+						property="hotfix.build.version"
+						regexp=".+/hotfix/liferay-hotfix-\d+-(\d)(\d)(\d\d).zip"
+						replace="\1\2\3"
+					/>
 
-			<mirrors-get
-				dest="@{patching.tool.dir}/patches"
-				src="http://files.liferay.com/private/ee/fix-packs/${hotfix.portal.version}/de/liferay-fix-pack-${patch.requirements}-${hotfix.build.version}.zip"
-			/>
+					<propertyregex
+						input="@{hotfix.file.zip.url}"
+						property="hotfix.portal.version"
+						regexp=".+/hotfix/liferay-hotfix-\d+-(\d)(\d)(\d\d).zip"
+						replace="\1.\2.\3"
+					/>
+
+					<mirrors-get
+						dest="@{patching.tool.dir}/patches"
+						src="http://files.liferay.com/private/ee/fix-packs/${hotfix.portal.version}/de/liferay-fix-pack-${patch.requirements}-${hotfix.build.version}.zip"
+					/>
+				</then>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -1100,8 +1108,24 @@ war.path=${app.server.portal.dir}/</echo>
 			<update-gradle-properties />
 
 			<if>
+				<contains string="${env.CI_TEST_SUITE}" substring="poshi" />
+				<then>
+					<propertycopy from="test.poshi.runner.local.release[${env.CI_TEST_SUITE}]" name="test.poshi.runner.local.release" override="true" />
+				</then>
+			</if>
+
+			<if>
 				<equals arg1="${test.poshi.runner.local.release}" arg2="true" />
 				<then>
+					<if>
+						<not>
+							<available file="tools/sdk" />
+						</not>
+						<then>
+							<antcall inheritAll="false" target="setup-sdk" />
+						</then>
+					</if>
+
 					<gradle-execute dir="${test.poshi.runner.src.dir}" task="deploy" />
 				</then>
 			</if>
@@ -1685,7 +1709,7 @@ passthrough=&quot;true&quot;</echo>
 			<local name="patching.tool.name" />
 			<local name="patching.tool.version" />
 
-			<mirrors-get
+			<get
 				dest="${basedir}"
 				src="${test.fix.pack.base.url}/patching-tool/${patching.tool.latest.txt}"
 			/>
@@ -1872,23 +1896,6 @@ tell application "Safari" to quit
 				<else>
 					<fail message="Operating system is not supported." />
 				</else>
-			</if>
-		</sequential>
-	</macrodef>
-
-	<macrodef name="prepare-search-engine">
-		<attribute name="search.engine" />
-
-		<sequential>
-			<echo>Preparing search engine: @{search.engine}</echo>
-
-			<if>
-				<equals arg1="@{search.engine}" arg2="solr" />
-				<then>
-					<ant antfile="build-test-solr.xml" inheritAll="false" target="deploy-solr" />
-
-					<ant antfile="build-test-solr.xml" inheritAll="false" target="start-solr" />
-				</then>
 			</if>
 		</sequential>
 	</macrodef>
@@ -2785,7 +2792,8 @@ persisted.scheduler.org.quartz.threadPool.threadCount=1]]></echo>
 
 	<macrodef name="set-portal-impl-system-ext-properties">
 		<sequential>
-			<echo file="portal-impl/test/system-ext.properties">log.sanitizer.enabled=false</echo>
+			<echo file="portal-impl/test/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=600000
+log.sanitizer.enabled=false</echo>
 		</sequential>
 	</macrodef>
 
@@ -3953,17 +3961,6 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 		</sequential>
 	</macrodef>
 
-	<macrodef name="stop-search-engine">
-		<sequential>
-			<if>
-				<equals arg1="${search.engine}" arg2="solr" />
-				<then>
-					<ant antfile="build-test-solr.xml" target="stop-solr-core" />
-				</then>
-			</if>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="uninstall-patches">
 		<attribute name="patching.tool.dir" />
 
@@ -4609,7 +4606,7 @@ go]]></replacevalue>
 
 		<gradle-execute dir="${portal.dir}/modules" task="cleanVersionOverride">
 			<arg value="-b" />
-			<arg value="util.gradle" />
+			<arg value="releng.gradle" />
 			<arg value="-PgitRepoPath=${module.dir}" />
 		</gradle-execute>
 	</target>
@@ -4901,7 +4898,7 @@ go]]></replacevalue>
 				</if>
 
 				<execute dir="${project.dir}/modules/sdk/project-templates/project-templates-npm-portlet">
-					mvn archetype:generate --batch-mode -DarchetypeArtifactId=com.liferay.project.templates.npm.portlet -DarchetypeGroupId=com.liferay -DarchetypeVersion=1.0.5 -DartifactId=com.npm.simple -Dauthor=liferay -DbuildType=maven -DclassName=Foo -DgroupId=com.test -DinteractiveMode=false -DliferayVersion=7.1 -Dpackage=com.test -DprojectType=standalone -Dversion=1.0.0
+					mvn archetype:generate --batch-mode -DarchetypeArtifactId=com.liferay.project.templates.npm.portlet -DarchetypeGroupId=com.liferay -DarchetypeVersion=1.0.8 -DartifactId=com.npm.simple -Dauthor=liferay -DbuildType=maven -DclassName=Foo -DgroupId=com.test -DinteractiveMode=false -DliferayVersion=7.1 -Dpackage=com.test -DprojectType=standalone -Dversion=1.0.0
 				</execute>
 
 				<execute dir="${project.dir}/modules/sdk/project-templates/project-templates-npm-portlet/com.npm.simple">
@@ -4922,7 +4919,7 @@ go]]></replacevalue>
 				</if>
 
 				<execute dir="${project.dir}/modules/sdk/project-templates/project-templates-npm-${blade.templates}-portlet">
-					mvn archetype:generate --batch-mode -DarchetypeArtifactId=com.liferay.project.templates.npm.${blade.templates}.portlet -DarchetypeGroupId=com.liferay -DarchetypeVersion=1.0.5 -DartifactId=com.npm.${blade.templates} -Dauthor=liferay -DbuildType=maven -DclassName=Foo -DgroupId=com.test -DinteractiveMode=false -DliferayVersion=7.1 -Dpackage=com.test -DprojectType=standalone -Dversion=1.0.0
+					mvn archetype:generate --batch-mode -DarchetypeArtifactId=com.liferay.project.templates.npm.${blade.templates}.portlet -DarchetypeGroupId=com.liferay -DarchetypeVersion=1.0.8 -DartifactId=com.npm.${blade.templates} -Dauthor=liferay -DbuildType=maven -DclassName=Foo -DgroupId=com.test -DinteractiveMode=false -DliferayVersion=7.1 -Dpackage=com.test -DprojectType=standalone -Dversion=1.0.0
 				</execute>
 
 				<execute dir="${project.dir}/modules/sdk/project-templates/project-templates-npm-${blade.templates}-portlet/com.npm.${blade.templates}">
@@ -5448,16 +5445,6 @@ go]]></replacevalue>
 				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
 					<property name="plugin.types" value="portlets" />
 					<property name="plugins.includes" value="${portlet.plugins.includes}" />
-				</ant>
-			</then>
-		</if>
-
-		<if>
-			<equals arg1="${test.pacl}" arg2="true" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
-					<property name="plugin.types" value="portlets" />
-					<property name="plugins.includes" value="chat-portlet,flash-portlet,portal-compat-hook,sample-service-builder-portlet,test-pacl-portlet" />
 				</ant>
 			</then>
 		</if>
@@ -6218,9 +6205,11 @@ osb.lcs.portlet.oauth.consumer.secret=${osb.lcs.portlet.oauth.consumer.secret}</
 			</then>
 		</if>
 
+		<get-testcase-property property.name="captcha.enabled" />
+
 		<if>
 			<not>
-				<contains string="${osgi.module.configurations}" substring="maxChallenges" />
+				<equals arg1="${captcha.enabled}" arg2="true" />
 			</not>
 			<then>
 				<prepare-captcha-configuration />
@@ -6231,7 +6220,7 @@ osb.lcs.portlet.oauth.consumer.secret=${osb.lcs.portlet.oauth.consumer.secret}</
 
 		<if>
 			<not>
-				<contains string="${testray.main.component.name}" substring="Elastic Search Impl" />
+				<contains string="${testray.main.component.name}" substring="Elasticsearch Impl" />
 			</not>
 			<then>
 				<prepare-elasticsearch-configuration />
@@ -6315,6 +6304,8 @@ index.on.startup=true
 setup.wizard.enabled=false
 
 mail.session.jndi.name=
+
+module.framework.properties.initial.system.check.enabled=true
 
 sprite.root.dir=/tmp/sprite
 
@@ -6426,20 +6417,6 @@ custom.sql.function.isnotnull=CONVERT(VARCHAR,?) IS NOT NULL</echo>
 				<echo append="true" file="portal-impl/src/portal-ext.properties">
 
 hot.deploy.dependency.management.enabled=false</echo>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="index.on.startup" />
-
-		<if>
-			<equals arg1="${index.on.startup}" arg2="false" />
-			<then>
-				<replace
-					file="portal-impl/src/portal-ext.properties"
-				>
-					<replacetoken>index.on.startup=true</replacetoken>
-					<replacevalue>index.on.startup=false</replacevalue>
-				</replace>
 			</then>
 		</if>
 
@@ -6971,6 +6948,19 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 					regexp="(.*?),.*"
 					replace="\1"
 				/>
+
+				<if>
+					<contains string="${test.name.skip.portal.instance}" substring="." />
+					<then>
+						<propertyregex
+							input="${test.name.skip.portal.instance}"
+							override="true"
+							property="test.name.skip.portal.instance"
+							regexp=".*\.(.*)"
+							replace="\1"
+						/>
+					</then>
+				</if>
 
 				<echo append="true" file="${test.ext.properties.file}">
 					test.portal.instance=true
@@ -8074,7 +8064,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 	</target>
 
 	<target name="prepare-system-ext-properties">
-		<echo file="${app.server.classes.portal.dir}/system-ext.properties">liferay.mode=test
+		<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=600000
+liferay.mode=test
 log.sanitizer.enabled=false</echo>
 
 	</target>
@@ -9550,13 +9541,6 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			</else>
 		</if>
 
-		<if>
-			<equals arg1="${app.server.type}" arg2="tomcat" />
-			<then>
-				<ant antfile="build-dist.xml" target="update-java-security-tomcat" />
-			</then>
-		</if>
-
 		<antcall target="check-inet-address" />
 
 		<get-testcase-property property.name="database.jndi.enabled" />
@@ -9776,6 +9760,19 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			<then>
 				<ant antfile="build-test-solr.xml" target="start-solr" />
 			</then>
+			<elseif>
+				<isset property="env.CI_TEST_SUITE" />
+				<then>
+					<propertycopy from="search.engine[${env.CI_TEST_SUITE}]" name="suite.search.engine" silent="true" />
+
+					<if>
+						<equals arg1="${suite.search.engine}" arg2="solr" />
+						<then>
+							<ant antfile="build-test-solr.xml" target="start-solr" />
+						</then>
+					</if>
+				</then>
+			</elseif>
 		</if>
 
 		<get-testcase-property property.name="test.smtp.server.enabled" />
@@ -10112,10 +10109,21 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		<if>
 			<equals arg1="${solr.enabled}" arg2="true" />
 			<then>
-				<print-file file.name="${solr.dir}/server/logs/solr.log" />
-
 				<ant antfile="build-test-solr.xml" target="stop-solr-core" />
 			</then>
+			<elseif>
+				<isset property="env.CI_TEST_SUITE" />
+				<then>
+					<propertycopy from="search.engine[${env.CI_TEST_SUITE}]" name="suite.search.engine" silent="true" />
+
+					<if>
+						<equals arg1="${suite.search.engine}" arg2="solr" />
+						<then>
+							<ant antfile="build-test-solr.xml" target="stop-solr-core" />
+						</then>
+					</if>
+				</then>
+			</elseif>
 		</if>
 
 		<antcall target="clean-up-web-xml" />

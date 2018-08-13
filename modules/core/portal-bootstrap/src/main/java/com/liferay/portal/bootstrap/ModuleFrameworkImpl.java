@@ -19,7 +19,6 @@ import aQute.bnd.header.Parameters;
 import aQute.bnd.version.Version;
 
 import com.liferay.petra.reflect.ReflectionUtil;
-import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.concurrent.DefaultNoticeableFuture;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -34,6 +33,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.NamedThreadFactory;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -87,8 +87,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -101,7 +105,6 @@ import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkEvent;
@@ -113,7 +116,6 @@ import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.FrameworkWiring;
-import org.osgi.util.tracker.BundleTracker;
 
 import org.springframework.beans.factory.BeanIsAbstractException;
 import org.springframework.context.ApplicationContext;
@@ -321,9 +323,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			_log.debug("Registering context " + context);
 		}
 
-		if ((context instanceof ApplicationContext) &&
-			PropsValues.MODULE_FRAMEWORK_REGISTER_LIFERAY_SERVICES) {
-
+		if (context instanceof ApplicationContext) {
 			ApplicationContext applicationContext = (ApplicationContext)context;
 
 			_registerApplicationContext(applicationContext);
@@ -735,7 +735,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			extraProperties.getProperty(
 				Constants.FRAMEWORK_SYSTEMCAPABILITIES_EXTRA));
 
-		String provideCapability = _getAttributeValue(
+		Attributes attributes = _getExtraManifestAttributes();
+
+		String provideCapability = attributes.getValue(
 			Constants.PROVIDE_CAPABILITY);
 
 		Parameters provideCapabilityParameters = new Parameters(
@@ -749,8 +751,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		}
 
 		extraProperties.setProperty(
-			Constants.FRAMEWORK_SYSTEMCAPABILITIES_EXTRA,
-			extraCapabilitiesParameters.toString());
+			Constants.FRAMEWORK_SYSTEMCAPABILITIES_EXTRA, provideCapability);
 
 		for (Map.Entry<Object, Object> entry : extraProperties.entrySet()) {
 			String key = (String)entry.getKey();
@@ -769,7 +770,8 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			properties.put(key, value);
 		}
 
-		String systemPackagesExtra = _getSystemPackagesExtra();
+		String systemPackagesExtra = _getSystemPackagesExtra(
+			attributes.getValue(Constants.EXPORT_PACKAGE));
 
 		properties.put(
 			Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, systemPackagesExtra);
@@ -822,7 +824,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 				Matcher matcher = _pattern.matcher(name);
 
 				if (matcher.matches()) {
-					String fileName = matcher.group(1) + matcher.group(4);
+					String fileName = matcher.group(1) + ".jar";
 
 					if (overrideStaticFileNames.contains(fileName)) {
 						if (_log.isInfoEnabled()) {
@@ -882,24 +884,18 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		return bundles;
 	}
 
-	private String _getAttributeValue(String name) {
-		Manifest manifest = null;
+	private Attributes _getExtraManifestAttributes() {
+		try (InputStream inputStream =
+				ModuleFrameworkImpl.class.getResourceAsStream(
+					"/META-INF/system.packages.extra.mf")) {
 
-		Class<?> clazz = getClass();
+			Manifest manifest = new Manifest(inputStream);
 
-		InputStream inputStream = clazz.getResourceAsStream(
-			"/META-INF/system.packages.extra.mf");
-
-		try {
-			manifest = new Manifest(inputStream);
+			return manifest.getMainAttributes();
 		}
 		catch (IOException ioe) {
-			ReflectionUtil.throwException(ioe);
+			return ReflectionUtil.throwException(ioe);
 		}
-
-		Attributes attributes = manifest.getMainAttributes();
-
-		return attributes.getValue(name);
 	}
 
 	private String _getFelixFileInstallDir() {
@@ -996,7 +992,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		}
 	}
 
-	private String _getSystemPackagesExtra() {
+	private String _getSystemPackagesExtra(String exportedPackages) {
 		String[] systemPackagesExtra =
 			PropsValues.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA;
 
@@ -1006,8 +1002,6 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			sb.append(extraPackage);
 			sb.append(StringPool.COMMA);
 		}
-
-		String exportedPackages = _getAttributeValue(Constants.EXPORT_PACKAGE);
 
 		sb.append(exportedPackages);
 
@@ -1099,16 +1093,6 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 			bundleStartLevel.setStartLevel(
 				PropsValues.MODULE_FRAMEWORK_BEGINNING_START_LEVEL);
-
-			if (_log.isDebugEnabled()) {
-				_log.debug("Starting initial bundle " + bundle);
-			}
-
-			bundle.start();
-
-			if (_log.isDebugEnabled()) {
-				_log.debug("Started bundle " + bundle);
-			}
 
 			return bundle;
 		}
@@ -1405,12 +1389,18 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 			Matcher matcher = _pattern.matcher(location);
 
-			if (matcher.matches()) {
-				location = matcher.group(1) + matcher.group(4);
+			if (matcher.find()) {
+				location = matcher.group(1) + "*.jar";
 			}
 
 			if (overrideLPKGFileNames.contains(location)) {
 				bundle.uninstall();
+			}
+		}
+
+		for (Bundle bundle : bundles.values()) {
+			if (!_isFragmentBundle(bundle)) {
+				bundle.stop();
 			}
 		}
 
@@ -1419,43 +1409,70 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		FrameworkStartLevel frameworkStartLevel = _framework.adapt(
 			FrameworkStartLevel.class);
 
+		final DefaultNoticeableFuture<FrameworkEvent> defaultNoticeableFuture =
+			new DefaultNoticeableFuture<>();
+
 		frameworkStartLevel.setStartLevel(
-			PropsValues.MODULE_FRAMEWORK_BEGINNING_START_LEVEL);
+			PropsValues.MODULE_FRAMEWORK_BEGINNING_START_LEVEL,
+			new FrameworkListener() {
 
-		final Set<Bundle> bundlesSet = new HashSet<>();
+				@Override
+				public void frameworkEvent(FrameworkEvent frameworkEvent) {
+					defaultNoticeableFuture.set(frameworkEvent);
+				}
 
-		for (Bundle bundle : bundles.values()) {
+			});
+
+		FrameworkEvent frameworkEvent = defaultNoticeableFuture.get();
+
+		if (frameworkEvent.getType() != FrameworkEvent.STARTLEVEL_CHANGED) {
+			ReflectionUtil.throwException(frameworkEvent.getThrowable());
+		}
+
+		Runtime runtime = Runtime.getRuntime();
+
+		ExecutorService executorService = Executors.newFixedThreadPool(
+			runtime.availableProcessors(),
+			new NamedThreadFactory(
+				"ModuleFramework-Static-Bundles", Thread.NORM_PRIORITY,
+				ModuleFrameworkImpl.class.getClassLoader()));
+
+		List<Future<Void>> futures = new ArrayList<>();
+
+		FrameworkWiring frameworkWiring = _framework.adapt(
+			FrameworkWiring.class);
+
+		frameworkWiring.resolveBundles(bundles.values());
+
+		for (final Bundle bundle : bundles.values()) {
 			if (!_isFragmentBundle(bundle)) {
-				bundlesSet.add(bundle);
+				futures.add(
+					executorService.submit(
+						new Callable<Void>() {
+
+							@Override
+							public Void call() throws BundleException {
+								bundle.start();
+
+								return null;
+							}
+
+						}));
 			}
 		}
 
-		if (!bundlesSet.isEmpty()) {
-			final CountDownLatch countDownLatch = new CountDownLatch(1);
+		executorService.shutdown();
 
-			BundleTracker<Void> bundleTracker = new BundleTracker<Void>(
-				_framework.getBundleContext(), Bundle.ACTIVE, null) {
-
-				@Override
-				public Void addingBundle(
-					Bundle trackedBundle, BundleEvent bundleEvent) {
-
-					if (bundlesSet.remove(trackedBundle)) {
-						if (bundlesSet.isEmpty()) {
-							countDownLatch.countDown();
-
-							close();
-						}
-					}
-
-					return null;
-				}
-
-			};
-
-			bundleTracker.open();
-
-			countDownLatch.await();
+		for (Future<Void> future : futures) {
+			try {
+				future.get();
+			}
+			catch (ExecutionException ee) {
+				throwableCollector.collect(ee.getCause());
+			}
+			catch (InterruptedException ie) {
+				throwableCollector.collect(ie);
+			}
 		}
 
 		throwableCollector.rethrow();
@@ -1466,34 +1483,15 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		Bundle[] installedBundles = bundleContext.getBundles();
 
-		List<String> hostBundleSymbolicNames = new ArrayList<>();
+		Set<Bundle> fragmentBundles = new HashSet<>();
 
 		for (Bundle bundle : installedBundles) {
-			Dictionary<String, String> headers = bundle.getHeaders(
-				StringPool.BLANK);
-
-			String fragmentHost = headers.get(Constants.FRAGMENT_HOST);
-
-			if (fragmentHost == null) {
-				continue;
-			}
-
-			int index = fragmentHost.indexOf(CharPool.SEMICOLON);
-
-			if (index != -1) {
-				fragmentHost = fragmentHost.substring(0, index);
-			}
-
-			hostBundleSymbolicNames.add(fragmentHost);
-		}
-
-		for (Bundle bundle : installedBundles) {
-			if (hostBundleSymbolicNames.contains(bundle.getSymbolicName())) {
-				refreshBundles.add(bundle);
+			if (_isFragmentBundle(bundle)) {
+				fragmentBundles.add(bundle);
 			}
 		}
 
-		_refreshBundles(refreshBundles);
+		frameworkWiring.resolveBundles(fragmentBundles);
 
 		return new HashSet<>(Arrays.asList(initialBundles));
 	}
@@ -1673,7 +1671,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		ModuleFrameworkImpl.class);
 
 	private static final Pattern _pattern = Pattern.compile(
-		"/?(.*?)(-\\d+\\.\\d+\\.\\d+)(\\..+)?(\\.jar)");
+		"(.*?)-\\d+\\.\\d+\\.\\d+(\\..+)?\\.jar");
 
 	private Framework _framework;
 	private final Map<ApplicationContext, List<ServiceRegistration<?>>>

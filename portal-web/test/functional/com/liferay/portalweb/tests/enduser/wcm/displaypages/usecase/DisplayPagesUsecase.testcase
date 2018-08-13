@@ -30,7 +30,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -61,7 +61,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -78,9 +78,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />
@@ -114,7 +112,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -131,9 +129,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />
@@ -174,7 +170,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -191,9 +187,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />
@@ -235,7 +229,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -252,9 +246,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />
@@ -344,7 +336,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -354,7 +346,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="cssSnippet" />
+			<return name="cssSnippet" />
 			<var name="fileName" value="fragment_title.css" />
 		</execute>
 
@@ -371,9 +363,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />
@@ -440,7 +430,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_multiple_editables.html" />
 		</execute>
 
@@ -457,9 +447,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Display Pages" />
-		</execute>
+		<execute macro="NavItem#gotoDisplayPages" />
 
 		<execute macro="DisplayPages#add">
 			<var name="displayPageName" value="Display Page Name" />

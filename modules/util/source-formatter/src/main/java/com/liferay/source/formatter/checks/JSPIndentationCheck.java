@@ -598,12 +598,10 @@ public class JSPIndentationCheck extends BaseFileCheck {
 		}
 
 		public boolean isOpenTag() {
-			if (!_javaSource && (_lineTabLevel == 1)) {
-				Matcher matcher = _openTagNamePattern.matcher(_line);
+			if (!_javaSource && (_lineTabLevel == 1) &&
+				_line.matches("^\\s*<.*")) {
 
-				if (matcher.find()) {
-					return true;
-				}
+				return true;
 			}
 
 			return false;

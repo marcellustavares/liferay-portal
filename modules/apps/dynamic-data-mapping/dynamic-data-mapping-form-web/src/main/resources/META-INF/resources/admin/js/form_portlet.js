@@ -221,6 +221,8 @@ AUI.add(
 							instance._copyPublishFormURLPopover.destroy();
 						}
 
+						instance.savedState = null;
+
 						(new A.EventHandle(instance._eventHandlers)).detach();
 					},
 
@@ -356,7 +358,7 @@ AUI.add(
 
 						var count = 0;
 
-						formBuilder.eachFields(
+						formBuilder.eachFormBuilderField(
 							function(field) {
 								count++;
 							}

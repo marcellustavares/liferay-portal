@@ -15,17 +15,18 @@
 package com.liferay.document.library.uad.test;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestDataConstants;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -50,27 +51,37 @@ public class DLFileEntryUADTestHelper {
 			false, 0L, RandomTestUtil.randomString(),
 			RandomTestUtil.randomString(), false, serviceContext);
 
-		byte[] bytes = RandomTestUtil.randomBytes(
-			TikaSafeRandomizerBumper.INSTANCE);
+		byte[] bytes = TestDataConstants.TEST_BYTE_ARRAY;
 
 		InputStream is = new ByteArrayInputStream(bytes);
 
-		return _dlFileEntryLocalService.addFileEntry(
-			userId, dlFolder.getGroupId(), dlFolder.getRepositoryId(),
-			dlFolder.getFolderId(), RandomTestUtil.randomString(),
-			ContentTypes.TEXT_PLAIN, RandomTestUtil.randomString(),
-			StringPool.BLANK, StringPool.BLANK,
-			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT, null,
-			null, is, bytes.length, serviceContext);
+		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
+			userId, dlFolder.getRepositoryId(), dlFolder.getFolderId(),
+			RandomTestUtil.randomString(), ContentTypes.TEXT_PLAIN,
+			RandomTestUtil.randomString(), StringPool.BLANK, StringPool.BLANK,
+			is, bytes.length, serviceContext);
+
+		return _dlFileEntryLocalService.getFileEntry(
+			fileEntry.getFileEntryId());
 	}
 
 	public void cleanUpDependencies(List<DLFileEntry> dlFileEntries)
 		throws Exception {
 
 		for (DLFileEntry dlFileEntry : dlFileEntries) {
+			if (_dlFileEntryLocalService.fetchDLFileEntry(
+					dlFileEntry.getFileEntryId()) != null) {
+
+				_dlAppLocalService.deleteFileEntry(
+					dlFileEntry.getFileEntryId());
+			}
+
 			_dlFolderLocalService.deleteFolder(dlFileEntry.getFolderId());
 		}
 	}
+
+	@Reference
+	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
 	private DLFileEntryLocalService _dlFileEntryLocalService;

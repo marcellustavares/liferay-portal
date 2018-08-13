@@ -45,6 +45,7 @@ import ${apiPackagePath}.model.${entity.name}Soap;
 </#if>
 
 import ${apiPackagePath}.service.${entity.name}LocalServiceUtil;
+import ${serviceBuilder.getCompatProperty("StringBundler")};
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -73,7 +74,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 

@@ -197,7 +197,7 @@ if ((portletParallelRender != null) && (portletParallelRender.booleanValue() == 
 
 Layout curLayout = PortletConfigurationLayoutUtil.getLayout(themeDisplay);
 
-if ((!group.hasStagingGroup() || !PropsValues.STAGING_LIVE_GROUP_LOCKING_ENABLED) && PortletPermissionUtil.contains(permissionChecker, themeDisplay.getScopeGroupId(), curLayout, portlet, ActionKeys.CONFIGURATION)) {
+if ((!group.hasLocalOrRemoteStagingGroup() || !PropsValues.STAGING_LIVE_GROUP_LOCKING_ENABLED) && PortletPermissionUtil.contains(permissionChecker, themeDisplay.getScopeGroupId(), curLayout, portlet, ActionKeys.CONFIGURATION)) {
 	showConfigurationIcon = true;
 
 	boolean supportsConfigurationLAR = portlet.getConfigurationActionInstance() != null;
@@ -217,7 +217,7 @@ if ((!group.hasStagingGroup() || !PropsValues.STAGING_LIVE_GROUP_LOCKING_ENABLED
 		checkingStagingGroup = themeDisplay.getSiteGroup();
 	}
 
-	if ((checkingStagingGroup.isStaged() || checkingStagingGroup.isStagedRemotely()) && !checkingStagingGroup.hasLocalOrRemoteStagingGroup() && checkingStagingGroup.isStagedPortlet(portletId)) {
+	if ((checkingStagingGroup.isStaged() || checkingStagingGroup.isStagedRemotely()) && (!checkingStagingGroup.hasLocalOrRemoteStagingGroup() || PropsValues.STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED) && checkingStagingGroup.isStagedPortlet(portletId)) {
 		showStagingIcon = true;
 	}
 }
@@ -661,13 +661,13 @@ else {
 urlMax.setEscapeXml(false);
 
 if (lifecycle.equals(PortletRequest.RENDER_PHASE)) {
-	String portletNamespace = portletDisplay.getNamespace();
-
-	Set<String> publicRenderParameterNames = SetUtil.fromEnumeration(portletConfig.getPublicRenderParameterNames());
-
 	Map<String, String[]> renderParameters = RenderParametersPool.get(request, plid, portletDisplay.getId());
 
 	if (renderParameters != null) {
+		String portletNamespace = portletDisplay.getNamespace();
+		Set<String> publicRenderParameterNames = SetUtil.fromEnumeration(portletConfig.getPublicRenderParameterNames());
+		MutableRenderParameters urlMaxRenderParameters = urlMax.getRenderParameters();
+
 		for (Map.Entry<String, String[]> entry : renderParameters.entrySet()) {
 			String key = entry.getKey();
 
@@ -678,7 +678,7 @@ if (lifecycle.equals(PortletRequest.RENDER_PHASE)) {
 
 				String[] values = entry.getValue();
 
-				urlMax.setParameter(key, values);
+				urlMaxRenderParameters.setValues(key, values);
 			}
 		}
 	}

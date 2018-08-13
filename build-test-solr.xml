@@ -58,32 +58,6 @@ trustStorePath=${solr.dir}/server/etc/solr-ssl.keystore.jks</echo>
 		</sequential>
 	</macrodef>
 
-	<macrodef name="configure-solr-logging">
-		<sequential>
-			<replace
-				file="${solr.dir}/server/solr/solr.xml"
-			>
-				<replacetoken><![CDATA[</solr>]]></replacetoken>
-				<replacevalue expandproperties="true"><![CDATA[
-	<logging>
-		<str name="enabled">true</str>
-		<watcher>
-			<int name="size">100</int>
-			<str name="threshold">INFO</str>
-		</watcher>
-	</logging>
-</solr>]]></replacevalue>
-			</replace>
-
-			<replace
-				file="${solr.dir}/server/resources/log4j.properties"
-			>
-				<replacetoken><![CDATA[WARN]]></replacetoken>
-				<replacevalue><![CDATA[INFO]]></replacevalue>
-			</replace>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="configure-solr-ssl-properties">
 		<sequential>
 			<if>
@@ -302,6 +276,23 @@ schema=schema.xml</echo>
 		<echo file="${liferay.home}/osgi/configs/com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config">blacklistBundleSymbolicNames=&quot;com.liferay.portal.mobile.device.detection.fiftyonedegrees.api,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise.test.data,com.liferay.portal.mobile.device.detection.fiftyonedegrees,com.liferay.portal.search.elasticsearch6.api,com.liferay.portal.search.elasticsearch6.impl,com.liferay.portal.search.elasticsearch6.xpack.security.impl,com.liferay.portal.search.elasticsearch6.xpack.monitoring.web&quot;</echo>
 	</target>
 
+	<target name="prepare-solr-suite">
+		<antcall target="deploy-solr" />
+
+		<condition else="${env.TEST_BATCH_NAME}" property="test.batch.name" value="${test.batch.name}">
+			<isset property="test.batch.name" />
+		</condition>
+
+		<if>
+			<not>
+				<contains string="${test.batch.name}" substring="functional" />
+			</not>
+			<then>
+				<antcall target="start-solr" />
+			</then>
+		</if>
+	</target>
+
 	<target name="start-solr">
 		<unzip-solr />
 
@@ -321,15 +312,6 @@ schema=schema.xml</echo>
 				<configure-liferay-solr-ssl-adapter-properties />
 
 				<configure-app-server-ssl-jvm-arguments />
-			</then>
-		</if>
-
-		<get-testcase-property property.name="solr.logging.info.level" />
-
-		<if>
-			<equals arg1="${solr.logging.info.level}" arg2="true" />
-			<then>
-				<configure-solr-logging />
 			</then>
 		</if>
 
@@ -393,7 +375,7 @@ schema=schema.xml</echo>
 	</target>
 
 	<target name="stop-solr-core">
-		<get-testcase-property property.name="solr.solrcloud.enabled" />
+		<print-file file.name="${solr.dir}/server/logs/solr.log" />
 
 		<if>
 			<os family="unix" />

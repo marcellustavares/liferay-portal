@@ -19,15 +19,12 @@ import com.liferay.portal.configuration.settings.internal.scoped.configuration.S
 import com.liferay.portal.configuration.settings.internal.scoped.configuration.ScopedConfigurationBeanConfigurationListener;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
 import com.liferay.portal.kernel.resource.manager.ClassLoaderResourceManager;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
@@ -68,7 +65,6 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Shuyang Zhou
  */
 @Component(immediate = true, service = SettingsLocatorHelper.class)
-@DoPrivileged
 public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 
 	@Override
@@ -342,9 +338,6 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 				scopeKey.getObjectClass()),
 			configuration, parentSettings);
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SettingsLocatorHelperImpl.class);
 
 	private final ConcurrentMap<String, Class<?>> _configurationBeanClasses =
 		new ConcurrentHashMap<>();

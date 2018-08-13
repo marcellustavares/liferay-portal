@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
 	<module name="TreeWalker">
@@ -96,7 +96,7 @@
 			<message key="assert.add.information" value="Add ''{0}'' as extra parameter at the beginning of the ''Assert.assertEquals'' call to provide more information to the test. See LPS-70411." />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.ChainingCheck">
-			<property name="allowedClassNames" value=".*[Bb]uilder,Awaitility,Mockito,Response,RestAssured" />
+			<property name="allowedClassNames" value=".*[Bb]uilder,Awaitility,JSONUtil,Mockito,Response,RestAssured" />
 			<property name="allowedMethodNames" value="bind" />
 			<property name="allowedVariableTypeNames" value="^(?!String).+Builder,Column,CompletableFuture,Dataset,Description,FormsEventDatasetFilter,.*Function,HttpSecurity,Optional,Response,(Double|Int|Long)?Stream,Try" />
 			<message key="chaining.avoid" value="Avoid chaining on method ''{0}''. See https://github.com/liferay/liferay-portal/blob/master/modules/util/source-formatter/documentation/chaining.markdown" />
@@ -119,9 +119,12 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstructorMissingEmptyLineCheck">
 			<message key="empty.line.missing" value="There should be an empty line before line ''{0}''" />
 		</module>
-		<module name="com.liferay.source.formatter.checkstyle.checks.DeprecatedMethodCallsCheck">
+		<module name="com.liferay.source.formatter.checkstyle.checks.DeprecatedUsageCheck">
 			<property name="enabled" value="false" />
+			<message key="constructor.call.deprecated" value="Constructor ''{0}'' has been deprecated" />
+			<message key="field.call.deprecated" value="Field ''{0}'' has been deprecated" />
 			<message key="method.call.deprecated" value="Method ''{0}'' has been deprecated" />
+			<message key="type.call.deprecated" value="Type ''{0}'' has been deprecated" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.EnumConstantDividerCheck">
 			<message key="empty.line.unnecessary" value="Unnecessary empty line needed between enum constants" />

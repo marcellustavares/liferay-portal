@@ -26,8 +26,8 @@ import com.liferay.portal.kernel.search.SearchEngine;
 import com.liferay.portal.kernel.search.SearchEngineConfigurator;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.search.queue.QueuingSearchEngine;
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ClassUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.search.configuration.SearchEngineHelperConfiguration;
 
@@ -116,8 +116,6 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 
 	@Override
 	public SearchEngine getSearchEngine(String searchEngineId) {
-		PortalRuntimePermission.checkSearchEngine(searchEngineId);
-
 		SearchEngine searchEngine = _searchEngines.get(searchEngineId);
 
 		if (searchEngine != null) {
@@ -226,8 +224,6 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 
 	@Override
 	public SearchEngine removeSearchEngine(String searchEngineId) {
-		PortalRuntimePermission.checkSearchEngine(searchEngineId);
-
 		return _searchEngines.remove(searchEngineId);
 	}
 
@@ -244,8 +240,6 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 	@Override
 	public void setSearchEngine(
 		String searchEngineId, SearchEngine searchEngine) {
-
-		PortalRuntimePermission.checkSearchEngine(searchEngineId);
 
 		_searchEngines.put(searchEngineId, searchEngine);
 
@@ -296,6 +290,12 @@ public class SearchEngineHelperImpl implements SearchEngineHelper {
 				public SearchEngineConfigurator addingService(
 					ServiceReference<SearchEngineConfigurator>
 						serviceReference) {
+
+					if (GetterUtil.getBoolean(
+							serviceReference.getProperty("original.bean"))) {
+
+						return null;
+					}
 
 					SearchEngineConfigurator searchEngineConfigurator =
 						bundleContext.getService(serviceReference);

@@ -35,7 +35,7 @@ ConfigurationModel configurationModel = (ConfigurationModel)request.getAttribute
 
 viewFactoryInstancesURL.setParameter("factoryPid", configurationModel.getFactoryPid());
 
-if (configurationModel.isFactory()) {
+if (!configurationModel.isCompanyFactory() && configurationModel.isFactory()) {
 	bindRedirectURL = viewFactoryInstancesURL.toString();
 }
 
@@ -117,7 +117,7 @@ renderResponse.setTitle(categoryDisplayName);
 						}
 					}
 					else {
-						configurationTitle = (componentResourceBundle != null) ? LanguageUtil.get(componentResourceBundle, configurationModel.getName()) : configurationModel.getName();
+						configurationTitle = (componentResourceBundle != null) ? LanguageUtil.format(componentResourceBundle, configurationModel.getName(), configurationModel.getNameArguments()) : configurationModel.getName();
 					}
 					%>
 
@@ -181,7 +181,7 @@ renderResponse.setTitle(categoryDisplayName);
 					</c:if>
 
 					<%
-					String configurationModelDescription = (componentResourceBundle != null) ? LanguageUtil.get(componentResourceBundle, configurationModel.getDescription()) : configurationModel.getDescription();
+					String configurationModelDescription = (componentResourceBundle != null) ? LanguageUtil.format(componentResourceBundle, configurationModel.getDescription(), configurationModel.getDescriptionArguments()) : configurationModel.getDescription();
 					%>
 
 					<c:if test="<%= !Validator.isBlank(configurationModelDescription) %>">

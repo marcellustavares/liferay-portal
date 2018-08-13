@@ -30,6 +30,12 @@ public interface LiferaySelenium {
 
 	public void assertAlertNotPresent() throws Exception;
 
+	public void assertAttributeNotPresent(String attribute, String locator)
+		throws Exception;
+
+	public void assertAttributePresent(String attribute, String locator)
+		throws Exception;
+
 	public void assertAttributeValue(
 			String attribute, String locator, String pattern)
 		throws Exception;
@@ -218,6 +224,10 @@ public interface LiferaySelenium {
 	public void goBack();
 
 	public boolean isAlertPresent();
+
+	public boolean isAttributeNotPresent(String attribute, String locator);
+
+	public boolean isAttributePresent(String attribute, String locator);
 
 	public boolean isChecked(String locator);
 

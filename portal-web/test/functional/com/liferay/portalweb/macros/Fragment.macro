@@ -79,24 +79,17 @@
 	<command name="importCollectionFromTempFolder">
 		<execute macro="Fragment#_gotoImportCollection" />
 
-		<var method="TestPropsUtil#get('output.dir.name')" name="tempDir" />
+		<var method="PropsUtil#get('output.dir.name')" name="tempDir" />
 
 		<var method="StringUtil#split('**/collections-*.zip')" name="pattern" />
 
-		<execute class="com.liferay.poshi.runner.util.FileUtil" method="getIncludedResourceURLs">
-			<arg value="${pattern}" />
-			<arg value="${tempDir}" />
-			<return name="fileName" />
-		</execute>
+		<var method="FileUtil#getIncludedResourceURLs('${pattern}', '${tempDir}')" name="fileName" />
 
-		<var name="fileName" value="${fileName}" />
+		<var method="StringUtil#valueOf('${fileName}')" name="fileName" />
 
 		<var method="RegexUtil#replace('${fileName}', '\[(.*)\]', '1')" name="fileName" />
 
-		<execute class="org.apache.commons.io.FilenameUtils" method="getName">
-			<arg value="${fileName}" />
-			<return name="shortFileName" />
-		</execute>
+		<var method="FileUtil#getFileName('${fileName}')" name="shortFileName" />
 
 		<execute function="UploadTempFile" locator1="TextInput#FILE" value1="${shortFileName}" />
 

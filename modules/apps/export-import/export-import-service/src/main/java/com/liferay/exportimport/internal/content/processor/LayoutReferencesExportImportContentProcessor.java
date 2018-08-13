@@ -20,6 +20,7 @@ import com.liferay.exportimport.kernel.exception.ExportImportContentProcessorExc
 import com.liferay.exportimport.kernel.exception.ExportImportContentValidationException;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
@@ -43,7 +44,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
@@ -252,6 +252,13 @@ public class LayoutReferencesExportImportContentProcessor
 
 			String url = content.substring(beginPos + offset, endPos);
 
+			int pos = url.indexOf(Portal.FRIENDLY_URL_SEPARATOR);
+
+			if (pos != -1) {
+				url = url.substring(0, pos);
+				endPos = beginPos + offset + pos;
+			}
+
 			if (url.endsWith(StringPool.SLASH)) {
 				url = url.substring(0, url.length() - 1);
 			}
@@ -281,7 +288,7 @@ public class LayoutReferencesExportImportContentProcessor
 					continue;
 				}
 
-				int pos = url.indexOf(StringPool.SLASH, 1);
+				pos = url.indexOf(StringPool.SLASH, 1);
 
 				String localePath = StringPool.BLANK;
 

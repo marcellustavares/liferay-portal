@@ -1,7 +1,7 @@
 <definition component-name="portal-permissions">
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+	<property name="testray.main.component.name" value="Roles" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
@@ -10,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -63,7 +63,7 @@
 	</command>
 
 	<command name="AddDMDocumentRegRoleDefinePermissions" priority="5">
-		<property name="portal.acceptance" value="false" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="Permissions#setUpRegRolePG">
 			<var name="pageName" value="Documents and Media Page" />
@@ -178,8 +178,8 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Basic Document" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Basic Document" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -255,8 +255,8 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Basic Document" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Basic Document" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">
@@ -312,8 +312,8 @@
 			<var name="portletName" value="Documents and Media" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Basic Document" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Basic Document" />
 		</execute>
 	</command>
 
@@ -368,8 +368,8 @@
 			<var name="key_dmFolderName" value="DM Folder Name" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Move to Recycle Bin" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Move to Recycle Bin" />
 		</execute>
 
 		<execute macro="User#logoutAndLoginPG">

@@ -135,7 +135,7 @@ public class PoshiRunnerValidation {
 
 		List<String> possibleElementNames = Arrays.asList(
 			"description", "echo", "execute", "fail", "for", "if", "property",
-			"return", "take-screenshot", "task", "toggle", "var", "while");
+			"return", "take-screenshot", "task", "var", "while");
 
 		if (Validator.isNotNull(filePath) && filePath.endsWith(".function")) {
 			possibleElementNames = Arrays.asList("execute", "if");
@@ -176,9 +176,6 @@ public class PoshiRunnerValidation {
 			}
 			else if (elementName.equals("task")) {
 				validateTaskElement(childElement, filePath);
-			}
-			else if (elementName.equals("toggle")) {
-				validateToggleElement(childElement, filePath);
 			}
 			else if (elementName.equals("var")) {
 				validateVarElement(childElement, filePath);
@@ -742,7 +739,7 @@ public class PoshiRunnerValidation {
 								":" + element.attributeValue("line-number")));
 				}
 				else if (!PoshiRunnerContext.isPathLocator(
-							locator, namespace) &&
+							 locator, namespace) &&
 						 !PoshiRunnerContext.isPathLocator(
 							 locator, defaultNamespace)) {
 
@@ -1051,6 +1048,15 @@ public class PoshiRunnerValidation {
 				new Exception(
 					"Unable to find class " + className + "\n" + filePath +
 						":" + element.attributeValue("line-number")));
+
+			return;
+		}
+
+		try {
+			validateUtilityClassName(element, filePath, className);
+		}
+		catch (Exception e) {
+			_exceptions.add(e);
 
 			return;
 		}
@@ -1615,17 +1621,29 @@ public class PoshiRunnerValidation {
 		}
 	}
 
-	protected static void validateToggleElement(
-		Element element, String filePath) {
+	protected static void validateUtilityClassName(
+			Element element, String filePath, String className)
+		throws Exception {
 
-		List<String> attributeNames = Arrays.asList("line-number", "name");
+		if (!className.startsWith("selenium")) {
+			if (!className.contains(".")) {
+				try {
+					className = PoshiRunnerGetterUtil.getUtilityClassName(
+						className);
+				}
+				catch (IllegalArgumentException iae) {
+					throw new Exception(
+						iae.getMessage() + "\n" + filePath + ":" +
+							element.attributeValue("line-number"));
+				}
+			}
 
-		validateHasChildElements(element, filePath);
-		validatePossibleAttributeNames(element, attributeNames, filePath);
-		validateRequiredAttributeNames(element, attributeNames, filePath);
-
-		validateOffElement(element, filePath);
-		validateOnElement(element, filePath);
+			if (!PoshiRunnerGetterUtil.isValidUtilityClass(className)) {
+				throw new Exception(
+					className + " is an invalid utility class\n" + filePath +
+						":" + element.attributeValue("line-number"));
+			}
+		}
 	}
 
 	protected static void validateVarElement(Element element, String filePath) {
@@ -1649,9 +1667,8 @@ public class PoshiRunnerValidation {
 		Collections.addAll(
 			possibleAttributeNames,
 			new String[] {
-				"attribute", "from", "group", "hash", "index", "input",
-				"line-number", "locator", "method", "name", "pattern",
-				"property-value", "type", "value"
+				"from", "hash", "index", "line-number", "method", "name",
+				"type", "value"
 			});
 
 		if (filePath.contains(".macro")) {
@@ -1673,28 +1690,19 @@ public class PoshiRunnerValidation {
 		validatePossibleAttributeNames(
 			element, possibleAttributeNames, filePath);
 
-		if (Validator.isNotNull(element.attributeValue("attribute"))) {
-			List<String> attributeNames = Arrays.asList(
-				"attribute", "line-number", "locator", "name");
+		if (Validator.isNotNull(element.attributeValue("method"))) {
+			String methodAttribute = element.attributeValue("method");
 
-			validatePossibleAttributeNames(element, attributeNames, filePath);
-			validateRequiredAttributeNames(element, attributeNames, filePath);
-		}
-		else if (Validator.isNotNull(element.attributeValue("group")) ||
-				 Validator.isNotNull(element.attributeValue("input")) ||
-				 Validator.isNotNull(element.attributeValue("pattern"))) {
+			int x = methodAttribute.indexOf("#");
 
-			List<String> attributeNames = Arrays.asList(
-				"group", "line-number", "input", "name", "pattern");
+			String className = methodAttribute.substring(0, x);
 
-			validatePossibleAttributeNames(element, attributeNames, filePath);
-			validateRequiredAttributeNames(element, attributeNames, filePath);
-		}
-		else if (Validator.isNotNull(element.attributeValue("locator")) ||
-				 Validator.isNotNull(element.attributeValue("method")) ||
-				 Validator.isNotNull(
-					 element.attributeValue("property-value")) ||
-				 Validator.isNotNull(element.attributeValue("var"))) {
+			try {
+				validateUtilityClassName(element, filePath, className);
+			}
+			catch (Exception e) {
+				_exceptions.add(e);
+			}
 
 			int expectedAttributeCount = 1;
 

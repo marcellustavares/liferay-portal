@@ -14,12 +14,8 @@
 
 package com.liferay.portal.template;
 
-import com.liferay.portal.kernel.security.pacl.NotPrivileged;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateResource;
-
-import java.security.AccessControlContext;
-import java.security.AccessController;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +25,6 @@ import java.util.Map;
  */
 public abstract class BaseSingleTemplateManager extends BaseTemplateManager {
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		List<TemplateResource> templateResources, boolean restricted) {
@@ -37,7 +32,6 @@ public abstract class BaseSingleTemplateManager extends BaseTemplateManager {
 		return getTemplate(templateResources, null, restricted);
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		List<TemplateResource> templateResources,
@@ -47,7 +41,6 @@ public abstract class BaseSingleTemplateManager extends BaseTemplateManager {
 			"Template type does not support multi templates");
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		TemplateResource templateResource, boolean restricted) {
@@ -55,39 +48,40 @@ public abstract class BaseSingleTemplateManager extends BaseTemplateManager {
 		return getTemplate(templateResource, null, restricted);
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		TemplateResource templateResource,
 		TemplateResource errorTemplateResource, boolean restricted) {
 
-		AccessControlContext accessControlContext = getAccessControlContext();
-
-		if (accessControlContext == null) {
-			return doGetTemplate(
-				templateResource, errorTemplateResource, restricted,
-				getHelperUtilities(restricted), false);
-		}
-
-		Map<String, Object> helperUtilities = AccessController.doPrivileged(
-			new DoGetHelperUtilitiesPrivilegedAction(
-				templateContextHelper, getTemplateControlContextClassLoader(),
-				restricted),
-			accessControlContext);
-
-		Template template = AccessController.doPrivileged(
-			new DoGetSingleTemplatePrivilegedAction(
-				templateResource, errorTemplateResource, restricted,
-				helperUtilities));
-
-		return new PrivilegedTemplateWrapper(accessControlContext, template);
+		return doGetTemplate(
+			templateResource, errorTemplateResource, restricted,
+			getHelperUtilities(restricted));
 	}
 
 	protected abstract Template doGetTemplate(
 		TemplateResource templateResource,
 		TemplateResource errorTemplateResource, boolean restricted,
-		Map<String, Object> helperUtilities, boolean privileged);
+		Map<String, Object> helperUtilities);
 
+	/**
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *             #doGetTemplate(TemplateResource, TemplateResource, boolean, Map)}
+	 */
+	@Deprecated
+	protected Template doGetTemplate(
+		TemplateResource templateResource,
+		TemplateResource errorTemplateResource, boolean restricted,
+		Map<String, Object> helperUtilities, boolean privileged) {
+
+		return doGetTemplate(
+			templateResource, errorTemplateResource, restricted,
+			helperUtilities);
+	}
+
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	protected class DoGetSingleTemplatePrivilegedAction
 		extends DoGetAbstractTemplatePrivilegedAction {
 

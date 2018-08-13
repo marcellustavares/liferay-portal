@@ -10,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -63,6 +63,8 @@
 		<execute macro="LAR#exportSiteCP">
 			<var name="larFileName" value="CustomExport" />
 		</execute>
+
+		<execute function="Refresh" />
 
 		<execute macro="LAR#viewProcessesInListView" />
 

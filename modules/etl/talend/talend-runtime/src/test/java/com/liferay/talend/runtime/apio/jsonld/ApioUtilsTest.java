@@ -62,6 +62,16 @@ public class ApioUtilsTest {
 	}
 
 	@Test
+	public void testHasValueOf() {
+		JsonNode typeJsonNode = _apioJsonLDResource.getTypeJsonNode();
+
+		Assert.assertThat(
+			ApioUtils.hasValueOf("BlogPosting", typeJsonNode), is(false));
+		Assert.assertThat(
+			ApioUtils.hasValueOf("WebSite", typeJsonNode), is(true));
+	}
+
+	@Test
 	public void testIsSingleModel() {
 		Assert.assertThat(_apioJsonLDResource.isSingleModel(), is(true));
 	}

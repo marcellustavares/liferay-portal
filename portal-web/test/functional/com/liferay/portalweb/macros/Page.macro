@@ -122,8 +122,8 @@
 			<var name="key_pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Delete" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Delete" />
 		</execute>
 	</command>
 
@@ -138,8 +138,8 @@
 			<var name="key_pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Configure">
-			<var name="key_menuItem" value="Configure" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Configure" />
 		</execute>
 
 		<execute macro="Navigator#gotoNavTab">
@@ -177,26 +177,6 @@
 
 		<execute macro="Navigator#gotoNavTab">
 			<var name="navTab" value="Advanced" />
-		</execute>
-
-		<execute macro="Page#uploadFileForLogo">
-			<var name="logoFile" value="${logoFile}" />
-		</execute>
-	</command>
-
-	<command name="changeSiteLogoViaPageCP">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#COG">
-			<var name="key_pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Logo" />
 		</execute>
 
 		<execute macro="Page#uploadFileForLogo">
@@ -386,8 +366,8 @@
 		<execute function="AssertTextEquals" locator1="SitePages#PAGE_TREE_PAGE_LINK" value1="${pageName}" />
 	</command>
 
-	<command name="getGroupIdFromHtmlSource" returns="groupId">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+	<command name="getGroupIdFromHtmlSource">
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<var method="selenium#getAttribute('//li[@class=\'control-menu-nav-item\']/a[contains(@data-qa-id,\'editLayout\')]@href')" name="pageURL" />
 
@@ -395,9 +375,9 @@
 
 		<var method="StringUtil#extractFirst('${partialPageURL}', '&amp;')" name="groupId" />
 
-		<echo>## * Group ID: ${groupId}</echo>
+		<echo message="## * Group ID: ${groupId}" />
 
-		<return name="groupId" value="${groupId}" />
+		<return value="${groupId}" />
 	</command>
 
 	<command name="gotoChildPagePG">
@@ -421,12 +401,12 @@
 	</command>
 
 	<command name="gotoEditTemplatePages">
-		<var name="key_siteTemplateName" value="${siteTemplateName}" />
+		<execute macro="LexiconEntry#openEntryMenu">
+			<var name="rowEntry" value="${siteTemplateName}" />
+		</execute>
 
-		<execute function="Click" locator1="SiteTemplates#SITE_TEMPLATE_TABLE_ACTIONS" value1="${siteTemplateName}" />
-
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Manage">
-			<var name="key_menuItem" value="Manage" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Manage" />
 		</execute>
 	</command>
 
@@ -537,14 +517,14 @@
 
 		<var name="key_sitePagesVariationName" value="${sitePagesVariationName}" />
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="${sitePagesVariationName}">
-			<var name="key_menuItem" value="${sitePagesVariationName}" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="${sitePagesVariationName}" />
 		</execute>
 	</command>
 
 	<command name="tearDownCP" summary="Delete all pages except the Welcome and Search Page">
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -566,8 +546,8 @@
 					<var name="key_index" value="3" />
 				</execute>
 
-				<execute function="AssertClickNoError" locator1="MenuItem#ANY_MENU_ITEM" value1="Delete">
-					<var name="key_menuItem" value="Delete" />
+				<execute macro="MenuItem#clickNoError">
+					<var name="menuItem" value="Delete" />
 				</execute>
 
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
@@ -675,8 +655,8 @@
 			<var name="key_pageName" value="${pageName}" />
 		</execute>
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Configure">
-			<var name="key_menuItem" value="Configure" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Configure" />
 		</execute>
 
 		<execute function="AssertTextPresent" locator1="SitePagesEditPage#VIEW_THEME" value1="${themeName}" />
@@ -1079,18 +1059,6 @@
 		</execute>
 	</command>
 
-	<command name="viewSiteLogo">
-		<if>
-			<equals arg1="${assertCustomLogoPresent}" arg2="true" />
-			<then>
-				<execute function="AssertElementPresent" locator1="Home#CUSTOM_LOGO" />
-			</then>
-			<else>
-				<execute function="AssertElementNotPresent" locator1="Home#CUSTOM_LOGO" />
-			</else>
-		</if>
-	</command>
-
 	<command name="viewSiteNameTranslationsPG">
 		<execute macro="LanguagePortlet#selectLanguagePG">
 			<var name="locale" value="${locale}" />
@@ -1139,7 +1107,9 @@
 		<if>
 			<isset var="localizationOption" />
 			<then>
-				<execute function="AssertClick" locator1="Home#PORTAL_LOCALIZATION_DEFAULT_LANGUAGE_MESSAGE" value1="${localizationOption}" />
+				<execute function="AssertClick" locator1="Home#PORTAL_LOCALIZATION_DEFAULT_LANGUAGE_MESSAGE" value1="${localizationOption}">
+					<var name="key_pageLocale" value="${localizationOption}" />
+				</execute>
 			</then>
 		</if>
 

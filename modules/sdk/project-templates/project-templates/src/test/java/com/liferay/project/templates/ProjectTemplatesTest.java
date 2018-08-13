@@ -625,39 +625,51 @@ public class ProjectTemplatesTest {
 	}
 
 	@Test
-	public void testBuildTemplateFormField() throws Exception {
+	public void testBuildTemplateFormField70() throws Exception {
 		File gradleProjectDir = _buildTemplateWithGradle(
-			"form-field", "foobar");
+			"form-field", "foobar", "--liferayVersion", "7.0");
 
-		_testExists(gradleProjectDir, "bnd.bnd");
-
+		_testContains(
+			gradleProjectDir, "bnd.bnd", "Bundle-Name: foobar",
+			"Web-ContextPath: /dynamic-data-foobar-form-field");
 		_testContains(
 			gradleProjectDir, "build.gradle",
 			"apply plugin: \"com.liferay.plugin\"");
 		_testContains(
 			gradleProjectDir,
 			"src/main/java/foobar/form/field/FoobarDDMFormFieldRenderer.java",
+			"property = \"ddm.form.field.type.name=foobar\"",
 			"public class FoobarDDMFormFieldRenderer extends " +
-				"BaseDDMFormFieldRenderer {");
+				"BaseDDMFormFieldRenderer {",
+			"ddm.Foobar", "/META-INF/resources/foobar.soy");
 		_testContains(
 			gradleProjectDir,
 			"src/main/java/foobar/form/field/FoobarDDMFormFieldType.java",
-			"class FoobarDDMFormFieldType extends BaseDDMFormFieldType");
+			"ddm.form.field.type.js.class.name=Liferay.DDM.Field.Foobar",
+			"ddm.form.field.type.js.module=foobar-form-field",
+			"ddm.form.field.type.label=foobar-label",
+			"ddm.form.field.type.name=foobar",
+			"public class FoobarDDMFormFieldType extends BaseDDMFormFieldType",
+			"return \"foobar\";");
 		_testContains(
 			gradleProjectDir, "src/main/resources/META-INF/resources/config.js",
-			"'foobar-form-field': {");
+			"foobar-group", "'foobar-form-field': {",
+			"path: 'foobar_field.js',", "'foobar-form-field-template': {");
 		_testContains(
 			gradleProjectDir,
 			"src/main/resources/META-INF/resources/foobar.soy",
-			"{template .Foobar autoescape");
+			"{namespace ddm}", "{template .Foobar autoescape",
+			"<div class=\"form-group foobar-form-field\"");
 		_testContains(
 			gradleProjectDir,
 			"src/main/resources/META-INF/resources/foobar_field.js",
-			"var FoobarField");
+			"'foobar-form-field',", "var FoobarField",
+			"value: 'foobar-form-field'", "NAME: 'foobar-form-field'",
+			"Liferay.namespace('DDM.Field').Foobar = FoobarField;");
 
 		File mavenProjectDir = _buildTemplateWithMaven(
 			"form-field", "foobar", "com.test", "-DclassName=Foobar",
-			"-Dpackage=foobar");
+			"-Dpackage=foobar", "-DliferayVersion=7.0");
 
 		_buildProjects(gradleProjectDir, mavenProjectDir);
 	}
@@ -668,9 +680,55 @@ public class ProjectTemplatesTest {
 			"form-field", "foobar", "--liferayVersion", "7.1");
 
 		_testContains(
+			gradleProjectDir, "bnd.bnd", "Bundle-Name: foobar",
+			"Web-ContextPath: /dynamic-data-foobar-form-field");
+		_testContains(
 			gradleProjectDir, "build.gradle",
-			"name: \"com.liferay.portal.kernel\", version: \"3.0.0",
-			"apply plugin: \"com.liferay.plugin\"");
+			"apply plugin: \"com.liferay.plugin\"",
+			"name: \"com.liferay.portal.kernel\", version: \"3.0.0");
+		_testContains(
+			gradleProjectDir, "package.json",
+			"\"name\": \"dynamic-data-foobar-form-field\"",
+			",foobar_field.js &&");
+		_testContains(
+			gradleProjectDir,
+			"src/main/java/foobar/form/field/FoobarDDMFormFieldRenderer.java",
+			"property = \"ddm.form.field.type.name=foobar\"",
+			"public class FoobarDDMFormFieldRenderer extends " +
+				"BaseDDMFormFieldRenderer {",
+			"DDMFoobar.render", "/META-INF/resources/foobar.soy");
+		_testContains(
+			gradleProjectDir,
+			"src/main/java/foobar/form/field/FoobarDDMFormFieldType.java",
+			"ddm.form.field.type.description=foobar-description",
+			"ddm.form.field.type.js.class.name=Liferay.DDM.Field.Foobar",
+			"ddm.form.field.type.js.module=foobar-form-field",
+			"ddm.form.field.type.label=foobar-label",
+			"ddm.form.field.type.name=foobar",
+			"public class FoobarDDMFormFieldType extends BaseDDMFormFieldType",
+			"return \"foobar\";");
+		_testContains(
+			gradleProjectDir, "src/main/resources/META-INF/resources/config.js",
+			"field-foobar", "'foobar-form-field': {",
+			"path: 'foobar_field.js',");
+		_testContains(
+			gradleProjectDir,
+			"src/main/resources/META-INF/resources/foobar.soy",
+			"{namespace DDMFoobar}", "variant=\"'foobar'\"",
+			"foobar-form-field");
+		_testContains(
+			gradleProjectDir,
+			"src/main/resources/META-INF/resources/foobar.es.js",
+			"import templates from './foobar.soy';", "* Foobar Component",
+			"class Foobar extends Component", "Soy.register(Foobar,",
+			"!window.DDMFoobar", "window.DDMFoobar",
+			"window.DDMFoobar.render = Foobar;", "export default Foobar;");
+		_testContains(
+			gradleProjectDir,
+			"src/main/resources/META-INF/resources/foobar_field.js",
+			"'foobar-form-field',", "var FoobarField",
+			"value: 'foobar-form-field'", "NAME: 'foobar-form-field'",
+			"Liferay.namespace('DDM.Field').Foobar = FoobarField;");
 
 		File mavenProjectDir = _buildTemplateWithMaven(
 			"form-field", "foobar", "com.test", "-DclassName=Foobar",
@@ -2828,6 +2886,30 @@ public class ProjectTemplatesTest {
 	}
 
 	@Test
+	public void testBuildTemplateTheme71() throws Exception {
+		File gradleProjectDir = _buildTemplateWithGradle(
+			"theme", "theme-test", "--liferayVersion", "7.1");
+
+		_testContains(
+			gradleProjectDir, "build.gradle",
+			"name: \"com.liferay.gradle.plugins.theme.builder\"",
+			"apply plugin: \"com.liferay.portal.tools.theme.builder\"");
+		_testContains(
+			gradleProjectDir,
+			"src/main/webapp/WEB-INF/liferay-plugin-package.properties",
+			"name=theme-test");
+
+		File mavenProjectDir = _buildTemplateWithMaven(
+			"theme", "theme-test", "com.test", "-DliferayVersion=7.1");
+
+		_testContains(
+			mavenProjectDir, "pom.xml",
+			"com.liferay.portal.tools.theme.builder");
+
+		_buildProjects(gradleProjectDir, mavenProjectDir);
+	}
+
+	@Test
 	public void testBuildTemplateThemeContributorCustom() throws Exception {
 		File gradleProjectDir = _buildTemplateWithGradle(
 			"theme-contributor", "my-contributor-custom", "--contributor-type",
@@ -2851,6 +2933,39 @@ public class ProjectTemplatesTest {
 		File mavenProjectDir = _buildTemplateWithMaven(
 			"theme-contributor", "my-contributor-custom", "com.test",
 			"-DcontributorType=foo-bar", "-Dpackage=my.contributor.custom");
+
+		_testContains(
+			mavenProjectDir, "bnd.bnd",
+			"-plugin.sass: com.liferay.ant.bnd.sass.SassAnalyzerPlugin");
+
+		_buildProjects(gradleProjectDir, mavenProjectDir);
+	}
+
+	@Test
+	public void testBuildTemplateThemeContributorCustom71() throws Exception {
+		File gradleProjectDir = _buildTemplateWithGradle(
+			"theme-contributor", "my-contributor-custom", "--contributor-type",
+			"foo-bar", "--liferayVersion", "7.1");
+
+		_testContains(
+			gradleProjectDir, "bnd.bnd",
+			"Liferay-Theme-Contributor-Type: foo-bar",
+			"Web-ContextPath: /foo-bar-theme-contributor");
+		_testNotContains(
+			gradleProjectDir, "bnd.bnd",
+			"-plugin.sass: com.liferay.ant.bnd.sass.SassAnalyzerPlugin");
+
+		_testExists(
+			gradleProjectDir,
+			"src/main/resources/META-INF/resources/css/foo-bar.scss");
+		_testExists(
+			gradleProjectDir,
+			"src/main/resources/META-INF/resources/js/foo-bar.js");
+
+		File mavenProjectDir = _buildTemplateWithMaven(
+			"theme-contributor", "my-contributor-custom", "com.test",
+			"-DcontributorType=foo-bar", "-Dpackage=my.contributor.custom",
+			"-DliferayVersion=7.1");
 
 		_testContains(
 			mavenProjectDir, "bnd.bnd",
@@ -3263,6 +3378,54 @@ public class ProjectTemplatesTest {
 	}
 
 	@Test
+	public void testBuildTemplateWorkspaceWith70() throws Exception {
+		File gradleWorkspaceProjectDir = _buildTemplateWithGradle(
+			WorkspaceUtil.WORKSPACE, "withportlet", "--liferayVersion", "7.0");
+
+		_testContains(
+			gradleWorkspaceProjectDir, "gradle.properties", true,
+			".*liferay.workspace.bundle.url=.*liferay.com/portal/7.0.*");
+
+		File gradlePropertiesFile = new File(
+			gradleWorkspaceProjectDir, "gradle.properties");
+
+		_testPropertyKeyExists(
+			gradlePropertiesFile, "liferay.workspace.bundle.url");
+
+		File mavenWorkspaceProjectDir = _buildTemplateWithMaven(
+			WorkspaceUtil.WORKSPACE, "withportlet", "com.test",
+			"-DliferayVersion=7.0");
+
+		_testContains(
+			mavenWorkspaceProjectDir, "pom.xml",
+			"<liferay.workspace.bundle.url>", "liferay.com/portal/7.0.");
+	}
+
+	@Test
+	public void testBuildTemplateWorkspaceWith71() throws Exception {
+		File gradleWorkspaceProjectDir = _buildTemplateWithGradle(
+			WorkspaceUtil.WORKSPACE, "withportlet", "--liferayVersion", "7.1");
+
+		_testContains(
+			gradleWorkspaceProjectDir, "gradle.properties", true,
+			".*liferay.workspace.bundle.url=.*liferay.com/portal/7.1.0-.*");
+
+		File gradlePropertiesFile = new File(
+			gradleWorkspaceProjectDir, "gradle.properties");
+
+		_testPropertyKeyExists(
+			gradlePropertiesFile, "liferay.workspace.bundle.url");
+
+		File mavenWorkspaceProjectDir = _buildTemplateWithMaven(
+			WorkspaceUtil.WORKSPACE, "withportlet", "com.test",
+			"-DliferayVersion=7.1");
+
+		_testContains(
+			mavenWorkspaceProjectDir, "pom.xml",
+			"<liferay.workspace.bundle.url>", "liferay.com/portal/7.1.0-");
+	}
+
+	@Test
 	public void testBuildTemplateWorkspaceWithPortlet() throws Exception {
 		File gradleWorkspaceProjectDir = _buildTemplateWithGradle(
 			WorkspaceUtil.WORKSPACE, "withportlet");
@@ -3293,24 +3456,6 @@ public class ProjectTemplatesTest {
 
 		_testExists(
 			mavenModulesDir, "foo-portlet/target/foo-portlet-1.0.0.jar");
-	}
-
-	@Test
-	public void testBuildTemplateWorkspaceWithVersion() throws Exception {
-		File workspaceProjectDir = _buildTemplateWithMaven(
-			WorkspaceUtil.WORKSPACE, "withportlet", "com.test",
-			"-DliferayVersion=7.1");
-
-		_testContains(
-			workspaceProjectDir, "pom.xml", "<liferay.workspace.bundle.url>",
-			"liferay.com/portal/7.1.0-");
-
-		workspaceProjectDir = _buildTemplateWithGradle(
-			WorkspaceUtil.WORKSPACE, "withportlet", "--liferayVersion", "7.1");
-
-		_testContains(
-			workspaceProjectDir, "gradle.properties", true,
-			".*liferay.workspace.bundle.url=.*liferay.com/portal/7.1.0-.*");
 	}
 
 	@Test
@@ -3846,6 +3991,28 @@ public class ProjectTemplatesTest {
 
 		final String repositoryUrl = mavenExecutor.getRepositoryUrl();
 
+		String projectPath = projectDir.getPath();
+
+		if (projectPath.contains("workspace")) {
+			File buildFile = new File(projectDir, "build.gradle");
+
+			Path buildFilePath = buildFile.toPath();
+
+			String content = FileUtil.read(buildFilePath);
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(content);
+			sb.append("allprojects {\n");
+			sb.append("repositories {");
+			sb.append("mavenLocal()}}");
+
+			content = sb.toString();
+
+			Files.write(
+				buildFilePath, content.getBytes(StandardCharsets.UTF_8));
+		}
+
 		Files.walkFileTree(
 			projectDir.toPath(),
 			new SimpleFileVisitor<Path>() {
@@ -3984,6 +4151,18 @@ public class ProjectTemplatesTest {
 		Assert.assertEquals(result.output, 0, result.exitCode);
 
 		return result.output;
+	}
+
+	private static List<String> _sanitizeLines(List<String> lines) {
+		List<String> sanitizedLines = new ArrayList<>();
+
+		for (String line : lines) {
+			line = line.replaceAll("\\?t=[0-9]+", "");
+
+			sanitizedLines.add(line);
+		}
+
+		return sanitizedLines;
 	}
 
 	private static void _testArchetyper(
@@ -4282,6 +4461,19 @@ public class ProjectTemplatesTest {
 		return file;
 	}
 
+	private static void _testPropertyKeyExists(File file, String key)
+		throws Exception {
+
+		Properties properties = FileTestUtil.readProperties(file);
+
+		String property = properties.getProperty(key);
+
+		Assert.assertNotNull(
+			"Expected key " + key + " to exist in properties " +
+				file.getAbsolutePath(),
+			property);
+	}
+
 	private static File _testStartsWith(
 			File dir, String fileName, String prefix)
 		throws IOException {
@@ -4368,6 +4560,17 @@ public class ProjectTemplatesTest {
 						List<String> lines2 = StringTestUtil.readLines(
 							inputStream2);
 
+						lines1 = _sanitizeLines(lines1);
+						lines2 = _sanitizeLines(lines2);
+
+						Patch<String> diff = DiffUtils.diff(lines1, lines2);
+
+						List<Delta<String>> deltas = diff.getDeltas();
+
+						if (deltas.isEmpty()) {
+							continue;
+						}
+
 						message.append(System.lineSeparator());
 
 						message.append("--- ");
@@ -4378,9 +4581,7 @@ public class ProjectTemplatesTest {
 						message.append(zipArchiveEntry2.getName());
 						message.append(System.lineSeparator());
 
-						Patch<String> diff = DiffUtils.diff(lines1, lines2);
-
-						for (Delta<String> delta : diff.getDeltas()) {
+						for (Delta<String> delta : deltas) {
 							message.append('\t');
 							message.append(delta.getOriginal());
 							message.append(System.lineSeparator());
@@ -4405,7 +4606,7 @@ public class ProjectTemplatesTest {
 			realChange = true;
 		}
 
-		Assert.assertFalse(message.toString(), realChange);
+		Assert.assertFalse(message.toString() + differences, realChange);
 	}
 
 	private static void _writeServiceClass(File projectDir) throws IOException {

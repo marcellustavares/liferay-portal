@@ -3,7 +3,7 @@
 		<for list="${checkContentNameList}" param="contentName">
 			<var name="key_contentName" value="${contentName}" />
 
-			<execute function="Click" locator1="PagesConfiguration#CONTENT_CHOOSE_CONTENT_CHECKBOX_LABEL" />
+			<execute function="Check#checkToggleSwitch" locator1="PagesConfiguration#CONTENT_CHOOSE_CONTENT_CHECKBOX_LABEL" />
 		</for>
 	</command>
 
@@ -124,9 +124,13 @@
 		<execute function="Click" locator1="Checkbox#PERMISSIONS" />
 	</command>
 
+	<command name="setTitle">
+		<execute function="Type" locator1="StagingPublishToLive#PUBLICATION_TITLE" value1="${publicationTitle}" />
+	</command>
+
 	<command name="uncheckContentNameList">
 		<for list="${uncheckContentNameList}" param="contentName">
-			<execute function="Click" locator1="PagesConfiguration#CONTENT_CHOOSE_CONTENT_CHECKBOX_LABEL">
+			<execute function="Uncheck#uncheckToggleSwitch" locator1="PagesConfiguration#CONTENT_CHOOSE_CONTENT_CHECKBOX_LABEL">
 				<var name="key_contentName" value="${contentName}" />
 			</execute>
 		</for>
@@ -145,11 +149,11 @@
 	</command>
 
 	<command name="uncheckSubContent">
-		<execute function="SelectFrame" value1="relative=top" />
+		<execute function="SelectFrame" value1="IFrame#PUBLISH_LATEST_CHANGES_DIALOG" />
 
 		<var name="key_contentName" value="${mainContent}" />
 
-		<execute function="AssertClick" locator1="ExportImport#CONTENT_CHOOSE_CONTENT_CONTENT_CHANGE_LINK" value1="Change" />
+		<execute function="Click" locator1="ExportImport#CONTENT_CHOOSE_CONTENT_CONTENT_CHANGE_LINK" />
 
 		<var name="key_subContent" value="${uncheckSubContent}" />
 

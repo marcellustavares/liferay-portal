@@ -20,7 +20,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -56,7 +56,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_button.html" />
 		</execute>
 
@@ -73,9 +73,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -126,7 +124,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_image.html" />
 		</execute>
 
@@ -136,7 +134,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="cssSnippet" />
+			<return name="cssSnippet" />
 			<var name="fileName" value="fragment_image.css" />
 		</execute>
 
@@ -153,9 +151,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -201,7 +197,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -218,9 +214,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -261,9 +255,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Collection Name" />
@@ -287,9 +279,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -309,9 +299,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="Navigator#gotoNavNested">
 			<var name="navNested" value="Page Template Collection" />
@@ -333,9 +321,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionDescription" value="Collection Description Original" />
@@ -360,9 +346,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -382,9 +366,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="Navigator#gotoNavNested">
 			<var name="navNested" value="Page Template Collection" />
@@ -423,7 +405,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -433,7 +415,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="cssSnippet" />
+			<return name="cssSnippet" />
 			<var name="fileName" value="fragment_title.css" />
 		</execute>
 
@@ -449,7 +431,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_title.html" />
 		</execute>
 
@@ -459,7 +441,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="cssSnippet" />
+			<return name="cssSnippet" />
 			<var name="fileName" value="fragment_content.css" />
 		</execute>
 
@@ -476,9 +458,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -569,9 +549,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />

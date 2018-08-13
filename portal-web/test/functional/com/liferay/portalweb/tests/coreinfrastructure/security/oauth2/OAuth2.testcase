@@ -1,8 +1,7 @@
 <definition component-name="portal-security">
 	<property name="portal.release" value="true" />
 	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="OAuth2" />
-	<property name="testray.main.component.name" value="Security" />
+	<property name="testray.main.component.name" value="OAuth 2" />
 
 	<set-up>
 		<execute macro="TestCase#setUpPortalInstance" />
@@ -11,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -101,7 +100,7 @@
 		</execute>
 
 		<execute macro="OAuth2#editApplication">
-			<return from="newGeneratedClientSecret" name="newGeneratedClientSecret" />
+			<return name="newGeneratedClientSecret" />
 			<var name="applicationName" value="OAuth Application Edited" />
 			<var name="generateNewSecret" value="true" />
 		</execute>
@@ -201,12 +200,12 @@
 
 		<var method="selenium#getElementValue(OAuth2#ADMIN_INPUT_FORM_CLIENT_SECRET)" name="generatedClientSecret" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
-		<var name="curl">
+		<var name="curl"><![CDATA[
 			${portalURL}/o/oauth2/token \
-				--data grant_type=client_credentials&amp;client_id=${generatedClientId}&amp;client_secret=${generatedClientSecret}
-		</var>
+				--data grant_type=client_credentials&client_id=${generatedClientId}&client_secret=${generatedClientSecret}
+		]]></var>
 
 		<execute class="com.liferay.poshi.runner.util.JSONCurlUtil" method="post">
 			<arg value="${curl}" />

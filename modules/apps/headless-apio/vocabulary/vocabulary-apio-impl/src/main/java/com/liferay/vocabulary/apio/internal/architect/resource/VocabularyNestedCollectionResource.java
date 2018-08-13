@@ -97,14 +97,12 @@ public class VocabularyNestedCollectionResource
 		).identifier(
 			AssetVocabulary::getVocabularyId
 		).addBidirectionalModel(
-			"interactionService", "vocabularies", ContentSpaceIdentifier.class,
+			"contentSpace", "vocabularies", ContentSpaceIdentifier.class,
 			AssetVocabulary::getGroupId
 		).addDate(
 			"dateCreated", AssetVocabulary::getCreateDate
 		).addDate(
 			"dateModified", AssetVocabulary::getModifiedDate
-		).addDate(
-			"datePublished", AssetVocabulary::getLastPublishDate
 		).addLinkedModel(
 			"creator", PersonIdentifier.class, AssetVocabulary::getUserId
 		).addLocalizedStringByLocale(

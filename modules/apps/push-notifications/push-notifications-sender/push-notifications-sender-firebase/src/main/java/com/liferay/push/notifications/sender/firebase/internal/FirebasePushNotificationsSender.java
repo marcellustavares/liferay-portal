@@ -21,8 +21,6 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.push.notifications.constants.PushNotificationsConstants;
 import com.liferay.push.notifications.exception.PushNotificationsException;
@@ -175,6 +173,37 @@ public class FirebasePushNotificationsSender
 			builder.sound(sound);
 		}
 
+		String title = payloadJSONObject.getString(
+			PushNotificationsConstants.KEY_TITLE);
+
+		if (Validator.isNotNull(title)) {
+			builder.title(title);
+		}
+
+		JSONArray titleLocalizedArgumentsJSONArray =
+			payloadJSONObject.getJSONArray(
+				PushNotificationsConstants.KEY_TITLE_LOCALIZED_ARGUMENTS);
+
+		if (titleLocalizedArgumentsJSONArray != null) {
+			List<String> localizedArguments = new ArrayList<>();
+
+			for (int i = 0; i < titleLocalizedArgumentsJSONArray.length();
+					i++) {
+
+				localizedArguments.add(
+					titleLocalizedArgumentsJSONArray.getString(i));
+			}
+
+			builder.titleLocalizationArguments(localizedArguments);
+		}
+
+		String titleLocalizedKey = payloadJSONObject.getString(
+			PushNotificationsConstants.KEY_TITLE_LOCALIZED);
+
+		if (Validator.isNotNull(titleLocalizedKey)) {
+			builder.titleLocalizationKey(titleLocalizedKey);
+		}
+
 		return builder.build();
 	}
 
@@ -182,9 +211,6 @@ public class FirebasePushNotificationsSender
 	protected void deactivate() {
 		_sender = null;
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FirebasePushNotificationsSender.class);
 
 	private volatile FirebasePushNotificationsSenderConfiguration
 		_firebasePushNotificationsSenderConfiguration;

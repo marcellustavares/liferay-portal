@@ -1101,6 +1101,10 @@ public class PropsValues {
 
 	public static final String MODULE_FRAMEWORK_PORTAL_DIR = PropsUtil.get(PropsKeys.MODULE_FRAMEWORK_PORTAL_DIR);
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final boolean MODULE_FRAMEWORK_REGISTER_LIFERAY_SERVICES = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.MODULE_FRAMEWORK_REGISTER_LIFERAY_SERVICES));
 
 	public static final String MODULE_FRAMEWORK_RESOLVER_REVISION_BATCH_SIZE = PropsUtil.get(PropsKeys.MODULE_FRAMEWORK_RESOLVER_REVISION_BATCH_SIZE);
@@ -1540,10 +1544,22 @@ public class PropsValues {
 
 	public static final int SEARCH_CONTAINER_PAGE_ITERATOR_MAX_PAGES = GetterUtil.getInteger(PropsUtil.get(PropsKeys.SEARCH_CONTAINER_PAGE_ITERATOR_MAX_PAGES));
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final boolean SEARCH_CONTAINER_SHOW_PAGINATION_BOTTOM = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.SEARCH_CONTAINER_SHOW_PAGINATION_BOTTOM));
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final boolean SEARCH_CONTAINER_SHOW_PAGINATION_TOP = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.SEARCH_CONTAINER_SHOW_PAGINATION_TOP));
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final int SEARCH_CONTAINER_SHOW_PAGINATION_TOP_DELTA = GetterUtil.getInteger(PropsUtil.get(PropsKeys.SEARCH_CONTAINER_SHOW_PAGINATION_TOP_DELTA), 10);
 
 	public static final String[] SERVLET_SERVICE_EVENTS_POST = PropsUtil.getArray(PropsKeys.SERVLET_SERVICE_EVENTS_POST);

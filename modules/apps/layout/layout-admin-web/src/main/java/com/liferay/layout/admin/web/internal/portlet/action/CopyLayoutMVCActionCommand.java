@@ -128,7 +128,7 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 				groupId, privateLayout, copyLayout.getParentLayoutId(), nameMap,
 				new HashMap<>(), new HashMap<>(), copyLayout.getKeywordsMap(),
 				copyLayout.getRobotsMap(), copyLayout.getType(),
-				typeSettingsProperties.toString(), false, new HashMap<>(),
+				copyTypeSettingsProperties.toString(), false, new HashMap<>(),
 				serviceContext);
 
 			LayoutTypePortlet layoutTypePortlet =
@@ -172,6 +172,13 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 				_portal.getLiferayPortletResponse(actionResponse);
 
 			PortletURL redirectURL = liferayPortletResponse.createRenderURL();
+
+			redirectURL.setParameter(
+				"navigation", privateLayout ? "private-pages" : "public-pages");
+			redirectURL.setParameter(
+				"selPlid", String.valueOf(copyLayout.getParentPlid()));
+			redirectURL.setParameter(
+				"privateLayout", String.valueOf(privateLayout));
 
 			jsonObject.put("redirectURL", redirectURL.toString());
 

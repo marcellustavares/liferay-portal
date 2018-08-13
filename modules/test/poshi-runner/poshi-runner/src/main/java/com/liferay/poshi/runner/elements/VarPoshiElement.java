@@ -157,9 +157,7 @@ public class VarPoshiElement extends PoshiElement {
 			return;
 		}
 
-		if (isValidUtilClassName(value) || value.startsWith("selenium.") ||
-			value.startsWith("TestPropsUtil.")) {
-
+		if (isValidUtilityClassName(value) || value.startsWith("selenium.")) {
 			value = value.replaceFirst("\\.", "#");
 
 			addAttribute("method", value);
@@ -170,7 +168,7 @@ public class VarPoshiElement extends PoshiElement {
 	public String toPoshiScript() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("\n\t");
+		sb.append("\n\n\t");
 
 		String staticAttribute = attributeValue("static");
 
@@ -230,19 +228,14 @@ public class VarPoshiElement extends PoshiElement {
 				}
 			}
 			else if (valueAttributeName.equals("method")) {
-				if (isValidUtilClassName(value) ||
-					value.startsWith("selenium#") ||
-					value.startsWith("TestPropsUtil#")) {
+				if (isValidUtilityClassName(value) ||
+					value.startsWith("selenium#")) {
 
 					value = value.replaceFirst("#", ".");
 				}
 			}
 			else {
 				value = StringEscapeUtils.escapeXml10(value);
-
-				if (parentElement instanceof ExecutePoshiElement) {
-					value = value.replace("\\", "\\\\");
-				}
 
 				value = quoteContent(value);
 			}

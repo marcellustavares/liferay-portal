@@ -10,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -315,7 +315,7 @@
 	</command>
 
 	<command name="AddOrganizationSitePrivatePage" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Users" />
@@ -366,7 +366,7 @@
 	</command>
 
 	<command name="AddOrganizationSitePublicPage" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Users" />
@@ -417,7 +417,7 @@
 	</command>
 
 	<command name="AddOrganizationTeam" priority="5">
-		<property name="portal.acceptance" value="false" />
+		<property name="portal.acceptance" value="true" />
 		<property name="test.name.skip.portal.instance" value="CPUsersandorganizations#AddOrganizationTeam" />
 		<property name="testray.component.names" value="Training" />
 
@@ -1327,8 +1327,8 @@
 
 		<execute function="Click" locator1="Dropdown#FILTER_AND_ORDER" />
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Inactive">
-			<var name="key_menuItem" value="Inactive" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Inactive" />
 		</execute>
 
 		<execute macro="User#searchCP">
@@ -1520,7 +1520,7 @@
 	</command>
 
 	<command name="EditUserSite" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Users" />
@@ -1988,7 +1988,7 @@
 	</command>
 
 	<command name="ViewLoginForActivatedUser" priority="5">
-		<property name="portal.acceptance" value="false" />
+		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -2044,7 +2044,7 @@
 	</command>
 
 	<command name="ViewLoginForDeactivatedUserViaDeactivateButton" priority="4">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
 			<var name="category" value="Users" />
@@ -2168,7 +2168,7 @@
 		</execute>
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -2206,5 +2206,66 @@
 			<var name="breadcrumbListVisible" value="Test Page" />
 			<var name="pathLocator" value="PAGE" />
 		</execute>
+	</command>
+
+	<command name="ViewUpdateUserViaJSONWS" priority="4">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Configuration" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Search" />
+		</execute>
+
+		<execute macro="SearchAdministration#executeSearchActions">
+			<var name="actionsDescription" value="Reindex all search indexes." />
+		</execute>
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
+		<var name="key_userScreenName" value="test" />
+
+		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="test" />
+
+		<execute function="Pause" locator1="5000" />
+
+		<var method="selenium#getElementValue(UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD)" name="userId" />
+
+		<execute macro="Api#apiJsonwsUserView" />
+
+		<execute macro="Api#editJsonwsUserView">
+			<var name="userBirthdayDay" value="24" />
+			<var name="userBirthdayMonth" value="10" />
+			<var name="userBirthdayYear" value="1984" />
+			<var name="userEmailAddress" value="test1@liferay.com" />
+			<var name="userFacebookId" value="0" />
+			<var name="userFirstName" value="test1" />
+			<var name="userId" value="${userId}" />
+			<var name="userLastName" value="test1" />
+			<var name="userPrefixId" value="0" />
+			<var name="userScreenName" value="test1" />
+			<var name="userSuffixId" value="0" />
+		</execute>
+
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Users" />
+			<var name="panel" value="Control Panel" />
+			<var name="portlet" value="Users and Organizations" />
+		</execute>
+
+		<var name="key_userScreenName" value="test1" />
+
+		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="test1" />
+
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD" value1="${userId}" />
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD" value1="test1" />
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD" value1="test1" />
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD" value1="test1@liferay.com" />
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD" value1="test1" />
+		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_BIRTHDAY_FIELD" value1="11/24/1984" />
 	</command>
 </definition>

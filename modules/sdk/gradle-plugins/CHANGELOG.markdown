@@ -5208,6 +5208,182 @@ to version 2.3.216.
 - [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
 1.0.689.
 
+## 3.12.85 - 2018-07-24
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.217.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.690.
+
+## 3.12.86 - 2018-07-24
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.218.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.691.
+
+## 3.12.87 - 2018-07-25
+
+### Changed
+- [LPS-83761]: Update the [Liferay Gradle Plugins Service Builder] dependency to
+version 2.1.53.
+- [LPS-83761]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.236.
+
+## 3.12.88 - 2018-07-25
+
+### Changed
+- [LPS-83705]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.219.
+- [LPS-83705]: Update the [Liferay Source Formatter] dependency to version
+1.0.692.
+
+## 3.12.89 - 2018-07-27
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.220.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.693.
+
+## 3.12.90 - 2018-07-27
+
+### Changed
+- [LPS-78938]: Update the [Liferay Gradle Plugins Service Builder] dependency to
+version 2.1.54.
+- [LPS-78938]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.237.
+
+## 3.12.91 - 2018-07-30
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.221.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.694.
+
+## 3.12.92 - 2018-07-31
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.222.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.695.
+
+## 3.12.93 - 2018-08-01
+
+### Changed
+- [LPS-84039]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.223.
+- [LPS-84039]: Update the [Liferay Source Formatter] dependency to version
+1.0.696.
+
+## 3.12.94 - 2018-08-01
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.224.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.697.
+
+## 3.12.95 - 2018-08-01
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.225.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.698.
+
+## 3.12.96 - 2018-08-02
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.226.
+- [LPS-74544]: Update the [Liferay Source Formatter] dependency to version
+1.0.699.
+
+## 3.12.97- 2018-08-01
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.227.
+- [LPS-76475]: Update the [Liferay Gradle Plugins CSS Builder] dependency to
+version 2.2.1.
+
+## 3.12.98 - 2018-08-05
+
+### Changed
+- [LPS-83705]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.227.
+- [LPS-83705]: Update the [Liferay Source Formatter] dependency to version
+1.0.701.
+
+## 3.12.99 - 2018-08-06
+
+### Changed
+- [LPS-78033]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.228.
+- [LPS-78033]: Update the [Liferay Source Formatter] dependency to version
+1.0.702.
+
+## 3.12.100 - 2018-08-06
+
+### Changed
+- [LPS-84119]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.229.
+- [LPS-84119]: Update the [Liferay Source Formatter] dependency to version
+1.0.703.
+
+## 3.12.101 - 2018-08-06
+
+### Changed
+- [LPS-84213]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.230.
+- [LPS-84213]: Update the [Liferay Source Formatter] dependency to version
+1.0.704.
+
+## 3.12.102 - 2018-08-06
+
+### Changed
+- [LPS-84119]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.231.
+- [LPS-84119]: Update the [Liferay Source Formatter] dependency to version
+1.0.705.
+
+## 3.12.103 - 2018-08-07
+
+### Changed
+- [LPS-84119]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.232.
+- [LPS-84119]: Update the [Liferay Source Formatter] dependency to version
+1.0.706.
+
+## 3.12.104 - 2018-08-08
+
+### Changed
+- [LPS-84119]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.233.
+- [LPS-84119]: Update the [Liferay Source Formatter] dependency to version
+1.0.707.
+
+## 3.12.105 - 2018-08-09
+
+### Changed
+- [LPS-84307]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.234.
+- [LPS-84307]: Update the [Liferay Source Formatter] dependency to version
+1.0.708.
+
+## 3.12.106 - 2018-08-10
+
+### Changed
+- [LPS-84039]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 2.3.235.
+- [LPS-84039]: Update the [Liferay Source Formatter] dependency to version
+1.0.709.
+
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Alloy Taglib]: https://github.com/liferay/alloy-taglibs
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
@@ -5552,6 +5728,7 @@ to version 2.3.216.
 [LPS-78854]: https://issues.liferay.com/browse/LPS-78854
 [LPS-78901]: https://issues.liferay.com/browse/LPS-78901
 [LPS-78911]: https://issues.liferay.com/browse/LPS-78911
+[LPS-78938]: https://issues.liferay.com/browse/LPS-78938
 [LPS-78940]: https://issues.liferay.com/browse/LPS-78940
 [LPS-78971]: https://issues.liferay.com/browse/LPS-78971
 [LPS-78986]: https://issues.liferay.com/browse/LPS-78986
@@ -5631,4 +5808,10 @@ to version 2.3.216.
 [LPS-83483]: https://issues.liferay.com/browse/LPS-83483
 [LPS-83520]: https://issues.liferay.com/browse/LPS-83520
 [LPS-83576]: https://issues.liferay.com/browse/LPS-83576
+[LPS-83705]: https://issues.liferay.com/browse/LPS-83705
+[LPS-83761]: https://issues.liferay.com/browse/LPS-83761
+[LPS-84039]: https://issues.liferay.com/browse/LPS-84039
+[LPS-84119]: https://issues.liferay.com/browse/LPS-84119
+[LPS-84213]: https://issues.liferay.com/browse/LPS-84213
+[LPS-84307]: https://issues.liferay.com/browse/LPS-84307
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

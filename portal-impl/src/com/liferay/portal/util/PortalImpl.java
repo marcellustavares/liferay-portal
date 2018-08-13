@@ -116,7 +116,6 @@ import com.liferay.portal.kernel.security.auth.FullNameGenerator;
 import com.liferay.portal.kernel.security.auth.FullNameGeneratorFactory;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.http.HttpAuthManagerUtil;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
@@ -204,7 +203,6 @@ import com.liferay.portal.model.impl.CookieRemotePreference;
 import com.liferay.portal.model.impl.LayoutTypeImpl;
 import com.liferay.portal.plugin.PluginPackageUtil;
 import com.liferay.portal.security.jaas.JAASHelper;
-import com.liferay.portal.security.lang.DoPrivilegedUtil;
 import com.liferay.portal.security.sso.SSOUtil;
 import com.liferay.portal.servlet.filters.i18n.I18nFilter;
 import com.liferay.portal.spring.context.PortalContextLoaderListener;
@@ -311,7 +309,6 @@ import org.apache.struts.Globals;
  * @author Marco Leo
  * @author Neil Griffin
  */
-@DoPrivileged
 public class PortalImpl implements Portal {
 
 	public PortalImpl() {
@@ -3324,7 +3321,7 @@ public class PortalImpl implements Portal {
 		LiferayPortletRequest liferayPortletRequest =
 			LiferayPortletUtil.getLiferayPortletRequest(portletRequest);
 
-		return DoPrivilegedUtil.wrapWhenActive(liferayPortletRequest);
+		return liferayPortletRequest;
 	}
 
 	@Override
@@ -3338,7 +3335,7 @@ public class PortalImpl implements Portal {
 		LiferayPortletResponse liferayPortletResponse =
 			LiferayPortletUtil.getLiferayPortletResponse(portletResponse);
 
-		return DoPrivilegedUtil.wrapWhenActive(liferayPortletResponse);
+		return liferayPortletResponse;
 	}
 
 	@Override

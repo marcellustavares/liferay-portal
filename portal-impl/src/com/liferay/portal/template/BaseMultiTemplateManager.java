@@ -14,12 +14,8 @@
 
 package com.liferay.portal.template;
 
-import com.liferay.portal.kernel.security.pacl.NotPrivileged;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateResource;
-
-import java.security.AccessControlContext;
-import java.security.AccessController;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +26,6 @@ import java.util.Map;
  */
 public abstract class BaseMultiTemplateManager extends BaseTemplateManager {
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		List<TemplateResource> templateResources, boolean restricted) {
@@ -38,35 +33,16 @@ public abstract class BaseMultiTemplateManager extends BaseTemplateManager {
 		return getTemplate(templateResources, null, restricted);
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		List<TemplateResource> templateResources,
 		TemplateResource errorTemplateResource, boolean restricted) {
 
-		AccessControlContext accessControlContext = getAccessControlContext();
-
-		if (accessControlContext == null) {
-			return doGetTemplate(
-				templateResources, errorTemplateResource, restricted,
-				getHelperUtilities(restricted), false);
-		}
-
-		Map<String, Object> helperUtilities = AccessController.doPrivileged(
-			new DoGetHelperUtilitiesPrivilegedAction(
-				templateContextHelper, getTemplateControlContextClassLoader(),
-				restricted),
-			accessControlContext);
-
-		Template template = AccessController.doPrivileged(
-			new DoGetMultiTemplatePrivilegedAction(
-				templateResources, errorTemplateResource, restricted,
-				helperUtilities));
-
-		return new PrivilegedTemplateWrapper(accessControlContext, template);
+		return doGetTemplate(
+			templateResources, errorTemplateResource, restricted,
+			getHelperUtilities(restricted));
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		TemplateResource templateResource, boolean restricted) {
@@ -75,7 +51,6 @@ public abstract class BaseMultiTemplateManager extends BaseTemplateManager {
 			Collections.singletonList(templateResource), null, restricted);
 	}
 
-	@NotPrivileged
 	@Override
 	public Template getTemplate(
 		TemplateResource templateResource,
@@ -89,8 +64,26 @@ public abstract class BaseMultiTemplateManager extends BaseTemplateManager {
 	protected abstract Template doGetTemplate(
 		List<TemplateResource> templateResources,
 		TemplateResource errorTemplateResource, boolean restricted,
-		Map<String, Object> helperUtilities, boolean privileged);
+		Map<String, Object> helperUtilities);
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
+	protected Template doGetTemplate(
+		List<TemplateResource> templateResources,
+		TemplateResource errorTemplateResource, boolean restricted,
+		Map<String, Object> helperUtilities, boolean privileged) {
+
+		return doGetTemplate(
+			templateResources, errorTemplateResource, restricted,
+			helperUtilities);
+	}
+
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	protected class DoGetMultiTemplatePrivilegedAction
 		extends DoGetAbstractTemplatePrivilegedAction {
 
@@ -108,7 +101,7 @@ public abstract class BaseMultiTemplateManager extends BaseTemplateManager {
 		public Template run() {
 			return doGetTemplate(
 				_templateResources, errorTemplateResource, restricted,
-				helperUtilities, true);
+				helperUtilities);
 		}
 
 		private final List<TemplateResource> _templateResources;

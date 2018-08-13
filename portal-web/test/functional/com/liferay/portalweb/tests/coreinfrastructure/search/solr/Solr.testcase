@@ -25,7 +25,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -43,19 +43,10 @@
 	</tear-down>
 
 	<command name="SolrSmokeTest" priority="4">
+		<description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr by asserting the Solr administration dashboard and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
+
 		<property name="test.name.skip.portal.instance" value="Solr#SolrSmokeTest" />
 
-		<!-- <description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr by asserting the Solr administration dashboard and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
-
-		<execute macro="Solr#viewAdminDashboard">
-			<var name="solrVersion" value="5.2.1" />
-		</execute>
-
-		<execute macro="Solr#viewLiferayCoreAdminDashboard">
-			<var name="coreName" value="liferay" />
-			<var name="solrVersion" value="5.2.1" />
-		</execute>
--->
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="ProductMenu#gotoPortlet">
@@ -97,16 +88,16 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Apple" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
@@ -115,16 +106,16 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Orange" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
@@ -133,8 +124,11 @@
 	<command ignore="true" name="SolrWithSolrCloudSmokeTest" priority="4">
 		<description message="This smoke test is to ensure that Liferay is successfully running on a remote SolrCloud with 2 nodes by asserting console logging for ZooKeeper and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
 
+		<property name="dummy.socket.proxy.disabled" value="true" />
 		<property name="solr.solrcloud.enabled" value="true" />
 		<property name="test.name.skip.portal.instance" value="Solr#SolrWithSolrCloudSmokeTest" />
+
+		<!-- LPS-83256 -->
 
 		<execute macro="Solr#viewSolrwithSolrCloudEnabledInConsole" />
 
@@ -183,16 +177,16 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Apple" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
@@ -201,16 +195,16 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Orange" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
@@ -263,16 +257,16 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Apple" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
@@ -281,40 +275,18 @@
 			<var name="pageName" value="Solr Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#searchPG">
+		<execute macro="SearchPortlets#searchEmbedded">
 			<var name="searchTerm" value="Orange" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Document" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
+		<execute macro="SearchResultPortlet#viewSearchResults">
 			<var name="searchAssetTitle" value="Apple" />
 			<var name="searchAssetType" value="Message Boards Message" />
 		</execute>
-	</command>
-
-	<command ignore="true" name="ViewReindexAllSearchIndexesLoggingInSolrAdmin" priority="4">
-		<property name="index.on.startup" value="false" />
-		<property name="solr.logging.info.level" value="true" />
-		<property name="test.name.skip.portal.instance" value="Solr#ViewReindexAllSearchIndexesLoggingInSolrAdmin" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
-
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:8983/solr/#/~logging" />
-		</execute>
-
-		<execute macro="Solr#viewLoggerNameInSolrAdminLogging" />
 	</command>
 </definition>

@@ -65,6 +65,7 @@ import com.liferay.journal.util.JournalHelper;
 import com.liferay.journal.util.comparator.ArticleIDComparator;
 import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.journal.util.impl.JournalUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.xml.XMLUtil;
 import com.liferay.portal.kernel.bean.BeanReference;
@@ -140,7 +141,6 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SubscriptionSender;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
@@ -1937,8 +1937,8 @@ public class JournalArticleLocalServiceImpl
 			throw new NoSuchArticleException(
 				StringBundler.concat(
 					"No approved JournalArticle exists with the key {groupId=",
-					String.valueOf(groupId), ", className=", className,
-					", classPK=", String.valueOf(classPK), "}"));
+					groupId, ", className=", className, ", classPK=", classPK,
+					"}"));
 		}
 
 		return articles.get(0);
@@ -3001,7 +3001,7 @@ public class JournalArticleLocalServiceImpl
 			throw new NoSuchArticleException(
 				StringBundler.concat(
 					"No approved JournalArticle exists with the key {groupId=",
-					String.valueOf(groupId), ", articleId=", articleId, "}"));
+					groupId, ", articleId=", articleId, "}"));
 		}
 
 		return article;
@@ -3044,8 +3044,8 @@ public class JournalArticleLocalServiceImpl
 		if (articles.isEmpty()) {
 			throw new NoSuchArticleException(
 				StringBundler.concat(
-					"No JournalArticle exists with the key {groupId=",
-					String.valueOf(groupId), ", urlTitle=", urlTitle, "}"));
+					"No JournalArticle exists with the key {groupId=", groupId,
+					", urlTitle=", urlTitle, "}"));
 		}
 
 		Date now = new Date();
@@ -3263,9 +3263,8 @@ public class JournalArticleLocalServiceImpl
 		if (articles.isEmpty()) {
 			throw new NoSuchArticleException(
 				StringBundler.concat(
-					"No JournalArticle exists with the key {groupId=",
-					String.valueOf(groupId), ", className=", className,
-					", classPK =", String.valueOf(classPK), "}"));
+					"No JournalArticle exists with the key {groupId=", groupId,
+					", className=", className, ", classPK =", classPK, "}"));
 		}
 
 		return articles.get(0);
@@ -3303,9 +3302,8 @@ public class JournalArticleLocalServiceImpl
 		if (article == null) {
 			throw new NoSuchArticleException(
 				StringBundler.concat(
-					"No JournalArticle exists with the key {groupId=",
-					String.valueOf(groupId), ", urlTitle=", urlTitle,
-					", status=", String.valueOf(status), "}"));
+					"No JournalArticle exists with the key {groupId=", groupId,
+					", urlTitle=", urlTitle, ", status=", status, "}"));
 		}
 
 		return article;
@@ -4230,16 +4228,31 @@ public class JournalArticleLocalServiceImpl
 	 * @param  end the upper bound of the range of web content articles to
 	 *         return (not inclusive)
 	 * @return the matching web content articles
+	 *
+	 * @deprecated As of Judson (7.1.x), replaced by {@link
+	 *  		   #search(long groupId, List folderIds, Locale locale,
+	 *  		   int status, int start, int end)}
 	 */
+	@Deprecated
 	@Override
 	public List<JournalArticle> search(
 		long groupId, List<Long> folderIds, int status, int start, int end) {
 
+		Locale locale = LocaleUtil.getMostRelevantLocale();
+
+		return search(groupId, folderIds, locale, status, start, end);
+	}
+
+	@Override
+	public List<JournalArticle> search(
+		long groupId, List<Long> folderIds, Locale locale, int status,
+		int start, int end) {
+
 		QueryDefinition<JournalArticle> queryDefinition = new QueryDefinition<>(
 			status, start, end, null);
 
-		return journalArticleFinder.findByG_F(
-			groupId, folderIds, queryDefinition);
+		return journalArticleFinder.findByG_F_L(
+			groupId, folderIds, locale, queryDefinition);
 	}
 
 	/**
@@ -6531,9 +6544,8 @@ public class JournalArticleLocalServiceImpl
 					_log.error(
 						StringBundler.concat(
 							"Unable to send email to notify the change of ",
-							"status to ", msg, " for article ",
-							String.valueOf(article.getId()), ": ",
-							e.getMessage()));
+							"status to ", msg, " for article ", article.getId(),
+							": ", e.getMessage()));
 				}
 			}
 
@@ -7475,7 +7487,7 @@ public class JournalArticleLocalServiceImpl
 				_log.debug(
 					StringBundler.concat(
 						"Transforming ", article.getArticleId(),
-						StringPool.SPACE, String.valueOf(article.getVersion()),
+						StringPool.SPACE, article.getVersion(),
 						StringPool.SPACE, languageId));
 			}
 

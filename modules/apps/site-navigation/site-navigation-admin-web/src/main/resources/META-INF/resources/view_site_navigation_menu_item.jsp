@@ -37,25 +37,36 @@ request.setAttribute("edit_site_navigation_menu.jsp-siteNavigationMenuItemId", s
 
 <div class="site-navigation-menu-item <%= (siteNavigationMenuItem.getParentSiteNavigationMenuItemId() > 0) ? "site-navigation-menu-item--nested" : StringPool.BLANK %> <%= (selectedSiteNavigationMenuItemId == siteNavigationMenuItemId) ? "site-navigation-menu-item--selected" : StringPool.BLANK %>" <%= AUIUtil.buildData(data) %>" tabindex="0">
 	<div class="site-navigation-menu-item__content">
-		<liferay-frontend:horizontal-card
-			actionJsp="/site_navigation_menu_item_action.jsp"
-			actionJspServletContext="<%= application %>"
-			text="<%= title %>"
-			url="javascript:;"
-		>
-			<div class="site-navigation-menu-item__drag-icon">
-				<liferay-ui:icon
-					icon="drag"
-					markupView="lexicon"
-				/>
-			</div>
+		<div class="card card-horizontal taglib-horizontal-card">
+			<div class="card-row card-row-padded">
+				<div class="card-row">
+					<div class="autofit-col site-navigation-menu-item__drag-icon">
+						<liferay-ui:icon
+							icon="drag"
+							markupView="lexicon"
+						/>
+					</div>
 
-			<liferay-frontend:horizontal-card-col>
-				<liferay-frontend:horizontal-card-icon
-					icon="<%= siteNavigationMenuItemType.getIcon() %>"
-				/>
-			</liferay-frontend:horizontal-card-col>
-		</liferay-frontend:horizontal-card>
+					<div class="autofit-col autofit-col-expand autofit-col-gutters">
+						<h4 class="list-group-title">
+							<span class="text-truncate">
+								<a href="javascript:;">
+									<%= HtmlUtil.escape(title) %>
+								</a>
+							</span>
+						</h4>
+
+						<h6 class="list-group-subtitle text-truncate">
+							<%= HtmlUtil.escape(siteNavigationMenuItemType.getSubtitle(siteNavigationMenuItem, locale)) %>
+						</h6>
+					</div>
+				</div>
+
+				<div class="card-col-field lfr-card-actions-column">
+					<liferay-util:include page="/site_navigation_menu_item_action.jsp" servletContext="<%= application %>" />
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<%

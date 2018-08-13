@@ -44,7 +44,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -84,9 +84,7 @@
 			<var name="portlet" value="Web Content" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Templates" />
-		</execute>
+		<execute macro="NavItem#gotoTemplates" />
 
 		<execute macro="Staging#viewAddButtonDoesNotExist" />
 
@@ -96,15 +94,13 @@
 			<var name="portlet" value="Web Content" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Structures" />
-		</execute>
+		<execute macro="NavItem#gotoStructures" />
 
 		<execute macro="Staging#viewAddButtonDoesNotExist" />
 	</command>
 
 	<command name="DeleteLivePage" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
+		<property name="portal.acceptance" value="true" />
 
 		<execute macro="ProductMenu#gotoSite">
 			<var name="site" value="Site Name" />
@@ -609,7 +605,7 @@
 	</command>
 
 	<command name="PublishPortlet" priority="5">
-		<property name="portal.acceptance" value="false" />
+		<property name="portal.acceptance" value="true" />
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="ProductMenu#gotoSite">

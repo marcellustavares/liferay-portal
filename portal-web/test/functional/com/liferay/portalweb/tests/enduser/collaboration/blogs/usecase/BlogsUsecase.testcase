@@ -39,7 +39,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -1158,7 +1158,7 @@
 		<execute macro="Staging#gotoPublishToLive" />
 
 		<execute macro="Staging#configurePublishToLive">
-			<var name="checkContentNameList" value="Blogs" />
+			<var name="checkContentNameList" value="Blogs,Navigation Menus" />
 			<var name="checkPageName" value="Blogs Page 2" />
 			<var name="contentDateRange" value="All" />
 		</execute>
@@ -1719,7 +1719,7 @@
 	</command>
 
 	<command name="ViewBlogsEntryFriendlyURLViaBlogsPortletAndRecentBloggers" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<var name="entryAuthor" value="Test Test" />
 		<var name="entryContent" value="Blogs Entry Content" />
@@ -1797,7 +1797,7 @@
 
 	<command name="ViewBlogsEntryOnMultiplePagesWithDefaultAndPageScope" priority="4">
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 

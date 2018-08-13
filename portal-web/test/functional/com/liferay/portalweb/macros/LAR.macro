@@ -264,7 +264,9 @@
 	<command name="_selectImportFile">
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION_DIALOG" />
 
-		<execute function="AssertClick" locator1="ExportImport#NAVIGATION_IMPORT" value1="Import" />
+		<execute macro="NavItem#click">
+			<var name="navItem" value="Import" />
+		</execute>
 
 		<execute function="AssertElementPresent" locator1="Button#SELECT_FILE" />
 
@@ -564,8 +566,8 @@
 
 		<execute function="Click" locator1="Dropdown#FILTER_AND_ORDER" />
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Completed">
-			<var name="key_menuItem" value="Completed" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Completed" />
 		</execute>
 	</command>
 
@@ -635,8 +637,8 @@
 
 		<execute function="Click" locator1="Dropdown#FILTER_ORDER" />
 
-		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Completion Date">
-			<var name="key_menuItem" value="Completion Date" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Completion Date" />
 		</execute>
 	</command>
 
@@ -872,7 +874,7 @@
 	</command>
 
 	<command name="viewProcessesInListView">
-		<execute macro="LexiconEntry#changeDisplayStyle">
+		<execute macro="LexiconEntry#changeExportDisplayStyle">
 			<var name="displayStyle" value="table" />
 		</execute>
 	</command>

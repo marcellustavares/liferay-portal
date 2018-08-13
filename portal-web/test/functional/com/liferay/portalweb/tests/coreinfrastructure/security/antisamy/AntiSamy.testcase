@@ -1,0 +1,107 @@
+<definition component-name="portal-security">
+	<property name="portal.release" value="true" />
+	<property name="portal.upstream" value="true" />
+	<property name="testray.main.component.name" value="AntiSamy" />
+
+	<set-up>
+		<execute macro="TestCase#setUpPortalInstance" />
+
+		<execute macro="User#firstLoginPG" />
+	</set-up>
+
+	<tear-down>
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+
+		<if>
+			<equals arg1="${testPortalInstance}" arg2="true" />
+			<then>
+				<execute macro="PortalInstances#tearDownCP" />
+			</then>
+			<else>
+				<execute macro="WikiPage#tearDownCP" />
+
+				<execute macro="Page#tearDownCP" />
+			</else>
+		</if>
+	</tear-down>
+
+	<command name="AssertNoWikiJavascript" priority="4">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="AntiSamy Test Page" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="AntiSamy Test Page" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Wiki" />
+		</execute>
+
+		<var name="wikiPageContent">
+			<![CDATA[
+				<p id='demo'>PASS</p>
+
+				<script type='text/javascript'>
+					document.getElementById('demo').innerHTML = 'FAIL';
+				</script>
+			]]>
+		</var>
+
+		<execute macro="WikiPage#addFrontPagePG">
+			<var name="htmlSource" value="true" />
+			<var name="wikiPageContent" value="${wikiPageContent}" />
+		</execute>
+
+		<execute macro="WikiPage#viewPG">
+			<var name="wikiPageContent" value="PASS" />
+			<var name="wikiPageTitle" value="FrontPage" />
+		</execute>
+	</command>
+
+	<command name="AssertWebContentJavascript" priority="4">
+		<execute macro="ProductMenu#gotoPortlet">
+			<var name="category" value="Build" />
+			<var name="panel" value="Site Administration" />
+			<var name="portlet" value="Pages" />
+		</execute>
+
+		<execute macro="SitePages#addPublicPage">
+			<var name="pageName" value="Web Content Display Page" />
+		</execute>
+
+		<execute macro="Navigator#gotoPage">
+			<var name="pageName" value="Web Content Display Page" />
+		</execute>
+
+		<execute macro="Portlet#addPG">
+			<var name="portletName" value="Web Content Display" />
+		</execute>
+
+		<var name="webContentContent">
+			<![CDATA[
+				<p id='demo'>FAIL</p>
+
+				<script type='text/javascript'>
+					document.getElementById('demo').innerHTML = 'PASS';
+				</script>
+			]]>
+		</var>
+
+		<execute macro="WebContent#addPGViaWCD">
+			<var name="webContentContent" value="${webContentContent}" />
+			<var name="webContentTitle" value="WC WebContent Title" />
+		</execute>
+
+		<execute macro="WebContent#viewPGViaWCD">
+			<var name="webContentContent" value="PASS" />
+			<var name="webContentTitle" value="Web Content Title" />
+		</execute>
+	</command>
+</definition>

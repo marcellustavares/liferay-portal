@@ -622,6 +622,18 @@ version 1.0.234.
 - [LPS-83483]: Update the [Liferay Portal Tools Service Builder] dependency to
 version 1.0.235.
 
+## 2.1.53 - 2018-07-25
+
+### Changed
+- [LPS-83761]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.236.
+
+## 2.1.54 - 2018-07-27
+
+### Changed
+- [LPS-78938]: Update the [Liferay Portal Tools Service Builder] dependency to
+version 1.0.237.
+
 [Liferay Portal Tools Service Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-service-builder
 [LPS-53392]: https://issues.liferay.com/browse/LPS-53392
 [LPS-58672]: https://issues.liferay.com/browse/LPS-58672
@@ -668,6 +680,7 @@ version 1.0.235.
 [LPS-78023]: https://issues.liferay.com/browse/LPS-78023
 [LPS-78477]: https://issues.liferay.com/browse/LPS-78477
 [LPS-78901]: https://issues.liferay.com/browse/LPS-78901
+[LPS-78938]: https://issues.liferay.com/browse/LPS-78938
 [LPS-78940]: https://issues.liferay.com/browse/LPS-78940
 [LPS-78971]: https://issues.liferay.com/browse/LPS-78971
 [LPS-79262]: https://issues.liferay.com/browse/LPS-79262
@@ -702,3 +715,4 @@ version 1.0.235.
 [LPS-82815]: https://issues.liferay.com/browse/LPS-82815
 [LPS-82828]: https://issues.liferay.com/browse/LPS-82828
 [LPS-83483]: https://issues.liferay.com/browse/LPS-83483
+[LPS-83761]: https://issues.liferay.com/browse/LPS-83761

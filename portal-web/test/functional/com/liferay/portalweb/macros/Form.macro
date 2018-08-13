@@ -226,10 +226,10 @@
 		</execute>
 	</command>
 
-	<command name="getPublishedFormPublicURL" returns="publicURL">
+	<command name="getPublishedFormPublicURL">
 		<var method="selenium#getElementValue(Form#PUBLISH_FORM_PUBLIC_URL)" name="publicURL" />
 
-		<return name="publicURL" value="${publicURL}" />
+		<return value="${publicURL}" />
 	</command>
 
 	<command name="gotoAddElementSet">
@@ -326,8 +326,8 @@
 	<command name="saveAndPublish">
 		<execute function="Click" locator1="Form#SAVE_BUTTON_DROPDOWN" />
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Save and Publish Live Page">
-			<var name="key_menuItem" value="Save and Publish Live Page" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Save and Publish Live Page" />
 		</execute>
 
 		<execute macro="Alert#viewSuccessMessage" />

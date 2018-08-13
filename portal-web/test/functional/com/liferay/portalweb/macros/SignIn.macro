@@ -136,8 +136,8 @@
 					<var name="key_rowNumber" value="2" />
 				</execute>
 
-				<execute function="AssertClickNoError" locator1="MenuItem#ANY_MENU_ITEM" value1="Delete">
-					<var name="key_menuItem" value="Delete" />
+				<execute macro="MenuItem#clickNoError">
+					<var name="menuItem" value="Delete" />
 				</execute>
 
 				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
@@ -146,7 +146,7 @@
 			</then>
 		</while>
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<var method="StringUtil#replace('${portalURL}', 'http://', '')" name="portalURL" />
 		<var method="StringUtil#replace('${portalURL}', ':8080', '')" name="portalURL" />

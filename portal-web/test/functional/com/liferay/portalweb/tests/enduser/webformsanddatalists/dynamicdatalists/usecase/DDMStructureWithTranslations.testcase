@@ -33,7 +33,7 @@
 		<execute macro="DDLDataDefinition#addCP" />
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="sourceJSON" />
+			<return name="sourceJSON" />
 			<var name="fileName" value="complexDDMStructure.json" />
 		</execute>
 
@@ -73,7 +73,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />

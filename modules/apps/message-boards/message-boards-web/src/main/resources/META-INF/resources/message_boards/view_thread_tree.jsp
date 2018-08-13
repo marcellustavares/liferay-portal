@@ -43,17 +43,12 @@ MBMessageDisplay messageDisplay = (MBMessageDisplay)request.getAttribute(WebKeys
 	request.setAttribute("edit-message.jsp-showPermanentLink", Boolean.TRUE);
 	request.setAttribute("edit-message.jsp-showRecentPosts", Boolean.TRUE);
 	request.setAttribute("edit_message.jsp-category", category);
-	request.setAttribute("edit_message.jsp-editable", Boolean.TRUE);
+	request.setAttribute("edit_message.jsp-editable", !thread.isInTrash());
 	request.setAttribute("edit_message.jsp-message", message);
 	request.setAttribute("edit_message.jsp-thread", thread);
 	%>
 
 	<liferay-util:include page="/message_boards/view_thread_message.jsp" servletContext="<%= application %>" />
-
-	<%
-	request.setAttribute(WebKeys.MESSAGE_BOARDS_TREE_WALKER_VIEWABLE_THREAD, Boolean.TRUE.toString());
-	%>
-
 </c:if>
 
 <c:if test="<%= message.getMessageId() != treeWalker.getRoot().getMessageId() %>">

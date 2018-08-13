@@ -45,6 +45,7 @@ import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DDMXML;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidator;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -73,7 +74,6 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -164,8 +164,6 @@ public class DDMStructureLocalServiceImpl
 		structure.setDefinition(ddmFormJSONSerializer.serialize(ddmForm));
 		structure.setStorageType(storageType);
 		structure.setType(type);
-
-		structure.setDDMForm(new DDMForm(ddmForm));
 
 		ddmStructurePersistence.update(structure);
 
@@ -1590,8 +1588,6 @@ public class DDMStructureLocalServiceImpl
 		structureVersion.setStatusByUserName(user.getFullName());
 		structureVersion.setStatusDate(structure.getModifiedDate());
 
-		structureVersion.setDDMForm(structure.getDDMForm());
-
 		ddmStructureVersionPersistence.update(structureVersion);
 
 		return structureVersion;
@@ -1664,8 +1660,6 @@ public class DDMStructureLocalServiceImpl
 		structure.setVersionUserName(user.getFullName());
 		structure.setDescriptionMap(descriptionMap, ddmForm.getDefaultLocale());
 		structure.setDefinition(ddmFormJSONSerializer.serialize(ddmForm));
-
-		structure.setDDMForm(new DDMForm(ddmForm));
 
 		// Structure version
 
@@ -2045,9 +2039,8 @@ public class DDMStructureLocalServiceImpl
 			LocaleException le = new LocaleException(
 				LocaleException.TYPE_CONTENT,
 				StringBundler.concat(
-					"The locale ", String.valueOf(contentDefaultLocale),
-					" is not available in company ",
-					String.valueOf(companyId)));
+					"The locale ", contentDefaultLocale,
+					" is not available in company ", companyId));
 
 			le.setSourceAvailableLocales(
 				Collections.singleton(contentDefaultLocale));

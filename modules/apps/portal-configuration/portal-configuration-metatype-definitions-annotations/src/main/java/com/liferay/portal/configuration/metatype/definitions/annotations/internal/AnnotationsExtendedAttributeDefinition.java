@@ -14,7 +14,13 @@
 
 package com.liferay.portal.configuration.metatype.definitions.annotations.internal;
 
-import com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDefinition;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedAttributeDefinition;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.lang.reflect.Method;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,13 +33,18 @@ import org.osgi.service.metatype.AttributeDefinition;
  * @author Iván Zaera
  */
 public class AnnotationsExtendedAttributeDefinition
-	implements ExtendedAttributeDefinition {
+	implements com.liferay.portal.configuration.metatype.definitions.ExtendedAttributeDefinition {
 
 	public AnnotationsExtendedAttributeDefinition(
 		Class<?> configurationBeanClass,
 		AttributeDefinition attributeDefinition) {
 
+		_configurationBeanClass = configurationBeanClass;
 		_attributeDefinition = attributeDefinition;
+
+		if (configurationBeanClass != null) {
+			_processExtendedMetatypeFields();
+		}
 	}
 
 	@Override
@@ -97,7 +108,60 @@ public class AnnotationsExtendedAttributeDefinition
 		return _attributeDefinition.validate(value);
 	}
 
+	private ExtendedAttributeDefinition _getExtendedAttributeDefinition() {
+		try {
+			Method method = _configurationBeanClass.getMethod(
+				_attributeDefinition.getID());
+
+			return method.getAnnotation(ExtendedAttributeDefinition.class);
+		}
+		catch (NoSuchMethodException nsme) {
+			return null;
+		}
+	}
+
+	private void _processExtendedMetatypeFields() {
+		try {
+			Method method = _configurationBeanClass.getMethod(
+				_attributeDefinition.getID());
+
+			ExtendedAttributeDefinition extendedAttributeDefinition =
+				method.getAnnotation(ExtendedAttributeDefinition.class);
+
+			if (extendedAttributeDefinition != null) {
+				Map<String, String> map = new HashMap<>();
+
+				map.put(
+					"description-arguments",
+					StringUtil.merge(
+						extendedAttributeDefinition.descriptionArguments()));
+				map.put(
+					"name-arguments",
+					StringUtil.merge(
+						extendedAttributeDefinition.nameArguments()));
+
+				_extensionAttributes.put(
+					ExtendedAttributeDefinition.XML_NAMESPACE, map);
+			}
+		}
+		catch (NoSuchMethodException nsme) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat(
+						"The configuration bean class ",
+						_configurationBeanClass.getName(),
+						" does not have a method for the attribute definition ",
+						_attributeDefinition.getID()),
+					nsme);
+			}
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AnnotationsExtendedAttributeDefinition.class);
+
 	private final AttributeDefinition _attributeDefinition;
+	private final Class<?> _configurationBeanClass;
 	private final Map<String, Map<String, String>> _extensionAttributes =
 		new HashMap<>();
 

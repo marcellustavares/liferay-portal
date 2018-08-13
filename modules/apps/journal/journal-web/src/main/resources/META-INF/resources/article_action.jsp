@@ -208,14 +208,19 @@ else {
 		/>
 	</c:if>
 
-	<c:if test="<%= journalDisplayContext.isShowPublishArticleAction(article) %>">
+	<%
+	Group group = themeDisplay.getScopeGroup();
+	%>
+
+	<c:if test="<%= journalDisplayContext.isShowPublishArticleAction(article) && !group.isLayout() %>">
 		<portlet:actionURL name="/journal/publish_article" var="publishArticleURL">
 			<portlet:param name="backURL" value="<%= currentURL %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(article.getGroupId()) %>" />
 			<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
 		</portlet:actionURL>
 
-		<liferay-ui:icon
+		<liferay-ui:icon-delete
+			confirmation="are-you-sure-you-want-to-publish-the-selected-web-content"
 			message="publish-to-live"
 			url="<%= publishArticleURL %>"
 		/>

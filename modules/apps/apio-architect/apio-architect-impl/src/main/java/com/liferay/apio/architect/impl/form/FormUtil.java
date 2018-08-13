@@ -25,6 +25,7 @@ import com.liferay.apio.architect.form.FormField;
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.impl.alias.form.FieldFormBiConsumer;
 import com.liferay.apio.architect.impl.date.DateTransformer;
+import com.liferay.apio.architect.impl.url.URLCreator;
 import com.liferay.apio.architect.uri.Path;
 
 import java.text.NumberFormat;
@@ -213,9 +214,28 @@ public class FormUtil {
 	 */
 	public static <T> BiConsumer<String, Function<T, Consumer<?>>>
 		getOptionalLinkedModel(
-			Body body, T t, IdentifierFunction identifierFunction) {
+			Body body, T t, IdentifierFunction<?> pathToIdentifierFunction) {
 
 		return (key, function) -> _getLinkedModelValueField(
+			body, key, false, function.apply(t), pathToIdentifierFunction);
+	}
+
+	/**
+	 * Returns a field form consumer that tries to extract a list of linked
+	 * models from the HTTP request body and store it in the provided {@code T}
+	 * instance. If the field isn't an URL, a {@code
+	 * BadRequestException} is thrown.
+	 *
+	 * @param  body the HTTP request body
+	 * @param  t the form values store
+	 * @return the field form function, that maps a path with its identifier
+	 * @review
+	 */
+	public static <T> BiConsumer<String, Function<T, Consumer<List<?>>>>
+		getOptionalLinkedModelList(
+			Body body, T t, IdentifierFunction identifierFunction) {
+
+		return (key, function) -> _getLinkedModelListValueField(
 			body, key, false, function.apply(t), identifierFunction);
 	}
 
@@ -443,11 +463,30 @@ public class FormUtil {
 	 * @return the field form function, that maps a path with its identifier
 	 * @review
 	 */
-	public static <T> BiConsumer<String, Function<T, Consumer>>
+	public static <T> BiConsumer<String, Function<T, Consumer<?>>>
 		getRequiredLinkedModel(
-			Body body, T t, IdentifierFunction identifierFunction) {
+			Body body, T t, IdentifierFunction<?> pathToIdentifierFunction) {
 
 		return (key, function) -> _getLinkedModelValueField(
+			body, key, true, function.apply(t), pathToIdentifierFunction);
+	}
+
+	/**
+	 * Returns a required {@code FormField} consumer that tries to extract a
+	 * list of linked models from the HTTP request body and store it in the
+	 * provided {@code T} instance. If the field isn't an URL, a {@code
+	 * BadRequestException} is thrown.
+	 *
+	 * @param  body the HTTP request body
+	 * @param  t the form values store
+	 * @return the field form function, that maps a path with its identifier
+	 * @review
+	 */
+	public static <T> BiConsumer<String, Function<T, Consumer<List<?>>>>
+		getRequiredLinkedModelList(
+			Body body, T t, IdentifierFunction identifierFunction) {
+
+		return (key, function) -> _getLinkedModelListValueField(
 			body, key, true, function.apply(t), identifierFunction);
 	}
 
@@ -622,9 +661,35 @@ public class FormUtil {
 		return stream.map(name -> new FormFieldImpl(name, required, fieldType));
 	}
 
+	private static void _getLinkedModelListValueField(
+		Body body, String key, boolean required, Consumer<List<?>> consumer,
+		IdentifierFunction<?> identifierFunction) {
+
+		Optional<List<String>> optional = body.getValueListOptional(key);
+
+		if (optional.isPresent()) {
+			List<String> urls = optional.get();
+
+			Stream<String> urlStream = urls.stream();
+
+			List<?> list = urlStream.map(
+				URLCreator::getPath
+			).map(
+				identifierFunction::apply
+			).collect(
+				Collectors.toList()
+			);
+
+			consumer.accept(list);
+		}
+		else if (required) {
+			throw new BadRequestException("Field \"" + key + "\" is required");
+		}
+	}
+
 	private static void _getLinkedModelValueField(
 		Body body, String key, boolean required, Consumer consumer,
-		IdentifierFunction<?> identifierFunction) {
+		IdentifierFunction<?> pathToIdentifierFunction) {
 
 		Optional<String> optional = body.getValueOptional(key);
 
@@ -633,7 +698,7 @@ public class FormUtil {
 
 			Path path = getPath(url);
 
-			Object object = identifierFunction.apply(path);
+			Object object = pathToIdentifierFunction.apply(path);
 
 			consumer.accept(object);
 		}

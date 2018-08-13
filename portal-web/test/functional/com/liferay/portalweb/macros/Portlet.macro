@@ -1,6 +1,6 @@
 <definition>
 	<command name="_clickAddPortlet">
-		<var method="TestPropsUtil#get('browser.type')" name="browserType" />
+		<var method="PropsUtil#get('browser.type')" name="browserType" />
 
 		<if>
 			<equals arg1="${browserType}" arg2="safari" />
@@ -116,8 +116,6 @@
 			</then>
 		</if>
 
-		<execute macro-mobile="MobileNavigator#clickRemoveIcon" />
-
 		<if>
 			<condition function="IsNotVisible" locator1="ControlMenuAddPanel#CLOSE_ADD_PANEL" />
 			<then>
@@ -134,7 +132,7 @@
 
 		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="${portletName}" />
 
-		<execute macro-desktop="Portlet#_clickAddPortlet" macro-mobile="Portlet#_mobileClickAddPortlet">
+		<execute macro="Portlet#_clickAddPortlet">
 			<var name="portletName" value="${portletName}" />
 		</execute>
 
@@ -160,7 +158,7 @@
 
 				<var method="MathUtil#sum('${shutdownPauseCount}', '1')" name="shutdownPauseCount" />
 
-				<echo>Shutdown pause count: ${shutdownPauseCount}</echo>
+				<echo message="Shutdown pause count: ${shutdownPauseCount}" />
 			</then>
 		</while>
 	</command>
@@ -184,7 +182,7 @@
 
 				<var method="MathUtil#sum('${startupPauseCount}', '1')" name="startupPauseCount" />
 
-				<echo>Startup pause count: ${startupPauseCount}</echo>
+				<echo message="Startup pause count: ${startupPauseCount}" />
 			</then>
 		</while>
 	</command>
@@ -260,8 +258,8 @@
 
 		<execute function="Click" locator1="Portlet#SPECIFIC_ELLIPSIS_ICON" />
 
-		<execute function="AssertClickNoError" locator1="MenuItem#ANY_MENU_ITEM" value1="Remove">
-			<var name="key_menuItem" value="Remove" />
+		<execute macro="MenuItem#clickNoError">
+			<var name="menuItem" value="Remove" />
 		</execute>
 
 		<execute function="Confirm" value1="Are you sure you want to remove this component?" />
@@ -307,9 +305,9 @@
 		<if>
 			<isset var="portletOption" />
 			<then>
-				<var name="key_menuItem" value="${portletOption}" />
-
-				<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" />
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="${portletOption}" />
+				</execute>
 			</then>
 		</if>
 	</command>

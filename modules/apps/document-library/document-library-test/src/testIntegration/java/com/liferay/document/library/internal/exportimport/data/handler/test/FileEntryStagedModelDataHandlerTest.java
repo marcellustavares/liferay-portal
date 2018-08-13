@@ -16,6 +16,7 @@ package com.liferay.document.library.internal.exportimport.data.handler.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.constants.DLPortletKeys;
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
@@ -50,6 +51,7 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestDataConstants;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -57,7 +59,6 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.repository.portletrepository.PortletRepository;
-import com.liferay.portal.test.randomizerbumpers.TikaSafeRandomizerBumper;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
 
@@ -440,8 +441,7 @@ public class FileEntryStagedModelDataHandlerTest
 		return DLAppLocalServiceUtil.addFileEntry(
 			TestPropsValues.getUserId(), group.getGroupId(),
 			folder.getFolderId(), RandomTestUtil.randomString() + ".txt",
-			ContentTypes.TEXT_PLAIN,
-			RandomTestUtil.randomBytes(TikaSafeRandomizerBumper.INSTANCE),
+			ContentTypes.TEXT_PLAIN, TestDataConstants.TEST_BYTE_ARRAY,
 			serviceContext);
 	}
 
@@ -599,7 +599,15 @@ public class FileEntryStagedModelDataHandlerTest
 			fileEntry.getDescription(), importedFileEntry.getDescription());
 		Assert.assertEquals(fileEntry.getSize(), importedFileEntry.getSize());
 
-		FileVersion latestFileVersion = fileEntry.getLatestFileVersion();
+		FileVersion latestFileVersion = null;
+
+		try {
+			latestFileVersion = fileEntry.getLatestFileVersion();
+		}
+		catch (NoSuchFileEntryException nsfee) {
+			return;
+		}
+
 		FileVersion importedLatestFileVersion =
 			importedFileEntry.getLatestFileVersion();
 

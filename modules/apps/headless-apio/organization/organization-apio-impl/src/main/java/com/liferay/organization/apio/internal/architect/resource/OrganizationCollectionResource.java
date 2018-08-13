@@ -14,27 +14,38 @@
 
 package com.liferay.organization.apio.internal.architect.resource;
 
+import com.liferay.address.apio.architect.identifier.AddressIdentifier;
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
+import com.liferay.apio.architect.representor.NestedRepresentor;
 import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.CollectionResource;
 import com.liferay.apio.architect.routes.CollectionRoutes;
 import com.liferay.apio.architect.routes.ItemRoutes;
+import com.liferay.email.apio.architect.identifier.EmailIdentifier;
 import com.liferay.organization.apio.architect.identifier.OrganizationIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.phone.apio.architect.identifier.PhoneIdentifier;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ListType;
+import com.liferay.portal.kernel.model.OrgLabor;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.service.CountryService;
-import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.GroupService;
+import com.liferay.portal.kernel.service.OrgLaborService;
 import com.liferay.portal.kernel.service.OrganizationService;
 import com.liferay.portal.kernel.service.RegionService;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.webserver.WebServerServletTokenUtil;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
+import com.liferay.web.url.apio.architect.identifier.WebUrlIdentifier;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import java.util.List;
 import java.util.Locale;
@@ -87,7 +98,7 @@ public class OrganizationCollectionResource
 		).identifier(
 			Organization::getOrganizationId
 		).addBidirectionalModel(
-			"parentOrganization", "suborganizations",
+			"parentOrganization", "suborganization",
 			OrganizationIdentifier.class,
 			OrganizationCollectionResource::_getParentOrganizationId
 		).addLinkedModel(
@@ -101,10 +112,23 @@ public class OrganizationCollectionResource
 			).addString(
 				"addressRegion", this::_getRegion
 			).build()
+		).addNestedList(
+			"services", this::_getOrgLabors,
+			this::_getServiceNestedRepresentorFunction
 		).addRelatedCollection(
-			"members", PersonIdentifier.class
+			"addresses", AddressIdentifier.class
+		).addRelatedCollection(
+			"emails", EmailIdentifier.class
+		).addRelatedCollection(
+			"phones", PhoneIdentifier.class
+		).addRelatedCollection(
+			"userAccounts", PersonIdentifier.class
+		).addRelatedCollection(
+			"webUrls", WebUrlIdentifier.class
 		).addRelativeURL(
 			"logo", this::_getLogoURL
+		).addString(
+			"comments", Organization::getComments
 		).addString(
 			"name", Organization::getName
 		).build();
@@ -120,6 +144,20 @@ public class OrganizationCollectionResource
 		return parentOrganizationId;
 	}
 
+	private String _formatHour(int integer) {
+		DecimalFormat decimalFormat = new DecimalFormat("00,00");
+
+		DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+
+		decimalFormatSymbols.setGroupingSeparator(':');
+
+		decimalFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+
+		decimalFormat.setGroupingSize(2);
+
+		return decimalFormat.format(integer);
+	}
+
 	private String _getCountry(Organization organization, Locale locale) {
 		return Try.success(
 			organization.getCountryId()
@@ -132,6 +170,18 @@ public class OrganizationCollectionResource
 		);
 	}
 
+	private String _getHours(int hours) {
+		return Try.fromFallible(
+			() -> hours
+		).filter(
+			value -> value != -1
+		).map(
+			this::_formatHour
+		).orElse(
+			null
+		);
+	}
+
 	private String _getLogoURL(Organization organization) {
 		return Try.success(
 			organization.getLogoId()
@@ -139,9 +189,27 @@ public class OrganizationCollectionResource
 			logoId -> logoId != 0
 		).map(
 			logoId -> StringBundler.concat(
-				_portal.getPathImage(), "/organization_logo?img_id=",
-				String.valueOf(logoId), "&t=",
-				WebServerServletTokenUtil.getToken(logoId))
+				_portal.getPathImage(), "/organization_logo?img_id=", logoId,
+				"&t=", WebServerServletTokenUtil.getToken(logoId))
+		).orElse(
+			null
+		);
+	}
+
+	private List<OrgLabor> _getOrgLabors(Organization organization) {
+		return Try.fromFallible(
+			() -> _orgLaborService.getOrgLabors(
+				organization.getOrganizationId())
+		).orElse(
+			null
+		);
+	}
+
+	private String _getOrgLaborType(OrgLabor orgLabor) {
+		return Try.fromFallible(
+			orgLabor::getType
+		).map(
+			ListType::getName
 		).orElse(
 			null
 		);
@@ -172,11 +240,49 @@ public class OrganizationCollectionResource
 		);
 	}
 
+	private NestedRepresentor<OrgLabor> _getServiceNestedRepresentorFunction(
+		NestedRepresentor.Builder<OrgLabor> orgLaborBuilder) {
+
+		return orgLaborBuilder.types(
+			"OrgLabor"
+		).addString(
+			"type", this::_getOrgLaborType
+		).addString(
+			"fridayClose", orgLabor -> _getHours(orgLabor.getFriClose())
+		).addString(
+			"fridayOpen", orgLabor -> _getHours(orgLabor.getFriOpen())
+		).addString(
+			"mondayClose", orgLabor -> _getHours(orgLabor.getMonClose())
+		).addString(
+			"mondayOpen", orgLabor -> _getHours(orgLabor.getMonOpen())
+		).addString(
+			"saturdayClose", orgLabor -> _getHours(orgLabor.getSatClose())
+		).addString(
+			"saturdayOpen", orgLabor -> _getHours(orgLabor.getSatOpen())
+		).addString(
+			"sundayClose", orgLabor -> _getHours(orgLabor.getSunClose())
+		).addString(
+			"sundayOpen", orgLabor -> _getHours(orgLabor.getSunOpen())
+		).addString(
+			"thursdayClose", orgLabor -> _getHours(orgLabor.getThuClose())
+		).addString(
+			"thursdayOpen", orgLabor -> _getHours(orgLabor.getThuOpen())
+		).addString(
+			"tuesdayClose", orgLabor -> _getHours(orgLabor.getTueClose())
+		).addString(
+			"tuesdayOpen", orgLabor -> _getHours(orgLabor.getTueOpen())
+		).addString(
+			"wednesdayClose", orgLabor -> _getHours(orgLabor.getWedClose())
+		).addString(
+			"wednesdayOpen", orgLabor -> _getHours(orgLabor.getWedOpen())
+		).build();
+	}
+
 	private Long _getSiteId(Organization organization) {
 		return Try.success(
 			organization.getGroupId()
 		).map(
-			_groupLocalService::getGroup
+			_groupService::getGroup
 		).filter(
 			Group::isSite
 		).map(
@@ -190,10 +296,13 @@ public class OrganizationCollectionResource
 	private CountryService _countryService;
 
 	@Reference
-	private GroupLocalService _groupLocalService;
+	private GroupService _groupService;
 
 	@Reference
 	private OrganizationService _organizationService;
+
+	@Reference
+	private OrgLaborService _orgLaborService;
 
 	@Reference
 	private Portal _portal;

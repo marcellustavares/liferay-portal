@@ -14,7 +14,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -1175,10 +1175,10 @@
 		<property name="custom.properties" value="message.boards.message.formats.default=html${line.separator}pop.server.notifications.enabled=true${line.separator}pop.server.subdomain=${line.separator}mail.session.mail.smtp.auth=true${line.separator}mail.session.mail.store.protocol=pop3${line.separator}mail.session.mail.transport.protocol=smtp" />
 		<property name="test.name.skip.portal.instance" value="MessageboardsUsecase#ViewMBThreadAndReplyThreadInGmail" />
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		<var method="PropsUtil#get('portal.url')" name="portalURL" />
 
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -1190,8 +1190,8 @@
 
 		<execute macro="ServerAdministration#configureMailServerSettings">
 			<var name="needsReply" value="true" />
-			<var method="TestPropsUtil#get('email.address.2')" name="userName" />
-			<var method="TestPropsUtil#get('email.password.2')" name="userPassword" />
+			<var method="PropsUtil#get('email.address.2')" name="userName" />
+			<var method="PropsUtil#get('email.password.2')" name="userPassword" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -1214,7 +1214,7 @@
 		</execute>
 
 		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.address.3')" name="userEmailAddress" />
 			<var name="userFirstName" value="userfn" />
 			<var name="userLastName" value="userln" />
 			<var name="userScreenName" value="usersn" />
@@ -1227,7 +1227,7 @@
 		</execute>
 
 		<execute macro="User#editPasswordCP">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.address.3')" name="userEmailAddress" />
 			<var name="userScreenName" value="usersn" />
 		</execute>
 
@@ -1243,11 +1243,11 @@
 		</execute>
 
 		<execute macro="User#editEmailViaMyAccount">
-			<var method="TestPropsUtil#get('email.address.4')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.address.4')" name="userEmailAddress" />
 		</execute>
 
 		<execute macro="MessageboardsPortlet#configureMessageEmailFromCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="emailFromAddress" />
+			<var method="PropsUtil#get('email.address.2')" name="emailFromAddress" />
 		</execute>
 
 		<execute macro="Navigator#openURL" />
@@ -1290,7 +1290,7 @@
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.address.3')" name="userEmailAddress" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1307,7 +1307,7 @@
 
 		<execute macro="User#loginPG">
 			<var name="password" value="test" />
-			<var method="TestPropsUtil#get('email.address.4')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.address.4')" name="userEmailAddress" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1326,8 +1326,8 @@
 		<execute function="Pause" locator1="30000" />
 
 		<execute macro="Gmail#login">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
-			<var method="TestPropsUtil#get('email.password.3')" name="userPassword" />
+			<var method="PropsUtil#get('email.address.3')" name="userEmailAddress" />
+			<var method="PropsUtil#get('email.password.3')" name="userPassword" />
 		</execute>
 
 		<execute macro="Gmail#gotoHtmlMode" />
@@ -1562,7 +1562,7 @@
 
 	<command name="ViewMessageBoardsRSS" priority="4">
 		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
+			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />
 		</execute>
 
@@ -1905,8 +1905,9 @@
 		<var name="key_threadSubject" value="MB Thread Message Subject" />
 
 		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
-		<execute function="AssertTextEquals" locator1="MenuItem#ANY_MENU_ITEM" value1="Subscribe">
-			<var name="key_menuItem" value="Subscribe" />
+
+		<execute macro="MenuItem#viewPresent">
+			<var name="menuItem" value="Subscribe" />
 		</execute>
 
 		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
@@ -1920,16 +1921,17 @@
 		</execute>
 
 		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
-		<execute function="AssertTextEquals" locator1="MenuItem#ANY_MENU_ITEM" value1="Unsubscribe">
-			<var name="key_menuItem" value="Unsubscribe" />
+
+		<execute macro="MenuItem#viewPresent">
+			<var name="menuItem" value="Unsubscribe" />
 		</execute>
 
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
 
 		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
-		<execute function="AssertTextEquals" locator1="MenuItem#ANY_MENU_ITEM" value1="Unsubscribe">
-			<var name="key_menuItem" value="Unsubscribe" />
+		<execute macro="MenuItem#viewPresent">
+			<var name="menuItem" value="Unsubscribe" />
 		</execute>
 
 		<execute macro="Navigator#gotoPage">
@@ -1954,8 +1956,8 @@
 
 		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Subscribe" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Subscribe" />
 		</execute>
 
 		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
@@ -1967,16 +1969,16 @@
 		</execute>
 
 		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM">
-			<var name="key_menuItem" value="Unsubscribe" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Unsubscribe" />
 		</execute>
 
 		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
 
 		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
 
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM" value1="Unsubscribe">
-			<var name="key_menuItem" value="Unsubscribe" />
+		<execute macro="MenuItem#viewNotPresent">
+			<var name="menuItem" value="Unsubscribe" />
 		</execute>
 	</command>
 

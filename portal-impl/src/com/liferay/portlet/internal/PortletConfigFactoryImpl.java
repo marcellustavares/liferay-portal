@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.PortletConfigFactory;
 import com.liferay.portal.kernel.portlet.PortletContextFactory;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
-import com.liferay.portal.security.lang.DoPrivilegedUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +30,6 @@ import javax.servlet.ServletContext;
 /**
  * @author Brian Wing Shun Chan
  */
-@DoPrivileged
 public class PortletConfigFactoryImpl implements PortletConfigFactory {
 
 	public PortletConfigFactoryImpl() {
@@ -70,7 +67,7 @@ public class PortletConfigFactoryImpl implements PortletConfigFactory {
 			portletConfigs.put(portlet.getPortletId(), portletConfig);
 		}
 
-		return DoPrivilegedUtil.wrap(portletConfig);
+		return portletConfig;
 	}
 
 	@Override
@@ -120,7 +117,7 @@ public class PortletConfigFactoryImpl implements PortletConfigFactory {
 
 		portletConfigs.put(portlet.getPortletId(), portletConfig);
 
-		return DoPrivilegedUtil.wrap(portletConfig);
+		return portletConfig;
 	}
 
 	private final Map<String, Map<String, PortletConfig>> _pool;

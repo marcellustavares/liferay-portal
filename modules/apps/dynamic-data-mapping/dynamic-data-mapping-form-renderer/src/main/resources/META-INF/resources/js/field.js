@@ -141,6 +141,8 @@ AUI.add(
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
 
+						instance._eventHandlers = null;
+
 						instance.set('rendered', false);
 					},
 
@@ -225,9 +227,13 @@ AUI.add(
 
 						var container = document.createDocumentFragment();
 
-						new renderer(instance.getTemplateContext(), container);
+						const metalComponent = new renderer(instance.getTemplateContext(), container);
 
-						return container.firstChild.outerHTML;
+						const html = container.firstChild.outerHTML;
+
+						metalComponent.dispose();
+
+						return html;
 					},
 
 					getTemplateContext: function() {
@@ -297,7 +303,7 @@ AUI.add(
 
 						container.setContent(instance.getTemplate());
 
-						instance.eachField(
+						instance.eachNestedField(
 							function(field) {
 								field.updateContainer();
 							}

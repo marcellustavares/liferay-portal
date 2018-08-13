@@ -31,7 +31,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -56,7 +56,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="htmlSnippet" />
+			<return name="htmlSnippet" />
 			<var name="fileName" value="fragment_button.html" />
 		</execute>
 
@@ -66,7 +66,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="cssSnippet" />
+			<return name="cssSnippet" />
 			<var name="fileName" value="fragment_button.css" />
 		</execute>
 
@@ -76,7 +76,7 @@
 		</execute>
 
 		<execute macro="TestCase#getFileContent">
-			<return from="fileContent" name="javascriptSnippet" />
+			<return name="javascriptSnippet" />
 			<var name="fileName" value="fragment_button.js" />
 		</execute>
 
@@ -97,9 +97,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		<execute macro="NavItem#gotoPageTemplates" />
 
 		<execute macro="LayoutPageTemplates#addCollection">
 			<var name="collectionName" value="Page Template Collection" />
@@ -126,9 +124,7 @@
 			<var name="portlet" value="Pages" />
 		</execute>
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Pages" />
-		</execute>
+		<execute macro="NavItem#gotoPages" />
 
 		<execute macro="ContentPages#addPage">
 			<var name="pageName" value="Test Page Name" />

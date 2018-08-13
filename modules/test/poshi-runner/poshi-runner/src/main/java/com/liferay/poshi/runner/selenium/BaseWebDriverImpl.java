@@ -243,6 +243,24 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		}
 	}
 
+	public void assertAttributeNotPresent(String attribute, String locator)
+		throws Exception {
+
+		if (isAttributePresent(attribute, locator)) {
+			throw new Exception(
+				"Unexpected attribute \"" + attribute + "\" is present");
+		}
+	}
+
+	public void assertAttributePresent(String attribute, String locator)
+		throws Exception {
+
+		if (!isAttributePresent(attribute, locator)) {
+			throw new Exception(
+				"Expected attribute \"" + attribute + "\" is not present");
+		}
+	}
+
 	public void assertAttributeValue(
 			String attribute, String locator, String pattern)
 		throws Exception {
@@ -1510,6 +1528,37 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		return alertPresent;
 	}
 
+	public boolean isAttributeNotPresent(String attribute, String locator) {
+		return !isAttributePresent(attribute, locator);
+	}
+
+	public boolean isAttributePresent(String attribute, String locator) {
+		WebElement webElement = getWebElement(locator);
+
+		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		JavascriptExecutor javascriptExecutor =
+			(JavascriptExecutor)wrappedWebDriver;
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var element = arguments[0];");
+		sb.append("return element.attributes[\'");
+		sb.append(attribute);
+		sb.append("\'];");
+
+		Object returnObject = javascriptExecutor.executeScript(
+			sb.toString(), webElement);
+
+		if (returnObject != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public boolean isChecked(String locator) {
 		WebElement webElement = getWebElement(locator, "1");
@@ -1690,9 +1739,15 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public boolean isTestName(String testName) {
-		if (testName.equals(
-				PoshiRunnerContext.getTestCaseNamespacedClassCommandName())) {
+		String classCommandName =
+			PoshiRunnerContext.getTestCaseNamespacedClassCommandName();
 
+		classCommandName =
+			PoshiRunnerGetterUtil.
+				getClassCommandNameFromNamespacedClassCommandName(
+					classCommandName);
+
+		if (testName.equals(classCommandName)) {
 			return true;
 		}
 

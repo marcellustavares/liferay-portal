@@ -11,7 +11,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -43,10 +43,6 @@
 
 		<execute macro="Theme#configureLookAndFeelSpecificLook" />
 
-		<execute macro="Theme#configureLookAndFeelBulletStyle">
-			<var name="bulletStyle" value="Arrows" />
-		</execute>
-
 		<execute macro="Theme#configureLookAndFeelShowHeaderSearch">
 			<var name="showHeaderSearch" value="false" />
 		</execute>
@@ -66,15 +62,11 @@
 			<var name="navTab" value="Look and Feel" />
 		</execute>
 
-		<execute macro="Theme#viewBulletStyle">
-			<var name="bulletStyle" value="Arrows" />
-		</execute>
-
 		<execute macro="Navigator#gotoPage">
 			<var name="pageName" value="Classic Theme Page" />
 		</execute>
 
-		<execute macro="SearchPortlet#viewSearchHidden" />
+		<execute macro="SearchPortlets#viewSearchHidden" />
 
 		<execute macro="Portlet#addPG">
 			<var name="portletName" value="Hello World" />

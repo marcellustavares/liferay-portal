@@ -1,0 +1,23 @@
+task runGradleTest
+
+runGradleTest {
+	dependsOn distBundle
+
+	doLast {
+		File warFile = file("build/dist/osgi/war/baz-theme.war")
+
+		assert warFile.exists()
+
+		File themeDir = file("themes/baz-theme")
+
+		assert themeDir.exists()
+
+		File nodeModulesDir = new File(themeDir, "node_modules")
+
+		assert nodeModulesDir.exists()
+
+		warFile = file("build/dist/osgi/modules/baz-theme.war")
+
+		assert !warFile.exists()
+	}
+}

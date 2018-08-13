@@ -224,19 +224,63 @@ version 3.2.5.
 3.12.46.
 
 ## 1.10.2 - 2018-06-18
+
+### Changed
 - [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
 3.12.48.
 
 ## 1.10.3 - 2018-06-28
+
+### Changed
+- [LPS-79679]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.59.
 - [LPS-80660]: Support commonly used Liferay Portal versions in the target
 platform version.
+
+## 1.10.4 - 2018-07-17
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.78.
+- [LPS-77359]: Update the [Liferay Gradle Plugins Poshi Runner] dependency to
+version 2.2.5.
+- [LPS-77875]: Update the [Liferay Portal Tools Bundle Support] dependency to
+version 3.2.6.
+- [LPS-82491]: Update the [Liferay Gradle Target Platform Plugin] dependency to
+version 1.1.0.
+
+## 1.10.5 - 2018-07-23
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.84.
+- [LPS-82491]: Update the [Liferay Gradle Target Platform Plugin] dependency to
+version 1.1.1.
+
+## 1.10.6 - 2018-08-07
+
+### Changed
+- [BLADE-255]: Copy themes into `osgi/war` instead of `osgi/modules`.
+- [LPS-74315]: Update the [Liferay Gradle Plugins Theme Builder] dependency to
+version 2.0.4.
+- [LPS-84119]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.102.
+
+## 1.10.7 - 2018-08-08
+
+### Fixed
+- [LPS-83922]: Adjust target platform configuration to use new BOM ids.
+- [LPS-83922]: Update the [Liferay Gradle Target Platform Plugin] dependency to
+version 1.1.2.
 
 [Gradle Download Task]: https://github.com/michel-kraemer/gradle-download-task/
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
 [Liferay Gradle Plugins Poshi Runner]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-poshi-runner
 [Liferay Gradle Plugins Target Platform]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-target-platform
+[Liferay Gradle Plugins Theme Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins-theme-builder
 [Liferay Portal Tools Bundle Support]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-bundle-support
 [Liferay Portal Tools Theme Builder]: https://github.com/liferay/liferay-portal/tree/master/modules/util/portal-tools-theme-builder
+[BLADE-255]: https://issues.liferay.com/browse/BLADE-255
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
 [LPS-66906]: https://issues.liferay.com/browse/LPS-66906
 [LPS-67352]: https://issues.liferay.com/browse/LPS-67352
@@ -266,12 +310,14 @@ platform version.
 [LPS-73913]: https://issues.liferay.com/browse/LPS-73913
 [LPS-73967]: https://issues.liferay.com/browse/LPS-73967
 [LPS-74124]: https://issues.liferay.com/browse/LPS-74124
+[LPS-74315]: https://issues.liferay.com/browse/LPS-74315
 [LPS-74544]: https://issues.liferay.com/browse/LPS-74544
 [LPS-74818]: https://issues.liferay.com/browse/LPS-74818
 [LPS-75323]: https://issues.liferay.com/browse/LPS-75323
 [LPS-75479]: https://issues.liferay.com/browse/LPS-75479
 [LPS-76221]: https://issues.liferay.com/browse/LPS-76221
 [LPS-76271]: https://issues.liferay.com/browse/LPS-76271
+[LPS-77359]: https://issues.liferay.com/browse/LPS-77359
 [LPS-77425]: https://issues.liferay.com/browse/LPS-77425
 [LPS-77586]: https://issues.liferay.com/browse/LPS-77586
 [LPS-77875]: https://issues.liferay.com/browse/LPS-77875
@@ -279,9 +325,13 @@ platform version.
 [LPS-78537]: https://issues.liferay.com/browse/LPS-78537
 [LPS-78911]: https://issues.liferay.com/browse/LPS-78911
 [LPS-79453]: https://issues.liferay.com/browse/LPS-79453
+[LPS-79679]: https://issues.liferay.com/browse/LPS-79679
 [LPS-80222]: https://issues.liferay.com/browse/LPS-80222
 [LPS-80281]: https://issues.liferay.com/browse/LPS-80281
 [LPS-80517]: https://issues.liferay.com/browse/LPS-80517
 [LPS-80660]: https://issues.liferay.com/browse/LPS-80660
 [LPS-80950]: https://issues.liferay.com/browse/LPS-80950
+[LPS-82491]: https://issues.liferay.com/browse/LPS-82491
 [LPS-82534]: https://issues.liferay.com/browse/LPS-82534
+[LPS-83922]: https://issues.liferay.com/browse/LPS-83922
+[LPS-84119]: https://issues.liferay.com/browse/LPS-84119

@@ -58,10 +58,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.module.framework.ModuleFrameworkUtilAdapter;
-import com.liferay.portal.security.lang.SecurityManagerUtil;
 import com.liferay.portal.servlet.PortalSessionListener;
 import com.liferay.portal.spring.aop.DynamicProxyCreator;
-import com.liferay.portal.spring.bean.BeanReferenceRefreshUtil;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PortalClassPathUtil;
 import com.liferay.portal.util.PropsValues;
@@ -79,6 +77,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -109,8 +108,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
-		PortalContextLoaderLifecycleThreadLocal.setDestroying(true);
-
 		ThreadLocalCacheManager.destroy();
 
 		if (_serviceWrapperRegistry != null) {
@@ -156,34 +153,26 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 		closeDataSource("liferayDataSourceImpl");
 
+		super.contextDestroyed(servletContextEvent);
+
 		try {
-			super.contextDestroyed(servletContextEvent);
-
-			try {
-				ModuleFrameworkUtilAdapter.stopRuntime();
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-
-			try {
-				ModuleFrameworkUtilAdapter.stopFramework(
-					PropsValues.MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT);
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-
-			ModuleFrameworkUtilAdapter.unregisterContext(
-				_arrayApplicationContext);
-
-			_arrayApplicationContext.close();
+			ModuleFrameworkUtilAdapter.stopRuntime();
 		}
-		finally {
-			PortalContextLoaderLifecycleThreadLocal.setDestroying(false);
-
-			SecurityManagerUtil.destroy();
+		catch (Exception e) {
+			_log.error(e, e);
 		}
+
+		try {
+			ModuleFrameworkUtilAdapter.stopFramework(
+				PropsValues.MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+		}
+
+		ModuleFrameworkUtilAdapter.unregisterContext(_arrayApplicationContext);
+
+		_arrayApplicationContext.close();
 	}
 
 	@Override
@@ -250,17 +239,14 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 			servletContext.setAttribute(
 				PortalApplicationContext.PARENT_APPLICATION_CONTEXT,
 				_arrayApplicationContext);
-
-			ModuleFrameworkUtilAdapter.registerContext(
-				_arrayApplicationContext);
-
-			ModuleFrameworkUtilAdapter.startFramework();
-
-			ModuleFrameworkUtilAdapter.startRuntime();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		ClassLoader portalClassLoader = ClassLoaderUtil.getPortalClassLoader();
+
+		ClassLoaderPool.register(_portalServletContextName, portalClassLoader);
 
 		ServiceDependencyManager serviceDependencyManager =
 			new ServiceDependencyManager();
@@ -284,28 +270,37 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 			SchedulerEngineHelper.class,
 			SingleDestinationMessageSenderFactory.class);
 
-		ClassLoader portalClassLoader = ClassLoaderUtil.getPortalClassLoader();
+		FutureTask<Void> springInitTask = new FutureTask<>(
+			() -> {
+				super.contextInitialized(servletContextEvent);
 
-		ClassLoaderPool.register(_portalServletContextName, portalClassLoader);
+				return null;
+			});
 
-		PortalContextLoaderLifecycleThreadLocal.setInitializing(true);
+		Thread springInitThread = new Thread(
+			springInitTask, "Portal Spring Init Thread");
 
-		try {
-			super.contextInitialized(servletContextEvent);
-		}
-		finally {
-			PortalContextLoaderLifecycleThreadLocal.setInitializing(false);
-		}
+		springInitThread.setDaemon(true);
 
-		ApplicationContext applicationContext =
-			ContextLoader.getCurrentWebApplicationContext();
+		springInitThread.start();
 
 		try {
-			BeanReferenceRefreshUtil.refresh(
-				applicationContext.getAutowireCapableBeanFactory());
+			ModuleFrameworkUtilAdapter.registerContext(
+				_arrayApplicationContext);
+
+			ModuleFrameworkUtilAdapter.startFramework();
+
+			ModuleFrameworkUtilAdapter.startRuntime();
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			throw new RuntimeException(e);
+		}
+
+		try {
+			springInitTask.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		InitUtil.registerSpringInitialized();
@@ -324,6 +319,9 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 		}
 
 		ServletContextPool.put(_portalServletContextName, servletContext);
+
+		ApplicationContext applicationContext =
+			ContextLoader.getCurrentWebApplicationContext();
 
 		BeanLocatorImpl beanLocatorImpl = new BeanLocatorImpl(
 			portalClassLoader, applicationContext);

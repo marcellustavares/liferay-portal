@@ -18,8 +18,9 @@ AUI.add(
 
 				var renderer = instance.getTemplateRenderer();
 
-				return MetalComponent.renderToString(
-					renderer, instance.getTemplateContext());
+				var context = instance.getTemplateContext();
+
+				return MetalComponent.renderToString(renderer, context);
 			},
 
 			getTemplateContext: function() {
@@ -49,7 +50,7 @@ AUI.add(
 
 				container.html(instance.getTemplate());
 
-				instance.eachField(
+				instance.eachNestedField(
 					function(field) {
 						field.updateContainer();
 					}

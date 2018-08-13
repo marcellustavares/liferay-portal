@@ -1,3 +1,5 @@
+apply plugin: "com.liferay.lang.merger"
+
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
@@ -39,4 +41,6 @@ dependencies {
 	compileOnly project(":core:petra:petra-lang")
 	compileOnly project(":core:petra:petra-string")
 	compileOnly project(":core:registry-api")
+
+	testCompile project(":apps:dynamic-data-mapping:dynamic-data-mapping-test-util")
 }

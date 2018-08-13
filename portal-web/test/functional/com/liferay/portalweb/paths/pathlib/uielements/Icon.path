@@ -89,7 +89,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>COG</td>
+	<td>COG_PAGE</td>
 	<td>//li/div[contains(.,'${key_pageName}')]/..//a[*[name()='svg'][contains(@class,'icon-cog')]]</td>
 	<td></td>
 </tr>

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.kernel.model.portlet;
 
-import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 
 import javax.portlet.PortletRequest;
@@ -27,7 +26,7 @@ public class PortletDependencyFactoryUtil {
 	public static PortletDependency createPortletDependency(
 		String name, String scope, String version) {
 
-		return getPortletDependencyFactory().createPortletDependency(
+		return _portletDependencyFactory.createPortletDependency(
 			name, scope, version);
 	}
 
@@ -35,14 +34,15 @@ public class PortletDependencyFactoryUtil {
 		String name, String scope, String version, String markup,
 		PortletRequest portletRequest) {
 
-		return getPortletDependencyFactory().createPortletDependency(
+		return _portletDependencyFactory.createPortletDependency(
 			name, scope, version, markup, portletRequest);
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static PortletDependencyFactory getPortletDependencyFactory() {
-		PortalRuntimePermission.checkGetBeanProperty(
-			PortletDependencyFactoryUtil.class);
-
 		return _portletDependencyFactory;
 	}
 

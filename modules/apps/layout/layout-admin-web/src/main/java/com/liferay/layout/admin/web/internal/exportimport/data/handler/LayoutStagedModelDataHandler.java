@@ -40,6 +40,7 @@ import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.layout.admin.constants.LayoutAdminConstants;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -94,7 +95,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -1539,11 +1539,21 @@ public class LayoutStagedModelDataHandler
 			return;
 		}
 
+		long scopeGroupId = portletDataContext.getScopeGroupId();
+		boolean privateLayout = portletDataContext.isPrivateLayout();
+
+		Layout existingLayout = _layoutLocalService.fetchLayout(
+			linkedToLayoutUuid, scopeGroupId, privateLayout);
+
+		if (existingLayout != null) {
+			typeSettingsProperties.setProperty(
+				"linkToLayoutId", String.valueOf(existingLayout.getLayoutId()));
+		}
+
 		_exportImportProcessCallbackRegistry.registerCallback(
 			portletDataContext.getExportImportProcessId(),
 			new ImportLinkedLayoutCallable(
-				portletDataContext.getScopeGroupId(),
-				portletDataContext.isPrivateLayout(), importedLayout.getUuid(),
+				scopeGroupId, privateLayout, importedLayout.getUuid(),
 				linkedToLayoutUuid));
 	}
 

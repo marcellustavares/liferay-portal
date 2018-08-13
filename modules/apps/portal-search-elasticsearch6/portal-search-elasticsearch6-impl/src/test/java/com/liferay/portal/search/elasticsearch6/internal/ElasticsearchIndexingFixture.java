@@ -62,6 +62,8 @@ import com.liferay.portal.search.elasticsearch6.internal.query.StringQueryTransl
 import com.liferay.portal.search.elasticsearch6.internal.query.TermQueryTranslatorImpl;
 import com.liferay.portal.search.elasticsearch6.internal.query.TermRangeQueryTranslatorImpl;
 import com.liferay.portal.search.elasticsearch6.internal.query.WildcardQueryTranslatorImpl;
+import com.liferay.portal.search.elasticsearch6.internal.search.response.DefaultSearchResponseTranslator;
+import com.liferay.portal.search.elasticsearch6.internal.search.response.SearchResponseTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.sort.DefaultSortTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.stats.DefaultStatsTranslator;
 import com.liferay.portal.search.elasticsearch6.internal.suggest.ElasticsearchSuggesterTranslator;
@@ -142,15 +144,6 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 		_elasticsearchFixture.tearDown();
 	}
 
-	protected static DefaultFacetTranslator createDefaultFacetTranslator() {
-		return new DefaultFacetTranslator() {
-			{
-				facetProcessor = _facetProcessor;
-				filterTranslator = createElasticsearchFilterTranslator();
-			}
-		};
-	}
-
 	protected static ElasticsearchFilterTranslator
 		createElasticsearchFilterTranslator() {
 
@@ -198,6 +191,25 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 				termQueryTranslator = new TermQueryTranslatorImpl();
 				termRangeQueryTranslator = new TermRangeQueryTranslatorImpl();
 				wildcardQueryTranslator = new WildcardQueryTranslatorImpl();
+			}
+		};
+	}
+
+	protected DefaultFacetTranslator createDefaultFacetTranslator() {
+		return new DefaultFacetTranslator() {
+			{
+				facetProcessor = _facetProcessor;
+				filterTranslator = createElasticsearchFilterTranslator();
+			}
+		};
+	}
+
+	protected SearchResponseTranslator createDefaultSearchResponseTranslator() {
+		return new DefaultSearchResponseTranslator() {
+			{
+				searchHitDocumentTranslator =
+					new SearchHitDocumentTranslatorImpl();
+				statsTranslator = new DefaultStatsTranslator();
 			}
 		};
 	}
@@ -272,10 +284,10 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 				indexNameBuilder = indexNameBuilder1;
 				props = createProps();
 				queryTranslator = createElasticsearchQueryTranslator();
+				searchResponseTranslator =
+					createDefaultSearchResponseTranslator();
 				sortTranslator = new DefaultSortTranslator();
 				statsTranslator = new DefaultStatsTranslator();
-				searchHitDocumentTranslator =
-					new SearchHitDocumentTranslatorImpl();
 
 				setQuerySuggester(
 					createElasticsearchQuerySuggester(
@@ -347,11 +359,10 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 	}
 
-	private static FacetProcessor<SearchRequestBuilder> _facetProcessor =
-		new DefaultFacetProcessor();
-
 	private final long _companyId;
 	private final ElasticsearchFixture _elasticsearchFixture;
+	private FacetProcessor<SearchRequestBuilder> _facetProcessor =
+		new DefaultFacetProcessor();
 	private final IndexCreator _indexCreator;
 	private final IndexNameBuilder _indexNameBuilder =
 		new TestIndexNameBuilder();

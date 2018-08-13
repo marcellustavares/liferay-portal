@@ -16,16 +16,15 @@ package com.liferay.message.boards.parser.bbcode.internal;
 
 import com.liferay.message.boards.util.MBUtil;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ThemeConstants;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslator;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.IntegerWrapper;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -47,7 +46,6 @@ import org.osgi.service.component.annotations.Component;
  * @author Iliyan Peychev
  */
 @Component(service = BBCodeTranslator.class)
-@DoPrivileged
 public class HtmlBBCodeTranslatorImpl implements BBCodeTranslator {
 
 	public HtmlBBCodeTranslatorImpl() {

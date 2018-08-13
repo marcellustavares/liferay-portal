@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.exception.LayoutTypeException;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.RequiredLayoutException;
+import com.liferay.portal.kernel.exception.RequiredLayoutPrototypeException;
 import com.liferay.portal.kernel.exception.SitemapChangeFrequencyException;
 import com.liferay.portal.kernel.exception.SitemapIncludeException;
 import com.liferay.portal.kernel.exception.SitemapPagePriorityException;
@@ -96,7 +97,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.use-default-template=true",
 		"javax.portlet.display-name=Group Pages",
 		"javax.portlet.expiration-cache=0",
-		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + LayoutAdminPortletKeys.GROUP_PAGES,
 		"javax.portlet.resource-bundle=content.Language",
@@ -205,6 +206,7 @@ public class GroupPagesPortlet extends MVCPortlet {
 			cause instanceof NoSuchGroupException ||
 			cause instanceof PrincipalException ||
 			cause instanceof RequiredLayoutException ||
+			cause instanceof RequiredLayoutPrototypeException ||
 			cause instanceof SitemapChangeFrequencyException ||
 			cause instanceof SitemapIncludeException ||
 			cause instanceof SitemapPagePriorityException ||

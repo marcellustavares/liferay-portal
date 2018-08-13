@@ -40,10 +40,10 @@ public class FolderForm {
 			__ -> "This form can be used to create or update a folder"
 		).constructor(
 			FolderForm::new
+		).addOptionalString(
+			"description", FolderForm::setDescription
 		).addRequiredString(
-			"description", FolderForm::_setDescription
-		).addRequiredString(
-			"name", FolderForm::_setName
+			"name", FolderForm::setName
 		).build();
 	}
 
@@ -67,11 +67,11 @@ public class FolderForm {
 		return _name;
 	}
 
-	private void _setDescription(String description) {
+	public void setDescription(String description) {
 		_description = description;
 	}
 
-	private void _setName(String name) {
+	public void setName(String name) {
 		_name = name;
 	}
 

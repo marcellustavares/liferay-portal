@@ -24,7 +24,6 @@ import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.model.AssetTagModel;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.category.apio.architect.identifier.CategoryIdentifier;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -93,34 +92,34 @@ public class MediaObjectNestedCollectionResource
 		Representor.Builder<FileEntry, Long> builder) {
 
 		return builder.types(
-			"MediaObject"
+			"Liferay:Document", "MediaObject"
 		).identifier(
 			FileEntry::getFileEntryId
 		).addBidirectionalModel(
-			"folder", "mediaObjects", FolderIdentifier.class,
+			"folder", "documents", FolderIdentifier.class,
 			FileEntry::getFolderId
 		).addRelativeURL(
-			"contentStream", this::_getFileEntryPreviewURL
+			"contentUrl", this::_getFileEntryPreviewURL
 		).addDate(
 			"dateCreated", FileEntry::getCreateDate
 		).addDate(
 			"dateModified", FileEntry::getModifiedDate
-		).addDate(
-			"datePublished", FileEntry::getLastPublishDate
 		).addLinkedModel(
 			"creator", PersonIdentifier.class, FileEntry::getUserId
 		).addNumber(
-			"contentSize", FileEntry::getSize
+			"sizeInBytes", FileEntry::getSize
 		).addRelatedCollection(
-			"categories", CategoryIdentifier.class
+			"category", CategoryIdentifier.class
+		).addString(
+			"contentSize", fileEntry -> String.valueOf(fileEntry.getSize())
+		).addString(
+			"description", FileEntry::getDescription
 		).addString(
 			"fileFormat", FileEntry::getMimeType
 		).addString(
 			"headline", FileEntry::getTitle
 		).addString(
 			"name", FileEntry::getFileName
-		).addString(
-			"text", FileEntry::getDescription
 		).addStringList(
 			"keywords", this::_getMediaObjectAssetTags
 		).build();
@@ -149,7 +148,7 @@ public class MediaObjectNestedCollectionResource
 		List<AssetTag> assetTags = _assetTagLocalService.getTags(
 			DLFileEntry.class.getName(), fileEntry.getFileEntryId());
 
-		return ListUtil.toList(assetTags, AssetTagModel::getName);
+		return ListUtil.toList(assetTags, AssetTag::getName);
 	}
 
 	private PageItems<FileEntry> _getPageItems(

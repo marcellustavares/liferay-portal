@@ -20,6 +20,7 @@ import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.util.JournalContent;
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
@@ -34,7 +35,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -42,7 +42,6 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -67,7 +66,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Michael Young
  */
 @Component(service = {IdentifiableOSGiService.class, JournalContent.class})
-@DoPrivileged
 public class JournalContentImpl
 	implements IdentifiableOSGiService, JournalContent {
 
@@ -255,10 +253,9 @@ public class JournalContentImpl
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				StringBundler.concat(
-					"getDisplay for {", String.valueOf(groupId), ", ",
-					articleId, ", ", ddmTemplateKey, ", ", viewMode, ", ",
-					languageId, ", ", String.valueOf(page), "} takes ",
-					String.valueOf(stopWatch.getTime()), " ms"));
+					"getDisplay for {", groupId, ", ", articleId, ", ",
+					ddmTemplateKey, ", ", viewMode, ", ", languageId, ", ",
+					page, "} takes ", stopWatch.getTime(), " ms"));
 		}
 
 		return articleDisplay;
@@ -282,9 +279,8 @@ public class JournalContentImpl
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
-						"Unable to get display for ", String.valueOf(groupId),
-						StringPool.BLANK, articleId, StringPool.BLANK,
-						languageId),
+						"Unable to get display for ", groupId, StringPool.BLANK,
+						articleId, StringPool.BLANK, languageId),
 					pe);
 			}
 
@@ -407,8 +403,8 @@ public class JournalContentImpl
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					StringBundler.concat(
-						"Get article display {", String.valueOf(groupId), ", ",
-						articleId, ", ", ddmTemplateKey, "}"));
+						"Get article display {", groupId, ", ", articleId, ", ",
+						ddmTemplateKey, "}"));
 			}
 
 			return _journalArticleLocalService.getArticleDisplay(
@@ -419,9 +415,8 @@ public class JournalContentImpl
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
-						"Unable to get display for ", String.valueOf(groupId),
-						StringPool.SPACE, articleId, StringPool.SPACE,
-						languageId));
+						"Unable to get display for ", groupId, StringPool.SPACE,
+						articleId, StringPool.SPACE, languageId));
 			}
 
 			return null;

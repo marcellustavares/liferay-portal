@@ -59,6 +59,7 @@ import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -87,7 +88,6 @@ import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -1322,7 +1322,8 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			PreparedStatement ps3 =
 				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					connection,
-					"update DDMTemplate set script = ? where templateId = ?");
+					"update DDMTemplate set language = ?, script = ? where " +
+						"templateId = ?");
 			PreparedStatement ps4 =
 				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					connection, sb.toString());
@@ -1375,11 +1376,14 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					ddmForm = updateDDMFormFields(ddmForm);
 
 					updatedScript = toJSON(ddmForm);
+
+					language = "json";
 				}
 
 				if (!script.equals(updatedScript)) {
-					ps3.setString(1, updatedScript);
-					ps3.setLong(2, templateId);
+					ps3.setString(1, language);
+					ps3.setString(2, updatedScript);
+					ps3.setLong(3, templateId);
 
 					ps3.addBatch();
 				}

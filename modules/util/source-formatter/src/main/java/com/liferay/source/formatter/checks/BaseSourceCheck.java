@@ -393,12 +393,44 @@ public abstract class BaseSourceCheck implements SourceCheck {
 		return _pluginsInsideModulesDirectoryNames;
 	}
 
+	protected String getPortalBranchName() {
+		String value = SourceFormatterUtil.getPropertyValue(
+			SourceFormatterUtil.GIT_LIFERAY_PORTAL_BRANCH, _propertiesMap);
+
+		if (Validator.isNull(value)) {
+			return StringPool.BLANK;
+		}
+
+		if (!value.contains(StringPool.COMMA)) {
+			return value;
+		}
+
+		String[] portalBranchNames = StringUtil.split(value);
+
+		return portalBranchNames[0];
+	}
+
 	protected String getPortalContent(String fileName) throws IOException {
 		return getPortalContent(fileName, false);
 	}
 
 	protected String getPortalContent(
 			String fileName, boolean forceRetrieveFromGit)
+		throws IOException {
+
+		return getPortalContent(
+			fileName, getPortalBranchName(), forceRetrieveFromGit);
+	}
+
+	protected String getPortalContent(String fileName, String portalBranchName)
+		throws IOException {
+
+		return getPortalContent(fileName, portalBranchName, false);
+	}
+
+	protected String getPortalContent(
+			String fileName, String portalBranchName,
+			boolean forceRetrieveFromGit)
 		throws IOException {
 
 		if (!forceRetrieveFromGit) {
@@ -410,7 +442,7 @@ public abstract class BaseSourceCheck implements SourceCheck {
 			}
 		}
 
-		URL url = _getPortalGitURL(fileName);
+		URL url = _getPortalGitURL(fileName, portalBranchName);
 
 		if (url != null) {
 			return StringUtil.read(url.openStream());
@@ -486,13 +518,20 @@ public abstract class BaseSourceCheck implements SourceCheck {
 	protected InputStream getPortalInputStream(String fileName)
 		throws IOException {
 
+		return getPortalInputStream(fileName, getPortalBranchName());
+	}
+
+	protected InputStream getPortalInputStream(
+			String fileName, String portalBranchName)
+		throws IOException {
+
 		File file = getFile(fileName, ToolsUtil.PORTAL_MAX_DIR_LEVEL);
 
 		if (file != null) {
 			return new FileInputStream(file);
 		}
 
-		URL url = _getPortalGitURL(fileName);
+		URL url = _getPortalGitURL(fileName, portalBranchName);
 
 		if (url != null) {
 			return url.openStream();
@@ -755,10 +794,7 @@ public abstract class BaseSourceCheck implements SourceCheck {
 	protected static final String RUN_OUTSIDE_PORTAL_EXCLUDES =
 		"run.outside.portal.excludes";
 
-	private URL _getPortalGitURL(String fileName) {
-		String portalBranchName = SourceFormatterUtil.getPropertyValue(
-			SourceFormatterUtil.GIT_LIFERAY_PORTAL_BRANCH, _propertiesMap);
-
+	private URL _getPortalGitURL(String fileName, String portalBranchName) {
 		if (Validator.isNull(portalBranchName)) {
 			return null;
 		}

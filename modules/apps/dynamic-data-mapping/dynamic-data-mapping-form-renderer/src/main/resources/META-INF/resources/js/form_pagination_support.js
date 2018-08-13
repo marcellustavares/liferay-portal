@@ -20,6 +20,15 @@ AUI.add(
 				instance.after('render', instance._afterPaginatedFormRender);
 			},
 
+			destructor: function() {
+				var instance = this;
+
+				if (instance.pagination) {
+					instance.pagination.destroy();
+					instance.pagination = null;
+				}
+			},
+
 			getCurrentPage: function() {
 				var instance = this;
 
@@ -41,7 +50,7 @@ AUI.add(
 
 				var pageNode = instance.getCurrentPageNode();
 
-				instance.eachField(
+				instance.eachNestedField(
 					function(field) {
 						var visible = field.get('visible');
 
