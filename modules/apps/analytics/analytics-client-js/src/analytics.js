@@ -14,6 +14,8 @@ import uuidv1 from 'uuid/v1';
 const ENV = window || global;
 const FLUSH_INTERVAL = 2000;
 const REQUEST_TIMEOUT = 5000;
+const LCS_IDENTITY_ENDPOINT =
+	'https://analytics-gw.liferay.com/api/identitycontextgateway/send-identity-context';
 
 // Local Storage keys
 const STORAGE_KEY_EVENTS = 'lcs_client_batch';
@@ -42,8 +44,12 @@ class Analytics {
 			instance = this;
 		}
 
-		const lcsClient = new LCSClient(config.uri);
-		const asahClient = new AsahClient();
+		const {analyticsKey, endpoints, flushInterval, uri} = config;
+		const {identity: identityEndpoint, events: eventsEndpoint} =
+			endpoints || {};
+
+		const lcsClient = new LCSClient(uri);
+		const asahClient = new AsahClient(eventsEndpoint);
 
 		instance.client = lcsClient;
 
@@ -54,11 +60,10 @@ class Analytics {
 
 		instance.config = config;
 
-		const analyticsKey = config.analyticsKey;
-
-		instance.asahIdentityEndpoint = `https://osbasahfarobackend-asahlfr.lfr.io/${analyticsKey}/identity/`;
-		instance.lcsIdentityEndpoint =
-			'https://analytics-gw.liferay.com/api/identitycontextgateway/send-identity-context';
+		instance.identityEndpoint =
+			identityEndpoint ||
+			`https://osbasahfarobackend-asahlfr.lfr.io/${analyticsKey}/identity/`;
+		instance.lcsIdentityEndpoint = LCS_IDENTITY_ENDPOINT;
 
 		instance.events = storage.get(STORAGE_KEY_EVENTS) || [];
 		instance.contexts = storage.get(STORAGE_KEY_CONTEXTS) || [];
@@ -78,7 +83,7 @@ class Analytics {
 
 		instance.flushInterval = setInterval(
 			() => instance.flush(),
-			config.flushInterval || FLUSH_INTERVAL
+			flushInterval || FLUSH_INTERVAL
 		);
 
 		return instance;
@@ -155,10 +160,16 @@ class Analytics {
 	}
 
 	_getContext() {
-		const {context} = middlewares.reduce(
-			(request, middleware) => middleware(request, this),
+		const instance = this;
+
+		let {context} = middlewares.reduce(
+			(request, middleware) => middleware(request, instance),
 			{context: {}}
 		);
+
+		const {dataSourceId = ''} = instance.config;
+
+		context = {dataSourceId, ...context};
 
 		return context;
 	}
@@ -217,7 +228,7 @@ class Analytics {
 				mode: 'cors',
 			};
 
-			fetch(this.asahIdentityEndpoint, request);
+			fetch(this.identityEndpoint, request);
 
 			return fetch(this.lcsIdentityEndpoint, request).then(
 				() => newIdentityHash
