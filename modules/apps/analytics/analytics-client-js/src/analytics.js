@@ -42,7 +42,9 @@ class Analytics {
 			instance = this;
 		}
 
-		const lcsClient = new LCSClient(config.uri);
+		const {analyticsKey, flushInterval, uri, weDeployKey} = config;
+
+		const lcsClient = new LCSClient(uri);
 		const asahClient = new AsahClient();
 
 		instance.client = lcsClient;
@@ -54,9 +56,7 @@ class Analytics {
 
 		instance.config = config;
 
-		const analyticsKey = config.analyticsKey;
-
-		instance.asahIdentityEndpoint = `https://osbasahfarobackend-asahlfr.lfr.io/${analyticsKey}/identity/`;
+		instance.asahIdentityEndpoint = `https://osbasahfarobackend-${weDeployKey}/${analyticsKey}/identity/`;
 		instance.lcsIdentityEndpoint =
 			'https://analytics-gw.liferay.com/api/identitycontextgateway/send-identity-context';
 
@@ -78,7 +78,7 @@ class Analytics {
 
 		instance.flushInterval = setInterval(
 			() => instance.flush(),
-			config.flushInterval || FLUSH_INTERVAL
+			flushInterval || FLUSH_INTERVAL
 		);
 
 		return instance;
@@ -155,10 +155,16 @@ class Analytics {
 	}
 
 	_getContext() {
-		const {context} = middlewares.reduce(
-			(request, middleware) => middleware(request, this),
+		const instance = this;
+
+		let {context} = middlewares.reduce(
+			(request, middleware) => middleware(request, instance),
 			{context: {}}
 		);
+
+		const {dataSourceId = ''} = instance.config;
+
+		context = {dataSourceId, ...context};
 
 		return context;
 	}
@@ -190,11 +196,13 @@ class Analytics {
 	 * @return {Promise} A promise returned by the fetch request.
 	 */
 	_sendIdentity(identity, userId) {
+		const {analyticsKey, weDeployKey} = this.config;
 		const bodyData = {
 			...fingerprint(),
-			analyticsKey: this.config.analyticsKey,
+			analyticsKey,
 			identity,
 			userId,
+			weDeployKey,
 		};
 
 		const storedIdentityHash = storage.get(STORAGE_KEY_IDENTITY_HASH);
@@ -384,6 +392,7 @@ class Analytics {
 	 *	   uri: 'https://analytics-gw.liferay.com/api/analyticsgateway/send-analytics-events'
 	 *	   userId: 'id-s7uatimmxgo',
 	 *     analyticsKey: 'MyAnalyticsKey',
+	 *     weDeployKey: 'MyWeDeployKey',
 	 *   }
 	 * );
 	 */

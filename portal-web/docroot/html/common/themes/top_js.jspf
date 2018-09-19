@@ -14,8 +14,11 @@
  */
 --%>
 
+<%@ page import="java.util.HashSet" %>
+<%@ page import="com.liferay.portal.kernel.util.Base64" %>
+
 <script data-senna-track="temporary" type="text/javascript">
-	// <![CDATA[
+// <![CDATA[
 		var Liferay = Liferay || {};
 
 		Liferay.Browser = {
@@ -437,9 +440,31 @@ UnicodeProperties groupTypeSettings = group.getTypeSettingsProperties();
 if (Validator.isNull(liferayAnalyticsKey)) {
 	liferayAnalyticsKey = groupTypeSettings.getProperty(GroupConstants.TYPE_SETTINGS_KEY_LIFERAY_ANALYTICS_KEY);
 }
+
+String liferayAnalyticsSettings = PrefsPropsUtil.getString(company.getCompanyId(), "liferayAnalyticsSettings");
+
+JSONObject liferayAnalyticsSettingsJSONObject = null;
+
+Set<Long> liferayAnalyticsUntrackedGroupIds = new HashSet<>();
+
+String liferayDataSourceId = null;
+String liferayWeDeployKey = "asahlfr.lfr.io";
+
+if (Validator.isNotNull(liferayAnalyticsSettings)) {
+	liferayAnalyticsSettingsJSONObject = JSONFactoryUtil.createJSONObject(new String(Base64.decode(liferayAnalyticsSettings)));
+
+	JSONArray untrackedGroupIdsJSONArray = liferayAnalyticsSettingsJSONObject.getJSONArray("untrackedGroupIds");
+
+	for (int i = 0; i < untrackedGroupIdsJSONArray.length(); i++) {
+		liferayAnalyticsUntrackedGroupIds.add(untrackedGroupIdsJSONArray.getLong(i));
+	}
+
+	liferayDataSourceId = liferayAnalyticsSettingsJSONObject.getString("dataSourceId");
+	liferayWeDeployKey = liferayAnalyticsSettingsJSONObject.getString("weDeployKey", liferayWeDeployKey);
+}
 %>
 
-<c:if test="<%= Validator.isNotNull(liferayAnalyticsKey) %>">
+<c:if test="<%= Validator.isNotNull(liferayAnalyticsKey) || !liferayAnalyticsUntrackedGroupIds.contains(group.getGroupId()) %>">
 	<script data-senna-track="permanent" id="liferayAnalyticsScript" type="text/javascript">
 		(function(u, c, a, m, o, l) {
 			o = 'script';
@@ -451,7 +476,11 @@ if (Validator.isNull(liferayAnalyticsKey)) {
 			a.onload = c;
 			m.parentNode.insertBefore(a, m);
 		})('https://analytics-js-cdn.liferay.com', function() {
-			var config = {analyticsKey: '<%= HtmlUtil.escapeJS(liferayAnalyticsKey) %>'};
+			var config = {
+				analyticsKey: '<%= HtmlUtil.escapeJS(liferayAnalyticsKey) %>',
+				dataSourceId: '<%= HtmlUtil.escapeJS(liferayDataSourceId) %>',
+				weDeployKey: '<%= HtmlUtil.escapeJS(liferayWeDeployKey) %>'
+			};
 
 			Analytics.create(config);
 

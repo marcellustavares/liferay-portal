@@ -15,6 +15,9 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceMode;
 import com.liferay.portal.kernel.model.Account;
@@ -26,7 +29,10 @@ import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.Website;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.base.CompanyServiceBaseImpl;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.ratings.kernel.transformer.RatingsDataTransformerUtil;
@@ -173,6 +179,18 @@ public class CompanyServiceImpl extends CompanyServiceBaseImpl {
 		return companyLocalService.getCompanyByWebId(webId);
 	}
 
+	@Override
+	public void removeAnalyticsSettings(long companyId) throws PortalException {
+		if (!roleLocalService.hasUserRole(
+				getUserId(), companyId, RoleConstants.ADMINISTRATOR, true)) {
+
+			throw new PrincipalException();
+		}
+
+		companyLocalService.removePreferences(
+			companyId, new String[] {"liferayAnalyticsSettings"});
+	}
+
 	/**
 	 * Removes the values that match the keys of the company's preferences.
 	 *
@@ -195,6 +213,33 @@ public class CompanyServiceImpl extends CompanyServiceBaseImpl {
 		}
 
 		companyLocalService.removePreferences(companyId, keys);
+	}
+
+	@Override
+	public void updateAnalyticsSettings(
+			long companyId, String dataSourceId, String weDeployKey,
+			long[] untrackedGroupIds)
+		throws PortalException {
+
+		if (!roleLocalService.hasUserRole(
+				getUserId(), companyId, RoleConstants.ADMINISTRATOR, true)) {
+
+			throw new PrincipalException();
+		}
+
+		if (Validator.isNull(dataSourceId) || Validator.isNull(weDeployKey)) {
+			throw new PortalException("Invalid analytics settings");
+		}
+
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
+
+		String liferayAnalyticsSettings = _encodeAnalyticsSettings(
+			dataSourceId, weDeployKey, untrackedGroupIds);
+
+		unicodeProperties.setProperty(
+			"liferayAnalyticsSettings", liferayAnalyticsSettings);
+
+		companyLocalService.updatePreferences(companyId, unicodeProperties);
 	}
 
 	/**
@@ -567,6 +612,28 @@ public class CompanyServiceImpl extends CompanyServiceBaseImpl {
 		companyLocalService.updateSecurity(
 			companyId, authType, autoLogin, sendPassword, strangers,
 			strangersWithMx, strangersVerify, siteLogo);
+	}
+
+	private String _encodeAnalyticsSettings(
+		String dataSourceId, String weDeployKey, long[] untrackedGroupIds) {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		jsonObject.put("dataSourceId", dataSourceId);
+		jsonObject.put("weDeployKey", weDeployKey);
+
+		JSONArray untrackedGroupIdsJSONArray =
+			JSONFactoryUtil.createJSONArray();
+
+		if (untrackedGroupIds != null) {
+			for (long untrackedGroupId : untrackedGroupIds) {
+				untrackedGroupIdsJSONArray.put(untrackedGroupId);
+			}
+		}
+
+		jsonObject.put("untrackedGroupIds", untrackedGroupIdsJSONArray);
+
+		return Base64.encode(jsonObject.toString().getBytes());
 	}
 
 }
