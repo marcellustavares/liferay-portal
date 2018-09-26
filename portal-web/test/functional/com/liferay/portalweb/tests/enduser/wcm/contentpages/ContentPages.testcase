@@ -1,0 +1,119 @@
+<definition component-name="portal-wcm">
+	<property name="portal.release" value="true" />
+	<property name="portal.upstream" value="true" />
+	<property name="testray.main.component.name" value="Content Pages" />
+
+	<set-up>
+		<execute macro="TestCase#setUpPortalInstance" />
+
+		<execute macro="User#firstLoginPG" />
+
+		<execute macro="JSONGroup#addGroup">
+			<var name="groupName" value="Test Site Name" />
+		</execute>
+
+		<execute macro="FragmentsAdmin#openFragmentsAdmin">
+			<var name="siteURLKey" value="test-site-name" />
+		</execute>
+
+		<execute macro="FragmentsAdmin#addCollection">
+			<var name="collectionDescription" value="Collection Description" />
+			<var name="collectionName" value="Collection Name" />
+		</execute>
+	</set-up>
+
+	<tear-down>
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+
+		<if>
+			<equals arg1="${testPortalInstance}" arg2="true" />
+			<then>
+				<execute macro="PortalInstances#tearDownCP" />
+			</then>
+			<else>
+				<execute macro="JSONGroup#deleteGroupByName">
+					<var name="groupName" value="Test Site Name" />
+				</execute>
+			</else>
+		</if>
+	</tear-down>
+
+	<command name="AddContentPage" priority="5">
+		<property name="portal.acceptance" value="true" />
+
+		<execute macro="FragmentsAdmin#addFragment">
+			<var name="fragmentName" value="Fragment Name" />
+		</execute>
+
+		<execute macro="TestCase#getFileContent">
+			<return name="htmlSnippet" />
+			<var name="fileName" value="fragment_button.html" />
+		</execute>
+
+		<execute function="Type#typeAceEditorNoError" locator1="Fragment#HTML_EDITOR" value1="${htmlSnippet}" />
+
+		<execute macro="TestCase#getFileContent">
+			<return name="cssSnippet" />
+			<var name="fileName" value="fragment_button.css" />
+		</execute>
+
+		<execute function="Type#typeAceEditorNoError" locator1="Fragment#CSS_EDITOR" value1="${cssSnippet}" />
+
+		<execute macro="TestCase#getFileContent">
+			<return name="javascriptSnippet" />
+			<var name="fileName" value="fragment_button.js" />
+		</execute>
+
+		<execute function="Type#typeAceEditorNoError" locator1="Fragment#JAVASCRIPT_EDITOR" value1="${javascriptSnippet}" />
+
+		<execute macro="Button#clickPublish" />
+
+		<execute macro="PageTemplatesAdmin#openPageTemplatesAdmin">
+			<var name="siteURLKey" value="test-site-name" />
+		</execute>
+
+		<execute macro="PageTemplatesAdmin#addCollection">
+			<var name="collectionName" value="Page Template Collection" />
+		</execute>
+
+		<execute macro="PageTemplatesAdmin#add">
+			<var name="pageTemplateName" value="Page Template Name" />
+		</execute>
+
+		<execute macro="PageEditor#addFragment">
+			<var name="collectionName" value="Collection Name" />
+			<var name="fragmentName" value="Fragment Name" />
+		</execute>
+
+		<execute macro="Button#clickPublish" />
+
+		<execute macro="SitePages#openPagesAdmin">
+			<var name="siteURLKey" value="test-site-name" />
+		</execute>
+
+		<execute macro="NavItem#gotoPages" />
+
+		<execute macro="ContentPages#addPage">
+			<var name="collectionName" value="Page Template Collection" />
+			<var name="pageName" value="Test Page Name" />
+			<var name="pageTemplateName" value="Page Template Name" />
+		</execute>
+
+		<execute macro="Navigator#gotoSitePage">
+			<var name="pageName" value="Test Page Name" />
+			<var name="siteName" value="Test Site Name" />
+		</execute>
+
+		<for list="Submit,Cancel" param="button">
+			<execute macro="Button#viewPresent">
+				<var name="button" value="${button}" />
+			</execute>
+		</for>
+
+		<execute macro="Button#clickNoError">
+			<var name="button" value="Submit" />
+		</execute>
+
+		<execute function="AssertConfirm" value1="Form submitted" />
+	</command>
+</definition>

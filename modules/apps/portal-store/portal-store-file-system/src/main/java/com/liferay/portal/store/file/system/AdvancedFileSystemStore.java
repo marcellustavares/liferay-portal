@@ -23,7 +23,6 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.convert.documentlibrary.FileSystemStoreRootDirException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -93,16 +92,7 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 			File newFileNameVersionFile = new File(
 				newFileNameDir + StringPool.SLASH + newFileNameVersion);
 
-			boolean renamed = FileUtil.move(
-				fileNameVersionFile, newFileNameVersionFile);
-
-			if (!renamed) {
-				throw new SystemException(
-					StringBundler.concat(
-						"File name version file was not renamed from ",
-						fileNameVersionFile.getPath(), " to ",
-						newFileNameVersionFile.getPath()));
-			}
+			fileSystemHelper.move(fileNameVersionFile, newFileNameVersionFile);
 		}
 	}
 
@@ -122,6 +112,10 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 		}
 
 		initializeRootDir();
+
+		fileSystemHelper = new FileSystemHelper(
+			_advancedFileSystemStoreConfiguration.useHardLinks(),
+			getRootDirPath());
 	}
 
 	protected void buildPath(StringBundler sb, String fileNameFragment) {

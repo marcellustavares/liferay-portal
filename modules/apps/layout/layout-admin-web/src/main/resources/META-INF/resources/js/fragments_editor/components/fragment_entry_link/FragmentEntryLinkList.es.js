@@ -12,6 +12,7 @@ import {
 	UPDATE_LAST_SAVE_DATE,
 	UPDATE_SAVING_CHANGES_STATUS
 } from '../../actions/actions.es';
+import DragScroller from '../../utils/DragScroller.es';
 import {DRAG_POSITIONS} from '../../reducers/placeholders.es';
 import templates from './FragmentEntryLinkList.soy';
 
@@ -30,6 +31,7 @@ class FragmentEntryLinkList extends Component {
 
 	attached() {
 		this._initializeDragAndDrop();
+		this._initializeDragScroller();
 	}
 
 	/**
@@ -63,17 +65,23 @@ class FragmentEntryLinkList extends Component {
 
 	/**
 	 * Callback that is executed when an item is being dragged.
-	 * @param {!MouseEvent} event
+	 * @param {object} data
+	 * @param {MouseEvent} data.originalEvent
 	 * @private
 	 * @review
 	 */
 
-	_handleDrag(data, event) {
+	_handleDrag(data) {
 		const targetItem = data.target;
 
 		if (targetItem && 'fragmentEntryLinkId' in targetItem.dataset) {
-			const mouseY = event.target.mousePos_.y;
+			const mouseY = data.originalEvent.clientY;
 			const targetItemRegion = position.getRegion(targetItem);
+
+			const documentHeight = document.body.offsetHeight;
+			let placeholderItemRegion = position.getRegion(data.placeholder);
+
+			this._dragScroller.scrollOnDrag(placeholderItemRegion, documentHeight);
 
 			this._targetBorder = DRAG_POSITIONS.bottom;
 
@@ -98,7 +106,7 @@ class FragmentEntryLinkList extends Component {
 	* @review
 	*/
 
-	_handleDragEnd(data, event) {
+	_handleDragEnd() {
 		this.store.dispatchAction(
 			CLEAR_DRAG_TARGET
 		);
@@ -106,7 +114,8 @@ class FragmentEntryLinkList extends Component {
 
 	/**
 	 * Callback that is executed when an item is dropped.
-	 * @param {!MouseEvent} event
+	 * @param {object} data
+	 * @param {MouseEvent} event
 	 * @private
 	 * @review
 	 */
@@ -121,6 +130,7 @@ class FragmentEntryLinkList extends Component {
 			requestAnimationFrame(
 				() => {
 					this._initializeDragAndDrop();
+					this._initializeDragScroller();
 				}
 			);
 
@@ -240,6 +250,24 @@ class FragmentEntryLinkList extends Component {
 			this._handleDragEnd.bind(this)
 		);
 	}
+
+	/**
+	 * @private
+	 * @review
+	 */
+
+	_initializeDragScroller() {
+		const controlMenu = document.querySelector('.control-menu');
+		const controlMenuHeight = controlMenu ? controlMenu.offsetHeight : 0;
+		const managementBar = document.querySelector('.management-bar');
+		const managementBarHeight = managementBar ? managementBar.offsetHeight : 0;
+
+		this._dragScroller = new DragScroller(
+			{
+				upOffset: controlMenuHeight + managementBarHeight
+			}
+		);
+	}
 }
 
 /**
@@ -304,6 +332,28 @@ FragmentEntryLinkList.STATE = {
 				structure: []
 			}
 		),
+
+	/**
+	 * Internal DragDrop instance.
+	 * @default null
+	 * @instance
+	 * @memberOf FragmentEntryLinkList
+	 * @review
+	 * @type {object|null}
+	 */
+
+	_dragDrop: Config.internal().value(null),
+
+	/**
+	 * Internal DragScroller instance
+	 * @default null
+	 * @instance
+	 * @memberOf FragmentEntryLinkList
+	 * @review
+	 * @type {object|null}
+	 */
+
+	_dragScroller: Config.internal().value(null),
 
 	/**
 	 * Nearest border of the hovered fragment while dragging

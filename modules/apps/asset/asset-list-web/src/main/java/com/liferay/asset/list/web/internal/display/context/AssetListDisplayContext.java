@@ -14,43 +14,35 @@
 
 package com.liferay.asset.list.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.list.constants.AssetListActionKeys;
 import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
-import com.liferay.asset.list.constants.AssetListFormConstants;
 import com.liferay.asset.list.constants.AssetListPortletKeys;
-import com.liferay.asset.list.constants.AssetListWebKeys;
 import com.liferay.asset.list.model.AssetListEntry;
+import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
 import com.liferay.asset.list.service.AssetListEntryServiceUtil;
 import com.liferay.asset.list.web.internal.security.permission.resource.AssetListPermission;
 import com.liferay.asset.list.web.util.AssetListPortletUtil;
-import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
-import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationCategory;
-import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
-import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationRegistry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.portlet.PortletPreferences;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -74,28 +66,6 @@ public class AssetListDisplayContext {
 			_request);
 		_themeDisplay = (ThemeDisplay)_request.getAttribute(
 			WebKeys.THEME_DISPLAY);
-	}
-
-	public ScreenNavigationEntry getActiveScreenNavigationEntry()
-		throws Exception {
-
-		String screenNavigationEntryKey = ParamUtil.getString(
-			_request, "screenNavigationEntryKey",
-			AssetListFormConstants.ENTRY_KEY_DETAILS);
-
-		List<ScreenNavigationEntry> screenNavigationEntries =
-			getScreenNavigationEntries();
-
-		screenNavigationEntries = ListUtil.filter(
-			screenNavigationEntries,
-			screenNavigationEntry -> Objects.equals(
-				screenNavigationEntryKey, screenNavigationEntry.getEntryKey()));
-
-		if (screenNavigationEntries.isEmpty()) {
-			return null;
-		}
-
-		return screenNavigationEntries.get(0);
 	}
 
 	public List<DropdownItem> getAddAssetListEntryDropdownItems() {
@@ -122,16 +92,38 @@ public class AssetListDisplayContext {
 		};
 	}
 
+	public SearchContainer<AssetEntry> getAssetListContentSearchContainer() {
+		if (_assetListContentSearchContainer != null) {
+			return _assetListContentSearchContainer;
+		}
+
+		SearchContainer searchContainer = new SearchContainer(
+			_renderRequest, _renderResponse.createRenderURL(), null,
+			"there-are-no-asset-entries");
+
+		AssetListEntry assetListEntry = getAssetListEntry();
+
+		List<AssetEntry> assetEntries = assetListEntry.getAssetEntries();
+
+		searchContainer.setResults(assetEntries);
+
+		int totalCount = assetListEntry.getAssetEntriesCount();
+
+		searchContainer.setTotal(totalCount);
+
+		_assetListContentSearchContainer = searchContainer;
+
+		return _assetListContentSearchContainer;
+	}
+
 	public int getAssetListEntriesCount() {
 		if (_assetListEntriesCount != null) {
 			return _assetListEntriesCount;
 		}
 
-		int assetListEntriesCount =
+		_assetListEntriesCount =
 			AssetListEntryServiceUtil.getAssetListEntriesCount(
 				_themeDisplay.getScopeGroupId());
-
-		_assetListEntriesCount = assetListEntriesCount;
 
 		return _assetListEntriesCount;
 	}
@@ -188,15 +180,13 @@ public class AssetListDisplayContext {
 		return _assetListEntriesSearchContainer;
 	}
 
-	public AssetListEntry getAssetListEntry() throws PortalException {
+	public AssetListEntry getAssetListEntry() {
 		if (_assetListEntry != null) {
 			return _assetListEntry;
 		}
 
-		long assetListEntryId = getAssetListEntryId();
-
-		_assetListEntry = AssetListEntryServiceUtil.fetchAssetListEntry(
-			assetListEntryId);
+		_assetListEntry = AssetListEntryLocalServiceUtil.fetchAssetListEntry(
+			getAssetListEntryId());
 
 		return _assetListEntry;
 	}
@@ -258,22 +248,21 @@ public class AssetListDisplayContext {
 		return searchActionURL.toString();
 	}
 
-	public String getAssetListEntryTitle() throws PortalException {
-		String title = StringPool.BLANK;
-
-		int assetListEntryType = getAssetListEntryType();
-
+	public String getAssetListEntryTitle() {
 		AssetListEntry assetListEntry = getAssetListEntry();
 
 		if (assetListEntry != null) {
-			title = HtmlUtil.escape(assetListEntry.getTitle());
+			return HtmlUtil.escape(assetListEntry.getTitle());
 		}
-		else if (assetListEntryType ==
-					AssetListEntryTypeConstants.TYPE_DYNAMIC) {
+
+		String title = StringPool.BLANK;
+
+		if (getAssetListEntryType() ==
+				AssetListEntryTypeConstants.TYPE_DYNAMIC) {
 
 			title = "new-dynamic-asset-list";
 		}
-		else if (assetListEntryType ==
+		else if (getAssetListEntryType() ==
 					AssetListEntryTypeConstants.TYPE_MANUAL) {
 
 			title = "new-manual-asset-list";
@@ -289,7 +278,7 @@ public class AssetListDisplayContext {
 		return assetListEntriesSearchContainer.getTotal();
 	}
 
-	public int getAssetListEntryType() throws PortalException {
+	public int getAssetListEntryType() {
 		if (_assetListEntryType != null) {
 			return _assetListEntryType;
 		}
@@ -413,34 +402,6 @@ public class AssetListDisplayContext {
 		return portletURL;
 	}
 
-	public List<ScreenNavigationEntry> getScreenNavigationEntries()
-		throws Exception {
-
-		AssetListEntry assetListEntry = getAssetListEntry();
-
-		ScreenNavigationRegistry screenNavigationRegistry =
-			(ScreenNavigationRegistry)_renderRequest.getAttribute(
-				AssetListWebKeys.SCREEN_NAVIGATION_REGISTRY);
-
-		List<ScreenNavigationCategory> screenNavigationCategories =
-			screenNavigationRegistry.getScreenNavigationCategories(
-				AssetListFormConstants.SCREEN_NAVIGATION_KEY_ASSET_LIST,
-				_themeDisplay.getUser(), assetListEntry);
-
-		List<ScreenNavigationEntry> screenNavigationEntries = new ArrayList<>();
-
-		for (ScreenNavigationCategory screenNavigationCategory :
-				screenNavigationCategories) {
-
-			screenNavigationEntries.addAll(
-				screenNavigationRegistry.getScreenNavigationEntries(
-					screenNavigationCategory, _themeDisplay.getUser(),
-					assetListEntry));
-		}
-
-		return screenNavigationEntries;
-	}
-
 	public String getSortingURL() {
 		PortletURL sortingURL = getPortletURL();
 
@@ -449,21 +410,6 @@ public class AssetListDisplayContext {
 			Objects.equals(getOrderByType(), "asc") ? "desc" : "asc");
 
 		return sortingURL.toString();
-	}
-
-	public String getViewContentPreferences() throws Exception {
-		PortletPreferences portletPreferences =
-			PortletPreferencesFactoryUtil.getPortletPreferences(
-				_request, AssetPublisherPortletKeys.ASSET_PUBLISHER);
-
-		portletPreferences.setValue(
-			"assetListEntryId", String.valueOf(getAssetListEntryId()));
-		portletPreferences.setValue(
-			"emailAssetEntryAddedEnabled", Boolean.FALSE.toString());
-		portletPreferences.setValue("paginationType", "none");
-		portletPreferences.setValue("selectionStyle", "asset-list");
-
-		return PortletPreferencesFactoryUtil.toXML(portletPreferences);
 	}
 
 	public boolean isShowAddAssetListEntryAction() {
@@ -543,6 +489,7 @@ public class AssetListDisplayContext {
 		return false;
 	}
 
+	private SearchContainer _assetListContentSearchContainer;
 	private Integer _assetListEntriesCount;
 	private SearchContainer _assetListEntriesSearchContainer;
 	private AssetListEntry _assetListEntry;

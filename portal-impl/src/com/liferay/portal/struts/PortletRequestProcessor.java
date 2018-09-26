@@ -62,7 +62,6 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.config.ActionConfig;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.upload.MultipartRequestHandler;
 import org.apache.struts.util.MessageResources;
 
@@ -412,24 +411,6 @@ public class PortletRequestProcessor extends TilesRequestProcessor {
 		}
 
 		return super.processActionCreate(request, response, actionMapping);
-	}
-
-	@Override
-	protected ActionForm processActionForm(
-		HttpServletRequest request, HttpServletResponse response,
-		ActionMapping actionMapping) {
-
-		ActionForm actionForm = super.processActionForm(
-			request, response, actionMapping);
-
-		if (actionForm instanceof InitializableActionForm) {
-			InitializableActionForm initializableActionForm =
-				(InitializableActionForm)actionForm;
-
-			initializableActionForm.init(request, response, actionMapping);
-		}
-
-		return actionForm;
 	}
 
 	@Override

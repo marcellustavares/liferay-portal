@@ -2459,6 +2459,44 @@ ${tomcat-gc-log}
 		</sequential>
 	</macrodef>
 
+	<macrodef name="record-test-junit-csv-report">
+		<sequential>
+			<local name="test.batch.name" />
+
+			<condition else="junit-test-csv-report-jdk8" property="test.batch.name" value="${test.batch.name}">
+				<isset property="test.batch.name" />
+			</condition>
+
+			<local name="top.level.job.name" />
+
+			<condition else="junit-test-csv-report" property="top.level.job.name" value="${env.TOP_LEVEL_JOB_NAME}">
+				<isset property="env.TOP_LEVEL_JOB_NAME" />
+			</condition>
+
+			<beanshell>
+				<![CDATA[
+					import com.liferay.jenkins.results.parser.Job;
+					import com.liferay.jenkins.results.parser.JobFactory;
+					import com.liferay.jenkins.results.parser.test.clazz.group.JUnitBatchTestClassGroup;
+					import com.liferay.jenkins.results.parser.test.clazz.group.TestClassGroupFactory;
+
+					Job job = JobFactory.newJob(project.getProperty("top.level.job.name"));
+
+					JUnitBatchTestClassGroup jUnitbatchTestClassGroup = (JUnitBatchTestClassGroup)TestClassGroupFactory.newBatchTestClassGroup(project.getProperty("test.batch.name"), job);
+
+					try {
+						jUnitbatchTestClassGroup.writeTestCSVReportFile();
+					}
+					catch (Exception e) {
+						e.printStackTrace;
+
+						throw e;
+					}
+				]]>
+			</beanshell>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="request-cmis-repository-vm">
 		<attribute name="cmis.repository.type" />
 
@@ -6955,6 +6993,7 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			test.case.available.property.names=${test.case.available.property.names}
 			test.console.log.file.name=${liferay.home}/logs/liferay.*.xml
 			test.console.shut.down.file.name=${project.dir}/console-shut-down
+			test.csv.report.property.names=${test.csv.report.property.names}
 			test.dependencies.dir.name=dependencies
 			test.poshi.warnings.file.name=${project.dir}/poshi-warnings.xml
 			test.retry.command.wait.time=${test.retry.command.wait.time}
@@ -9446,6 +9485,10 @@ if (ppstate.equals("normal")) {
 		</if>
 	</target>
 
+	<target name="record-test-junit-csv-report">
+		<record-test-junit-csv-report />
+	</target>
+
 	<target name="record-test-plugin-names">
 		<condition else="plugins-compile-jdk8" property="test.batch.name" value="${test.batch.name}">
 			<isset property="test.batch.name" />
@@ -9518,6 +9561,72 @@ if (ppstate.equals("normal")) {
 		<echo file="test.plugin.names.properties">${test.plugin.names.properties.content}</echo>
 
 		<print-file file.name="test.plugin.names.properties" />
+	</target>
+
+	<target name="record-test-poshi-csv-report">
+		<delete failonerror="false" file="${test.ext.properties.file}" />
+
+		<if>
+			<isset property="test.base.dir.name" />
+			<then>
+				<antcall inheritAll="false" target="prepare-poshi-runner-properties">
+					<param name="test.base.dir.name" value="${test.base.dir.name}" />
+				</antcall>
+			</then>
+			<else>
+				<antcall inheritAll="false" target="prepare-poshi-runner-properties" />
+			</else>
+		</if>
+
+		<poshi-execute task="validatePoshi" />
+
+		<setup-libs />
+
+		<delete failonerror="false" file="${test.ext.properties.file}" />
+
+		<if>
+			<isset property="test.base.dir.name" />
+			<then>
+				<antcall inheritAll="false" target="prepare-poshi-runner-properties">
+					<param name="test.base.dir.name" value="${test.base.dir.name}" />
+					<param name="test.batch.run.type" value="${test.batch.run.type}" />
+					<param name="test.portal.instance" value="${test.portal.instance}" />
+				</antcall>
+			</then>
+			<else>
+				<antcall inheritAll="false" target="prepare-poshi-runner-properties">
+					<param name="test.batch.run.type" value="${test.batch.run.type}" />
+					<param name="test.portal.instance" value="${test.portal.instance}" />
+				</antcall>
+			</else>
+		</if>
+
+		<poshi-execute task="writePoshiProperties" />
+
+		<local name="report.csv.file" />
+		<local name="report.csv.file.name" />
+
+		<first id="report.csv.file">
+			<fileset
+				dir="portal-web/"
+				includes="Report*.csv"
+			/>
+		</first>
+
+		<propertyregex
+			input="${toString:report.csv.file}"
+			override="true"
+			property="report.csv.file.name"
+			regexp=".*/([^/]+.csv)"
+			replace="\1"
+		/>
+
+		<move
+			file="portal-web/${report.csv.file.name}"
+			tofile="${report.csv.file.name}"
+		/>
+
+		<echo>Writing ${project.dir}/${report.csv.file.name}</echo>
 	</target>
 
 	<target name="remove-plugin">

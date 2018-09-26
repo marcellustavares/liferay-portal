@@ -1,0 +1,118 @@
+<definition>
+	<command name="_gotoAddCollection">
+		<if>
+			<condition function="IsElementPresent" locator1="NavNested#NAV_NESTED_PLUS" />
+			<then>
+				<execute function="Click" locator1="NavNested#NAV_NESTED_PLUS" />
+			</then>
+			<else>
+				<execute macro="Button#click">
+					<var name="button" value="New" />
+				</execute>
+
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="Collection" />
+				</execute>
+			</else>
+		</if>
+	</command>
+
+	<command name="addCollection">
+		<execute macro="FragmentsAdmin#_gotoAddCollection" />
+
+		<execute macro="Collection#editCollection">
+			<var name="collectionDescription" value="${collectionDescription}" />
+			<var name="collectionName" value="${collectionName}" />
+		</execute>
+
+		<execute macro="Button#clickSave" />
+	</command>
+
+	<command name="addFragment">
+		<execute macro="LexiconEntry#gotoAdd" />
+
+		<execute function="AssertTextEquals" locator1="Modal#HEADER" value1="Add Fragment" />
+
+		<execute macro="PortletEntry#inputName">
+			<var name="name" value="${fragmentName}" />
+		</execute>
+
+		<execute macro="Button#clickSave" />
+	</command>
+
+	<command name="exportCollection">
+		<execute macro="Navigator#gotoNavNested">
+			<var name="navNested" value="${collectionName}" />
+		</execute>
+
+		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
+			<var name="menuItem" value="Export" />
+		</execute>
+	</command>
+
+	<command name="gotoImportCollection">
+		<if>
+			<condition function="IsElementPresent" locator1="NavNested#NAV_NESTED_ELLIPSIS" />
+			<then>
+				<execute function="Click" locator1="NavNested#NAV_NESTED_ELLIPSIS" />
+			</then>
+			<else>
+				<execute macro="Button#click">
+					<var name="button" value="New" />
+				</execute>
+			</else>
+		</if>
+
+		<execute macro="Button#click">
+			<var name="button" value="Import" />
+		</execute>
+
+		<execute macro="IFrame#selectConfigurationFrame" />
+	</command>
+
+	<command name="importCollectionFromDependenciesFolder">
+		<execute macro="FragmentsAdmin#gotoImportCollection" />
+
+		<execute function="UploadCommonFile" locator1="TextInput#FILE" value1="${collectionZipFile}" />
+
+		<execute macro="Button#click">
+			<var name="button" value="Import" />
+		</execute>
+
+		<execute macro="Alert#viewSuccessMessage" />
+
+		<execute macro="IFrame#closeFrame" />
+	</command>
+
+	<command name="importCollectionFromTempFolder">
+		<execute macro="FragmentsAdmin#gotoImportCollection" />
+
+		<var method="PropsUtil#get('output.dir.name')" name="tempDir" />
+
+		<var method="StringUtil#split('**/collections-*.zip')" name="pattern" />
+
+		<var method="FileUtil#getIncludedResourceURLs('${pattern}', '${tempDir}')" name="fileName" />
+
+		<var method="StringUtil#valueOf('${fileName}')" name="fileName" />
+
+		<var method="RegexUtil#replace('${fileName}', '\[(.*)\]', '1')" name="fileName" />
+
+		<var method="FileUtil#getFileName('${fileName}')" name="shortFileName" />
+
+		<execute function="UploadTempFile" locator1="TextInput#FILE" value1="${shortFileName}" />
+
+		<execute macro="Button#click">
+			<var name="button" value="Import" />
+		</execute>
+
+		<execute macro="Alert#viewSuccessMessage" />
+
+		<execute macro="IFrame#closeFrame" />
+	</command>
+
+	<command name="openFragmentsAdmin">
+		<execute macro="Navigator#openWithAppendToBaseURL">
+			<var name="urlAppend" value="group/${siteURLKey}/~/control_panel/manage/-/fragments" />
+		</execute>
+	</command>
+</definition>

@@ -1,0 +1,64 @@
+<definition>
+	<command name="assertAssetTypeUnselectable">
+		<execute macro="PageEditor#gotoTab">
+			<var name="tabName" value="Mapping" />
+		</execute>
+
+		<execute macro="Button#viewNotPresent">
+			<var name="button" value="Select" />
+		</execute>
+	</command>
+
+	<command name="mapEditableTextToAsset">
+		<execute macro="PageEditor#gotoTab">
+			<var name="tabName" value="Mapping" />
+		</execute>
+
+		<execute function="MouseOver#mouseOverNotVisible" locator1="Fragment#PAGE_TEMPLATE_FRAGMENT_EDITABLE_TEXT">
+			<var name="key_fragmentName" value="${fragmentName}" />
+			<var name="key_id" value="${id}" />
+		</execute>
+
+		<execute function="Click" locator1="Fragment#PAGE_TEMPLATE_FRAGMENT_EDITABLE_TEXT">
+			<var name="key_fragmentName" value="${fragmentName}" />
+			<var name="key_id" value="${id}" />
+		</execute>
+
+		<execute macro="Button#clickMap" />
+
+		<execute function="AssertClick" locator1="Fragment#LIST_GROUP_ITEM" value1="${itemName}">
+			<var name="key_itemName" value="${itemName}" />
+		</execute>
+	</command>
+
+	<command name="selectAssetType">
+		<execute macro="PageEditor#gotoTab">
+			<var name="tabName" value="Mapping" />
+		</execute>
+
+		<execute macro="Button#clickSelect" />
+
+		<if>
+			<contains string="${assetType}" substring="{assetType}" />
+			<then>
+				<var name="assetType" value="Web Content Article" />
+				<if>
+					<contains string="${subType}" substring="{subType}" />
+					<then>
+						<var name="subType" value="Basic Web Content" />
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<execute function="Select" locator1="Select#GENERIC_SELECT_FIELD" value1="${assetType}">
+			<var name="key_fieldLabel" value="Asset Type" />
+		</execute>
+
+		<execute function="Select" locator1="Select#GENERIC_SELECT_FIELD" value1="${subType}">
+			<var name="key_fieldLabel" value="Subtype" />
+		</execute>
+
+		<execute macro="Button#clickSave" />
+	</command>
+</definition>
