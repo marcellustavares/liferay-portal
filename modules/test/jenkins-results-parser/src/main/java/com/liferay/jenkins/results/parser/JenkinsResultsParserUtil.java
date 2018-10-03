@@ -1022,25 +1022,7 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static String getProperty(Properties properties, String name) {
-		if (!properties.containsKey(name)) {
-			return null;
-		}
-
-		String value = properties.getProperty(name);
-
-		Matcher matcher = _nestedPropertyPattern.matcher(value);
-
-		String newValue = value;
-
-		while (matcher.find()) {
-			if (properties.containsKey(matcher.group(1))) {
-				newValue = newValue.replace(
-					matcher.group(0),
-					getProperty(properties, matcher.group(1)));
-			}
-		}
-
-		return newValue;
+		return _getProperty(properties, new ArrayList<String>(), name);
 	}
 
 	public static String getProperty(
@@ -1957,7 +1939,7 @@ public class JenkinsResultsParserUtil {
 
 	protected static final String DEPENDENCIES_URL_HTTP =
 		"http://mirrors-no-cache.lax.liferay.com/github.com/liferay" +
-			"/liferay-jenkins-results-parser-samples-ee/2/";
+			"/liferay-jenkins-results-parser-samples-ee/1/";
 
 	static {
 		File dependenciesDir = new File("src/test/resources/dependencies/");
@@ -2059,6 +2041,56 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return properties;
+	}
+
+	private static String _getProperty(
+		Properties properties, List<String> previousNames, String name) {
+
+		if (previousNames.contains(name)) {
+			if (previousNames.size() > 1) {
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("Circular property reference chain found\n");
+
+				for (String previousName : previousNames) {
+					sb.append(previousName);
+					sb.append(" -> ");
+				}
+
+				sb.append(name);
+
+				throw new IllegalStateException(sb.toString());
+			}
+
+			return combine("${", name, "}");
+		}
+
+		previousNames.add(name);
+
+		if (!properties.containsKey(name)) {
+			return null;
+		}
+
+		String value = properties.getProperty(name);
+
+		Matcher matcher = _nestedPropertyPattern.matcher(value);
+
+		String newValue = value;
+
+		while (matcher.find()) {
+			String propertyGroup = matcher.group(0);
+			String propertyName = matcher.group(1);
+
+			if (properties.containsKey(propertyName)) {
+				newValue = newValue.replace(
+					propertyGroup,
+					_getProperty(
+						properties, new ArrayList<>(previousNames),
+						propertyName));
+			}
+		}
+
+		return newValue;
 	}
 
 	private static String _getRedactTokenKey(int index) {
