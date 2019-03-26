@@ -180,7 +180,7 @@ class Analytics {
 			return Promise.resolve(userId);
 		}
 		else {
-			return Promise.resolve(userId);
+			return Promise.resolve(storedUserId);
 		}
 	}
 
