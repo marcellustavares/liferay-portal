@@ -14,6 +14,7 @@ const FLUSH_INTERVAL = 2000;
 const REQUEST_TIMEOUT = 5000;
 
 // Local Storage keys
+const STORAGE_KEY_ANONYMOUS = 'ac_client_anonymous';
 const STORAGE_KEY_EVENTS = 'ac_client_batch';
 const STORAGE_KEY_CONTEXTS = 'ac_client_context';
 const STORAGE_KEY_USER_ID = 'ac_client_user_id';
@@ -159,20 +160,26 @@ class Analytics {
 
 	/**
 	 * Gets the userId for the existing analytics user. Previously generated ids
-	 * are stored and retrieved before generating a new one and attempting to update
-	 * the Identity Service.
+	 * are stored and retrieved before generating a new one. If a anonymous 
+	 * navigation is started after a identified navigation, the user ID token
+	 * is regenerated.
 	 * @return {Promise} A promise resolved with the stored or generated userId
 	 */
 	_getUserId() {
-		let userId = storage.get(STORAGE_KEY_USER_ID);
+		const {anonymous} = this.config;
 
-		if (userId) {
-			return Promise.resolve(userId);
-		} else {
-			userId = this._generateUserId();
+		const storedAnonymous = storage.get(STORAGE_KEY_ANONYMOUS);
+		const storedUserId = storage.get(STORAGE_KEY_USER_ID);
 
+		if (!storedUserId || ((storedAnonymous === false) && (anonymous === true))) {
+			const userId = this._generateUserId();
+
+			this._persist(STORAGE_KEY_ANONYMOUS, anonymous);
 			this._persist(STORAGE_KEY_USER_ID, userId);
 
+			return Promise.resolve(userId);
+		}
+		else {
 			return Promise.resolve(userId);
 		}
 	}
