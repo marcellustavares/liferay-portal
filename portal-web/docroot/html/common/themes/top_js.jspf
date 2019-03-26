@@ -451,6 +451,7 @@ String[] liferayAnalyticsGroupIds = PrefsPropsUtil.getStringArray(company.getCom
 			m.parentNode.insertBefore(a, m);
 		})('https://analytics-js-cdn.liferay.com', function() {
 			var config = {
+				anonymous: !themeDisplay.isSignedIn(),
 				analyticsKey: '<%= HtmlUtil.escapeJS(liferayAnalyticsKey) %>',
 				dataSourceId: '<%= HtmlUtil.escapeJS(liferayAnalyticsDataSourceId) %>',
 				endpointUrl: '<%= HtmlUtil.escapeJS(liferayAnalyticsEndpointURL) %>'
