@@ -92,6 +92,22 @@ class Analytics {
 			.forEach(disposer => disposer());
 	}
 
+	_isNewUserIdRequired() {
+		const storedUserId = storage.get(STORAGE_KEY_USER_ID);
+
+		if (!storedUserId) {
+			return true;
+		}
+
+		const storedAnonymous = storage.get(STORAGE_KEY_ANONYMOUS);
+
+		if ((storedAnonymous === false) && (this.config.anonymous === true)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Persists the event queue to the LocalStorage
 	 * @protected
@@ -142,11 +158,19 @@ class Analytics {
 	}
 
 	/**
-	 * Returns an unique identifier for an user
+	 * Returns an unique identifier for an user, additionaly it stores
+	 * the generated token to the local storage cache.
 	 * @return {string} The generated id
 	 */
 	_generateUserId() {
-		return uuidv1();
+		const userId = uuidv1();
+
+		this._persist(STORAGE_KEY_ANONYMOUS, this.config.anonymous);
+		this._persist(STORAGE_KEY_USER_ID, userId);
+
+		storage.remove(STORAGE_KEY_IDENTITY_HASH);
+
+		return userId;
 	}
 
 	_getContext() {
@@ -166,21 +190,13 @@ class Analytics {
 	 * @return {Promise} A promise resolved with the stored or generated userId
 	 */
 	_getUserId() {
-		const {anonymous} = this.config;
-
-		const storedAnonymous = storage.get(STORAGE_KEY_ANONYMOUS);
-		const storedUserId = storage.get(STORAGE_KEY_USER_ID);
-
-		if (!storedUserId || ((storedAnonymous === false) && (anonymous === true))) {
-			const userId = this._generateUserId();
-
-			this._persist(STORAGE_KEY_ANONYMOUS, anonymous);
-			this._persist(STORAGE_KEY_USER_ID, userId);
-
-			return Promise.resolve(userId);
+		const newUserIdRequired = this._isNewUserIdRequired();
+	
+		if (newUserIdRequired) {
+			return Promise.resolve(this._generateUserId());
 		}
 		else {
-			return Promise.resolve(storedUserId);
+			return Promise.resolve(storage.get(STORAGE_KEY_USER_ID));
 		}
 	}
 
@@ -362,15 +378,21 @@ class Analytics {
 	 * Sets the current user identity in the system. This is meant to be invoked
 	 * by consumers every time an identity change is detected. If the identity is
 	 * different than the previously stored one, we will save this new identity and
-	 * send a request updating the Identity Service.
+	 * send a request updating the Identity Service. Aditionally is stores the property
+	 * value `anonymous` to false in the local storage.
 	 * @param {object} identity A key-value pair object that identifies the user
 	 * @return {Promise} A promise resolved with the generated identity hash
 	 */
 	setIdentity(identity) {
 		this.config.identity = identity;
 
-		return this._getUserId().then(userId =>
-			this._sendIdentity(identity, userId)
+		return this._getUserId().then(userId => {
+				const identityHash = this._sendIdentity(identity, userId);
+
+				this._persist(STORAGE_KEY_ANONYMOUS, false);
+
+				return identityHash;
+			}
 		);
 	}
 
