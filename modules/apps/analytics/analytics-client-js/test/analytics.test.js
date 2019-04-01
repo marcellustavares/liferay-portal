@@ -15,6 +15,7 @@ const INITIAL_CONFIG = {
 const MOCKED_REQUEST_DURATION = 5000;
 
 // Local Storage keys
+const STORAGE_KEY_ANONYMOUS = 'ac_client_anonymous';
 const STORAGE_KEY_EVENTS = 'ac_client_batch';
 const STORAGE_KEY_USER_ID = 'ac_client_user_id';
 const STORAGE_KEY_IDENTITY = 'ac_client_identity';
@@ -50,6 +51,7 @@ describe('Analytics Client', () => {
 
 			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
 
+			localStorage.removeItem(STORAGE_KEY_ANONYMOUS);
 			localStorage.removeItem(STORAGE_KEY_EVENTS);
 			localStorage.removeItem(STORAGE_KEY_USER_ID);
 		}
@@ -150,28 +152,6 @@ describe('Analytics Client', () => {
 			});
 		});
 
-		it('should regenerate the stored userid if the identity changed' , () => {
-			fetchMock.mock(/identity$/ig, () => Promise.resolve(200));
-
-			Analytics.reset();
-			Analytics.dispose();
-
-			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
-
-			Analytics.setIdentity(ANALYTICS_IDENTITY);
-
-			const previousUserId = localStorage.getItem(STORAGE_KEY_USER_ID);
-
-			return Analytics.setIdentity({
-				email: 'john@liferay.com',
-				name: 'John'
-			}).then(() => {
-				const currentUserId = localStorage.getItem(STORAGE_KEY_USER_ID);
-
-				expect(currentUserId).not.to.equal(previousUserId);
-			});
-		});
-
 		it('should report identity changes to the Identity Service', () => {
 			fetchMock.mock('*', () => Promise.resolve(200));
 
@@ -220,6 +200,97 @@ describe('Analytics Client', () => {
 				})
 				.then(() => Analytics.setIdentity(ANALYTICS_IDENTITY))
 				.then(() => expect(identityCalled).to.equal(0));
+		});
+
+		it('should store anonymous false whenever identity is called', () => {
+			fetchMock.mock(/identity$/, () => Promise.resolve(200));
+
+			Analytics.reset();
+			Analytics.dispose();
+
+			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
+
+			return Analytics.setIdentity({
+				email: 'john@liferay.com',
+				name: 'John'
+			}).then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_ANONYMOUS)).to.equal('false');
+			});
+		});
+
+		it('should store anonymous true when flush is called and initial config is anonoymous', () => {
+			Analytics.reset();
+			Analytics.dispose();
+
+			Analytics = AnalyticsClient.create({
+				...INITIAL_CONFIG, anonymous: true
+			});
+
+			sendDummyEvents(Analytics, 1);
+
+			Analytics.flush().then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_ANONYMOUS)).to.equal('true');
+			});
+		});
+
+
+		it('should preserve the user id whenever the set identity is called after a anonymous navigation', () => {
+			fetchMock.mock(/identity$/, () => Promise.resolve(200));
+
+			Analytics.reset();
+			Analytics.dispose();
+
+			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
+
+			sendDummyEvents(Analytics, 1);
+
+			Analytics.flush().then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_ANONYMOUS)).to.equal('true');
+			});
+			
+			const userId = localStorage.getItem(STORAGE_KEY_USER_ID);
+
+			return Analytics.setIdentity({
+				email: 'john@liferay.com',
+				name: 'John'
+			}).then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_USER_ID)).to.equal(userId);
+			});
+		});
+
+		it('should regenerate the user id if a new anonynous navigation begins after a known navigation', () => {
+			fetchMock.mock(/identity$/, () => Promise.resolve(200));
+
+			Analytics.reset();
+			Analytics.dispose();
+
+			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
+
+			sendDummyEvents(Analytics, 1);
+
+			Analytics.flush().then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_ANONYMOUS)).to.equal('true');
+			});
+			
+			const userId = localStorage.getItem(STORAGE_KEY_USER_ID);
+
+			Analytics.setIdentity({
+				email: 'john@liferay.com',
+				name: 'John'
+			}).then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_USER_ID)).to.equal(userId);
+			});
+
+			Analytics = AnalyticsClient.create({
+				anonymous: true,
+				...INITIAL_CONFIG
+			});
+
+			sendDummyEvents(Analytics, 1);
+
+			Analytics.flush().then(() => {
+				expect(localStorage.getItem(STORAGE_KEY_USER_ID)).not.to.equal(userId);
+			});
 		});
 
 		it('should only clear the persisted events when done', () => {
