@@ -211,7 +211,7 @@ public class AsahFaroBackendClientImpl implements AsahFaroBackendClient {
 			throw new IllegalArgumentException("Experiment ID is null");
 		}
 
-		_jsonWebServiceClient.doPut(
+		_jsonWebServiceClient.doPatch(
 			StringUtil.replace(
 				_PATH_EXPERIMENTS_EXPERIMENT, "{experimentId}",
 				experiment.getId()),
