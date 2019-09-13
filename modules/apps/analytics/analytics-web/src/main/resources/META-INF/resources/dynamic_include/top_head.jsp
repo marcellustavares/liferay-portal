@@ -17,11 +17,15 @@
 <%@ include file="/init.jsp" %>
 
 <%
+Map<String, String> analyticsClientRequestContext = (Map<String, String>)request.getAttribute(AnalyticsWebKeys.ANALYTICS_CLIENT_REQUEST_CONTEXT_KEY);
+
 String liferayAnalyticsDataSourceId = PrefsPropsUtil.getString(company.getCompanyId(), "liferayAnalyticsDataSourceId");
 String liferayAnalyticsEndpointURL = PrefsPropsUtil.getString(company.getCompanyId(), "liferayAnalyticsEndpointURL");
 boolean liferayAnalyticsEnableAllGroupIds = PrefsPropsUtil.getBoolean(company.getCompanyId(), "liferayAnalyticsEnableAllGroupIds");
 String[] liferayAnalyticsGroupIds = PrefsPropsUtil.getStringArray(company.getCompanyId(), "liferayAnalyticsGroupIds", StringPool.COMMA);
 %>
+
+<%= analyticsClientRequestContext.get("name") %>
 
 <c:if test="<%= _isAnalyticsTrackingEnabled(liferayAnalyticsDataSourceId, liferayAnalyticsEndpointURL, liferayAnalyticsEnableAllGroupIds, liferayAnalyticsGroupIds, layout.getGroup(), layout.isTypeControlPanel(), request) %>">
 	<script data-senna-track="permanent" id="liferayAnalyticsScript" type="text/javascript">

@@ -12,12 +12,9 @@
  * details.
  */
 
-package com.liferay.segments.experiment.web.internal.servlet.taglib;
+package com.liferay.segments.experiment.web.internal.analytics;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.servlet.taglib.BaseJSPDynamicInclude;
-import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
+import com.liferay.analytics.client.AnalyticsClientRequestContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -26,29 +23,29 @@ import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.experiment.web.internal.constants.SegmentsExperimentWebKeys;
 import com.liferay.segments.experiment.web.internal.util.SegmentsExperimentUtil;
 import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
-import java.io.IOException;
+import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
+ * @author Marcellus Tavares
  * @author Eduardo García
  */
-@Component(immediate = true, service = DynamicInclude.class)
-public class SegmentsExperimentAnalyticsTopHeadJSPDynamicInclude
-	extends BaseJSPDynamicInclude {
+@Component(
+	immediate = true, service = AnalyticsClientRequestContextContributor.class
+)
+public class SegmentsExperimentAnalyticsClientRequestContextContributor
+	implements AnalyticsClientRequestContextContributor {
 
 	@Override
-	public void include(
-			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, String key)
-		throws IOException {
+	public void contribute(
+		Map<String, String> context, HttpServletRequest httpServletRequest) {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -60,41 +57,28 @@ public class SegmentsExperimentAnalyticsTopHeadJSPDynamicInclude
 			return;
 		}
 
-		long[] segmentsExperienceIds = GetterUtil.getLongValues(
-			httpServletRequest.getAttribute(
-				SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS));
+		String segmentsExperienceKey = _getSegmentsExperienceKey(
+			GetterUtil.getLongValues(
+				httpServletRequest.getAttribute(
+					SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS)));
 
-		httpServletRequest.setAttribute(
-			SegmentsExperimentWebKeys.
-				SEGMENTS_EXPERIMENT_SEGMENTS_EXPERIENCE_KEY,
-			_getSegmentsExperienceKey(segmentsExperienceIds));
+		SegmentsExperiment segmentsExperiment =
+			(SegmentsExperiment)httpServletRequest.getAttribute(
+				SegmentsExperimentWebKeys.SEGMENTS_EXPERIMENT);
 
-		super.include(httpServletRequest, httpServletResponse, key);
-	}
+		if (segmentsExperiment != null) {
+			context.put(
+				"experienceId", segmentsExperiment.getSegmentsExperienceKey());
+			context.put(
+				"experimentId", segmentsExperiment.getSegmentsExperimentKey());
+			context.put("variantId", segmentsExperienceKey);
 
-	@Override
-	public void register(DynamicIncludeRegistry dynamicIncludeRegistry) {
-		dynamicIncludeRegistry.register(
-			"/html/common/themes/top_head.jsp#post");
-	}
+			return;
+		}
 
-	@Override
-	protected String getJspPath() {
-		return "/dynamic_include/top_head.jsp";
-	}
+		context.put("experienceId", segmentsExperienceKey);
 
-	@Override
-	protected Log getLog() {
-		return _log;
-	}
-
-	@Override
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.segments.experiment.web)",
-		unbind = "-"
-	)
-	protected void setServletContext(ServletContext servletContext) {
-		super.setServletContext(servletContext);
+		System.out.println(context);
 	}
 
 	private String _getSegmentsExperienceKey(long[] segmentsExperienceIds) {
@@ -110,9 +94,6 @@ public class SegmentsExperimentAnalyticsTopHeadJSPDynamicInclude
 
 		return SegmentsExperienceConstants.KEY_DEFAULT;
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SegmentsExperimentAnalyticsTopHeadJSPDynamicInclude.class);
 
 	@Reference
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
