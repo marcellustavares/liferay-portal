@@ -23,7 +23,7 @@ boolean liferayAnalyticsEnableAllGroupIds = PrefsPropsUtil.getBoolean(company.ge
 String[] liferayAnalyticsGroupIds = PrefsPropsUtil.getStringArray(company.getCompanyId(), "liferayAnalyticsGroupIds", StringPool.COMMA);
 %>
 
-<c:if test="<%= _isAnalyticsTrackingEnabled(liferayAnalyticsDataSourceId, liferayAnalyticsEndpointURL, liferayAnalyticsEnableAllGroupIds, liferayAnalyticsGroupIds, group, layout.isTypeControlPanel(), request) %>">
+<c:if test="<%= _isAnalyticsTrackingEnabled(liferayAnalyticsDataSourceId, liferayAnalyticsEndpointURL, liferayAnalyticsEnableAllGroupIds, liferayAnalyticsGroupIds, layout.getGroup(), layout.isTypeControlPanel(), request) %>">
 	<script data-senna-track="permanent" id="liferayAnalyticsScript" type="text/javascript">
 		(function(u, c, a, m, o, l) {
 			o = 'script';
@@ -62,7 +62,7 @@ String[] liferayAnalyticsGroupIds = PrefsPropsUtil.getStringArray(company.getCom
 
 			Analytics.send('pageViewed', 'Page');
 
-			<c:if test="<%= PropsValues.JAVASCRIPT_SINGLE_PAGE_APPLICATION_ENABLED %>">
+			<c:if test="<%= GetterUtil.getBoolean(PropsUtil.get(PropsKeys.JAVASCRIPT_SINGLE_PAGE_APPLICATION_ENABLED)) %>">
 				Liferay.on(
 					'endNavigate',
 					function(event) {
