@@ -493,6 +493,8 @@ String[] liferayAnalyticsGroupIds = PrefsPropsUtil.getStringArray(company.getCom
 								);
 							}
 
+							<liferay-util:dynamic-include key="/html/common/themes/top_js.jspf#analytics" />
+
 							Analytics.send('pageViewed', 'Page', {'page': event.path});
 						}
 					}

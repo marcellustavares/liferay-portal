@@ -1,0 +1,11 @@
+if (window.Analytics) {
+	Analytics.registerMiddleware(
+		function(request) {
+			${experienceId}
+			${experimentId}
+			${variantId}
+
+			return request;
+		}
+	);
+}
