@@ -126,7 +126,7 @@ public class SegmentsExperimentAnalyticsTopHeadDynamicInclude
 
 	private static final String _ANALYTICS_TMPL_CONTENT = StringUtil.read(
 		SegmentsExperimentAnalyticsTopHeadJSPDynamicInclude.class,
-		"analytics.tmpl");
+		"analytics.tpl");
 
 	@Reference
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
