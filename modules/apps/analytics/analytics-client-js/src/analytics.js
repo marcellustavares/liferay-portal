@@ -79,7 +79,7 @@ class Analytics {
 			return instance;
 		}
 
-		const {endpointUrl, flushInterval} = config;
+		const {endpointUrl} = config;
 
 		const client = new Client(endpointUrl);
 
@@ -96,6 +96,8 @@ class Analytics {
 		instance.events = getItem(STORAGE_KEY_EVENTS) || [];
 		instance.contexts = getItem(STORAGE_KEY_CONTEXTS) || [];
 		instance.isFlushInProgress = false;
+		instance.delay = this.defaultValueOfDelay();
+		instance.attempts = 0;
 
 		// Initializes default plugins
 
@@ -103,20 +105,23 @@ class Analytics {
 			plugin(instance)
 		);
 
-		// Starts flush loop
-
 		if (instance.flushInterval) {
 			clearInterval(instance.flushInterval);
 		}
 
-		instance.flushInterval = setInterval(
-			() => instance.flush(),
-			flushInterval || FLUSH_INTERVAL
-		);
+		this.startsFlushLoop();
 
 		this._ensureIntegrity();
 
 		return instance;
+	}
+
+	startsFlushLoop() {
+		this.flushInterval = setInterval(() => this.flush(), this.delay);
+	}
+
+	defaultValueOfDelay() {
+		return this.config.flushInterval || FLUSH_INTERVAL;
 	}
 
 	/**
@@ -351,11 +356,23 @@ class Analytics {
 					);
 
 					this.reset(events);
+
+					this.attempts = 0;
+					this.delay = this.defaultValueOfDelay();
+					clearInterval(this.flushInterval);
+					this.startsFlushLoop();
 				})
-				.catch()
-				.then(() => {
+				.catch(() => {
 					this.isFlushInProgress = false;
 
+					this.increaseDelay();
+					clearInterval(this.flushInterval);
+					this.startsFlushLoop();
+
+					return this.isFlushInProgress;
+				})
+				.then(() => {
+					this.isFlushInProgress = false;
 					return this.isFlushInProgress;
 				});
 		} else {
@@ -363,6 +380,20 @@ class Analytics {
 		}
 
 		return result;
+	}
+
+	// Increases delay based in fibonacci sequence
+
+	increaseDelay() {
+		if (this.attempts <= 7) {
+			this.delay += this.fibonacci(this.attempts) * 1000;
+			this.attempts += 1;
+		}
+	}
+
+	fibonacci(num) {
+		if (num <= 1) return 1;
+		return this.fibonacci(num - 1) + this.fibonacci(num - 2);
 	}
 
 	/**
