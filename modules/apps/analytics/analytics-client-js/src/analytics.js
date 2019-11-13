@@ -39,6 +39,8 @@ const STORAGE_KEY_IDENTITY_HASH = 'ac_client_identity';
 
 const STORAGE_KEY_USER_ID = 'ac_client_user_id';
 
+const EVENTS_STORAGE_LIMIT = 512;
+
 let instance;
 
 const getItem = key => {
@@ -468,6 +470,19 @@ class Analytics {
 			return;
 		}
 
+		const currentContextHash = this.getCurrentContextHash();
+		this.addNewEvent(
+			eventId,
+			applicationId,
+			eventProps,
+			currentContextHash
+		);
+		this.removeOldEventWhenReachSize();
+		this._persist(STORAGE_KEY_EVENTS, this.events);
+		this._persist(STORAGE_KEY_CONTEXTS, this.contexts);
+	}
+
+	getCurrentContextHash() {
 		const currentContext = this._getContext();
 		const currentContextHash = hash(currentContext);
 
@@ -478,7 +493,10 @@ class Analytics {
 		if (!hasStoredContext) {
 			this.contexts = [...this.contexts, currentContext];
 		}
+		return currentContextHash;
+	}
 
+	addNewEvent(eventId, applicationId, eventProps, currentContextHash) {
 		this.events = [
 			...this.events,
 			this._serialize(
@@ -488,9 +506,16 @@ class Analytics {
 				currentContextHash
 			)
 		];
+	}
 
-		this._persist(STORAGE_KEY_EVENTS, this.events);
-		this._persist(STORAGE_KEY_CONTEXTS, this.contexts);
+	removeOldEventWhenReachSize() {
+		const totalSize = Number(
+			(JSON.stringify(this.events).length * 16) / (8 * 1024)
+		);
+
+		if (totalSize > EVENTS_STORAGE_LIMIT) {
+			this.events.shift();
+		}
 	}
 
 	/**
