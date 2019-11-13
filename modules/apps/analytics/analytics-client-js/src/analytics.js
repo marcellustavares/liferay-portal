@@ -95,11 +95,11 @@ class Analytics {
 
 		instance.identityEndpoint = `${endpointUrl}/identity`;
 
+		instance.attempts = 0;
+		instance.delay = this.defaultValueOfDelay();
 		instance.events = getItem(STORAGE_KEY_EVENTS) || [];
 		instance.contexts = getItem(STORAGE_KEY_CONTEXTS) || [];
 		instance.isFlushInProgress = false;
-		instance.delay = this.defaultValueOfDelay();
-		instance.attempts = 0;
 
 		// Initializes default plugins
 
@@ -118,8 +118,16 @@ class Analytics {
 		return instance;
 	}
 
-	startsFlushLoop() {
-		this.flushInterval = setInterval(() => this.flush(), this.delay);
+	addNewEvent(eventId, applicationId, eventProps, currentContextHash) {
+		this.events = [
+			...this.events,
+			this._serialize(
+				eventId,
+				applicationId,
+				eventProps,
+				currentContextHash
+			)
+		];
 	}
 
 	defaultValueOfDelay() {
@@ -139,6 +147,49 @@ class Analytics {
 				.filter(disposer => typeof disposer === 'function')
 				.forEach(disposer => disposer());
 		}
+	}
+
+	fibonacci(num) {
+		if (num <= 1) return 1;
+		return this.fibonacci(num - 1) + this.fibonacci(num - 2);
+	}
+
+	getCurrentContextHash() {
+		const currentContext = this._getContext();
+		const currentContextHash = hash(currentContext);
+
+		const hasStoredContext = this.contexts.find(
+			storedContext => hash(storedContext) === currentContextHash
+		);
+
+		if (!hasStoredContext) {
+			this.contexts = [...this.contexts, currentContext];
+		}
+		return currentContextHash;
+	}
+
+	/**
+	 * Increases delay based in fibonacci sequence
+	 */
+	increaseDelay() {
+		if (this.attempts <= 7) {
+			this.delay += this.fibonacci(this.attempts) * 1000;
+			this.attempts += 1;
+		}
+	}
+
+	removeOldEventWhenReachSize() {
+		const totalSize = Number(
+			(JSON.stringify(this.events).length * 16) / (8 * 1024)
+		);
+
+		if (totalSize > EVENTS_STORAGE_LIMIT) {
+			this.events.shift();
+		}
+	}
+
+	startsFlushLoop() {
+		this.flushInterval = setInterval(() => this.flush(), this.delay);
 	}
 
 	_ensureIntegrity() {
@@ -384,20 +435,6 @@ class Analytics {
 		return result;
 	}
 
-	// Increases delay based in fibonacci sequence
-
-	increaseDelay() {
-		if (this.attempts <= 7) {
-			this.delay += this.fibonacci(this.attempts) * 1000;
-			this.attempts += 1;
-		}
-	}
-
-	fibonacci(num) {
-		if (num <= 1) return 1;
-		return this.fibonacci(num - 1) + this.fibonacci(num - 2);
-	}
-
 	/**
 	 * Registers the given plugin and executes its initialistion logic
 	 * @param {Function} plugin An Analytics Plugin
@@ -480,42 +517,6 @@ class Analytics {
 		this.removeOldEventWhenReachSize();
 		this._persist(STORAGE_KEY_EVENTS, this.events);
 		this._persist(STORAGE_KEY_CONTEXTS, this.contexts);
-	}
-
-	getCurrentContextHash() {
-		const currentContext = this._getContext();
-		const currentContextHash = hash(currentContext);
-
-		const hasStoredContext = this.contexts.find(
-			storedContext => hash(storedContext) === currentContextHash
-		);
-
-		if (!hasStoredContext) {
-			this.contexts = [...this.contexts, currentContext];
-		}
-		return currentContextHash;
-	}
-
-	addNewEvent(eventId, applicationId, eventProps, currentContextHash) {
-		this.events = [
-			...this.events,
-			this._serialize(
-				eventId,
-				applicationId,
-				eventProps,
-				currentContextHash
-			)
-		];
-	}
-
-	removeOldEventWhenReachSize() {
-		const totalSize = Number(
-			(JSON.stringify(this.events).length * 16) / (8 * 1024)
-		);
-
-		if (totalSize > EVENTS_STORAGE_LIMIT) {
-			this.events.shift();
-		}
 	}
 
 	/**
