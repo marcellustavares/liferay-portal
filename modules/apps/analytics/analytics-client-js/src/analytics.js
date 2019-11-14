@@ -25,7 +25,11 @@ import hash from './utils/hash';
 
 const ENV = window || global;
 
+const EVENTS_STORAGE_LIMIT = 512;
+
 const FLUSH_INTERVAL = 2000;
+
+const LIMIT_FAILED_ATTEMPTS = 7;
 
 const REQUEST_TIMEOUT = 5000;
 
@@ -38,8 +42,6 @@ const STORAGE_KEY_EVENTS = 'ac_client_batch';
 const STORAGE_KEY_IDENTITY_HASH = 'ac_client_identity';
 
 const STORAGE_KEY_USER_ID = 'ac_client_user_id';
-
-const EVENTS_STORAGE_LIMIT = 512;
 
 let instance;
 
@@ -95,7 +97,7 @@ class Analytics {
 
 		instance.identityEndpoint = `${endpointUrl}/identity`;
 
-		instance.attempts = 0;
+		instance.failedAttempts = 0;
 		instance.delay = this.defaultValueOfDelay();
 		instance.events = getItem(STORAGE_KEY_EVENTS) || [];
 		instance.contexts = getItem(STORAGE_KEY_CONTEXTS) || [];
@@ -107,10 +109,6 @@ class Analytics {
 			plugin(instance)
 		);
 
-		if (instance.flushInterval) {
-			clearInterval(instance.flushInterval);
-		}
-
 		this.startsFlushLoop();
 
 		this._ensureIntegrity();
@@ -118,7 +116,7 @@ class Analytics {
 		return instance;
 	}
 
-	addNewEvent(eventId, applicationId, eventProps, currentContextHash) {
+	addNewEvent(applicationId, currentContextHash, eventId, eventProps) {
 		this.events = [
 			...this.events,
 			this._serialize(
@@ -172,23 +170,31 @@ class Analytics {
 	 * Increases delay based in fibonacci sequence
 	 */
 	increaseDelay() {
-		if (this.attempts <= 7) {
-			this.delay += this.fibonacci(this.attempts) * 1000;
-			this.attempts += 1;
+		if (this.failedAttempts <= LIMIT_FAILED_ATTEMPTS) {
+			this.delay += this.fibonacci(this.failedAttempts) * 1000;
+			this.failedAttempts += 1;
 		}
 	}
 
+	/**
+	 * Remove old events when event storage limit is reached
+	 */
 	removeOldEventWhenReachSize() {
-		const totalSize = Number(
-			(JSON.stringify(this.events).length * 16) / (8 * 1024)
-		);
+		if (this.failedAttempts != 0) {
+			const totalSize = Number(
+				(JSON.stringify(this.events).length * 16) / (8 * 1024)
+			);
 
-		if (totalSize > EVENTS_STORAGE_LIMIT) {
-			this.events.shift();
+			if (totalSize > EVENTS_STORAGE_LIMIT) {
+				this.events.shift();
+			}
 		}
 	}
 
 	startsFlushLoop() {
+		if (this.flushInterval) {
+			clearInterval(instance.flushInterval);
+		}
 		this.flushInterval = setInterval(() => this.flush(), this.delay);
 	}
 
@@ -410,16 +416,14 @@ class Analytics {
 
 					this.reset(events);
 
-					this.attempts = 0;
+					this.failedAttempts = 0;
 					this.delay = this.defaultValueOfDelay();
-					clearInterval(this.flushInterval);
 					this.startsFlushLoop();
 				})
 				.catch(() => {
 					this.isFlushInProgress = false;
 
 					this.increaseDelay();
-					clearInterval(this.flushInterval);
 					this.startsFlushLoop();
 
 					return this.isFlushInProgress;
@@ -509,10 +513,10 @@ class Analytics {
 
 		const currentContextHash = this.getCurrentContextHash();
 		this.addNewEvent(
-			eventId,
 			applicationId,
-			eventProps,
-			currentContextHash
+			currentContextHash,
+			eventId,
+			eventProps
 		);
 		this.removeOldEventWhenReachSize();
 		this._persist(STORAGE_KEY_EVENTS, this.events);
