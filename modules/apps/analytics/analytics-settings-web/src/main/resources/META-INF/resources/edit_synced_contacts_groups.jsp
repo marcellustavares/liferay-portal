@@ -19,6 +19,8 @@
 <%
 AnalyticsConfiguration analyticsConfiguration = (AnalyticsConfiguration)request.getAttribute(AnalyticsSettingsWebKeys.ANALYTICS_CONFIGURATION);
 
+SyncedContactsGroupsManagementToolbarContext syncedContactsGroupsManagementToolbarContext = new SyncedContactsGroupsManagementToolbarContext(liferayPortletRequest, liferayPortletResponse, request, currentURLObj);
+
 boolean syncAllContacts = analyticsConfiguration.syncAllContacts();
 Set<String> syncedOrganizationIds = SetUtil.fromArray(analyticsConfiguration.syncedOrganizationIds());
 Set<String> syncedUserGroupIds = SetUtil.fromArray(analyticsConfiguration.syncedUserGroupIds());
@@ -47,6 +49,16 @@ portletDisplay.setURLBack(backURL);
 		</span>
 	</h2>
 
+	<clay:management-toolbar
+		creationMenu="<%= syncedContactsGroupsManagementToolbarContext.getCreationMenu() %>"
+		filterDropdownItems="<%= syncedContactsGroupsManagementToolbarContext.getFilterDropdownItems() %>"
+		filterLabelItems="<%= syncedContactsGroupsManagementToolbarContext.getFilterLabelItems() %>"
+		itemsTotal="<%= syncedContactsGroupsManagementToolbarContext.getTotalItems() %>"
+		searchContainerId="userGroupsEntries"
+		showCreationMenu="<%= false %>"
+		showSelectAllButton="<%= false %>"
+	/>
+
 	<portlet:actionURL name="/analytics/edit_synced_contacts" var="editSyncedContactsURL" />
 
 	<aui:form action="<%= editSyncedContactsURL %>" method="post" name="fm">
@@ -55,6 +67,7 @@ portletDisplay.setURLBack(backURL);
 		<liferay-ui:search-container
 			curParam="inheritedUserGroupsCur"
 			headerNames="name"
+			id="userGroupsEntries"
 			iteratorURL="<%= currentURLObj %>"
 			rowChecker="<%= new UserGroupChecker(renderResponse, syncedUserGroupIds) %>"
 			total="<%= UserGroupServiceUtil.getUserGroupsCount(themeDisplay.getCompanyId(), null) %>"
