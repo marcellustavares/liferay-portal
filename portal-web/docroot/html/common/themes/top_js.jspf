@@ -205,6 +205,9 @@
 			getCDNHost: function() {
 				return '<%= themeDisplay.getCDNHost() %>';
 			},
+			getChannelId: function() {
+				return '<%= liveGroup.getTypeSettingsProperty("channelId") %>';
+			},
 			getCompanyGroupId: function() {
 				return '<%= themeDisplay.getCompanyGroupId() %>';
 			},
