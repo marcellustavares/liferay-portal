@@ -18,6 +18,8 @@ import com.liferay.analytics.settings.web.internal.util.AnalyticsSettingsUtil;
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -29,6 +31,7 @@ import com.liferay.portal.kernel.service.CompanyService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -53,6 +56,7 @@ import javax.portlet.ActionRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.util.EntityUtils;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -214,6 +218,9 @@ public class AddChannelMVCActionCommand extends BaseAnalyticsMVCActionCommand {
 		if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
 			throw new PortalException("Invalid token");
 		}
+
+		_updateTypeSettingsProperties(
+			EntityUtils.toString(httpResponse.getEntity()));
 	}
 
 	private Set<String> _updateCompanyPreferences(
@@ -233,6 +240,44 @@ public class AddChannelMVCActionCommand extends BaseAnalyticsMVCActionCommand {
 			themeDisplay.getCompanyId(), unicodeProperties);
 
 		return liferayAnalyticsGroupIds;
+	}
+
+	private void _updateTypeSettingsProperties(String json)
+		throws PortalException {
+
+		JSONArray channelsJSONArray = JSONFactoryUtil.createJSONArray(json);
+
+		for (int i = 0; i < channelsJSONArray.length(); i++) {
+			JSONObject channelJSONObject = channelsJSONArray.getJSONObject(i);
+
+			String channelId = channelJSONObject.getString("id");
+
+			Stream<Object> dataSourcesStream = JSONUtil.toObjectStream(
+				channelJSONObject.getJSONArray("dataSources"));
+
+			dataSourcesStream.map(
+				object -> (JSONObject)object
+			).flatMap(
+				dataSourceJSONObject -> JSONUtil.toObjectStream(
+					dataSourceJSONObject.getJSONArray("groupIds"))
+			).map(
+				String::valueOf
+			).forEach(
+				groupId -> {
+					Group group = _groupLocalService.fetchGroup(
+						GetterUtil.getLong(groupId));
+
+					UnicodeProperties properties =
+						group.getTypeSettingsProperties();
+
+					properties.put("channelId", channelId);
+
+					group.setTypeSettingsProperties(properties);
+
+					_groupLocalService.updateGroup(group);
+				}
+			);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

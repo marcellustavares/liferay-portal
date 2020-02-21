@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Brian Wing Shun Chan
@@ -527,6 +529,10 @@ public class JSONUtil {
 		}
 
 		return values;
+	}
+
+	public static Stream<Object> toObjectStream(JSONArray jsonArray) {
+		return StreamSupport.stream(jsonArray.spliterator(), false);
 	}
 
 	public static String[] toStringArray(JSONArray jsonArray) {
