@@ -42,31 +42,25 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Rachael Koestartyo
  */
 @Component(immediate = true, service = AnalyticsMessageSenderClient.class)
 public class AnalyticsMessageSenderClientImpl
-	implements AnalyticsMessageSenderClient {
+	extends BaseAnalyticsClientImpl implements AnalyticsMessageSenderClient {
 
 	@Override
 	public Object send(String body, long companyId) throws Exception {
-		if (!_analyticsConfigurationTracker.isActive()) {
+		if (!isEnabled(companyId)) {
 			return null;
 		}
 
 		AnalyticsConfiguration analyticsConfiguration =
-			_analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
-
-		if (analyticsConfiguration.liferayAnalyticsEndpointURL() == null) {
-			return null;
-		}
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
 
 		HttpUriRequest httpUriRequest = _buildHttpUriRequest(
 			body, analyticsConfiguration.liferayAnalyticsDataSourceId(),
@@ -81,16 +75,12 @@ public class AnalyticsMessageSenderClientImpl
 
 	@Override
 	public void validateConnection(long companyId) throws Exception {
-		if (!_analyticsConfigurationTracker.isActive()) {
+		if (!isEnabled(companyId)) {
 			return;
 		}
 
 		AnalyticsConfiguration analyticsConfiguration =
-			_analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
-
-		if (analyticsConfiguration.liferayAnalyticsEndpointURL() == null) {
-			return;
-		}
+			analyticsConfigurationTracker.getAnalyticsConfiguration(companyId);
 
 		HttpUriRequest httpUriRequest = _buildHttpUriRequest(
 			null, analyticsConfiguration.liferayAnalyticsDataSourceId(),
