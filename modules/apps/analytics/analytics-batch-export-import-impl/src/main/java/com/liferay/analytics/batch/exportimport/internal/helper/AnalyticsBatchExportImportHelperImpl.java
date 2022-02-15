@@ -12,12 +12,12 @@
  * details.
  */
 
-package com.liferay.analytics.exportimport.internal.helper;
+package com.liferay.analytics.batch.exportimport.internal.helper;
 
-import com.liferay.analytics.exportimport.helper.AnalyticsExportImportHelper;
-import com.liferay.analytics.exportimport.internal.batch.BatchEngineExportTaskHelper;
-import com.liferay.analytics.exportimport.internal.batch.BatchEngineImportTaskHelper;
-import com.liferay.analytics.exportimport.internal.batch.BatchEngineTaskHelperFactory;
+import com.liferay.analytics.batch.exportimport.helper.AnalyticsBatchExportImportHelper;
+import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineExportTaskHelper;
+import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineImportTaskHelper;
+import com.liferay.analytics.batch.exportimport.internal.batch.BatchEngineTaskHelperFactory;
 import com.liferay.analytics.message.sender.client.AnalyticsBatchClient;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringBundler;
@@ -41,9 +41,9 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Riccardo Ferrari
  */
-@Component(immediate = true, service = AnalyticsExportImportHelper.class)
-public class AnalyticsExportImportHelperImpl
-	implements AnalyticsExportImportHelper {
+@Component(immediate = true, service = AnalyticsBatchExportImportHelper.class)
+public class AnalyticsBatchExportImportHelperImpl
+	implements AnalyticsBatchExportImportHelper {
 
 	@Override
 	public void exportToAnalyticsCloud(
@@ -161,7 +161,7 @@ public class AnalyticsExportImportHelperImpl
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		AnalyticsExportImportHelperImpl.class);
+		AnalyticsBatchExportImportHelperImpl.class);
 
 	@Reference
 	private AnalyticsBatchClient _analyticsBatchClient;
