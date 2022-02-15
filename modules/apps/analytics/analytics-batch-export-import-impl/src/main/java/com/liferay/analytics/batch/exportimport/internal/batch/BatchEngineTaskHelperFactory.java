@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.analytics.exportimport.internal.batch;
+package com.liferay.analytics.batch.exportimport.internal.batch;
 
 import com.liferay.batch.engine.BatchEngineExportTaskExecutor;
 import com.liferay.batch.engine.BatchEngineImportTaskExecutor;
