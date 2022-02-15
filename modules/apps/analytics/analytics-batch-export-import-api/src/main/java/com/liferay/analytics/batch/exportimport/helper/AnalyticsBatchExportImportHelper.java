@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.analytics.exportimport.helper;
+package com.liferay.analytics.batch.exportimport.helper;
 
 import com.liferay.petra.function.UnsafeConsumer;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Riccardo Ferrari
  */
-public interface AnalyticsExportImportHelper {
+public interface AnalyticsBatchExportImportHelper {
 
 	public void exportToAnalyticsCloud(
 			String batchEngineExportTaskItemDelegateName, long companyId,
