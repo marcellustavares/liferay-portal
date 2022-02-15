@@ -1,4 +1,0 @@
-Bundle-Name: Liferay Analytics Export Import Implementation
-Bundle-SymbolicName: com.liferay.analytics.exportimport.impl
-Bundle-Version: 1.0.0
--dsannotations-options: inherit
