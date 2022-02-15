@@ -1,4 +1,0 @@
-Bundle-Name: Liferay Analytics Export Import API
-Bundle-SymbolicName: com.liferay.analytics.exportimport.api
-Bundle-Version: 1.0.0
-Export-Package: com.liferay.analytics.exportimport.helper
