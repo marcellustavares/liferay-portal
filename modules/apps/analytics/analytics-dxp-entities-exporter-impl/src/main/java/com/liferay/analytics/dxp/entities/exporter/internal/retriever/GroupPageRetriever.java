@@ -53,6 +53,8 @@ public class GroupPageRetriever implements DXPEntityPageRetriever {
 			companyId,
 			LinkedHashMapBuilder.<String, Object>put(
 				"active", true
+			).put(
+				"site", true
 			).build(),
 			pagination.getStartPosition(), pagination.getEndPosition());
 
