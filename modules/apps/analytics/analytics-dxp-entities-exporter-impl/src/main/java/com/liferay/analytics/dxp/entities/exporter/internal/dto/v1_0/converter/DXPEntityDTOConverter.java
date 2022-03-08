@@ -72,7 +72,7 @@ public class DXPEntityDTOConverter
 
 		return _toDXPEntity(
 			_getExpandoFields(baseModel), _getFields(baseModel),
-			(String)baseModel.getPrimaryKeyObj(),
+			String.valueOf(baseModel.getPrimaryKeyObj()),
 			baseModel.getModelClassName());
 	}
 
