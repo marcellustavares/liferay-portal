@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Deactivate;
  * @author Marcos Martins
  */
 @Component(immediate = true, service = DXPEntityPageRetrieverTracker.class)
-public class DXPEntityPageRetrievertrackerImpl
+public class DXPEntityPageRetrieverTrackerImpl
 	implements DXPEntityPageRetrieverTracker {
 
 	@Override
