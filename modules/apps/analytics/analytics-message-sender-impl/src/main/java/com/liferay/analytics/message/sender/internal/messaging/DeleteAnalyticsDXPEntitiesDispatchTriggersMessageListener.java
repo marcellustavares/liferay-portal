@@ -14,9 +14,9 @@
 
 package com.liferay.analytics.message.sender.internal.messaging;
 
-import com.liferay.analytics.message.sender.constants.DXPEntitiesDispatchTriggerProcessorCommand;
-import com.liferay.analytics.message.sender.constants.DXPEntitiesDispatchTriggersDestinantionNames;
-import com.liferay.analytics.message.sender.helper.DXPEntityDispatchTriggerHelper;
+import com.liferay.analytics.message.sender.constants.AnalyticsDXPEntitiesDispatchTriggerProcessorCommand;
+import com.liferay.analytics.message.sender.constants.AnalyticsDXPEntitiesDispatchTriggersDestinantionNames;
+import com.liferay.analytics.message.sender.helper.AnalyticsDXPEntityDispatchTriggerHelper;
 import com.liferay.analytics.settings.configuration.AnalyticsConfigurationTracker;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
@@ -32,24 +32,23 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "destination.name=" + DXPEntitiesDispatchTriggersDestinantionNames.DXP_ENTITIES_DISPATCH_TRIGGER_PROCESSOR,
+	property = "destination.name=" + AnalyticsDXPEntitiesDispatchTriggersDestinantionNames.ANALYTICS_DXP_ENTITIES_DISPATCH_TRIGGER_PROCESSOR,
 	service = MessageListener.class
 )
-public class DeleteDXPEntitiesDispatchTriggersMessageListener
+public class DeleteAnalyticsDXPEntitiesDispatchTriggersMessageListener
 	extends BaseMessageListener {
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		Object object = message.get("command");
-
 		if (!_analyticsConfigurationTracker.isActive() ||
 			!Objects.equals(
-				object, DXPEntitiesDispatchTriggerProcessorCommand.DELETE)) {
+				message.get("command"),
+				AnalyticsDXPEntitiesDispatchTriggerProcessorCommand.DELETE)) {
 
 			return;
 		}
 
-		_dxpEntityDispatchTriggerHelper.deleteDispatchTriggers(
+		_analyticsDXPEntityDispatchTriggerHelper.deleteDispatchTriggers(
 			message.getLong("companyId"));
 	}
 
@@ -57,6 +56,7 @@ public class DeleteDXPEntitiesDispatchTriggersMessageListener
 	private AnalyticsConfigurationTracker _analyticsConfigurationTracker;
 
 	@Reference
-	private DXPEntityDispatchTriggerHelper _dxpEntityDispatchTriggerHelper;
+	private AnalyticsDXPEntityDispatchTriggerHelper
+		_analyticsDXPEntityDispatchTriggerHelper;
 
 }
