@@ -19,6 +19,6 @@ package com.liferay.analytics.message.sender.constants;
  */
 public enum AnalyticsDXPEntitiesDispatchTriggerProcessorCommand {
 
-	ADD, SYNC
+	ADD, DELETE, SYNC
 
 }
