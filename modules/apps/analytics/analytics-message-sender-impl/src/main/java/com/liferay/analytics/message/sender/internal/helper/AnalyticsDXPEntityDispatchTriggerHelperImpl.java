@@ -93,7 +93,7 @@ public class AnalyticsDXPEntityDispatchTriggerHelperImpl
 		}
 	}
 
-	private static final String _CRON_EXPRESSION = "0 * * * *";
+	private static final String _CRON_EXPRESSION = "0 0 * * * ?";
 
 	private static final String[] _DISPATCH_TRIGGER_NAMES = {
 		"upload-expando-column-analytics-dxp-entities",
