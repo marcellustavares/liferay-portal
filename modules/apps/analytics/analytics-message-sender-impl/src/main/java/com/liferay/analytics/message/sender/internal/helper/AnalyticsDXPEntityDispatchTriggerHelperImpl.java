@@ -58,7 +58,7 @@ public class AnalyticsDXPEntityDispatchTriggerHelperImpl
 				_dispatchTriggerLocalService.updateDispatchTrigger(
 					dispatchTrigger.getDispatchTriggerId(), true,
 					_CRON_EXPRESSION, DispatchTaskClusterMode.NOT_APPLICABLE, 0,
-					0, 0, 0, 0, true, false, localDateTime.getMonthValue(),
+					0, 0, 0, 0, true, false, localDateTime.getMonthValue() - 1,
 					localDateTime.getDayOfMonth(), localDateTime.getYear(),
 					localDateTime.getHour(), localDateTime.getMinute());
 			}
