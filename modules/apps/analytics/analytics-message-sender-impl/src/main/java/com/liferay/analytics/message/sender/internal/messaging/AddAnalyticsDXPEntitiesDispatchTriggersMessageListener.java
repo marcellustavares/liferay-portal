@@ -40,18 +40,16 @@ public class AddAnalyticsDXPEntitiesDispatchTriggersMessageListener
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		Object object = message.get("command");
-
 		if (!_analyticsConfigurationTracker.isActive() ||
 			!Objects.equals(
-				object,
+				message.get("command"),
 				AnalyticsDXPEntitiesDispatchTriggerProcessorCommand.ADD)) {
 
 			return;
 		}
 
-		_analyticsDXPEntityDispatchTriggerHelper.
-			createDispatchTriggersIfNotExist(message.getLong("companyId"));
+		_analyticsDXPEntityDispatchTriggerHelper.addDispatchTriggers(
+			message.getLong("companyId"));
 	}
 
 	@Reference
