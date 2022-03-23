@@ -40,17 +40,15 @@ public class SyncAnalyticsDXPEntitiesMessageListener
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		Object object = message.get("command");
-
 		if (!_analyticsConfigurationTracker.isActive() ||
 			!Objects.equals(
-				object,
+				message.get("command"),
 				AnalyticsDXPEntitiesDispatchTriggerProcessorCommand.SYNC)) {
 
 			return;
 		}
 
-		_analyticsDXPEntityDispatchTriggerHelper.syncNow(
+		_analyticsDXPEntityDispatchTriggerHelper.sync(
 			message.getLong("companyId"));
 	}
 

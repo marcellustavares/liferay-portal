@@ -19,9 +19,8 @@ package com.liferay.analytics.message.sender.helper;
  */
 public interface AnalyticsDXPEntityDispatchTriggerHelper {
 
-	public void createDispatchTriggersIfNotExist(long companyId)
-		throws Exception;
+	public void addDispatchTriggers(long companyId) throws Exception;
 
-	public void syncNow(long companyId) throws Exception;
+	public void sync(long companyId) throws Exception;
 
 }

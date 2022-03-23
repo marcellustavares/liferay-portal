@@ -39,9 +39,7 @@ public class AnalyticsDXPEntityDispatchTriggerHelperImpl
 	implements AnalyticsDXPEntityDispatchTriggerHelper {
 
 	@Override
-	public void createDispatchTriggersIfNotExist(long companyId)
-		throws Exception {
-
+	public void addDispatchTriggers(long companyId) throws Exception {
 		for (String dispatchTriggerName : _DISPATCH_TRIGGER_NAMES) {
 			DispatchTrigger dispatchTrigger =
 				_dispatchTriggerLocalService.fetchDispatchTrigger(
@@ -66,7 +64,7 @@ public class AnalyticsDXPEntityDispatchTriggerHelperImpl
 	}
 
 	@Override
-	public void syncNow(long companyId) throws Exception {
+	public void sync(long companyId) throws Exception {
 		for (String dispatchTriggerName : _DISPATCH_TRIGGER_NAMES) {
 			DispatchTrigger dispatchTrigger =
 				_dispatchTriggerLocalService.fetchDispatchTrigger(
