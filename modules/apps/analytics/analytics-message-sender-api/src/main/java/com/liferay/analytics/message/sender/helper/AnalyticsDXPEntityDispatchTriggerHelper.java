@@ -21,6 +21,8 @@ public interface AnalyticsDXPEntityDispatchTriggerHelper {
 
 	public void addDispatchTriggers(long companyId) throws Exception;
 
+	public void deleteDispatchTriggers(long companyId) throws Exception;
+
 	public void sync(long companyId) throws Exception;
 
 }
