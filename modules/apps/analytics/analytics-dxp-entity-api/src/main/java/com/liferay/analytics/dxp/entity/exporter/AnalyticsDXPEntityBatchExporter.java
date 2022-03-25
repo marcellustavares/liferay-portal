@@ -12,13 +12,17 @@
  * details.
  */
 
-package com.liferay.analytics.dxp.entity.exporter.constants;
+package com.liferay.analytics.dxp.entity.exporter;
 
 /**
  * @author Marcos Martins
  */
-public enum AnalyticsDXPEntityDispatchTriggerProcessorCommand {
+public interface AnalyticsDXPEntityBatchExporter {
 
-	ADD, DELETE, SYNC
+	public void scheduleExportTriggers(long companyId) throws Exception;
+
+	public void unscheduleExportTriggers(long companyId) throws Exception;
+
+	public void export(long companyId) throws Exception;
 
 }

@@ -12,22 +12,28 @@
  * details.
  */
 
-package com.liferay.analytics.dxp.entity.internal.exporter.batch;
+package com.liferay.analytics.dxp.entity.internal.exporter.batch.engine;
 
 import com.liferay.analytics.dxp.entity.internal.exporter.helper.AnalyticsDXPEntityBatchEngineTaskItemDelegateHelper;
 import com.liferay.analytics.dxp.entity.internal.exporter.odata.entity.AnalyticsDXPEntityEntityModel;
 import com.liferay.analytics.dxp.entity.rest.dto.v1_0.DXPEntity;
+import com.liferay.analytics.dxp.entity.rest.dto.v1_0.converter.DXPEntityDTOConverter;
 import com.liferay.batch.engine.BaseBatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.BatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.pagination.Page;
 import com.liferay.batch.engine.pagination.Pagination;
-import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.odata.entity.EntityModel;
 
 import java.io.Serializable;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,10 +45,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "batch.engine.task.item.delegate.name=user-dxp-entities",
+	property = "batch.engine.task.item.delegate.name=role-dxp-entities",
 	service = BatchEngineTaskItemDelegate.class
 )
-public class UserAnalyticsDXPEntityBatchEngineTaskItemDelegate
+public class RoleAnalyticsDXPEntityBatchEngineTaskItemDelegate
 	extends BaseBatchEngineTaskItemDelegate<DXPEntity> {
 
 	@Override
@@ -58,14 +64,44 @@ public class UserAnalyticsDXPEntityBatchEngineTaskItemDelegate
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		return _analyticsDXPEntityBatchEngineTaskItemDelegateHelper.
-			getDXPEntities(
-				User.class.getName(), contextCompany.getCompanyId(), filter,
-				pagination, sorts, parameters, search);
+		List<DXPEntity> dxpEntities = new ArrayList<>();
+
+		DynamicQuery dynamicQuery = _buildDynamicQuery(
+				contextCompany.getCompanyId(), filter);
+
+		List<Role> roles = _roleLocalService.dynamicQuery(
+			dynamicQuery, pagination.getStartPosition(),
+			pagination.getEndPosition());
+
+		for (Role role : roles) {
+			dxpEntities.add(_dxpEntityDTOConverter.toDTO(role));
+		}
+
+		return Page.of(
+			dxpEntities, pagination,
+			_roleLocalService.dynamicQueryCount(dynamicQuery));
+		
+	}
+
+	private DynamicQuery _buildDynamicQuery(long companyId, Filter filter) {
+		DynamicQuery dynamicQuery = _roleLocalService.dynamicQuery();
+
+		Property nameProperty = PropertyFactoryUtil.forName("name");
+
+		dynamicQuery.add(
+			nameProperty.ne(RoleConstants.ANALYTICS_ADMINISTRATOR));
+
+		Property typeProperty = PropertyFactoryUtil.forName("type");
+
+		dynamicQuery.add(typeProperty.eq(RoleConstants.TYPE_REGULAR));
+
+		return buildDynamicQuery(companyId, dynamicQuery, filter);
 	}
 
 	@Reference
-	private AnalyticsDXPEntityBatchEngineTaskItemDelegateHelper
-		_analyticsDXPEntityBatchEngineTaskItemDelegateHelper;
+	private RoleLocalService _roleLocalService;
+	
+	@Reference
+	private DXPEntityDTOConverter _dxpEntityDTOConverter;
 
 }

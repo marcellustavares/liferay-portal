@@ -12,19 +12,24 @@
  * details.
  */
 
-package com.liferay.analytics.dxp.entity.internal.exporter.batch;
+package com.liferay.analytics.dxp.entity.internal.exporter.batch.engine;
 
 import com.liferay.analytics.dxp.entity.internal.exporter.helper.AnalyticsDXPEntityBatchEngineTaskItemDelegateHelper;
 import com.liferay.analytics.dxp.entity.internal.exporter.odata.entity.AnalyticsDXPEntityEntityModel;
 import com.liferay.analytics.dxp.entity.rest.dto.v1_0.DXPEntity;
+import com.liferay.analytics.dxp.entity.rest.dto.v1_0.converter.DXPEntityDTOConverter;
 import com.liferay.batch.engine.BaseBatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.BatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.pagination.Page;
 import com.liferay.batch.engine.pagination.Pagination;
-import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.io.Serializable;
 
@@ -39,10 +44,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "batch.engine.task.item.delegate.name=group-dxp-entities",
+	property = "batch.engine.task.item.delegate.name=organization-dxp-entities",
 	service = BatchEngineTaskItemDelegate.class
 )
-public class GroupAnalyticsDXPEntityBatchEngineTaskItemDelegate
+public class OrganizationAnalyticsDXPEntityBatchEngineTaskItemDelegate
 	extends BaseBatchEngineTaskItemDelegate<DXPEntity> {
 
 	@Override
@@ -58,12 +63,34 @@ public class GroupAnalyticsDXPEntityBatchEngineTaskItemDelegate
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		return _analyticsDXPEntityBatchEngineTaskItemDelegateHelper.
-			getDXPEntities(
-				Group.class.getName(), contextCompany.getCompanyId(), filter,
-				pagination, sorts, parameters, search);
+		com.liferay.portal.vulcan.pagination.Pagination vulcanPagination =
+				com.liferay.portal.vulcan.pagination.Pagination.of(
+					pagination.getPage(), pagination.getPageSize());
+		
+		com.liferay.portal.vulcan.pagination.Page<DXPEntity> dxpEntitiesPage = SearchUtil.search(
+			null, booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
+			Organization.class.getName(), null, vulcanPagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			searchContext -> 
+			searchContext.setCompanyId(contextCompany.getCompanyId()), null,
+			document -> _dxpEntityDTOConverter.toDTO(
+				_organizationLocalService.getOrganization(
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
+	
+	
+		return Page.of(
+				dxpEntitiesPage.getItems(),
+				Pagination.of(pagination.getPage(), (int)pagination.getPageSize()),
+				dxpEntitiesPage.getTotalCount());
 	}
 
+	@Reference
+	private OrganizationLocalService _organizationLocalService;
+
+	@Reference
+	private DXPEntityDTOConverter _dxpEntityDTOConverter;
+	
 	@Reference
 	private AnalyticsDXPEntityBatchEngineTaskItemDelegateHelper
 		_analyticsDXPEntityBatchEngineTaskItemDelegateHelper;

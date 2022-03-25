@@ -14,7 +14,6 @@
 
 package com.liferay.analytics.dxp.entity.internal.exporter.dispatch.executor;
 
-import com.liferay.analytics.dxp.entity.internal.exporter.helper.UploadAnalyticsDXPEntityDispatchTaskExecutorHelper;
 import com.liferay.dispatch.executor.BaseDispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutorOutput;
@@ -32,34 +31,24 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"dispatch.task.executor.name=" + UploadGroupAnalyticsDXPEntityDispatchTaskExecutor.KEY,
-		"dispatch.task.executor.type=" + UploadGroupAnalyticsDXPEntityDispatchTaskExecutor.KEY
+		"dispatch.task.executor.name=" + GroupAnalyticsDXPEntityExportDispatchTaskExecutor.KEY,
+		"dispatch.task.executor.type=" + GroupAnalyticsDXPEntityExportDispatchTaskExecutor.KEY
 	},
 	service = DispatchTaskExecutor.class
 )
-public class UploadGroupAnalyticsDXPEntityDispatchTaskExecutor
-	extends BaseDispatchTaskExecutor {
+public class GroupAnalyticsDXPEntityExportDispatchTaskExecutor
+	extends BaseAnalyticsDXPEntityExportDispatchTaskExecutor {
 
 	public static final String KEY = "upload-group-analytics-dxp-entities";
-
-	@Override
-	public void doExecute(
-			DispatchTrigger dispatchTrigger,
-			DispatchTaskExecutorOutput dispatchTaskExecutorOutput)
-		throws IOException, PortalException {
-
-		_uploadAnalyticsDXPEntityDispatchTaskExecutorHelper.doExecute(
-			"group-analytics-dxp-entities", dispatchTrigger,
-			dispatchTaskExecutorOutput);
-	}
 
 	@Override
 	public String getName() {
 		return KEY;
 	}
 
-	@Reference
-	private UploadAnalyticsDXPEntityDispatchTaskExecutorHelper
-		_uploadAnalyticsDXPEntityDispatchTaskExecutorHelper;
+	@Override
+	protected String getBatchEngineExportTaskItemDelegateName() {
+		return "group-analytics-dxp-entities";
+	}
 
 }

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.analytics.dxp.entity.internal.exporter.batch;
+package com.liferay.analytics.dxp.entity.internal.exporter.batch.engine;
 
 import com.liferay.analytics.dxp.entity.internal.exporter.helper.AnalyticsDXPEntityBatchEngineTaskItemDelegateHelper;
 import com.liferay.analytics.dxp.entity.internal.exporter.odata.entity.AnalyticsDXPEntityEntityModel;
@@ -21,7 +21,7 @@ import com.liferay.batch.engine.BaseBatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.BatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.pagination.Page;
 import com.liferay.batch.engine.pagination.Pagination;
-import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -39,10 +39,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "batch.engine.task.item.delegate.name=role-dxp-entities",
+	property = "batch.engine.task.item.delegate.name=user-dxp-entities",
 	service = BatchEngineTaskItemDelegate.class
 )
-public class RoleAnalyticsDXPEntityBatchEngineTaskItemDelegate
+public class UserAnalyticsDXPEntityBatchEngineTaskItemDelegate
 	extends BaseBatchEngineTaskItemDelegate<DXPEntity> {
 
 	@Override
@@ -60,7 +60,7 @@ public class RoleAnalyticsDXPEntityBatchEngineTaskItemDelegate
 
 		return _analyticsDXPEntityBatchEngineTaskItemDelegateHelper.
 			getDXPEntities(
-				Role.class.getName(), contextCompany.getCompanyId(), filter,
+				User.class.getName(), contextCompany.getCompanyId(), filter,
 				pagination, sorts, parameters, search);
 	}
 

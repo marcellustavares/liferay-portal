@@ -14,7 +14,6 @@
 
 package com.liferay.analytics.dxp.entity.internal.exporter.dispatch.executor;
 
-import com.liferay.analytics.dxp.entity.internal.exporter.helper.UploadAnalyticsDXPEntityDispatchTaskExecutorHelper;
 import com.liferay.dispatch.executor.BaseDispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutorOutput;
