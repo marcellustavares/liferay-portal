@@ -50,6 +50,21 @@ public abstract class BaseAnalyticsDXPEntityExportDispatchTaskExecutor
 				dispatchTrigger.getDispatchTriggerId(),
 				DispatchTaskStatus.IN_PROGRESS);
 
+		analyticsBatchExportImportManager.exportToAnalyticsCloud(
+			getBatchEngineExportTaskItemDelegateName(),
+			dispatchTrigger.getCompanyId(), null,
+			message -> _updateDispatchLog(
+				dispatchLog.getDispatchLogId(), dispatchTaskExecutorOutput,
+				message),
+			getResourceLastModifiedDate(dispatchTrigger),
+			DXPEntity.class.getName(), dispatchTrigger.getUserId());
+	}
+
+	protected abstract String getBatchEngineExportTaskItemDelegateName();
+
+	protected Date getResourceLastModifiedDate(
+		DispatchTrigger dispatchTrigger) {
+
 		DispatchLog latestSuccessfulDispatchLog =
 			dispatchLogLocalService.fetchLatestDispatchLog(
 				dispatchTrigger.getDispatchTriggerId(),
@@ -61,17 +76,9 @@ public abstract class BaseAnalyticsDXPEntityExportDispatchTaskExecutor
 			resourceLastModifiedDate = latestSuccessfulDispatchLog.getEndDate();
 		}
 
-		analyticsBatchExportImportManager.exportToAnalyticsCloud(
-			getBatchEngineExportTaskItemDelegateName(),
-			dispatchTrigger.getCompanyId(), null,
-			message -> _updateDispatchLog(
-				dispatchLog.getDispatchLogId(), dispatchTaskExecutorOutput,
-				message),
-			resourceLastModifiedDate, DXPEntity.class.getName(),
-			dispatchTrigger.getUserId());
+		return resourceLastModifiedDate;
 	}
 
-	protected abstract String getBatchEngineExportTaskItemDelegateName();
 
 	@Reference
 	protected AnalyticsBatchExportImportManager
