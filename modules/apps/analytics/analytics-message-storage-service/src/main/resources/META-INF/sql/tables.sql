@@ -7,3 +7,14 @@ create table AnalyticsMessage (
 	createDate DATE null,
 	body BLOB
 );
+
+create table AnalyticsModelRemoveLogger (
+	mvccVersion LONG default 0 not null,
+	analyticsModelRemoveLoggerId LONG not null primary key,
+	companyId LONG,
+	userId LONG,
+	createDate DATE null,
+	modifiedDate DATE null,
+	className VARCHAR(75) null,
+	classPK LONG
+);

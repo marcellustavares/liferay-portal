@@ -10,4 +10,14 @@
 		<field name="createDate" type="Date" />
 		<field name="body" type="Blob" />
 	</model>
+	<model name="com.liferay.analytics.message.storage.model.AnalyticsModelRemoveLogger">
+		<field name="mvccVersion" type="long" />
+		<field name="analyticsModelRemoveLoggerId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="className" type="String" />
+		<field name="classPK" type="long" />
+	</model>
 </model-hints>
