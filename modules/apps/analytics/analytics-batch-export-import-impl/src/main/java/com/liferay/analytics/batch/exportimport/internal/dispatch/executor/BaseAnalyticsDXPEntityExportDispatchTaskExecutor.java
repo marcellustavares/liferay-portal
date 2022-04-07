@@ -58,6 +58,8 @@ public abstract class BaseAnalyticsDXPEntityExportDispatchTaskExecutor
 				message),
 			getResourceLastModifiedDate(dispatchTrigger),
 			DXPEntity.class.getName(), dispatchTrigger.getUserId());
+
+		postExecute(dispatchTrigger);
 	}
 
 	protected abstract String getBatchEngineExportTaskItemDelegateName();
@@ -79,6 +81,8 @@ public abstract class BaseAnalyticsDXPEntityExportDispatchTaskExecutor
 		return resourceLastModifiedDate;
 	}
 
+	protected void postExecute(DispatchTrigger dispatchTrigger) {
+	}
 
 	@Reference
 	protected AnalyticsBatchExportImportManager
