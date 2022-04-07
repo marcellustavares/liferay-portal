@@ -32,4 +32,36 @@
 			<finder-column name="companyId" />
 		</finder>
 	</entity>
+	<entity local-service="true" name="AnalyticsModelRemoveLogger" remote-service="false">
+
+		<!-- PK fields -->
+
+		<column name="analyticsModelRemoveLoggerId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="className" type="String" />
+		<column name="classPK" type="long" />
+
+		<!-- Finder methods -->
+
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId" />
+		</finder>
+		<finder name="GtM_C" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column comparator="&gt;" name="modifiedDate" />
+		</finder>
+		<finder name="LteM_C" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column comparator="&lt;=" name="modifiedDate" />
+		</finder>
+	</entity>
 </service-builder>
