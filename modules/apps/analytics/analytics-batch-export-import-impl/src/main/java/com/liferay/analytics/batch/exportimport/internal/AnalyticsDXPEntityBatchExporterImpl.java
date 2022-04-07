@@ -118,6 +118,7 @@ public class AnalyticsDXPEntityBatchExporterImpl
 	private static final String[] _DISPATCH_TRIGGER_NAMES = {
 		"export-expando-column-analytics-dxp-entities",
 		"export-group-analytics-dxp-entities",
+		"export-model-remove-logger-analytics-dxp-entities",
 		"export-organization-analytics-dxp-entities",
 		"export-role-analytics-dxp-entities",
 		"export-team-analytics-dxp-entities",
