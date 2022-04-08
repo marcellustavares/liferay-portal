@@ -15,6 +15,7 @@
 package com.liferay.analytics.batch.exportimport.internal;
 
 import com.liferay.analytics.batch.exportimport.AnalyticsDXPEntityBatchExporter;
+import com.liferay.analytics.message.storage.service.AnalyticsModelRemoveLoggerLocalService;
 import com.liferay.dispatch.constants.DispatchConstants;
 import com.liferay.dispatch.executor.DispatchTaskClusterMode;
 import com.liferay.dispatch.model.DispatchTrigger;
@@ -27,6 +28,8 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.service.UserLocalService;
 
 import java.time.LocalDateTime;
+
+import java.util.Date;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -111,6 +114,9 @@ public class AnalyticsDXPEntityBatchExporterImpl
 
 			_dispatchTriggerLocalService.deleteDispatchTrigger(dispatchTrigger);
 		}
+
+		_analyticsModelRemoveLoggerLocalService.
+			deleteLteAnalyticsModelRemoveLoggers(companyId, new Date());
 	}
 
 	private static final String _CRON_EXPRESSION = "0 0 * * * ?";
@@ -128,6 +134,10 @@ public class AnalyticsDXPEntityBatchExporterImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AnalyticsDXPEntityBatchExporterImpl.class);
+
+	@Reference
+	private AnalyticsModelRemoveLoggerLocalService
+		_analyticsModelRemoveLoggerLocalService;
 
 	@Reference(
 		target = "(destination.name=" + DispatchConstants.EXECUTOR_DESTINATION_NAME + ")"
