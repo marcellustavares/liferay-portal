@@ -92,7 +92,7 @@ public class AnalyticsModelRemoveLoggerModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table AnalyticsModelRemoveLogger (mvccVersion LONG default 0 not null,analyticsModelRemoveLoggerId LONG not null primary key,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,className VARCHAR(75) null,classPK LONG)";
+		"create table AnalyticsModelRemoveLogger (mvccVersion LONG default 0 not null,analyticsModelRemoveLoggerId LONG not null primary key,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,className VARCHAR(255) null,classPK LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table AnalyticsModelRemoveLogger";
