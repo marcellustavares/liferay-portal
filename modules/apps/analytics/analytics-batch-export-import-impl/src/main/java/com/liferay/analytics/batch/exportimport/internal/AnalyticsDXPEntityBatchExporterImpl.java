@@ -29,8 +29,6 @@ import com.liferay.portal.kernel.service.UserLocalService;
 
 import java.time.LocalDateTime;
 
-import java.util.Date;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -115,8 +113,8 @@ public class AnalyticsDXPEntityBatchExporterImpl
 			_dispatchTriggerLocalService.deleteDispatchTrigger(dispatchTrigger);
 		}
 
-		_analyticsDeleteMessageLocalService.
-			deleteAnalyticsModelRemoveLoggers(companyId);
+		_analyticsDeleteMessageLocalService.deleteAnalyticsModelRemoveLoggers(
+			companyId);
 	}
 
 	private static final String _CRON_EXPRESSION = "0 0 * * * ?";
