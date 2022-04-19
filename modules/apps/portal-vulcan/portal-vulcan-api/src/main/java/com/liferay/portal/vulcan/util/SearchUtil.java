@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.IndexSearcherHelperUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.facet.SimpleFacet;
@@ -113,16 +114,23 @@ public class SearchUtil {
 
 		List<T> items = new ArrayList<>();
 
+		long totalCount = 0;
+
 		Hits hits = null;
 
 		Indexer<?> indexer = IndexerRegistryUtil.getIndexer(indexerClassName);
 
 		if (searchContext.isVulcanCheckPermissions()) {
 			hits = indexer.search(searchContext);
+			totalCount = indexer.searchCount(searchContext);
 		}
 		else {
-			hits = IndexSearcherHelperUtil.search(
-				searchContext, indexer.getFullQuery(searchContext));
+			Query query = indexer.getFullQuery(searchContext);
+
+			hits = IndexSearcherHelperUtil.search(searchContext, query);
+
+			totalCount = IndexSearcherHelperUtil.searchCount(
+				searchContext, query);
 		}
 
 		for (Document document : hits.getDocs()) {
@@ -134,8 +142,7 @@ public class SearchUtil {
 		}
 
 		return Page.of(
-			actions, _getFacets(searchContext), items, pagination,
-			indexer.searchCount(searchContext));
+			actions, _getFacets(searchContext), items, pagination, totalCount);
 	}
 
 	public static class SearchContext
