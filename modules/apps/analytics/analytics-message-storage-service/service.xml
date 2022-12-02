@@ -68,33 +68,4 @@
 			<finder-column comparator="&gt;" name="modifiedDate" />
 		</finder>
 	</entity>
-	<entity local-service="true" name="AnalyticsMessage" remote-service="false">
-
-		<!-- PK fields -->
-
-		<column name="analyticsMessageId" primary="true" type="long" />
-
-		<!-- Audit fields -->
-
-		<column name="companyId" type="long" />
-		<column name="userId" type="long" />
-		<column name="userName" type="String" />
-		<column name="createDate" type="Date" />
-
-		<!-- Other fields -->
-
-		<column name="body" type="Blob" />
-
-		<!-- Order -->
-
-		<order by="asc">
-			<order-column name="analyticsMessageId" />
-		</order>
-
-		<!-- Finder methods -->
-
-		<finder name="CompanyId" return-type="Collection">
-			<finder-column name="companyId" />
-		</finder>
-	</entity>
 </service-builder>
