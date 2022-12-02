@@ -15,58 +15,33 @@
 package com.liferay.analytics.settings.internal.configuration;
 
 import com.liferay.analytics.batch.exportimport.AnalyticsDXPEntityBatchExporter;
-import com.liferay.analytics.message.sender.constants.AnalyticsMessagesDestinationNames;
-import com.liferay.analytics.message.sender.constants.AnalyticsMessagesProcessorCommand;
-import com.liferay.analytics.message.sender.model.AnalyticsMessage;
-import com.liferay.analytics.message.sender.model.listener.EntityModelListener;
-import com.liferay.analytics.message.storage.service.AnalyticsMessageLocalService;
 import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.configuration.AnalyticsConfigurationRegistry;
-import com.liferay.analytics.settings.internal.model.AnalyticsUserImpl;
-import com.liferay.analytics.settings.internal.util.EntityModelListenerRegistry;
 import com.liferay.analytics.settings.security.constants.AnalyticsSecurityConstants;
-import com.liferay.expando.kernel.model.ExpandoColumn;
-import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.messaging.MessageBus;
-import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
-import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.service.access.policy.model.SAPEntry;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 
-import java.nio.charset.Charset;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -259,44 +234,6 @@ public class AnalyticsConfigurationRegistryImpl
 		_userLocalService.updateUser(user);
 	}
 
-	private void _addAnalyticsMessages(
-		String action, List<? extends BaseModel> baseModels, long companyId) {
-
-		if (baseModels.isEmpty()) {
-			return;
-		}
-
-		Message message = new Message();
-
-		message.put("action", action);
-		message.put("command", AnalyticsMessagesProcessorCommand.ADD);
-
-		BaseModel<?> baseModel = baseModels.get(0);
-
-		message.put(
-			"entityModelListener",
-			_entityModelListenerRegistry.getEntityModelListener(
-				baseModel.getModelClassName()));
-
-		message.put("principalName", _getAnalyticsAdminUserId(companyId));
-
-		message.setPayload(baseModels);
-
-		if (_log.isInfoEnabled()) {
-			_log.info("Queueing add analytics messages message");
-		}
-
-		TransactionCommitCallbackUtil.registerCallback(
-			() -> {
-				_messageBus.sendMessage(
-					AnalyticsMessagesDestinationNames.
-						ANALYTICS_MESSAGES_PROCESSOR,
-					message);
-
-				return null;
-			});
-	}
-
 	private void _addSAPEntry(long companyId) throws Exception {
 		String sapEntryName = _SAP_ENTRY_OBJECT[0];
 
@@ -312,47 +249,6 @@ public class AnalyticsConfigurationRegistryImpl
 			false, true, sapEntryName,
 			Collections.singletonMap(LocaleUtil.getDefault(), sapEntryName),
 			new ServiceContext());
-	}
-
-	private void _addUsersAnalyticsMessages(long companyId, List<User> users) {
-		List<AnalyticsUserImpl> analyticsUsers = new ArrayList<>(users.size());
-
-		List<Contact> contacts = new ArrayList<>(users.size());
-
-		for (User user : users) {
-			Map<String, long[]> memberships = new HashMap<>();
-
-			for (EntityModelListener<?> entityModelListener :
-					_entityModelListenerRegistry.getEntityModelListeners()) {
-
-				try {
-					long[] membershipIds = entityModelListener.getMembershipIds(
-						user);
-
-					if (membershipIds.length == 0) {
-						continue;
-					}
-
-					memberships.put(
-						entityModelListener.getModelClassName(), membershipIds);
-				}
-				catch (Exception exception) {
-					_log.error(exception);
-				}
-			}
-
-			analyticsUsers.add(new AnalyticsUserImpl(user, memberships));
-
-			Contact contact = user.fetchContact();
-
-			if (contact != null) {
-				contacts.add(contact);
-			}
-		}
-
-		_addAnalyticsMessages("update", analyticsUsers, companyId);
-
-		_addAnalyticsMessages("update", contacts, companyId);
 	}
 
 	private void _deleteAnalyticsAdmin(long companyId) throws Exception {
@@ -376,16 +272,8 @@ public class AnalyticsConfigurationRegistryImpl
 	private void _disable(long companyId) {
 		try {
 			if (companyId != CompanyConstants.SYSTEM) {
-				if (GetterUtil.getBoolean(
-						PropsUtil.get("feature.flag.LRAC-10632"))) {
-
-					_analyticsDXPEntityBatchExporter.unscheduleExportTriggers(
-						companyId);
-				}
-				else {
-					_analyticsMessageLocalService.deleteAnalyticsMessages(
-						companyId);
-				}
+				_analyticsDXPEntityBatchExporter.unscheduleExportTriggers(
+					companyId);
 
 				_deleteAnalyticsAdmin(companyId);
 				_deleteSAPEntry(companyId);
@@ -410,17 +298,6 @@ public class AnalyticsConfigurationRegistryImpl
 		catch (Exception exception) {
 			_log.error(exception);
 		}
-	}
-
-	private long _getAnalyticsAdminUserId(long companyId) {
-		User user = _userLocalService.fetchUserByScreenName(
-			companyId, AnalyticsSecurityConstants.SCREEN_NAME_ANALYTICS_ADMIN);
-
-		if (user == null) {
-			return 0;
-		}
-
-		return user.getUserId();
 	}
 
 	private boolean _hasConfiguration() {
@@ -458,23 +335,8 @@ public class AnalyticsConfigurationRegistryImpl
 			if (Validator.isNotNull(dictionary.get("token")) &&
 				Validator.isNull(dictionary.get("previousToken"))) {
 
-				if (GetterUtil.getBoolean(
-						PropsUtil.get("feature.flag.LRAC-10632"))) {
-
-					_analyticsDXPEntityBatchExporter.scheduleExportTriggers(
-						(Long)dictionary.get("companyId"));
-				}
-				else {
-					Collection<EntityModelListener<?>> entityModelListeners =
-						_entityModelListenerRegistry.getEntityModelListeners();
-
-					for (EntityModelListener<?> entityModelListener :
-							entityModelListeners) {
-
-						entityModelListener.syncAll(
-							(Long)dictionary.get("companyId"));
-					}
-				}
+				_analyticsDXPEntityBatchExporter.scheduleExportTriggers(
+					(Long)dictionary.get("companyId"));
 			}
 
 			String[] previousSyncedContactFieldNames =
@@ -492,236 +354,23 @@ public class AnalyticsConfigurationRegistryImpl
 			Arrays.sort(syncedContactFieldNames);
 			Arrays.sort(syncedUserFieldNames);
 
-			if (GetterUtil.getBoolean(
-					PropsUtil.get("feature.flag.LRAC-10632"))) {
-
-				if (!Arrays.equals(
-						previousSyncedUserFieldNames, syncedUserFieldNames) ||
-					!Arrays.equals(
-						previousSyncedContactFieldNames,
-						syncedContactFieldNames) ||
-					!Arrays.equals(
-						previousSyncedUserFieldNames, syncedUserFieldNames)) {
-
-					_analyticsDXPEntityBatchExporter.refreshExportTrigger(
-						(Long)dictionary.get("companyId"),
-						"export-user-analytics-dxp-entities");
-				}
-
-				_analyticsDXPEntityBatchExporter.export(
-					(Long)dictionary.get("companyId"));
-
-				return;
-			}
-
 			if (!Arrays.equals(
-					previousSyncedUserFieldNames, syncedUserFieldNames)) {
-
-				_syncUserCustomFields(
-					(Long)dictionary.get("companyId"), syncedUserFieldNames);
-			}
-
-			if (!Arrays.equals(
+					previousSyncedUserFieldNames, syncedUserFieldNames) ||
+				!Arrays.equals(
 					previousSyncedContactFieldNames, syncedContactFieldNames) ||
 				!Arrays.equals(
 					previousSyncedUserFieldNames, syncedUserFieldNames)) {
 
-				_syncDefaultFields(
-					(Long)dictionary.get("companyId"), syncedContactFieldNames,
-					syncedUserFieldNames);
-			}
-
-			if (GetterUtil.getBoolean(dictionary.get("syncAllContacts"))) {
-				if (!GetterUtil.getBoolean(
-						dictionary.get("previousSyncAllContacts"))) {
-
-					_syncContacts((Long)dictionary.get("companyId"));
-				}
-			}
-			else {
-				_syncOrganizationUsers(
+				_analyticsDXPEntityBatchExporter.refreshExportTrigger(
 					(Long)dictionary.get("companyId"),
-					(String[])dictionary.get("syncedOrganizationIds"));
-				_syncUserGroupUsers(
-					(Long)dictionary.get("companyId"),
-					(String[])dictionary.get("syncedUserGroupIds"));
+					"export-user-analytics-dxp-entities");
 			}
 
-			Message message = new Message();
-
-			message.put("command", AnalyticsMessagesProcessorCommand.SEND);
-			message.put("companyId", dictionary.get("companyId"));
-			message.put(
-				"principalName",
-				_getAnalyticsAdminUserId((Long)dictionary.get("companyId")));
-
-			if (_log.isInfoEnabled()) {
-				_log.info("Queueing send analytics messages message");
-			}
-
-			TransactionCommitCallbackUtil.registerCallback(
-				() -> {
-					_messageBus.sendMessage(
-						AnalyticsMessagesDestinationNames.
-							ANALYTICS_MESSAGES_PROCESSOR,
-						message);
-
-					return null;
-				});
+			_analyticsDXPEntityBatchExporter.export(
+				(Long)dictionary.get("companyId"));
 		}
 		catch (Exception exception) {
 			_log.error(exception);
-		}
-	}
-
-	private void _syncContacts(long companyId) {
-		int count = _userLocalService.getCompanyUsersCount(companyId);
-
-		int pages = count / _DEFAULT_DELTA;
-
-		for (int i = 0; i <= pages; i++) {
-			int start = i * _DEFAULT_DELTA;
-
-			int end = start + _DEFAULT_DELTA;
-
-			if (end > count) {
-				end = count;
-			}
-
-			List<User> users = _userLocalService.getCompanyUsers(
-				companyId, start, end);
-
-			_addUsersAnalyticsMessages(companyId, users);
-		}
-	}
-
-	private void _syncDefaultFields(
-		long companyId, String[] syncedContactFieldNames,
-		String[] syncedUserFieldNames) {
-
-		for (Map.Entry<String, String> entry : _defaultFieldNames.entrySet()) {
-			String fieldName = entry.getKey();
-
-			if (!ArrayUtil.contains(syncedContactFieldNames, fieldName) &&
-				!ArrayUtil.contains(syncedUserFieldNames, fieldName)) {
-
-				continue;
-			}
-
-			JSONObject jsonObject = JSONUtil.put(
-				"className", User.class.getName()
-			).put(
-				"companyId", companyId
-			).put(
-				"dataType", entry.getValue()
-			).put(
-				"name", fieldName
-			);
-
-			try {
-				AnalyticsMessage.Builder analyticsMessageBuilder =
-					AnalyticsMessage.builder(User.class.getName() + ".field");
-
-				analyticsMessageBuilder.action("add");
-				analyticsMessageBuilder.object(jsonObject);
-
-				String analyticsMessageJSON =
-					analyticsMessageBuilder.buildJSONString();
-
-				_analyticsMessageLocalService.addAnalyticsMessage(
-					companyId, _userLocalService.getDefaultUserId(companyId),
-					analyticsMessageJSON.getBytes(Charset.defaultCharset()));
-			}
-			catch (Exception exception) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to add analytics message " +
-							jsonObject.toString(),
-						exception);
-				}
-			}
-		}
-	}
-
-	private void _syncOrganizationUsers(
-		long companyId, String[] organizationIds) {
-
-		for (String organizationId : organizationIds) {
-			int count = _userLocalService.getOrganizationUsersCount(
-				GetterUtil.getLong(organizationId));
-
-			int pages = count / _DEFAULT_DELTA;
-
-			for (int i = 0; i <= pages; i++) {
-				int start = i * _DEFAULT_DELTA;
-
-				int end = start + _DEFAULT_DELTA;
-
-				if (end > count) {
-					end = count;
-				}
-
-				try {
-					List<User> users = _userLocalService.getOrganizationUsers(
-						GetterUtil.getLong(organizationId), start, end);
-
-					_addUsersAnalyticsMessages(companyId, users);
-				}
-				catch (Exception exception) {
-					if (_log.isWarnEnabled()) {
-						_log.warn(
-							"Unable to get organization users for " +
-								"organization " + organizationId,
-							exception);
-					}
-				}
-			}
-		}
-	}
-
-	private void _syncUserCustomFields(
-		long companyId, String[] syncedUserFieldNames) {
-
-		List<ExpandoColumn> expandoColumns = new ArrayList<>();
-
-		List<ExpandoColumn> defaultTableColumns =
-			_expandoColumnLocalService.getDefaultTableColumns(
-				companyId, User.class.getName());
-
-		for (ExpandoColumn defaultTableColumn : defaultTableColumns) {
-			if (ArrayUtil.contains(
-					syncedUserFieldNames, defaultTableColumn.getName())) {
-
-				expandoColumns.add(defaultTableColumn);
-			}
-		}
-
-		if (!expandoColumns.isEmpty()) {
-			_addAnalyticsMessages("add", expandoColumns, companyId);
-		}
-	}
-
-	private void _syncUserGroupUsers(long companyId, String[] userGroupIds) {
-		for (String userGroupId : userGroupIds) {
-			int count = _userLocalService.getUserGroupUsersCount(
-				GetterUtil.getLong(userGroupId));
-
-			int pages = count / _DEFAULT_DELTA;
-
-			for (int i = 0; i <= pages; i++) {
-				int start = i * _DEFAULT_DELTA;
-
-				int end = start + _DEFAULT_DELTA;
-
-				if (end > count) {
-					end = count;
-				}
-
-				List<User> users = _userLocalService.getUserGroupUsers(
-					GetterUtil.getLong(userGroupId), start, end);
-
-				_addUsersAnalyticsMessages(companyId, users);
-			}
 		}
 	}
 
@@ -732,8 +381,6 @@ public class AnalyticsConfigurationRegistryImpl
 			_analyticsConfigurations.remove(companyId);
 		}
 	}
-
-	private static final int _DEFAULT_DELTA = 500;
 
 	private static final String[] _SAP_ENTRY_OBJECT = {
 		AnalyticsSecurityConstants.SERVICE_ACCESS_POLICY_NAME,
@@ -749,107 +396,12 @@ public class AnalyticsConfigurationRegistryImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		AnalyticsConfigurationRegistryImpl.class);
 
-	private static final Map<String, String> _defaultFieldNames =
-		HashMapBuilder.put(
-			"agreedToTermsOfUse", "boolean"
-		).put(
-			"birthday", "date"
-		).put(
-			"classNameId", "Integer"
-		).put(
-			"classPK", "Integer"
-		).put(
-			"comments", "Text"
-		).put(
-			"companyId", "Integer"
-		).put(
-			"contactId", "Integer"
-		).put(
-			"createDate", "date"
-		).put(
-			"defaultUser", "boolean"
-		).put(
-			"emailAddress", "Text"
-		).put(
-			"emailAddressVerified", "boolean"
-		).put(
-			"employeeNumber", "Text"
-		).put(
-			"employeeStatusId", "Text"
-		).put(
-			"externalReferenceCode", "Text"
-		).put(
-			"facebookId", "Integer"
-		).put(
-			"facebookSn", "Text"
-		).put(
-			"firstName", "Text"
-		).put(
-			"googleUserId", "Text"
-		).put(
-			"greeting", "Text"
-		).put(
-			"hoursOfOperation", "Text"
-		).put(
-			"jabberSn", "Text"
-		).put(
-			"jobClass", "Text"
-		).put(
-			"jobTitle", "Text"
-		).put(
-			"languageId", "Text"
-		).put(
-			"lastName", "Text"
-		).put(
-			"ldapServerId", "Integer"
-		).put(
-			"male", "boolean"
-		).put(
-			"middleName", "Text"
-		).put(
-			"modifiedDate", "date"
-		).put(
-			"openId", "Text"
-		).put(
-			"parentContactId", "Integer"
-		).put(
-			"portraitId", "Integer"
-		).put(
-			"prefixListTypeId", "Integer"
-		).put(
-			"screenName", "Text"
-		).put(
-			"skypeSn", "Text"
-		).put(
-			"smsSn", "Text"
-		).put(
-			"status", "Integer"
-		).put(
-			"suffixListTypeId", "Integer"
-		).put(
-			"timeZoneId", "Text"
-		).put(
-			"twitterSn", "Text"
-		).put(
-			"userId", "Integer"
-		).put(
-			"userName", "Text"
-		).put(
-			"uuid", "Text"
-		).build();
-
 	private boolean _active;
 	private final Map<Long, AnalyticsConfiguration> _analyticsConfigurations =
 		new ConcurrentHashMap<>();
 
 	@Reference
 	private AnalyticsDXPEntityBatchExporter _analyticsDXPEntityBatchExporter;
-
-	@Reference
-	private AnalyticsMessageLocalService _analyticsMessageLocalService;
-
-	@Reference
-	private ClassNameLocalService _classNameLocalService;
 
 	private final Map<String, Long> _companyIds = new ConcurrentHashMap<>();
 
@@ -859,16 +411,7 @@ public class AnalyticsConfigurationRegistryImpl
 	@Reference
 	private ConfigurationAdmin _configurationAdmin;
 
-	@Reference
-	private EntityModelListenerRegistry _entityModelListenerRegistry;
-
-	@Reference
-	private ExpandoColumnLocalService _expandoColumnLocalService;
-
 	private final Set<Long> _initializedCompanyIds = new HashSet<>();
-
-	@Reference
-	private MessageBus _messageBus;
 
 	@Reference
 	private RoleLocalService _roleLocalService;

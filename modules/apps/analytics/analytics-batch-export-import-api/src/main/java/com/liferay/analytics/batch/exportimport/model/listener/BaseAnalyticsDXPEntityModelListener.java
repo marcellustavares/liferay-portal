@@ -78,9 +78,7 @@ public abstract class BaseAnalyticsDXPEntityModelListener
 
 	@Override
 	public void onBeforeRemove(T model) throws ModelListenerException {
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LRAC-10632")) ||
-			!isTracked(model)) {
-
+		if (!isTracked(model)) {
 			return;
 		}
 
@@ -191,9 +189,7 @@ public abstract class BaseAnalyticsDXPEntityModelListener
 		String associationClassName, Object associationClassPK,
 		Object classPK) {
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LRAC-10632")) ||
-			!analyticsConfigurationRegistry.isActive()) {
-
+		if (!analyticsConfigurationRegistry.isActive()) {
 			return;
 		}
 
