@@ -343,7 +343,7 @@ public class AnalyticsConfigurationRegistryImpl
 					companyId,
 					ArrayUtil.append(
 						AnalyticsDXPEntityBatchExporterConstants.
-							DISPATCH_TRIGGER_NAMES_DXP_ENTITIES,
+							DISPATCH_TRIGGER_NAME_DXP_ENTITIES,
 						new String[] {
 							AnalyticsDXPEntityBatchExporterConstants.
 								DISPATCH_TRIGGER_NAME_ACCOUNT_ENTRY_DXP_ENTITIES,
@@ -387,19 +387,14 @@ public class AnalyticsConfigurationRegistryImpl
 		try {
 			Set<String> dispatchTriggerNames = new HashSet<>();
 
-			if (FeatureFlagManagerUtil.isEnabled("LRAC-10632")) {
+			if (FeatureFlagManagerUtil.isEnabled("LRAC-10632") &&
+				_analyticsSettingsManager.syncedContactSettingsEnabled(
+						companyId)) {
+					
 				Collections.addAll(
 					dispatchTriggerNames,
 					AnalyticsDXPEntityBatchExporterConstants.
-						DISPATCH_TRIGGER_NAMES_DXP_ENTITIES);
-
-				if (_analyticsSettingsManager.syncedContactSettingsEnabled(
-						companyId)) {
-
-					dispatchTriggerNames.add(
-						AnalyticsDXPEntityBatchExporterConstants.
-							DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES);
-				}
+						DISPATCH_TRIGGER_NAME_DXP_ENTITIES);
 			}
 
 			if (_analyticsSettingsManager.syncedAccountSettingsEnabled(
