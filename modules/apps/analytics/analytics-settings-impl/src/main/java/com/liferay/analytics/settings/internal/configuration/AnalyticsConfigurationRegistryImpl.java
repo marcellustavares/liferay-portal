@@ -341,19 +341,16 @@ public class AnalyticsConfigurationRegistryImpl
 			if (companyId != CompanyConstants.SYSTEM) {
 				_analyticsDXPEntityBatchExporter.unscheduleExportTriggers(
 					companyId,
-					ArrayUtil.append(
+					new String[] {
+						AnalyticsDXPEntityBatchExporterConstants.
+							DISPATCH_TRIGGER_NAME_ACCOUNT_ENTRY_DXP_ENTITIES,
 						AnalyticsDXPEntityBatchExporterConstants.
 							DISPATCH_TRIGGER_NAME_DXP_ENTITIES,
-						new String[] {
-							AnalyticsDXPEntityBatchExporterConstants.
-								DISPATCH_TRIGGER_NAME_ACCOUNT_ENTRY_DXP_ENTITIES,
-							AnalyticsDXPEntityBatchExporterConstants.
-								DISPATCH_TRIGGER_NAME_ORDER,
-							AnalyticsDXPEntityBatchExporterConstants.
-								DISPATCH_TRIGGER_NAME_PRODUCT,
-							AnalyticsDXPEntityBatchExporterConstants.
-								DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES
-						}));
+						AnalyticsDXPEntityBatchExporterConstants.
+							DISPATCH_TRIGGER_NAME_ORDER,
+						AnalyticsDXPEntityBatchExporterConstants.
+							DISPATCH_TRIGGER_NAME_PRODUCT
+					});
 
 				_analyticsMessageLocalService.deleteAnalyticsMessages(
 					companyId);
@@ -387,12 +384,8 @@ public class AnalyticsConfigurationRegistryImpl
 		try {
 			Set<String> dispatchTriggerNames = new HashSet<>();
 
-			if (FeatureFlagManagerUtil.isEnabled("LRAC-10632") &&
-				_analyticsSettingsManager.syncedContactSettingsEnabled(
-						companyId)) {
-					
-				Collections.addAll(
-					dispatchTriggerNames,
+			if (FeatureFlagManagerUtil.isEnabled("LRAC-10632")) {
+				dispatchTriggerNames.add(
 					AnalyticsDXPEntityBatchExporterConstants.
 						DISPATCH_TRIGGER_NAME_DXP_ENTITIES);
 			}
@@ -624,33 +617,19 @@ public class AnalyticsConfigurationRegistryImpl
 					}
 				}
 
-				if (FeatureFlagManagerUtil.isEnabled("LRAC-10632")) {
-					if (_analyticsSettingsManager.syncedContactSettingsChanged(
-							companyId)) {
+				if (FeatureFlagManagerUtil.isEnabled("LRAC-10632") &&
+					((_analyticsSettingsManager.syncedContactSettingsChanged(
+						companyId) &&
+					  _analyticsSettingsManager.syncedContactSettingsEnabled(
+						  companyId)) ||
+					 (_analyticsSettingsManager.syncedContactSettingsEnabled(
+						 companyId) &&
+					  _analyticsSettingsManager.syncedUserFieldsChanged(
+						  companyId)))) {
 
-						if (_analyticsSettingsManager.
-								syncedContactSettingsEnabled(companyId)) {
-
-							refreshDispatchTriggerNames.add(
-								AnalyticsDXPEntityBatchExporterConstants.
-									DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES);
-						}
-						else {
-							unscheduleDispatchTriggerNames.add(
-								AnalyticsDXPEntityBatchExporterConstants.
-									DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES);
-						}
-					}
-
-					if (_analyticsSettingsManager.syncedContactSettingsEnabled(
-							companyId) &&
-						_analyticsSettingsManager.syncedUserFieldsChanged(
-							companyId)) {
-
-						refreshDispatchTriggerNames.add(
-							AnalyticsDXPEntityBatchExporterConstants.
-								DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES);
-					}
+					refreshDispatchTriggerNames.add(
+						AnalyticsDXPEntityBatchExporterConstants.
+							DISPATCH_TRIGGER_NAME_DXP_ENTITIES);
 				}
 
 				if (!refreshDispatchTriggerNames.isEmpty()) {
@@ -665,7 +644,7 @@ public class AnalyticsConfigurationRegistryImpl
 							companyId,
 							new String[] {
 								AnalyticsDXPEntityBatchExporterConstants.
-									DISPATCH_TRIGGER_NAME_USER_DXP_ENTITIES
+									DISPATCH_TRIGGER_NAME_DXP_ENTITIES
 							});
 					}
 				}

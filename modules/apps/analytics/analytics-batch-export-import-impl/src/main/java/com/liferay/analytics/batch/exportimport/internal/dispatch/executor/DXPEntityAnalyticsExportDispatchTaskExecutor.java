@@ -1,30 +1,24 @@
 /**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package com.liferay.analytics.batch.exportimport.internal.dispatch.executor;
 
-import com.liferay.account.model.AccountGroup;
-import com.liferay.analytics.batch.exportimport.manager.AnalyticsBatchExportImportManager;
-import com.liferay.analytics.batch.exportimport.manager.AnalyticsBatchExportTask;
 import com.liferay.analytics.dxp.entity.rest.dto.v1_0.DXPEntity;
-import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.configuration.AnalyticsConfigurationRegistry;
-import com.liferay.dispatch.executor.BaseDispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutor;
 import com.liferay.dispatch.executor.DispatchTaskExecutorOutput;
 import com.liferay.dispatch.executor.DispatchTaskStatus;
 import com.liferay.dispatch.model.DispatchLog;
 import com.liferay.dispatch.model.DispatchTrigger;
-import com.liferay.dispatch.service.DispatchLogLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.ArrayUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -42,39 +36,9 @@ import org.osgi.service.component.annotations.Reference;
 	service = DispatchTaskExecutor.class
 )
 public class DXPEntityAnalyticsExportDispatchTaskExecutor
-	extends BaseDispatchTaskExecutor {
+	extends BaseAnalyticsDXPEntityExportDispatchTaskExecutor {
 
 	public static final String KEY = "export-analytics-dxp-entities";
-
-	@Override
-	public String getName() {
-		return KEY;
-	}
-
-	@Override
-	protected String getBatchEngineExportTaskItemDelegateName() {
-		return "analytics-dxp-entities";
-	}
-
-	@Override
-	protected boolean shouldExport(long companyId) {
-		AnalyticsConfiguration analyticsConfiguration =
-			_analyticsConfigurationRegistry.getAnalyticsConfiguration(
-				companyId);
-
-		if (analyticsConfiguration.syncAllContacts() ||
-			!ArrayUtil.isEmpty(analyticsConfiguration.syncedUserGroupIds()) ||
-			!ArrayUtil.isEmpty(
-				analyticsConfiguration.syncedOrganizationIds())) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Reference
-	private AnalyticsConfigurationRegistry _analyticsConfigurationRegistry;
 
 	@Override
 	public void doExecute(
@@ -101,11 +65,10 @@ public class DXPEntityAnalyticsExportDispatchTaskExecutor
 		if (latestSuccessfulDispatchLog != null) {
 			resourceLastModifiedDate = latestSuccessfulDispatchLog.getEndDate();
 		}
-		
 
 		analyticsBatchExportImportManager.exportToAnalyticsCloud(
 			Arrays.asList(
-				"account-group-analytics-dxp-entities", 
+				"account-group-analytics-dxp-entities",
 				"analytics-association-analytics-dxp-entities",
 				"analytics-delete-message-analytics-dxp-entities",
 				"expando-column-analytics-dxp-entities",
@@ -114,21 +77,28 @@ public class DXPEntityAnalyticsExportDispatchTaskExecutor
 				"role-analytics-dxp-entities", "team-analytics-dxp-entities",
 				"user-analytics-dxp-entities",
 				"user-group-analytics-dxp-entities"),
-			dispatchTrigger.getCompanyId(), 
+			dispatchTrigger.getCompanyId(),
 			message -> _updateDispatchLog(
 				dispatchLog.getDispatchLogId(), dispatchTaskExecutorOutput,
 				message),
 			resourceLastModifiedDate, DXPEntity.class.getName(),
 			dispatchTrigger.getUserId());
 	}
-	
-	
-	@Reference
-	protected AnalyticsBatchExportImportManager
-		analyticsBatchExportImportManager;
 
-	@Reference
-	protected DispatchLogLocalService dispatchLogLocalService;
+	@Override
+	public String getName() {
+		return KEY;
+	}
+
+	@Override
+	protected String getBatchEngineExportTaskItemDelegateName() {
+		return "analytics-dxp-entities";
+	}
+
+	@Override
+	protected boolean shouldExport(long companyId) {
+		return _analyticsConfigurationRegistry.isActive();
+	}
 
 	private void _updateDispatchLog(
 			long dispatchLogId,
@@ -157,5 +127,8 @@ public class DXPEntityAnalyticsExportDispatchTaskExecutor
 
 	private static final DateFormat _dateFormat = new SimpleDateFormat(
 		"yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+	@Reference
+	private AnalyticsConfigurationRegistry _analyticsConfigurationRegistry;
 
 }
