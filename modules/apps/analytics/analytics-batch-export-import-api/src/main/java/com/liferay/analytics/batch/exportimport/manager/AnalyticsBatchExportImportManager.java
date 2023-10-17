@@ -22,6 +22,13 @@ public interface AnalyticsBatchExportImportManager {
 			UnsafeConsumer<String, Exception> notificationUnsafeConsumer,
 			Date resourceLastModifiedDate, String resourceName, long userId)
 		throws Exception;
+	
+	public void exportToAnalyticsCloud(
+			List<String> batchEngineExportTaskItemDelegateNames,
+			long companyId,
+			UnsafeConsumer<String, Exception> notificationUnsafeConsumer,
+			Date resourceLastModifiedDate, String resourceName, long userId)
+		throws Exception;
 
 	public void importFromAnalyticsCloud(
 			String batchEngineImportTaskItemDelegateName, long companyId,
