@@ -1,0 +1,23 @@
+import com.liferay.gradle.plugins.patcher.PatchTask
+
+apply plugin: "com.liferay.patcher"
+
+task patch(type: PatchTask)
+
+dependencies {
+	api group: "org.springframework", name: 'spring-web', version: '5.3.31'
+}
+
+jar {
+	doFirst {
+		exclude ("org/springframework/remoting/httpinvoker/**")
+	}
+}
+
+patch {
+	ext {
+		autoClean = false
+	}
+
+	originalLibModuleName = "spring-web"
+}
