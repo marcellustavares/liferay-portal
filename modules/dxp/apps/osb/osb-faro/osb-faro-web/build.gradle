@@ -63,7 +63,7 @@ packageRunWebpack {
 		environment "FARO_ENVIRONMENT_NAME", faroEnvironmentName
 	}
 
-	enabled = ((System.getProperty("user.name") != "root") || (System.getProperty("liferay.ci") == "true"))
+	enabled = true
 
 	inputs.dir "src/main/css"
 	inputs.dir "src/main/images"
