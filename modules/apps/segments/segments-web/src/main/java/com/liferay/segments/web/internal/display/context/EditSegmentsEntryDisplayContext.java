@@ -109,16 +109,32 @@ public class EditSegmentsEntryDisplayContext {
 		return LanguageUtil.get(_httpServletRequest, "segments");
 	}
 
-	public Map<String, Object> getData() throws Exception {
+	public Map<String, Object> getData() {
 		if (_data != null) {
 			return _data;
 		}
 
-		_data = HashMapBuilder.<String, Object>put(
-			"context", _getContext()
-		).put(
-			"props", _getProps()
-		).build();
+		HashMapBuilder.HashMapWrapper<String, Object> builder =
+			HashMapBuilder.put(
+				"context", _getContext()
+			);
+
+		try {
+			builder.put(
+				"props", _getProps()
+			);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			builder.put(
+				"error", ""
+			);
+		}
+
+		_data = builder.build();
 
 		return _data;
 	}
